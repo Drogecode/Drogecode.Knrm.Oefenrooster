@@ -11,5 +11,9 @@
         </AuthorizeView>
     </MudNavGroup>
     <MudNavLink Href="/counter" Match="NavLinkMatch.Prefix">Counter</MudNavLink>
-    <MudNavLink Href="/fetchdata" Match="NavLinkMatch.Prefix">Fetch data</MudNavLink>
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Href="/fetchdata" Match="NavLinkMatch.Prefix">Fetch data</MudNavLink>
+        </Authorized>
+    </AuthorizeView>
 </MudNavMenu>
