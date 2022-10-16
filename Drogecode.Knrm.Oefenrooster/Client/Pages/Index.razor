@@ -4,6 +4,13 @@
 
 <h1>Hello, world!</h1>
 
-Welcome to your new app.
+@if (_isAuthenticated)
+{
+    <p>Hello @_name</p>
+}
+else
+{
+    <p>Welcome to your new app.</p>
+}
 
 <SurveyPrompt Title="How is Blazor working for you?" />
