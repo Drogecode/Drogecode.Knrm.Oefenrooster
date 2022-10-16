@@ -1,9 +1,15 @@
 ﻿<MudNavMenu>
     <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
-    <MudNavLink Href="/counter" Match="NavLinkMatch.Prefix">Counter</MudNavLink>
-    <MudNavGroup Title="Settings" Expanded="true">
-        <MudNavLink Href="/users" Match="NavLinkMatch.Prefix">Users</MudNavLink>
-        <MudNavLink Href="/security" Match="NavLinkMatch.Prefix">Security</MudNavLink>
+    <MudNavGroup Title="User" Expanded="true">
+        <AuthorizeView>
+            <Authorized>
+                <MudNavLink @onclick="BeginLogout" Match="NavLinkMatch.Prefix">Logout</MudNavLink>
+            </Authorized>
+            <NotAuthorized>
+                <MudNavLink Href="/authentication/login" Match="NavLinkMatch.Prefix">Login</MudNavLink>
+            </NotAuthorized>
+        </AuthorizeView>
     </MudNavGroup>
+    <MudNavLink Href="/counter" Match="NavLinkMatch.Prefix">Counter</MudNavLink>
     <MudNavLink Href="/fetchdata" Match="NavLinkMatch.Prefix">Fetch data</MudNavLink>
 </MudNavMenu>
