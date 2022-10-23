@@ -1,0 +1,41 @@
+﻿@using System.Globalization
+@using Microsoft.Extensions.Localization
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+@inject IStringLocalizer<CultureSelector> L
+
+<p>
+    <label>
+        @L["Select your locale"]
+        <select @bind="Culture">
+            @foreach (var culture in supportedCultures)
+            {
+                <option value="@culture">@culture.DisplayName</option>
+            }
+        </select>
+    </label>
+</p>
+
+@code
+{
+    private CultureInfo[] supportedCultures = new[]
+    {
+        new CultureInfo("nl-NL"),
+        new CultureInfo("en-US"),
+    };
+
+    private CultureInfo Culture
+    {
+        get => CultureInfo.CurrentCulture;
+        set
+        {
+            if (CultureInfo.CurrentCulture != value)
+            {
+                var js = (IJSInProcessRuntime)JS;
+                js.InvokeVoid("blazorCulture.set", value.Name);
+
+                Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+            }
+        }
+    }
+}

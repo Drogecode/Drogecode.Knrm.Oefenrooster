@@ -1,19 +1,20 @@
 ﻿<MudNavMenu>
     <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
-    <MudNavGroup Title="User" Expanded="true">
-        <AuthorizeView>
-            <Authorized>
+    <AuthorizeView>
+        <Authorized>
+            <MudNavGroup Title="User">
                 <MudNavLink @onclick="BeginLogout" Match="NavLinkMatch.Prefix">Logout</MudNavLink>
-            </Authorized>
-            <NotAuthorized>
-                <MudNavLink Href="/authentication/login" Match="NavLinkMatch.Prefix">Login</MudNavLink>
-            </NotAuthorized>
-        </AuthorizeView>
-    </MudNavGroup>
+            </MudNavGroup>
+        </Authorized>
+        <NotAuthorized>
+            <MudNavLink Href="/authentication/login" Match="NavLinkMatch.Prefix">Login</MudNavLink>
+        </NotAuthorized>
+    </AuthorizeView>
     <MudNavLink Href="/counter" Match="NavLinkMatch.Prefix">Counter</MudNavLink>
     <AuthorizeView>
         <Authorized>
             <MudNavLink Href="/fetchdata" Match="NavLinkMatch.Prefix">Fetch data</MudNavLink>
         </Authorized>
     </AuthorizeView>
+    <CultureSelector />
 </MudNavMenu>

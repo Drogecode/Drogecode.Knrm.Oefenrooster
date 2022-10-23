@@ -20,19 +20,19 @@
         <MudTh>Summary</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Nr">@context.Date</MudTd>
-        <MudTd DataLabel="Sign">@context.TemperatureC</MudTd>
-        <MudTd DataLabel="Name">@context.TemperatureF</MudTd>
-        <MudTd DataLabel="Position" HideSmall="_hidePosition">@context.Summary</MudTd>
+        <MudTd DataLabel="Date">@context.Date</MudTd>
+        <MudTd DataLabel="Temp. (C)">@context.TemperatureC</MudTd>
+        <MudTd DataLabel="Temp. (F)">@context.TemperatureF</MudTd>
+        <MudTd DataLabel="Summary" HideSmall="_hidePosition">@context.Summary</MudTd>
     </RowTemplate>
 </MudTable>
 
-<MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
+<MudSwitch @bind-Checked="_hidePosition">Hide <b>Summary</b> when Breakpoint=Xs</MudSwitch>
 <MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch>
 
 @code {
     private bool _hidePosition;
-    private bool _loading;
+    private bool _loading = true;
     private WeatherForecast[]? forecasts;
 
     protected override async Task OnInitializedAsync()
