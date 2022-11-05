@@ -1,0 +1,19 @@
+﻿@inherits LayoutComponentBase
+@inject IStringLocalizer<MainLayout> L
+
+<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar>
+        <MudIconButton Icon="@(_isDarkMode ? Icons.Filled.DarkMode : Icons.Filled.LightMode)" Color="Color.Inherit" OnClick="@(()=>_isDarkMode = !_isDarkMode)" />
+    </MudAppBar>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _isDarkMode;
+}

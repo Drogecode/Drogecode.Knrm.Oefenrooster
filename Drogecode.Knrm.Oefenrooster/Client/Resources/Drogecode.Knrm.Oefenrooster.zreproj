@@ -26,6 +26,18 @@
       <remarks>
       </remarks>
     </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="22b42bef-847e-4063-b59c-5cd57e1b6f07">
+      <file filePath="Pages\LandingPage.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\Drogecode.Knrm.Oefenrooster\Client\Resources\Pages\LandingPage.en-US.resx" uniqueID="56413277-b37f-497b-97ca-018487e16b4b" />
+      <file filePath="Pages\LandingPage.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\Drogecode.Knrm.Oefenrooster\Client\Resources\Pages\LandingPage.nl-NL.resx" uniqueID="ba19ef6f-ed56-4155-8ee0-332c6e1ab3e7" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="663923ac-3073-4c16-b0c4-86ec1c474ce0">
+      <file filePath="Shared\Layout\MainLayout.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\Drogecode.Knrm.Oefenrooster\Client\Resources\Shared\Layout\MainLayout.en-US.resx" uniqueID="00d3cfcd-76f3-40eb-b0ff-b706ccef49af" />
+      <file filePath="Shared\Layout\MainLayout.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\Drogecode.Knrm.Oefenrooster\Client\Resources\Shared\Layout\MainLayout.nl-NL.resx" uniqueID="c6f522ba-3634-41be-82e0-cc3c50a82ebe" />
+      <remarks>
+      </remarks>
+    </fileGroup>
   </fileGroups>
   <projectFolders />
 </project>
