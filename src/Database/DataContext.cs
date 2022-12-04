@@ -11,19 +11,10 @@ namespace Drogecode.Knrm.Oefenrooster.Database
 {
     public class DataContext : DbContext
     {
-        private readonly IConfiguration Configuration;
         public DbSet<Users> Users { get; set; }
 
-        public DataContext(IConfiguration configuration)
+        public DataContext(DbContextOptions<DataContext> context) : base(context)
         {
-            Configuration = configuration;
         }
-
-        public override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            // connect to postgres with connection string from app settings
-            options.UseNpgsql(Configuration.GetConnectionString("postgresDB"));
-        }
-
-    }
+    }   
 }
