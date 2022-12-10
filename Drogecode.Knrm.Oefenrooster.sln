@@ -5,8 +5,6 @@ VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.Client", "src\Client\Drogecode.Knrm.Oefenrooster.Client.csproj", "{EB07ED30-006B-43A7-BCA6-3B5D3C5E95D8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.Database", "src\Database\Drogecode.Knrm.Oefenrooster.Database.csproj", "{988D61CD-5D86-4706-9377-18804AD150DF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.Server", "src\Server\Drogecode.Knrm.Oefenrooster.Server.csproj", "{2D9143F7-D2D7-4DDC-AC5E-E62410334F69}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.Shared", "src\Shared\Drogecode.Knrm.Oefenrooster.Shared.csproj", "{23D21DA6-1A18-46BF-AECF-7B751D52002D}"
@@ -21,10 +19,6 @@ Global
 		{EB07ED30-006B-43A7-BCA6-3B5D3C5E95D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB07ED30-006B-43A7-BCA6-3B5D3C5E95D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB07ED30-006B-43A7-BCA6-3B5D3C5E95D8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{988D61CD-5D86-4706-9377-18804AD150DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{988D61CD-5D86-4706-9377-18804AD150DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{988D61CD-5D86-4706-9377-18804AD150DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{988D61CD-5D86-4706-9377-18804AD150DF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2D9143F7-D2D7-4DDC-AC5E-E62410334F69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2D9143F7-D2D7-4DDC-AC5E-E62410334F69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D9143F7-D2D7-4DDC-AC5E-E62410334F69}.Release|Any CPU.ActiveCfg = Release|Any CPU

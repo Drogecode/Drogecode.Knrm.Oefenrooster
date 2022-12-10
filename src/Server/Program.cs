@@ -8,6 +8,7 @@ using Microsoft.Extensions;
 using Microsoft.Graph.ExternalConnectors;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore.Migrations.Internal;
+using Drogecode.Knrm.Oefenrooster.Server.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
