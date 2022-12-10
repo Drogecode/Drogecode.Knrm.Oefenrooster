@@ -1,7 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject IStringLocalizer<MainLayout> L
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager Navigation
 
 <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" />
 <MudDialogProvider />
@@ -42,7 +41,7 @@
                 <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft" TransformOrigin="@Origin.TopLeft">
                     <MudMenuItem>Profile</MudMenuItem>
                     <MudMenuItem>My account</MudMenuItem>
-                    <MudMenuItem>Logout</MudMenuItem>
+                    <MudMenuItem @onclick="BeginLogout">Logout</MudMenuItem>
                 </MudMenu>
                 <MudIconButton Icon="@(_isDarkMode ? Icons.Filled.DarkMode : Icons.Filled.LightMode)" Color="Color.Inherit" OnClick="@(()=>_isDarkMode = !_isDarkMode)" />
             </MudAppBar>

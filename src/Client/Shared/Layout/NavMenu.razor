@@ -1,15 +1,5 @@
 ﻿<MudNavMenu>
     <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
-    <AuthorizeView>
-        <Authorized>
-            <MudNavGroup Title="User">
-                <MudNavLink @onclick="BeginLogout" Match="NavLinkMatch.Prefix">Logout</MudNavLink>
-            </MudNavGroup>
-        </Authorized>
-        <NotAuthorized>
-            <MudNavLink Href="/authentication/login" Match="NavLinkMatch.Prefix">Login</MudNavLink>
-        </NotAuthorized>
-    </AuthorizeView>
     <MudNavLink Href="/counter" Match="NavLinkMatch.Prefix">Counter</MudNavLink>
     <AuthorizeView>
         <Authorized>

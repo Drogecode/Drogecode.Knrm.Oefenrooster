@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
-public sealed partial class NavMenu
+public sealed partial class MainLayout
 {
     [Inject] SignOutSessionStateManager SignOutManager { get; set; }
     [Inject] NavigationManager Navigation { get; set; }
