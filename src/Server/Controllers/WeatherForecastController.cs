@@ -28,11 +28,19 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
-            _database.Users.Add(new Oefenrooster.Database.Models.Users
+            try
             {
-                Id = Guid.NewGuid(),
-                Name = "test"
-            });
+                var result = _database.Users.Add(new Oefenrooster.Database.Models.Users
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "test"
+                });
+                _database.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
