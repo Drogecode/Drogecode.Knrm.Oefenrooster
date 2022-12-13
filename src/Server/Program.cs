@@ -9,6 +9,8 @@ using Microsoft.Graph.ExternalConnectors;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore.Migrations.Internal;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
+using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddDbContextPool<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("postgresDB")));
 
 var app = builder.Build();

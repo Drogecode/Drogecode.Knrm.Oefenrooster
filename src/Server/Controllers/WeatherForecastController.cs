@@ -1,7 +1,9 @@
 using Drogecode.Knrm.Oefenrooster.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph;
 using Microsoft.Identity.Web.Resource;
+using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers
 {
@@ -11,7 +13,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers
     [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
     public class WeatherForecastController : ControllerBase
     {
-        private readonly Database.DataContext _database;
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -19,28 +20,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers
 
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, Database.DataContext data)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
             _logger = logger;
-            _database = data;
         }
 
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
-            try
-            {
-                var result = _database.Users.Add(new Oefenrooster.Database.Models.Users
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "test"
-                });
-                _database.SaveChanges();
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),

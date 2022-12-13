@@ -11,7 +11,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
 {
     public class DataContext : DbContext
     {
-        public DbSet<Users> Users { get; set; }
+        public DbSet<DbUsers> Users { get; set; }
 
         public DataContext(DbContextOptions<DataContext> context) : base(context)
         {
