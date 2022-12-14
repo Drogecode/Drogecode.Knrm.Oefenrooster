@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Drogecode.Knrm.Oefenrooster.Server.Migrations
+namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
     partial class DataContextModelSnapshot : ModelSnapshot
@@ -47,7 +47,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Migrations
                         new
                         {
                             Id = new Guid("46a4ddb6-412b-4329-b48f-ed681c96bc26"),
-                            Created = new DateTime(2022, 12, 14, 19, 22, 16, 829, DateTimeKind.Utc).AddTicks(327),
+                            Created = new DateTime(2022, 12, 14, 19, 33, 40, 205, DateTimeKind.Utc).AddTicks(2670),
                             Email = "test@drogecode.nl",
                             Name = "from model creating"
                         });

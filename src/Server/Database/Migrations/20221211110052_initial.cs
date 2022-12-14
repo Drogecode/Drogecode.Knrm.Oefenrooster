@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Drogecode.Knrm.Oefenrooster.Server.Migrations
+namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 {
     /// <inheritdoc />
     public partial class initial : Migration
@@ -28,7 +28,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Created", "Email", "Name" },
-                values: new object[] { new Guid("46a4ddb6-412b-4329-b48f-ed681c96bc26"), new DateTime(2022, 12, 14, 19, 22, 16, 829, DateTimeKind.Utc).AddTicks(327), "test@drogecode.nl", "from model creating" });
+                values: new object[] { new Guid("46a4ddb6-412b-4329-b48f-ed681c96bc26"), new DateTime(2022, 12, 14, 19, 33, 40, 205, DateTimeKind.Utc).AddTicks(2670), "test@drogecode.nl", "from model creating" });
         }
 
         /// <inheritdoc />
