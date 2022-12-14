@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Drogecode.Knrm.Oefenrooster.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221214192216_initiate")]
-    partial class initiate
+    [Migration("20221211110052_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
