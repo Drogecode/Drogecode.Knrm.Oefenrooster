@@ -13,21 +13,22 @@ public class UserService : IUserService
         _database = database;
     }
 
-    public User? GetUserFromDb(Guid userId, string userName)
+    public User? GetUserFromDb(Guid userId)
     {
         var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
         return DbUserToSharedUser(userObj);
     }
-    public User GetOrSetUserFromDb(Guid userId, string userName)
+
+    public User GetOrSetUserFromDb(Guid userId, string userName, string userEmail)
     {
         var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
         if (userObj == null)
         {
-
             var result = _database.Users.Add(new DbUsers
             {
                 Id = userId,
                 Name = userName,
+                Email= userEmail,
                 Created = DateTime.UtcNow
             });
             _database.SaveChanges();
