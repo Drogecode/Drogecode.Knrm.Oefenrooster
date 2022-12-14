@@ -39,8 +39,7 @@
                     </MudMenu>
                 </MudBadge>
                 <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft" TransformOrigin="@Origin.TopLeft">
-                    <MudMenuItem>Profile</MudMenuItem>
-                    <MudMenuItem>My account</MudMenuItem>
+                    <MudMenuItem Href="/user/profile">Profile</MudMenuItem>
                     <MudMenuItem @onclick="BeginLogout">Logout</MudMenuItem>
                 </MudMenu>
                 <MudIconButton Icon="@(_isDarkMode ? Icons.Filled.DarkMode : Icons.Filled.LightMode)" Color="Color.Inherit" OnClick="@(()=>_isDarkMode = !_isDarkMode)" />

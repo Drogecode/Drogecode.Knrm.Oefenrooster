@@ -13,13 +13,13 @@ public class UserService : IUserService
         _database = database;
     }
 
-    public User? GetUserFromDb(Guid userId)
+    public DrogeUser? GetUserFromDb(Guid userId)
     {
         var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
         return DbUserToSharedUser(userObj);
     }
 
-    public User GetOrSetUserFromDb(Guid userId, string userName, string userEmail)
+    public DrogeUser GetOrSetUserFromDb(Guid userId, string userName, string userEmail)
     {
         var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
         if (userObj == null)
@@ -37,9 +37,9 @@ public class UserService : IUserService
         return DbUserToSharedUser(userObj);
     }
 
-    private User DbUserToSharedUser(DbUsers dbUsers)
+    private DrogeUser DbUserToSharedUser(DbUsers dbUsers)
     {
-        return new User
+        return new DrogeUser
         {
             Id = dbUsers.Id,
             Name = dbUsers.Name,

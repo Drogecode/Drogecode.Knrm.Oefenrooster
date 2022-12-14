@@ -22,7 +22,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public User Get()
+    public DrogeUser Get()
     {
         var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
         var userName = User?.FindFirstValue("name") ?? throw new Exception("No userName found");

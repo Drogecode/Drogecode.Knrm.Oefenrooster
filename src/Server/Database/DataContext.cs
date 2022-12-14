@@ -17,6 +17,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DataContext(DbContextOptions<DataContext> context) : base(context)
         {
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //demo seed data
@@ -25,5 +26,5 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUsers>(entity => { entity.Property(e => e.Email).IsRequired(); });
             modelBuilder.Entity<DbUsers>(entity => { entity.HasData(new DbUsers { Name = "from model creating", Id = new Guid("46a4ddb6-412b-4329-b48f-ed681c96bc26"), Email = "test@drogecode.nl", Created = DateTime.UtcNow }); });
         }
-    }   
+    }
 }

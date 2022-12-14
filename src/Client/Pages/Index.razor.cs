@@ -1,10 +1,4 @@
-﻿
-using Drogecode.Knrm.Oefenrooster.Shared;
-using Drogecode.Knrm.Oefenrooster.Shared.Models;
-using System.Net.Http.Json;
-using static System.Net.WebRequestMethods;
-
-namespace Drogecode.Knrm.Oefenrooster.Client.Pages;
+﻿namespace Drogecode.Knrm.Oefenrooster.Client.Pages;
 public sealed partial class Index
 {
     [Inject] AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
@@ -17,7 +11,7 @@ public sealed partial class Index
         _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
         if (_isAuthenticated)
         {
-            var dbUser = await Http.GetFromJsonAsync<User>("User");
+            var dbUser = await Http.GetFromJsonAsync<DrogeUser>("User");
             _name = authState!.User!.Identity!.Name ?? string.Empty;
         }
     }
