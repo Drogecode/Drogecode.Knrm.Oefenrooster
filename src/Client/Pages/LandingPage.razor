@@ -1,7 +1,5 @@
 ﻿@layout LandingLayout
 @page "/landing_page"
-@inject IStringLocalizer<LandingPage> L
-
 
 <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
     <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">@L["Welcome on the page of {0}",CUSTOMER_NAME]</MudText>
@@ -13,5 +11,6 @@
 </MudContainer>
 
 @code {
+    [Inject] private IStringLocalizer<LandingPage> L { get; set; } = default!;
     private const string CUSTOMER_NAME = "KNRM Huizen";
 }
