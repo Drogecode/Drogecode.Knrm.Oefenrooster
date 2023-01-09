@@ -16,7 +16,7 @@ services:
     image: ${DOCKER_REGISTRY-}drogecodeknrmoefenroosterserver
     restart: always
     environment:
-      - ConnectionStrings:postgresDB=host=host.docker.internal;port=5432;database=postgresDB;username=postgresUser;password=postgresPW
+      - ConnectionStrings__postgresDB=host=host.docker.internal;port=5432;database=postgresDB;username=postgresUser;password=postgresPW
     build:
       context: .
       dockerfile: src/Server/Dockerfile
