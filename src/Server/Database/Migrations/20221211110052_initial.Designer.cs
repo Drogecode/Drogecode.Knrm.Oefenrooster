@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221211110052_initial")]
+    [Migration("20230109214314_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -50,10 +50,28 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("46a4ddb6-412b-4329-b48f-ed681c96bc26"),
-                            Created = new DateTime(2022, 12, 14, 19, 33, 40, 205, DateTimeKind.Utc).AddTicks(2670),
+                            Created = new DateTime(1992, 9, 4, 6, 30, 42, 0, DateTimeKind.Utc),
                             Email = "test@drogecode.nl",
                             Name = "from model creating"
                         });
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Customers");
                 });
 #pragma warning restore 612, 618
         }
