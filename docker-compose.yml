@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  drogecode.knrm.oefenrooster.server:
+    image: ${DOCKER_REGISTRY-}drogecodeknrmoefenroosterserver
+    build:
+      context: .
+      dockerfile: src/Server/Dockerfile
