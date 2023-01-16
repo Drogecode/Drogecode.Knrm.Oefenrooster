@@ -6,10 +6,13 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-COPY ["/Drogecode.Knrm.Oefenrooster.Server.csproj", "Drogecode.Knrm.Oefenrooster/Server/"]
+WORKDIR /src
+COPY ["/Server/Drogecode.Knrm.Oefenrooster.Server.csproj", "Drogecode.Knrm.Oefenrooster/Server/"]
+COPY ["/Client/Drogecode.Knrm.Oefenrooster.Client.csproj", "Drogecode.Knrm.Oefenrooster/Client/"]
+COPY ["/Shared/Drogecode.Knrm.Oefenrooster.Shared.csproj", "Drogecode.Knrm.Oefenrooster/Shared/"]
 RUN dotnet restore "Drogecode.Knrm.Oefenrooster/Server/Drogecode.Knrm.Oefenrooster.Server.csproj"
-COPY . .
 WORKDIR "/src/Drogecode.Knrm.Oefenrooster/Server"
+COPY . .
 RUN dotnet build "Drogecode.Knrm.Oefenrooster.Server.csproj" -c Release -o /app/build
 
 FROM build AS publish
