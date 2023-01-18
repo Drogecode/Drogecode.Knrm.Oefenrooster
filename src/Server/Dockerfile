@@ -8,8 +8,6 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["src/Server/Drogecode.Knrm.Oefenrooster.Server.csproj", "Server/"]
-COPY ["src/Client/Drogecode.Knrm.Oefenrooster.Client.csproj", "Client/"]
-COPY ["src/Shared/Drogecode.Knrm.Oefenrooster.Shared.csproj", "Shared/"]
 RUN dotnet restore "Server/Drogecode.Knrm.Oefenrooster.Server.csproj"
 COPY . .
 WORKDIR "/src/src/Server"
