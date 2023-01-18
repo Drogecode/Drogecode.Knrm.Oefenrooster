@@ -13,13 +13,13 @@ services:
     volumes: 
       - D:/programming/dockerData/postgres-data:/var/lib/postgresql/data
   drogecode.knrm.oefenrooster.server:
-    image: ${DOCKER_REGISTRY-}drogecode.knrm.oefenrooster
+    image: kanman/drogecode.knrm.oefenrooster:0.0.3
     restart: always
     environment:
       - ConnectionStrings__postgresDB=host=host.docker.internal;port=5432;database=postgresDB;username=postgresUser;password=postgresPW
     build:
       context: .
       dockerfile: src/Server/Dockerfile
-volumes:
-  db:
-    driver: D:/programming/dockerData/postgres-data
+    ports:
+        - 6080:80
+        - 6443:443
