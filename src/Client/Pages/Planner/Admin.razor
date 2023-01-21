@@ -1,15 +1,7 @@
 ﻿@page "/planner/admin"
-@page "/planner/admin/{CustomerId:guid}"
 <h3>Admin</h3>
 
-@if (CustomerId == Guid.Empty)
-{
-    <p>@L["No customer id found"]</p>
-}
-else
-{
-    <p>@L["The admin will be implemented soon!"]</p>
-}
+<p>@L["The admin will be implemented soon!"]</p>
 
 @code {
     [Inject] private IStringLocalizer<Admin> L { get; set; } = default!;

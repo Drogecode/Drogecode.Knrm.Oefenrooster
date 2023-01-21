@@ -1,0 +1,16 @@
+﻿@page "/configuration/global"
+@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+<h3>Global configuration</h3>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateDatabase">@L["Update database"]</MudButton>
+
+@code {
+    [Inject] private IStringLocalizer<Global> L { get; set; } = default!;
+    [Inject] private ConfigurationRepository configurationRepository {get;set;} = default!;
+
+    private async Task UpdateDatabase()
+    {
+        Console.WriteLine("Durp");
+        await configurationRepository.UpgradeDatabaseAsync();
+    }
+}

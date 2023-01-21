@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 using System.Globalization;
 using Microsoft.JSInterop;
-
+using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -16,6 +16,9 @@ builder.Services.AddHttpClient("Drogecode.Knrm.Oefenrooster.ServerAPI", client =
     .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 builder.Services.AddMudServices();
+
+builder.Services.AddScoped<ConfigurationRepository>();
+builder.Services.AddScoped<UserRepository>();
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Drogecode.Knrm.Oefenrooster.ServerAPI"));

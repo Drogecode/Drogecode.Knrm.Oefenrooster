@@ -1,15 +1,7 @@
 ﻿@page "/planner/calendar"
-@page "/planner/calendar/{CustomerId:guid}"
 <h3>Calendar</h3>
 
-@if(CustomerId == Guid.Empty)
-{
-    <p>@L["No customer id found"]</p>
-}
-else
-{
-    <p>@L["The calendar will be implemented soon!"]</p>
-}
+<p>@L["The calendar will be implemented soon!"]</p>
 
 @code {
     [Inject] private IStringLocalizer<Calendar> L { get; set; } = default!;

@@ -1,14 +1,8 @@
 ﻿<MudNavMenu>
     <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
-    <MudNavGroup Title="KNRM Huizen" Expanded="true">
-        <MudNavLink Href="/planner/calendar/c0f17c92-57e5-4ec2-83c4-904160078c38" Match="NavLinkMatch.Prefix">@L["Calendar"]</MudNavLink>
-        <MudNavLink Href="/planner/admin/c0f17c92-57e5-4ec2-83c4-904160078c38" Match="NavLinkMatch.Prefix">@L["Admin"]</MudNavLink>
-    </MudNavGroup>
-    <MudNavGroup Title="HRB" Expanded="true">
-        <MudNavLink Href="/planner/calendar/fba4d79a-a774-4afa-b432-bc01bbcb68a2" Match="NavLinkMatch.Prefix">@L["Calendar"]</MudNavLink>
-        <MudNavLink Href="/planner/admin/fba4d79a-a774-4afa-b432-bc01bbcb68a2" Match="NavLinkMatch.Prefix">@L["Admin"]</MudNavLink>
-    </MudNavGroup>
-    <MudNavLink Href="/planner/calendar" Match="NavLinkMatch.All">No Guid</MudNavLink>
+    <MudNavLink Href="/planner/calendar" Match="NavLinkMatch.Prefix">@L["Calendar"]</MudNavLink>
+    <MudNavLink Href="/planner/admin" Match="NavLinkMatch.Prefix">@L["Admin"]</MudNavLink>
+    <MudNavLink Href="/configuration/global" Match="NavLinkMatch.Prefix">@L["Configuration"]</MudNavLink>
 </MudNavMenu>
 
 @code {
