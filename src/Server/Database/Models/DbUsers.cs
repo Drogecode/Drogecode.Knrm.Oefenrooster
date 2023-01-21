@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -16,4 +17,9 @@ public class DbUsers
     public string Name { get; set; }
     public string Email { get; set; }
     public DateTime Created { get; set; }
+    public DateTime LastLogin { get; set; }
+
+    public DbCustomers? Customer { get; set; }
+    public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
+    public ICollection<DbAudit>? Audits { get; set; }
 }

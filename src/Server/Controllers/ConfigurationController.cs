@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
@@ -13,16 +14,23 @@ public class ConfigurationController : ControllerBase
 {
     private readonly ILogger<ConfigurationController> _logger;
     private readonly IConfigurationService _configurationService;
+    private readonly IAuditService _auditService;
 
-    public ConfigurationController(ILogger<ConfigurationController> logger, IConfigurationService configurationService)
+    public ConfigurationController(
+        ILogger<ConfigurationController> logger, 
+        IConfigurationService configurationService,
+        IAuditService auditService)
     {
         _logger = logger;
         _configurationService = configurationService;
+        _auditService = auditService;
     }
 
     [HttpGet]
     public async Task UpgradeDatabase()
     {
+        var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
         await _configurationService.UpgradeDatabase();
+        await _auditService.Log(userId, Shared.Enums.AuditType.DataBaseUpgrade);
     }
 }

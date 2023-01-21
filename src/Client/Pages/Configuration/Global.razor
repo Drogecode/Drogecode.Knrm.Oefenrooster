@@ -2,15 +2,22 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 <h3>Global configuration</h3>
 
+<p>Alleen Taco mag op deze knop klikken</p>
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateDatabase">@L["Update database"]</MudButton>
+@if(_clickedUpdate)
+{
+    <p>Dude!</p>
+}
 
 @code {
     [Inject] private IStringLocalizer<Global> L { get; set; } = default!;
     [Inject] private ConfigurationRepository configurationRepository {get;set;} = default!;
 
+    private bool _clickedUpdate;
+
     private async Task UpdateDatabase()
     {
-        Console.WriteLine("Durp");
+        _clickedUpdate = true;
         await configurationRepository.UpgradeDatabaseAsync();
     }
 }

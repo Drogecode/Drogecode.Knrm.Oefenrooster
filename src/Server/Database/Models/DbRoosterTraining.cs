@@ -12,5 +12,7 @@ public class DbRoosterTraining
     public DateOnly Date { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
-    public ICollection<DbRoosterAvailable> RoosterAvailables{ get; set; }
+
+    public DbCustomers? Customer { get; set; }
+    public ICollection<DbRoosterAvailable>? RoosterAvailables{ get; set; }
 }

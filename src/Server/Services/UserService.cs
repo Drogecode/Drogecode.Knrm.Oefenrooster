@@ -14,13 +14,13 @@ public class UserService : IUserService
         _database = database;
     }
 
-    public DrogeUser? GetUserFromDb(Guid userId)
+    public async Task<DrogeUser?> GetUserFromDb(Guid userId)
     {
         var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
         return DbUserToSharedUser(userObj);
     }
 
-    public DrogeUser GetOrSetUserFromDb(Guid userId, string userName, string userEmail)
+    public async Task<DrogeUser> GetOrSetUserFromDb(Guid userId, string userName, string userEmail)
     {
         var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
         if (userObj == null)
@@ -29,11 +29,17 @@ public class UserService : IUserService
             {
                 Id = userId,
                 Name = userName,
-                Email= userEmail,
+                Email = userEmail,
                 Created = DateTime.UtcNow
             });
             _database.SaveChanges();
             userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
+        }
+        if (userObj != null)
+        {
+            userObj.LastLogin = DateTime.UtcNow;
+            _database.Users.Update(userObj);
+            await _database.SaveChangesAsync();
         }
         return DbUserToSharedUser(userObj);
     }
