@@ -13,7 +13,7 @@ public class UserRepository
 
     public async Task<DrogeUser?> GetCurrentUserAsync()
     {
-        var dbUser = await _httpClient.GetFromJsonAsync<DrogeUser>("User");
+        var dbUser = await _httpClient.GetFromJsonAsync<DrogeUser>("api/User/Get");
         return dbUser;
     }
 }

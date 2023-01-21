@@ -12,6 +12,7 @@ namespace Drogecode.Knrm.Oefenrooster.Database.Models;
 public class DbUsers
 {
     public Guid Id { get; set; }
+    public Guid CustomerId { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
     public DateTime Created { get; set; }

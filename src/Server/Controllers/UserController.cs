@@ -8,7 +8,7 @@ using System.Security.Claims;
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]/[action]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class UserController : ControllerBase
 {

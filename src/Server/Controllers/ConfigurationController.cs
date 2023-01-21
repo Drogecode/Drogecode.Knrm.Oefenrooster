@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -6,7 +7,7 @@ using Microsoft.Identity.Web.Resource;
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]/[action]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class ConfigurationController : ControllerBase
 {
@@ -19,9 +20,9 @@ public class ConfigurationController : ControllerBase
         _configurationService = configurationService;
     }
 
-    [HttpPatch]
-    public void UpgradeDatabase()
+    [HttpGet]
+    public async Task UpgradeDatabase()
     {
-        _configurationService.UpgradeDatabase();
+        await _configurationService.UpgradeDatabase();
     }
 }

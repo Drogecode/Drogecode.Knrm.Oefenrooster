@@ -2,5 +2,5 @@
 
 public interface IConfigurationService
 {
-    void UpgradeDatabase();
+    Task<bool> UpgradeDatabase();
 }

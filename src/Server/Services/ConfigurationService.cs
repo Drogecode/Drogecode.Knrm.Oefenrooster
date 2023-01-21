@@ -13,9 +13,9 @@ public class ConfigurationService : IConfigurationService
         _database = database;
     }
 
-    public void UpgradeDatabase()
+    public async Task<bool> UpgradeDatabase()
     {
-        _database.Database.EnsureCreated();
         _database.Database.Migrate();
+        return true;
     }
 }
