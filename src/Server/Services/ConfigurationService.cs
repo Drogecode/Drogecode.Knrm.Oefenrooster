@@ -1,7 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
-
-namespace Drogecode.Knrm.Oefenrooster.Server.Services;
+﻿namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class ConfigurationService : IConfigurationService
 {
@@ -15,7 +12,7 @@ public class ConfigurationService : IConfigurationService
 
     public async Task<bool> UpgradeDatabase()
     {
-        _database.Database.Migrate();
+        await _database.Database.MigrateAsync();
         return true;
     }
 }

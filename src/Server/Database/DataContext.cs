@@ -79,7 +79,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 {
                     Id = new Guid("4142048e-82dc-4015-aab7-1b519da01238"),
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                    WeekDay = (short)DayOfWeek.Monday,
+                    WeekDay = DayOfWeek.Monday,
                     StartTime = new TimeOnly(19, 30),
                     EndTime = new TimeOnly(21, 30)
                 });
@@ -90,7 +90,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 {
                     Id = new Guid("7b4693a8-ae9c-430f-9119-49a6ecbfeb54"),
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                    WeekDay = (short)DayOfWeek.Tuesday,
+                    WeekDay = DayOfWeek.Tuesday,
                     StartTime = new TimeOnly(19, 30),
                     EndTime = new TimeOnly(21, 30)
                 });
@@ -101,7 +101,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 {
                     Id = new Guid("c1967b6b-1f3b-41d2-bfa4-361a71cd064c"),
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                    WeekDay = (short)DayOfWeek.Wednesday,
+                    WeekDay = DayOfWeek.Wednesday,
                     StartTime = new TimeOnly(19, 30),
                     EndTime = new TimeOnly(21, 30)
                 });
@@ -112,7 +112,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 {
                     Id = new Guid("b73bd006-0d29-4d4e-b71b-2c382d5f703f"),
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                    WeekDay = (short)DayOfWeek.Tuesday,
+                    WeekDay = DayOfWeek.Tuesday,
                     StartTime = new TimeOnly(19, 30),
                     EndTime = new TimeOnly(21, 30)
                 });
@@ -123,7 +123,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 {
                     Id = new Guid("3d73993f-9935-4ebc-b16d-4d444ea8e93a"),
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                    WeekDay = (short)DayOfWeek.Tuesday,
+                    WeekDay = DayOfWeek.Tuesday,
                     StartTime = new TimeOnly(19, 30),
                     EndTime = new TimeOnly(21, 30)
                 });
@@ -134,7 +134,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 {
                     Id = new Guid("2bdaccc0-e9f7-40c1-ae76-d9ed66e4a978"),
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                    WeekDay = (short)DayOfWeek.Saturday,
+                    WeekDay = DayOfWeek.Saturday,
                     StartTime = new TimeOnly(10, 00),
                     EndTime = new TimeOnly(13, 00)
                 });
@@ -145,7 +145,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 {
                     Id = new Guid("348c82b5-ba0d-4d31-b242-2edc1dc669c7"),
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                    WeekDay = (short)DayOfWeek.Saturday,
+                    WeekDay = DayOfWeek.Saturday,
                     StartTime = new TimeOnly(13, 00),
                     EndTime = new TimeOnly(16, 00)
                 });

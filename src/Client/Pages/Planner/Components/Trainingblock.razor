@@ -1,0 +1,10 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+<h2>@Training.Date</h2>
+<ul>
+    <li>start: @Training.StartTime</li>
+    <li>end: @Training.EndTime</li>
+    <li>Availabilty: @Training.Availabilty</li>
+</ul>
+@code {
+    [Parameter, EditorRequired] public Training Training { get; set; } = default!;
+}

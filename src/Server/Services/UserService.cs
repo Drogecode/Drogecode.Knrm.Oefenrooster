@@ -1,7 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class UserService : IUserService

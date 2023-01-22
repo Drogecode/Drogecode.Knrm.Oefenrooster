@@ -1,9 +1,25 @@
 ﻿@page "/planner/calendar"
+@using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
+@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 <h3>Calendar</h3>
 
-<p>@L["The calendar will be implemented soon!"]</p>
+@if(_scheduleForUser != null)
+{
+    foreach(var training in _scheduleForUser.Trainings)
+    {
+        <Trainingblock Training="training"/>
+    }
+}
 
 @code {
     [Inject] private IStringLocalizer<Calendar> L { get; set; } = default!;
+    [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
+    private ScheduleForUserResponse? _scheduleForUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _scheduleForUser = await _scheduleRepository.ScheduleForUser();
+    }
 }

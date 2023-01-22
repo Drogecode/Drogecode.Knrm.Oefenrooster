@@ -18,6 +18,7 @@ builder.Services.AddHttpClient("Drogecode.Knrm.Oefenrooster.ServerAPI", client =
 builder.Services.AddMudServices();
 
 builder.Services.AddScoped<ConfigurationRepository>();
+builder.Services.AddScoped<ScheduleRepository>();
 builder.Services.AddScoped<UserRepository>();
 
 // Supply HttpClient instances that include access tokens when making requests to the server project

@@ -1,7 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-
-namespace Drogecode.Knrm.Oefenrooster.Server.Services;
+﻿namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class AuditService : IAuditService
 {
