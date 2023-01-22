@@ -38,23 +38,55 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("LastLogin")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.HasIndex("CustomerId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("46a4ddb6-412b-4329-b48f-ed681c96bc26"),
-                            Created = new DateTime(1992, 9, 4, 6, 30, 42, 0, DateTimeKind.Utc),
-                            CustomerId = new Guid("c0f17c92-57e5-4ec2-83c4-904160078c38"),
-                            Email = "test@drogecode.nl",
-                            Name = "from model creating"
-                        });
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbAudit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("AuditType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("ObjectKey")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ObjectName")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Audits");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", b =>
@@ -73,6 +105,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Created = new DateTime(2022, 10, 12, 18, 12, 5, 0, DateTimeKind.Utc),
+                            Name = "KNRM Huizen"
+                        });
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterAvailable", b =>
@@ -84,18 +124,22 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<short>("Available")
                         .HasColumnType("smallint");
 
-                    b.Property<Guid>("IdCustomer")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("IdUser")
+                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("TrainingId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("CustomerId");
+
                     b.HasIndex("TrainingId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("RoosterAvailable");
                 });
@@ -120,7 +164,83 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CustomerId");
+
                     b.ToTable("RoosterDefault");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("4142048e-82dc-4015-aab7-1b519da01238"),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            EndTime = new TimeOnly(21, 30, 0),
+                            StartTime = new TimeOnly(19, 30, 0),
+                            WeekDay = (short)1
+                        },
+                        new
+                        {
+                            Id = new Guid("7b4693a8-ae9c-430f-9119-49a6ecbfeb54"),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            EndTime = new TimeOnly(21, 30, 0),
+                            StartTime = new TimeOnly(19, 30, 0),
+                            WeekDay = (short)2
+                        },
+                        new
+                        {
+                            Id = new Guid("c1967b6b-1f3b-41d2-bfa4-361a71cd064c"),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            EndTime = new TimeOnly(21, 30, 0),
+                            StartTime = new TimeOnly(19, 30, 0),
+                            WeekDay = (short)3
+                        },
+                        new
+                        {
+                            Id = new Guid("b73bd006-0d29-4d4e-b71b-2c382d5f703f"),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            EndTime = new TimeOnly(21, 30, 0),
+                            StartTime = new TimeOnly(19, 30, 0),
+                            WeekDay = (short)2
+                        },
+                        new
+                        {
+                            Id = new Guid("3d73993f-9935-4ebc-b16d-4d444ea8e93a"),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            EndTime = new TimeOnly(21, 30, 0),
+                            StartTime = new TimeOnly(19, 30, 0),
+                            WeekDay = (short)2
+                        },
+                        new
+                        {
+                            Id = new Guid("2bdaccc0-e9f7-40c1-ae76-d9ed66e4a978"),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            EndTime = new TimeOnly(13, 0, 0),
+                            StartTime = new TimeOnly(10, 0, 0),
+                            WeekDay = (short)6
+                        },
+                        new
+                        {
+                            Id = new Guid("348c82b5-ba0d-4d31-b242-2edc1dc669c7"),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            EndTime = new TimeOnly(16, 0, 0),
+                            StartTime = new TimeOnly(13, 0, 0),
+                            WeekDay = (short)6
+                        },
+                        new
+                        {
+                            Id = new Guid("015b9e42-e233-457e-bf26-de26c3a718ba"),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            EndTime = new TimeOnly(13, 0, 0),
+                            StartTime = new TimeOnly(10, 0, 0),
+                            WeekDay = (short)0
+                        },
+                        new
+                        {
+                            Id = new Guid("80d8ac0c-a2f7-4dc9-af57-a0ed74b7f8df"),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            EndTime = new TimeOnly(16, 0, 0),
+                            StartTime = new TimeOnly(13, 0, 0),
+                            WeekDay = (short)0
+                        });
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterTraining", b =>
@@ -143,18 +263,108 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CustomerId");
+
                     b.ToTable("RoosterTraining");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("Users")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbAudit", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("Audits")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "User")
+                        .WithMany("Audits")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterAvailable", b =>
                 {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("RoosterAvailables")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterTraining", "Training")
                         .WithMany("RoosterAvailables")
                         .HasForeignKey("TrainingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "User")
+                        .WithMany("RoosterAvailables")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
                     b.Navigation("Training");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterDefault", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("RoosterDefaults")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterTraining", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("RoosterTraining")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", b =>
+                {
+                    b.Navigation("Audits");
+
+                    b.Navigation("RoosterAvailables");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", b =>
+                {
+                    b.Navigation("Audits");
+
+                    b.Navigation("RoosterAvailables");
+
+                    b.Navigation("RoosterDefaults");
+
+                    b.Navigation("RoosterTraining");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterTraining", b =>

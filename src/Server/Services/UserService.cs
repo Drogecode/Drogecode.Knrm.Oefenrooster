@@ -20,7 +20,7 @@ public class UserService : IUserService
         return DbUserToSharedUser(userObj);
     }
 
-    public async Task<DrogeUser> GetOrSetUserFromDb(Guid userId, string userName, string userEmail)
+    public async Task<DrogeUser> GetOrSetUserFromDb(Guid userId, string userName, string userEmail, Guid customerId)
     {
         var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
         if (userObj == null)
@@ -30,7 +30,8 @@ public class UserService : IUserService
                 Id = userId,
                 Name = userName,
                 Email = userEmail,
-                Created = DateTime.UtcNow
+                Created = DateTime.UtcNow,
+                CustomerId = customerId
             });
             _database.SaveChanges();
             userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();

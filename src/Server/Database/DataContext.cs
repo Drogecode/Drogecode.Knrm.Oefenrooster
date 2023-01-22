@@ -66,7 +66,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 {
                     Id = DefaultSettingsHelper.KnrmHuizenId,
                     Name = "KNRM Huizen",
-                    Created = new DateTime(2022, 10, 12)
+                    Created = new DateTime(2022, 10, 12, 18, 12, 5, DateTimeKind.Utc)
                 });
             });
         }

@@ -30,7 +30,8 @@ public class ConfigurationController : ControllerBase
     public async Task UpgradeDatabase()
     {
         var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+        var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
         await _configurationService.UpgradeDatabase();
-        await _auditService.Log(userId, Shared.Enums.AuditType.DataBaseUpgrade);
+        await _auditService.Log(userId, Shared.Enums.AuditType.DataBaseUpgrade, customerId);
     }
 }

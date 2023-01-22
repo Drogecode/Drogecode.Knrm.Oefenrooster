@@ -13,6 +13,6 @@ public class DbAudit
     public string? ObjectName { get; set; }
     public DateTime Created { get; set; }
 
-    public DbUsers? User { get; set; }
+    public DbUsers User { get; set; }
     public DbCustomers? Customer { get; set; }
 }

@@ -8,6 +8,6 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 public static class DefaultSettingsHelper
 {
-    public static Guid KnrmHuizenId { get; set; } = new Guid("c0f17c92-57e5-4ec2-83c4-904160078c38");
-    public static Guid HRBId { get; set; } = new Guid("fba4d79a-a774-4afa-b432-bc01bbcb68a2");
+    public static Guid KnrmHuizenId { get; set; } = new Guid("d9754755-b054-4a9c-a77f-da42a4009365");
+    //public static Guid HRBId { get; set; } = new Guid("fba4d79a-a774-4afa-b432-bc01bbcb68a2");
 }

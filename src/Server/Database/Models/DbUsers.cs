@@ -19,7 +19,7 @@ public class DbUsers
     public DateTime Created { get; set; }
     public DateTime LastLogin { get; set; }
 
-    public DbCustomers? Customer { get; set; }
+    public DbCustomers Customer { get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
     public ICollection<DbAudit>? Audits { get; set; }
 }

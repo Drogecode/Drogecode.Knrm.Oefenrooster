@@ -13,7 +13,7 @@ public class AuditService : IAuditService
         _database = database;
     }
 
-    public async Task Log(Guid user, AuditType auditType, string? note = null, Guid? customer = null, Guid? objectKey = null, string? objectName = null)
+    public async Task Log(Guid user, AuditType auditType, Guid customer, string? note = null, Guid? objectKey = null, string? objectName = null)
     {
         await _database.Audits.AddAsync(
              new Database.Models.DbAudit()

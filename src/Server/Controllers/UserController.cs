@@ -27,8 +27,9 @@ public class UserController : ControllerBase
         var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
         var userName = User?.FindFirstValue("name") ?? throw new Exception("No userName found");
         var userEmail = User?.FindFirstValue("preferred_username") ?? throw new Exception("No userEmail found");
-        var result = await _userService.GetOrSetUserFromDb(userId, userName, userEmail);
-        
+        var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+        var result = await _userService.GetOrSetUserFromDb(userId, userName, userEmail, customerId);
+
         return result;
     }
 }

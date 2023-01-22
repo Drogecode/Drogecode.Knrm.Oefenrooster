@@ -13,6 +13,6 @@ public class DbRoosterTraining
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
 
-    public DbCustomers? Customer { get; set; }
+    public DbCustomers Customer { get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables{ get; set; }
 }
