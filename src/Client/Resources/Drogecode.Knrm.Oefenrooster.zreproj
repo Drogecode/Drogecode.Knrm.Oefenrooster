@@ -11,7 +11,7 @@
   &lt;property name="#LayoutScaleFactor"&gt;@1,Width=1@1,Height=1&lt;/property&gt;
 &lt;/XtraSerializer&gt;</globalSetting>
     <globalSetting name="projectMruItems">&lt;?xml version='1.0' encoding='utf-8'?&gt;&lt;items /&gt;</globalSetting>
-    <userSetting name="Taco@DESKTOP-FMJI318.filesInitialDir">C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\Drogecode.Knrm.Oefenrooster\Client\Resources</userSetting>
+    <userSetting name="Taco@DESKTOP-FMJI318.filesInitialDir">C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources</userSetting>
     <userSetting name="Taco@DESKTOP-FMJI318.FindText">
     </userSetting>
     <userSetting name="Taco@DESKTOP-FMJI318.RecentFiles">
@@ -21,20 +21,26 @@
   </configuration>
   <fileGroups>
     <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="df0b59b4-a02e-4799-b4cc-ab63c5b5425b">
-      <file filePath="Shared\Layout\CultureSelector.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\Drogecode.Knrm.Oefenrooster\Client\Resources\Shared\Layout\CultureSelector.en-US.resx" uniqueID="6af24618-c124-4a20-b7eb-22c134602185" />
-      <file filePath="Shared\Layout\CultureSelector.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\Drogecode.Knrm.Oefenrooster\Client\Resources\Shared\Layout\CultureSelector.nl-NL.resx" uniqueID="c9a8b846-751a-44fa-ac6d-16b8fa5d50e9" />
+      <file filePath="Shared\Layout\CultureSelector.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Shared\Layout\CultureSelector.en-US.resx" uniqueID="6af24618-c124-4a20-b7eb-22c134602185" />
+      <file filePath="Shared\Layout\CultureSelector.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Shared\Layout\CultureSelector.nl-NL.resx" uniqueID="c9a8b846-751a-44fa-ac6d-16b8fa5d50e9" />
       <remarks>
       </remarks>
     </fileGroup>
     <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="22b42bef-847e-4063-b59c-5cd57e1b6f07">
-      <file filePath="Pages\LandingPage.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\Drogecode.Knrm.Oefenrooster\Client\Resources\Pages\LandingPage.en-US.resx" uniqueID="56413277-b37f-497b-97ca-018487e16b4b" />
-      <file filePath="Pages\LandingPage.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\Drogecode.Knrm.Oefenrooster\Client\Resources\Pages\LandingPage.nl-NL.resx" uniqueID="ba19ef6f-ed56-4155-8ee0-332c6e1ab3e7" />
+      <file filePath="Pages\LandingPage.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\LandingPage.en-US.resx" uniqueID="56413277-b37f-497b-97ca-018487e16b4b" />
+      <file filePath="Pages\LandingPage.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\LandingPage.nl-NL.resx" uniqueID="ba19ef6f-ed56-4155-8ee0-332c6e1ab3e7" />
       <remarks>
       </remarks>
     </fileGroup>
     <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="663923ac-3073-4c16-b0c4-86ec1c474ce0">
-      <file filePath="Shared\Layout\MainLayout.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\Drogecode.Knrm.Oefenrooster\Client\Resources\Shared\Layout\MainLayout.en-US.resx" uniqueID="00d3cfcd-76f3-40eb-b0ff-b706ccef49af" />
-      <file filePath="Shared\Layout\MainLayout.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\Drogecode.Knrm.Oefenrooster\Client\Resources\Shared\Layout\MainLayout.nl-NL.resx" uniqueID="c6f522ba-3634-41be-82e0-cc3c50a82ebe" />
+      <file filePath="Shared\Layout\MainLayout.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Shared\Layout\MainLayout.en-US.resx" uniqueID="00d3cfcd-76f3-40eb-b0ff-b706ccef49af" />
+      <file filePath="Shared\Layout\MainLayout.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Shared\Layout\MainLayout.nl-NL.resx" uniqueID="c6f522ba-3634-41be-82e0-cc3c50a82ebe" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="76550b1d-ffaa-41d1-963b-e9e39debfa4f">
+      <file filePath="Shared\Layout\UpdateChecker.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Shared\Layout\UpdateChecker.en-US.resx" uniqueID="838acaba-6f2c-4e1d-9aaf-d9e2ed53ead9" />
+      <file filePath="Shared\Layout\UpdateChecker.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Shared\Layout\UpdateChecker.nl-NL.resx" uniqueID="fa43d46c-cf25-4c9c-ad7a-f136070ecf00" />
       <remarks>
       </remarks>
     </fileGroup>

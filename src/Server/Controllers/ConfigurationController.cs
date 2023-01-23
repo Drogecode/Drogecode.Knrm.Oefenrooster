@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ public class ConfigurationController : ControllerBase
     private readonly IAuditService _auditService;
 
     public ConfigurationController(
-        ILogger<ConfigurationController> logger, 
+        ILogger<ConfigurationController> logger,
         IConfigurationService configurationService,
         IAuditService auditService)
     {
@@ -33,5 +34,11 @@ public class ConfigurationController : ControllerBase
         var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
         await _configurationService.UpgradeDatabase();
         await _auditService.Log(userId, Shared.Enums.AuditType.DataBaseUpgrade, customerId);
+    }
+
+    [HttpGet]
+    public bool NewVersionAvailable(string clientVersion)
+    {
+        return string.Compare(DefaultSettingsHelper.CURRENT_VERSION, clientVersion, StringComparison.OrdinalIgnoreCase) != 0;
     }
 }

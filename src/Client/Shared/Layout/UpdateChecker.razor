@@ -1,0 +1,25 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+@code {
+    [Inject] private IStringLocalizer<UpdateChecker> L { get; set; } = default!;
+    [Inject] ConfigurationRepository _configurationRepository { get; set; } = default!;
+    [Inject] ISnackbar Snackbar { get; set; } = default!;
+    private bool _newVersion = false;
+    protected override async Task OnInitializedAsync()
+    {
+        while (true)
+        {
+            _newVersion = await _configurationRepository.NewVersionAvailable();
+            if (_newVersion)
+            {
+                var config = (SnackbarOptions options) =>
+                {
+                    options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
+                    options.RequireInteraction = true;
+                };
+                Snackbar.Add(L["Update available"], configure: config, key: "outdated");
+            }
+
+            await Task.Delay(1000 * 60);
+        }
+    }
+}
