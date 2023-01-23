@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using MudBlazor.Extensions;
 using System.Data;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -14,11 +15,12 @@ public class ScheduleService : IScheduleService
         _database = database;
     }
 
-    public async Task<ScheduleForUserResponse> ScheduleForUserAsync(Guid userId, Guid customerId)
+    public async Task<ScheduleForUserResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int relativeWeek)
     {
         var result = new ScheduleForUserResponse();
-        var startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
-        var tillDate = DateOnly.FromDateTime(DateTime.Now.AddMonths(3));
+        var d = DateTime.UtcNow.StartOfWeek(DayOfWeek.Monday).AddDays(relativeWeek * 7);
+        var startDate = DateOnly.FromDateTime(d);
+        var tillDate = DateOnly.FromDateTime(d.AddDays(6));
         var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId).ToList();
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.Date > startDate && x.Date < tillDate).ToList();
         var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId).ToList();
@@ -49,7 +51,7 @@ public class ScheduleService : IScheduleService
             }
             scheduleDate = scheduleDate.AddDays(1);
 
-        } while (scheduleDate < tillDate);
+        } while (scheduleDate <= tillDate);
 
         return result;
     }

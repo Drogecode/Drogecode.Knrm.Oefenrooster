@@ -24,11 +24,11 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ScheduleForUserResponse> ForUser()
+    public async Task<ScheduleForUserResponse> ForUser(int relativeWeek)
     {
         var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
         var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-        ScheduleForUserResponse result = await _scheduleService.ScheduleForUserAsync(userId, customerId);
+        ScheduleForUserResponse result = await _scheduleService.ScheduleForUserAsync(userId, customerId, relativeWeek);
         return result;
     }
 }

@@ -10,9 +10,9 @@ public class ScheduleRepository
     {
         _httpClient = httpClient;
     }
-    public async Task<ScheduleForUserResponse?> ScheduleForUser()
+    public async Task<ScheduleForUserResponse?> ScheduleForUser(int relativeWeek)
     {
-        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForUserResponse>("api/Schedule/ForUser");
+        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForUserResponse>($"api/Schedule/ForUser?relativeWeek={relativeWeek}");
         return schedule;
     }
 }

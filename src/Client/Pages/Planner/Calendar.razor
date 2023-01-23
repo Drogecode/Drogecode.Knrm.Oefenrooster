@@ -4,22 +4,53 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 <h3>Calendar</h3>
 
-@if(_scheduleForUser != null)
+<MudButton Variant="Variant.Filled" Class="ml-2" OnClick="async ()=>{await AddWeekToSchadules(false);}">@L["Add week"]</MudButton>
+<br />
+@foreach (var trainingWeek in _scheduleForUser)
 {
-    foreach(var training in _scheduleForUser.Trainings)
-    {
-        <Trainingblock Training="training"/>
-    }
+    <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+        @foreach (var training in trainingWeek)
+        {
+            <Trainingblock Training="training" />
+        }
+    </MudPaper>
 }
+<br />
+<MudButton Variant="Variant.Filled" Class="ml-2" OnClick="async ()=>{await AddWeekToSchadules(true);}">@L["Add week"]</MudButton>
 
 @code {
     [Inject] private IStringLocalizer<Calendar> L { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
-    private ScheduleForUserResponse? _scheduleForUser;
+    private LinkedList<List<Training>> _scheduleForUser = new();
+    private int _high = -1;
+    private int _low = -2;
 
     protected override async Task OnInitializedAsync()
     {
-        _scheduleForUser = await _scheduleRepository.ScheduleForUser();
+        for (int i = -1; i < 6; i++)
+        {
+            await AddWeekToSchadules(true);
+        }
+    }
+
+    private async Task AddWeekToSchadules(bool high)
+    {
+        List<Training> scheduleForUser = new();
+        var trainingsInWeek = (await _scheduleRepository.ScheduleForUser(high ? _high : _low))?.Trainings;
+        if (trainingsInWeek != null)
+            foreach (var training in trainingsInWeek)
+                scheduleForUser.Add(training);
+        if (high)
+        {
+            _scheduleForUser.AddLast(scheduleForUser);
+            _high++;
+        }
+        else
+        {
+            _scheduleForUser.AddFirst(scheduleForUser);
+            _low--;
+        }
+        StateHasChanged();
     }
 }
