@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using System;
 using System.Net.Http.Json;
 
@@ -19,10 +20,10 @@ public class ConfigurationRepository
         response.EnsureSuccessStatusCode();
     }
 
-    public async Task<bool> NewVersionAvailable()
+    public async Task<UpdateDetails?> NewVersionAvailable()
     {
         var clientVersion = DefaultSettingsHelper.CURRENT_VERSION;
-        var response = await _httpClient.GetFromJsonAsync<bool>($"api/Configuration/NewVersionAvailable?clientVersion={clientVersion}");
+        var response = await _httpClient.GetFromJsonAsync<UpdateDetails?>($"api/Configuration/NewVersionAvailable?clientVersion={clientVersion}");
         return response;
     }
 }

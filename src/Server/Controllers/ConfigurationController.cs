@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -33,12 +34,16 @@ public class ConfigurationController : ControllerBase
         var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
         var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
         await _configurationService.UpgradeDatabase();
-        await _auditService.Log(userId, Shared.Enums.AuditType.DataBaseUpgrade, customerId);
+        await _auditService.Log(userId, AuditType.DataBaseUpgrade, customerId);
     }
 
     [HttpGet]
-    public bool NewVersionAvailable(string clientVersion)
+    public UpdateDetails NewVersionAvailable(string clientVersion)
     {
-        return string.Compare(DefaultSettingsHelper.CURRENT_VERSION, clientVersion, StringComparison.OrdinalIgnoreCase) != 0;
+        var response = new UpdateDetails
+        {
+            NewVersionAvailable = string.Compare(DefaultSettingsHelper.CURRENT_VERSION, clientVersion, StringComparison.OrdinalIgnoreCase) != 0
+        };
+        return response;
     }
 }
