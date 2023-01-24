@@ -9,7 +9,7 @@ services:
       - POSTGRES_PASSWORD=postgresPW
       - POSTGRES_DB=postgresDB
     ports:
-      - '5432:5432'
+      - 5432:5432
     volumes: 
       - D:/programming/dockerData/postgres-data:/var/lib/postgresql/data
   drogecode.knrm.oefenrooster.server:

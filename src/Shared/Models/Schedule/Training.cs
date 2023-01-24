@@ -14,5 +14,5 @@ public class Training
     public DateOnly Date { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
-    public Availabilty Availabilty { get; set; }
+    public Availabilty? Availabilty { get; set; }
 }

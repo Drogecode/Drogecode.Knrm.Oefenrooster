@@ -1,13 +1,51 @@
-﻿<MudPaper>
-    @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-    <h1>@Training.Date.DayOfWeek</h1>
-    <ul>
-        <li>date: @Training.Date</li>
-        <li>start: @Training.StartTime</li>
-        <li>end: @Training.EndTime</li>
-        <li>Availabilty: @Training.Availabilty</li>
-    </ul>
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+<MudPaper Width="200px" Elevation="0">
+    <MudCard>
+        <MudCardContent>
+            <MudText Color="ColorHeader">@Training.Date.DayOfWeek</MudText>
+            <MudText Typo="Typo.body2">start: @Training.StartTime.ToString("HH:mm")</MudText>
+            <MudText Typo="Typo.body2">end: @Training.EndTime.ToString("HH:mm")</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudSelect T="Availabilty?" Label="@L["Availibility"]" Variant="Variant.Text" @bind-Value="Training.Availabilty" SelectedValuesChanged="OnChange">
+                <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@L["Available"]</MudSelectItem>
+                <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@L["NotAvailable"]</MudSelectItem>
+                <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@L["Maybe"]</MudSelectItem>
+            </MudSelect>
+        </MudCardActions>
+    </MudCard>
 </MudPaper>
 @code {
+    [Inject] private IStringLocalizer<Trainingblock> L { get; set; } = default!;
     [Parameter, EditorRequired] public Training Training { get; set; } = default!;
+    private Color ColorHeader
+    {
+        get
+        {
+            switch (Training.Availabilty)
+            {
+                case Availabilty.Available:
+                    return Color.Success;
+                case Availabilty.NotAvailable:
+                    return Color.Error;
+                case Availabilty.Maybe:
+                    return Color.Warning;
+                case Availabilty.None:
+                default:
+                    return Color.Inherit;
+            }
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Training.Availabilty == Availabilty.None)
+            Training.Availabilty = null;
+    }
+
+    private void OnChange()
+    {
+        Console.WriteLine(Training.Availabilty);
+    }
 }
