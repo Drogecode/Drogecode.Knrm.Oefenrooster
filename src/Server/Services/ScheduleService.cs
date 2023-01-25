@@ -23,8 +23,8 @@ public class ScheduleService : IScheduleService
         var startDate = DateOnly.FromDateTime(d);
         var tillDate = DateOnly.FromDateTime(d.AddDays(6));
         var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId).ToList();
-        var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.Date > startDate && x.Date < tillDate).ToList();
-        var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date > startDate && x.Date < tillDate).ToList();
+        var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
+        var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate).ToList();
 
         var scheduleDate = startDate;
         do
