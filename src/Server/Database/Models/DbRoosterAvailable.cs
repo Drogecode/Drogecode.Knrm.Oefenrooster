@@ -13,7 +13,8 @@ public class DbRoosterAvailable
     public Guid UserId { get; set; }
     public Guid CustomerId { get; set; }
     public Guid TrainingId { get; set; }
-    public Availabilty Available { get; set; }
+    public DateOnly Date { get; set; }
+    public Availabilty? Available { get; set; }
 
     public DbCustomers? Customer { get; set; }
     public DbUsers? User { get; set; }

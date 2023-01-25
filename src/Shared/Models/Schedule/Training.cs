@@ -15,4 +15,5 @@ public class Training
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public Availabilty? Availabilty { get; set; }
+    public bool Updated { get; set; }
 }

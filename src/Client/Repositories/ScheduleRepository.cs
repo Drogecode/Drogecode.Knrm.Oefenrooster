@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using System.Net.Http.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 
@@ -14,5 +15,12 @@ public class ScheduleRepository
     {
         var schedule = await _httpClient.GetFromJsonAsync<ScheduleForUserResponse>($"api/Schedule/ForUser?relativeWeek={relativeWeek}");
         return schedule;
+    }
+    public async Task<Training> PatchScheduleForUser(Training training)
+    {
+        var request = await _httpClient.PostAsJsonAsync<Training>($"api/Schedule/Patch", training);
+        var result = await request.Content.ReadFromJsonAsync<Training>();
+
+        return result;
     }
 }

@@ -50,6 +50,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             // Rooster training
             modelBuilder.Entity<DbRoosterTraining>(entity => { entity.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.Customer).WithMany(g => g.RoosterTraining).HasForeignKey(s => s.CustomerId).IsRequired();
+            modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.RoosterDefault).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.RoosterDefaultId).IsRequired();
 
             // Required data
             SetCustomer(modelBuilder);
@@ -112,18 +113,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 {
                     Id = new Guid("b73bd006-0d29-4d4e-b71b-2c382d5f703f"),
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                    WeekDay = DayOfWeek.Tuesday,
-                    StartTime = new TimeOnly(19, 30),
-                    EndTime = new TimeOnly(21, 30)
-                });
-            });
-            modelBuilder.Entity<DbRoosterDefault>(entity =>
-            {
-                entity.HasData(new DbRoosterDefault
-                {
-                    Id = new Guid("3d73993f-9935-4ebc-b16d-4d444ea8e93a"),
-                    CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                    WeekDay = DayOfWeek.Tuesday,
+                    WeekDay = DayOfWeek.Thursday,
                     StartTime = new TimeOnly(19, 30),
                     EndTime = new TimeOnly(21, 30)
                 });

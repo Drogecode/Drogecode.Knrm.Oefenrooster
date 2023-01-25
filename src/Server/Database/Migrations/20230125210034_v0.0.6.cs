@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class v006 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,7 +32,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    WeekDay = table.Column<short>(type: "smallint", nullable: false),
+                    WeekDay = table.Column<int>(type: "integer", nullable: false),
                     StartTime = table.Column<TimeOnly>(type: "time without time zone", nullable: false),
                     EndTime = table.Column<TimeOnly>(type: "time without time zone", nullable: false)
                 },
@@ -41,27 +41,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     table.PrimaryKey("PK_RoosterDefault", x => x.Id);
                     table.ForeignKey(
                         name: "FK_RoosterDefault_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RoosterTraining",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    StartTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RoosterTraining", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RoosterTraining_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
                         principalColumn: "Id",
@@ -86,6 +65,34 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         name: "FK_Users_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RoosterTraining",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoosterDefaultId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    StartTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoosterTraining", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RoosterTraining_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RoosterTraining_RoosterDefault_RoosterDefaultId",
+                        column: x => x.RoosterDefaultId,
+                        principalTable: "RoosterDefault",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -128,7 +135,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
                     TrainingId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Available = table.Column<short>(type: "smallint", nullable: false)
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    Available = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -163,15 +171,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                 columns: new[] { "Id", "CustomerId", "EndTime", "StartTime", "WeekDay" },
                 values: new object[,]
                 {
-                    { new Guid("015b9e42-e233-457e-bf26-de26c3a718ba"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(13, 0, 0), new TimeOnly(10, 0, 0), (short)0 },
-                    { new Guid("2bdaccc0-e9f7-40c1-ae76-d9ed66e4a978"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(13, 0, 0), new TimeOnly(10, 0, 0), (short)6 },
-                    { new Guid("348c82b5-ba0d-4d31-b242-2edc1dc669c7"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(16, 0, 0), new TimeOnly(13, 0, 0), (short)6 },
-                    { new Guid("3d73993f-9935-4ebc-b16d-4d444ea8e93a"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(21, 30, 0), new TimeOnly(19, 30, 0), (short)2 },
-                    { new Guid("4142048e-82dc-4015-aab7-1b519da01238"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(21, 30, 0), new TimeOnly(19, 30, 0), (short)1 },
-                    { new Guid("7b4693a8-ae9c-430f-9119-49a6ecbfeb54"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(21, 30, 0), new TimeOnly(19, 30, 0), (short)2 },
-                    { new Guid("80d8ac0c-a2f7-4dc9-af57-a0ed74b7f8df"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(16, 0, 0), new TimeOnly(13, 0, 0), (short)0 },
-                    { new Guid("b73bd006-0d29-4d4e-b71b-2c382d5f703f"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(21, 30, 0), new TimeOnly(19, 30, 0), (short)2 },
-                    { new Guid("c1967b6b-1f3b-41d2-bfa4-361a71cd064c"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(21, 30, 0), new TimeOnly(19, 30, 0), (short)3 }
+                    { new Guid("015b9e42-e233-457e-bf26-de26c3a718ba"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(13, 0, 0), new TimeOnly(10, 0, 0), 0 },
+                    { new Guid("2bdaccc0-e9f7-40c1-ae76-d9ed66e4a978"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(13, 0, 0), new TimeOnly(10, 0, 0), 6 },
+                    { new Guid("348c82b5-ba0d-4d31-b242-2edc1dc669c7"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(16, 0, 0), new TimeOnly(13, 0, 0), 6 },
+                    { new Guid("4142048e-82dc-4015-aab7-1b519da01238"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(21, 30, 0), new TimeOnly(19, 30, 0), 1 },
+                    { new Guid("7b4693a8-ae9c-430f-9119-49a6ecbfeb54"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(21, 30, 0), new TimeOnly(19, 30, 0), 2 },
+                    { new Guid("80d8ac0c-a2f7-4dc9-af57-a0ed74b7f8df"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(16, 0, 0), new TimeOnly(13, 0, 0), 0 },
+                    { new Guid("b73bd006-0d29-4d4e-b71b-2c382d5f703f"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(21, 30, 0), new TimeOnly(19, 30, 0), 4 },
+                    { new Guid("c1967b6b-1f3b-41d2-bfa4-361a71cd064c"), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new TimeOnly(21, 30, 0), new TimeOnly(19, 30, 0), 3 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -210,6 +217,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RoosterTraining_RoosterDefaultId",
+                table: "RoosterTraining",
+                column: "RoosterDefaultId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_CustomerId",
                 table: "Users",
                 column: "CustomerId");
@@ -225,13 +237,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                 name: "RoosterAvailable");
 
             migrationBuilder.DropTable(
-                name: "RoosterDefault");
-
-            migrationBuilder.DropTable(
                 name: "RoosterTraining");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "RoosterDefault");
 
             migrationBuilder.DropTable(
                 name: "Customers");

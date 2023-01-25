@@ -14,4 +14,5 @@ public class DbRoosterDefault
     public TimeOnly EndTime { get; set; }
 
     public DbCustomers? Customer { get; set; }
+    public ICollection<DbRoosterTraining>? RoosterTrainings { get; set; }
 }

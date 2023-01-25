@@ -1,1 +1,1 @@
-﻿const CACHE_VERSION = 'v0.0.5';
+﻿const CACHE_VERSION = 'v0.0.6';

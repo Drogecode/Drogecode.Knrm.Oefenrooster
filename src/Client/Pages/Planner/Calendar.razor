@@ -8,6 +8,11 @@
 <br />
 @foreach (var trainingWeek in _scheduleForUser)
 {
+    @if (_month != trainingWeek.First().Date.Month)
+    {
+        _month = trainingWeek.First().Date.Month;
+        <MudText Typo="Typo.h3">@trainingWeek.First().Date.ToString("MMMM")</MudText>
+    }
     <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
         @foreach (var training in trainingWeek)
         {
@@ -23,6 +28,7 @@
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
     private LinkedList<List<Training>> _scheduleForUser = new();
+    private int? _month;
     private int _high = -1;
     private int _low = -2;
 

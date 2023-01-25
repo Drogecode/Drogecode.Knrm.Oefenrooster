@@ -9,10 +9,12 @@ public class DbRoosterTraining
     [Key]
     public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
+    public Guid? RoosterDefaultId { get; set; }
     public DateOnly Date { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
 
     public DbCustomers Customer { get; set; }
-    public ICollection<DbRoosterAvailable>? RoosterAvailables{ get; set; }
+    public DbRoosterDefault? RoosterDefault { get; set; }
+    public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
 }
