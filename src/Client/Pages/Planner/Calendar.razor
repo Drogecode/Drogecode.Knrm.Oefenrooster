@@ -2,7 +2,6 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-<h3>Calendar</h3>
 
 <MudButton Variant="Variant.Filled" Class="ml-2" OnClick="async ()=>{await AddWeekToSchadules(false);}">@L["Add week"]</MudButton>
 <br />
@@ -11,7 +10,7 @@
     @if (_month != trainingWeek.First().Date.Month)
     {
         _month = trainingWeek.First().Date.Month;
-        <MudText Typo="Typo.h3">@trainingWeek.First().Date.ToString("MMMM")</MudText>
+        <MudText Typo="Typo.h3" Class="ml-2 mt-12">@trainingWeek.First().Date.ToString("MMMM")</MudText>
     }
     <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
         @foreach (var training in trainingWeek)
