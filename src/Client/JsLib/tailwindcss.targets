@@ -1,0 +1,20 @@
+﻿<!--https://www.tailblazor.dev/build-->
+<Project>
+	<PropertyGroup>
+		<TailwindBuild>true</TailwindBuild>
+        <JsLibRoot>JsLib\</JsLibRoot>
+	</PropertyGroup>
+	<Target Name="npm install" BeforeTargets="tailwind build" Inputs="./JsLib/package.json" Outputs="./JsLib/node_modules/.install-stamp">
+		<Exec WorkingDirectory="$(JsLibRoot)" Command="npm -v" ContinueOnError="true">
+			<Output TaskParameter="ExitCode" PropertyName="error" />
+		</Exec>
+		<Error Condition="'$(error)' != '0'" Text="install node please !" />
+		<Exec WorkingDirectory="$(JsLibRoot)" Command="npm install" />
+		<Touch Files="./JsLib/node_modules/.install-stamp" AlwaysCreate="true" />
+	</Target>
+	<Target Name="tailwind build" AfterTargets="AfterBuild" Condition="'$(TailwindBuild)' == 'true'">
+		<Message Text="tailwind build target running.." Importance="high" />
+		<Exec WorkingDirectory="$(JsLibRoot)" Command="npm run build" Condition="'$(Configuration)' == 'Debug'"/>
+		<Exec WorkingDirectory="$(JsLibRoot)" Command="npm run publish" Condition="'$(Configuration)' != 'Debug'"/>
+	</Target>
+</Project>

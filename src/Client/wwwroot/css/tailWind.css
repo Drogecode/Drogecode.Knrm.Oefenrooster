@@ -1,0 +1,50 @@
+﻿/*
+Do not run preflight, this is bits other parts.
+@ tailwind base;
+@layer base {
+    .no-tailwindcss-base h1,
+    .no-tailwindcss-base h2,
+    .no-tailwindcss-base h3,
+    .no-tailwindcss-base h4,
+    .no-tailwindcss-base h5,
+    .no-tailwindcss-base h6 {
+        font-size: revert;
+        font-weight: revert;
+    }
+
+    .no-tailwindcss-base ol,
+    .no-tailwindcss-base ul {
+        list-style: revert;
+        margin: revert;
+        padding: revert;
+    }
+    .no-tailwindcss-base table td,
+    .no-tailwindcss-base table th {
+        border: 0 !important;
+    }
+}
+*/
+
+@tailwind components;
+@tailwind utilities;
+
+/* tailwindcss advices to use @layer and @apply as limited as possible */
+@layer components {
+    .a-pubble {
+        @apply no-underline hover:underline text-blue-600 hover:text-blue-800 visited:text-purple-600 cursor-pointer;
+    }
+    .select-slim-pubble
+    {
+        @apply bg-transparent text-xl appearance-none outline-none border-0 p-0 bg-none;
+    }
+    .clean-froala{
+        background-color: #ffffffff !important;
+    }
+    .clean-froala.mud-typography{
+        color: #424242ff !important;
+    }
+    .clean-froala table td,
+    .clean-froala table th {
+        border: 0 !important;
+    }
+}

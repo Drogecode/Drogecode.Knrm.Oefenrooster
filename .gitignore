@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Drogecode.Knrm.Oefenrooster
+/src/Client/wwwroot/css/tailWind.min.css
+/src/Client/wwwroot/js/empty.js.map
+/src/Client/wwwroot/js/empty.js

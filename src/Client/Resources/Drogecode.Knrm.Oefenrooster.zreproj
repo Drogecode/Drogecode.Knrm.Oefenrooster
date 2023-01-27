@@ -10,11 +10,12 @@
   &lt;property name="#LayoutVersion" /&gt;
   &lt;property name="#LayoutScaleFactor"&gt;@1,Width=1@1,Height=1&lt;/property&gt;
 &lt;/XtraSerializer&gt;</globalSetting>
-    <globalSetting name="projectMruItems">&lt;?xml version='1.0' encoding='utf-8'?&gt;&lt;items&gt;&lt;item type="2" checksum="2113121002" /&gt;&lt;/items&gt;</globalSetting>
+    <globalSetting name="projectMruItems">&lt;?xml version='1.0' encoding='utf-8'?&gt;&lt;items /&gt;</globalSetting>
     <userSetting name="Taco@DESKTOP-FMJI318.filesInitialDir">C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources</userSetting>
     <userSetting name="Taco@DESKTOP-FMJI318.FindText">
     </userSetting>
-    <userSetting name="Taco@DESKTOP-FMJI318.RecentFiles">C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\Trainingblock.en-US.resx;C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\Trainingblock.nl-NL.resx</userSetting>
+    <userSetting name="Taco@DESKTOP-FMJI318.RecentFiles">
+    </userSetting>
     <description>
     </description>
   </configuration>
