@@ -8,17 +8,21 @@
 <br />
 @foreach (var plannesInWeek in _scheduleForUser)
 {
-    @if (_month != plannesInWeek.First().Date.Month)
+    @if (plannesInWeek != null && plannesInWeek.Count > 0)
     {
-        _month = plannesInWeek.First().Date.Month;
-        <MudText Typo="Typo.h3" Class="ml-2 mt-12">@plannesInWeek.First().Date.ToString(plannesInWeek.First().Date.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy")</MudText>
-    }
-    <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-        @foreach (var training in plannesInWeek)
+        @if (_month != plannesInWeek.First().Date.Month)
         {
-            <ScheduleBlock Planner="training" />
+            _month = plannesInWeek.First().Date.Month;
+            <MudText Typo="Typo.h3" Class="ml-2 mt-12">@plannesInWeek.First().Date.ToString(plannesInWeek.First().Date.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy")</MudText>
         }
+
+        <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+            @foreach (var training in plannesInWeek)
+            {
+                <ScheduleBlock Planner="training" />
+            }
     </MudPaper>
+    }
 }
 <br />
 <MudButton Variant="Variant.Filled" Class="ml-2" OnClick="async ()=>{await AddWeekToSchadules(true);}">@L["Add week"]</MudButton>
@@ -42,19 +46,24 @@
 
     private async Task AddWeekToSchadules(bool high)
     {
-        List<Planner> ScheduleForUser = new();
+        List<Planner>? scheduleForUser = null;
         var PlannersInWeek = (await _scheduleRepository.ScheduleForAll(high ? _high : _low))?.Planners;
         if (PlannersInWeek != null)
+        {
+            scheduleForUser = new List<Planner>();
             foreach (var Plan in PlannersInWeek)
-                ScheduleForUser.Add(Plan);
+                scheduleForUser.Add(Plan);
+        }
         if (high)
         {
-            _scheduleForUser.AddLast(ScheduleForUser);
+            if (scheduleForUser != null)
+                _scheduleForUser.AddLast(scheduleForUser);
             _high++;
         }
         else
         {
-            _scheduleForUser.AddFirst(ScheduleForUser);
+            if (scheduleForUser != null)
+                _scheduleForUser.AddFirst(scheduleForUser);
             _low--;
         }
         StateHasChanged();
