@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230125210034_v0.0.7")]
+    [Migration("20230125210034_v0.0.6")]
     partial class v006
     {
         /// <inheritdoc />
