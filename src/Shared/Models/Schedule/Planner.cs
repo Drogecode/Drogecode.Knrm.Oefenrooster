@@ -16,4 +16,5 @@ public class Planner
     public DateTime EndTime { get; set; }
     public List<PlanUser> PlanUsers { get; set; } = new List<PlanUser>();
     public bool Updated { get; set; }
+    public bool IsCreated { get; set; }
 }

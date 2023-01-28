@@ -15,6 +15,7 @@ public class DbRoosterAvailable
     public Guid TrainingId { get; set; }
     public DateOnly Date { get; set; }
     public Availabilty? Available { get; set; }
+    public bool Assigned { get; set; }
 
     public DbCustomers? Customer { get; set; }
     public DbUsers? User { get; set; }

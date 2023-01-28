@@ -3,20 +3,29 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 <MudPaper Width="200px" Elevation="0">
     <MudCard>
-        <MudCardContent>
+        <MudCardContent Class='@(Planner.IsCreated ? "" : "bg-gray-400")'>
             <MudText Typo="Typo.h6">@Planner.Date.DayOfWeek</MudText>
             <MudText Typo="Typo.subtitle2">@Planner.Date.ToString(DateTime.Today.Year == Planner.Date.Year ? "MMM dd" : "yyyy MMM dd")</MudText>
-            <MudText Typo="Typo.body2">@Planner.StartTime.ToString("HH:mm") @L["till"] @Planner.EndTime.ToString("HH:mm")</MudText>
+            <MudText Typo="Typo.body2" @onclick="OpenDialog">@Planner.StartTime.ToString("HH:mm") @L["till"] @Planner.EndTime.ToString("HH:mm")</MudText>
+            <MudText Typo="Typo.body2" @onclick="OpenDialog">@L["Available"]: @Planner.PlanUsers.Where(x => x.Availabilty == Availabilty.Available).Count() / @Planner.PlanUsers.Count</MudText>
+            <MudText Typo="Typo.body2" @onclick="OpenDialog">@L["Assigned"]: @Planner.PlanUsers.Where(x => x.Assigned).Count() </MudText>
         </MudCardContent>
     </MudCard>
 </MudPaper>
 @code {
     [Inject] private IStringLocalizer<ScheduleBlock> L { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
+    [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Parameter, EditorRequired] public Planner Planner { get; set; } = default!;
     private bool _updating;
 
     protected override void OnParametersSet()
     {
+    }
+
+    private void OpenDialog()
+    {
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        _dialogProvider.Show<ScheduleDialog>("Custom Options Dialog", options);
     }
 }

@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{E8B45E7F-F232-42C9-8C8D-330D104D4C43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drogecode.Knrm.Oefenrooster.TestServer", "..\Drogecode.Knrm.Oefenrooster.TestServer\Drogecode.Knrm.Oefenrooster.TestServer.csproj", "{D8CDEEEF-D77E-4420-8313-8EF3457D0F1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.TestServer", "..\Drogecode.Knrm.Oefenrooster.TestServer\Drogecode.Knrm.Oefenrooster.TestServer.csproj", "{D8CDEEEF-D77E-4420-8313-8EF3457D0F1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -149,25 +149,54 @@ public class ScheduleService : IScheduleService
         var d = DateTime.UtcNow.StartOfWeek(System.DayOfWeek.Monday).AddDays(relativeWeek * 7);
         var startDate = DateOnly.FromDateTime(d);
         var tillDate = DateOnly.FromDateTime(d.AddDays(6));
+        var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId).ToList();
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
         var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
 
         var scheduleDate = startDate;
         do
         {
+            var defaultsFound = new List<Guid?>();
+            var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek);
             var trainingsToday = trainings.Where(x => x.Date == scheduleDate).ToList();
             if (trainingsToday.Count > 0)
             {
                 foreach (var training in trainingsToday)
                 {
-                    var ava = availables.FirstOrDefault(x => x.TrainingId == training.Id);
-                    result.Planners.Add(new Shared.Models.Schedule.Planner
+                    var ava = availables.FindAll(x => x.TrainingId == training.Id);
+                    var newPlanner = new Shared.Models.Schedule.Planner
                     {
                         DefaultId = training.RoosterDefaultId,
                         TrainingId = training.Id,
                         Date = training.Date,
                         StartTime = training.StartTime,
                         EndTime = training.EndTime,
+                        IsCreated = true,
+                    };
+                    foreach (var a in ava)
+                    {
+                        newPlanner.PlanUsers.Add(new PlanUser
+                        {
+                            UserId = a.UserId,
+                            Availabilty = a.Available,
+                            Assigned = a.Assigned
+                        });
+                    }
+                    result.Planners.Add(newPlanner);
+                    defaultsFound.Add(training.RoosterDefaultId);
+                }
+            }
+            foreach (var def in defaultsToday)
+            {
+                if (!defaultsFound.Contains(def.Id))
+                {
+                    result.Planners.Add(new Shared.Models.Schedule.Planner
+                    {
+                        DefaultId = def.Id,
+                        Date = scheduleDate,
+                        StartTime = scheduleDate.ToDateTime(def.StartTime, DateTimeKind.Utc),
+                        EndTime = scheduleDate.ToDateTime(def.EndTime, DateTimeKind.Utc),
+                        IsCreated = false
                     });
                 }
             }
