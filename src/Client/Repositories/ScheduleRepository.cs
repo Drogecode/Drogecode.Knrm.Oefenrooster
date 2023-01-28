@@ -11,9 +11,14 @@ public class ScheduleRepository
     {
         _httpClient = httpClient;
     }
-    public async Task<ScheduleForUserResponse?> ScheduleForUser(int relativeWeek)
+    public async Task<ScheduleForUserResponse?> CalendarForUser(int relativeWeek)
     {
         var schedule = await _httpClient.GetFromJsonAsync<ScheduleForUserResponse>($"api/Schedule/ForUser?relativeWeek={relativeWeek}");
+        return schedule;
+    }
+    public async Task<ScheduleForAllResponse?> ScheduleForAll(int relativeWeek)
+    {
+        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForAllResponse>($"api/Schedule/ForAll?relativeWeek={relativeWeek}");
         return schedule;
     }
     public async Task<Training> PatchScheduleForUser(Training training)

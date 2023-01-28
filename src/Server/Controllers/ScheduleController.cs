@@ -33,6 +33,15 @@ public class ScheduleController : ControllerBase
         return result;
     }
 
+    [HttpGet]
+    public async Task<ScheduleForAllResponse> ForAll(int relativeWeek)
+    {
+        var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+        var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+        ScheduleForAllResponse result = await _scheduleService.ScheduleForAllAsync(userId, customerId, relativeWeek);
+        return result;
+    }
+
     [HttpPost]
     public async Task<Training> Patch(Training training)
     {

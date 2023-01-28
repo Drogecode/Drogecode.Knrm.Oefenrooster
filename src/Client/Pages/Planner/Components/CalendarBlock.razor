@@ -18,7 +18,7 @@
     </MudCard>
 </MudPaper>
 @code {
-    [Inject] private IStringLocalizer<Trainingblock> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<CalendarBlock> L { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Parameter, EditorRequired] public Training Training { get; set; } = default!;
     private bool _updating;

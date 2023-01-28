@@ -1,9 +1,0 @@
-﻿@page "/planner/admin"
-<h3>Admin</h3>
-
-<p>@L["The admin will be implemented soon!"]</p>
-
-@code {
-    [Inject] private IStringLocalizer<Admin> L { get; set; } = default!;
-    [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
-}

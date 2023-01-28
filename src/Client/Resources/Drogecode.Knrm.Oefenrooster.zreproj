@@ -38,6 +38,12 @@
       <remarks>
       </remarks>
     </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="cd46d459-987d-4197-ac99-5c5cb261aef7">
+      <file filePath="Shared\Layout\NavMenu.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Shared\Layout\NavMenu.en-US.resx" uniqueID="b44c22ea-bfd8-4c29-9482-4bdd1bc33edd" />
+      <file filePath="Shared\Layout\NavMenu.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Shared\Layout\NavMenu.nl-NL.resx" uniqueID="016fa9e1-c063-4db5-8191-75180df51ca3" />
+      <remarks>
+      </remarks>
+    </fileGroup>
     <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="b7f5f18f-0b94-4e91-9f08-0fdd17aff845">
       <file filePath="Pages\Planner\Components\Trainingblock.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\Trainingblock.en-US.resx" uniqueID="8cc89204-0a74-4611-a07e-6d2438e2b4ab" />
       <file filePath="Pages\Planner\Components\Trainingblock.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\Trainingblock.nl-NL.resx" uniqueID="1a574d66-33cd-4c7a-8493-7c5350891ec7" />
