@@ -2,7 +2,6 @@
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
-using Microsoft.Graph;
 using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
