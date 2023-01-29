@@ -38,4 +38,9 @@ public class ScheduleRepository
         };
         var request = await _httpClient.PostAsJsonAsync<PatchScheduleUserRequest>($"api/Schedule/PatchScheduleUser", body, token);
     }
+    public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(CancellationToken token)
+    {
+        var schedule = await _httpClient.GetFromJsonAsync<GetScheduledTrainingsForUserResponse>($"api/Schedule/GetScheduledTrainingsForUser", token);
+        return schedule;
+    }
 }

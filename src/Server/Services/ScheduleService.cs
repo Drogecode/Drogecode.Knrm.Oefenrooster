@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
+using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Graph;
 using MudBlazor.Extensions;
@@ -45,6 +46,7 @@ public class ScheduleService : IScheduleService
                         Availabilty = ava?.Available,
                         StartTime = training.StartTime,
                         EndTime = training.EndTime,
+                        Assigned = ava?.Assigned ?? false,
                     });
                     defaultsFound.Add(training.RoosterDefaultId);
                 }
@@ -59,7 +61,7 @@ public class ScheduleService : IScheduleService
                         Date = scheduleDate,
                         StartTime = scheduleDate.ToDateTime(def.StartTime, DateTimeKind.Utc),
                         EndTime = scheduleDate.ToDateTime(def.EndTime, DateTimeKind.Utc),
-                        Availabilty = Availabilty.None, //ToDo
+                        Availabilty = Availabilty.None,
                     });
                 }
             }
@@ -234,5 +236,31 @@ public class ScheduleService : IScheduleService
         ava.Assigned = body.User.Assigned;
         _database.RoosterAvailables.Update(ava);
         await _database.SaveChangesAsync(token);
+    }
+
+    public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateOnly fromDate, CancellationToken token)
+    {
+        var result = new GetScheduledTrainingsForUserResponse();
+        var scheduled = await _database.RoosterAvailables.Include(i => i.Training).Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Date >= fromDate).ToListAsync(cancellationToken: token);
+        foreach (var schedul in scheduled)
+        {
+
+            if (schedul.Training == null)
+            {
+                _logger.LogWarning("No training found for schedule '{ScheduleId}'", schedul.Id);
+                continue;
+            }
+            result.Trainings.Add(new Training
+            {
+                TrainingId = schedul.TrainingId,
+                DefaultId= schedul.TrainingId,
+                Date = schedul.Date,
+                StartTime = schedul.Training.StartTime,
+                EndTime = schedul.Training.EndTime,
+                Availabilty = schedul.Available,
+                Assigned= schedul.Assigned,
+            });
+        }
+        return result;
     }
 }

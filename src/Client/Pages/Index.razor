@@ -1,9 +1,27 @@
 ﻿@page "/"
 @attribute [Authorize]
+@using Drogecode.Knrm.Oefenrooster.Client.Pages.Components
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<MudText>@L["Future trainings"]</MudText>
+
+@if (_trainings != null)
+{
+    @if (_trainings.Count() > 0)
+    {
+        <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+            @foreach (var training in _trainings)
+            {
+                <IndexBlock Training="training" />
+            }
+        </MudPaper>
+    }
+    else
+    {
+        <MudText>@L["No future trainings"]</MudText>
+    }
+}
 
 @if (_isAuthenticated)
 {

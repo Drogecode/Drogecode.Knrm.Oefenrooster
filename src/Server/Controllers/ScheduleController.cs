@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
 
@@ -84,6 +85,24 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             await _scheduleService.PatchScheduleUserAsync(userId, customerId, body, token);
             return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in Patch");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> GetScheduledTrainingsForUser(CancellationToken token)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var fromDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
+            var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, token);
+            return result;
         }
         catch (Exception ex)
         {

@@ -8,4 +8,5 @@ public interface IScheduleService
     Task<ScheduleForAllResponse> ScheduleForAllAsync(Guid userId, Guid customerId, int relativeWeek, CancellationToken token);
     Task<Training> PatchTrainingAsync(Guid userId, Guid customerId, Training training, CancellationToken token);
     Task PatchScheduleUserAsync(Guid userId, Guid customerId, PatchScheduleUserRequest body, CancellationToken token);
+    Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateOnly fromDate, CancellationToken token);
 }
