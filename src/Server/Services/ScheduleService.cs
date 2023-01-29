@@ -16,7 +16,7 @@ public class ScheduleService : IScheduleService
         _database = database;
     }
 
-    public async Task<ScheduleForUserResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int relativeWeek)
+    public async Task<ScheduleForUserResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int relativeWeek, CancellationToken token)
     {
         var result = new ScheduleForUserResponse();
         var d = DateTime.UtcNow.StartOfWeek(System.DayOfWeek.Monday).AddDays(relativeWeek * 7);
@@ -63,6 +63,7 @@ public class ScheduleService : IScheduleService
                     });
                 }
             }
+            token.ThrowIfCancellationRequested();
             scheduleDate = scheduleDate.AddDays(1);
 
         } while (scheduleDate <= tillDate);
@@ -70,7 +71,7 @@ public class ScheduleService : IScheduleService
         return result;
     }
 
-    public async Task<Training> PatchTrainingAsync(Guid userId, Guid customerId, Training training)
+    public async Task<Training> PatchTrainingAsync(Guid userId, Guid customerId, Training training, CancellationToken token)
     {
         training.Updated = false;
         DbRoosterTraining? dbTraining = null;
@@ -80,11 +81,13 @@ public class ScheduleService : IScheduleService
             if (dbTraining == null)
             {
                 training.TrainingId = Guid.NewGuid();
+                token.ThrowIfCancellationRequested();
                 if (!await AddTrainingInternalAsync(customerId, training)) return training;
             }
             else
                 training.TrainingId = dbTraining.Id;
         }
+        token = CancellationToken.None;
         if (dbTraining == null)
             dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == training.TrainingId);
         if (dbTraining == null)
@@ -143,7 +146,7 @@ public class ScheduleService : IScheduleService
         return (await _database.SaveChangesAsync()) > 0;
     }
 
-    public async Task<ScheduleForAllResponse> ScheduleForAllAsync(Guid userId, Guid customerId, int relativeWeek)
+    public async Task<ScheduleForAllResponse> ScheduleForAllAsync(Guid userId, Guid customerId, int relativeWeek, CancellationToken token)
     {
         var result = new ScheduleForAllResponse();
         var d = DateTime.UtcNow.StartOfWeek(System.DayOfWeek.Monday).AddDays(relativeWeek * 7);
@@ -200,6 +203,7 @@ public class ScheduleService : IScheduleService
                     });
                 }
             }
+            token.ThrowIfCancellationRequested();
             scheduleDate = scheduleDate.AddDays(1);
 
         } while (scheduleDate <= tillDate);
