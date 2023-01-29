@@ -2,9 +2,15 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
 <MudDialog>
     <DialogContent>
-        @foreach (var user in Planner.PlanUsers)
+        <MudText>@L["Available users"]</MudText>
+        @foreach (var user in Planner.PlanUsers.Where(x=>x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available))
         {
             <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user)" Label="@user.Name" Color="Color.Info" Checked="user.Assigned" />
+        }
+        <MudText>@L["Other users"]</MudText>
+        @foreach (var user in Planner.PlanUsers.Where(x => x.Availabilty != Oefenrooster.Shared.Enums.Availabilty.Available).OrderBy(o=>o.Availabilty))
+        {
+            <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user)" Label="@user.Name" Color="GetColor(user.Availabilty)" Checked="user.Assigned" /> @LApp[@user.Availabilty.ToString() ?? ""]
         }
     </DialogContent>
     <DialogActions>

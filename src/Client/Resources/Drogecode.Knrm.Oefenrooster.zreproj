@@ -20,6 +20,12 @@
     </description>
   </configuration>
   <fileGroups>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="6dfd39aa-ceee-415f-9a51-e68f2d624cd8">
+      <file filePath="App.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\App.en-US.resx" uniqueID="52653914-6e55-47c7-b3db-a302ba3568cd" />
+      <file filePath="App.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\App.nl-NL.resx" uniqueID="2556f0e4-46d5-4f8c-83ba-7decfe7ad334" />
+      <remarks>
+      </remarks>
+    </fileGroup>
     <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="b39d7d5f-225e-4665-9264-b1c45d0aa8a3">
       <file filePath="Pages\Planner\Components\CalendarBlock.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\CalendarBlock.en-US.resx" uniqueID="2f904500-553f-46ff-b072-2ee039a92f49" />
       <file filePath="Pages\Planner\Components\CalendarBlock.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\CalendarBlock.nl-NL.resx" uniqueID="9908946d-85a5-496b-a337-796519da8aa5" />
@@ -59,6 +65,12 @@
     <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="1fe92327-41e6-48d1-ad97-fb71378aa405">
       <file filePath="Pages\Planner\Components\ScheduleBlock.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleBlock.en-US.resx" uniqueID="a0893556-2fca-4eaa-9c09-c85ba09e8547" />
       <file filePath="Pages\Planner\Components\ScheduleBlock.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleBlock.nl-NL.resx" uniqueID="ac1a72e5-ff82-48cb-923e-598ce3fd0ea1" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="8ece9a15-512f-4023-b1ef-b559b1eb8e47">
+      <file filePath="Pages\Planner\Components\ScheduleDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleDialog.en-US.resx" uniqueID="edc8971f-c4c0-4073-8ed6-74a200e8755a" />
+      <file filePath="Pages\Planner\Components\ScheduleDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleDialog.nl-NL.resx" uniqueID="9507753d-0463-4d40-82f2-f15f6546e04b" />
       <remarks>
       </remarks>
     </fileGroup>

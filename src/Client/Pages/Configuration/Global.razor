@@ -1,19 +1,61 @@
 ﻿@page "/configuration/global"
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+@using System.Security.Claims;
 <h3>Global configuration</h3>
 
-<p>Alleen Taco mag op deze knop klikken</p>
+<MudText>Alleen Taco mag op deze knop klikken</MudText>
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateDatabase">@L["Update database"]</MudButton>
 @if(_clickedUpdate)
 {
-    <p>Dude!</p>
+    <MudText Typo="Typo.h1">Dude!</MudText>
+}
+@if (_isAuthenticated)
+{
+    <p>Hello @_name</p>
+    <div>
+        <table cellpadding="2" cellspacing="2">
+            <tr>
+                <th>Claim</th>
+                <th>Value</th>
+            </tr>
+            @foreach (var claim in _user.Claims)
+            {
+                <tr>
+                    <td>@claim.Type</td>
+                    <td>@claim.Value</td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+else
+{
+    <p>Welcome to your new app.</p>
 }
 
 @code {
     [Inject] private IStringLocalizer<Global> L { get; set; } = default!;
-    [Inject] private ConfigurationRepository configurationRepository {get;set;} = default!;
+    [Inject] AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+    [Inject] private ConfigurationRepository configurationRepository { get; set; } = default!;
+    [Inject] UserRepository UserRepository { get; set; } = default!;
+    private ClaimsPrincipal _user;
+    private bool _isAuthenticated;
+    private string _name = string.Empty;
 
     private bool _clickedUpdate;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _user = authState.User;
+        _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
+        if (_isAuthenticated)
+        {
+            var dbUser = await UserRepository.GetCurrentUserAsync();
+            _name = authState!.User!.Identity!.Name ?? string.Empty;
+
+        }
+    }
 
     private async Task UpdateDatabase()
     {

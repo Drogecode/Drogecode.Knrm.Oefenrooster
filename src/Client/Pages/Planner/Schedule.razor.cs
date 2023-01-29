@@ -6,6 +6,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 public sealed partial class Schedule : IDisposable
 {
     [Inject] private IStringLocalizer<Schedule> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
     private LinkedList<List<Oefenrooster.Shared.Models.Schedule.Planner>> _scheduleForUser = new();

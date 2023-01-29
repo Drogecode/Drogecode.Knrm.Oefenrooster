@@ -4,8 +4,15 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-<MudButton Variant="Variant.Filled" Class="ml-2" OnClick="async ()=>{await AddWeekToCalendar(false);}">@L["Add week"]</MudButton>
+<MudButton Variant="Variant.Filled" Class="ml-2 mt-2" OnClick="async ()=>{await AddWeekToCalendar(false);}">@LApp["Add week"]</MudButton>
 <br />
+@if (_calendarForUser.Count == 0)
+{
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+}
 @foreach (var trainingWeek in _calendarForUser)
 {
     @if (_month != trainingWeek.First().Date.Month)
@@ -21,4 +28,4 @@
     </MudPaper>
 }
 <br />
-<MudButton Variant="Variant.Filled" Class="ml-2" OnClick="async ()=>{await AddWeekToCalendar(true);}">@L["Add week"]</MudButton>
+<MudButton Variant="Variant.Filled" Class="ml-2 mb-2" OnClick="async ()=>{await AddWeekToCalendar(true);}">@LApp["Add week"]</MudButton>
