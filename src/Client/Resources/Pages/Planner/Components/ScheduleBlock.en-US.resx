@@ -132,6 +132,9 @@
   <data name="NotAvailable" xml:space="preserve">
     <value>Not available</value>
   </data>
+  <data name="Schedule people for this training" xml:space="preserve">
+    <value>Schedule people for this training</value>
+  </data>
   <data name="till" xml:space="preserve">
     <value>till</value>
   </data>

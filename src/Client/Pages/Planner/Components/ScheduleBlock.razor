@@ -26,6 +26,6 @@
     private void OpenDialog()
     {
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-        _dialogProvider.Show<ScheduleDialog>("Custom Options Dialog", options);
+        _dialogProvider.Show<ScheduleDialog>(L["Schedule people for this training"], new DialogParameters{ { "Planner", Planner}}, options);
     }
 }

@@ -13,19 +13,29 @@ public class ScheduleRepository
     }
     public async Task<ScheduleForUserResponse?> CalendarForUser(int relativeWeek, CancellationToken token)
     {
-        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForUserResponse>($"api/Schedule/ForUser?relativeWeek={relativeWeek}",token);
+        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForUserResponse>($"api/Schedule/ForUser?relativeWeek={relativeWeek}", token);
         return schedule;
     }
     public async Task<ScheduleForAllResponse?> ScheduleForAll(int relativeWeek, CancellationToken token)
     {
-        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForAllResponse>($"api/Schedule/ForAll?relativeWeek={relativeWeek}",token);
+        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForAllResponse>($"api/Schedule/ForAll?relativeWeek={relativeWeek}", token);
         return schedule;
     }
     public async Task<Training> PatchScheduleForUser(Training training, CancellationToken token)
     {
-        var request = await _httpClient.PostAsJsonAsync<Training>($"api/Schedule/Patch", training,token);
+        var request = await _httpClient.PostAsJsonAsync<Training>($"api/Schedule/Patch", training, token);
         var result = await request.Content.ReadFromJsonAsync<Training>(cancellationToken: token);
 
         return result;
+    }
+
+    public async Task PatchScheduleUserScheduled(Guid? trainingId, PlanUser user, CancellationToken token)
+    {
+        var body = new PatchScheduleUserRequest
+        {
+            TrainingId = trainingId,
+            User = user,
+        };
+        var request = await _httpClient.PostAsJsonAsync<PatchScheduleUserRequest>($"api/Schedule/PatchScheduleUser", body, token);
     }
 }

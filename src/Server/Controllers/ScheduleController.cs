@@ -74,4 +74,21 @@ public class ScheduleController : ControllerBase
             return BadRequest();
         }
     }
+
+    [HttpPost]
+    public async Task<ActionResult> PatchScheduleUser(PatchScheduleUserRequest body, CancellationToken token)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            await _scheduleService.PatchScheduleUserAsync(userId, customerId, body, token);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in Patch");
+            return BadRequest();
+        }
+    }
 }

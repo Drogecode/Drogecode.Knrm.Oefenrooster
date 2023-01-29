@@ -1,19 +1,15 @@
-﻿<MudDialog>
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
+<MudDialog>
     <DialogContent>
-        <p>Hier komt de mogelijkheid om deelnemers in te vullen voor de betreffende oefening.</p>
-        <p>Maar, zoals je ziet is dat nog niet af.</p>
-        <p>Of eigenlijk, ik ben er nog niet aan begonnen :O</p>
+        @foreach (var user in Planner.PlanUsers)
+        {
+            <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user)" Label="@user.Name" Color="Color.Info" Checked="user.Assigned" />
+        }
     </DialogContent>
     <DialogActions>
         @*<MudButton OnClick="Cancel">Cancel</MudButton>*@
         <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
     </DialogActions>
 </MudDialog>
-
-@code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
-}
 

@@ -154,7 +154,7 @@ public class ScheduleService : IScheduleService
         var tillDate = DateOnly.FromDateTime(d.AddDays(6));
         var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId).ToList();
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
-        var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
+        var availables = _database.RoosterAvailables.Include(i => i.User).Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
 
         var scheduleDate = startDate;
         do
@@ -182,7 +182,8 @@ public class ScheduleService : IScheduleService
                         {
                             UserId = a.UserId,
                             Availabilty = a.Available,
-                            Assigned = a.Assigned
+                            Assigned = a.Assigned,
+                            Name = a?.User?.Name ?? "Name not found"
                         });
                     }
                     result.Planners.Add(newPlanner);
@@ -209,5 +210,29 @@ public class ScheduleService : IScheduleService
         } while (scheduleDate <= tillDate);
 
         return result;
+    }
+
+    public async Task PatchScheduleUserAsync(Guid userId, Guid customerId, PatchScheduleUserRequest body, CancellationToken token)
+    {
+        if (body.User == null || body.TrainingId == null)
+        {
+            _logger.LogWarning("user is null {UserIsNull} or trainingId is null {TrainingIsNull}", body.User == null, body.TrainingId == null);
+            return;
+        }
+        var training = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == body.TrainingId, cancellationToken: token);
+        if (training == null)
+        {
+            _logger.LogWarning("No training with '{Id}' found", body.TrainingId);
+            return;
+        }
+        var ava = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.TrainingId == body.TrainingId && x.UserId == body.User.UserId, cancellationToken: token);
+        if (ava == null)
+        {
+            _logger.LogWarning("No ava with '{Id}' found for user '{User}'", body.TrainingId, body.User.UserId);
+            return;
+        }
+        ava.Assigned = body.User.Assigned;
+        _database.RoosterAvailables.Update(ava);
+        await _database.SaveChangesAsync(token);
     }
 }

@@ -12,4 +12,5 @@ public class PlanUser
     public Guid UserId { get; set; }
     public Availabilty? Availabilty { get; set; }
     public bool Assigned { get; set; }
+    public string Name { get; set; } = "Some dude!";
 }
