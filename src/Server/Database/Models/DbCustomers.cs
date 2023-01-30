@@ -11,6 +11,7 @@ public class DbCustomers
     public DateTime Created { get; set; }
 
     public ICollection<DbUsers>? Users { get; set; }
+    public ICollection<DbUserFunctions>? UserFunctions { get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
     public ICollection<DbRoosterDefault>? RoosterDefaults { get; set; }
     public ICollection<DbRoosterTraining>? RoosterTraining { get; set; }

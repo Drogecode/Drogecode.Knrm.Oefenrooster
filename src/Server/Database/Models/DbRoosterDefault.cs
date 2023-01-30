@@ -13,6 +13,6 @@ public class DbRoosterDefault
     public TimeOnly StartTime { get; set; }
     public TimeOnly EndTime { get; set; }
 
-    public DbCustomers? Customer { get; set; }
+    public DbCustomers Customer { get; set; }
     public ICollection<DbRoosterTraining>? RoosterTrainings { get; set; }
 }

@@ -37,6 +37,18 @@ public class UserService : IUserService
         if (userObj != null)
         {
             userObj.LastLogin = DateTime.UtcNow;
+            if (userObj.UserFunctionId == null || userObj.UserFunctionId == Guid.Empty)
+            {
+                var defaultFunction = await _database.UserFunctions.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Default);
+                if (defaultFunction != null)
+                {
+                    userObj.UserFunctionId = defaultFunction.Id;
+                }
+                else
+                {
+                    _logger.LogWarning("No default UserFunction found for {CustomerId}", customerId);
+                }
+            }
             _database.Users.Update(userObj);
             await _database.SaveChangesAsync();
         }
