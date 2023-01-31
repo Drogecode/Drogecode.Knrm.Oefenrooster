@@ -21,6 +21,7 @@ public class DbUsers
     public string Email { get; set; }
     public DateTime Created { get; set; }
     public DateTime LastLogin { get; set; }
+    public DateTime? DeletedOn { get; set; }
 
     public DbCustomers Customer { get; set; }
     public DbUserFunctions? UserFunction{ get; set; }

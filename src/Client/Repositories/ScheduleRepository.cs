@@ -37,6 +37,7 @@ public class ScheduleRepository
             User = user,
         };
         var request = await _httpClient.PostAsJsonAsync<PatchScheduleUserRequest>($"api/Schedule/PatchScheduleUser", body, token);
+        request.EnsureSuccessStatusCode();
     }
     public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(CancellationToken token)
     {

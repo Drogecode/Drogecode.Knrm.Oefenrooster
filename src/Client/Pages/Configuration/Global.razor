@@ -1,6 +1,7 @@
 ﻿@page "/configuration/global"
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using System.Security.Claims;
+@using System.Text;
 <h3>Global configuration</h3>
 
 <MudText>Alleen Taco mag op deze knop klikken</MudText>
@@ -33,12 +34,27 @@ else
     <p>Welcome to your new app.</p>
 }
 
+@if (_users != null && _functions != null)
+{
+    <MudPaper Width="700px">
+        <MudList Clickable="false">
+            @foreach (var user in _users.OrderBy(x => x.UserFunctionId))
+            {
+                <MudListItem OnClick="()=>ChangeUser(user)" Text="@GetTextUserName(user)" />
+            }
+        </MudList>
+    </MudPaper>
+}
+
 @code {
     [Inject] private IStringLocalizer<Global> L { get; set; } = default!;
-    [Inject] AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+    [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
     [Inject] private ConfigurationRepository configurationRepository { get; set; } = default!;
-    [Inject] UserRepository UserRepository { get; set; } = default!;
+    [Inject] private UserRepository _userRepository { get; set; } = default!;
+    [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
     private ClaimsPrincipal _user;
+    private List<DrogeUser>? _users;
+    private List<DrogeFunction>? _functions;
     private bool _isAuthenticated;
     private string _name = string.Empty;
 
@@ -51,15 +67,37 @@ else
         _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
         if (_isAuthenticated)
         {
-            var dbUser = await UserRepository.GetCurrentUserAsync();
+            var dbUser = await _userRepository.GetCurrentUserAsync();
             _name = authState!.User!.Identity!.Name ?? string.Empty;
-
         }
+        _users = await _userRepository.GetAllUsersAsync();
+        _functions = await _functionRepository.GetAllFunctionsAsync();
     }
 
     private async Task UpdateDatabase()
     {
         _clickedUpdate = true;
         await configurationRepository.UpgradeDatabaseAsync();
+    }
+
+    private string GetTextUserName(DrogeUser user)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.Append(user.Name);
+        var function = _functions?.FirstOrDefault(x => x.Id == user.UserFunctionId);
+        if (function != null)
+        {
+            sb.Append(" - ");
+            sb.Append(function.Name);
+        }
+        return sb.ToString();
+    }
+
+    private async void ChangeUser(DrogeUser user)
+    {
+        var random = new Random();
+        int index = random.Next(_functions.Count);
+        user.UserFunctionId = _functions[index].Id;
+        await _userRepository.UpdateUserAsync(user);
     }
 }

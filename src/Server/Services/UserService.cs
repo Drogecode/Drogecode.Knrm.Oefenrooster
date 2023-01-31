@@ -12,6 +12,23 @@ public class UserService : IUserService
         _database = database;
     }
 
+    public async Task<List<DrogeUser>> GetAllUsers(Guid customerId)
+    {
+        var result = new List<DrogeUser>();
+        var dbUsers = _database.Users.Where(u => u.CustomerId == customerId && u.DeletedOn == null);
+        foreach (var dbUser in dbUsers)
+        {
+            result.Add(new DrogeUser
+            {
+                Id = dbUser.Id,
+                Name = dbUser.Name,
+                Created = dbUser.Created,
+                UserFunctionId = dbUser.UserFunctionId,
+            });
+        }
+        return result;
+    }
+
     public async Task<DrogeUser?> GetUserFromDb(Guid userId)
     {
         var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
@@ -20,7 +37,7 @@ public class UserService : IUserService
 
     public async Task<DrogeUser> GetOrSetUserFromDb(Guid userId, string userName, string userEmail, Guid customerId)
     {
-        var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
+        var userObj = _database.Users.Where(u => u.Id == userId && u.DeletedOn == null).FirstOrDefault();
         if (userObj == null)
         {
             var result = _database.Users.Add(new DbUsers
@@ -63,5 +80,18 @@ public class UserService : IUserService
             Name = dbUsers.Name,
             Created = dbUsers.Created
         };
+    }
+
+    public async Task<bool> UpdateUser(DrogeUser user, Guid userId, string userName, string userEmail, Guid customerId)
+    {
+        var oldVersion = await _database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null);
+        if (oldVersion != null)
+        {
+            oldVersion.UserFunctionId = user.UserFunctionId;
+            _database.Users.Update(oldVersion);
+            await _database.SaveChangesAsync();
+            return true;
+        }
+        return false;
     }
 }

@@ -18,6 +18,7 @@ builder.Services.AddHttpClient("Drogecode.Knrm.Oefenrooster.ServerAPI", client =
 builder.Services.AddMudServices();
 
 builder.Services.AddScoped<ConfigurationRepository>();
+builder.Services.AddScoped<FunctionRepository>();
 builder.Services.AddScoped<ScheduleRepository>();
 builder.Services.AddScoped<UserRepository>();
 
