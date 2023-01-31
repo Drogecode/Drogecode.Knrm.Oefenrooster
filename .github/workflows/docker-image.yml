@@ -26,7 +26,7 @@ jobs:
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
         with:
-          images: l7r7/sample
+          images:  ${{ secrets.DOCKER_USERNAME }}/drogecode.knrm.oefenrooster
           tag-custom: latest
           tag-semver: |
             {{raw}}
