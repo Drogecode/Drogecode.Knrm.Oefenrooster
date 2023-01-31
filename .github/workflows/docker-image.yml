@@ -21,21 +21,21 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
-      - name: Docker meta
-        id: docker_meta
-        uses: crazy-max/ghaction-docker-meta@v1
+      
+      - name: Extract metadata for the Docker image
+        id: meta
+        uses: docker/metadata-action@v4
         with:
-          images: l7r7/sample
-          tag-custom: latest
-          tag-semver: |
-            {{raw}}
-            
-      - name: Build and push
-        uses: docker/build-push-action@v3
+          # list of Docker images to use as base name for tags
+          images: ${{ secrets.DOCKER_USERNAME }}/drogecode.knrm.oefenrooster
+          # generate Docker tags based on the following events/attributes
+          tags: type=semver,pattern={{version}}
+
+      - name: Build and push the Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: .
           file: ./src/Server/Dockerfile
           push: true
-          tags: ${{ steps.docker_meta.outputs.tags }}
-          labels: ${{ steps.docker_meta.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
