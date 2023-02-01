@@ -13,7 +13,7 @@ services:
     volumes: 
       - D:/programming/dockerData/postgres-data:/var/lib/postgresql/data
   drogecode.knrm.oefenrooster.server:
-    image: kanman/drogecode.knrm.oefenrooster:v0.0.12
+    image: kanman/drogecode.knrm.oefenrooster:v0.0.13
     restart: always
     environment:
       - ConnectionStrings__postgresDB=host=host.docker.internal;port=5432;database=postgresDB;username=postgresUser;password=postgresPW
