@@ -14,11 +14,13 @@ public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
     private readonly IUserService _userService;
+    private readonly IAuditService _auditService;
 
-    public UserController(ILogger<UserController> logger, IUserService userService)
+    public UserController(ILogger<UserController> logger, IUserService userService, IAuditService auditService)
     {
         _logger = logger;
         _userService = userService;
+        _auditService = auditService;
     }
 
     [HttpGet]
@@ -51,6 +53,7 @@ public class UserController : ControllerBase
         var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
         user.Id = Guid.NewGuid();
         var result = await _userService.AddUser(user, customerId);
+        await _auditService.Log(userId, AuditType.AddUser, customerId, objectKey: user.Id, objectName: user.Name);
         return result;
     }
 
