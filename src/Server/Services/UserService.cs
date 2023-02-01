@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Models;
+using Microsoft.Graph;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class UserService : IUserService
@@ -93,5 +94,19 @@ public class UserService : IUserService
             return true;
         }
         return false;
+    }
+
+    public async Task<bool> AddUser(DrogeUser user, Guid customerId)
+    {
+        _database.Users.Add(new DbUsers
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Email = "",
+            Created = DateTime.UtcNow,
+            CustomerId = customerId,
+            UserFunctionId = user.UserFunctionId,
+        });
+        return await _database.SaveChangesAsync() > 0;
     }
 }

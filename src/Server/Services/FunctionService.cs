@@ -20,6 +20,7 @@ public class FunctionService : IFunctionService
                 Id = function.Id,
                 Name = function.Name,
                 Order = function.Order,
+                TrainingOnly = function.TrainingOnly,
                 Default = function.Default
             });
         }

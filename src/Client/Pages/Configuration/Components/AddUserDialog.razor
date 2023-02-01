@@ -1,0 +1,45 @@
+﻿@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+
+
+<MudDialog>
+    <DialogContent>
+        @if (Functions != null)
+        {
+            <MudTextField @bind-Value="_user.Name" Label="@L["Name"]" Variant="Variant.Text" />
+            <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" @bind-Value="_user.UserFunctionId">
+                @foreach (var function in Functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
+                {
+                    <MudSelectItem T="Guid?" Value="@function.Id">@function.Name</MudSelectItem>
+                }
+            </MudSelect>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">@LApp["save"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [Inject] private IStringLocalizer<EditUserDialog> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
+    [Inject] private UserRepository _userRepository { get; set; } = default!;
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public List<DrogeFunction>? Functions { get; set; } = default!;
+
+    private DrogeUser _user = new();
+
+
+    private async Task Submit()
+    {
+
+        await _userRepository.AddUserAsync(_user);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}
+

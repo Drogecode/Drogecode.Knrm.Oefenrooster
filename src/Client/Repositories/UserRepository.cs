@@ -27,4 +27,10 @@ public class UserRepository
         var successfull = await request.Content.ReadFromJsonAsync<bool>();
         return successfull;
     }
+    public async Task<bool> AddUserAsync(DrogeUser user)
+    {
+        var request = await _httpClient.PostAsJsonAsync("api/User/AddUser", user);
+        var successfull = await request.Content.ReadFromJsonAsync<bool>();
+        return successfull;
+    }
 }

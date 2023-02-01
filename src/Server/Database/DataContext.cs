@@ -9,7 +9,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
     {
         public DbSet<DbAudit> Audits { get; set; }
         public DbSet<DbUsers> Users { get; set; }
-        public DbSet<DbUserFunctions> UserFunctions{ get; set; }
+        public DbSet<DbUserFunctions> UserFunctions { get; set; }
         public DbSet<DbCustomers> Customers { get; set; }
         public DbSet<DbRoosterDefault> RoosterDefaults { get; set; }
         public DbSet<DbRoosterTraining> RoosterTrainings { get; set; }
@@ -179,7 +179,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         {
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
-                Id= new Guid("48db5dd5-cb72-4365-9bf5-959691dc54f2"),
+                Id = new Guid("48db5dd5-cb72-4365-9bf5-959691dc54f2"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Schipper",
                 Order = 10
@@ -203,7 +203,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = new Guid("feb3641f-9941-4db7-a202-14263d706516"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Aankomend opstapper",
-                Order =40
+                Order = 40
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
@@ -225,14 +225,16 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = new Guid("44288807-9e8a-48c5-8579-05d9f0f15f34"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Wal",
-                Order = 60
+                Order = 70,
+                TrainingOnly = true
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("95427da1-e4d5-442e-962a-b04ab861a2c2"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Waarnemer",
-                Order = 80
+                Order = 80,
+                TrainingOnly = true
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {

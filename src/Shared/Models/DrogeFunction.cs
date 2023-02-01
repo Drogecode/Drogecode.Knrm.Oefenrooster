@@ -11,5 +11,6 @@ public class DrogeFunction
     public Guid Id { get; set; }
     public string Name { get; set; }
     public int Order { get; set; }
+    public bool TrainingOnly { get; set; }
     public bool Default { get; set; }
 }

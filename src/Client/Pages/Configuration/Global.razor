@@ -1,4 +1,5 @@
 ﻿@page "/configuration/global"
+@using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using System.Security.Claims;
 @using System.Text;
@@ -6,7 +7,7 @@
 
 <MudText>Alleen Taco mag op deze knop klikken</MudText>
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateDatabase">@L["Update database"]</MudButton>
-@if(_clickedUpdate)
+@if (_clickedUpdate)
 {
     <MudText Typo="Typo.h1">Dude!</MudText>
 }
@@ -34,13 +35,22 @@ else
     <p>Welcome to your new app.</p>
 }
 
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddUser">Voeg test user toe</MudButton>
+
 @if (_users != null && _functions != null)
 {
     <MudPaper Width="700px">
         <MudList Clickable="false">
-            @foreach (var user in _users.OrderBy(x => x.UserFunctionId))
+            @foreach (var function in _functions.OrderBy(x=>x.Order))
             {
-                <MudListItem OnClick="()=>ChangeUser(user)" Text="@GetTextUserName(user)" />
+                @if (_users.Any(x => x.UserFunctionId == function.Id))
+                {
+                    <MudText>@function.Name</MudText>
+                    @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id))
+                    {
+                        <MudListItem OnClick="()=>ChangeUser(user)" Text="@GetTextUserName(user)" />
+                    }
+                }
             }
         </MudList>
     </MudPaper>
@@ -49,6 +59,7 @@ else
 @code {
     [Inject] private IStringLocalizer<Global> L { get; set; } = default!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+    [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private ConfigurationRepository configurationRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
@@ -80,6 +91,13 @@ else
         await configurationRepository.UpgradeDatabaseAsync();
     }
 
+    private void AddUser()
+    {
+
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        _dialogProvider.Show<AddUserDialog>(L["Add user"], new DialogParameters { { "Functions", _functions } }, options);
+    }
+
     private string GetTextUserName(DrogeUser user)
     {
         StringBuilder sb = new StringBuilder();
@@ -95,9 +113,7 @@ else
 
     private async void ChangeUser(DrogeUser user)
     {
-        var random = new Random();
-        int index = random.Next(_functions.Count);
-        user.UserFunctionId = _functions[index].Id;
-        await _userRepository.UpdateUserAsync(user);
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        _dialogProvider.Show<EditUserDialog>(L["Edit user"], new DialogParameters { { "User", user }, { "Functions", _functions } }, options);
     }
 }

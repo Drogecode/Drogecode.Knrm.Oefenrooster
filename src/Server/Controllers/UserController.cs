@@ -43,6 +43,18 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
+    public async Task<bool> AddUser(DrogeUser user)
+    {
+        var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+        var userName = User?.FindFirstValue("name") ?? throw new Exception("No userName found");
+        var userEmail = User?.FindFirstValue("preferred_username") ?? throw new Exception("No userEmail found");
+        var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+        user.Id = Guid.NewGuid();
+        var result = await _userService.AddUser(user, customerId);
+        return result;
+    }
+
+    [HttpPost]
     public async Task<bool> UpdateUser(DrogeUser user)
     {
         var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
