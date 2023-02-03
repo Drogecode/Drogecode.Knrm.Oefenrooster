@@ -6,7 +6,23 @@ on:
       - "v*.*.*"
 
 jobs:
+  get-version:
+    name: Get version to deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set tag from input
+      if: ${{ github.event.inputs.nuget-version != '' }}
+      env:
+        TAG: ${{ github.event.inputs.nuget-version }}
+      run: echo "VERSION=${TAG#v}" >> $GITHUB_ENV
+    - name: Set version variable from tag
+      if: ${{ github.ref_type == 'tag' }}
+      env:
+        TAG: ${{ github.ref_name }}
+      run: echo "VERSION=${TAG#v}" >> $GITHUB_ENV
+
   build:
+    needs: get-version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,15 +35,13 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      
-      - name: Extract metadata for the Docker image
-        id: meta
-        uses: docker/metadata-action@v4
+
+      - name: replace
+        uses: cschleiden/replace-tokens@v1
         with:
-          # list of Docker images to use as base name for tags
-          images: ${{ secrets.DOCKER_USERNAME }}/drogecode.knrm.oefenrooster
-          # generate Docker tags based on the following events/attributes
-          tags: type=semver,pattern={{version}}
+            files: '["**/index.html","**/version.js",**/DefaultSettingsHelper.cs"]'
+        env:
+            VERSION_TOKEN: v${{ needs.get-version.outputs.VERSION }}
 
       - name: Build and push the Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
@@ -35,5 +49,5 @@ jobs:
           context: .
           file: ./src/Server/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/drogecode.knrm.oefenrooster:${{ needs.get-version.outputs.VERSION }}
           labels: ${{ steps.meta.outputs.labels }}

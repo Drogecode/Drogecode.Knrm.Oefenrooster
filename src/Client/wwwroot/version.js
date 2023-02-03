@@ -1,1 +1,1 @@
-﻿const CACHE_VERSION = 'v0.0.14';
+﻿const CACHE_VERSION = '#{VERSION_TOKEN}#';
