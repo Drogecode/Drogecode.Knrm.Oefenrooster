@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
@@ -13,6 +14,7 @@ public sealed partial class ScheduleDialog : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Parameter] public Oefenrooster.Shared.Models.Schedule.Planner Planner { get; set; } = default!;
+    [Parameter] public RefreshModel Refresh { get; set; } = default!;
     private CancellationTokenSource _cls = new();
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
@@ -22,6 +24,7 @@ public sealed partial class ScheduleDialog : IDisposable
     {
         user.Assigned = toggled;
         await _scheduleRepository.PatchScheduleUserScheduled(Planner.TrainingId, user, _cls.Token);
+        await Refresh.CallRequestRefreshAsync();
     }
 
     private Color GetColor(Availabilty? availabilty)

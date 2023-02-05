@@ -30,12 +30,14 @@
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public DrogeUser User { get; set; } = default!;
     [Parameter] public List<DrogeFunction>? Functions { get; set; } = default!;
+    [Parameter] public RefreshModel Refresh { get; set; } = default!;
 
 
     private async Task Submit()
     {
 
         await _userRepository.UpdateUserAsync(User);
+        await Refresh.CallRequestRefreshAsync();
         MudDialog.Close(DialogResult.Ok(true));
     }
 

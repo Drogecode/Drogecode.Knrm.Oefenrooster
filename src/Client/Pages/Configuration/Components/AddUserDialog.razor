@@ -29,6 +29,7 @@
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public List<DrogeFunction>? Functions { get; set; } = default!;
+    [Parameter] public RefreshModel Refresh { get; set; } = default!;
 
     private DrogeUser _user = new();
 
@@ -37,6 +38,7 @@
     {
 
         await _userRepository.AddUserAsync(_user);
+        await Refresh.CallRequestRefreshAsync();
         MudDialog.Close(DialogResult.Ok(true));
     }
 
