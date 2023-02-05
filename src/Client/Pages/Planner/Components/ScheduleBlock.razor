@@ -2,13 +2,30 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 <MudPaper Width="200px" Elevation="0">
-    <MudCard>
+    <MudCard @onclick="OpenDialog">
         <MudCardContent Class='@(Planner.IsCreated ? "" : "bg-gray-400")'>
             <MudText Typo="Typo.h6">@Planner.Date.DayOfWeek</MudText>
             <MudText Typo="Typo.subtitle2">@Planner.Date.ToString(DateTime.Today.Year == Planner.Date.Year ? "MMM dd" : "yyyy MMM dd")</MudText>
-            <MudText Typo="Typo.body2" @onclick="OpenDialog">@Planner.StartTime.ToString("HH:mm") @L["till"] @Planner.EndTime.ToString("HH:mm")</MudText>
-            <MudText Typo="Typo.body2" @onclick="OpenDialog">@L["Available"]: @Planner.PlanUsers.Where(x => x.Availabilty == Availabilty.Available).Count() / @Planner.PlanUsers.Count</MudText>
-            <MudText Typo="Typo.body2" @onclick="OpenDialog">@L["Assigned"]: @Planner.PlanUsers.Where(x => x.Assigned).Count() </MudText>
+            <MudText Typo="Typo.body2" >@Planner.StartTime.ToString("HH:mm") @L["till"] @Planner.EndTime.ToString("HH:mm")</MudText>
+            @if (Functions != null && Users != null)
+            {
+                @foreach (var function in Functions.OrderBy(x => x.Order))
+                {
+                    @if (Users.Any(x => x.UserFunctionId == function.Id) || Planner.PlanUsers.Any(x => x.UserFunctionId == function.Id))
+                    {
+                        var assigned = @Planner.PlanUsers.Where(x => x.Assigned && x.UserFunctionId == function.Id).Count();
+                        var available = @Planner.PlanUsers.Where(x => x.Availabilty == Availabilty.Available && x.UserFunctionId == function.Id).Count();
+                        var total = @Planner.PlanUsers.Where(x => x.UserFunctionId == function.Id).Count();
+                        <MudText>@function.Name</MudText>
+                        <MudText Typo="Typo.body2">@available / @total</MudText>
+                        @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.UserFunctionId == function.Id))
+                        {
+                            <MudText>@assignedUser.Name</MudText>
+                        }
+                    }
+
+                }
+            }
         </MudCardContent>
     </MudCard>
 </MudPaper>

@@ -14,6 +14,8 @@ public sealed partial class ScheduleDialog : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Parameter] public Oefenrooster.Shared.Models.Schedule.Planner Planner { get; set; } = default!;
+    [Parameter] public List<DrogeUser>? Users { get; set; }
+    [Parameter] public List<DrogeFunction>? Functions { get; set; }
     [Parameter] public RefreshModel Refresh { get; set; } = default!;
     private CancellationTokenSource _cls = new();
 
@@ -24,6 +26,11 @@ public sealed partial class ScheduleDialog : IDisposable
     {
         user.Assigned = toggled;
         await _scheduleRepository.PatchScheduleUserScheduled(Planner.TrainingId, user, _cls.Token);
+        await Refresh.CallRequestRefreshAsync();
+    }
+    private async Task CheckChangeddd(bool toggled, DrogeUser user, Guid functionId)
+    {
+        //Add to schedule with a new status to indicate it was not set by the user.
         await Refresh.CallRequestRefreshAsync();
     }
 

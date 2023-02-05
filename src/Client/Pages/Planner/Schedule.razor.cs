@@ -9,9 +9,13 @@ public sealed partial class Schedule : IDisposable
     [Inject] private IStringLocalizer<Schedule> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
+    [Inject] private UserRepository _userRepository { get; set; } = default!;
+    [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
     private LinkedList<List<Oefenrooster.Shared.Models.Schedule.Planner>> _scheduleForUser = new();
     private CancellationTokenSource _cls = new();
+    private List<DrogeUser>? _users;
+    private List<DrogeFunction>? _functions;
     private int? _month;
     private int _high = -1;
     private int _low = -2;
@@ -22,6 +26,8 @@ public sealed partial class Schedule : IDisposable
         {
             await AddWeekToSchadules(true);
         }
+        _users = await _userRepository.GetAllUsersAsync();
+        _functions = await _functionRepository.GetAllFunctionsAsync();
     }
 
     private async Task AddWeekToSchadules(bool high)

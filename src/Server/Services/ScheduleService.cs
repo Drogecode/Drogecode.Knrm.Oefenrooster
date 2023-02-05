@@ -154,6 +154,7 @@ public class ScheduleService : IScheduleService
         var d = DateTime.UtcNow.StartOfWeek(System.DayOfWeek.Monday).AddDays(relativeWeek * 7);
         var startDate = DateOnly.FromDateTime(d);
         var tillDate = DateOnly.FromDateTime(d.AddDays(6));
+        var users = _database.Users.Where(x=> x.CustomerId == customerId && x.DeletedOn == null);
         var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId).ToList();
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
         var availables = _database.RoosterAvailables.Include(i => i.User).Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
@@ -180,13 +181,15 @@ public class ScheduleService : IScheduleService
                     };
                     foreach (var a in ava)
                     {
+                        if (a == null ) continue;
                         newPlanner.PlanUsers.Add(new PlanUser
                         {
                             UserId = a.UserId,
                             Availabilty = a.Available,
                             Assigned = a.Assigned,
-                            Name = a?.User?.Name ?? "Name not found"
-                        });
+                            Name = a.User?.Name ?? "Name not found",
+                            UserFunctionId = a.UserFunctionId ?? users.FirstOrDefault(x=>x.Id == a.UserId)?.UserFunctionId,
+                        }) ;
                     }
                     result.Planners.Add(newPlanner);
                     defaultsFound.Add(training.RoosterDefaultId);
