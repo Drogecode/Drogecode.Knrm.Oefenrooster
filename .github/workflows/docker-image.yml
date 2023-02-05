@@ -39,7 +39,7 @@ jobs:
       - name: replace
         uses: cschleiden/replace-tokens@v1
         with:
-            files: '["**/index.html","**/version.js",**/DefaultSettingsHelper.cs"]'
+            files: '["**/index.html","**/version.js","**/DefaultSettingsHelper.cs"]'
         env:
             VERSION_TOKEN: v${{ needs.get-version.outputs.VERSION }}
 
