@@ -154,7 +154,7 @@ public class ScheduleService : IScheduleService
         var d = DateTime.UtcNow.StartOfWeek(System.DayOfWeek.Monday).AddDays(relativeWeek * 7);
         var startDate = DateOnly.FromDateTime(d);
         var tillDate = DateOnly.FromDateTime(d.AddDays(6));
-        var users = _database.Users.Where(x=> x.CustomerId == customerId && x.DeletedOn == null);
+        var users = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
         var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId).ToList();
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
         var availables = _database.RoosterAvailables.Include(i => i.User).Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
@@ -181,15 +181,16 @@ public class ScheduleService : IScheduleService
                     };
                     foreach (var a in ava)
                     {
-                        if (a == null ) continue;
+                        if (a == null) continue;
                         newPlanner.PlanUsers.Add(new PlanUser
                         {
                             UserId = a.UserId,
                             Availabilty = a.Available,
                             Assigned = a.Assigned,
                             Name = a.User?.Name ?? "Name not found",
-                            UserFunctionId = a.UserFunctionId ?? users.FirstOrDefault(x=>x.Id == a.UserId)?.UserFunctionId,
-                        }) ;
+                            PlannedFunctionId = a.UserFunctionId ?? users.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId,
+                            UserFunctionId = users.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId
+                        });
                     }
                     result.Planners.Add(newPlanner);
                     defaultsFound.Add(training.RoosterDefaultId);
@@ -241,6 +242,57 @@ public class ScheduleService : IScheduleService
         await _database.SaveChangesAsync(token);
     }
 
+    public async Task OtherScheduleUserAsync(Guid userId, Guid customerId, OtherScheduleUserRequest body, CancellationToken token)
+    {
+        if (body.UserId == null || body.TrainingId == null || body.FunctionId == null)
+        {
+            _logger.LogWarning("userId is null {UserIsNull} or trainingId is null {TrainingIsNull} or functionId is null {FunctionId}", body.UserId == null, body.TrainingId == null, body.FunctionId == null);
+            return;
+        }
+        var user = await _database.Users.FirstOrDefaultAsync(x=>x.Id == userId && x.DeletedOn == null && x.CustomerId == customerId, cancellationToken: token);
+        if (user == null)
+        {
+            _logger.LogWarning("No user with '{Id}' found", body.UserId);
+            return;
+        }
+        var training = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == body.TrainingId, cancellationToken: token);
+        if (training == null)
+        {
+            _logger.LogWarning("No training with '{Id}' found", body.TrainingId);
+            return;
+        }
+        var ava = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.TrainingId == body.TrainingId && x.UserId == body.UserId, cancellationToken: token);
+        if (ava == null)
+        {
+            if (body.Assigned)// only add to db if if assigned.
+            {
+                ava = new DbRoosterAvailable
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = body.UserId ?? Guid.Empty,
+                    CustomerId = customerId,
+                    TrainingId = body.TrainingId ?? Guid.Empty,
+                    UserFunctionId = body.FunctionId,
+                    Date = training.Date,
+                    Available = Availabilty.None,
+                    Assigned = body.Assigned,
+                };
+                _database.RoosterAvailables.Add(ava);
+                await _database.SaveChangesAsync(token);
+            }
+        }
+        else
+        {
+            ava.Assigned = body.Assigned;
+            if (body.Assigned)
+                ava.UserFunctionId = body.FunctionId;
+            else
+                ava.UserFunctionId = null;
+            _database.RoosterAvailables.Update(ava);
+            await _database.SaveChangesAsync(token);
+        }
+    }
+
     public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateOnly fromDate, CancellationToken token)
     {
         var result = new GetScheduledTrainingsForUserResponse();
@@ -256,12 +308,12 @@ public class ScheduleService : IScheduleService
             result.Trainings.Add(new Training
             {
                 TrainingId = schedul.TrainingId,
-                DefaultId= schedul.TrainingId,
+                DefaultId = schedul.TrainingId,
                 Date = schedul.Date,
                 StartTime = schedul.Training.StartTime,
                 EndTime = schedul.Training.EndTime,
                 Availabilty = schedul.Available,
-                Assigned= schedul.Assigned,
+                Assigned = schedul.Assigned,
             });
         }
         return result;

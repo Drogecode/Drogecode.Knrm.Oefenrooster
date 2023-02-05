@@ -36,12 +36,25 @@ public class ScheduleRepository
             TrainingId = trainingId,
             User = user,
         };
-        var request = await _httpClient.PostAsJsonAsync<PatchScheduleUserRequest>($"api/Schedule/PatchScheduleUser", body, token);
+        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/PatchScheduleUser", body, token);
         request.EnsureSuccessStatusCode();
     }
     public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(CancellationToken token)
     {
         var schedule = await _httpClient.GetFromJsonAsync<GetScheduledTrainingsForUserResponse>($"api/Schedule/GetScheduledTrainingsForUser", token);
         return schedule;
+    }
+
+    internal async Task OtherScheduleUser(bool assigned, Guid? trainingId, Guid functionId, DrogeUser user, CancellationToken token)
+    {
+        var body = new OtherScheduleUserRequest
+        {
+            TrainingId = trainingId,
+            FunctionId = functionId,
+            UserId = user.Id,
+            Assigned = assigned
+        };
+        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/OtherScheduleUser", body, token);
+        request.EnsureSuccessStatusCode();
     }
 }

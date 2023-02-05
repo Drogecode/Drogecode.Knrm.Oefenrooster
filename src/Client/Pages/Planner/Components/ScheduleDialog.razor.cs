@@ -31,6 +31,30 @@ public sealed partial class ScheduleDialog : IDisposable
     private async Task CheckChangeddd(bool toggled, DrogeUser user, Guid functionId)
     {
         //Add to schedule with a new status to indicate it was not set by the user.
+        await _scheduleRepository.OtherScheduleUser(toggled, Planner.TrainingId, functionId, user, _cls.Token);
+        var planuser = Planner.PlanUsers.FirstOrDefault(x => x.UserId == user.Id);
+        if (planuser == null)
+        {
+            Planner.PlanUsers.Add(new PlanUser
+            {
+                UserId = user.Id,
+                UserFunctionId = user.UserFunctionId,
+                PlannedFunctionId= functionId,
+                Availabilty = Availabilty.None,
+                Assigned = toggled,
+                Name = user.Name,
+
+            });
+        }
+        else
+        {
+            planuser.Assigned = toggled;
+            if (toggled)
+                planuser.PlannedFunctionId = functionId;
+            else
+                planuser.PlannedFunctionId = planuser.UserFunctionId;
+
+        }
         await Refresh.CallRequestRefreshAsync();
     }
 

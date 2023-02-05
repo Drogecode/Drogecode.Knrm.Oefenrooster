@@ -8,23 +8,18 @@
             {
                 @foreach (var function in Functions.OrderBy(x => x.Order))
                 {
-                    @if (Users.Any(x => x.UserFunctionId == function.Id) || Planner.PlanUsers.Any(x => x.UserFunctionId == function.Id))
+                    @if (Users.Any(x => x.UserFunctionId == function.Id) || Planner.PlanUsers.Any(x => x.PlannedFunctionId == function.Id) || function.TrainingOnly)
                     {
-                        var assigned = @Planner.PlanUsers.Where(x => x.Assigned && x.UserFunctionId == function.Id).Count();
-                        var available = @Planner.PlanUsers.Where(x => x.Availabilty == Availabilty.Available && x.UserFunctionId == function.Id).Count();
-                        var total = @Planner.PlanUsers.Where(x => x.UserFunctionId == function.Id).Count();
-                        <MudText>@function.Name</MudText>
-                        @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.UserFunctionId == function.Id))
-                        {
-                            <MudText>@assignedUser.Name</MudText>
-                        }
+                        var assigned = @Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id).Count();
+                        var available = @Planner.PlanUsers.Where(x => x.Availabilty == Availabilty.Available && x.PlannedFunctionId == function.Id).Count();
+                        var total = @Planner.PlanUsers.Where(x => x.PlannedFunctionId == function.Id).Count();
                         <MudText>@L["Available {0}", function.Name]</MudText>
-                        @foreach (var user in Planner.PlanUsers.Where(x => x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available && x.UserFunctionId == function.Id))
+                        @foreach (var user in Planner.PlanUsers.Where(x => (x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available || x.Assigned) && x.PlannedFunctionId == function.Id))
                         {
-                            <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user)" Label="@user.Name" Color="Color.Info" Checked="user.Assigned" />
+                            <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user)" Label="@user.Name" Color="GetColor(user.Availabilty)" Checked="user.Assigned" /> <br/>
                         }
                         <MudExpansionPanel Text="@L["Other users"]">
-                            @foreach (var user in Planner.PlanUsers.Where(x => x.Availabilty != Oefenrooster.Shared.Enums.Availabilty.Available && x.UserFunctionId == function.Id).OrderBy(o => o.Availabilty))
+                            @foreach (var user in Planner.PlanUsers.Where(x => x.Availabilty != Oefenrooster.Shared.Enums.Availabilty.Available && !x.Assigned && x.PlannedFunctionId == function.Id).OrderBy(o => o.Availabilty))
                             {
                                 <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user)" Label="@user.Name" Color="GetColor(user.Availabilty)" Checked="user.Assigned" /> @LApp[@user.Availabilty.ToString() ?? ""] <br/>
                             }
@@ -33,14 +28,15 @@
                                 @if (Planner.PlanUsers.Any(x => x.UserId == user.Id)) continue;
                                 <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user, function.Id)" Label="@user.Name" /> <br/>
                             }
-                            @foreach (var user in Planner.PlanUsers.Where(x => x.Availabilty != Oefenrooster.Shared.Enums.Availabilty.Available && x.UserFunctionId != function.Id).OrderBy(o => o.Availabilty))
+                            @foreach (var user in Planner.PlanUsers.Where(x => x.Availabilty != Oefenrooster.Shared.Enums.Availabilty.Available && !x.Assigned && x.PlannedFunctionId != function.Id).OrderBy(o => o.Availabilty))
                             {
-                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user)" Label="@user.Name" Color="GetColor(user.Availabilty)" Checked="user.Assigned" /> @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(" - ") @LApp[@user.Availabilty.ToString() ?? ""] <br />
+                                //ToDo: Change function for this training for this user.
+                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user)" Label="@user.Name" Color="GetColor(user.Availabilty)" Checked="user.Assigned" />  @LApp[@user.Availabilty.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")") <br />
                             }
                             @foreach (var user in Users.Where(x => x.UserFunctionId != function.Id))
                             {
                                 @if (Planner.PlanUsers.Any(x => x.UserId == user.Id)) continue;
-                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user, function.Id)" Label="@user.Name" Color="Color.Dark" /> @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name <br />
+                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user, function.Id)" Label="@user.Name" Color="Color.Dark" /> @("(") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")") <br />
                             }
                         </MudExpansionPanel>
                     }
