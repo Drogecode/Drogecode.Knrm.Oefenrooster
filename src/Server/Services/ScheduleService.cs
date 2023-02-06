@@ -238,6 +238,7 @@ public class ScheduleService : IScheduleService
             return;
         }
         ava.Assigned = body.User.Assigned;
+        ava.UserFunctionId = body.FunctionId;
         _database.RoosterAvailables.Update(ava);
         await _database.SaveChangesAsync(token);
     }

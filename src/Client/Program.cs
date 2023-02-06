@@ -6,6 +6,7 @@ using MudBlazor.Services;
 using System.Globalization;
 using Microsoft.JSInterop;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using MudBlazor;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -15,7 +16,10 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddHttpClient("Drogecode.Knrm.Oefenrooster.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
     .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(config =>
+{
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+});
 
 builder.Services.AddScoped<ConfigurationRepository>();
 builder.Services.AddScoped<FunctionRepository>();

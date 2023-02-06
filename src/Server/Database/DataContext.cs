@@ -179,38 +179,46 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         {
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
+                Id = new Guid("d23de705-d950-4833-8b94-aa531022d450"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "Kompas leider",
+                Order = 10,
+                TrainingOnly = true
+            }));
+            modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
+            {
                 Id = new Guid("48db5dd5-cb72-4365-9bf5-959691dc54f2"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Schipper",
-                Order = 10
+                Order = 20
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("cf6e6afa-8aa5-4b3d-8198-fb5e86faf53c"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Schipper I.O.",
-                Order = 20
+                Order = 30
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("35ad11b8-d3f2-4960-b1e8-d41aaccd188a"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Opstapper",
-                Order = 30
+                Order = 60
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("feb3641f-9941-4db7-a202-14263d706516"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Aankomend opstapper",
-                Order = 40
+                Order = 70
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("322858f8-fd2c-4e62-b699-92c605adbbf2"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Opstapper op proef",
-                Order = 50,
+                Order = 80,
                 Default = true
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
@@ -218,14 +226,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = new Guid("5c49fc5c-25eb-48c2-a746-74ac3a030d48"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "HRB Aankomend opstapper",
-                Order = 60
+                Order = 100
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("44288807-9e8a-48c5-8579-05d9f0f15f34"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Wal",
-                Order = 70,
+                Order = 170,
                 TrainingOnly = true
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
@@ -233,7 +241,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = new Guid("95427da1-e4d5-442e-962a-b04ab861a2c2"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Waarnemer",
-                Order = 80,
+                Order = 180,
                 TrainingOnly = true
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions

@@ -22,10 +22,14 @@ public sealed partial class ScheduleDialog : IDisposable
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
 
-    private async Task CheckChangeddd(bool toggled, PlanUser user)
+    private async Task CheckChangeddd(bool toggled, PlanUser user, Guid functionId)
     {
         user.Assigned = toggled;
-        await _scheduleRepository.PatchScheduleUserScheduled(Planner.TrainingId, user, _cls.Token);
+        if (toggled)
+            user.PlannedFunctionId = functionId;
+        else
+            user.PlannedFunctionId = user.UserFunctionId;
+        await _scheduleRepository.PatchScheduleUserScheduled(Planner.TrainingId, user, functionId, _cls.Token);
         await Refresh.CallRequestRefreshAsync();
     }
     private async Task CheckChangeddd(bool toggled, DrogeUser user, Guid functionId)
@@ -39,7 +43,7 @@ public sealed partial class ScheduleDialog : IDisposable
             {
                 UserId = user.Id,
                 UserFunctionId = user.UserFunctionId,
-                PlannedFunctionId= functionId,
+                PlannedFunctionId = functionId,
                 Availabilty = Availabilty.None,
                 Assigned = toggled,
                 Name = user.Name,

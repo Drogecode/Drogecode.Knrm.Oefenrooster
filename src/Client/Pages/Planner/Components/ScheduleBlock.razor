@@ -11,14 +11,12 @@
             {
                 @foreach (var function in Functions.OrderBy(x => x.Order))
                 {
-                    @if (Users.Any(x => x.UserFunctionId == function.Id) || Planner.PlanUsers.Any(x => x.UserFunctionId == function.Id))
+                    @if (Planner.PlanUsers.Any(x => x.PlannedFunctionId == function.Id))
                     {
-                        var assigned = @Planner.PlanUsers.Where(x => x.Assigned && x.UserFunctionId == function.Id).Count();
-                        var available = @Planner.PlanUsers.Where(x => x.Availabilty == Availabilty.Available && x.UserFunctionId == function.Id).Count();
-                        var total = @Planner.PlanUsers.Where(x => x.UserFunctionId == function.Id).Count();
-                        <MudText>@function.Name</MudText>
-                        <MudText Typo="Typo.body2">@available / @total</MudText>
-                        @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.UserFunctionId == function.Id))
+                        var available = @Planner.PlanUsers.Where(x => x.Availabilty == Availabilty.Available && x.PlannedFunctionId == function.Id).Count();
+                        var total = @Planner.PlanUsers.Where(x => x.PlannedFunctionId == function.Id).Count();
+                        <MudText Typo="Typo.caption">@function.Name @available / @total </MudText>
+                        @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id))
                         {
                             <MudText>@assignedUser.Name</MudText>
                         }
