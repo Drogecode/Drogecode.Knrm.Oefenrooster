@@ -29,21 +29,38 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task UpgradeDatabase()
+    public async Task<ActionResult> UpgradeDatabase()
     {
-        var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-        var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-        await _configurationService.UpgradeDatabase();
-        await _auditService.Log(userId, AuditType.DataBaseUpgrade, customerId);
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            await _configurationService.UpgradeDatabase();
+            await _auditService.Log(userId, AuditType.DataBaseUpgrade, customerId);
+            return Ok();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Exception in UpgradeDatabase");
+            return BadRequest();
+        }
     }
 
     [HttpGet]
-    public UpdateDetails NewVersionAvailable(string clientVersion)
+    public async Task<ActionResult<UpdateDetails>> NewVersionAvailable(string clientVersion)
     {
-        var response = new UpdateDetails
+        try
         {
-            NewVersionAvailable = string.Compare(DefaultSettingsHelper.CURRENT_VERSION, clientVersion, StringComparison.OrdinalIgnoreCase) != 0
-        };
-        return response;
+            var response = new UpdateDetails
+            {
+                NewVersionAvailable = string.Compare(DefaultSettingsHelper.CURRENT_VERSION, clientVersion, StringComparison.OrdinalIgnoreCase) != 0
+            };
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in NewVersionAvailable");
+            return BadRequest();
+        }
     }
 }

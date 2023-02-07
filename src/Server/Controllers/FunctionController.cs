@@ -21,11 +21,19 @@ public class FunctionController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<List<DrogeFunction>> GetAll()
+    public async Task<ActionResult<List<DrogeFunction>>> GetAll()
     {
-        var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-        var result = await _functionService.GetAllFunctions(customerId);
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var result = await _functionService.GetAllFunctions(customerId);
 
-        return result;
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in UpgradeDatabase");
+            return BadRequest();
+        }
     }
 }
