@@ -24,6 +24,7 @@ public class UserService : IUserService
                 Id = dbUser.Id,
                 Name = dbUser.Name,
                 Created = dbUser.Created,
+                LastLogin= dbUser.LastLogin,
                 UserFunctionId = dbUser.UserFunctionId,
             });
         }
@@ -79,7 +80,9 @@ public class UserService : IUserService
         {
             Id = dbUsers.Id,
             Name = dbUsers.Name,
-            Created = dbUsers.Created
+            Created = dbUsers.Created,
+            LastLogin= dbUsers.LastLogin,
+            UserFunctionId= dbUsers.UserFunctionId,
         };
     }
 

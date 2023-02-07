@@ -38,6 +38,12 @@
       <remarks>
       </remarks>
     </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="c4ed6992-7562-40fb-8110-307074877061">
+      <file filePath="Pages\Configuration\Components\EditUserDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Components\EditUserDialog.en-US.resx" uniqueID="f5371e38-60c4-47b5-b7fc-6330d97bf129" />
+      <file filePath="Pages\Configuration\Components\EditUserDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Components\EditUserDialog.nl-NL.resx" uniqueID="fc11dab1-44ee-4799-b2e9-8d850c7c356e" />
+      <remarks>
+      </remarks>
+    </fileGroup>
     <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="1744504d-ddc6-4282-8be5-de491a45579d">
       <file filePath="Pages\Index.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Index.en-US.resx" uniqueID="5faa6bb6-5dfb-4145-bb37-21d85854d7cc" />
       <file filePath="Pages\Index.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Index.nl-NL.resx" uniqueID="5ca432c8-e000-469c-81c1-da291c4b4f35" />

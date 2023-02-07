@@ -8,6 +8,8 @@
         @if (User != null && Functions != null)
         {
             <MudTextField @bind-Value="User.Name" Label="@L["Name"]" Variant="Variant.Text" Disabled />
+            <MudDatePicker Date="User.Created" Label="@L["Created"]" Disabled />
+            <MudDatePicker Date="User.LastLogin" Label="@L["Last login"]" Disabled />
             <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" @bind-Value="User.UserFunctionId">
                 @foreach (var function in Functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
                 {

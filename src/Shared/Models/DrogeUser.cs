@@ -11,6 +11,7 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models
         public Guid Id { get; set; }
         public string Name { get; set; }
         public DateTime Created { get; set; }
+        public DateTime LastLogin { get; set; }
         public Guid? UserFunctionId { get; set; }
     }
 }
