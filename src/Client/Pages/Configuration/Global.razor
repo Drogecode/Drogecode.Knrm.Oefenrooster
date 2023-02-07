@@ -25,7 +25,7 @@
                     <MudText>@function.Name</MudText>
                     @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id))
                     {
-                        <MudListItem OnClick="()=>ChangeUser(user)" Text="@GetTextUserName(user)" />
+                        <MudListItem OnClick="()=>ChangeUser(user)" Text="@user.Name" />
                     }
                 }
             }

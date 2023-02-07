@@ -133,7 +133,7 @@
     <value>Niet beschikbaar</value>
   </data>
   <data name="Requires one person to set their availability" xml:space="preserve">
-    <value>Vereist één persoon om hun beschikbaarheid in te stellen</value>
+    <value>Minimaal een persoon moet de beschikbaarheid hebben ingevuld.</value>
   </data>
   <data name="Schedule people for this training" xml:space="preserve">
     <value>Plan mensen voor deze training</value>

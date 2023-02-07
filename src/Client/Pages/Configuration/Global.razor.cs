@@ -57,19 +57,6 @@ public sealed partial class Global : IDisposable
         _dialogProvider.Show<AddUserDialog>(L["Add user"], new DialogParameters { { "Functions", _functions }, { "Refresh", _refreshModel } }, options);
     }
 
-    private string GetTextUserName(DrogeUser user)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.Append(user.Name);
-        var function = _functions?.FirstOrDefault(x => x.Id == user.UserFunctionId);
-        if (function != null)
-        {
-            sb.Append(" - ");
-            sb.Append(function.Name);
-        }
-        return sb.ToString();
-    }
-
     private async void ChangeUser(DrogeUser user)
     {
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
