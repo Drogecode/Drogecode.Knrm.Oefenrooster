@@ -11,6 +11,7 @@ public class Training
 {
     public Guid? TrainingId { get; set; }
     public Guid? DefaultId { get; set; }
+    public string? Name { get; set; }
     public DateOnly Date { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }

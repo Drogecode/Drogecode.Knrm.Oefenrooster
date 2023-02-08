@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
+using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.AspNetCore.Authorization;
@@ -16,13 +17,16 @@ public class ScheduleController : ControllerBase
 {
     private readonly ILogger<ScheduleController> _logger;
     private readonly IScheduleService _scheduleService;
+    private readonly IAuditService _auditService;
 
     public ScheduleController(
         ILogger<ScheduleController> logger,
-        IScheduleService scheduleService)
+        IScheduleService scheduleService,
+        IAuditService auditService)
     {
         _logger = logger;
         _scheduleService = scheduleService;
+        _auditService = auditService;
     }
 
     [HttpGet]
@@ -60,6 +64,25 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
+    public async Task<ActionResult<bool>> AddTraining(Training training, CancellationToken token)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            training.TrainingId = Guid.NewGuid();
+            var result = await _scheduleService.AddTrainingAsync(customerId, training, token);
+            await _auditService.Log(userId, AuditType.AddTraining, customerId, objectKey: training.TrainingId, objectName: training.Name);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in AddTraining");
+            return BadRequest();
+        }
+    }
+
+    [HttpPost]
     public async Task<ActionResult<Training>> Patch(Training training, CancellationToken token)
     {
         try
@@ -88,7 +111,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in Patch");
+            _logger.LogError(ex, "Error in PatchScheduleUser");
             return BadRequest();
         }
     }

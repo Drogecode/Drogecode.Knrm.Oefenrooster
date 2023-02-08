@@ -83,8 +83,7 @@ public class ScheduleService : IScheduleService
             if (dbTraining == null)
             {
                 training.TrainingId = Guid.NewGuid();
-                token.ThrowIfCancellationRequested();
-                if (!await AddTrainingInternalAsync(customerId, training)) return training;
+                if (!await AddTrainingAsync(customerId, training, token)) return training;
             }
             else
                 training.TrainingId = dbTraining.Id;
@@ -94,7 +93,7 @@ public class ScheduleService : IScheduleService
             dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == training.TrainingId);
         if (dbTraining == null)
         {
-            if (!await AddTrainingInternalAsync(customerId, training)) return training;
+            if (!await AddTrainingAsync(customerId, training, token)) return training;
             dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == training.TrainingId);
             if (dbTraining == null)
             {
@@ -110,16 +109,18 @@ public class ScheduleService : IScheduleService
         else if (!await PatchAvailableInternalAsync(available, training)) return training;
         training.Updated = true;
         return training;
-
     }
 
-    private async Task<bool> AddTrainingInternalAsync(Guid customerId, Training training)
+    public async Task<bool> AddTrainingAsync(Guid customerId, Training training, CancellationToken token)
     {
+        token.ThrowIfCancellationRequested();
+        token = CancellationToken.None;
         await _database.RoosterTrainings.AddAsync(new DbRoosterTraining
         {
             Id = training.TrainingId ?? throw new NoNullAllowedException("TrainingId is still null while adding new training"),
             RoosterDefaultId = training.DefaultId,
             CustomerId = customerId,
+            Name= training.Name,
             Date = training.Date,
             StartTime = training.StartTime,
             EndTime = training.EndTime,
@@ -170,7 +171,7 @@ public class ScheduleService : IScheduleService
                 foreach (var training in trainingsToday)
                 {
                     var ava = availables.FindAll(x => x.TrainingId == training.Id);
-                    var newPlanner = new Shared.Models.Schedule.Planner
+                    var newPlanner = new PlannedTraining
                     {
                         DefaultId = training.RoosterDefaultId,
                         TrainingId = training.Id,
@@ -200,7 +201,7 @@ public class ScheduleService : IScheduleService
             {
                 if (!defaultsFound.Contains(def.Id))
                 {
-                    result.Planners.Add(new Shared.Models.Schedule.Planner
+                    result.Planners.Add(new PlannedTraining
                     {
                         DefaultId = def.Id,
                         Date = scheduleDate,

@@ -23,8 +23,15 @@ public class ScheduleRepository
     }
     public async Task<Training> PatchScheduleForUser(Training training, CancellationToken token)
     {
-        var request = await _httpClient.PostAsJsonAsync<Training>($"api/Schedule/Patch", training, token);
+        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/Patch", training, token);
         var result = await request.Content.ReadFromJsonAsync<Training>(cancellationToken: token);
+
+        return result;
+    }
+    public async Task<bool> AddTraining(Training training, CancellationToken token)
+    {
+        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/AddTraining", training, token);
+        var result = await request.Content.ReadFromJsonAsync<bool>(cancellationToken: token);
 
         return result;
     }

@@ -35,7 +35,7 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in UpgradeDatabase");
+            _logger.LogError(ex, "Exception in GetAll");
             return BadRequest();
         }
     }
@@ -55,7 +55,7 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in UpgradeDatabase");
+            _logger.LogError(ex, "Exception in Get");
             return BadRequest();
         }
     }
@@ -76,7 +76,7 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in UpgradeDatabase");
+            _logger.LogError(ex, "Exception in AddUser");
             return BadRequest();
         }
     }
@@ -96,7 +96,7 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in UpgradeDatabase");
+            _logger.LogError(ex, "Exception in UpdateUser");
             return BadRequest();
         }
     }

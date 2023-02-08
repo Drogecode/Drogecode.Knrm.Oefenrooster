@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
 
@@ -12,7 +13,7 @@ public sealed partial class ScheduleBlock : IDisposable
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private ISnackbar SnackbarService { get; set; } = default!;
 
-    [Parameter, EditorRequired] public Oefenrooster.Shared.Models.Schedule.Planner Planner { get; set; } = default!;
+    [Parameter, EditorRequired] public PlannedTraining Planner { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
     private RefreshModel _refreshModel = new();

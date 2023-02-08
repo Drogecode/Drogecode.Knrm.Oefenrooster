@@ -129,4 +129,7 @@
   <data name="Schedule" xml:space="preserve">
     <value>Schedule</value>
   </data>
+  <data name="Training" xml:space="preserve">
+    <value>Training</value>
+  </data>
 </root>

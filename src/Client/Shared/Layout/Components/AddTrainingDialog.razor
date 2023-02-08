@@ -1,0 +1,21 @@
+﻿@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+
+
+<MudDialog>
+    <DialogContent>
+        <EditForm Model="@_training" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" For="@(() => _training.Name)" />
+            <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" For="@(() => _training.Date)" />
+            <MudTimePicker Label="@L["From"]" @bind-Time="_training.StartTime" For="@(() => _training.StartTime)" />
+            <MudTimePicker Label="@L["Till"]" @bind-Time="_training.EndTime" For="@(() => _training.EndTime)" />
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">@LApp["save"]</MudButton>
+    </DialogActions>
+</MudDialog>

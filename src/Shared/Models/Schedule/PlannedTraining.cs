@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-public class Planner
+public class PlannedTraining
 {
     public Guid? TrainingId { get; set; }
     public Guid? DefaultId { get; set; }

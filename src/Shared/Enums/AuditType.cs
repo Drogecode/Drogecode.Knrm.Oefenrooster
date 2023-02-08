@@ -11,4 +11,5 @@ public enum AuditType
     None = 0,
     DataBaseUpgrade = 1,
     AddUser = 2,
+    AddTraining = 3,
 }

@@ -10,6 +10,7 @@ public class DbRoosterTraining
     public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
     public Guid? RoosterDefaultId { get; set; }
+    public string? Name { get; set; }
     public DateOnly Date { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }

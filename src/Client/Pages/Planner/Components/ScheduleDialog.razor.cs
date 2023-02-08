@@ -13,7 +13,7 @@ public sealed partial class ScheduleDialog : IDisposable
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    [Parameter] public Oefenrooster.Shared.Models.Schedule.Planner Planner { get; set; } = default!;
+    [Parameter] public PlannedTraining Planner { get; set; } = default!;
     [Parameter] public List<DrogeUser>? Users { get; set; }
     [Parameter] public List<DrogeFunction>? Functions { get; set; }
     [Parameter] public RefreshModel Refresh { get; set; } = default!;

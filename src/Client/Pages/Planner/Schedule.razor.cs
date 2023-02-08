@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
@@ -12,7 +13,7 @@ public sealed partial class Schedule : IDisposable
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
-    private LinkedList<List<Oefenrooster.Shared.Models.Schedule.Planner>> _scheduleForUser = new();
+    private LinkedList<List<PlannedTraining>> _scheduleForUser = new();
     private CancellationTokenSource _cls = new();
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
@@ -32,11 +33,11 @@ public sealed partial class Schedule : IDisposable
 
     private async Task AddWeekToSchadules(bool high)
     {
-        List<Oefenrooster.Shared.Models.Schedule.Planner>? scheduleForUser = null;
+        List<PlannedTraining>? scheduleForUser = null;
         var PlannersInWeek = (await _scheduleRepository.ScheduleForAll(high ? _high : _low, _cls.Token))?.Planners;
         if (PlannersInWeek != null)
         {
-            scheduleForUser = new List<Oefenrooster.Shared.Models.Schedule.Planner>();
+            scheduleForUser = new List<PlannedTraining>();
             foreach (var Plan in PlannersInWeek)
                 scheduleForUser.Add(Plan);
         }
@@ -57,6 +58,6 @@ public sealed partial class Schedule : IDisposable
 
     public void Dispose()
     {
-        _cls.Dispose();
+        _cls.Cancel();
     }
 }
