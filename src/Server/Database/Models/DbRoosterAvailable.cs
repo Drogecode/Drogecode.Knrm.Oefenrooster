@@ -14,7 +14,7 @@ public class DbRoosterAvailable
     public Guid CustomerId { get; set; }
     public Guid TrainingId { get; set; }
     public Guid? UserFunctionId { get; set; }
-    public DateOnly Date { get; set; }
+    public DateTime Date { get; set; }
     public Availabilty? Available { get; set; }
     public bool Assigned { get; set; }
 

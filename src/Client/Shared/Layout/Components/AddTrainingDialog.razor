@@ -6,16 +6,15 @@
 
 <MudDialog>
     <DialogContent>
-        <EditForm Model="@_training" OnValidSubmit="OnValidSubmit">
-            <DataAnnotationsValidator />
+        <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
             <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" For="@(() => _training.Name)" />
             <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" For="@(() => _training.Date)" />
             <MudTimePicker Label="@L["From"]" @bind-Time="_training.StartTime" For="@(() => _training.StartTime)" />
             <MudTimePicker Label="@L["Till"]" @bind-Time="_training.EndTime" For="@(() => _training.EndTime)" />
-        </EditForm>
+        </MudForm>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
-        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">@LApp["save"]</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="OnSubmit">@LApp["save"]</MudButton>
     </DialogActions>
 </MudDialog>

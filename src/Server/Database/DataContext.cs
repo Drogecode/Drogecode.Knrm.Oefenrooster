@@ -53,14 +53,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.User).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.UserId).IsRequired();
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.UserFunction).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.UserFunctionId);
 
-            // Rooster defrault
+            // Rooster default
             modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbRoosterDefault>().HasOne(p => p.Customer).WithMany(g => g.RoosterDefaults).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // Rooster training
             modelBuilder.Entity<DbRoosterTraining>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.Customer).WithMany(g => g.RoosterTraining).HasForeignKey(s => s.CustomerId).IsRequired();
-            modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.RoosterDefault).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.RoosterDefaultId).IsRequired();
+            modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.RoosterDefault).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.RoosterDefaultId);
 
             // Required data
             SetCustomer(modelBuilder);
@@ -93,7 +93,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                     WeekDay = DayOfWeek.Monday,
                     StartTime = new TimeOnly(19, 30),
-                    EndTime = new TimeOnly(21, 30)
+                    Duration = 2 * 60
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -104,7 +104,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                     WeekDay = DayOfWeek.Tuesday,
                     StartTime = new TimeOnly(19, 30),
-                    EndTime = new TimeOnly(21, 30)
+                    Duration = 2 * 60
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -115,7 +115,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                     WeekDay = DayOfWeek.Wednesday,
                     StartTime = new TimeOnly(19, 30),
-                    EndTime = new TimeOnly(21, 30)
+                    Duration = 2 * 60
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -126,7 +126,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                     WeekDay = DayOfWeek.Thursday,
                     StartTime = new TimeOnly(19, 30),
-                    EndTime = new TimeOnly(21, 30)
+                    Duration = 2 * 60
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -137,7 +137,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                     WeekDay = DayOfWeek.Saturday,
                     StartTime = new TimeOnly(10, 00),
-                    EndTime = new TimeOnly(13, 00)
+                    Duration = 2 * 60
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -148,7 +148,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                     WeekDay = DayOfWeek.Saturday,
                     StartTime = new TimeOnly(13, 00),
-                    EndTime = new TimeOnly(16, 00)
+                    Duration = 2 * 60
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -159,7 +159,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                     WeekDay = (short)DayOfWeek.Sunday,
                     StartTime = new TimeOnly(10, 00),
-                    EndTime = new TimeOnly(13, 00)
+                    Duration = 2 * 60
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -170,7 +170,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                     WeekDay = (short)DayOfWeek.Sunday,
                     StartTime = new TimeOnly(13, 00),
-                    EndTime = new TimeOnly(16, 00)
+                    Duration = 2 * 60
                 });
             });
         }

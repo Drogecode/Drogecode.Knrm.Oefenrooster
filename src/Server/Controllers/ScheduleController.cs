@@ -64,15 +64,19 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<bool>> AddTraining(Training training, CancellationToken token)
+    public async Task<ActionResult<bool>> AddTraining(NewTraining newTraining, CancellationToken token)
     {
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            training.TrainingId = Guid.NewGuid();
-            var result = await _scheduleService.AddTrainingAsync(customerId, training, token);
-            await _auditService.Log(userId, AuditType.AddTraining, customerId, objectKey: training.TrainingId, objectName: training.Name);
+            var trainingId = Guid.NewGuid();
+            var result = await _scheduleService.AddTrainingAsync(customerId, newTraining, trainingId, token);
+            if (result)
+                await _auditService.Log(userId, AuditType.AddTraining, customerId, objectKey: trainingId, objectName: newTraining.Name);
+            else
+                await _auditService.Log(userId, AuditType.AddTraining, customerId, "Failed", trainingId, newTraining.Name);
+
             return result;
         }
         catch (Exception ex)
@@ -140,7 +144,7 @@ public class ScheduleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var fromDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
+            var fromDate = DateTime.Today.AddDays(-7).ToUniversalTime();
             var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, token);
             return result;
         }

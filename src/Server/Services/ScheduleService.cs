@@ -20,19 +20,20 @@ public class ScheduleService : IScheduleService
     public async Task<ScheduleForUserResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int relativeWeek, CancellationToken token)
     {
         var result = new ScheduleForUserResponse();
-        var d = DateTime.UtcNow.StartOfWeek(System.DayOfWeek.Monday).AddDays(relativeWeek * 7);
-        var startDate = DateOnly.FromDateTime(d);
-        var tillDate = DateOnly.FromDateTime(d.AddDays(6));
+        var startDate = DateTime.UtcNow.StartOfWeek(System.DayOfWeek.Monday).AddDays(relativeWeek * 7);
+        var tillDate = startDate.AddDays(7).AddMicroseconds(-1);
         var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId).ToList();
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
         var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate).ToList();
 
-        var scheduleDate = startDate;
+        var scheduleDate = DateOnly.FromDateTime(startDate);
         do
         {
             var defaultsFound = new List<Guid?>();
             var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek);
-            var trainingsToday = trainings.Where(x => x.Date == scheduleDate).ToList();
+            var start = scheduleDate.ToDateTime(new TimeOnly(0, 0, 0,0), DateTimeKind.Utc);
+            var end = scheduleDate.ToDateTime(new TimeOnly(23, 59, 59,999), DateTimeKind.Utc);
+            var trainingsToday = trainings.Where(x => x.Date >= start && x.Date <= end).ToList();
             if (trainingsToday.Count > 0)
             {
                 foreach (var training in trainingsToday)
@@ -44,8 +45,7 @@ public class ScheduleService : IScheduleService
                         TrainingId = training.Id,
                         Date = training.Date,
                         Availabilty = ava?.Available,
-                        StartTime = training.StartTime,
-                        EndTime = training.EndTime,
+                        Duration = training.Duration,
                         Assigned = ava?.Assigned ?? false,
                     });
                     defaultsFound.Add(training.RoosterDefaultId);
@@ -58,9 +58,8 @@ public class ScheduleService : IScheduleService
                     result.Trainings.Add(new Training
                     {
                         DefaultId = def.Id,
-                        Date = scheduleDate,
-                        StartTime = scheduleDate.ToDateTime(def.StartTime, DateTimeKind.Utc),
-                        EndTime = scheduleDate.ToDateTime(def.EndTime, DateTimeKind.Utc),
+                        Date = scheduleDate.ToDateTime(def.StartTime, DateTimeKind.Utc),
+                        Duration = def.Duration,
                         Availabilty = Availabilty.None,
                     });
                 }
@@ -68,7 +67,7 @@ public class ScheduleService : IScheduleService
             token.ThrowIfCancellationRequested();
             scheduleDate = scheduleDate.AddDays(1);
 
-        } while (scheduleDate <= tillDate);
+        } while (scheduleDate <= DateOnly.FromDateTime(tillDate));
 
         return result;
     }
@@ -79,11 +78,11 @@ public class ScheduleService : IScheduleService
         DbRoosterTraining? dbTraining = null;
         if (training.TrainingId == null || training.TrainingId == Guid.Empty)
         {
-            dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.RoosterDefaultId == training.DefaultId && x.Date == training.Date && x.StartTime == training.StartTime && x.EndTime == training.EndTime);
+            dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.RoosterDefaultId == training.DefaultId && x.Date == training.Date && x.Duration == training.Duration);
             if (dbTraining == null)
             {
                 training.TrainingId = Guid.NewGuid();
-                if (!await AddTrainingAsync(customerId, training, token)) return training;
+                if (!await AddTrainingInternalAsync(customerId, training, token)) return training;
             }
             else
                 training.TrainingId = dbTraining.Id;
@@ -93,7 +92,7 @@ public class ScheduleService : IScheduleService
             dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == training.TrainingId);
         if (dbTraining == null)
         {
-            if (!await AddTrainingAsync(customerId, training, token)) return training;
+            if (!await AddTrainingInternalAsync(customerId, training, token)) return training;
             dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == training.TrainingId);
             if (dbTraining == null)
             {
@@ -111,7 +110,21 @@ public class ScheduleService : IScheduleService
         return training;
     }
 
-    public async Task<bool> AddTrainingAsync(Guid customerId, Training training, CancellationToken token)
+    public async Task<bool> AddTrainingAsync(Guid customerId, NewTraining newTraining, Guid trainingId, CancellationToken token)
+    {
+        DateTime date = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.StartTime ?? throw new ArgumentNullException("StartTime is null"))).ToUniversalTime();
+        var training = new Training
+        {
+            TrainingId = trainingId,
+            DefaultId = null,
+            Name = newTraining.Name,
+            Date = date,
+            Duration = Convert.ToInt32((newTraining.EndTime ?? throw new ArgumentNullException("EndTime is null")).Subtract(newTraining.StartTime ?? throw new ArgumentNullException("StartTime is null")).TotalMinutes)
+        };
+        return await AddTrainingInternalAsync(customerId, training, token);
+    }
+
+    private async Task<bool> AddTrainingInternalAsync(Guid customerId, Training training, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         token = CancellationToken.None;
@@ -120,10 +133,9 @@ public class ScheduleService : IScheduleService
             Id = training.TrainingId ?? throw new NoNullAllowedException("TrainingId is still null while adding new training"),
             RoosterDefaultId = training.DefaultId,
             CustomerId = customerId,
-            Name= training.Name,
+            Name = training.Name,
             Date = training.Date,
-            StartTime = training.StartTime,
-            EndTime = training.EndTime,
+            Duration = training.Duration,
         });
         return (await _database.SaveChangesAsync()) > 0;
     }
@@ -152,20 +164,21 @@ public class ScheduleService : IScheduleService
     public async Task<ScheduleForAllResponse> ScheduleForAllAsync(Guid userId, Guid customerId, int relativeWeek, CancellationToken token)
     {
         var result = new ScheduleForAllResponse();
-        var d = DateTime.UtcNow.StartOfWeek(System.DayOfWeek.Monday).AddDays(relativeWeek * 7);
-        var startDate = DateOnly.FromDateTime(d);
-        var tillDate = DateOnly.FromDateTime(d.AddDays(6));
+        var startDate = DateTime.UtcNow.StartOfWeek(System.DayOfWeek.Monday).AddDays(relativeWeek * 7);
+        var tillDate = startDate.AddDays(7).AddMicroseconds(-1);
         var users = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
         var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId).ToList();
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
         var availables = _database.RoosterAvailables.Include(i => i.User).Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
 
-        var scheduleDate = startDate;
+        var scheduleDate = DateOnly.FromDateTime(startDate);
         do
         {
             var defaultsFound = new List<Guid?>();
             var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek);
-            var trainingsToday = trainings.Where(x => x.Date == scheduleDate).ToList();
+            var start = scheduleDate.ToDateTime(new TimeOnly(0, 0, 0, 0), DateTimeKind.Utc);
+            var end = scheduleDate.ToDateTime(new TimeOnly(23, 59, 59, 999), DateTimeKind.Utc);
+            var trainingsToday = trainings.Where(x => x.Date >= start && x.Date <= end).ToList();
             if (trainingsToday.Count > 0)
             {
                 foreach (var training in trainingsToday)
@@ -176,8 +189,7 @@ public class ScheduleService : IScheduleService
                         DefaultId = training.RoosterDefaultId,
                         TrainingId = training.Id,
                         Date = training.Date,
-                        StartTime = training.StartTime,
-                        EndTime = training.EndTime,
+                        Duration = training.Duration,
                         IsCreated = true,
                     };
                     foreach (var a in ava)
@@ -204,9 +216,8 @@ public class ScheduleService : IScheduleService
                     result.Planners.Add(new PlannedTraining
                     {
                         DefaultId = def.Id,
-                        Date = scheduleDate,
-                        StartTime = scheduleDate.ToDateTime(def.StartTime, DateTimeKind.Utc),
-                        EndTime = scheduleDate.ToDateTime(def.EndTime, DateTimeKind.Utc),
+                        Date = scheduleDate.ToDateTime(def.StartTime,DateTimeKind.Utc),
+                        Duration = def.Duration,
                         IsCreated = false
                     });
                 }
@@ -214,7 +225,7 @@ public class ScheduleService : IScheduleService
             token.ThrowIfCancellationRequested();
             scheduleDate = scheduleDate.AddDays(1);
 
-        } while (scheduleDate <= tillDate);
+        } while (scheduleDate <= DateOnly.FromDateTime(tillDate));
 
         return result;
     }
@@ -251,7 +262,7 @@ public class ScheduleService : IScheduleService
             _logger.LogWarning("userId is null {UserIsNull} or trainingId is null {TrainingIsNull} or functionId is null {FunctionId}", body.UserId == null, body.TrainingId == null, body.FunctionId == null);
             return;
         }
-        var user = await _database.Users.FirstOrDefaultAsync(x=>x.Id == userId && x.DeletedOn == null && x.CustomerId == customerId, cancellationToken: token);
+        var user = await _database.Users.FirstOrDefaultAsync(x => x.Id == userId && x.DeletedOn == null && x.CustomerId == customerId, cancellationToken: token);
         if (user == null)
         {
             _logger.LogWarning("No user with '{Id}' found", body.UserId);
@@ -295,7 +306,7 @@ public class ScheduleService : IScheduleService
         }
     }
 
-    public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateOnly fromDate, CancellationToken token)
+    public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime fromDate, CancellationToken token)
     {
         var result = new GetScheduledTrainingsForUserResponse();
         var scheduled = await _database.RoosterAvailables.Include(i => i.Training).Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Date >= fromDate).ToListAsync(cancellationToken: token);
@@ -312,8 +323,7 @@ public class ScheduleService : IScheduleService
                 TrainingId = schedul.TrainingId,
                 DefaultId = schedul.TrainingId,
                 Date = schedul.Date,
-                StartTime = schedul.Training.StartTime,
-                EndTime = schedul.Training.EndTime,
+                Duration = schedul.Training.Duration,
                 Availabilty = schedul.Available,
                 Assigned = schedul.Assigned,
             });

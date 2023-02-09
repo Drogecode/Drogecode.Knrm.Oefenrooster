@@ -11,9 +11,11 @@ public class PlannedTraining
 {
     public Guid? TrainingId { get; set; }
     public Guid? DefaultId { get; set; }
-    public DateOnly Date { get; set; }
-    public DateTime StartTime { get; set; }
-    public DateTime EndTime { get; set; }
+    public DateTime Date { get; set; }
+    /// <summary>
+    /// Time from start in minutes.
+    /// </summary>
+    public int Duration { get; set; }
     public List<PlanUser> PlanUsers { get; set; } = new List<PlanUser>();
     public bool Updated { get; set; }
     public bool IsCreated { get; set; }

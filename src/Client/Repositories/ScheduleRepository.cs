@@ -28,9 +28,9 @@ public class ScheduleRepository
 
         return result;
     }
-    public async Task<bool> AddTraining(Training training, CancellationToken token)
+    public async Task<bool> AddTraining(NewTraining newTraining, CancellationToken token)
     {
-        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/AddTraining", training, token);
+        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/AddTraining", newTraining, token);
         var result = await request.Content.ReadFromJsonAsync<bool>(cancellationToken: token);
 
         return result;
