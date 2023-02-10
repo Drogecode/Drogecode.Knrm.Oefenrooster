@@ -21,6 +21,7 @@
     [Inject] private IStringLocalizer<NavMenu> L { get; set; } = default!;
     [Inject] NavigationManager Navigation { get; set; } = default!;
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
+    [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
 
     private string _uriCalendar = "/planner/calendar";
     protected override void OnInitialized() => Navigation.LocationChanged += RefreshForSubMenu;
@@ -30,8 +31,8 @@
     }
     private void AddTraining()
     {
-
-        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-        _dialogProvider.Show<AddTrainingDialog>(L["Add training"], options);
+        var parameters = new DialogParameters { { "Global", Global } };
+        var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        _dialogProvider.Show<AddTrainingDialog>(L["Add training"], parameters, options);
     }
 }

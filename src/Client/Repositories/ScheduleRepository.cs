@@ -28,10 +28,10 @@ public class ScheduleRepository
 
         return result;
     }
-    public async Task<bool> AddTraining(NewTraining newTraining, CancellationToken token)
+    public async Task<Guid> AddTraining(NewTraining newTraining, CancellationToken token)
     {
         var request = await _httpClient.PostAsJsonAsync($"api/Schedule/AddTraining", newTraining, token);
-        var result = await request.Content.ReadFromJsonAsync<bool>(cancellationToken: token);
+        var result = await request.Content.ReadFromJsonAsync<Guid>(cancellationToken: token);
 
         return result;
     }

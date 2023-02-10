@@ -64,7 +64,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<bool>> AddTraining(NewTraining newTraining, CancellationToken token)
+    public async Task<ActionResult<Guid>> AddTraining(NewTraining newTraining, CancellationToken token)
     {
         try
         {
@@ -77,7 +77,7 @@ public class ScheduleController : ControllerBase
             else
                 await _auditService.Log(userId, AuditType.AddTraining, customerId, "Failed", trainingId, newTraining.Name);
 
-            return result;
+            return trainingId;
         }
         catch (Exception ex)
         {

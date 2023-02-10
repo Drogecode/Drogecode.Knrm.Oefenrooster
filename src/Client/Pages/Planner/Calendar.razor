@@ -15,15 +15,15 @@
 }
 @foreach (var trainingWeek in _calendarForUser)
 {
-    @if (_month != trainingWeek.First().Date.Month)
+    @if (_month != trainingWeek.Trainings.First().Date.Month)
     {
-        _month = trainingWeek.First().Date.Month;
+        _month = trainingWeek.Trainings.First().Date.Month;
         <MudText Typo="Typo.h3" Class="ml-2 mt-12">
-            @trainingWeek.First().Date.ToString(@trainingWeek.First().Date.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy",Thread.CurrentThread.CurrentCulture)
+            @trainingWeek.Trainings.First().Date.ToString(@trainingWeek.Trainings.First().Date.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy",Thread.CurrentThread.CurrentCulture)
         </MudText>
     }
     <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-        @foreach (var training in trainingWeek)
+        @foreach (var training in trainingWeek.Trainings)
         {
             <CalendarBlock Training="training" />
         }

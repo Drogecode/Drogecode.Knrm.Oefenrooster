@@ -44,14 +44,16 @@
                 </MudMenu>
                 <MudIconButton Icon="@(_isDarkMode ? Icons.Filled.DarkMode : Icons.Filled.LightMode)" Color="Color.Inherit" OnClick="@(()=>_isDarkMode = !_isDarkMode)" />
             </MudAppBar>
-            <MudDrawer @bind-Open="@_drawerOpen">
-                <NavMenu />
-            </MudDrawer>
-            <MudMainContent>
-                <Banner />
-                @Body
-                <UpdateChecker />
-            </MudMainContent>
+            <CascadingValue Value="_global">
+                <MudDrawer @bind-Open="@_drawerOpen">
+                    <NavMenu />
+                </MudDrawer>
+                <MudMainContent>
+                    <Banner />
+                    @Body
+                    <UpdateChecker />
+                </MudMainContent>
+            </CascadingValue>
         </Authorized>
         <Authorizing>
             <MudMainContent>
