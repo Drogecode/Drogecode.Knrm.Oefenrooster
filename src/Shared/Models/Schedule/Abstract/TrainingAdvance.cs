@@ -10,6 +10,7 @@ public class TrainingAdvance : TrainingBase
 {
     public Guid? TrainingId { get; set; }
     public Guid? DefaultId { get; set; }
+    public DateTime Date { get; set; }
     /// <summary>
     /// Time from start in minutes.
     /// </summary>

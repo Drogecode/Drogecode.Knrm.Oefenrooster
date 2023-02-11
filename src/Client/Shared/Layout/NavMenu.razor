@@ -32,7 +32,12 @@
     private void AddTraining()
     {
         var parameters = new DialogParameters { { "Global", Global } };
-        var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var options = new DialogOptions
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                DisableBackdropClick = true
+            };
         _dialogProvider.Show<AddTrainingDialog>(L["Add training"], parameters, options);
     }
 }
