@@ -44,11 +44,12 @@ public class ScheduleService : IScheduleService
                     {
                         DefaultId = training.RoosterDefaultId,
                         TrainingId = training.Id,
-                        Name= training.Name,
+                        Name = training.Name,
                         Date = training.Date,
                         Availabilty = ava?.Available,
                         Duration = training.Duration,
                         Assigned = ava?.Assigned ?? false,
+                        TrainingType = training.TrainingType,
                     });
                     if (training.RoosterDefaultId != null)
                         defaultsFound.Add(training.RoosterDefaultId);
@@ -64,6 +65,7 @@ public class ScheduleService : IScheduleService
                         Date = scheduleDate.ToDateTime(def.StartTime, DateTimeKind.Utc),
                         Duration = def.Duration,
                         Availabilty = Availabilty.None,
+                        TrainingType = TrainingType.Default,
                     });
                 }
             }
@@ -191,10 +193,11 @@ public class ScheduleService : IScheduleService
                     {
                         DefaultId = training.RoosterDefaultId,
                         TrainingId = training.Id,
-                        Name= training.Name,
+                        Name = training.Name,
                         Date = training.Date,
                         Duration = training.Duration,
                         IsCreated = true,
+                        TrainingType = training.TrainingType,
                     };
                     foreach (var a in ava)
                     {
@@ -222,7 +225,8 @@ public class ScheduleService : IScheduleService
                         DefaultId = def.Id,
                         Date = scheduleDate.ToDateTime(def.StartTime, DateTimeKind.Utc),
                         Duration = def.Duration,
-                        IsCreated = false
+                        IsCreated = false,
+                        TrainingType = TrainingType.Default
                     });
                 }
             }
@@ -313,7 +317,7 @@ public class ScheduleService : IScheduleService
     public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime fromDate, CancellationToken token)
     {
         var result = new GetScheduledTrainingsForUserResponse();
-        var scheduled = await _database.RoosterAvailables.Include(i => i.Training).Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Date >= fromDate).OrderBy(x=>x.Date).ToListAsync(cancellationToken: token);
+        var scheduled = await _database.RoosterAvailables.Include(i => i.Training).Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Date >= fromDate).OrderBy(x => x.Date).ToListAsync(cancellationToken: token);
         foreach (var schedul in scheduled)
         {
 
@@ -326,11 +330,12 @@ public class ScheduleService : IScheduleService
             {
                 TrainingId = schedul.TrainingId,
                 DefaultId = schedul.TrainingId,
-                Name= schedul.Training.Name,
+                Name = schedul.Training.Name,
                 Date = schedul.Date,
                 Duration = schedul.Training.Duration,
                 Availabilty = schedul.Available,
                 Assigned = schedul.Assigned,
+                TrainingType = schedul.Training.TrainingType,
             });
         }
         return result;

@@ -117,19 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Available" xml:space="preserve">
-    <value>Beschikbaar</value>
-  </data>
-  <data name="Availibility" xml:space="preserve">
-    <value>Beschikbaarheid</value>
-  </data>
-  <data name="Maybe" xml:space="preserve">
-    <value>Misschien</value>
-  </data>
-  <data name="NotAvailable" xml:space="preserve">
-    <value>Niet beschikbaar</value>
-  </data>
-  <data name="till" xml:space="preserve">
-    <value>t/m</value>
-  </data>
 </root>

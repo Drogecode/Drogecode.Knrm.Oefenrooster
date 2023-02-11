@@ -8,7 +8,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
 public sealed partial class CalendarBlock : IDisposable
 {
-    [Inject] private IStringLocalizer<CalendarBlock> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Parameter, EditorRequired] public Training Training { get; set; } = default!;
     private CancellationTokenSource _cls = new();

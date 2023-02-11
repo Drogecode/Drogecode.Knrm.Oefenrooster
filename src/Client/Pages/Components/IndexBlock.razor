@@ -3,17 +3,22 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 <MudPaper Width="200px" Elevation="0">
     <MudCard>
+        <MudCardHeader Class="@HeaderClass">
+            <CardHeaderContent>
+                @if (string.IsNullOrEmpty(Training.Name))
+                {
+                    <MudText Typo="Typo.h6">@Training.Date.ToString("dddd")</MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h6">@Training.Name</MudText>
+                }
+            </CardHeaderContent>
+        </MudCardHeader>
         <MudCardContent>
-            @if (string.IsNullOrEmpty(Training.Name))
-            {
-                <MudText Typo="Typo.h6" Color="ColorHeader">@Training.Date.ToString("dddd")</MudText>
-            }
-            else
-            {
-                <MudText Typo="Typo.h6" Color="ColorHeader">@Training.Name</MudText>
-            }
+            <MudText Color="@ColorAvailabilty" Typo="Typo.subtitle2">@LApp[Training?.Availabilty.ToString() ?? "None"]</MudText>
             <MudText Typo="Typo.subtitle2">@Training.Date.ToString(DateTime.Today.Year == Training.Date.Year ? "MMM dd" : "yyyy MMM dd")</MudText>
-            <MudText Typo="Typo.body2">@Training.Date.ToString("HH:mm") @L["till"] @Training.Date.AddMinutes(Training.Duration).ToString("HH:mm")</MudText>
+            <MudText Typo="Typo.body2">@Training.Date.ToString("HH:mm") @LApp["till"] @Training.Date.AddMinutes(Training.Duration).ToString("HH:mm")</MudText>
         </MudCardContent>
     </MudCard>
 </MudPaper>

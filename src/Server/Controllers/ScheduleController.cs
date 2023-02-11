@@ -132,7 +132,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in Patch");
+            _logger.LogError(ex, "Error in OtherScheduleUser");
             return BadRequest();
         }
     }
@@ -150,7 +150,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in Patch");
+            _logger.LogError(ex, "Error in GetScheduledTrainingsForUser");
             return BadRequest();
         }
     }

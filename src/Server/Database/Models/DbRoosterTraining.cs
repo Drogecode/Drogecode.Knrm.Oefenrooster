@@ -16,6 +16,7 @@ public class DbRoosterTraining
     /// Time from start in minutes.
     /// </summary>
     public int Duration { get; set; }
+    public TrainingType TrainingType { get; set; } = TrainingType.Default;
 
     public DbCustomers Customer { get; set; }
     public DbRoosterDefault? RoosterDefault { get; set; }

@@ -1,0 +1,7 @@
+﻿.DrogeCode-card-header-default {
+    background: var(--mud-palette-lines-inputs);
+}
+
+.DrogeCode-card-header-ehbo {
+    background: var(--mud-palette-warning-darken);
+}
