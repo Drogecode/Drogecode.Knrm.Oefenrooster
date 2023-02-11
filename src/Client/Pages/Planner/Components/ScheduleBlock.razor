@@ -4,7 +4,14 @@
 <MudPaper Width="200px" Elevation="0">
     <MudCard @onclick="OpenDialog">
         <MudCardContent Class='@(Planner.IsCreated ? "" : "bg-gray-400")'>
-            <MudText Typo="Typo.h6">@Planner.Date.ToString("dddd")</MudText>
+            @if (string.IsNullOrEmpty(Planner.Name))
+            {
+                <MudText Typo="Typo.h6">@Planner.Date.ToString("dddd")</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.h6">@Planner.Name</MudText>
+            }
             <MudText Typo="Typo.subtitle2">@Planner.Date.ToString(DateTime.Today.Year == Planner.Date.Year ? "MMM dd" : "yyyy MMM dd")</MudText>
             <MudText Typo="Typo.body2" >@Planner.Date.ToString("HH:mm") @L["till"] @Planner.Date.AddMinutes(Planner.Duration).ToString("HH:mm")</MudText>
             @if (Functions != null && Users != null)

@@ -44,6 +44,7 @@ public class ScheduleService : IScheduleService
                     {
                         DefaultId = training.RoosterDefaultId,
                         TrainingId = training.Id,
+                        Name= training.Name,
                         Date = training.Date,
                         Availabilty = ava?.Available,
                         Duration = training.Duration,
@@ -190,6 +191,7 @@ public class ScheduleService : IScheduleService
                     {
                         DefaultId = training.RoosterDefaultId,
                         TrainingId = training.Id,
+                        Name= training.Name,
                         Date = training.Date,
                         Duration = training.Duration,
                         IsCreated = true,
@@ -324,6 +326,7 @@ public class ScheduleService : IScheduleService
             {
                 TrainingId = schedul.TrainingId,
                 DefaultId = schedul.TrainingId,
+                Name= schedul.Training.Name,
                 Date = schedul.Date,
                 Duration = schedul.Training.Duration,
                 Availabilty = schedul.Available,
