@@ -54,39 +54,41 @@ public sealed partial class Calendar : IDisposable
     }
     private async Task HandleNewTraining(NewTraining newTraining, Guid newId)
     {
-        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(newTraining));
         if (newTraining.Date == null) return;
         var asTraining = new Training
         {
             TrainingId = newId,
-            Name= newTraining.Name,
+            Name = newTraining.Name,
             Date = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.StartTime ?? throw new ArgumentNullException("StartTime is null"))).ToUniversalTime(),
             Duration = Convert.ToInt32((newTraining.EndTime ?? throw new ArgumentNullException("EndTime is null")).Subtract(newTraining.StartTime ?? throw new ArgumentNullException("StartTime is null")).TotalMinutes)
         };
         var date = DateOnly.FromDateTime(newTraining.Date ?? throw new UnreachableException("newTraining.Date is null after null check"));
-        bool set = false;
         foreach (var week in _calendarForUser)
         {
-            Console.WriteLine($"{week.From} <= {date} && {week.Till} >= {date}");
-            Console.WriteLine($"week.From <= date && week.Till >= date {week.From <= date} {week.Till >= date}");
             if (week.From <= date && week.Till >= date)
             {
-                week.Trainings.AddLast(asTraining);
-                StateHasChanged();
-                //ToDo correct moment of week.
-                /*Training last;
-                foreach (var training in week.Trainings)
+                var node = week.Trainings.First;
+                LinkedListNode<Training>? last = null;
+                while (node != null)
                 {
-                    last = training;
-                    if (training.Date.CompareTo(newTraining.Date) >= 0)
-                        continue;
-                    week.Trainings.AddAfter(last, new Training { });
-
-                }*/
+                    if (node.Value.Date.CompareTo(newTraining.Date) >= 0)
+                    {
+                        Console.WriteLine($"Setting newNode {asTraining.Date} after {node.Value.Date}");
+                        week.Trainings.AddAfter(node, asTraining);
+                        StateHasChanged();
+                        return;
+                    }
+                    last = node;
+                    node = node.Next;
+                }
+                if (last != null)
+                {
+                    week.Trainings.AddAfter(last, asTraining);
+                    StateHasChanged();
+                }
                 return;
             }
         }
-        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(asTraining));
     }
 
     public void Dispose()
