@@ -13,5 +13,5 @@ public class NewTraining : TrainingBase
     public DateTime? Date { get; set; }
     public TimeSpan? StartTime { get; set; }
     public TimeSpan? EndTime { get; set; }
-    public override TrainingType TrainingType { get; set; } = TrainingType.EHBO;
+    public override TrainingType TrainingType { get; set; }
 }

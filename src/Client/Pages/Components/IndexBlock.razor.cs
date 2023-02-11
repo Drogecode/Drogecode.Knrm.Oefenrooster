@@ -48,6 +48,8 @@ public sealed partial class IndexBlock : IDisposable
             {
                 case TrainingType.EHBO:
                     return "DrogeCode-card-header-ehbo";
+                case TrainingType.OneOnOne:
+                    return "DrogeCode-card-header-one_on_one";
                 case TrainingType.Default:
                 default:
                     return "DrogeCode-card-header-default";

@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout.Components;
 
@@ -18,8 +19,8 @@ public sealed partial class AddTrainingDialog : IDisposable
     private DrogeUser _user = new();
     private NewTraining _training = new();
     private bool _success;
-    private string[] _errors = { };
-    private MudForm _form;
+    private string[] _errors = Array.Empty<string>();
+    [AllowNull] private MudForm _form;
 
     private async Task OnSubmit()
     {

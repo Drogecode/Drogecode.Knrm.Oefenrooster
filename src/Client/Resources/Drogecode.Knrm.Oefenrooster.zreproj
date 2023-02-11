@@ -20,6 +20,12 @@
     </description>
   </configuration>
   <fileGroups>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="758c443a-08cb-4496-9537-e0fddbd755a3">
+      <file filePath="Shared\Layout\Components\AddTrainingDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Shared\Layout\Components\AddTrainingDialog.en-US.resx" uniqueID="e04682b6-d89b-4c07-944c-63f059ff0565" />
+      <file filePath="Shared\Layout\Components\AddTrainingDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Shared\Layout\Components\AddTrainingDialog.nl-NL.resx" uniqueID="b26acd79-bb6d-4255-a74f-b12696b45b01" />
+      <remarks>
+      </remarks>
+    </fileGroup>
     <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="6dfd39aa-ceee-415f-9a51-e68f2d624cd8">
       <file filePath="App.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\App.en-US.resx" uniqueID="52653914-6e55-47c7-b3db-a302ba3568cd" />
       <file filePath="App.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\App.nl-NL.resx" uniqueID="2556f0e4-46d5-4f8c-83ba-7decfe7ad334" />

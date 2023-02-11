@@ -5,3 +5,7 @@
 .DrogeCode-card-header-ehbo {
     background: var(--mud-palette-warning-darken);
 }
+
+.DrogeCode-card-header-one_on_one {
+    background: var(--mud-palette-tertiary-darken);
+}

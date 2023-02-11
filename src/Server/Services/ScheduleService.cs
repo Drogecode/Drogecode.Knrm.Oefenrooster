@@ -122,6 +122,7 @@ public class ScheduleService : IScheduleService
         {
             TrainingId = trainingId,
             DefaultId = null,
+            TrainingType = newTraining.TrainingType,
             Name = newTraining.Name,
             Date = date,
             Duration = Convert.ToInt32((newTraining.EndTime ?? throw new ArgumentNullException("EndTime is null")).Subtract(newTraining.StartTime ?? throw new ArgumentNullException("StartTime is null")).TotalMinutes)
@@ -138,6 +139,7 @@ public class ScheduleService : IScheduleService
             Id = training.TrainingId ?? throw new NoNullAllowedException("TrainingId is still null while adding new training"),
             RoosterDefaultId = training.DefaultId,
             CustomerId = customerId,
+            TrainingType = training.TrainingType,
             Name = training.Name,
             Date = training.Date,
             Duration = training.Duration,
