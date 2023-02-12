@@ -6,9 +6,9 @@ using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
-public sealed partial class ScheduleBlock : IDisposable
+public sealed partial class ScheduleCard : IDisposable
 {
-    [Inject] private IStringLocalizer<ScheduleBlock> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<ScheduleCard> L { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private ISnackbar SnackbarService { get; set; } = default!;

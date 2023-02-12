@@ -6,31 +6,13 @@ using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
-public sealed partial class CalendarBlock : IDisposable
+public sealed partial class CalendarCard : IDisposable
 {
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Parameter, EditorRequired] public Training Training { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private bool _updating;
-    private Color ColorHeader
-    {
-        get
-        {
-            switch (Training.Availabilty)
-            {
-                case Availabilty.Available:
-                    return Color.Success;
-                case Availabilty.NotAvailable:
-                    return Color.Error;
-                case Availabilty.Maybe:
-                    return Color.Warning;
-                case Availabilty.None:
-                default:
-                    return Color.Inherit;
-            }
-        }
-    }
 
     protected override void OnParametersSet()
     {

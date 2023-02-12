@@ -25,7 +25,7 @@
     <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
         @foreach (var training in trainingWeek.Trainings)
         {
-            <CalendarBlock Training="training" />
+            <CalendarCard Training="training" />
         }
     </MudPaper>
 }

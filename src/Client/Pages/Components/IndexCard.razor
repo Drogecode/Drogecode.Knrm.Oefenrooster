@@ -1,0 +1,4 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Helpers
+<CalendarBaseCard Training="@Training">
+    <MudText Color="@PlannerHelper.ColorAvailabilty(Training.Availabilty)" Typo="Typo.subtitle2">@LApp[Training?.Availabilty.ToString() ?? "None"]</MudText>
+</CalendarBaseCard>
