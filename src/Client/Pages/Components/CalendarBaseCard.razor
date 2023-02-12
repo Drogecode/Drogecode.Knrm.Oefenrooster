@@ -21,7 +21,7 @@
                 }
             </CardHeaderActions>
         </MudCardHeader>
-        <MudCardContent>
+        <MudCardContent Class="@ContentClass">
             <MudText Typo="Typo.subtitle2">@Training.Date.ToString(DateTime.Today.Year == Training.Date.Year ? "MMM dd" : "yyyy MMM dd")</MudText>
             <MudText Typo="Typo.body2">@Training.Date.ToString("HH:mm") @LApp["till"] @Training.Date.AddMinutes(Training.Duration).ToString("HH:mm")</MudText>
             @if (ChildContent != null)

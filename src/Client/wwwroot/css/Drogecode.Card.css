@@ -1,11 +1,15 @@
 ﻿.DrogeCode-card-header-default {
-    background: var(--mud-palette-lines-inputs);
+    background-color: var(--mud-palette-lines-inputs);
 }
 
 .DrogeCode-card-header-ehbo {
-    background: var(--mud-palette-warning-darken);
+    background-color: var(--mud-palette-warning-darken);
 }
 
 .DrogeCode-card-header-one_on_one {
-    background: var(--mud-palette-tertiary-darken);
+    background-color: var(--mud-palette-tertiary-darken);
+}
+
+.DrogeCode-card-content-not-created {
+    background-color: var(--mud-palette-grey-default);
 }
