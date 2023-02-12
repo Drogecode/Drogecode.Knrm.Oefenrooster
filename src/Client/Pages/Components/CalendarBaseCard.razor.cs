@@ -13,6 +13,7 @@ public sealed partial class CalendarBaseCard : IDisposable
     [Parameter, EditorRequired] public TrainingAdvance Training { get; set; } = default!;
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public EventCallback OnClickCallback { get; set; }
+    [Parameter] public EventCallback OnClickSettings { get; set; }
     private CancellationTokenSource _cls = new();
 
     private string HeaderClass

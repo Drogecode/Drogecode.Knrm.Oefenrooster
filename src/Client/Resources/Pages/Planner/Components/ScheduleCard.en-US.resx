@@ -126,6 +126,9 @@
   <data name="Availibility" xml:space="preserve">
     <value>Availibility</value>
   </data>
+  <data name="Configure training" xml:space="preserve">
+    <value>Configure training</value>
+  </data>
   <data name="Maybe" xml:space="preserve">
     <value>Maybe</value>
   </data>

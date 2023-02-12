@@ -24,7 +24,7 @@ public sealed partial class ScheduleCard : IDisposable
         _refreshModel.RefreshRequested += RefreshMe;
     }
 
-    private void OpenDialog()
+    private void OpenScheduleDialog()
     {
         if (Planner.IsCreated)
         {
@@ -40,6 +40,15 @@ public sealed partial class ScheduleCard : IDisposable
         {
             SnackbarService.Add(L["Requires one person to set their availability"]);
         }
+    }
+
+    private void OpenConfigDialog()
+    {
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        _dialogProvider.Show<EditTrainingDialog>(L["Configure training"], new DialogParameters {
+            { "Planner", Planner },
+            { "Refresh", _refreshModel }
+            }, options);
     }
 
     private void RefreshMe()

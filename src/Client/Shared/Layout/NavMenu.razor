@@ -2,12 +2,12 @@
 <MudNavMenu>
     <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/" Match="NavLinkMatch.All">@L["Dashboard"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.CalendarMonth" Href="@_uriCalendar" Match="NavLinkMatch.Prefix">@L["Calendar"]</MudNavLink>
-    <MudNavLink Icon="@Icons.Material.Filled.EditCalendar" Href="/planner/schedule" Match="NavLinkMatch.Prefix">@L["Schedule"]</MudNavLink>
+    <MudNavLink Icon="@Icons.Material.Filled.EditCalendar" Href="@_uriSchedule" Match="NavLinkMatch.Prefix">@L["Schedule"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/configuration/global" Match="NavLinkMatch.Prefix">@L["Configuration"]</MudNavLink>
     <MudDivider />
     <MudNavLink Href="https://dorus1824.sharepoint.com/" Match="NavLinkMatch.All">@L["Sharepoint"]</MudNavLink>
     <MudDivider />
-    @if (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriCalendar.Substring(1)))
+    @if (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriCalendar.Substring(1)) || Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriSchedule.Substring(1)))
     {
         <MudList>
             <MudListItem OnClick="AddTraining" Avatar="@Icons.Material.Filled.Add" Class="cursor-pointer">
@@ -24,6 +24,7 @@
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
 
     private string _uriCalendar = "/planner/calendar";
+    private string _uriSchedule = "/planner/schedule";
     protected override void OnInitialized() => Navigation.LocationChanged += RefreshForSubMenu;
     private void RefreshForSubMenu(object sender, LocationChangedEventArgs e)
     {

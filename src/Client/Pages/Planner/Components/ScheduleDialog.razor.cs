@@ -12,7 +12,7 @@ public sealed partial class ScheduleDialog : IDisposable
     [Inject] private IStringLocalizer<ScheduleDialog> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public PlannedTraining Planner { get; set; } = default!;
     [Parameter] public List<DrogeUser>? Users { get; set; }
     [Parameter] public List<DrogeFunction>? Functions { get; set; }
