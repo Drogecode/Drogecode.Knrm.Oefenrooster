@@ -4,7 +4,10 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-<MudButton Variant="Variant.Filled" Class="ml-2 mt-2" OnClick="async ()=>{await AddWeekToSchadules(false);}">@LApp["Add week"]</MudButton>
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" Class="ml-2 mt-2">
+    <MudButton OnClick="async ()=>{await AddWeekToSchadules(false);}">@LApp["Add week"]</MudButton>
+    <MudButton OnClick="async ()=>{await AddMultipeWeekToSchadules(false, 4);}">@LApp["Add multiple week"]</MudButton>
+</MudButtonGroup>
 <br />
 @if (_scheduleForUser.Count == 0)
 {
@@ -28,8 +31,11 @@
             {
                 <ScheduleCard Planner="training" Users="_users" Functions="_functions" />
             }
-    </MudPaper>
+        </MudPaper>
     }
 }
 <br />
-<MudButton Variant="Variant.Filled" Class="ml-2 mb-2" OnClick="async ()=>{await AddWeekToSchadules(true);}">@LApp["Add week"]</MudButton>
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" Class="ml-2 mt-2">
+    <MudButton OnClick="async ()=>{await AddWeekToSchadules(true);}">@LApp["Add week"]</MudButton>
+    <MudButton OnClick="async ()=>{await AddMultipeWeekToSchadules(true, 4);}">@LApp["Add multiple week"]</MudButton>
+</MudButtonGroup>

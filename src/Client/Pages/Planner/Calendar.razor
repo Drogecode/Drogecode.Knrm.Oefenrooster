@@ -4,7 +4,10 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-<MudButton Variant="Variant.Filled" Class="ml-2 mt-2" OnClick="async ()=>{await AddWeekToCalendar(false);}">@LApp["Add week"]</MudButton>
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" Class="ml-2 mt-2">
+    <MudButton OnClick="async ()=>{await AddWeekToCalendar(false);}">@LApp["Add week"]</MudButton>
+    <MudButton OnClick="async ()=>{await AddMultipeWeekToCalendar(true, 4);}">@LApp["Add multiple week"]</MudButton>
+</MudButtonGroup>
 <br />
 @if (_calendarForUser.Count == 0)
 {
@@ -15,7 +18,7 @@
 }
 @foreach (var trainingWeek in _calendarForUser)
 {
-    @if (_month != trainingWeek.Trainings.First().DateStart.Month)
+    @if (trainingWeek.Trainings.Count > 0 && _month != trainingWeek.Trainings.First().DateStart.Month)
     {
         _month = trainingWeek.Trainings.First().DateStart.Month;
         <MudText Typo="Typo.h3" Class="ml-2 mt-12">
@@ -30,4 +33,7 @@
     </MudPaper>
 }
 <br />
-<MudButton Variant="Variant.Filled" Class="ml-2 mb-2" OnClick="async ()=>{await AddWeekToCalendar(true);}">@LApp["Add week"]</MudButton>
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" Class="ml-2 mt-2">
+    <MudButton OnClick="async ()=>{await AddWeekToCalendar(true);}">@LApp["Add week"]</MudButton>
+    <MudButton OnClick="async ()=>{await AddMultipeWeekToCalendar(true, 4);}">@LApp["Add multiple week"]</MudButton>
+</MudButtonGroup>

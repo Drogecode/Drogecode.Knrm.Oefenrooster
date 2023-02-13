@@ -55,6 +55,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
 
             // Rooster default
             modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.ValidFrom).IsRequired(); });
+            modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.ValidUntil).IsRequired(); });
             modelBuilder.Entity<DbRoosterDefault>().HasOne(p => p.Customer).WithMany(g => g.RoosterDefaults).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // Rooster training
@@ -94,6 +96,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     WeekDay = DayOfWeek.Monday,
                     TimeStart = new TimeOnly(19, 30),
                     TimeEnd = new TimeOnly(21, 30),
+                    ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -105,6 +109,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     WeekDay = DayOfWeek.Tuesday,
                     TimeStart = new TimeOnly(19, 30),
                     TimeEnd = new TimeOnly(21, 30),
+                    ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -116,6 +122,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     WeekDay = DayOfWeek.Wednesday,
                     TimeStart = new TimeOnly(19, 30),
                     TimeEnd = new TimeOnly(21, 30),
+                    ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -127,6 +135,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     WeekDay = DayOfWeek.Thursday,
                     TimeStart = new TimeOnly(19, 30),
                     TimeEnd = new TimeOnly(21, 30),
+                    ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -138,6 +148,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     WeekDay = DayOfWeek.Saturday,
                     TimeStart = new TimeOnly(10, 00),
                     TimeEnd = new TimeOnly(13, 00),
+                    ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -149,6 +161,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     WeekDay = DayOfWeek.Saturday,
                     TimeStart = new TimeOnly(13, 00),
                     TimeEnd = new TimeOnly(16, 00),
+                    ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -160,6 +174,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     WeekDay = (short)DayOfWeek.Sunday,
                     TimeStart = new TimeOnly(10, 00),
                     TimeEnd = new TimeOnly(13, 00),
+                    ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -171,6 +187,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     WeekDay = (short)DayOfWeek.Sunday,
                     TimeStart = new TimeOnly(13, 00),
                     TimeEnd = new TimeOnly(16, 00),
+                    ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
                 });
             });
         }

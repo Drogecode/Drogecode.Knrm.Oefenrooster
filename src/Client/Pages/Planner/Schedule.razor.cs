@@ -20,6 +20,7 @@ public sealed partial class Schedule : IDisposable
     private int? _month;
     private int _high = -1;
     private int _low = -2;
+    private bool _updating;
 
     protected override async Task OnInitializedAsync()
     {
@@ -31,8 +32,18 @@ public sealed partial class Schedule : IDisposable
         _functions = await _functionRepository.GetAllFunctionsAsync();
     }
 
+    private async Task AddMultipeWeekToSchadules(bool high, int count)
+    {
+        for (int i = -1; i < count; i++)
+        {
+            await AddWeekToSchadules(high);
+        }
+    }
+
     private async Task AddWeekToSchadules(bool high)
     {
+        if (_updating) return;
+        _updating = true;
         List<PlannedTraining>? scheduleForUser = null;
         var PlannersInWeek = (await _scheduleRepository.ScheduleForAll(high ? _high : _low, _cls.Token))?.Planners;
         if (PlannersInWeek != null)
@@ -53,6 +64,7 @@ public sealed partial class Schedule : IDisposable
                 _scheduleForUser.AddFirst(scheduleForUser);
             _low--;
         }
+        _updating = false;
         StateHasChanged();
     }
 

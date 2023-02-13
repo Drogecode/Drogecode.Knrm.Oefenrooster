@@ -22,7 +22,7 @@ public class ScheduleService : IScheduleService
         var result = new ScheduleForUserResponse();
         var startDate = DateTime.UtcNow.StartOfWeek(System.DayOfWeek.Monday).AddDays(relativeWeek * 7);
         var tillDate = startDate.AddDays(7).AddMicroseconds(-1);
-        var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId);
+        var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= startDate && x.ValidUntil >= startDate);
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate);
         var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate).ToList();
 
@@ -175,7 +175,7 @@ public class ScheduleService : IScheduleService
         var startDate = DateTime.UtcNow.StartOfWeek(System.DayOfWeek.Monday).AddDays(relativeWeek * 7);
         var tillDate = startDate.AddDays(7).AddMicroseconds(-1);
         var users = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
-        var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId).ToList();
+        var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= startDate && x.ValidUntil >= startDate);
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).ToList();
         var availables = _database.RoosterAvailables.Include(i => i.User).Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
 

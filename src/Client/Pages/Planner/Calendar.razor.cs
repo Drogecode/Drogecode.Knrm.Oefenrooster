@@ -17,6 +17,7 @@ public sealed partial class Calendar : IDisposable
     private int? _month;
     private int _high = -1;
     private int _low = -2;
+    private bool _updating;
 
     protected override async Task OnInitializedAsync()
     {
@@ -27,11 +28,21 @@ public sealed partial class Calendar : IDisposable
         }
     }
 
+    private async Task AddMultipeWeekToCalendar(bool high, int count)
+    {
+        for (int i = -1; i < count; i++)
+        {
+            await AddWeekToCalendar(high);
+        }
+    }
+
     private async Task AddWeekToCalendar(bool high)
     {
+        if (_updating) return;
+        _updating = true;
         TrainingWeek scheduleForUser = new();
         var trainingsInWeek = (await _scheduleRepository.CalendarForUser(high ? _high : _low, _cls.Token))?.Trainings;
-        if (trainingsInWeek != null)
+        if (trainingsInWeek != null && trainingsInWeek.Count > 0)
         {
             scheduleForUser.From = DateOnly.FromDateTime(trainingsInWeek[0].DateStart);
             foreach (var training in trainingsInWeek)
@@ -50,6 +61,7 @@ public sealed partial class Calendar : IDisposable
             _calendarForUser.AddFirst(scheduleForUser);
             _low--;
         }
+        _updating= false;
         StateHasChanged();
     }
     private async Task HandleNewTraining(NewTraining newTraining, Guid newId)

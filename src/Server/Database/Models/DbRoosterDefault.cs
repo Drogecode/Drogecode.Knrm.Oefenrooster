@@ -12,6 +12,8 @@ public class DbRoosterDefault
     public DayOfWeek WeekDay { get; set; }
     public TimeOnly TimeStart { get; set; }
     public TimeOnly TimeEnd { get; set; }
+    public DateTime ValidFrom { get; set; }
+    public DateTime ValidUntil { get; set; }
 
     public DbCustomers Customer { get; set; }
     public ICollection<DbRoosterTraining>? RoosterTrainings { get; set; }
