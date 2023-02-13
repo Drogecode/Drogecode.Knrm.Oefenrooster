@@ -25,7 +25,7 @@ public sealed partial class AddTrainingDialog : IDisposable
     private async Task OnSubmit()
     {
         if (!_form.IsValid) return;
-        if (_training.StartTime >= _training.EndTime) return;
+        if (_training.TimeStart >= _training.TimeEnd) return;
         var newId = await _scheduleRepository.AddTraining(_training, _cls.Token);
         await Global.CallNewTrainingAddedAsync(_training, newId);
         MudDialog.Close(DialogResult.Ok(true));

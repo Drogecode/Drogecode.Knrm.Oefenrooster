@@ -10,11 +10,8 @@ public class DbRoosterDefault
     public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
     public DayOfWeek WeekDay { get; set; }
-    public TimeOnly StartTime { get; set; }
-    /// <summary>
-    /// Time from start in minutes.
-    /// </summary>
-    public int Duration { get; set; }
+    public TimeOnly TimeStart { get; set; }
+    public TimeOnly TimeEnd { get; set; }
 
     public DbCustomers Customer { get; set; }
     public ICollection<DbRoosterTraining>? RoosterTrainings { get; set; }

@@ -33,11 +33,11 @@ public sealed partial class Calendar : IDisposable
         var trainingsInWeek = (await _scheduleRepository.CalendarForUser(high ? _high : _low, _cls.Token))?.Trainings;
         if (trainingsInWeek != null)
         {
-            scheduleForUser.From = DateOnly.FromDateTime(trainingsInWeek[0].Date);
+            scheduleForUser.From = DateOnly.FromDateTime(trainingsInWeek[0].DateStart);
             foreach (var training in trainingsInWeek)
             {
                 scheduleForUser.Trainings.AddLast(training);
-                scheduleForUser.Till = DateOnly.FromDateTime(training.Date);
+                scheduleForUser.Till = DateOnly.FromDateTime(training.DateStart);
             }
         }
         if (high)
@@ -59,8 +59,8 @@ public sealed partial class Calendar : IDisposable
         {
             TrainingId = newId,
             Name = newTraining.Name,
-            Date = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.StartTime ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Utc),
-            Duration = Convert.ToInt32((newTraining.EndTime ?? throw new ArgumentNullException("EndTime is null")).Subtract(newTraining.StartTime ?? throw new ArgumentNullException("StartTime is null")).TotalMinutes)
+            DateStart = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Utc),
+            DateEnd = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Utc),
         };
         var date = DateOnly.FromDateTime(newTraining.Date ?? throw new UnreachableException("newTraining.Date is null after null check"));
         foreach (var week in _calendarForUser)
@@ -71,9 +71,8 @@ public sealed partial class Calendar : IDisposable
                 LinkedListNode<Training>? last = null;
                 while (node != null)
                 {
-                    if (node.Value.Date.CompareTo(newTraining.Date) >= 0)
+                    if (node.Value.DateStart.CompareTo(newTraining.Date) >= 0)
                     {
-                        Console.WriteLine($"Setting newNode {asTraining.Date} after {node.Value.Date}");
                         week.Trainings.AddAfter(node, asTraining);
                         StateHasChanged();
                         return;

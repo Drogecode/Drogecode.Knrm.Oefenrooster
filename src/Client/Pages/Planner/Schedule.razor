@@ -17,10 +17,10 @@
 {
     @if (plannesInWeek != null && plannesInWeek.Count > 0)
     {
-        @if (_month != plannesInWeek.First().Date.Month)
+        @if (_month != plannesInWeek.First().DateStart.Month)
         {
-            _month = plannesInWeek.First().Date.Month;
-            <MudText Typo="Typo.h3" Class="ml-2 mt-12">@plannesInWeek.First().Date.ToString(plannesInWeek.First().Date.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy",Thread.CurrentThread.CurrentCulture)</MudText>
+            _month = plannesInWeek.First().DateStart.Month;
+            <MudText Typo="Typo.h3" Class="ml-2 mt-12">@plannesInWeek.First().DateStart.ToString(plannesInWeek.First().DateStart.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy",Thread.CurrentThread.CurrentCulture)</MudText>
         }
 
         <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">

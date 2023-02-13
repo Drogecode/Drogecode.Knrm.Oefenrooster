@@ -11,7 +11,7 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 public class NewTraining : TrainingBase
 {
     public DateTime? Date { get; set; }
-    public TimeSpan? StartTime { get; set; }
-    public TimeSpan? EndTime { get; set; }
+    public TimeSpan? TimeStart { get; set; }
+    public TimeSpan? TimeEnd { get; set; }
     public override TrainingType TrainingType { get; set; }
 }

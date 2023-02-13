@@ -23,7 +23,7 @@ public class ScheduleService : IScheduleService
         var startDate = DateTime.UtcNow.StartOfWeek(System.DayOfWeek.Monday).AddDays(relativeWeek * 7);
         var tillDate = startDate.AddDays(7).AddMicroseconds(-1);
         var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId);
-        var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate);
+        var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate);
         var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate).ToList();
 
         var scheduleDate = DateOnly.FromDateTime(startDate);
@@ -34,7 +34,7 @@ public class ScheduleService : IScheduleService
             var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek);
             var start = scheduleDate.ToDateTime(new TimeOnly(0, 0, 0, 0), DateTimeKind.Utc);
             var end = scheduleDate.ToDateTime(new TimeOnly(23, 59, 59, 999), DateTimeKind.Utc);
-            var trainingsToday = trainings.Where(x => x.Date >= start && x.Date <= end);
+            var trainingsToday = trainings.Where(x => x.DateStart >= start && x.DateStart <= end);
             if (trainingsToday != null)
             {
                 foreach (var training in trainingsToday)
@@ -45,9 +45,9 @@ public class ScheduleService : IScheduleService
                         DefaultId = training.RoosterDefaultId,
                         TrainingId = training.Id,
                         Name = training.Name,
-                        Date = training.Date,
+                        DateStart = training.DateStart,
+                        DateEnd = training.DateEnd,
                         Availabilty = ava?.Available,
-                        Duration = training.Duration,
                         Assigned = ava?.Assigned ?? false,
                         TrainingType = training.TrainingType,
                     });
@@ -62,8 +62,8 @@ public class ScheduleService : IScheduleService
                     result.Trainings.Add(new Training
                     {
                         DefaultId = def.Id,
-                        Date = scheduleDate.ToDateTime(def.StartTime, DateTimeKind.Utc),
-                        Duration = def.Duration,
+                        DateStart = scheduleDate.ToDateTime(def.TimeStart, DateTimeKind.Utc),
+                        DateEnd = scheduleDate.ToDateTime(def.TimeEnd, DateTimeKind.Utc),
                         Availabilty = Availabilty.None,
                         TrainingType = TrainingType.Default,
                     });
@@ -83,7 +83,7 @@ public class ScheduleService : IScheduleService
         DbRoosterTraining? dbTraining = null;
         if (training.TrainingId == null || training.TrainingId == Guid.Empty)
         {
-            dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.RoosterDefaultId == training.DefaultId && x.Date == training.Date && x.Duration == training.Duration);
+            dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.RoosterDefaultId == training.DefaultId && x.DateStart == training.DateStart && x.DateEnd == training.DateEnd);
             if (dbTraining == null)
             {
                 training.TrainingId = Guid.NewGuid();
@@ -101,7 +101,7 @@ public class ScheduleService : IScheduleService
             dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == training.TrainingId);
             if (dbTraining == null)
             {
-                _logger.LogWarning("Two tries to add training {date} for user {userId} from customer {customerId} failed", training.Date, userId, customerId);
+                _logger.LogWarning("Two tries to add training {date} for user {userId} from customer {customerId} failed", training.DateStart, userId, customerId);
                 return training;
             }
         }
@@ -117,15 +117,16 @@ public class ScheduleService : IScheduleService
 
     public async Task<bool> AddTrainingAsync(Guid customerId, NewTraining newTraining, Guid trainingId, CancellationToken token)
     {
-        DateTime date = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.StartTime ?? throw new ArgumentNullException("StartTime is null"))).ToUniversalTime();
+        DateTime dateStart = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("StartTime is null"))).ToUniversalTime();
+        DateTime dateEnd = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null"))).ToUniversalTime();
         var training = new Training
         {
             TrainingId = trainingId,
             DefaultId = null,
             TrainingType = newTraining.TrainingType,
             Name = newTraining.Name,
-            Date = date,
-            Duration = Convert.ToInt32((newTraining.EndTime ?? throw new ArgumentNullException("EndTime is null")).Subtract(newTraining.StartTime ?? throw new ArgumentNullException("StartTime is null")).TotalMinutes)
+            DateStart = dateStart,
+            DateEnd = dateEnd,
         };
         return await AddTrainingInternalAsync(customerId, training, token);
     }
@@ -141,8 +142,8 @@ public class ScheduleService : IScheduleService
             CustomerId = customerId,
             TrainingType = training.TrainingType,
             Name = training.Name,
-            Date = training.Date,
-            Duration = training.Duration,
+            DateStart = training.DateStart,
+            DateEnd = training.DateEnd,
         });
         return (await _database.SaveChangesAsync()) > 0;
     }
@@ -155,7 +156,7 @@ public class ScheduleService : IScheduleService
             UserId = userId,
             CustomerId = customerId,
             TrainingId = training.TrainingId ?? throw new NoNullAllowedException("TrainingId is still null while adding available"),
-            Date = training.Date,
+            Date = training.DateStart,
             Available = training.Availabilty
         });
         return (await _database.SaveChangesAsync()) > 0;
@@ -175,7 +176,7 @@ public class ScheduleService : IScheduleService
         var tillDate = startDate.AddDays(7).AddMicroseconds(-1);
         var users = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
         var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId).ToList();
-        var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
+        var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).ToList();
         var availables = _database.RoosterAvailables.Include(i => i.User).Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
 
         var scheduleDate = DateOnly.FromDateTime(startDate);
@@ -185,7 +186,7 @@ public class ScheduleService : IScheduleService
             var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek);
             var start = scheduleDate.ToDateTime(new TimeOnly(0, 0, 0, 0), DateTimeKind.Utc);
             var end = scheduleDate.ToDateTime(new TimeOnly(23, 59, 59, 999), DateTimeKind.Utc);
-            var trainingsToday = trainings.Where(x => x.Date >= start && x.Date <= end).ToList();
+            var trainingsToday = trainings.Where(x => x.DateStart >= start && x.DateStart <= end).ToList();
             if (trainingsToday.Count > 0)
             {
                 foreach (var training in trainingsToday)
@@ -196,8 +197,8 @@ public class ScheduleService : IScheduleService
                         DefaultId = training.RoosterDefaultId,
                         TrainingId = training.Id,
                         Name = training.Name,
-                        Date = training.Date,
-                        Duration = training.Duration,
+                        DateStart = training.DateStart,
+                        DateEnd = training.DateEnd,
                         IsCreated = true,
                         TrainingType = training.TrainingType,
                     };
@@ -225,8 +226,8 @@ public class ScheduleService : IScheduleService
                     result.Planners.Add(new PlannedTraining
                     {
                         DefaultId = def.Id,
-                        Date = scheduleDate.ToDateTime(def.StartTime, DateTimeKind.Utc),
-                        Duration = def.Duration,
+                        DateStart = scheduleDate.ToDateTime(def.TimeStart, DateTimeKind.Utc),
+                        DateEnd = scheduleDate.ToDateTime(def.TimeEnd, DateTimeKind.Utc),
                         IsCreated = false,
                         TrainingType = TrainingType.Default
                     });
@@ -296,7 +297,7 @@ public class ScheduleService : IScheduleService
                     CustomerId = customerId,
                     TrainingId = body.TrainingId ?? Guid.Empty,
                     UserFunctionId = body.FunctionId,
-                    Date = training.Date,
+                    Date = training.DateStart,
                     Available = Availabilty.None,
                     Assigned = body.Assigned,
                 };
@@ -333,8 +334,8 @@ public class ScheduleService : IScheduleService
                 TrainingId = schedul.TrainingId,
                 DefaultId = schedul.TrainingId,
                 Name = schedul.Training.Name,
-                Date = schedul.Date,
-                Duration = schedul.Training.Duration,
+                DateStart = schedul.Training.DateStart,
+                DateEnd = schedul.Training.DateEnd,
                 Availabilty = schedul.Available,
                 Assigned = schedul.Assigned,
                 TrainingType = schedul.Training.TrainingType,
