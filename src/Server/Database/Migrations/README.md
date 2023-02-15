@@ -4,3 +4,11 @@
 2. cd .\src\Server
 3. dotnet ef migrations add initial -o Database/Migrations --project ./Drogecode.Knrm.Oefenrooster.Server.csproj
 4. dotnet ef database update --project ./Drogecode.Knrm.Oefenrooster.Server.csproj
+
+# Revert
+
+1. dotnet ef database update "20230213201351_v0.0.26"
+
+# Update tools:
+
+1. dotnet tool update --global dotnet-ef --version 7.0.3

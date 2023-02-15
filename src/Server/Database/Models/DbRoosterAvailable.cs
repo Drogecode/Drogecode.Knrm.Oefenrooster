@@ -14,6 +14,7 @@ public class DbRoosterAvailable
     public Guid CustomerId { get; set; }
     public Guid TrainingId { get; set; }
     public Guid? UserFunctionId { get; set; }
+    public Guid? VehicleId { get; set; }
     public DateTime Date { get; set; }
     public Availabilty? Available { get; set; }
     public bool Assigned { get; set; }
@@ -22,4 +23,5 @@ public class DbRoosterAvailable
     public DbUsers? User { get; set; }
     public DbUserFunctions? UserFunction { get; set; }
     public DbRoosterTraining Training { get; set; }
+    public DbVehicles Vehicle { get; set; }
 }

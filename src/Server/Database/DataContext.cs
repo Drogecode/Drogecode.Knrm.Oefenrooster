@@ -14,6 +14,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbRoosterDefault> RoosterDefaults { get; set; }
         public DbSet<DbRoosterTraining> RoosterTrainings { get; set; }
         public DbSet<DbRoosterAvailable> RoosterAvailables { get; set; }
+        public DbSet<DbVehicles> Vehicles { get; set; }
+
+        public DbSet<DbLinkVehicleTraining> LinkVehicleTraining { get; set; }
 
 
         public DataContext(DbContextOptions<DataContext> context) : base(context)
@@ -52,6 +55,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.Customer).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.User).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.UserId).IsRequired();
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.UserFunction).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.UserFunctionId);
+            modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.Vehicle).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.VehicleId).IsRequired();
 
             // Rooster default
             modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.Id).IsRequired(); });
@@ -64,11 +68,19 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.Customer).WithMany(g => g.RoosterTraining).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.RoosterDefault).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.RoosterDefaultId);
 
+            // Vehicles
+            modelBuilder.Entity<DbVehicles>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbVehicles>().HasOne(p => p.Customer).WithMany(g => g.Vehicles).HasForeignKey(s => s.CustomerId).IsRequired();
+
+            //// Links
+            // Vehicles <--> Rooster available
+            modelBuilder.Entity<DbLinkVehicleTraining>(e => { e.Property(e => e.Id).IsRequired(); });
+
             // Required data
             SetCustomer(modelBuilder);
             SetDefaultRooster(modelBuilder);
             SetUserFunctions(modelBuilder);
-
+            SetVehicles(modelBuilder);
         }
 
         #region Default data
@@ -248,14 +260,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
-                Id = new Guid("44288807-9e8a-48c5-8579-05d9f0f15f34"),
-                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                Name = "Wal",
-                Order = 170,
-                TrainingOnly = true
-            }));
-            modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
-            {
                 Id = new Guid("95427da1-e4d5-442e-962a-b04ab861a2c2"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Waarnemer",
@@ -268,6 +272,42 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Extra",
                 Order = 300
+            }));
+        }
+
+        private void SetVehicles(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DbVehicles>(e => e.HasData(new DbVehicles
+            {
+                Id = new Guid("4589535c-9064-4448-bc01-3b5a00e9410d"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "Nikolaas Wijsenbeek",
+                Short = "NWI",
+                Active = true
+            }));
+            modelBuilder.Entity<DbVehicles>(e => e.HasData(new DbVehicles
+            {
+                Id = new Guid("c759950b-8264-4521-9a6e-ff98ad358cc1"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "De Huizer",
+                Short = "HZR",
+                Active = true
+            }));
+            modelBuilder.Entity<DbVehicles>(e => e.HasData(new DbVehicles
+            {
+                Id = new Guid("5777102a-3c9e-438e-a11f-fafb5f9649b6"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "HZN018",
+                Short = "Vlet",
+                Active = true
+            }));
+            modelBuilder.Entity<DbVehicles>(e => e.HasData(new DbVehicles
+            {
+                Id = new Guid("f30d1856-2d26-441e-ae6d-935bb26c4852"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "Wal",
+                Short = "Wal",
+                Active = true
             }));
         }
         #endregion

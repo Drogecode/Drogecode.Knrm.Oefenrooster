@@ -1,7 +1,9 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Database.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 
+[Table("Audit")]
 public class DbAudit
 {
     public Guid Id { get; set; }

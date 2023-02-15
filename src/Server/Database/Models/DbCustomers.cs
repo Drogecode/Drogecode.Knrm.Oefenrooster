@@ -16,4 +16,5 @@ public class DbCustomers
     public ICollection<DbRoosterDefault>? RoosterDefaults { get; set; }
     public ICollection<DbRoosterTraining>? RoosterTraining { get; set; }
     public ICollection<DbAudit>? Audits { get; set; }
+    public ICollection<DbVehicles>? Vehicles { get; set; }
 }
