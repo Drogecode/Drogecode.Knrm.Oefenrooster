@@ -25,6 +25,7 @@ builder.Services.AddScoped<ConfigurationRepository>();
 builder.Services.AddScoped<FunctionRepository>();
 builder.Services.AddScoped<ScheduleRepository>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<VehicleRepository>();
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Drogecode.Knrm.Oefenrooster.ServerAPI"));

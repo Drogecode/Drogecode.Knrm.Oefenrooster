@@ -12,11 +12,13 @@ public sealed partial class Schedule : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
+    [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
     private LinkedList<List<PlannedTraining>> _scheduleForUser = new();
     private CancellationTokenSource _cls = new();
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
+    private List<DrogeVehicle>? _vehicles;
     private int? _month;
     private int _high = -1;
     private int _low = -2;
@@ -30,6 +32,7 @@ public sealed partial class Schedule : IDisposable
         }
         _users = await _userRepository.GetAllUsersAsync();
         _functions = await _functionRepository.GetAllFunctionsAsync();
+        _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
     }
 
     private async Task AddMultipeWeekToSchadules(bool high, int count)

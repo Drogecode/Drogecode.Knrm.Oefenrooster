@@ -282,32 +282,36 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = new Guid("4589535c-9064-4448-bc01-3b5a00e9410d"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Nikolaas Wijsenbeek",
-                Short = "NWI",
-                Active = true
+                Code = "NWI",
+                Active = true,
+                Order = 10,
             }));
             modelBuilder.Entity<DbVehicles>(e => e.HasData(new DbVehicles
             {
                 Id = new Guid("c759950b-8264-4521-9a6e-ff98ad358cc1"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "De Huizer",
-                Short = "HZR",
-                Active = true
+                Code = "HZR",
+                Active = true,
+                Order = 20,
             }));
             modelBuilder.Entity<DbVehicles>(e => e.HasData(new DbVehicles
             {
                 Id = new Guid("5777102a-3c9e-438e-a11f-fafb5f9649b6"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                Name = "HZN018",
-                Short = "Vlet",
-                Active = true
+                Name = "Vlet",
+                Code = "HZN018",
+                Active = true,
+                Order= 30,
             }));
             modelBuilder.Entity<DbVehicles>(e => e.HasData(new DbVehicles
             {
                 Id = new Guid("f30d1856-2d26-441e-ae6d-935bb26c4852"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Wal",
-                Short = "Wal",
-                Active = true
+                Code = "Wal",
+                Active = true,
+                Order = 100,
             }));
         }
         #endregion
