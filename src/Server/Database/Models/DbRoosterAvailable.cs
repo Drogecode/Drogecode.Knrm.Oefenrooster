@@ -23,5 +23,5 @@ public class DbRoosterAvailable
     public DbUsers? User { get; set; }
     public DbUserFunctions? UserFunction { get; set; }
     public DbRoosterTraining Training { get; set; }
-    public DbVehicles Vehicle { get; set; }
+    public DbVehicles? Vehicle { get; set; }
 }
