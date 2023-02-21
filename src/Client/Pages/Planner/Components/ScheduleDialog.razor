@@ -14,30 +14,30 @@
                         @foreach (var user in Planner.PlanUsers.Where(x => (x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available || x.Assigned) && x.PlannedFunctionId == function.Id))
                         {
                             /* Available user from this function */
-                            <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user, function.Id)" Label="@user.Name" Color="GetColor(user.Availabilty)" Tag="user" Checked="user.Assigned" /> <br />
+                            <MudSwitch T="bool" CheckedChanged="(e)=> CheckChanged(e, user, function.Id)" Label="@user.Name" Color="GetColor(user.Availabilty)" Tag="user" Checked="user.Assigned" /> <br />
                         }
                         <MudExpansionPanel Text="@L["Other users"]">
                             @foreach (var user in Planner.PlanUsers.Where(x => x.Availabilty != Oefenrooster.Shared.Enums.Availabilty.Available && !x.Assigned && x.PlannedFunctionId == function.Id).OrderBy(o => o.Availabilty))
                             {
                                 /* Not available user from this function */
-                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user, function.Id)" Label="@user.Name" Color="GetColor(user.Availabilty)" Tag="user" Checked="user.Assigned" /> @LApp[@user.Availabilty.ToString() ?? ""] <br />
+                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChanged(e, user, function.Id)" Label="@user.Name" Color="GetColor(user.Availabilty)" Tag="user" Checked="user.Assigned" /> @LApp[@user.Availabilty.ToString() ?? ""] <br />
                             }
                             @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
                             {
                                 /* Users who have not set an availability from this function */
                                 @if (Planner.PlanUsers.Any(x => x.UserId == user.Id)) continue;
-                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user, function.Id)" Label="@user.Name" Tag="user" /> <br />
+                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChanged(e, user, function.Id)" Label="@user.Name" Tag="@user" /> <br />
                             }
                             @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.PlannedFunctionId != function.Id).OrderBy(o => o.Availabilty))
                             {
                                 /* Users from a differetn function who have set there availability. */
-                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user, function.Id)" Label="@user.Name" Color="GetColor(user.Availabilty)" Tag="user" Checked="user.Assigned" />  @LApp[@user.Availabilty.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")") <br />
+                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChanged(e, user, function.Id)" Label="@user.Name" Color="GetColor(user.Availabilty)" Tag="user" Checked="user.Assigned" />  @LApp[@user.Availabilty.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")") <br />
                             }
                             @foreach (var user in Users.Where(x => x.UserFunctionId != function.Id))
                             {
                                 /* Users who have not set an availability from a different function */
                                 @if (Planner.PlanUsers.Any(x => x.UserId == user.Id)) continue;
-                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChangeddd(e, user, function.Id)" Label="@user.Name" Color="Color.Dark" Tag="user" /> @("(") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")") <br />
+                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChanged(e, user, function.Id)" Label="@user.Name" Color="Color.Dark" Tag="user" /> @("(") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")") <br />
                             }
                         </MudExpansionPanel>
                     }

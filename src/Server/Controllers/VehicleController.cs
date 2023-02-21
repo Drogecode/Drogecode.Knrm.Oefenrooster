@@ -30,11 +30,28 @@ public class VehicleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _vehicleService.GetAllVehicles(customerId);
 
-            return result;
+            return Ok(result);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in GetAll");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<DrogeLinkVehicleTraining>>> GetForTraining(Guid trainingId)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var result = await _vehicleService.GetForTraining(customerId, trainingId);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetForTraining");
             return BadRequest();
         }
     }

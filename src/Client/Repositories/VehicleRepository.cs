@@ -14,4 +14,11 @@ public class VehicleRepository
         var dbVehicle = await _httpClient.GetFromJsonAsync<List<DrogeVehicle>>("api/Vehicle/GetAll");
         return dbVehicle;
     }
+
+    public async Task<List<DrogeLinkVehicleTraining>?> GetForTrainingAsync(Guid trainingId)
+    {
+
+        var dbVehicle = await _httpClient.GetFromJsonAsync<List<DrogeLinkVehicleTraining>>($"api/Vehicle/GetForTraining?trainingId={trainingId}");
+        return dbVehicle;
+    }
 }

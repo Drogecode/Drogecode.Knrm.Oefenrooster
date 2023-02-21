@@ -22,7 +22,7 @@ public sealed partial class ScheduleDialog : IDisposable
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
 
-    private async Task CheckChangeddd(bool toggled, PlanUser user, Guid functionId)
+    private async Task CheckChanged(bool toggled, PlanUser user, Guid functionId)
     {
         user.Assigned = toggled;
         if (toggled)
@@ -32,7 +32,7 @@ public sealed partial class ScheduleDialog : IDisposable
         await _scheduleRepository.PatchScheduleUserScheduled(Planner.TrainingId, user, functionId, _cls.Token);
         await Refresh.CallRequestRefreshAsync();
     }
-    private async Task CheckChangeddd(bool toggled, DrogeUser user, Guid functionId)
+    private async Task CheckChanged(bool toggled, DrogeUser user, Guid functionId)
     {
         //Add to schedule with a new status to indicate it was not set by the user.
         await _scheduleRepository.OtherScheduleUser(toggled, Planner.TrainingId, functionId, user, _cls.Token);

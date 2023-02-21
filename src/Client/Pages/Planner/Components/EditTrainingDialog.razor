@@ -3,7 +3,14 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
 <MudDialog>
     <DialogContent>
-        De configuratie komt er aan :)
+        @if(Vehicles != null)
+        {
+            <MudText Typo="Typo.h4">@L["Which vehicle?"]</MudText>
+            foreach(var vehicle in Vehicles)
+            {
+                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChanged(e, vehicle)" Label="@vehicle.Name" Tag="@vehicle" Checked="@vehicle.Default" /> <br />
+            }
+        }
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>

@@ -16,6 +16,7 @@ public sealed partial class ScheduleCard : IDisposable
     [Parameter, EditorRequired] public PlannedTraining Planner { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
+    [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; }
     private RefreshModel _refreshModel = new();
     private bool _updating;
 
@@ -47,7 +48,8 @@ public sealed partial class ScheduleCard : IDisposable
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
         _dialogProvider.Show<EditTrainingDialog>(L["Configure training"], new DialogParameters {
             { "Planner", Planner },
-            { "Refresh", _refreshModel }
+            { "Refresh", _refreshModel },
+            { "Vehicles", Vehicles }
             }, options);
     }
 

@@ -12,5 +12,6 @@ public class DrogeVehicle
     public string Name { get; set; }
     public string Code { get; set; }
     public int Order { get; set; }
+    public bool Default { get; set; }
     public bool Active { get; set; }
 }

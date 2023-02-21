@@ -15,12 +15,18 @@ public sealed partial class EditTrainingDialog : IDisposable
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public PlannedTraining Planner { get; set; } = default!;
     [Parameter] public RefreshModel Refresh { get; set; } = default!;
+    [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
     private CancellationTokenSource _cls = new();
 
     void Cancel() => MudDialog.Cancel();
     private async Task Submit() {
 
         MudDialog.Close(DialogResult.Ok(true)); 
+    }
+
+    private async Task CheckChanged(bool toggled, DrogeVehicle vehicle)
+    {
+
     }
 
     public void Dispose()

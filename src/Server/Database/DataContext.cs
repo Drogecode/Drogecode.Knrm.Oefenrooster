@@ -283,6 +283,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Nikolaas Wijsenbeek",
                 Code = "NWI",
+                Default = true,
                 Active = true,
                 Order = 10,
             }));

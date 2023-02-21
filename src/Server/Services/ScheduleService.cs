@@ -200,7 +200,7 @@ public class ScheduleService : IScheduleService
                         DateStart = training.DateStart,
                         DateEnd = training.DateEnd,
                         IsCreated = true,
-                        TrainingType = training.TrainingType,
+                        TrainingType = training.TrainingType
                     };
                     foreach (var a in ava)
                     {
