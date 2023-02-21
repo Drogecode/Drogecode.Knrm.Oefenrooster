@@ -75,6 +75,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             //// Links
             // Vehicles <--> Rooster available
             modelBuilder.Entity<DbLinkVehicleTraining>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbLinkVehicleTraining>().HasOne(p => p.Customer).WithMany(g => g.LinkVehicleTraining).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // Required data
             SetCustomer(modelBuilder);

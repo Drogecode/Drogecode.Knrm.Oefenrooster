@@ -40,16 +40,23 @@ public sealed partial class EditTrainingDialog : IDisposable
         {
             Console.WriteLine("d is not null");
             d.IsSelected = toggled;
+            var newLink = await _vehicleRepository.UpdateLinkVehicleTrainingAsync(d);
         }
         else
         {
             Console.WriteLine("d is null");
-            _linkVehicleTraining?.Add(new DrogeLinkVehicleTraining
+            d = new DrogeLinkVehicleTraining
             {
+                Id = null,
                 IsSelected = toggled,
                 Vehicle = vehicle.Id,
                 RoosterTrainingId = Planner.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId")
-            });
+            };
+            var newLink = await _vehicleRepository.UpdateLinkVehicleTrainingAsync(d);
+            if (newLink != null)
+                _linkVehicleTraining?.Add(newLink);
+            else
+                Console.WriteLine("Failed to add new link");
         }
         StateHasChanged();
     }

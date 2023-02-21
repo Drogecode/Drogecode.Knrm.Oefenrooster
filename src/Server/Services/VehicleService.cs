@@ -32,16 +32,49 @@ public class VehicleService : IVehicleService
     public async Task<List<DrogeLinkVehicleTraining>> GetForTraining(Guid customerId, Guid trainingId)
     {
         var result = new List<DrogeLinkVehicleTraining>();
-        var dbVehicles = _database.LinkVehicleTraining.Where(x => x.RoosterTrainingId == trainingId).ToList();
+        var dbVehicles = _database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.RoosterTrainingId == trainingId).ToList();
         foreach (var dbVehicle in dbVehicles)
         {
             result.Add(new DrogeLinkVehicleTraining
             {
+                Id = dbVehicle.Id,
                 RoosterTrainingId = dbVehicle.RoosterTrainingId,
                 Vehicle = dbVehicle.Vehicle,
-                IsSelected= dbVehicle.IsSelected,
+                IsSelected = dbVehicle.IsSelected,
             });
         }
         return result;
+    }
+
+    public async Task<DrogeLinkVehicleTraining> UpdateLinkVehicleTraining(Guid customerId, DrogeLinkVehicleTraining link)
+    {
+        if (link.Id == null)
+        {
+            var newId = Guid.NewGuid();
+            _database.LinkVehicleTraining.Add(new Database.Models.DbLinkVehicleTraining
+            {
+                Id = newId,
+                IsSelected = link.IsSelected,
+                RoosterTrainingId = link.RoosterTrainingId,
+                CustomerId= customerId,
+                Vehicle = link.Vehicle,
+            });
+            await _database.SaveChangesAsync();
+            link.Id = newId;
+            return link;
+        }
+        else
+        {
+            var foundLink = await _database.LinkVehicleTraining.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == link.Id);
+            if (foundLink == null)
+            {
+                _logger.LogWarning("Link {LinkId} was not found", link.Id);
+                return link;
+            }
+            foundLink.IsSelected = link.IsSelected;
+            _database.LinkVehicleTraining.Update(foundLink);
+            await _database.SaveChangesAsync();
+            return link;
+        }
     }
 }

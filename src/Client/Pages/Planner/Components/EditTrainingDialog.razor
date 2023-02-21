@@ -8,7 +8,7 @@
             <MudText Typo="Typo.h4">@L["Which vehicle?"]</MudText>
             @if (_linkVehicleTraining != null)
             {
-                foreach (var vehicle in Vehicles)
+                foreach (var vehicle in Vehicles.Where(x=>x.Active))
                 {
                     bool? isSelected = _linkVehicleTraining?.FirstOrDefault(x => x.Vehicle == vehicle.Id)?.IsSelected;
                     <MudSwitch T="bool" CheckedChanged="(e)=> CheckChanged(e, vehicle)" Color="Color.Success" Label="@vehicle.Name" Tag="@vehicle" Checked="@(isSelected == true || (isSelected == null && vehicle.Default))" /> <br />

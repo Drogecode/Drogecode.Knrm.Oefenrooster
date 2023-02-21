@@ -17,4 +17,5 @@ public class DbCustomers
     public ICollection<DbRoosterTraining>? RoosterTraining { get; set; }
     public ICollection<DbAudit>? Audits { get; set; }
     public ICollection<DbVehicles>? Vehicles { get; set; }
+    public ICollection<DbLinkVehicleTraining>? LinkVehicleTraining{ get; set; }
 }
