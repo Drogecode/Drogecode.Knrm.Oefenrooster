@@ -27,6 +27,8 @@ public sealed partial class CalendarBaseCard : IDisposable
                     return "DrogeCode-card-header-ehbo";
                 case TrainingType.OneOnOne:
                     return "DrogeCode-card-header-one_on_one";
+                case TrainingType.FireBrigade:
+                    return "DrogeCode-card-header-fire-brigade";
                 case TrainingType.Default:
                 default:
                     return "DrogeCode-card-header-default";

@@ -20,7 +20,7 @@ public class VehicleService : IVehicleService
             {
                 Id = dbVehicle.Id,
                 Name = dbVehicle.Name,
-                Short = dbVehicle.Short,
+                Code = dbVehicle.Code,
                 Order = dbVehicle.Order,
                 Active = dbVehicle.Active,
             });

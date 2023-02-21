@@ -10,6 +10,10 @@
     background-color: var(--mud-palette-tertiary-darken);
 }
 
+.DrogeCode-card-header-fire-brigade {
+    background-color: var(--mud-palette-error-darken);
+}
+
 .DrogeCode-card-content-not-created {
     background-color: var(--mud-palette-grey-default);
 }
