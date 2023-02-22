@@ -9,7 +9,7 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models
     public class DrogeUser
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = "Some dude!";
         public DateTime Created { get; set; }
         public DateTime LastLogin { get; set; }
         public Guid? UserFunctionId { get; set; }

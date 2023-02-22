@@ -1,53 +1,24 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
+@using MudBlazor.Extensions
+@using MudExtensions;
+@using MudExtensions.Enums;
+@using System.Diagnostics.CodeAnalysis;
 <MudDialog>
     <DialogContent>
-        <MudExpansionPanels>
-            @if (Functions != null && Users != null)
-            {
-                @foreach (var function in Functions.OrderBy(x => x.Order))
-                {
-                    @if (Users.Any(x => x.UserFunctionId == function.Id) || Planner.PlanUsers.Any(x => x.PlannedFunctionId == function.Id) || function.TrainingOnly)
-                    {
-                        <MudText>@L["Available {0}", function.Name]</MudText>
-                        @foreach (var user in Planner.PlanUsers.Where(x => (x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available || x.Assigned) && x.PlannedFunctionId == function.Id))
-                        {
-                            /* Available user from this function */
-                            <MudSwitch T="bool" CheckedChanged="(e)=> CheckChanged(e, user, function.Id)" Label="@user.Name" Color="GetColor(user.Availabilty)" Tag="user" Checked="user.Assigned" /> <br />
-                        }
-                        <MudExpansionPanel Text="@L["Other users"]">
-                            @foreach (var user in Planner.PlanUsers.Where(x => x.Availabilty != Oefenrooster.Shared.Enums.Availabilty.Available && !x.Assigned && x.PlannedFunctionId == function.Id).OrderBy(o => o.Availabilty))
-                            {
-                                /* Not available user from this function */
-                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChanged(e, user, function.Id)" Label="@user.Name" Color="GetColor(user.Availabilty)" Tag="user" Checked="user.Assigned" /> @LApp[@user.Availabilty.ToString() ?? ""] <br />
-                            }
-                            @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
-                            {
-                                /* Users who have not set an availability from this function */
-                                @if (Planner.PlanUsers.Any(x => x.UserId == user.Id)) continue;
-                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChanged(e, user, function.Id)" Label="@user.Name" Tag="@user" /> <br />
-                            }
-                            @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.PlannedFunctionId != function.Id).OrderBy(o => o.Availabilty))
-                            {
-                                /* Users from a differetn function who have set there availability. */
-                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChanged(e, user, function.Id)" Label="@user.Name" Color="GetColor(user.Availabilty)" Tag="user" Checked="user.Assigned" />  @LApp[@user.Availabilty.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")") <br />
-                            }
-                            @foreach (var user in Users.Where(x => x.UserFunctionId != function.Id))
-                            {
-                                /* Users who have not set an availability from a different function */
-                                @if (Planner.PlanUsers.Any(x => x.UserId == user.Id)) continue;
-                                <MudSwitch T="bool" CheckedChanged="(e)=> CheckChanged(e, user, function.Id)" Label="@user.Name" Color="Color.Dark" Tag="user" /> @("(") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")") <br />
-                            }
-                        </MudExpansionPanel>
-                    }
-                }
-            }
-        </MudExpansionPanels>
+        <MudGrid>
+            <MudItem xs="12" sm="8" Class="d-flex flex-column align-center justify-center">
+
+                <MudTransferList @ref="_transferList" T="string" @bind-StartCollection="_startCollection" @bind-EndCollection="_endCollection" Vertical="true" Color="Color.Primary"
+                                 StyleListCommon="background-color: var(--mud-palette-background-grey); width: 200px" MultiSelection="true" SelectAllType="@SelectAllType.None"
+                                 PreventTransfer="@(new Func<bool, bool>(CheckTransfer))" ButtonVariant="Variant.Outlined" />
+
+            </MudItem>
+        </MudGrid>
     </DialogContent>
     <DialogActions>
         @*<MudButton OnClick="Cancel">Cancel</MudButton>*@
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">@LApp["Ok"]</MudButton>
     </DialogActions>
 </MudDialog>
-

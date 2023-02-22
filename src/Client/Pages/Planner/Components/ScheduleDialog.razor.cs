@@ -4,6 +4,8 @@ using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
+using MudExtensions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
@@ -18,6 +20,10 @@ public sealed partial class ScheduleDialog : IDisposable
     [Parameter] public List<DrogeFunction>? Functions { get; set; }
     [Parameter] public RefreshModel Refresh { get; set; } = default!;
     private CancellationTokenSource _cls = new();
+    [AllowNull] MudTransferList<string> _transferList;
+    ICollection<string> _startCollection = new List<string>() { "Sweden", "Hungary", "Turkey", "England", "Egypt" };
+
+    ICollection<string> _endCollection = new List<string>() { "Brazil", "China", "Germany", "USA", "South Africa" };
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
@@ -74,6 +80,34 @@ public sealed partial class ScheduleDialog : IDisposable
                 return Color.Warning;
             default: return Color.Inherit;
         }
+    }
+
+
+    private bool CheckTransfer(bool startToEnd)
+
+    {
+
+        //var valuesStart = _transferList.GetStartListSelectedValues();
+
+        //var valuesEnd = _transferList.GetEndListSelectedValues();
+
+        //if (_preventTurkeyTransfer == true && (valuesStart?.Contains("Turkey") == true || valuesEnd?.Contains("Turkey") == true))
+
+        //{
+
+        //    return true;
+
+        //}
+
+        return false;
+
+    }
+    private ICollection<string> OrderMethod(ICollection<string> e)
+
+    {
+
+        return e.Order().ToList();
+
     }
 
     public void Dispose()
