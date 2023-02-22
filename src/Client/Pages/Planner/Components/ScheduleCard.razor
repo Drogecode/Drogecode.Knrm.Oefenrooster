@@ -11,7 +11,7 @@
             {
                 var available = @Planner.PlanUsers.Where(x => x.Availabilty == Availabilty.Available && x.PlannedFunctionId == function.Id).Count();
                 var total = @Planner.PlanUsers.Where(x => x.PlannedFunctionId == function.Id).Count();
-                <MudText Typo="Typo.caption">@function.Name @available / @total </MudText>
+                <MudText Typo="Typo.caption">@function.Name @available / @total </MudText><br/>
                 @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id))
                 {
                     <MudText>@assignedUser.Name</MudText>
