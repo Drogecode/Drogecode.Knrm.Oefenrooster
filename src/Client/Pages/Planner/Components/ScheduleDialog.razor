@@ -7,55 +7,71 @@
         {
             @if (Planner.PlanUsers.Any(x => x.Assigned))
             {
-                <MudText>
+                <MudText Typo="Typo.h5">
                     @LApp["Assigned"]
                 </MudText>
             }
-            @foreach (var function in Functions.OrderBy(x => x.Order))
-            {
-                @foreach (var user in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id))
+            <MudButtonGroup Variant="Variant.Filled" VerticalAlign="true">
+                @foreach (var function in Functions.OrderBy(x => x.Order))
                 {
-                    /* Selected user from this function */
-                    <MudSwitchM3 T="bool" CheckedChanged="(e)=> CheckChanged(e, user, function.Id)" Label="@user.Name" Color="GetColor(user.Availabilty)" Tag="user" Checked="user.Assigned"><MudText Typo="Typo.subtitle2">@(" ") @LApp[@user.Availabilty.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")")</MudText></MudSwitchM3> <br />
+                    @foreach (var user in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id))
+                    {
+                        /* Selected user from this function */
+                        <MudButton StartIcon="@Icons.Material.Filled.KeyboardArrowDown" Variant="Variant.Text" OnClick="()=>CheckChanged(false, user,function.Id)" Color="GetColor(user.Availabilty)" Tag="user">
+                            <b>@user.Name</b> @(" ") @LApp[@user.Availabilty.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")")
+                        </MudButton>
+
+                    }
                 }
-            }
+            </MudButtonGroup>
             @if (Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available))
             {
-                <MudText>
+                <MudText Typo="Typo.h5">
                     @LApp["Available"]
                 </MudText>
             }
-            @foreach (var function in Functions.OrderBy(x => x.Order))
-            {
-                @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available && x.PlannedFunctionId == function.Id))
+            <MudButtonGroup Variant="Variant.Filled" VerticalAlign="true">
+                @foreach (var function in Functions.OrderBy(x => x.Order))
                 {
-                    /* Selected user from this function */
-                    <MudSwitchM3 T="bool" CheckedChanged="(e)=> CheckChanged(e, user, function.Id)" Label="@user.Name" Color="GetColor(user.Availabilty)" Tag="user" Checked="user.Assigned"><MudText Typo="Typo.subtitle2">@(" ") @LApp[@user.Availabilty.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")")</MudText></MudSwitchM3> <br />
+                    @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available && x.PlannedFunctionId == function.Id))
+                    {
+                        /* Selected user from this function */
+                        <MudButton StartIcon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Text" OnClick="()=>CheckChanged(true, user,function.Id)" Color="GetColor(user.Availabilty)" Tag="user">
+                            <b>@user.Name</b> @(" ") @LApp[@user.Availabilty.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")")
+                        </MudButton>
+                    }
                 }
-            }
+            </MudButtonGroup>
             @if (Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty != Oefenrooster.Shared.Enums.Availabilty.Available) || Users.Any(x => !Planner.PlanUsers.Any(y => y.UserId == x.Id)))
             {
-                <MudText>
+                <MudText Typo="Typo.h5">
                     @L["Other users"]
                 </MudText>
             }
-            @foreach (var function in Functions.OrderBy(x => x.Order))
-            {
-                @if (Users.Any(x => x.UserFunctionId == function.Id) || Planner.PlanUsers.Any(x => x.PlannedFunctionId == function.Id))
+            <MudButtonGroup Variant="Variant.Filled" VerticalAlign="true">
+                @foreach (var function in Functions.OrderBy(x => x.Order))
                 {
-                    @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty != Oefenrooster.Shared.Enums.Availabilty.Available && x.PlannedFunctionId == function.Id).OrderBy(o => o.Availabilty))
+                    @if (Users.Any(x => x.UserFunctionId == function.Id) || Planner.PlanUsers.Any(x => x.PlannedFunctionId == function.Id))
                     {
-                        /* Not available user from this function */
-                        <MudSwitchM3 T="bool" CheckedChanged="(e)=> CheckChanged(e, user, function.Id)" Label="@user.Name" Color="GetColor(user.Availabilty)" Tag="user" Checked="user.Assigned"><MudText Typo="Typo.subtitle2">@(" ") @LApp[@user.Availabilty.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")")</MudText></MudSwitchM3> <br />
-                    }
-                    @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
-                    {
-                        /* Users who have not set an availability from this function */
-                        @if (Planner.PlanUsers.Any(x => x.UserId == user.Id)) continue;
-                        <MudSwitchM3 T="bool" CheckedChanged="(e)=> CheckChanged(e, user, function.Id)" Label="@user.Name" Tag="@user"><MudText Typo="Typo.subtitle2">@(" ") @LApp[Availabilty.None.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")")</MudText></MudSwitchM3> <br />
+                        @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty != Oefenrooster.Shared.Enums.Availabilty.Available && x.PlannedFunctionId == function.Id).OrderBy(o => o.Availabilty))
+                        {
+                            /* Not available user from this function */
+                            <MudButton StartIcon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Text" OnClick="()=>CheckChanged(true, user,function.Id)" Color="GetColor(user.Availabilty)" Tag="user">
+                                <b>@user.Name</b> @(" ") @LApp[@user.Availabilty.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")")
+                            </MudButton>
+
+                        }
+                        @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
+                        {
+                            /* Users who have not set an availability from this function */
+                            @if (Planner.PlanUsers.Any(x => x.UserId == user.Id)) continue;
+                            <MudButton StartIcon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Text" OnClick="()=>CheckChanged(true, user,function.Id)" Tag="user">
+                                <b>@user.Name</b> @(" ") @LApp[Availabilty.None.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")")
+                            </MudButton>
+                        }
                     }
                 }
-            }
+            </MudButtonGroup>
         }
     </DialogContent>
     <DialogActions>
