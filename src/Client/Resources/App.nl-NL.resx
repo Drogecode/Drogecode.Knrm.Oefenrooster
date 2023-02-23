@@ -123,6 +123,9 @@
   <data name="Add week" xml:space="preserve">
     <value>Nog een week</value>
   </data>
+  <data name="Assigned" xml:space="preserve">
+    <value>Ingedeeld</value>
+  </data>
   <data name="Available" xml:space="preserve">
     <value>Beschikbaar</value>
   </data>

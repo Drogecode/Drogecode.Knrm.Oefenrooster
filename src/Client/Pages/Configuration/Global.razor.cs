@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Microsoft.Extensions.Localization;
+using Microsoft.Graph;
 using MudBlazor;
 using System.Security.Claims;
 using System.Text;
@@ -28,7 +29,7 @@ public sealed partial class Global : IDisposable
 
     protected override void OnInitialized()
     {
-        _refreshModel.RefreshRequested += RefreshMe;
+        _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
     }
     protected override async Task OnParametersSetAsync()
     {
@@ -53,22 +54,25 @@ public sealed partial class Global : IDisposable
     private void AddUser()
     {
 
-        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-        _dialogProvider.Show<AddUserDialog>(L["Add user"], new DialogParameters { { "Functions", _functions }, { "Refresh", _refreshModel } }, options);
+        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var parameters = new DialogParameters { { "Functions", _functions }, { "Refresh", _refreshModel } };
+        _dialogProvider.Show<AddUserDialog>(L["Add user"], parameters, options);
     }
 
-    private async void ChangeUser(DrogeUser user)
+    private void ChangeUser(DrogeUser user)
     {
-        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-        _dialogProvider.Show<EditUserDialog>(L["Edit user"], new DialogParameters { { "User", user }, { "Functions", _functions }, { "Refresh", _refreshModel } }, options);
+        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var parameters = new DialogParameters { { "User", user }, { "Functions", _functions }, { "Refresh", _refreshModel } };
+        _dialogProvider.Show<EditUserDialog>(L["Edit user"], parameters, options);
     }
-    private void RefreshMe()
+    private async Task RefreshMeAsync()
     {
+        _users = await _userRepository.GetAllUsersAsync();
         StateHasChanged();
     }
 
     public void Dispose()
     {
-        _refreshModel.RefreshRequested -= RefreshMe;
+        _refreshModel.RefreshRequestedAsync -= RefreshMeAsync;
     }
 }

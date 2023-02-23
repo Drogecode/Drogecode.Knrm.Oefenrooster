@@ -20,6 +20,7 @@ builder.Services.AddMudServices(config =>
 {
     config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
 });
+builder.Services.AddMudExtensions();
 
 builder.Services.AddScoped<ConfigurationRepository>();
 builder.Services.AddScoped<FunctionRepository>();
