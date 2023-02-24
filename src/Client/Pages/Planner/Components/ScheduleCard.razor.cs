@@ -34,7 +34,8 @@ public sealed partial class ScheduleCard : IDisposable
             { "Planner", Planner },
             { "Refresh", _refreshModel },
             { "Users", Users },
-            { "Functions", Functions}
+            { "Functions", Functions},
+            { "Vehicles", Vehicles }
             }, options);
         }
         else

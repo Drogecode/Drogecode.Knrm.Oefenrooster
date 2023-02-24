@@ -12,16 +12,25 @@ public sealed partial class ScheduleDialog : IDisposable
     [Inject] private IStringLocalizer<ScheduleDialog> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
+    [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public PlannedTraining Planner { get; set; } = default!;
     [Parameter] public List<DrogeUser>? Users { get; set; }
     [Parameter] public List<DrogeFunction>? Functions { get; set; }
+    [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter] public RefreshModel Refresh { get; set; } = default!;
     private CancellationTokenSource _cls = new();
+    private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
     private bool _layoutAB;
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Planner.TrainingId != null)
+            _linkVehicleTraining = await _vehicleRepository.GetForTrainingAsync(Planner.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
+    }
 
     private async Task CheckChanged(bool toggled, PlanUser user, Guid functionId)
     {

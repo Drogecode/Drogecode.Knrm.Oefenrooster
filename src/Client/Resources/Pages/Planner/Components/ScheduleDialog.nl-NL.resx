@@ -117,13 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="as" xml:space="preserve">
+    <value>als</value>
+  </data>
   <data name="Available users" xml:space="preserve">
     <value>Beschikbare gebruikers</value>
   </data>
   <data name="Available {0}" xml:space="preserve">
     <value>Beschikbaar {0}</value>
   </data>
+  <data name="No vehicle selected" xml:space="preserve">
+    <value>Geen boot geselecteerd</value>
+  </data>
   <data name="Other users" xml:space="preserve">
     <value>Andere gebruikers</value>
+  </data>
+  <data name="Selected vehicles" xml:space="preserve">
+    <value>Ingeplende boten</value>
   </data>
 </root>

@@ -3,6 +3,34 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 <MudDialog>
     <DialogContent>
+        @if (Vehicles?.Count > 0)
+        {
+            var hasVehicle = false;
+            <MudText Typo="Typo.h4">@L["Selected vehicles"]</MudText>
+            <MudGrid Spacing="1" Justify="Justify.FlexStart" Class="pa-1">
+                @foreach (var vehicle in Vehicles)
+                {
+                    var vehicleLink = _linkVehicleTraining?.FirstOrDefault(x => x.Vehicle == vehicle.Id);
+                    @if (vehicleLink?.IsSelected == true || (vehicle.Default == true && vehicleLink == null))
+                    {
+                        hasVehicle = true;
+                        <MudItem>
+                            <MudText Typo="Typo.body1">
+                                @vehicle.Name
+                            </MudText>
+                        </MudItem>
+                    }
+                }
+                @if(!hasVehicle)
+                {
+                    <MudItem>
+                        <MudText Typo="Typo.body1" Color="Color.Warning">
+                            @L["No vehicle selected"]
+                        </MudText>
+                    </MudItem>
+                }
+            </MudGrid>
+        }
         <MudSwitchM3 Label="Layout options" @bind-Checked="_layoutAB" />
         <MudDivider Class="my-2" />
         @if (_layoutAB)
@@ -67,11 +95,24 @@
                                 <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown" Variant="Variant.Text" OnClick="()=>CheckChanged(false, user,function.Id)" Color="GetColor(user.Availabilty)" Tag="user" />
                             </MudItem>
                             <MudItem>
-                                <MudText>@user.Name</MudText>
+                                <MudText Typo="Typo.body1">@user.Name</MudText>
                             </MudItem>
                             <MudItem>
-                                <MudText Typo="Typo.subtitle2">
-                                    @LApp[@user.Availabilty.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")")
+                                <MudText Typo="Typo.body2">
+                                    @LApp[@user.Availabilty.ToString() ?? ""]  @(" - ") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name)
+                                </MudText>
+                            </MudItem>
+                            @if (user.PlannedFunctionId != Guid.Empty && user.UserFunctionId != user.PlannedFunctionId)
+                            {
+                                <MudItem>
+                                    <MudText Typo="Typo.body2">
+                                        @L["as"] @(" ") @Functions.FirstOrDefault(x=>x.Id == user.PlannedFunctionId)?.Name
+                                    </MudText>
+                                </MudItem>
+                            }
+                            <MudItem>
+                                <MudText>
+                                    Boot!
                                 </MudText>
                             </MudItem>
                         </MudGrid>
