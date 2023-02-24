@@ -18,6 +18,7 @@ public sealed partial class ScheduleDialog : IDisposable
     [Parameter] public List<DrogeFunction>? Functions { get; set; }
     [Parameter] public RefreshModel Refresh { get; set; } = default!;
     private CancellationTokenSource _cls = new();
+    private bool _layoutAB;
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();

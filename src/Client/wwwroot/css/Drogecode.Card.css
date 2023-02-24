@@ -14,6 +14,10 @@
     background-color: var(--mud-palette-error-darken);
 }
 
+.DrogeCode-card-header-hrb {
+    background-color: var(--mud-palette-tertiary);
+}
+
 .DrogeCode-card-content-not-created {
     background-color: var(--mud-palette-grey-default);
 }

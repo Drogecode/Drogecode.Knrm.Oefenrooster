@@ -12,4 +12,5 @@ public enum TrainingType
     EHBO = 1,
     OneOnOne = 2,
     FireBrigade = 3,
+    HRB = 4,
 }
