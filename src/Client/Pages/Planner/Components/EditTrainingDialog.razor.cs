@@ -33,13 +33,15 @@ public sealed partial class EditTrainingDialog : IDisposable
             _training = new()
             {
                 Id = Planner.TrainingId,
-                Date = Planner.DateStart,
+                Date = Planner.DateStart.Date,
                 TimeStart = Planner.DateStart.TimeOfDay,
                 TimeEnd = Planner.DateEnd.TimeOfDay,
                 IsNew = false,
                 Name = Planner.Name,
                 TrainingType = Planner.TrainingType,
             };
+            Console.WriteLine($"start = {Planner.DateStart} : {_training.Date} {_training.TimeStart}");
+            Console.WriteLine($"end = {Planner.DateEnd} : {_training.Date} {_training.TimeEnd}");
         }
         else
         {
@@ -47,15 +49,37 @@ public sealed partial class EditTrainingDialog : IDisposable
             {
                 IsNew = true
             };
+            _linkVehicleTraining = new();
         }
     }
 
     void Cancel() => MudDialog.Cancel();
 
+    private string? EndAfterStartValidation(TimeSpan? timeEnd)
+    {
+        Console.WriteLine(timeEnd);
+        Console.WriteLine(_training?.TimeStart);
+        if (_training?.TimeStart >= timeEnd)
+        {
+            return L["End time before start time"];
+        }
+        return null;
+    }
+
     private async Task OnSubmit()
     {
-        if (!_form.IsValid || _training == null) return;
-        if (_training.TimeStart >= _training.TimeEnd) return;
+        _form?.Validate();
+        if (!_form?.IsValid == true || _training == null)
+        {
+            Console.WriteLine($"a {!_form?.IsValid == true} || {_training == null} ");
+            return;
+        }
+        if (_training.TimeStart >= _training.TimeEnd)
+        {
+            Console.WriteLine($"b {_training.TimeStart >= _training.TimeEnd}");
+            return;
+        }
+
         if (_training.IsNew)
         {
             var newId = await _scheduleRepository.AddTraining(_training, _cls.Token);
@@ -70,9 +94,17 @@ public sealed partial class EditTrainingDialog : IDisposable
             }
             await Global.CallNewTrainingAddedAsync(_training);
         }
-        else
+        else if (Planner != null)
         {
             await _scheduleRepository.PatchTraining(_training, _cls.Token);
+            var dateStart = (_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeStart ?? throw new ArgumentNullException("TimeStart is null"));
+            var dateEnd = (_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"));
+            Planner.TrainingType = _training.TrainingType;
+            Planner.Name = _training.Name;
+            Planner.DateStart = dateStart;
+            Planner.DateEnd = dateEnd;
+            if (Refresh != null)
+                await Refresh.CallRequestRefreshAsync();
         }
         MudDialog.Close(DialogResult.Ok(true));
     }

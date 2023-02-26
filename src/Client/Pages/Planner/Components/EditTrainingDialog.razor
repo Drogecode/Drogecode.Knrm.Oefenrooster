@@ -10,12 +10,12 @@
         else
         {
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
-                <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" For="@(() => _training.Name)" MaxLength="30" />
-                <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" For="@(() => _training.Date)" />
-                <MudTimePicker Label="@L["From"]" @bind-Time="_training.TimeStart" For="@(() => _training.TimeStart)" />
-                <MudTimePicker Label="@LApp["Till"]" @bind-Time="_training.TimeEnd" For="@(() => _training.TimeEnd)" />
-                <MudSelect T="TrainingType" Label="@L["Training type"]" AnchorOrigin="Origin.BottomCenter" @bind-Value="_training.TrainingType" For="@(() => _training.TrainingType)">
-                    @foreach (TrainingType trainingType in Enum.GetValues(typeof(TrainingType)))
+                <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" MaxLength="30" Required />
+                <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Required />
+                <MudTimePicker Label="@L["From"]" @bind-Time="_training.TimeStart" Required />
+                <MudTimePicker Label="@LApp["till"]" @bind-Time="_training.TimeEnd" Validation="@(new Func<TimeSpan?, string?>(EndAfterStartValidation))" Required />
+                <MudSelect T="TrainingType" Label="@L["Training type"]" AnchorOrigin="Origin.BottomCenter" @bind-Value="_training.TrainingType" Required>
+                @foreach (TrainingType trainingType in Enum.GetValues(typeof(TrainingType)))
                     {
                         <MudSelectItem T="TrainingType" Value="@trainingType">@L[trainingType.ToString()]</MudSelectItem>
                     }

@@ -117,6 +117,33 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="EHBO" xml:space="preserve">
+    <value>EHBO</value>
+  </data>
+  <data name="End time before start time" xml:space="preserve">
+    <value>End time before start time</value>
+  </data>
+  <data name="FireBrigade" xml:space="preserve">
+    <value>Fire brigade</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="OneOnOne" xml:space="preserve">
+    <value>One on one</value>
+  </data>
+  <data name="Training type" xml:space="preserve">
+    <value>Training type</value>
+  </data>
   <data name="Which vehicle?" xml:space="preserve">
     <value>Which vehicle?</value>
   </data>

@@ -36,12 +36,13 @@
     {
         StateHasChanged();
     }
-    private async void AddTraining()
+    private async Task AddTraining()
     {
+        var vehicles = await _vehicleRepository.GetAllVehiclesAsync();
         var parameters = new DialogParameters {
             { "Planner", null },
             { "Refresh", null },
-            { "Vehicles", await _vehicleRepository.GetAllVehiclesAsync() },
+            { "Vehicles", vehicles },
             { "Global", Global }
         };
         var options = new DialogOptions
