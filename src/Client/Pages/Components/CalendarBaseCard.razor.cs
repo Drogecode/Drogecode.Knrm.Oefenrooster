@@ -1,9 +1,6 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Microsoft.Extensions.Localization;
-using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Components;
 

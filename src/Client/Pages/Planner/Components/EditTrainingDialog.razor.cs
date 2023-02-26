@@ -20,7 +20,6 @@ public sealed partial class EditTrainingDialog : IDisposable
     [Parameter] public DrogeCodeGlobal Global { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
-    private DrogeUser _user = new();
     private EditTraining? _training;
     private bool _success;
     private string[] _errors = Array.Empty<string>();
@@ -40,8 +39,6 @@ public sealed partial class EditTrainingDialog : IDisposable
                 Name = Planner.Name,
                 TrainingType = Planner.TrainingType,
             };
-            Console.WriteLine($"start = {Planner.DateStart} : {_training.Date} {_training.TimeStart}");
-            Console.WriteLine($"end = {Planner.DateEnd} : {_training.Date} {_training.TimeEnd}");
         }
         else
         {
@@ -69,16 +66,8 @@ public sealed partial class EditTrainingDialog : IDisposable
     private async Task OnSubmit()
     {
         _form?.Validate();
-        if (!_form?.IsValid == true || _training == null)
-        {
-            Console.WriteLine($"a {!_form?.IsValid == true} || {_training == null} ");
-            return;
-        }
-        if (_training.TimeStart >= _training.TimeEnd)
-        {
-            Console.WriteLine($"b {_training.TimeStart >= _training.TimeEnd}");
-            return;
-        }
+        if (!_form?.IsValid == true || _training == null) return;
+        if (_training.TimeStart >= _training.TimeEnd) return;
 
         if (_training.IsNew)
         {
@@ -136,6 +125,10 @@ public sealed partial class EditTrainingDialog : IDisposable
                     _linkVehicleTraining?.Add(newLink);
                 else
                     Console.WriteLine("Failed to add new link");
+            }
+            else
+            {
+                _linkVehicleTraining?.Add(link);
             }
         }
         StateHasChanged();
