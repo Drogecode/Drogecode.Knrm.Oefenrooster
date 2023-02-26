@@ -4,11 +4,11 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Models;
 
 public class DrogeCodeGlobal : RefreshModel
 {
-    public event Func<NewTraining, Guid, Task>? NewTrainingAddedAsync;
+    public event Func<EditTraining, Task>? NewTrainingAddedAsync;
 
-    public async Task CallNewTrainingAddedAsync(NewTraining arg, Guid newId)
+    public async Task CallNewTrainingAddedAsync(EditTraining arg)
     {
-        var task = NewTrainingAddedAsync?.Invoke(arg, newId);
+        var task = NewTrainingAddedAsync?.Invoke(arg);
         if (task != null)
             await task;
     }

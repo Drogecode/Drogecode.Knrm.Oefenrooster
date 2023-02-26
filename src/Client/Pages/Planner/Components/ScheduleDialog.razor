@@ -99,7 +99,7 @@
                             </MudItem>
                             <MudItem>
                                 <MudText Typo="Typo.body2">
-                                    @LApp[@user.Availabilty.ToString() ?? ""]  @(" - ") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name)
+                                    @LApp[@user.Availabilty.ToString() ?? ""]  @(" - ") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name
                                 </MudText>
                             </MudItem>
                             @if (user.PlannedFunctionId != Guid.Empty && user.UserFunctionId != user.PlannedFunctionId)

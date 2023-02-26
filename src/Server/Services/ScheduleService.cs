@@ -77,7 +77,7 @@ public class ScheduleService : IScheduleService
         return result;
     }
 
-    public async Task<Training> PatchTrainingAsync(Guid userId, Guid customerId, Training training, CancellationToken token)
+    public async Task<Training> PatchScheduleForUserAsync(Guid userId, Guid customerId, Training training, CancellationToken token)
     {
         training.Updated = false;
         DbRoosterTraining? dbTraining = null;
@@ -115,10 +115,24 @@ public class ScheduleService : IScheduleService
         return training;
     }
 
-    public async Task<bool> AddTrainingAsync(Guid customerId, NewTraining newTraining, Guid trainingId, CancellationToken token)
+    public async Task<bool> PatchTraining(Guid customerId, EditTraining patchedTraining, CancellationToken token)
     {
-        DateTime dateStart = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("StartTime is null"))).ToUniversalTime();
-        DateTime dateEnd = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null"))).ToUniversalTime();
+        var oldTraining = await _database.RoosterTrainings.FindAsync(new object?[] { patchedTraining.Id }, cancellationToken: token);
+        if (oldTraining == null) return false;
+        DateTime dateStart = ((patchedTraining.Date ?? throw new ArgumentNullException("Date is null")) + (patchedTraining.TimeStart ?? throw new ArgumentNullException("TimeStart is null"))).ToUniversalTime();
+        DateTime dateEnd = ((patchedTraining.Date ?? throw new ArgumentNullException("Date is null")) + (patchedTraining.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"))).ToUniversalTime();
+        oldTraining.TrainingType = patchedTraining.TrainingType;
+        oldTraining.Name = patchedTraining.Name;
+        oldTraining.DateStart = dateStart;
+        oldTraining.DateEnd = dateEnd;
+        _database.RoosterTrainings.Update(oldTraining);
+        return (await _database.SaveChangesAsync()) > 0;
+    }
+
+    public async Task<bool> AddTrainingAsync(Guid customerId, EditTraining newTraining, Guid trainingId, CancellationToken token)
+    {
+        DateTime dateStart = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("TimeStart is null"))).ToUniversalTime();
+        DateTime dateEnd = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"))).ToUniversalTime();
         var training = new Training
         {
             TrainingId = trainingId,
@@ -241,15 +255,14 @@ public class ScheduleService : IScheduleService
         return result;
     }
 
-    public async Task PatchScheduleUserAsync(Guid userId, Guid customerId, PatchScheduleUserRequest body, CancellationToken token)
+    public async Task PatchAvailabilityUserAsync(Guid userId, Guid customerId, PatchScheduleUserRequest body, CancellationToken token)
     {
         if (body.User == null || body.TrainingId == null)
         {
             _logger.LogWarning("user is null {UserIsNull} or trainingId is null {TrainingIsNull}", body.User == null, body.TrainingId == null);
             return;
         }
-        var training = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == body.TrainingId, cancellationToken: token);
-        if (training == null)
+        if (!_database.RoosterTrainings.Any(x => x.CustomerId == customerId && x.Id == body.TrainingId))
         {
             _logger.LogWarning("No training with '{Id}' found", body.TrainingId);
             return;

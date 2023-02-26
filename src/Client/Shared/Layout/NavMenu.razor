@@ -1,4 +1,5 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout.Components;
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
+@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 <MudNavMenu>
     <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/" Match="NavLinkMatch.All">@L["Dashboard"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.CalendarMonth" Href="@_uriCalendar" Match="NavLinkMatch.Prefix">@L["Calendar"]</MudNavLink>
@@ -21,24 +22,34 @@
     [Inject] private IStringLocalizer<NavMenu> L { get; set; } = default!;
     [Inject] NavigationManager Navigation { get; set; } = default!;
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
+    [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
 
     private string _uriCalendar = "/planner/calendar";
     private string _uriSchedule = "/planner/schedule";
-    protected override void OnInitialized() => Navigation.LocationChanged += RefreshForSubMenu;
+
+    protected override void OnInitialized() { 
+        Navigation.LocationChanged += RefreshForSubMenu; 
+    }
+
     private void RefreshForSubMenu(object sender, LocationChangedEventArgs e)
     {
         StateHasChanged();
     }
-    private void AddTraining()
+    private async void AddTraining()
     {
-        var parameters = new DialogParameters { { "Global", Global } };
+        var parameters = new DialogParameters {
+            { "Planner", null },
+            { "Refresh", null },
+            { "Vehicles", await _vehicleRepository.GetAllVehiclesAsync() },
+            { "Global", Global }
+        };
         var options = new DialogOptions
             {
                 MaxWidth = MaxWidth.Medium,
                 FullWidth = true,
                 DisableBackdropClick = true
             };
-        _dialogProvider.Show<AddTrainingDialog>(L["Add training"], parameters, options);
+        _dialogProvider.Show<EditTrainingDialog>(L["Add training"], parameters, options);
     }
 }

@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-public class NewTraining : TrainingBase
+public class EditTraining : TrainingBase
 {
+    public Guid? Id { get; set; }
     public DateTime? Date { get; set; }
     public TimeSpan? TimeStart { get; set; }
     public TimeSpan? TimeEnd { get; set; }
     public override TrainingType TrainingType { get; set; }
+    public bool IsNew { get; set; }
 }

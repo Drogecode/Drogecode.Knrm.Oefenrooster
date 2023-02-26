@@ -24,6 +24,10 @@ public class VehicleRepository
 
     public async Task<DrogeLinkVehicleTraining?> UpdateLinkVehicleTrainingAsync(DrogeLinkVehicleTraining link)
     {
+        if (link.RoosterTrainingId == Guid.Empty)
+        {
+            throw new ArgumentNullException($"link.RoosterTrainingId is empty");
+        }
         var request = await _httpClient.PostAsJsonAsync("api/Vehicle/UpdateLinkVehicleTraining", link);
         var successfull = await request.Content.ReadFromJsonAsync<DrogeLinkVehicleTraining>();
         return successfull;

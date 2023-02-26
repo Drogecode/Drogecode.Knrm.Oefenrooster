@@ -23,12 +23,19 @@ public class ScheduleRepository
     }
     public async Task<Training> PatchScheduleForUser(Training training, CancellationToken token)
     {
-        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/Patch", training, token);
+        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/PatchScheduleForUser", training, token);
         var result = await request.Content.ReadFromJsonAsync<Training>(cancellationToken: token);
 
         return result;
     }
-    public async Task<Guid> AddTraining(NewTraining newTraining, CancellationToken token)
+    public async Task<bool> PatchTraining(EditTraining patchedTraining, CancellationToken token)
+    {
+        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/PatchTraining", patchedTraining, token);
+        var result = await request.Content.ReadFromJsonAsync<bool>(cancellationToken: token);
+
+        return result;
+    }
+    public async Task<Guid> AddTraining(EditTraining newTraining, CancellationToken token)
     {
         var request = await _httpClient.PostAsJsonAsync($"api/Schedule/AddTraining", newTraining, token);
         var result = await request.Content.ReadFromJsonAsync<Guid>(cancellationToken: token);
@@ -36,7 +43,7 @@ public class ScheduleRepository
         return result;
     }
 
-    public async Task PatchScheduleUserScheduled(Guid? trainingId, PlanUser user, Guid functionId, CancellationToken token)
+    public async Task PatchAvailabilityUser(Guid? trainingId, PlanUser user, Guid functionId, CancellationToken token)
     {
         var body = new PatchScheduleUserRequest
         {
@@ -44,7 +51,7 @@ public class ScheduleRepository
             FunctionId= functionId,
             User = user,
         };
-        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/PatchScheduleUser", body, token);
+        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/PatchAvailabilityUser", body, token);
         request.EnsureSuccessStatusCode();
     }
     public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(CancellationToken token)

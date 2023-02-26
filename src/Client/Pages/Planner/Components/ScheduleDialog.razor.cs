@@ -39,7 +39,7 @@ public sealed partial class ScheduleDialog : IDisposable
             user.PlannedFunctionId = functionId;
         else
             user.PlannedFunctionId = user.UserFunctionId;
-        await _scheduleRepository.PatchScheduleUserScheduled(Planner.TrainingId, user, functionId, _cls.Token);
+        await _scheduleRepository.PatchAvailabilityUser(Planner.TrainingId, user, functionId, _cls.Token);
         await Refresh.CallRequestRefreshAsync();
     }
     private async Task CheckChanged(bool toggled, DrogeUser user, Guid functionId)

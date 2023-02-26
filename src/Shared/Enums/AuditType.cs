@@ -12,4 +12,5 @@ public enum AuditType
     DataBaseUpgrade = 1,
     AddUser = 2,
     AddTraining = 3,
+    PatchTraining = 4,
 }

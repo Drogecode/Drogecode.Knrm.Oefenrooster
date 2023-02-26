@@ -64,12 +64,12 @@ public sealed partial class Calendar : IDisposable
         _updating= false;
         StateHasChanged();
     }
-    private async Task HandleNewTraining(NewTraining newTraining, Guid newId)
+    private async Task HandleNewTraining(EditTraining newTraining)
     {
         if (newTraining.Date == null) return;
         var asTraining = new Training
         {
-            TrainingId = newId,
+            TrainingId = newTraining.Id,
             Name = newTraining.Name,
             DateStart = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Utc),
             DateEnd = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Utc),

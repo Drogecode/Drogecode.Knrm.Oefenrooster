@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
@@ -12,7 +13,7 @@ public sealed partial class ScheduleCard : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private ISnackbar SnackbarService { get; set; } = default!;
-
+    [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter, EditorRequired] public PlannedTraining Planner { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
@@ -29,14 +30,15 @@ public sealed partial class ScheduleCard : IDisposable
     {
         if (Planner.IsCreated)
         {
-            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-            _dialogProvider.Show<ScheduleDialog>(L["Schedule people for this training"], new DialogParameters {
+            var parameters = new DialogParameters {
             { "Planner", Planner },
             { "Refresh", _refreshModel },
             { "Users", Users },
             { "Functions", Functions},
             { "Vehicles", Vehicles }
-            }, options);
+            };
+            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+            _dialogProvider.Show<ScheduleDialog>(L["Schedule people for this training"], parameters, options);
         }
         else
         {
@@ -46,12 +48,14 @@ public sealed partial class ScheduleCard : IDisposable
 
     private void OpenConfigDialog()
     {
-        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-        _dialogProvider.Show<EditTrainingDialog>(L["Configure training"], new DialogParameters {
+        var parameters = new DialogParameters {
             { "Planner", Planner },
             { "Refresh", _refreshModel },
-            { "Vehicles", Vehicles }
-            }, options);
+            { "Vehicles", Vehicles },
+            { "Global", Global }
+        };
+        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        _dialogProvider.Show<EditTrainingDialog>(L["Configure training"], parameters, options);
     }
 
     private void RefreshMe()
