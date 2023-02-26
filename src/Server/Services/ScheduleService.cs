@@ -1,5 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Graph;
 using MudBlazor.Extensions;
@@ -119,6 +121,8 @@ public class ScheduleService : IScheduleService
     {
         var oldTraining = await _database.RoosterTrainings.FindAsync(new object?[] { patchedTraining.Id }, cancellationToken: token);
         if (oldTraining == null) return false;
+        if (patchedTraining.Name?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)
+            throw new DrogeCodeToLongException();
         DateTime dateStart = ((patchedTraining.Date ?? throw new ArgumentNullException("Date is null")) + (patchedTraining.TimeStart ?? throw new ArgumentNullException("TimeStart is null"))).ToUniversalTime();
         DateTime dateEnd = ((patchedTraining.Date ?? throw new ArgumentNullException("Date is null")) + (patchedTraining.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"))).ToUniversalTime();
         oldTraining.TrainingType = patchedTraining.TrainingType;
@@ -147,6 +151,8 @@ public class ScheduleService : IScheduleService
 
     private async Task<bool> AddTrainingInternalAsync(Guid customerId, Training training, CancellationToken token)
     {
+        if (training.Name?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)
+            throw new DrogeCodeToLongException();
         token.ThrowIfCancellationRequested();
         token = CancellationToken.None;
         await _database.RoosterTrainings.AddAsync(new DbRoosterTraining

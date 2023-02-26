@@ -1,5 +1,6 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+@using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
 <MudDialog>
     <DialogContent>
@@ -10,7 +11,7 @@
         else
         {
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
-                <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" MaxLength="30" Required />
+                <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" Required />
                 <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Required />
                 <MudTimePicker Label="@L["From"]" @bind-Time="_training.TimeStart" Required />
                 <MudTimePicker Label="@LApp["till"]" @bind-Time="_training.TimeEnd" Validation="@(new Func<TimeSpan?, string?>(EndAfterStartValidation))" Required />
