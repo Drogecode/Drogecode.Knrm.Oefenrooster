@@ -4,6 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
+using static MudBlazor.Colors;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
@@ -21,7 +22,14 @@ public sealed partial class ScheduleDialog : IDisposable
     [Parameter] public RefreshModel Refresh { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
+    private List<DrogeVehicle>? _vehicleInfoForThisTraining;
+    private int _vehicleCount;
     private bool _layoutAB;
+    private int _colmn1 = 1;
+    private int _colmn2 = 3;
+    private int _colmn3 = 3;
+    private int _colmn4 = 3;
+    private int _colmn5 = 2;
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
@@ -30,6 +38,21 @@ public sealed partial class ScheduleDialog : IDisposable
     {
         if (Planner.TrainingId != null)
             _linkVehicleTraining = await _vehicleRepository.GetForTrainingAsync(Planner.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
+        if (Vehicles != null && _linkVehicleTraining != null)
+        {
+            _vehicleInfoForThisTraining = new();
+            var count = 0;
+            foreach (var vehicle in Vehicles.Where(x => x.Active))
+            {
+                bool? isSelected = _linkVehicleTraining?.FirstOrDefault(x => x.Vehicle == vehicle.Id)?.IsSelected;
+                if (isSelected == true || (isSelected == null && vehicle.Default))
+                {
+                    _vehicleInfoForThisTraining.Add(vehicle);
+                    count++;
+                }
+            }
+            _vehicleCount = count;
+        }
     }
 
     private async Task CheckChanged(bool toggled, PlanUser user, Guid functionId)

@@ -135,4 +135,7 @@
   <data name="Selected vehicles" xml:space="preserve">
     <value>Ingeplende boten</value>
   </data>
+  <data name="vehicle" xml:space="preserve">
+    <value>boot</value>
+  </data>
 </root>
