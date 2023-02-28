@@ -2,7 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Microsoft.Extensions.Localization;
 
-namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Components;
+namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 
 public sealed partial class CalendarBaseCard : IDisposable
 {

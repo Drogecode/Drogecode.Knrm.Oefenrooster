@@ -34,6 +34,10 @@
 	<ItemGroup>
 	  <TypeScriptCompile Include="wwwroot\js\empty.ts" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Components\MudBlazor\Pagination\DrogeCodeMudPagination.razor" />
+	</ItemGroup>
 	
 	<Import Project="JsLib/tailwindcss.targets" />
 

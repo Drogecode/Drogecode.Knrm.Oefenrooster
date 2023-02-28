@@ -31,11 +31,11 @@ public sealed partial class ScheduleCard : IDisposable
         if (Planner.IsCreated)
         {
             var parameters = new DialogParameters {
-            { "Planner", Planner },
-            { "Refresh", _refreshModel },
-            { "Users", Users },
-            { "Functions", Functions},
-            { "Vehicles", Vehicles }
+                { "Planner", Planner },
+                { "Refresh", _refreshModel },
+                { "Users", Users },
+                { "Functions", Functions},
+                { "Vehicles", Vehicles }
             };
             DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
             _dialogProvider.Show<ScheduleDialog>(L["Schedule people for this training"], parameters, options);

@@ -3,12 +3,8 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+@using Drogecode.Knrm.Oefenrooster.Client.Components.MudBlazor.Pagination;
 
-<MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" Class="ml-2 mt-2">
-    <MudButton OnClick="async ()=>{await AddWeekToCalendar(false);}">@LApp["Add week"]</MudButton>
-    <MudButton OnClick="async ()=>{await AddMultipeWeekToCalendar(false, 4);}">@LApp["Add multiple week"]</MudButton>
-</MudButtonGroup>
-<br />
 @if (_calendarForUser.Count == 0)
 {
     <MudSkeleton />
@@ -33,7 +29,7 @@
     </MudPaper>
 }
 <br />
-<MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" Class="ml-2 mt-2">
-    <MudButton OnClick="async ()=>{await AddWeekToCalendar(true);}">@LApp["Add week"]</MudButton>
-    <MudButton OnClick="async ()=>{await AddMultipeWeekToCalendar(true, 4);}">@LApp["Add multiple week"]</MudButton>
-</MudButtonGroup>
+@if (_dateOnly != null)
+{
+    <DrogeCodeMudPagination @bind-Selected="_dateOnly" />
+}

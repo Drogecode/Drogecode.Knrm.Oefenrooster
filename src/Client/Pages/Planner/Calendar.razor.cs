@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
 using System.Diagnostics;
+using System.Xml.Serialization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 public sealed partial class Calendar : IDisposable
@@ -14,56 +15,27 @@ public sealed partial class Calendar : IDisposable
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
     private LinkedList<TrainingWeek> _calendarForUser = new();
     private CancellationTokenSource _cls = new();
+    private DateOnly? _dateOnly;
     private int? _month;
-    private int _high = -1;
-    private int _low = -2;
     private bool _updating;
 
     protected override async Task OnInitializedAsync()
     {
+        _dateOnly = DateOnly.FromDateTime(DateTime.Today);
         Global.NewTrainingAddedAsync += HandleNewTraining;
-        for (int i = -1; i < 6; i++)
-        {
-            await AddWeekToCalendar(true);
-        }
     }
 
-    private async Task AddMultipeWeekToCalendar(bool high, int count)
+    private async Task SelectionChanged(DateOnly dateOnly)
     {
-        for (int i = -1; i < count; i++)
-        {
-            await AddWeekToCalendar(high);
-        }
-    }
 
-    private async Task AddWeekToCalendar(bool high)
-    {
         if (_updating) return;
         _updating = true;
-        TrainingWeek scheduleForUser = new();
-        var trainingsInWeek = (await _scheduleRepository.CalendarForUser(high ? _high : _low, _cls.Token))?.Trainings;
-        if (trainingsInWeek != null && trainingsInWeek.Count > 0)
-        {
-            scheduleForUser.From = DateOnly.FromDateTime(trainingsInWeek[0].DateStart);
-            foreach (var training in trainingsInWeek)
-            {
-                scheduleForUser.Trainings.AddLast(training);
-                scheduleForUser.Till = DateOnly.FromDateTime(training.DateStart);
-            }
-        }
-        if (high)
-        {
-            _calendarForUser.AddLast(scheduleForUser);
-            _high++;
-        }
-        else
-        {
-            _calendarForUser.AddFirst(scheduleForUser);
-            _low--;
-        }
-        _updating= false;
+        //ToDo 
+        Some text to create compile error
+        _updating = false;
         StateHasChanged();
     }
+
     private async Task HandleNewTraining(EditTraining newTraining)
     {
         if (newTraining.Date == null) return;
