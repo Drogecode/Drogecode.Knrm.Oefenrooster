@@ -31,5 +31,5 @@
 <br />
 @if (_dateOnly != null)
 {
-    <DrogeCodeMudPagination @bind-Selected="_dateOnly" />
+    <DrogeCodeMudPagination Selected="_dateOnly" SelectedChanged="(e)=>SelectionChanged(e)" />
 }
