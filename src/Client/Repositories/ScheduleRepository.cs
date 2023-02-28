@@ -43,12 +43,11 @@ public class ScheduleRepository
         return result;
     }
 
-    public async Task PatchAvailabilityUser(Guid? trainingId, PlanUser user, Guid functionId, CancellationToken token)
+    public async Task PatchAvailabilityUser(Guid? trainingId, PlanUser user, CancellationToken token)
     {
         var body = new PatchScheduleUserRequest
         {
             TrainingId = trainingId,
-            FunctionId= functionId,
             User = user,
         };
         var request = await _httpClient.PostAsJsonAsync($"api/Schedule/PatchAvailabilityUser", body, token);

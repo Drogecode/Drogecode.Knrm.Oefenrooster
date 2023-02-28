@@ -52,6 +52,7 @@ public class ScheduleService : IScheduleService
                         Availabilty = ava?.Available,
                         Assigned = ava?.Assigned ?? false,
                         TrainingType = training.TrainingType,
+                        VehicleId = ava.VehicleId
                     });
                     if (training.RoosterDefaultId != null)
                         defaultsFound.Add(training.RoosterDefaultId);
@@ -232,7 +233,8 @@ public class ScheduleService : IScheduleService
                             Assigned = a.Assigned,
                             Name = a.User?.Name ?? "Name not found",
                             PlannedFunctionId = a.UserFunctionId ?? users.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId,
-                            UserFunctionId = users.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId
+                            UserFunctionId = users.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId,
+                            VehicleId = a.VehicleId,
                         });
                     }
                     result.Planners.Add(newPlanner);
@@ -280,7 +282,8 @@ public class ScheduleService : IScheduleService
             return;
         }
         ava.Assigned = body.User.Assigned;
-        ava.UserFunctionId = body.FunctionId;
+        ava.UserFunctionId = body.User.PlannedFunctionId;
+        ava.VehicleId = body.User.VehicleId;
         _database.RoosterAvailables.Update(ava);
         await _database.SaveChangesAsync(token);
     }
@@ -358,6 +361,7 @@ public class ScheduleService : IScheduleService
                 Availabilty = schedul.Available,
                 Assigned = schedul.Assigned,
                 TrainingType = schedul.Training.TrainingType,
+                VehicleId = schedul.VehicleId
             });
         }
         return result;

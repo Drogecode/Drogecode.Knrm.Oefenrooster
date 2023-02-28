@@ -10,6 +10,7 @@ public class TrainingAdvance : TrainingBase
 {
     public Guid? TrainingId { get; set; }
     public Guid? DefaultId { get; set; }
+    public Guid? VehicleId { get; set; }
     public DateTime DateStart { get; set; }
     public DateTime DateEnd { get; set; }
     public bool Updated { get; set; }

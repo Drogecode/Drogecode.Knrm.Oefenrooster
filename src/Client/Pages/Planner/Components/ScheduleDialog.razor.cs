@@ -5,6 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
 using static MudBlazor.Colors;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
@@ -62,7 +63,7 @@ public sealed partial class ScheduleDialog : IDisposable
             user.PlannedFunctionId = functionId;
         else
             user.PlannedFunctionId = user.UserFunctionId;
-        await _scheduleRepository.PatchAvailabilityUser(Planner.TrainingId, user, functionId, _cls.Token);
+        await _scheduleRepository.PatchAvailabilityUser(Planner.TrainingId, user, _cls.Token);
         await Refresh.CallRequestRefreshAsync();
     }
     private async Task CheckChanged(bool toggled, DrogeUser user, Guid functionId)
@@ -107,6 +108,13 @@ public sealed partial class ScheduleDialog : IDisposable
                 return Color.Warning;
             default: return Color.Inherit;
         }
+    }
+
+    private async Task VehicleSelectionChanged(PlanUser user, Guid? id)
+    {
+        user.VehicleId = id;
+        await _scheduleRepository.PatchAvailabilityUser(Planner.TrainingId, user, _cls.Token);
+        await Refresh.CallRequestRefreshAsync();
     }
 
     public void Dispose()
