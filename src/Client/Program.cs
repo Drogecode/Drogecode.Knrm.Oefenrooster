@@ -7,6 +7,7 @@ using System.Globalization;
 using Microsoft.JSInterop;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using MudBlazor;
+using MudExtensions.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
