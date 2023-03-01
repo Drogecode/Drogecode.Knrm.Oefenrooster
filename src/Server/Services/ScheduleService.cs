@@ -19,11 +19,11 @@ public class ScheduleService : IScheduleService
         _database = database;
     }
 
-    public async Task<ScheduleForUserResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int relativeWeek, CancellationToken token)
+    public async Task<ScheduleForUserResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int year, int month, CancellationToken token)
     {
         var result = new ScheduleForUserResponse();
-        var startDate = DateTime.UtcNow.StartOfWeek(System.DayOfWeek.Monday).AddDays(relativeWeek * 7);
-        var tillDate = startDate.AddDays(7).AddMicroseconds(-1);
+        var startDate = (new DateTime(year, month, 1, 0, 0, 0)).ToUniversalTime();
+        var tillDate = (new DateTime(year, month, DateTime.DaysInMonth(year, month), 23, 59, 59)).ToUniversalTime();
         var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= startDate && x.ValidUntil >= startDate);
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate);
         var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate).ToList();
@@ -52,7 +52,7 @@ public class ScheduleService : IScheduleService
                         Availabilty = ava?.Available,
                         Assigned = ava?.Assigned ?? false,
                         TrainingType = training.TrainingType,
-                        VehicleId = ava.VehicleId
+                        VehicleId = ava?.VehicleId
                     });
                     if (training.RoosterDefaultId != null)
                         defaultsFound.Add(training.RoosterDefaultId);

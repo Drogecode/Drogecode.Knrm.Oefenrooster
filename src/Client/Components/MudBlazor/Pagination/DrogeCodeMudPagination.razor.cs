@@ -91,7 +91,6 @@ namespace MudBlazor
             get => _selected;
             set
             {
-                Console.WriteLine("dude-d" + value);
                 if (_selected == value)
                     return;
 

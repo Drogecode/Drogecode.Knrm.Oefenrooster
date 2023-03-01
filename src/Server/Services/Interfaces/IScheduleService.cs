@@ -4,7 +4,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 
 public interface IScheduleService
 {
-    Task<ScheduleForUserResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int relativeWeek, CancellationToken token);
+    Task<ScheduleForUserResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int year, int month, CancellationToken token);
     Task<ScheduleForAllResponse> ScheduleForAllAsync(Guid userId, Guid customerId, int relativeWeek, CancellationToken token);
     Task<Training> PatchScheduleForUserAsync(Guid userId, Guid customerId, Training training, CancellationToken token);
     Task PatchAvailabilityUserAsync(Guid userId, Guid customerId, PatchScheduleUserRequest body, CancellationToken token);

@@ -25,6 +25,7 @@ public sealed partial class Calendar : IDisposable
     {
         _dateOnly = DateOnly.FromDateTime(DateTime.Today);
         Global.NewTrainingAddedAsync += HandleNewTraining;
+        await SetCalenderForMonth(_dateOnly ?? throw new ArgumentNullException());
     }
 
     private async Task SelectionChanged(DateOnly dateOnly)
@@ -32,10 +33,29 @@ public sealed partial class Calendar : IDisposable
 
         if (_updating) return;
         _dateOnly = dateOnly;
-        _updating = true;
-        //ToDo 
-        _updating = false;
+        await SetCalenderForMonth(dateOnly);
         StateHasChanged();
+    }
+    private async Task SetCalenderForMonth(DateOnly dateOnly)
+    {
+        if (_updating) return;
+        _updating = true;
+        _calendarForUser = new();
+        TrainingWeek scheduleForUser = new();
+        var trainingsInWeek = (await _scheduleRepository.CalendarForUser(dateOnly, _cls.Token))?.Trainings;
+        if (trainingsInWeek != null && trainingsInWeek.Count > 0)
+        {
+
+            scheduleForUser.From = DateOnly.FromDateTime(trainingsInWeek[0].DateStart);
+            foreach (var training in trainingsInWeek)
+            {
+                scheduleForUser.Trainings.AddLast(training);
+                scheduleForUser.Till = DateOnly.FromDateTime(training.DateStart);
+            }
+        }
+        //ToDo new line for week
+        _calendarForUser.AddLast(scheduleForUser);
+        _updating = false;
     }
 
     private async Task HandleNewTraining(EditTraining newTraining)
@@ -82,9 +102,11 @@ public sealed partial class Calendar : IDisposable
         {
             case Page.Next:
                 _dateOnly = _dateOnly.Value.AddMonths(1);
+                await SetCalenderForMonth(_dateOnly ?? throw new ArgumentNullException());
                 break;
             case Page.Previous:
                 _dateOnly = _dateOnly.Value.AddMonths(-1);
+                await SetCalenderForMonth(_dateOnly ?? throw new ArgumentNullException());
                 break;
         }
         StateHasChanged();
