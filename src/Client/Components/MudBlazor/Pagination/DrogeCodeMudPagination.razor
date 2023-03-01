@@ -12,15 +12,15 @@
     @foreach (var state in GeneratePagination())
     {
         var currentPage = state;
-        if (currentPage == Selected)
+        if (currentPage.Value == Selected)
         {
             <li class="@SelectedItemClassname">
-                <MudButton Variant="@(Variant == Variant.Outlined ? Variant.Outlined : Variant.Filled)" Size="@Size" DisableRipple="true" Disabled="@Disabled" Color="@Color" aria-current="page" aria-label="@($"Current page {currentPage.ToString("MMMM")}")">@currentPage.ToString("MMMM")</MudButton>
+                <MudButton Variant="@(Variant == Variant.Outlined ? Variant.Outlined : Variant.Filled)" Size="@Size" DisableRipple="true" Disabled="@Disabled" Color="@Color" aria-current="page" aria-label="@($"Current page {currentPage.Name}")">@currentPage.Name</MudButton>
             </li>
         }
         else {
             <li class="@ItemClassname">
-                <MudButton OnClick="@(() => Selected = currentPage)" Variant="@Variant" Size="@Size" DisableRipple="true" Disabled="@Disabled" aria-label="@($"Page {currentPage.ToString("MMMM")}")">@currentPage.ToString("MMMM")</MudButton>
+                <MudButton OnClick="@(() => Selected = currentPage.Value)" Variant="@Variant" Size="@Size" DisableRipple="true" Disabled="@Disabled" aria-label="@($"Page {currentPage.Name}")">@currentPage.Name</MudButton>
             </li>
         }
     }

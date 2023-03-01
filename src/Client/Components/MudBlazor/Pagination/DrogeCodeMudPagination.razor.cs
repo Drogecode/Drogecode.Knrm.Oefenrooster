@@ -189,18 +189,20 @@ namespace MudBlazor
 
         #region Methods
 
-        private IEnumerable<DateOnly> GeneratePagination()
+        private IEnumerable<PageObject> GeneratePagination()
         {
-            Console.WriteLine("dude-a");
-            var pages = new DateOnly[5];
-            var date = Selected.AddMonths(-2);
-            for (var i = 0; i < 5;i++)
+            var options = 2;
+            var pages = new PageObject[options * 2 + 1];
+            var date = Selected.AddMonths(-options);
+            for (var i = 0; i < options * 2 + 1; i++)
             {
-                pages[i] = date;
-                Console.WriteLine("dude-b" + i);
+                pages[i] = new PageObject
+                {
+                    Name = DateTime.Today.Year == date.Year ? date.ToString("MMMM") : date.ToString("MMMM yyyy"),
+                    Value = date
+                };
                 date = date.AddMonths(1);
             }
-            Console.WriteLine("dude-c");
             return pages;
         }
 
@@ -230,5 +232,11 @@ namespace MudBlazor
             }
         }
         #endregion
+
+        private class PageObject
+        {
+            internal string Name { get; set; }
+            internal DateOnly Value { get; set; }
+        }
     }
 }

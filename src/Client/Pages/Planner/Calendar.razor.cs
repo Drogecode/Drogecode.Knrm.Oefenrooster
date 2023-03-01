@@ -2,6 +2,8 @@
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
+using MudBlazor;
+using System;
 using System.Diagnostics;
 using System.Xml.Serialization;
 
@@ -29,6 +31,7 @@ public sealed partial class Calendar : IDisposable
     {
 
         if (_updating) return;
+        _dateOnly = dateOnly;
         _updating = true;
         //ToDo 
         _updating = false;
@@ -72,6 +75,19 @@ public sealed partial class Calendar : IDisposable
                 return;
             }
         }
+    }
+    private async Task ControlButtonClicked(Page page)
+    {
+        switch (page)
+        {
+            case Page.Next:
+                _dateOnly = _dateOnly.Value.AddMonths(1);
+                break;
+            case Page.Previous:
+                _dateOnly = _dateOnly.Value.AddMonths(-1);
+                break;
+        }
+        StateHasChanged();
     }
 
     public void Dispose()

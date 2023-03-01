@@ -30,5 +30,5 @@
 <br />
 @if (_dateOnly != null)
 {
-    <DrogeCodeMudPagination Selected="_dateOnly ?? throw new ArgumentNullException()" SelectedChanged="(e)=>SelectionChanged(e)" />
+    <DrogeCodeMudPagination Selected="_dateOnly ?? throw new ArgumentNullException()" SelectedChanged="(e)=>SelectionChanged(e)" ControlButtonClicked="ControlButtonClicked" />
 }
