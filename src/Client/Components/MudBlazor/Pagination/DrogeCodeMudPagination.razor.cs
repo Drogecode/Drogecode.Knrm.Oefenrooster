@@ -15,7 +15,7 @@ using MudBlazor.Extensions;
 using MudBlazor.Internal;
 using MudBlazor.Utilities;
 
-namespace Drogecode.Knrm.Oefenrooster.Client.Components.MudBlazor.Pagination
+namespace MudBlazor
 {
     public partial class DrogeCodeMudPagination : MudComponentBase
     {
@@ -91,6 +91,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.MudBlazor.Pagination
             get => _selected;
             set
             {
+                Console.WriteLine("dude-d" + value);
                 if (_selected == value)
                     return;
 
@@ -188,18 +189,18 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.MudBlazor.Pagination
 
         #region Methods
 
-        private IEnumerable<PageObject> GeneratePagination()
+        private IEnumerable<DateOnly> GeneratePagination()
         {
-            var pages = new PageObject[5];
-            var date = Selected.AddMonths(2);
-            for (var i = 0; i < 5;)
+            Console.WriteLine("dude-a");
+            var pages = new DateOnly[5];
+            var date = Selected.AddMonths(-2);
+            for (var i = 0; i < 5;i++)
             {
-                pages[i] = new PageObject { 
-                    Name = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(date.Month),
-                    Value = date
-                };
-                date.AddMonths(1);
+                pages[i] = date;
+                Console.WriteLine("dude-b" + i);
+                date = date.AddMonths(1);
             }
+            Console.WriteLine("dude-c");
             return pages;
         }
 
@@ -229,11 +230,5 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.MudBlazor.Pagination
             }
         }
         #endregion
-
-        private class PageObject
-        {
-            internal string Name { get; set; }
-            internal DateOnly Value { get; set; }
-        }
     }
 }

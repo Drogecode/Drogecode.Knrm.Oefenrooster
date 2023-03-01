@@ -3,7 +3,6 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-@using Drogecode.Knrm.Oefenrooster.Client.Components.MudBlazor.Pagination;
 
 @if (_calendarForUser.Count == 0)
 {
@@ -31,5 +30,5 @@
 <br />
 @if (_dateOnly != null)
 {
-    <DrogeCodeMudPagination Selected="_dateOnly" SelectedChanged="(e)=>SelectionChanged(e)" />
+    <DrogeCodeMudPagination Selected="_dateOnly ?? throw new ArgumentNullException()" SelectedChanged="(e)=>SelectionChanged(e)" />
 }

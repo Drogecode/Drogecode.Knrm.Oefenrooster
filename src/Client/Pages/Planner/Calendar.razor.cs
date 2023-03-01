@@ -31,7 +31,6 @@ public sealed partial class Calendar : IDisposable
         if (_updating) return;
         _updating = true;
         //ToDo 
-        Some text to create compile error
         _updating = false;
         StateHasChanged();
     }
