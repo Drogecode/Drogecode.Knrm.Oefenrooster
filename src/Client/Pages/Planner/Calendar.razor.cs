@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
+using MudBlazor.Extensions;
 using System;
 using System.Diagnostics;
 using System.Xml.Serialization;
@@ -41,6 +42,8 @@ public sealed partial class Calendar : IDisposable
         if (_updating) return;
         _updating = true;
         _calendarForUser = new();
+        _month = null;
+        var lastStart = DateTime.MinValue;
         TrainingWeek scheduleForUser = new();
         var trainingsInWeek = (await _scheduleRepository.CalendarForUser(dateOnly, _cls.Token))?.Trainings;
         if (trainingsInWeek != null && trainingsInWeek.Count > 0)
@@ -49,11 +52,17 @@ public sealed partial class Calendar : IDisposable
             scheduleForUser.From = DateOnly.FromDateTime(trainingsInWeek[0].DateStart);
             foreach (var training in trainingsInWeek)
             {
+                var d = training.DateStart.StartOfWeek(DayOfWeek.Monday);
+                if (lastStart.CompareTo(d) < 0 )
+                {
+                    _calendarForUser.AddLast(scheduleForUser);
+                    scheduleForUser = new();
+                    lastStart = d;
+                }
                 scheduleForUser.Trainings.AddLast(training);
                 scheduleForUser.Till = DateOnly.FromDateTime(training.DateStart);
             }
         }
-        //ToDo new line for week
         _calendarForUser.AddLast(scheduleForUser);
         _updating = false;
     }

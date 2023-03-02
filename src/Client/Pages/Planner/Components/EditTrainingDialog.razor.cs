@@ -52,10 +52,16 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     void Cancel() => MudDialog.Cancel();
 
+    private string? StartBeforeEndValidation(TimeSpan? timeStart)
+    {
+        if (_training?.TimeEnd < timeStart)
+        {
+            return L["Start time past end time"];
+        }
+        return null;
+    }
     private string? EndAfterStartValidation(TimeSpan? timeEnd)
     {
-        Console.WriteLine(timeEnd);
-        Console.WriteLine(_training?.TimeStart);
         if (_training?.TimeStart >= timeEnd)
         {
             return L["End time before start time"];
