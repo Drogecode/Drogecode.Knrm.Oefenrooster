@@ -1,15 +1,6 @@
-using Drogecode.Knrm.Oefenrooster.Database;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
-using Microsoft.Extensions;
-using Microsoft.Graph.ExternalConnectors;
-using Microsoft.Extensions.Options;
-using Microsoft.EntityFrameworkCore.Migrations.Internal;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
-using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
