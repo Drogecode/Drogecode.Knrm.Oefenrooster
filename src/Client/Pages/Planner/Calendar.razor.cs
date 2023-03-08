@@ -1,6 +1,8 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using Heron.MudCalendar;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
 using MudBlazor.Extensions;
@@ -17,6 +19,7 @@ public sealed partial class Calendar : IDisposable
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
     private LinkedList<TrainingWeek> _calendarForUser = new();
+    private List<CustomItem> _events = new();
     private CancellationTokenSource _cls = new();
     private DateOnly? _dateOnly;
     private int? _month;
@@ -28,6 +31,7 @@ public sealed partial class Calendar : IDisposable
         Global.NewTrainingAddedAsync += HandleNewTraining;
         await SetCalenderForMonth(_dateOnly ?? throw new ArgumentNullException());
     }
+    private string GetColor(Color color) => $"var(--mud-palette-{color.ToDescriptionString()})";
 
     private async Task SelectionChanged(DateOnly dateOnly)
     {
@@ -52,21 +56,45 @@ public sealed partial class Calendar : IDisposable
             scheduleForUser.From = DateOnly.FromDateTime(trainingsInWeek[0].DateStart);
             foreach (var training in trainingsInWeek)
             {
+                _events.Add(new CustomItem
+                {
+                    Start = training.DateStart,
+                    End = training.DateEnd,
+                    Title = training.Name ?? "standaard",
+                    Text = training.Availabilty.ToString() ?? "",
+                    Color = HeaderClass(training.TrainingType)
+                });
                 var d = training.DateStart.StartOfWeek(DayOfWeek.Monday);
-                if (lastStart.CompareTo(d) < 0 )
+                if (lastStart.CompareTo(d) < 0)
                 {
                     _calendarForUser.AddLast(scheduleForUser);
                     scheduleForUser = new();
                     lastStart = d;
                 }
                 scheduleForUser.Trainings.AddLast(training);
-                scheduleForUser.Till = DateOnly.FromDateTime(training.DateStart);
+                scheduleForUser.Till = DateOnly.FromDateTime(training.DateEnd);
             }
         }
         _calendarForUser.AddLast(scheduleForUser);
         _updating = false;
     }
-
+    private string HeaderClass(TrainingType trainingType)
+    {
+        switch (trainingType)
+        {
+            case TrainingType.EHBO:
+                return "DrogeCode-card-header-ehbo";
+            case TrainingType.OneOnOne:
+                return "DrogeCode-card-header-one_on_one";
+            case TrainingType.FireBrigade:
+                return "DrogeCode-card-header-fire-brigade";
+            case TrainingType.HRB:
+                return "DrogeCode-card-header-hrb";
+            case TrainingType.Default:
+            default:
+                return "DrogeCode-card-header-default";
+        }
+    }
     private async Task HandleNewTraining(EditTraining newTraining)
     {
         if (newTraining.Date == null) return;
@@ -126,5 +154,11 @@ public sealed partial class Calendar : IDisposable
     {
         Global.NewTrainingAddedAsync -= HandleNewTraining;
         _cls.Cancel();
+    }
+    private class CustomItem : CalendarItem
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+        public string Color { get; set; } = "DrogeCode-card-header-default";
     }
 }

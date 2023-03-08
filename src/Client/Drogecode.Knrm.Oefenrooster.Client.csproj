@@ -13,7 +13,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.4.1" />
+		<PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.4.2" />
+		<PackageReference Include="Heron.MudCalendar" Version="1.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.3" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="7.0.3" />
