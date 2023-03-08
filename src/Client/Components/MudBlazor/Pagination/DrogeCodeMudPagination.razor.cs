@@ -234,7 +234,7 @@ namespace MudBlazor
 
         private class PageObject
         {
-            internal string Name { get; set; }
+            internal string Name { get; set; } = "";
             internal DateOnly Value { get; set; }
         }
     }

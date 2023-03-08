@@ -14,16 +14,16 @@
                 @L["Title"]
                 <MudSpacer />
                 <MudBadge Color="Color.Secondary" Dot="true" Overlap="true" Visible="_newNotificationsAvailable">
-                    <MudMenu Icon="@Icons.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter" PopoverClass="docs-layout-menu-shadow" ListClass="pa-2 docs-menu-list" LockScroll="true">
+                    <MudMenu Icon="@Icons.Material.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter" PopoverClass="docs-layout-menu-shadow" ListClass="pa-2 docs-menu-list" LockScroll="true">
                         <div class="d-flex justify-space-between align-center px-2">
                             <MudText Typo="Typo.subtitle2">Notifications</MudText>
-                            <MudButton Disabled="@(_newNotificationsAvailable == false)" StartIcon="@Icons.Filled.DoneAll" Variant="Variant.Text" Color="Color.Primary" Class="ml-16 mr-n2">Mark as read</MudButton>
+                            <MudButton Disabled="@(_newNotificationsAvailable == false)" StartIcon="@Icons.Material.Filled.DoneAll" Variant="Variant.Text" Color="Color.Primary" Class="ml-16 mr-n2">Mark as read</MudButton>
                         </div>
                         @if (_messages != null && _newNotificationsAvailable)
                         {
                             @foreach (var (message, isRead) in _messages.Take(5))
                             {
-                                <MudMenuItem Class="px-2 py-0 rounded" Link="@($"/mud/announcements/{message.Id}")">
+                                <MudMenuItem Class="px-2 py-0 rounded" Href="@($"/mud/announcements/{message.Id}")">
                                     <MudText Typo="Typo.subtitle2">@message.Title</MudText>
                                     <MudText Typo="Typo.body2">@($"{message.Authors.FirstOrDefault()?.DisplayName} • {message.PublishDate.ToString("MM/dd/yyyy")}")</MudText>
                                     </MudMenuItem>
@@ -42,7 +42,7 @@
                     <MudMenuItem Href="/user/profile">Profile</MudMenuItem>
                     <MudMenuItem @onclick="BeginLogout">Logout</MudMenuItem>
                 </MudMenu>
-                <MudIconButton Icon="@(_isDarkMode ? Icons.Filled.DarkMode : Icons.Filled.LightMode)" Color="Color.Inherit" OnClick="@(()=>_isDarkMode = !_isDarkMode)" />
+                <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.DarkMode : Icons.Material.Filled.LightMode)" Color="Color.Inherit" OnClick="@(()=>_isDarkMode = !_isDarkMode)" />
             </MudAppBar>
             <CascadingValue Value="_global">
                 <MudDrawer @bind-Open="@_drawerOpen">

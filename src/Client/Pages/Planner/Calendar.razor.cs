@@ -107,6 +107,7 @@ public sealed partial class Calendar : IDisposable
     }
     private async Task ControlButtonClicked(Page page)
     {
+        if (_dateOnly == null) return;
         switch (page)
         {
             case Page.Next:
