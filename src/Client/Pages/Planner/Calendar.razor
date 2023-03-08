@@ -2,51 +2,22 @@
 @attribute [Authorize]
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-@if (_dateOnly != null)
-{
-    <DrogeCodeMudPagination Selected="_dateOnly ?? throw new ArgumentNullException()" SelectedChanged="(e)=>SelectionChanged(e)" ControlButtonClicked="ControlButtonClicked" />
-}
-@if (_calendarForUser.Count == 0)
-{
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
-}
-else
-{
-    <MudCalendar Items="_events" MonthCellMinHeight="100">
-        <CellTemplate>
-            <div style="width: 100%; border: 2px solid @(((CustomItem)context).Color)">
-                <div style="background-color: @(((CustomItem)context).Color)">
-                    <MudText Style="color: #ffffff;" Typo="Typo.body1" Align="Align.Center">@(((CustomItem)context).Title)</MudText>
-                </div>
-                <div class="pa-2"><MudText Typo="Typo.body2">@context.Text</MudText></div>
+<MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth">
+    <CellTemplate>
+        <div style="width: 100%; border: 2px solid @(((CustomItem)context).Color)">
+            <div style="background-color: @(((CustomItem)context).Color)" class="min-h-[1.25rem]">
+                <MudText Style="color: #ffffff;" Typo="Typo.body1" Align="Align.Center">
+                    @(((CustomItem)context).training.Name)
+                </MudText>
             </div>
-         </CellTemplate>
-    </MudCalendar>
-
-    @foreach (var trainingWeek in _calendarForUser)
-    {
-        @if (trainingWeek.Trainings.Count > 0 && _month != trainingWeek.Trainings.First().DateStart.Month)
-        {
-            _month = trainingWeek.Trainings.First().DateStart.Month;
-            <MudText Typo="Typo.h3" Class="ml-2 mt-12">
-                @trainingWeek.Trainings.First().DateStart.ToString(@trainingWeek.Trainings.First().DateStart.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy",Thread.CurrentThread.CurrentCulture)
-            </MudText>
-        }
-        <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-            @foreach (var training in trainingWeek.Trainings)
-            {
-                <CalendarCard Training="training" />
-            }
-        </MudPaper>
-    }
-    <br />
-}
-@if (_dateOnly != null)
-{
-    <DrogeCodeMudPagination Selected="_dateOnly ?? throw new ArgumentNullException()" SelectedChanged="(e)=>SelectionChanged(e)" ControlButtonClicked="ControlButtonClicked" />
-}
+            <MudSelect T="Availabilty?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="@(((CustomItem)context).training.Availabilty)" SelectedValuesChanged="()=>OnChange((CustomItem)context)">
+                <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
+                <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
+                <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
+            </MudSelect>
+        </div>
+    </CellTemplate>
+</MudCalendar>

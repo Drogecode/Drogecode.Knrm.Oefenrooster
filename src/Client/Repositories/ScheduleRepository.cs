@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using MudBlazor;
 using System.Net.Http.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
@@ -11,9 +12,9 @@ public class ScheduleRepository
     {
         _httpClient = httpClient;
     }
-    public async Task<ScheduleForUserResponse?> CalendarForUser(DateOnly forMonth, CancellationToken token)
+    public async Task<ScheduleForUserResponse?> CalendarForUser(DateRange dateRange, CancellationToken token)
     {
-        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForUserResponse>($"api/Schedule/ForUser?year={forMonth.Year}&month={forMonth.Month}", token);
+        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForUserResponse>($"api/Schedule/ForUser?yearStart={dateRange.Start!.Value.Year}&monthStart={dateRange.Start!.Value.Month}&yearEnd={dateRange.End!.Value.Year}&monthEnd={dateRange.End!.Value.Month}", token);
         return schedule;
     }
     public async Task<ScheduleForAllResponse?> ScheduleForAll(int relativeWeek, CancellationToken token)
