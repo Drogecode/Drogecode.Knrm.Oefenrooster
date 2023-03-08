@@ -31,7 +31,6 @@ public sealed partial class Calendar : IDisposable
         Global.NewTrainingAddedAsync += HandleNewTraining;
         await SetCalenderForMonth(_dateOnly ?? throw new ArgumentNullException());
     }
-    private string GetColor(Color color) => $"var(--mud-palette-{color.ToDescriptionString()})";
 
     private async Task SelectionChanged(DateOnly dateOnly)
     {
@@ -83,16 +82,16 @@ public sealed partial class Calendar : IDisposable
         switch (trainingType)
         {
             case TrainingType.EHBO:
-                return "DrogeCode-card-header-ehbo";
+                return "var(--mud-palette-warning-darken)";
             case TrainingType.OneOnOne:
-                return "DrogeCode-card-header-one_on_one";
+                return "var(--mud-palette-tertiary-darken)";
             case TrainingType.FireBrigade:
-                return "DrogeCode-card-header-fire-brigade";
+                return "var(--mud-palette-error-darken)";
             case TrainingType.HRB:
-                return "DrogeCode-card-header-hrb";
+                return "var(--mud-palette-success-lighten)";
             case TrainingType.Default:
             default:
-                return "DrogeCode-card-header-default";
+                return "var(--mud-palette-lines-inputs)";
         }
     }
     private async Task HandleNewTraining(EditTraining newTraining)
@@ -159,6 +158,6 @@ public sealed partial class Calendar : IDisposable
     {
         public string Title { get; set; } = string.Empty;
         public string Location { get; set; } = string.Empty;
-        public string Color { get; set; } = "DrogeCode-card-header-default";
+        public string Color { get; set; } = "var(--mud-palette-grey-default)";
     }
 }

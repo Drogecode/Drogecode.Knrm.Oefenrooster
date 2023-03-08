@@ -19,14 +19,14 @@ else
 {
     <MudCalendar Items="_events" MonthCellMinHeight="100">
         <CellTemplate>
-            <div style="width: 100%; border: 2px solid" Class="@(((CustomItem)context).Color)">
-                <div Class="@(((CustomItem)context).Color)">
+            <div style="width: 100%; border: 2px solid @(((CustomItem)context).Color)">
+                <div style="background-color: @(((CustomItem)context).Color)">
                     <MudText Style="color: #ffffff;" Typo="Typo.body1" Align="Align.Center">@(((CustomItem)context).Title)</MudText>
                 </div>
                 <div class="pa-2"><MudText Typo="Typo.body2">@context.Text</MudText></div>
             </div>
-            </CellTemplate>
-        </MudCalendar>
+         </CellTemplate>
+    </MudCalendar>
 
     @foreach (var trainingWeek in _calendarForUser)
     {
