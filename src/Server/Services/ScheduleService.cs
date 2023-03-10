@@ -19,11 +19,11 @@ public class ScheduleService : IScheduleService
         _database = database;
     }
 
-    public async Task<ScheduleForUserResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int yearStart, int monthStart, int yearEnd, int monthEnd, CancellationToken token)
+    public async Task<ScheduleForUserResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token)
     {
         var result = new ScheduleForUserResponse();
-        var startDate = (new DateTime(yearStart, monthStart, 1, 0, 0, 0)).ToUniversalTime();
-        var tillDate = (new DateTime(yearEnd, monthEnd, 1, 0, 0, 0)).ToUniversalTime();
+        var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
+        var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 0, 0, 0)).ToUniversalTime();
         var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= startDate && x.ValidUntil >= startDate);
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate);
         var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate).ToList();

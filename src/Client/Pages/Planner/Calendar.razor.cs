@@ -4,12 +4,8 @@ using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Heron.MudCalendar;
 using Microsoft.Extensions.Localization;
-using Microsoft.Graph.Models;
 using MudBlazor;
-using MudBlazor.Extensions;
-using System;
 using System.Diagnostics;
-using System.Xml.Serialization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 public sealed partial class Calendar : IDisposable
@@ -34,8 +30,7 @@ public sealed partial class Calendar : IDisposable
 
     private async Task SetCalenderForMonth(DateRange dateRange)
     {
-        if (_updating) return;
-        if (dateRange.Start == null) return;
+        if (_updating || dateRange.Start == null) return;
         _updating = true;
         _events = new();
         _month = null;

@@ -14,7 +14,7 @@ public class ScheduleRepository
     }
     public async Task<ScheduleForUserResponse?> CalendarForUser(DateRange dateRange, CancellationToken token)
     {
-        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForUserResponse>($"api/Schedule/ForUser?yearStart={dateRange.Start!.Value.Year}&monthStart={dateRange.Start!.Value.Month}&yearEnd={dateRange.End!.Value.Year}&monthEnd={dateRange.End!.Value.Month}", token);
+        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForUserResponse>($"api/Schedule/ForUser?yearStart={dateRange.Start!.Value.Year}&monthStart={dateRange.Start!.Value.Month}&dayStart={dateRange.Start!.Value.Day}&yearEnd={dateRange.End!.Value.Year}&monthEnd={dateRange.End!.Value.Month}&dayEnd={dateRange.End!.Value.Day}", token);
         return schedule;
     }
     public async Task<ScheduleForAllResponse?> ScheduleForAll(int relativeWeek, CancellationToken token)

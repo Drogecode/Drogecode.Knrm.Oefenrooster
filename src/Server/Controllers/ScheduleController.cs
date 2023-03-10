@@ -30,13 +30,13 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ScheduleForUserResponse>> ForUser(int yearStart, int monthStart, int yearEnd, int monthEnd, CancellationToken token)
+    public async Task<ActionResult<ScheduleForUserResponse>> ForUser(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token)
     {
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            ScheduleForUserResponse result = await _scheduleService.ScheduleForUserAsync(userId, customerId, yearStart, monthStart, yearEnd, monthEnd, token);
+            ScheduleForUserResponse result = await _scheduleService.ScheduleForUserAsync(userId, customerId, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, token);
             return result;
         }
         catch (Exception ex)
