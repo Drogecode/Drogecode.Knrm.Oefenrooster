@@ -5,7 +5,7 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-<MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text">
+<MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
     <CellTemplate>
         <div style="width: 100%; border: 2px solid @(((CustomItem)context).Color)">
             <div style="background-color: @(((CustomItem)context).Color)" class="min-h-[1.25rem]">
@@ -13,6 +13,7 @@
                     @(((CustomItem)context).training.Name)
                 </MudText>
             </div>
+            <MudText Typo="Typo.body2">@context.Start.ToString("HH:mm") @LApp["till"] @context.End!.Value.ToString("HH:mm")</MudText>
             <MudSelect T="Availabilty?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="@(((CustomItem)context).training.Availabilty)" SelectedValuesChanged="()=>OnChange((CustomItem)context)">
                 <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
                 <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
