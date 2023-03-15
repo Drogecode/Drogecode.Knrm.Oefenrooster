@@ -15,7 +15,6 @@ public sealed partial class Calendar : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
-    private LinkedList<TrainingWeek> _calendarForUser = new();
     private List<CustomItem> _events = new();
     private CancellationTokenSource _cls = new();
     private DateOnly? _dateOnly;
@@ -52,7 +51,6 @@ public sealed partial class Calendar : IDisposable
                 });
             }
         }
-        _calendarForUser.AddLast(scheduleForUser);
         _updating = false;
         StateHasChanged();
     }
@@ -85,31 +83,15 @@ public sealed partial class Calendar : IDisposable
             TrainingType = newTraining.TrainingType
         };
         var date = DateOnly.FromDateTime(newTraining.Date ?? throw new UnreachableException("newTraining.Date is null after null check"));
-        foreach (var week in _calendarForUser)
+        _events.Add(new CustomItem
         {
-            if (week.From <= date && week.Till >= date)
-            {
-                var node = week.Trainings.First;
-                LinkedListNode<Training>? last = null;
-                while (node != null)
-                {
-                    if (node.Value.DateStart.CompareTo(newTraining.Date) >= 0)
-                    {
-                        week.Trainings.AddAfter(node, asTraining);
-                        StateHasChanged();
-                        return;
-                    }
-                    last = node;
-                    node = node.Next;
-                }
-                if (last != null)
-                {
-                    week.Trainings.AddAfter(last, asTraining);
-                    StateHasChanged();
-                }
-                return;
-            }
-        }
+            Start = asTraining.DateStart,
+            End = asTraining.DateEnd,
+            training = asTraining,
+            Text = asTraining.Availabilty.ToString() ?? "",
+            Color = HeaderClass(asTraining.TrainingType)
+        });
+        StateHasChanged();
     }
 
     private async Task OnChange( CustomItem customItem)
