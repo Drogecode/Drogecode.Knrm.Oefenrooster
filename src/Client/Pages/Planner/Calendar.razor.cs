@@ -1,6 +1,6 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Helpers;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Heron.MudCalendar;
 using Microsoft.Extensions.Localization;
@@ -17,13 +17,10 @@ public sealed partial class Calendar : IDisposable
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
     private List<CustomItem> _events = new();
     private CancellationTokenSource _cls = new();
-    private DateOnly? _dateOnly;
-    private int? _month;
     private bool _updating;
 
     protected override async Task OnInitializedAsync()
     {
-        _dateOnly = DateOnly.FromDateTime(DateTime.Today);
         Global.NewTrainingAddedAsync += HandleNewTraining;
     }
 
@@ -32,7 +29,6 @@ public sealed partial class Calendar : IDisposable
         if (_updating || dateRange.Start == null) return;
         _updating = true;
         _events = new();
-        _month = null;
         TrainingWeek scheduleForUser = new();
         var trainingsInWeek = (await _scheduleRepository.CalendarForUser(dateRange, _cls.Token))?.Trainings;
         if (trainingsInWeek != null && trainingsInWeek.Count > 0)
@@ -45,32 +41,25 @@ public sealed partial class Calendar : IDisposable
                 {
                     Start = training.DateStart,
                     End = training.DateEnd,
-                    training = training,
+                    Training = training,
                     Text = training.Availabilty.ToString() ?? "",
-                    Color = HeaderClass(training.TrainingType)
+                    Color = PlannerHelper.HeaderClass(training.TrainingType)
                 });
             }
         }
         _updating = false;
         StateHasChanged();
     }
-    private string HeaderClass(TrainingType trainingType)
+
+    private async Task OnChange(CustomItem customItem)
     {
-        switch (trainingType)
-        {
-            case TrainingType.EHBO:
-                return "var(--mud-palette-warning-darken)";
-            case TrainingType.OneOnOne:
-                return "var(--mud-palette-tertiary-darken)";
-            case TrainingType.FireBrigade:
-                return "var(--mud-palette-error-darken)";
-            case TrainingType.HRB:
-                return "var(--mud-palette-success-lighten)";
-            case TrainingType.Default:
-            default:
-                return "var(--mud-palette-lines-inputs)";
-        }
+        if (_updating) return;
+        _updating = true;
+        var updatedTraining = await _scheduleRepository.PatchScheduleForUser(customItem.Training, _cls.Token);
+        customItem.Training = updatedTraining;
+        _updating = false;
     }
+
     private async Task HandleNewTraining(EditTraining newTraining)
     {
         if (newTraining.Date == null) return;
@@ -87,20 +76,11 @@ public sealed partial class Calendar : IDisposable
         {
             Start = asTraining.DateStart,
             End = asTraining.DateEnd,
-            training = asTraining,
+            Training = asTraining,
             Text = asTraining.Availabilty.ToString() ?? "",
-            Color = HeaderClass(asTraining.TrainingType)
+            Color = PlannerHelper.HeaderClass(asTraining.TrainingType)
         });
         StateHasChanged();
-    }
-
-    private async Task OnChange( CustomItem customItem)
-    {
-        if (_updating) return;
-        _updating = true;
-        var updatedTraining = await _scheduleRepository.PatchScheduleForUser(customItem.training, _cls.Token);
-        customItem.training = updatedTraining;
-        _updating = false;
     }
 
     public void Dispose()
@@ -110,7 +90,7 @@ public sealed partial class Calendar : IDisposable
     }
     private class CustomItem : CalendarItem
     {
-        public Training training { get; set; }
+        public Training? Training { get; set; }
         public string Color { get; set; } = "var(--mud-palette-grey-default)";
     }
 }

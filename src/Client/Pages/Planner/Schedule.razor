@@ -4,38 +4,36 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-<MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" Class="ml-2 mt-2">
-    <MudButton OnClick="async ()=>{await AddWeekToSchadules(false);}">@LApp["Add week"]</MudButton>
-    <MudButton OnClick="async ()=>{await AddMultipeWeekToSchadules(false, 4);}">@LApp["Add multiple week"]</MudButton>
-</MudButtonGroup>
-<br />
-@if (_scheduleForUser.Count == 0)
-{
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
-}
-@foreach (var plannesInWeek in _scheduleForUser)
-{
-    @if (plannesInWeek != null && plannesInWeek.Count > 0)
-    {
-        @if (_month != plannesInWeek.First().DateStart.Month)
-        {
-            _month = plannesInWeek.First().DateStart.Month;
-            <MudText Typo="Typo.h3" Class="ml-2 mt-12">@plannesInWeek.First().DateStart.ToString(plannesInWeek.First().DateStart.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy",Thread.CurrentThread.CurrentCulture)</MudText>
+<MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
+    <CellTemplate>
+        @{
+            var training = ((CustomItem)context).Training;
         }
-
-        <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-            @foreach (var training in plannesInWeek)
-            {
-                <ScheduleCard Planner="training" Users="_users" Functions="_functions" Vehicles="_vehicles" />
-            }
-        </MudPaper>
-    }
-}
-<br />
-<MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" Class="ml-2 mt-2">
-    <MudButton OnClick="async ()=>{await AddWeekToSchadules(true);}">@LApp["Add week"]</MudButton>
-    <MudButton OnClick="async ()=>{await AddMultipeWeekToSchadules(true, 4);}">@LApp["Add multiple week"]</MudButton>
-</MudButtonGroup>
+        @if (training != null)
+        {
+            <ScheduleCard Planner="training" Users="_users" Functions="_functions" Vehicles="_vehicles" />
+            @*<div style="width: 100%; border: 2px solid @(((CustomItem)context).Color)">
+                <div style="background-color: @(((CustomItem)context).Color)" class="min-h-[1.25rem]">
+                    <MudText Style="color: #ffffff;" Typo="Typo.body1" Align="Align.Center">
+                        @(training.Name)
+                    </MudText>
+                </div>
+                <MudText Typo="Typo.body2">@context.Start.ToString("HH:mm") @LApp["till"] @context.End!.Value.ToString("HH:mm")</MudText>
+                @if (_functions != null && _users != null)
+                {
+                    @foreach (var function in _functions.OrderBy(x => x.Order))
+                    {
+                        @if (training.PlanUsers.Any(x => x.PlannedFunctionId == function.Id))
+                        {
+                            <br />
+                            @foreach (var assignedUser in training.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id))
+                            {
+                                <MudText>@assignedUser.Name</MudText>
+                            }
+                        }
+                    }
+                }
+            </div>*@
+        }
+    </CellTemplate>
+</MudCalendar>

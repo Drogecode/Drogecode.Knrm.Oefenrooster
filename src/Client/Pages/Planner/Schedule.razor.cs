@@ -1,7 +1,12 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Helpers;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using Heron.MudCalendar;
 using Microsoft.Extensions.Localization;
+using Microsoft.Graph.Models;
+using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 
@@ -19,53 +24,36 @@ public sealed partial class Schedule : IDisposable
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
     private List<DrogeVehicle>? _vehicles;
-    private int? _month;
-    private int _high = -1;
-    private int _low = -2;
+    private List<CustomItem> _events = new();
     private bool _updating;
 
     protected override async Task OnInitializedAsync()
     {
-        for (int i = -1; i < 6; i++)
-        {
-            await AddWeekToSchadules(true);
-        }
         _users = await _userRepository.GetAllUsersAsync();
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
     }
 
-    private async Task AddMultipeWeekToSchadules(bool high, int count)
+    private async Task SetCalenderForMonth(DateRange dateRange)
     {
-        for (int i = -1; i < count; i++)
-        {
-            await AddWeekToSchadules(high);
-        }
-    }
-
-    private async Task AddWeekToSchadules(bool high)
-    {
-        if (_updating) return;
+        if (_updating || dateRange.Start == null) return;
         _updating = true;
-        List<PlannedTraining>? scheduleForUser = null;
-        var PlannersInWeek = (await _scheduleRepository.ScheduleForAll(high ? _high : _low, _cls.Token))?.Planners;
-        if (PlannersInWeek != null)
+        _events = new();
+        TrainingWeek scheduleForUser = new();
+        var trainingsInWeek = (await _scheduleRepository.ScheduleForAll(dateRange, _cls.Token))?.Planners;
+        if (trainingsInWeek != null && trainingsInWeek.Count > 0)
         {
-            scheduleForUser = new List<PlannedTraining>();
-            foreach (var Plan in PlannersInWeek)
-                scheduleForUser.Add(Plan);
-        }
-        if (high)
-        {
-            if (scheduleForUser != null)
-                _scheduleForUser.AddLast(scheduleForUser);
-            _high++;
-        }
-        else
-        {
-            if (scheduleForUser != null)
-                _scheduleForUser.AddFirst(scheduleForUser);
-            _low--;
+            scheduleForUser.From = DateOnly.FromDateTime(trainingsInWeek[0].DateStart);
+            foreach (var training in trainingsInWeek)
+            {
+                _events.Add(new CustomItem
+                {
+                    Start = training.DateStart,
+                    End = training.DateEnd,
+                    Training = training,
+                    Color = PlannerHelper.HeaderClass(training.TrainingType)
+                });
+            }
         }
         _updating = false;
         StateHasChanged();
@@ -74,5 +62,10 @@ public sealed partial class Schedule : IDisposable
     public void Dispose()
     {
         _cls.Cancel();
+    }
+    private class CustomItem : CalendarItem
+    {
+        public PlannedTraining? Training { get; set; }
+        public string Color { get; set; } = "var(--mud-palette-grey-default)";
     }
 }

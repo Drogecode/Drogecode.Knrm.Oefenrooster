@@ -2,16 +2,16 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-<CalendarBaseCard Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" ContentClass="@(Planner.IsCreated ? "" : "DrogeCode-card-content-not-created")">
+<CalendarBaseCard Width="100%" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" ContentClass="@(Planner.IsCreated ? "" : "DrogeCode-card-content-not-created")">
     @if (Functions != null && Users != null)
     {
         @foreach (var function in Functions.OrderBy(x => x.Order))
         {
             @if (Planner.PlanUsers.Any(x => x.PlannedFunctionId == function.Id))
             {
-                var available = @Planner.PlanUsers.Where(x => x.Availabilty == Availabilty.Available && x.PlannedFunctionId == function.Id).Count();
+                @*var available = @Planner.PlanUsers.Where(x => x.Availabilty == Availabilty.Available && x.PlannedFunctionId == function.Id).Count();
                 var total = @Planner.PlanUsers.Where(x => x.PlannedFunctionId == function.Id).Count();
-                <MudText Typo="Typo.caption">@function.Name @available / @total </MudText><br/>
+                <MudText Typo="Typo.caption">@function.Name @available / @total </MudText><br/>*@
                 @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id))
                 {
                     <MudText>@assignedUser.Name</MudText>
