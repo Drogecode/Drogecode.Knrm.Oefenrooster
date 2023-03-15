@@ -21,3 +21,8 @@
 .DrogeCode-card-content-not-created {
     background-color: var(--mud-palette-grey-default);
 }
+
+table, tbody, tr, td {
+    /* Fix issue in FireFox */
+    vertical-align: top;
+}
