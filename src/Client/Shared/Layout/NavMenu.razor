@@ -6,7 +6,7 @@
     <MudNavLink Icon="@Icons.Material.Filled.EditCalendar" Href="@_uriSchedule" Match="NavLinkMatch.Prefix">@L["Schedule"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/configuration/global" Match="NavLinkMatch.Prefix">@L["Configuration"]</MudNavLink>
     <MudDivider />
-    <MudNavLink Href="https://dorus1824.sharepoint.com/" Match="NavLinkMatch.All">@L["Sharepoint"]</MudNavLink>
+    <MudNavLink Href="https://dorus1824.sharepoint.com/" Target="_blank" Match="NavLinkMatch.All">@L["Sharepoint"]</MudNavLink>
     <MudDivider />
     @if (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriCalendar.Substring(1)))
     {
