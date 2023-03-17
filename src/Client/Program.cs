@@ -8,6 +8,7 @@ using Microsoft.JSInterop;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using MudBlazor;
 using MudExtensions.Services;
+using Blazored.LocalStorage;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -22,6 +23,7 @@ builder.Services.AddMudServices(config =>
     config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
 });
 builder.Services.AddMudExtensions();
+builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddScoped<ConfigurationRepository>();
 builder.Services.AddScoped<FunctionRepository>();

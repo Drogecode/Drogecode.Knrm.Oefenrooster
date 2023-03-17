@@ -13,15 +13,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
 		<PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.4.3" />
-		<PackageReference Include="Heron.MudCalendar" Version="1.0.2" />
+		<PackageReference Include="Heron.MudCalendar" Version="1.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.4" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="7.0.4" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.4" />
-		<PackageReference Include="Microsoft.Graph" Version="5.1.0" />
-		<PackageReference Include="MudBlazor" Version="6.1.9" />
+		<PackageReference Include="Microsoft.Graph" Version="5.2.0" />
+		<PackageReference Include="MudBlazor" Version="6.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>

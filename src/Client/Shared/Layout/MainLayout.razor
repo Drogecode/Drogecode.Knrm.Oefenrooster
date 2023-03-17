@@ -1,8 +1,8 @@
-﻿@inherits LayoutComponentBase
-@inject IStringLocalizer<MainLayout> L
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+@inherits LayoutComponentBase
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" />
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -42,7 +42,9 @@
                     <MudMenuItem Href="/user/profile">Profile</MudMenuItem>
                     <MudMenuItem @onclick="BeginLogout">Logout</MudMenuItem>
                 </MudMenu>
-                <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.DarkMode : Icons.Material.Filled.LightMode)" Color="Color.Inherit" OnClick="@(()=>_isDarkMode = !_isDarkMode)" />
+                <MudTooltip Duration="1000" Text="@(_darkModeToggle == DarkLightMode.System ? @L["Switch to Light Theme"] : _darkModeToggle == DarkLightMode.Dark ? @L["Switch to system"] : @L["Switch to Dark Theme"])">
+                    <MudIconButton Icon="@(_darkModeToggle == DarkLightMode.System ? @Icons.Material.Filled.AutoMode :_darkModeToggle == DarkLightMode.Dark ? @Icons.Material.Rounded.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@ToggleDarkLight" />
+                </MudTooltip>
             </MudAppBar>
             <CascadingValue Value="_global">
                 <MudDrawer @bind-Open="@_drawerOpen">
@@ -68,30 +70,3 @@
     </AuthorizeView>
 </MudLayout>
 
-@code {
-    private bool _isDarkMode;
-    private bool _drawerOpen = true;
-    private bool _settingsOpen = true;
-    private bool _newNotificationsAvailable = false;
-    private IDictionary<NotificationMessage, bool> _messages = null;
-    private bool _isAuthenticated;
-    private string _name = string.Empty;
-
-    protected async Task NotAuthorized()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
-        if (!_isAuthenticated)
-            Navigation.NavigateTo("landing_page");
-    }
-
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
-
-    public void ToggleOpen()
-    {
-        _settingsOpen = !_settingsOpen;
-    }
-}
