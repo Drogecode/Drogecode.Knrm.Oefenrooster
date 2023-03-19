@@ -15,15 +15,18 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 public class ConfigurationController : ControllerBase
 {
     private readonly ILogger<ConfigurationController> _logger;
+    private readonly IConfiguration _configuration;
     private readonly IConfigurationService _configurationService;
     private readonly IAuditService _auditService;
 
     public ConfigurationController(
         ILogger<ConfigurationController> logger,
+        IConfiguration configuration,
         IConfigurationService configurationService,
         IAuditService auditService)
     {
         _logger = logger;
+        _configuration = configuration;
         _configurationService = configurationService;
         _auditService = auditService;
     }
@@ -35,11 +38,15 @@ public class ConfigurationController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            await _configurationService.UpgradeDatabase();
-            await _auditService.Log(userId, AuditType.DataBaseUpgrade, customerId);
+            var installing = _configuration.GetValue<bool>("Drogecode:Installing");
+            if (installing || userId == DefaultSettingsHelper.IdTaco)
+            {
+                await _configurationService.UpgradeDatabase();
+                await _auditService.Log(userId, AuditType.DataBaseUpgrade, customerId);
+            }
             return Ok();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in UpgradeDatabase");
             return BadRequest();
@@ -61,6 +68,20 @@ public class ConfigurationController : ControllerBase
         {
             _logger.LogError(ex, "Exception in NewVersionAvailable");
             return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    public ActionResult<bool> InstallingActive()
+    {
+        try
+        {
+            return _configuration.GetValue<bool>("Drogecode:Installing");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in InstallingActive");
+            return false;
         }
     }
 }

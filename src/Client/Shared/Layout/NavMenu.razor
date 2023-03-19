@@ -1,10 +1,14 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+@using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 <MudNavMenu>
     <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/" Match="NavLinkMatch.All">@L["Dashboard"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.CalendarMonth" Href="@_uriCalendar" Match="NavLinkMatch.Prefix">@L["Calendar"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.EditCalendar" Href="@_uriSchedule" Match="NavLinkMatch.Prefix">@L["Schedule"]</MudNavLink>
-    <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/configuration/global" Match="NavLinkMatch.Prefix">@L["Configuration"]</MudNavLink>
+    @if (_showSettings)
+    {
+        <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/configuration/global" Match="NavLinkMatch.Prefix">@L["Configuration"]</MudNavLink>
+    }
     <MudDivider />
     <MudNavLink Href="https://dorus1824.sharepoint.com/" Target="_blank" Match="NavLinkMatch.All">@L["Sharepoint"]</MudNavLink>
     <MudDivider />
@@ -20,16 +24,24 @@
 
 @code {
     [Inject] private IStringLocalizer<NavMenu> L { get; set; } = default!;
-    [Inject] NavigationManager Navigation { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
+    [Inject] private ConfigurationRepository _configurationRepository { get; set; } = default!;
+    [Inject] private UserRepository _userRepository { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
 
     private string _uriCalendar = "/planner/calendar";
     private string _uriSchedule = "/planner/schedule";
+    private bool _showSettings;
 
-    protected override void OnInitialized() { 
-        Navigation.LocationChanged += RefreshForSubMenu; 
+    protected override async Task OnInitializedAsync()
+    {
+        Navigation.LocationChanged += RefreshForSubMenu;
+        var installing = await _configurationRepository.InstallingActive();
+        var dbUser = await _userRepository.GetCurrentUserAsync();//Force creation of user.
+        if (installing == true || (dbUser != null && dbUser.Id.Equals(DefaultSettingsHelper.IdTaco)))
+            _showSettings = true;
     }
 
     private void RefreshForSubMenu(object sender, LocationChangedEventArgs e)
