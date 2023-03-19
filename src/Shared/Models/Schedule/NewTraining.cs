@@ -16,4 +16,5 @@ public class EditTraining : TrainingBase
     public TimeSpan? TimeEnd { get; set; }
     public override TrainingType TrainingType { get; set; }
     public bool IsNew { get; set; }
+    public bool CountToTrainingTarget { get; set; }
 }

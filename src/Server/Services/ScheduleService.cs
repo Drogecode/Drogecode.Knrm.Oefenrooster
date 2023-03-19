@@ -133,6 +133,7 @@ public class ScheduleService : IScheduleService
         oldTraining.Name = patchedTraining.Name;
         oldTraining.DateStart = dateStart;
         oldTraining.DateEnd = dateEnd;
+        oldTraining.CountToTrainingTarget = patchedTraining.CountToTrainingTarget;
         _database.RoosterTrainings.Update(oldTraining);
         return (await _database.SaveChangesAsync()) > 0;
     }
@@ -149,6 +150,7 @@ public class ScheduleService : IScheduleService
             Name = newTraining.Name,
             DateStart = dateStart,
             DateEnd = dateEnd,
+            CountToTrainingTarget = newTraining.CountToTrainingTarget,
         };
         return await AddTrainingInternalAsync(customerId, training, token);
     }

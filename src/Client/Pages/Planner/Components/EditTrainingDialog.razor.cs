@@ -38,6 +38,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 IsNew = false,
                 Name = Planner.Name,
                 TrainingType = Planner.TrainingType,
+                CountToTrainingTarget = Planner.CountToTrainingTarget,
             };
         }
         else

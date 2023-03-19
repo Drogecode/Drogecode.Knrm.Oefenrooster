@@ -21,6 +21,7 @@
                         <MudSelectItem T="TrainingType" Value="@trainingType">@L[trainingType.ToString()]</MudSelectItem>
                     }
                 </MudSelect>
+                <MudSwitchM3 Label="@L["Count to training target"]" T="bool" @bind-Checked="_training.CountToTrainingTarget" />
                 @if (Vehicles != null)
                 {
                     <MudText Typo="Typo.h4">@L["Which vehicle?"]</MudText>
