@@ -13,6 +13,7 @@ public sealed partial class CalendarBaseCard : IDisposable
     [Parameter] public EventCallback OnClickSettings { get; set; }
     [Parameter] public string? ContentClass { get; set; }
     [Parameter] public string Width { get; set; } = "200px";
+    [Parameter] public bool ReplaceEmtyName { get; set; }
     private CancellationTokenSource _cls = new();
 
     private string HeaderClass

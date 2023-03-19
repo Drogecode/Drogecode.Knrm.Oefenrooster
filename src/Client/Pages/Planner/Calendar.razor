@@ -13,19 +13,6 @@
         @if (training != null)
         {
             <CalendarCard Training="training" />
-            @*<div style="width: 100%; border: 2px solid @(((CustomItem)context).Color)">
-            <div style="background-color: @(((CustomItem)context).Color)" class="min-h-[1.25rem]">
-                <MudText Style="color: #ffffff;" Typo="Typo.body1" Align="Align.Center">
-                    @(((CustomItem)context).training.Name)
-                </MudText>
-            </div>
-            <MudText Typo="Typo.body2">@context.Start.ToString("HH:mm") @LApp["till"] @context.End!.Value.ToString("HH:mm")</MudText>
-            <MudSelect T="Availabilty?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="@(((CustomItem)context).training.Availabilty)" SelectedValuesChanged="()=>OnChange((CustomItem)context)">
-                <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
-                <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
-                <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
-            </MudSelect>
-            </div>*@
         }
     </CellTemplate>
 </MudCalendar>

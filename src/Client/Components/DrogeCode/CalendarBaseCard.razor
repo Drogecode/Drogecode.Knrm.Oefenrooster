@@ -5,7 +5,7 @@
     <MudCard @onclick="()=>OnClickCallback.InvokeAsync()">
         <MudCardHeader Class="@HeaderClass">
             <CardHeaderContent>
-                @if (string.IsNullOrEmpty(Training.Name))
+                @if (ReplaceEmtyName && string.IsNullOrEmpty(Training.Name))
                 {
                     <MudText Typo="Typo.h6">@Training.DateStart.ToString("dddd")</MudText>
                 }
