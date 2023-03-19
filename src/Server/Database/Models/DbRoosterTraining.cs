@@ -14,6 +14,7 @@ public class DbRoosterTraining
     public DateTime DateStart { get; set; }
     public DateTime DateEnd { get; set; }
     public TrainingType TrainingType { get; set; } = TrainingType.Default;
+    public bool CountToTrainingTarget { get; set; }
 
     public DbCustomers Customer { get; set; }
     public DbRoosterDefault? RoosterDefault { get; set; }

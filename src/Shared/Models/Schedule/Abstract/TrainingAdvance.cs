@@ -13,5 +13,6 @@ public class TrainingAdvance : TrainingBase
     public Guid? VehicleId { get; set; }
     public DateTime DateStart { get; set; }
     public DateTime DateEnd { get; set; }
+    public bool CountToTrainingTarget { get; set; }
     public bool Updated { get; set; }
 }

@@ -4,6 +4,24 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
+@if (_users != null && _userTrainingCounter != null)
+{
+    <MudPaper>
+        <MudList Clickable="false">
+            @foreach (var user in _userTrainingCounter)
+            {
+                var name = _users.FirstOrDefault(x=>x.Id == user.UserId)?.Name;
+                <MudListItem Text=@($"{name} : {@user.Count}") />
+            }
+            <MudDivider />
+            @foreach(var user in _users.Where(x=>!_userTrainingCounter.Any(y=>y.UserId == x.Id)))
+            {
+                <MudListItem Text=@($"{user.Name} : {L["No training"]}") />
+            }
+        </MudList>
+    </MudPaper>
+}
+
 <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
     <CellTemplate>
         @{

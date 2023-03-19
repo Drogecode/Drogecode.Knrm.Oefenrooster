@@ -52,7 +52,8 @@ public class ScheduleService : IScheduleService
                         Availabilty = ava?.Available,
                         Assigned = ava?.Assigned ?? false,
                         TrainingType = training.TrainingType,
-                        VehicleId = ava?.VehicleId
+                        VehicleId = ava?.VehicleId,
+                        CountToTrainingTarget = training.CountToTrainingTarget,
                     });
                     if (training.RoosterDefaultId != null)
                         defaultsFound.Add(training.RoosterDefaultId);
@@ -69,6 +70,8 @@ public class ScheduleService : IScheduleService
                         DateEnd = scheduleDate.ToDateTime(def.TimeEnd, DateTimeKind.Utc),
                         Availabilty = Availabilty.None,
                         TrainingType = TrainingType.Default,
+                        Assigned = def.CountToTrainingTarget,
+                        CountToTrainingTarget = def.CountToTrainingTarget
                     });
                 }
             }
@@ -165,6 +168,7 @@ public class ScheduleService : IScheduleService
             Name = training.Name,
             DateStart = training.DateStart,
             DateEnd = training.DateEnd,
+            CountToTrainingTarget = training.CountToTrainingTarget,
         });
         return (await _database.SaveChangesAsync()) > 0;
     }
@@ -190,7 +194,7 @@ public class ScheduleService : IScheduleService
         return (await _database.SaveChangesAsync()) > 0;
     }
 
-    public async Task<ScheduleForAllResponse> ScheduleForAllAsync(Guid userId, Guid customerId, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token)
+    public async Task<ScheduleForAllResponse> ScheduleForAllAsync(Guid userId, Guid customerId, int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token)
     {
         var result = new ScheduleForAllResponse();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
@@ -221,7 +225,8 @@ public class ScheduleService : IScheduleService
                         DateStart = training.DateStart,
                         DateEnd = training.DateEnd,
                         IsCreated = true,
-                        TrainingType = training.TrainingType
+                        TrainingType = training.TrainingType,
+                        CountToTrainingTarget = training.CountToTrainingTarget,
                     };
                     foreach (var a in ava)
                     {
@@ -236,6 +241,20 @@ public class ScheduleService : IScheduleService
                             UserFunctionId = users.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId,
                             VehicleId = a.VehicleId,
                         });
+                        if (training.CountToTrainingTarget && scheduleDate.Month == forMonth && a.Assigned)
+                        {
+                            var indexUser = result.UserTrainingCounters.FindIndex(X => X.UserId.Equals(a.UserId));
+                            if (indexUser >= 0)
+                                result.UserTrainingCounters[indexUser].Count++;
+                            else
+                            {
+                                result.UserTrainingCounters.Add(new UserTrainingCounter
+                                {
+                                    UserId = a.UserId,
+                                    Count = 1
+                                });
+                            }
+                        }
                     }
                     result.Planners.Add(newPlanner);
                     defaultsFound.Add(training.RoosterDefaultId);
@@ -251,7 +270,8 @@ public class ScheduleService : IScheduleService
                         DateStart = scheduleDate.ToDateTime(def.TimeStart, DateTimeKind.Utc),
                         DateEnd = scheduleDate.ToDateTime(def.TimeEnd, DateTimeKind.Utc),
                         IsCreated = false,
-                        TrainingType = TrainingType.Default
+                        TrainingType = TrainingType.Default,
+                        CountToTrainingTarget = def.CountToTrainingTarget
                     });
                 }
             }

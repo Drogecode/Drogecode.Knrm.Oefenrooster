@@ -25,6 +25,7 @@ public sealed partial class Schedule : IDisposable
     private List<DrogeFunction>? _functions;
     private List<DrogeVehicle>? _vehicles;
     private List<CustomItem> _events = new();
+    private List<UserTrainingCounter>? _userTrainingCounter;
     private bool _updating;
 
     protected override async Task OnInitializedAsync()
@@ -40,11 +41,14 @@ public sealed partial class Schedule : IDisposable
         _updating = true;
         _events = new();
         TrainingWeek scheduleForUser = new();
-        var trainingsInWeek = (await _scheduleRepository.ScheduleForAll(dateRange, _cls.Token))?.Planners;
-        if (trainingsInWeek != null && trainingsInWeek.Count > 0)
+        var scheduleForAll = await _scheduleRepository.ScheduleForAll(dateRange, _cls.Token);
+        if (scheduleForAll == null) return;
+        _userTrainingCounter = scheduleForAll.UserTrainingCounters;
+        var trainingsInRange = scheduleForAll.Planners;
+        if (trainingsInRange != null && trainingsInRange.Count > 0)
         {
-            scheduleForUser.From = DateOnly.FromDateTime(trainingsInWeek[0].DateStart);
-            foreach (var training in trainingsInWeek)
+            scheduleForUser.From = DateOnly.FromDateTime(trainingsInRange[0].DateStart);
+            foreach (var training in trainingsInRange)
             {
                 _events.Add(new CustomItem
                 {
