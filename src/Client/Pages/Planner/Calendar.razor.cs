@@ -43,7 +43,7 @@ public sealed partial class Calendar : IDisposable
                     End = training.DateEnd,
                     Training = training,
                     Text = training.Availabilty.ToString() ?? "",
-                    Color = PlannerHelper.HeaderClass(training.TrainingType)
+                    Color = PlannerHelper.HeaderClass(training.RoosterTrainingTypeId)
                 });
             }
         }
@@ -69,7 +69,7 @@ public sealed partial class Calendar : IDisposable
             Name = newTraining.Name,
             DateStart = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Utc),
             DateEnd = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Utc),
-            TrainingType = newTraining.TrainingType
+            RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId
         };
         var date = DateOnly.FromDateTime(newTraining.Date ?? throw new UnreachableException("newTraining.Date is null after null check"));
         _events.Add(new CustomItem
@@ -78,7 +78,7 @@ public sealed partial class Calendar : IDisposable
             End = asTraining.DateEnd,
             Training = asTraining,
             Text = asTraining.Availabilty.ToString() ?? "",
-            Color = PlannerHelper.HeaderClass(asTraining.TrainingType)
+            Color = PlannerHelper.HeaderClass(asTraining.RoosterTrainingTypeId)
         });
         StateHasChanged();
     }

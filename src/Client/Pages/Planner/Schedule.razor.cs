@@ -55,7 +55,7 @@ public sealed partial class Schedule : IDisposable
                     Start = training.DateStart,
                     End = training.DateEnd,
                     Training = training,
-                    Color = PlannerHelper.HeaderClass(training.TrainingType)
+                    Color = PlannerHelper.HeaderClass(training.RoosterTrainingTypeId)
                 });
             }
         }

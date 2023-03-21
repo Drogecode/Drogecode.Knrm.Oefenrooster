@@ -33,7 +33,6 @@ public sealed partial class MainLayout : IDisposable
         _global.RefreshRequested += RefreshMe;
         _localUserSettings = (await LocalStorage.GetItemAsync<LocalUserSettings>("localUserSettings")) ?? new LocalUserSettings();
         DarkModeToggle = _localUserSettings.DarkLightMode;
-        _isDarkMode = _localUserSettings.IsDark;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -93,7 +92,6 @@ public sealed partial class MainLayout : IDisposable
                 return;
             }
             _localUserSettings.DarkLightMode = _darkModeToggle;
-            _localUserSettings.IsDark = _isDarkMode;
             LocalStorage.SetItemAsync("localUserSettings", _localUserSettings);
         }
     }

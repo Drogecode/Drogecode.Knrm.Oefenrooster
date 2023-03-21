@@ -1,8 +1,12 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
+namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+
+[Table("LinkVehicleTraining")]
 public class DbLinkVehicleTraining
 {
-    public Guid Id { get; set; }
+    [Key] public Guid Id { get; set; }
     public Guid RoosterTrainingId { get; set; }
     public Guid Vehicle { get; set; }
     public Guid CustomerId { get; set; }

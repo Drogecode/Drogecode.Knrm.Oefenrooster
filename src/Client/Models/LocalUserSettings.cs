@@ -5,5 +5,4 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Models;
 public class LocalUserSettings
 {
     public DarkLightMode DarkLightMode { get; set; }
-    public bool IsDark { get; set; }
 }

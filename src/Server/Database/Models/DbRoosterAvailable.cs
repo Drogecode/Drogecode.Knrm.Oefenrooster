@@ -8,8 +8,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 [Table("RoosterAvailable")]
 public class DbRoosterAvailable
 {
-    [Key]
-    public Guid Id { get; set; }
+    [Key] public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public Guid CustomerId { get; set; }
     public Guid TrainingId { get; set; }

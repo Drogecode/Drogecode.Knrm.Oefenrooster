@@ -51,7 +51,7 @@ public class ScheduleService : IScheduleService
                         DateEnd = training.DateEnd,
                         Availabilty = ava?.Available,
                         Assigned = ava?.Assigned ?? false,
-                        TrainingType = training.TrainingType,
+                        RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                         VehicleId = ava?.VehicleId,
                         CountToTrainingTarget = training.CountToTrainingTarget,
                     });
@@ -69,7 +69,7 @@ public class ScheduleService : IScheduleService
                         DateStart = scheduleDate.ToDateTime(def.TimeStart, DateTimeKind.Utc),
                         DateEnd = scheduleDate.ToDateTime(def.TimeEnd, DateTimeKind.Utc),
                         Availabilty = Availabilty.None,
-                        TrainingType = TrainingType.Default,
+                        RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         Assigned = def.CountToTrainingTarget,
                         CountToTrainingTarget = def.CountToTrainingTarget
                     });
@@ -129,7 +129,7 @@ public class ScheduleService : IScheduleService
             throw new DrogeCodeToLongException();
         DateTime dateStart = ((patchedTraining.Date ?? throw new ArgumentNullException("Date is null")) + (patchedTraining.TimeStart ?? throw new ArgumentNullException("TimeStart is null"))).ToUniversalTime();
         DateTime dateEnd = ((patchedTraining.Date ?? throw new ArgumentNullException("Date is null")) + (patchedTraining.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"))).ToUniversalTime();
-        oldTraining.TrainingType = patchedTraining.TrainingType;
+        oldTraining.RoosterTrainingTypeId = patchedTraining.RoosterTrainingTypeId;
         oldTraining.Name = patchedTraining.Name;
         oldTraining.DateStart = dateStart;
         oldTraining.DateEnd = dateEnd;
@@ -146,7 +146,7 @@ public class ScheduleService : IScheduleService
         {
             TrainingId = trainingId,
             DefaultId = null,
-            TrainingType = newTraining.TrainingType,
+            RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId,
             Name = newTraining.Name,
             DateStart = dateStart,
             DateEnd = dateEnd,
@@ -166,7 +166,7 @@ public class ScheduleService : IScheduleService
             Id = training.TrainingId ?? throw new NoNullAllowedException("TrainingId is still null while adding new training"),
             RoosterDefaultId = training.DefaultId,
             CustomerId = customerId,
-            TrainingType = training.TrainingType,
+            RoosterTrainingTypeId = training.RoosterTrainingTypeId,
             Name = training.Name,
             DateStart = training.DateStart,
             DateEnd = training.DateEnd,
@@ -227,7 +227,7 @@ public class ScheduleService : IScheduleService
                         DateStart = training.DateStart,
                         DateEnd = training.DateEnd,
                         IsCreated = true,
-                        TrainingType = training.TrainingType,
+                        RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                         CountToTrainingTarget = training.CountToTrainingTarget,
                     };
                     foreach (var a in ava)
@@ -272,7 +272,7 @@ public class ScheduleService : IScheduleService
                         DateStart = scheduleDate.ToDateTime(def.TimeStart, DateTimeKind.Utc),
                         DateEnd = scheduleDate.ToDateTime(def.TimeEnd, DateTimeKind.Utc),
                         IsCreated = false,
-                        TrainingType = TrainingType.Default,
+                        RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget
                     });
                 }
@@ -382,7 +382,7 @@ public class ScheduleService : IScheduleService
                 DateEnd = schedul.Training.DateEnd,
                 Availabilty = schedul.Available,
                 Assigned = schedul.Assigned,
-                TrainingType = schedul.Training.TrainingType,
+                RoosterTrainingTypeId = schedul.Training.RoosterTrainingTypeId,
                 VehicleId = schedul.VehicleId
             });
         }
