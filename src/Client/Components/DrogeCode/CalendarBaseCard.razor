@@ -3,7 +3,7 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 <MudPaper Width="@Width" Elevation="0">
     <MudCard @onclick="()=>OnClickCallback.InvokeAsync()">
-        <MudCardHeader Class="@HeaderClass">
+        <MudCardHeader Style="@Style">
             <CardHeaderContent>
                 @if (ReplaceEmtyName && string.IsNullOrEmpty(Training.Name))
                 {

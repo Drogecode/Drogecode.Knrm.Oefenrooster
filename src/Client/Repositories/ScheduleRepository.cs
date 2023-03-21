@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using Microsoft.Graph.Models;
 using MudBlazor;
 using System.Net.Http.Json;
 
@@ -86,5 +87,11 @@ public class ScheduleRepository
         };
         var request = await _httpClient.PostAsJsonAsync($"api/Schedule/OtherScheduleUser", body, token);
         request.EnsureSuccessStatusCode();
+    }
+
+    internal async Task<List<PlannerTrainingType>> GetTrainingTypes(CancellationToken token)
+    {
+        var schedule = await _httpClient.GetFromJsonAsync<List<PlannerTrainingType>>($"api/Schedule/GetTrainingTypes", token);
+        return schedule;
     }
 }

@@ -26,6 +26,7 @@ public sealed partial class Schedule : IDisposable
     private List<DrogeVehicle>? _vehicles;
     private List<CustomItem> _events = new();
     private List<UserTrainingCounter>? _userTrainingCounter;
+    private List<PlannerTrainingType>? _trainingTypes;
     private bool _updating;
 
     protected override async Task OnInitializedAsync()
@@ -33,6 +34,7 @@ public sealed partial class Schedule : IDisposable
         _users = await _userRepository.GetAllUsersAsync();
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
+        _trainingTypes = await _scheduleRepository.GetTrainingTypes(_cls.Token);
     }
 
     private async Task SetCalenderForMonth(DateRange dateRange)
@@ -50,12 +52,13 @@ public sealed partial class Schedule : IDisposable
             scheduleForUser.From = DateOnly.FromDateTime(trainingsInRange[0].DateStart);
             foreach (var training in trainingsInRange)
             {
+                var trainingType = _trainingTypes?.FirstOrDefault(x=> x.Id == training.RoosterTrainingTypeId);
                 _events.Add(new CustomItem
                 {
                     Start = training.DateStart,
                     End = training.DateEnd,
                     Training = training,
-                    Color = PlannerHelper.HeaderClass(training.RoosterTrainingTypeId)
+                    ColorStyle = PlannerHelper.HeaderStyle(trainingType?.ColorLight)
                 });
             }
         }
@@ -70,6 +73,6 @@ public sealed partial class Schedule : IDisposable
     private class CustomItem : CalendarItem
     {
         public PlannedTraining? Training { get; set; }
-        public string Color { get; set; } = "var(--mud-palette-grey-default)";
+        public string ColorStyle { get; set; } = $"background-color: {MudBlazor.Color.Default}";
     }
 }

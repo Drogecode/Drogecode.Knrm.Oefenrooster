@@ -388,4 +388,25 @@ public class ScheduleService : IScheduleService
         }
         return result;
     }
+
+    public async Task<List<PlannerTrainingType>> GetTrainingTypes(Guid customerId)
+    {
+        var result = new List<PlannerTrainingType>();
+        var typesFromDb =  _database.RoosterTrainingTypes.Include(x => x.CustomerId == customerId);
+        foreach (var type in typesFromDb)
+        {
+            var newType = new PlannerTrainingType
+            {
+                Id = type.Id,
+                Name = type.Name,
+                CountToTrainingTarget = type.CountToTrainingTarget,
+            };
+            if (!string.IsNullOrEmpty(type.ColorLight))
+                newType.ColorLight = type.ColorLight;
+            if (!string.IsNullOrEmpty(type.ColorDark))
+                newType.ColorDark = type.ColorDark;
+            result.Add(newType);
+        }
+        return result;
+    }
 }

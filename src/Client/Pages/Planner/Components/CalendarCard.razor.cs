@@ -11,6 +11,7 @@ public sealed partial class CalendarCard : IDisposable
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Parameter, EditorRequired] public Training Training { get; set; } = default!;
+    [Parameter, EditorRequired] public string Style { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private bool _updating;
 

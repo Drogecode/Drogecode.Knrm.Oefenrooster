@@ -37,7 +37,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 TimeEnd = Planner.DateEnd.TimeOfDay,
                 IsNew = false,
                 Name = Planner.Name,
-                TrainingType = Planner.TrainingType,
+                RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
                 CountToTrainingTarget = Planner.CountToTrainingTarget,
             };
         }
@@ -95,7 +95,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             await _scheduleRepository.PatchTraining(_training, _cls.Token);
             var dateStart = (_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeStart ?? throw new ArgumentNullException("TimeStart is null"));
             var dateEnd = (_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"));
-            Planner.TrainingType = _training.TrainingType;
+            Planner.RoosterTrainingTypeId = _training.RoosterTrainingTypeId;
             Planner.Name = _training.Name;
             Planner.DateStart = dateStart;
             Planner.DateEnd = dateEnd;

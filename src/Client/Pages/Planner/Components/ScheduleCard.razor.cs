@@ -18,6 +18,7 @@ public sealed partial class ScheduleCard : IDisposable
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
     [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; }
+    [Parameter, EditorRequired] public string Style { get; set; } = default!;
     private RefreshModel _refreshModel = new();
     private bool _updating;
 
