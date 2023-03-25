@@ -14,9 +14,10 @@ public sealed partial class EditTrainingDialog : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
+    [Parameter] public List<PlannerTrainingType>? TrainingTypes { get; set; }
     [Parameter] public PlannedTraining? Planner { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }
-    [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter] public DrogeCodeGlobal Global { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;

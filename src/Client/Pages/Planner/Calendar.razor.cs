@@ -46,7 +46,7 @@ public sealed partial class Calendar : IDisposable
                     End = training.DateEnd,
                     Training = training,
                     Text = training.Availabilty.ToString() ?? "",
-                    ColorStyle = PlannerHelper.HeaderStyle(trainingType?.ColorLight)
+                    ColorStyle = PlannerHelper.HeaderStyle(trainingType)
                 });
             }
         }
@@ -82,7 +82,7 @@ public sealed partial class Calendar : IDisposable
             End = asTraining.DateEnd,
             Training = asTraining,
             Text = asTraining.Availabilty.ToString() ?? "",
-            ColorStyle = PlannerHelper.HeaderStyle(trainingType?.ColorLight)
+            ColorStyle = PlannerHelper.HeaderStyle(trainingType)
         });
         StateHasChanged();
     }

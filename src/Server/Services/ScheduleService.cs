@@ -1,11 +1,7 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
-using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-using Microsoft.Graph;
-using Microsoft.Graph.Models;
-using MudBlazor.Extensions;
 using System.Data;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -27,7 +23,8 @@ public class ScheduleService : IScheduleService
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 0, 0, 0)).ToUniversalTime();
         var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= startDate && x.ValidUntil >= startDate);
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate);
-        var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate).ToList();
+        var availables = await _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate).ToListAsync(cancellationToken: token);
+        var roosterTrainingTypes = await _database.RoosterTrainingTypes.Where(x => x.CustomerId == customerId).ToListAsync(cancellationToken: token);
 
         var scheduleDate = DateOnly.FromDateTime(startDate);
         var till = DateOnly.FromDateTime(tillDate);
@@ -71,7 +68,6 @@ public class ScheduleService : IScheduleService
                         DateEnd = scheduleDate.ToDateTime(def.TimeEnd, DateTimeKind.Utc),
                         Availabilty = Availabilty.None,
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
-                        Assigned = def.CountToTrainingTarget,
                         CountToTrainingTarget = def.CountToTrainingTarget
                     });
                 }

@@ -5,15 +5,14 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
-using static MudBlazor.Colors;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 public sealed partial class MainLayout : IDisposable
 {
     [Inject] private IStringLocalizer<MainLayout> L { get; set; } = default!;
-    [Inject] SignOutSessionStateManager SignOutManager { get; set; } = default!;
-    [Inject] NavigationManager Navigation { get; set; } = default!;
-    [Inject] ILocalStorageService LocalStorage { get; set; } = default!;
+    [Inject] private SignOutSessionStateManager SignOutManager { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+    [Inject] private ILocalStorageService LocalStorage { get; set; } = default!;
 
     private DrogeCodeGlobal _global { get; set; } = new();
     private MudThemeProvider _mudThemeProvider = new();

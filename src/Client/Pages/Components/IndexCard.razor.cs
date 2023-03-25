@@ -10,6 +10,7 @@ public sealed partial class IndexCard : IDisposable
 {
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Parameter, EditorRequired] public Training Training { get; set; } = default!;
+    [Parameter, EditorRequired] public string Style { get; set; } = default!;
     private CancellationTokenSource _cls = new();
 
     protected override void OnParametersSet()

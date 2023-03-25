@@ -1,11 +1,9 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Helpers;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Heron.MudCalendar;
 using Microsoft.Extensions.Localization;
-using Microsoft.Graph.Models;
 using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
@@ -58,7 +56,7 @@ public sealed partial class Schedule : IDisposable
                     Start = training.DateStart,
                     End = training.DateEnd,
                     Training = training,
-                    ColorStyle = PlannerHelper.HeaderStyle(trainingType?.ColorLight)
+                    ColorStyle = PlannerHelper.HeaderStyle(trainingType)
                 });
             }
         }

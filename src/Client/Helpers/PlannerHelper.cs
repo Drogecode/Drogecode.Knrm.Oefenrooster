@@ -24,8 +24,9 @@ public static class PlannerHelper
         }
     }
 
-    public static string HeaderStyle(MudColor? color)
+    public static string HeaderStyle(PlannerTrainingType? trainingType, bool isDark = false)
     {
+        var color = isDark ? trainingType?.ColorDark : trainingType?.ColorLight;
         if (color == null)
             return $"background-color: {Color.Default}";
         else
