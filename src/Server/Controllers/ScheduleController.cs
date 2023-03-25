@@ -183,7 +183,7 @@ public class ScheduleController : ControllerBase
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var result = await _scheduleService.GetTrainingTypes(customerId);
+            var result = await _scheduleService.GetTrainingTypes(customerId, token);
             return Ok(result);
         }
         catch (Exception ex)

@@ -52,7 +52,7 @@ public sealed partial class Schedule : IDisposable
             scheduleForUser.From = DateOnly.FromDateTime(trainingsInRange[0].DateStart);
             foreach (var training in trainingsInRange)
             {
-                var trainingType = _trainingTypes?.FirstOrDefault(x=> x.Id == training.RoosterTrainingTypeId);
+                var trainingType = (_trainingTypes?.FirstOrDefault(x => x.Id == training.RoosterTrainingTypeId)) ?? (_trainingTypes?.FirstOrDefault(x => x.IsDefault));
                 _events.Add(new CustomItem
                 {
                     Start = training.DateStart,

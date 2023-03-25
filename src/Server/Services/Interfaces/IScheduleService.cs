@@ -12,5 +12,5 @@ public interface IScheduleService
     Task<bool> AddTrainingAsync(Guid customerId, EditTraining training, Guid trainingId, CancellationToken token);
     Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime fromDate, CancellationToken token);
     Task OtherScheduleUserAsync(Guid userId, Guid customerId, OtherScheduleUserRequest body, CancellationToken token);
-    Task<List<PlannerTrainingType>> GetTrainingTypes(Guid customerId);
+    Task<List<PlannerTrainingType>> GetTrainingTypes(Guid customerId, CancellationToken token);
 }

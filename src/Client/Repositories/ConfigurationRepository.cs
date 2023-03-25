@@ -13,10 +13,10 @@ public class ConfigurationRepository
         _httpClient = httpClient;
     }
 
-    public async Task UpgradeDatabaseAsync()
+    public async Task<bool> UpgradeDatabaseAsync()
     {
-        var response = await _httpClient.GetAsync("api/Configuration/UpgradeDatabase");
-        response.EnsureSuccessStatusCode();
+        var response = await _httpClient.GetFromJsonAsync<bool>("api/Configuration/UpgradeDatabase");
+        return response;    
     }
 
     public async Task<UpdateDetails?> NewVersionAvailable()

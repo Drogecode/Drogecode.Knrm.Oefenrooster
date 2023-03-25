@@ -22,7 +22,7 @@ public class VehicleService : IVehicleService
                 Name = dbVehicle.Name,
                 Code = dbVehicle.Code,
                 Order = dbVehicle.Order,
-                Default = dbVehicle.Default,
+                Default = dbVehicle.IsDefault,
                 Active = dbVehicle.Active,
             });
         }

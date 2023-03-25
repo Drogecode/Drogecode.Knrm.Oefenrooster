@@ -36,11 +36,10 @@ public sealed partial class Calendar : IDisposable
         var trainingsInWeek = (await _scheduleRepository.CalendarForUser(dateRange, _cls.Token))?.Trainings;
         if (trainingsInWeek != null && trainingsInWeek.Count > 0)
         {
-
             scheduleForUser.From = DateOnly.FromDateTime(trainingsInWeek[0].DateStart);
             foreach (var training in trainingsInWeek)
             {
-                var trainingType = _trainingTypes?.FirstOrDefault(x => x.Id == training.RoosterTrainingTypeId);
+                var trainingType = (_trainingTypes?.FirstOrDefault(x => x.Id == training.RoosterTrainingTypeId)) ?? (_trainingTypes?.FirstOrDefault(x => x.IsDefault));
                 _events.Add(new CustomItem
                 {
                     Start = training.DateStart,

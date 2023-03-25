@@ -4,6 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Graph;
+using Microsoft.Graph.Models;
 using MudBlazor.Extensions;
 using System.Data;
 
@@ -389,10 +390,10 @@ public class ScheduleService : IScheduleService
         return result;
     }
 
-    public async Task<List<PlannerTrainingType>> GetTrainingTypes(Guid customerId)
+    public async Task<List<PlannerTrainingType>> GetTrainingTypes(Guid customerId, CancellationToken token)
     {
         var result = new List<PlannerTrainingType>();
-        var typesFromDb =  _database.RoosterTrainingTypes.Include(x => x.CustomerId == customerId);
+        var typesFromDb = await _database.RoosterTrainingTypes.Where(x => x.CustomerId == customerId).ToListAsync(cancellationToken: token);
         foreach (var type in typesFromDb)
         {
             var newType = new PlannerTrainingType
@@ -400,6 +401,7 @@ public class ScheduleService : IScheduleService
                 Id = type.Id,
                 Name = type.Name,
                 CountToTrainingTarget = type.CountToTrainingTarget,
+                IsDefault = type.IsDefault,
             };
             if (!string.IsNullOrEmpty(type.ColorLight))
                 newType.ColorLight = type.ColorLight;

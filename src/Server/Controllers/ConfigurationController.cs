@@ -32,19 +32,20 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> UpgradeDatabase()
+    public async Task<ActionResult<bool>> UpgradeDatabase()
     {
         try
         {
+            bool result = false;
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var installing = _configuration.GetValue<bool>("Drogecode:Installing");
             if (installing || userId == DefaultSettingsHelper.IdTaco)
             {
-                await _configurationService.UpgradeDatabase();
+                result = await _configurationService.UpgradeDatabase();
                 await _auditService.Log(userId, AuditType.DataBaseUpgrade, customerId);
             }
-            return Ok();
+            return Ok(result);
         }
         catch (Exception ex)
         {

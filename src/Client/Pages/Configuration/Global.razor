@@ -7,9 +7,13 @@
 
 <MudText>Alleen Taco mag op deze knop klikken</MudText>
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateDatabase">@L["Update database"]</MudButton>
-@if (_clickedUpdate)
+@if (_clickedUpdate == true)
 {
     <MudText Typo="Typo.h1">Dude!</MudText>
+}
+else if (_clickedUpdate == false)
+{
+    <MudText Typo="Typo.h1">Something went wrong :')</MudText>
 }
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddUser">Voeg test user toe</MudButton>

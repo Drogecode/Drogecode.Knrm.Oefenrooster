@@ -300,7 +300,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Nikolaas Wijsenbeek",
                 Code = "NWI",
-                Default = true,
+                IsDefault = true,
                 Active = true,
                 Order = 10,
             }));
@@ -341,7 +341,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Kompas oefening",
                 ColorLight = "#bdbdbdff",
-                ColorDark = "#ffffff4c"
+                ColorDark = "#ffffff4c",
+                CountToTrainingTarget = true,
+                IsDefault = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
