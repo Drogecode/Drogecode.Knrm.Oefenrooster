@@ -1,11 +1,9 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Helpers;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Heron.MudCalendar;
 using Microsoft.Extensions.Localization;
-using Microsoft.Graph.Models;
 using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
@@ -26,6 +24,7 @@ public sealed partial class Schedule : IDisposable
     private List<DrogeVehicle>? _vehicles;
     private List<CustomItem> _events = new();
     private List<UserTrainingCounter>? _userTrainingCounter;
+    private List<PlannerTrainingType>? _trainingTypes;
     private bool _updating;
 
     protected override async Task OnInitializedAsync()
@@ -33,6 +32,7 @@ public sealed partial class Schedule : IDisposable
         _users = await _userRepository.GetAllUsersAsync();
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
+        _trainingTypes = await _scheduleRepository.GetTrainingTypes(_cls.Token);
     }
 
     private async Task SetCalenderForMonth(DateRange dateRange)
@@ -55,7 +55,6 @@ public sealed partial class Schedule : IDisposable
                     Start = training.DateStart,
                     End = training.DateEnd,
                     Training = training,
-                    Color = PlannerHelper.HeaderClass(training.TrainingType)
                 });
             }
         }
@@ -70,6 +69,5 @@ public sealed partial class Schedule : IDisposable
     private class CustomItem : CalendarItem
     {
         public PlannedTraining? Training { get; set; }
-        public string Color { get; set; } = "var(--mud-palette-grey-default)";
     }
 }

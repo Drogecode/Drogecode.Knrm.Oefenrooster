@@ -13,6 +13,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbCustomers> Customers { get; set; }
         public DbSet<DbRoosterDefault> RoosterDefaults { get; set; }
         public DbSet<DbRoosterTraining> RoosterTrainings { get; set; }
+        public DbSet<DbRoosterTrainingType> RoosterTrainingTypes { get; set; }
         public DbSet<DbRoosterAvailable> RoosterAvailables { get; set; }
         public DbSet<DbVehicles> Vehicles { get; set; }
 
@@ -61,12 +62,18 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.ValidFrom).IsRequired(); });
             modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.ValidUntil).IsRequired(); });
+            modelBuilder.Entity<DbRoosterDefault>().HasOne(p => p.RoosterTrainingType).WithMany(g => g.RoosterDefaults).HasForeignKey(s => s.RoosterTrainingTypeId);
             modelBuilder.Entity<DbRoosterDefault>().HasOne(p => p.Customer).WithMany(g => g.RoosterDefaults).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // Rooster training
             modelBuilder.Entity<DbRoosterTraining>(e => { e.Property(e => e.Id).IsRequired(); });
-            modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.Customer).WithMany(g => g.RoosterTraining).HasForeignKey(s => s.CustomerId).IsRequired();
+            modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.Customer).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.RoosterDefault).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.RoosterDefaultId);
+            modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.RoosterTrainingType).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.RoosterTrainingTypeId);
+
+            // Rooster training type
+            modelBuilder.Entity<DbRoosterTrainingType>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbRoosterTrainingType>().HasOne(p => p.Customer).WithMany(g => g.RoosterTrainingTypes).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // Vehicles
             modelBuilder.Entity<DbVehicles>(e => { e.Property(e => e.Id).IsRequired(); });
@@ -75,13 +82,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             //// Links
             // Vehicles <--> Rooster available
             modelBuilder.Entity<DbLinkVehicleTraining>(e => { e.Property(e => e.Id).IsRequired(); });
-            modelBuilder.Entity<DbLinkVehicleTraining>().HasOne(p => p.Customer).WithMany(g => g.LinkVehicleTraining).HasForeignKey(s => s.CustomerId).IsRequired();
+            modelBuilder.Entity<DbLinkVehicleTraining>().HasOne(p => p.Customer).WithMany(g => g.LinkVehicleTrainings).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // Required data
             SetCustomer(modelBuilder);
             SetDefaultRooster(modelBuilder);
             SetUserFunctions(modelBuilder);
             SetVehicles(modelBuilder);
+            SetRoosterTrainingTypes(modelBuilder);
         }
 
         #region Default data
@@ -110,7 +118,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     TimeStart = new TimeOnly(19, 30),
                     TimeEnd = new TimeOnly(21, 30),
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
-                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
+                    RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -123,7 +132,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     TimeStart = new TimeOnly(19, 30),
                     TimeEnd = new TimeOnly(21, 30),
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
-                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
+                    RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -136,7 +146,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     TimeStart = new TimeOnly(19, 30),
                     TimeEnd = new TimeOnly(21, 30),
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
-                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
+                    RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -149,7 +160,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     TimeStart = new TimeOnly(19, 30),
                     TimeEnd = new TimeOnly(21, 30),
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
-                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
+                    RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -162,7 +174,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     TimeStart = new TimeOnly(10, 00),
                     TimeEnd = new TimeOnly(13, 00),
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
-                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
+                    RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -175,7 +188,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     TimeStart = new TimeOnly(13, 00),
                     TimeEnd = new TimeOnly(16, 00),
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
-                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
+                    RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -188,7 +202,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     TimeStart = new TimeOnly(10, 00),
                     TimeEnd = new TimeOnly(13, 00),
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
-                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
+                    RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -201,7 +216,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     TimeStart = new TimeOnly(13, 00),
                     TimeEnd = new TimeOnly(16, 00),
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
-                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc)
+                    ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
+                    RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
                 });
             });
         }
@@ -284,7 +300,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Nikolaas Wijsenbeek",
                 Code = "NWI",
-                Default = true,
+                IsDefault = true,
                 Active = true,
                 Order = 10,
             }));
@@ -314,6 +330,57 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Code = "Wal",
                 Active = true,
                 Order = 100,
+            }));
+        }
+
+        private void SetRoosterTrainingTypes(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
+            {
+                Id = DefaultSettingsHelper.KompasOefeningId,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "Kompas oefening",
+                ColorLight = "#bdbdbdff",
+                ColorDark = "#ffffff4c",
+                Order = 10,
+                CountToTrainingTarget = true,
+                IsDefault = true,
+            }));
+            modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
+            {
+                Id = new Guid("80108015-87a7-4453-a1af-d81d15fe3582"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "EHBO",
+                ColorLight = "rgb(214,129,0)",
+                ColorDark = "rgb(214,143,0)",
+                Order = 20,
+            }));
+            modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
+            {
+                Id = new Guid("52260d46-c748-4ffc-b94c-2baecacbfaf4"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "een op een",
+                ColorLight = "rgb(25,169,140)",
+                ColorDark = "",
+                Order = 30,
+            }));
+            modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
+            {
+                Id = new Guid("137f2d85-8a4f-4407-ba78-d24ea1bcc181"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "Brandweer",
+                ColorLight = "rgb(242,28,13)",
+                ColorDark = "rgb(244,47,70)",
+                Order = 40,
+            }));
+            modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
+            {
+                Id = new Guid("be12f5d9-b6f9-45d5-bd5f-6b74d7706a53"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "HRB",
+                ColorLight = "rgb(0,235,98)",
+                ColorDark = "rgb(13,222,156)",
+                Order = 50,
             }));
         }
         #endregion

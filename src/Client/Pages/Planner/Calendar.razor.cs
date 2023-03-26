@@ -6,6 +6,7 @@ using Heron.MudCalendar;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 public sealed partial class Calendar : IDisposable
@@ -33,7 +34,6 @@ public sealed partial class Calendar : IDisposable
         var trainingsInWeek = (await _scheduleRepository.CalendarForUser(dateRange, _cls.Token))?.Trainings;
         if (trainingsInWeek != null && trainingsInWeek.Count > 0)
         {
-
             scheduleForUser.From = DateOnly.FromDateTime(trainingsInWeek[0].DateStart);
             foreach (var training in trainingsInWeek)
             {
@@ -42,8 +42,7 @@ public sealed partial class Calendar : IDisposable
                     Start = training.DateStart,
                     End = training.DateEnd,
                     Training = training,
-                    Text = training.Availabilty.ToString() ?? "",
-                    Color = PlannerHelper.HeaderClass(training.TrainingType)
+                    Text = training.Availabilty.ToString() ?? ""
                 });
             }
         }
@@ -69,7 +68,7 @@ public sealed partial class Calendar : IDisposable
             Name = newTraining.Name,
             DateStart = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Utc),
             DateEnd = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Utc),
-            TrainingType = newTraining.TrainingType
+            RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId
         };
         var date = DateOnly.FromDateTime(newTraining.Date ?? throw new UnreachableException("newTraining.Date is null after null check"));
         _events.Add(new CustomItem
@@ -78,7 +77,6 @@ public sealed partial class Calendar : IDisposable
             End = asTraining.DateEnd,
             Training = asTraining,
             Text = asTraining.Availabilty.ToString() ?? "",
-            Color = PlannerHelper.HeaderClass(asTraining.TrainingType)
         });
         StateHasChanged();
     }
@@ -91,6 +89,5 @@ public sealed partial class Calendar : IDisposable
     private class CustomItem : CalendarItem
     {
         public Training? Training { get; set; }
-        public string Color { get; set; } = "var(--mud-palette-grey-default)";
     }
 }

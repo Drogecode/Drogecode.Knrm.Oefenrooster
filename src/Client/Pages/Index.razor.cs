@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Helpers;
+using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
 

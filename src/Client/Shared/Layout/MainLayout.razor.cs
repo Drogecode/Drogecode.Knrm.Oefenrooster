@@ -1,23 +1,26 @@
 ﻿using Blazored.LocalStorage;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
-using static MudBlazor.Colors;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 public sealed partial class MainLayout : IDisposable
 {
     [Inject] private IStringLocalizer<MainLayout> L { get; set; } = default!;
-    [Inject] SignOutSessionStateManager SignOutManager { get; set; } = default!;
-    [Inject] NavigationManager Navigation { get; set; } = default!;
-    [Inject] ILocalStorageService LocalStorage { get; set; } = default!;
+    [Inject] private SignOutSessionStateManager SignOutManager { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+    [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
+    [Inject] private ILocalStorageService LocalStorage { get; set; } = default!;
 
     private DrogeCodeGlobal _global { get; set; } = new();
     private MudThemeProvider _mudThemeProvider = new();
     private IDictionary<NotificationMessage, bool> _messages = null;
+    private List<PlannerTrainingType>? _trainingTypes;
     private bool _isDarkMode;
     private bool _drawerOpen = true;
     private bool _settingsOpen = true;
@@ -27,13 +30,13 @@ public sealed partial class MainLayout : IDisposable
     private DarkLightMode _darkModeToggle;
     private string _name = string.Empty;
     private LocalUserSettings? _localUserSettings;
+    private CancellationTokenSource _cls = new();
 
     protected override async Task OnParametersSetAsync()
     {
         _global.RefreshRequested += RefreshMe;
         _localUserSettings = (await LocalStorage.GetItemAsync<LocalUserSettings>("localUserSettings")) ?? new LocalUserSettings();
         DarkModeToggle = _localUserSettings.DarkLightMode;
-        _isDarkMode = _localUserSettings.IsDark;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -53,8 +56,22 @@ public sealed partial class MainLayout : IDisposable
                     _isDarkMode = true;
                     break;
             }
+            await _global.CallDarkLightChangedAsync(_isDarkMode);
+            await GetTrainingTypes();
             RefreshMe();
         }
+    }
+    private async Task GetTrainingTypes()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _isAuthenticated = authState?.User?.Identity?.IsAuthenticated ?? false;
+        if (_isAuthenticated)
+        {
+            if (_trainingTypes == null)
+                _trainingTypes = await _scheduleRepository.GetTrainingTypes();
+            RefreshMe();
+        }
+
     }
 
     private async Task BeginLogout(MouseEventArgs args)
@@ -89,11 +106,9 @@ public sealed partial class MainLayout : IDisposable
             _darkModeToggle = value;
             if (_localUserSettings == null)
             {
-                Console.WriteLine("_localUserSettings is null");
                 return;
             }
             _localUserSettings.DarkLightMode = _darkModeToggle;
-            _localUserSettings.IsDark = _isDarkMode;
             LocalStorage.SetItemAsync("localUserSettings", _localUserSettings);
         }
     }
@@ -116,7 +131,7 @@ public sealed partial class MainLayout : IDisposable
                 await StartWatch();
                 break;
         }
-        Console.WriteLine($"New setting: {DarkModeToggle} {_isDarkMode}");
+        await _global.CallDarkLightChangedAsync(_isDarkMode);
         RefreshMe();
     }
 
@@ -136,6 +151,7 @@ public sealed partial class MainLayout : IDisposable
         {
             Console.WriteLine($"System dark light changed: {newValue}");
             _isDarkMode = newValue;
+            await _global.CallDarkLightChangedAsync(_isDarkMode);
             RefreshMe();
         }
     }
@@ -148,5 +164,6 @@ public sealed partial class MainLayout : IDisposable
     public void Dispose()
     {
         _global.RefreshRequested -= RefreshMe;
+        _cls.Cancel();
     }
 }

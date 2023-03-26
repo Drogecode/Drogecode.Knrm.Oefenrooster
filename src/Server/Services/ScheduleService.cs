@@ -1,10 +1,7 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
-using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-using Microsoft.Graph;
-using MudBlazor.Extensions;
 using System.Data;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -26,7 +23,8 @@ public class ScheduleService : IScheduleService
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 0, 0, 0)).ToUniversalTime();
         var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= startDate && x.ValidUntil >= startDate);
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate);
-        var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate).ToList();
+        var availables = await _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate).ToListAsync(cancellationToken: token);
+        var roosterTrainingTypes = await _database.RoosterTrainingTypes.Where(x => x.CustomerId == customerId).ToListAsync(cancellationToken: token);
 
         var scheduleDate = DateOnly.FromDateTime(startDate);
         var till = DateOnly.FromDateTime(tillDate);
@@ -51,7 +49,7 @@ public class ScheduleService : IScheduleService
                         DateEnd = training.DateEnd,
                         Availabilty = ava?.Available,
                         Assigned = ava?.Assigned ?? false,
-                        TrainingType = training.TrainingType,
+                        RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                         VehicleId = ava?.VehicleId,
                         CountToTrainingTarget = training.CountToTrainingTarget,
                     });
@@ -69,8 +67,7 @@ public class ScheduleService : IScheduleService
                         DateStart = scheduleDate.ToDateTime(def.TimeStart, DateTimeKind.Utc),
                         DateEnd = scheduleDate.ToDateTime(def.TimeEnd, DateTimeKind.Utc),
                         Availabilty = Availabilty.None,
-                        TrainingType = TrainingType.Default,
-                        Assigned = def.CountToTrainingTarget,
+                        RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget
                     });
                 }
@@ -129,7 +126,7 @@ public class ScheduleService : IScheduleService
             throw new DrogeCodeToLongException();
         DateTime dateStart = ((patchedTraining.Date ?? throw new ArgumentNullException("Date is null")) + (patchedTraining.TimeStart ?? throw new ArgumentNullException("TimeStart is null"))).ToUniversalTime();
         DateTime dateEnd = ((patchedTraining.Date ?? throw new ArgumentNullException("Date is null")) + (patchedTraining.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"))).ToUniversalTime();
-        oldTraining.TrainingType = patchedTraining.TrainingType;
+        oldTraining.RoosterTrainingTypeId = patchedTraining.RoosterTrainingTypeId;
         oldTraining.Name = patchedTraining.Name;
         oldTraining.DateStart = dateStart;
         oldTraining.DateEnd = dateEnd;
@@ -146,7 +143,7 @@ public class ScheduleService : IScheduleService
         {
             TrainingId = trainingId,
             DefaultId = null,
-            TrainingType = newTraining.TrainingType,
+            RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId,
             Name = newTraining.Name,
             DateStart = dateStart,
             DateEnd = dateEnd,
@@ -166,7 +163,7 @@ public class ScheduleService : IScheduleService
             Id = training.TrainingId ?? throw new NoNullAllowedException("TrainingId is still null while adding new training"),
             RoosterDefaultId = training.DefaultId,
             CustomerId = customerId,
-            TrainingType = training.TrainingType,
+            RoosterTrainingTypeId = training.RoosterTrainingTypeId,
             Name = training.Name,
             DateStart = training.DateStart,
             DateEnd = training.DateEnd,
@@ -227,7 +224,7 @@ public class ScheduleService : IScheduleService
                         DateStart = training.DateStart,
                         DateEnd = training.DateEnd,
                         IsCreated = true,
-                        TrainingType = training.TrainingType,
+                        RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                         CountToTrainingTarget = training.CountToTrainingTarget,
                     };
                     foreach (var a in ava)
@@ -272,7 +269,7 @@ public class ScheduleService : IScheduleService
                         DateStart = scheduleDate.ToDateTime(def.TimeStart, DateTimeKind.Utc),
                         DateEnd = scheduleDate.ToDateTime(def.TimeEnd, DateTimeKind.Utc),
                         IsCreated = false,
-                        TrainingType = TrainingType.Default,
+                        RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget
                     });
                 }
@@ -382,9 +379,32 @@ public class ScheduleService : IScheduleService
                 DateEnd = schedul.Training.DateEnd,
                 Availabilty = schedul.Available,
                 Assigned = schedul.Assigned,
-                TrainingType = schedul.Training.TrainingType,
+                RoosterTrainingTypeId = schedul.Training.RoosterTrainingTypeId,
                 VehicleId = schedul.VehicleId
             });
+        }
+        return result;
+    }
+
+    public async Task<List<PlannerTrainingType>> GetTrainingTypes(Guid customerId, CancellationToken token)
+    {
+        var result = new List<PlannerTrainingType>();
+        var typesFromDb = await _database.RoosterTrainingTypes.Where(x => x.CustomerId == customerId).ToListAsync(cancellationToken: token);
+        foreach (var type in typesFromDb)
+        {
+            var newType = new PlannerTrainingType
+            {
+                Id = type.Id,
+                Name = type.Name,
+                CountToTrainingTarget = type.CountToTrainingTarget,
+                IsDefault = type.IsDefault,
+                Order = type.Order,
+            };
+            if (!string.IsNullOrEmpty(type.ColorLight))
+                newType.ColorLight = type.ColorLight;
+            if (!string.IsNullOrEmpty(type.ColorDark))
+                newType.ColorDark = type.ColorDark;
+            result.Add(newType);
         }
         return result;
     }

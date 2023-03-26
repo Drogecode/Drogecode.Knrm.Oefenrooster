@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using MudBlazor;
+using MudBlazor.Utilities;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Helpers;
 
@@ -22,21 +23,13 @@ public static class PlannerHelper
                 return Color.Inherit;
         }
     }
-    public static string HeaderClass(TrainingType trainingType)
+
+    public static string HeaderStyle(PlannerTrainingType? trainingType, bool isDark = false)
     {
-        switch (trainingType)
-        {
-            case TrainingType.EHBO:
-                return "var(--mud-palette-warning-darken)";
-            case TrainingType.OneOnOne:
-                return "var(--mud-palette-tertiary-darken)";
-            case TrainingType.FireBrigade:
-                return "var(--mud-palette-error-darken)";
-            case TrainingType.HRB:
-                return "var(--mud-palette-success-lighten)";
-            case TrainingType.Default:
-            default:
-                return "var(--mud-palette-lines-inputs)";
-        }
+        var color = isDark ? trainingType?.ColorDark : trainingType?.ColorLight;
+        if (color == null)
+            return $"background-color: {Color.Default}";
+        else
+            return $"background-color: {color}";
     }
 }

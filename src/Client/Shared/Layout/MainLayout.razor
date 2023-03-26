@@ -56,6 +56,19 @@
                     <UpdateChecker />
                 </MudMainContent>
             </CascadingValue>
+
+            @if (_trainingTypes != null)
+            {
+                <style>
+                @foreach (var trainingType in _trainingTypes)
+                {
+                    @($".trainingType-{trainingType.Id}")
+                    @("{")
+                        @($"background-color: {(_isDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)};")
+                    @("}")
+                }
+                </style>
+            }
         </Authorized>
         <Authorizing>
             <MudMainContent>
@@ -69,4 +82,3 @@
         </NotAuthorized>
     </AuthorizeView>
 </MudLayout>
-

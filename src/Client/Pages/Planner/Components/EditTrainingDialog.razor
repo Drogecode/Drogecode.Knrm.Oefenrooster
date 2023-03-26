@@ -4,7 +4,7 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
 <MudDialog>
     <DialogContent>
-        @if (_training == null)
+        @if (_training == null || TrainingTypes == null)
         {
             <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="110px" />
         }
@@ -15,10 +15,10 @@
                 <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Required />
                 <MudTimePicker Label="@L["From"]" @bind-Time="_training.TimeStart" Validation="@(new Func<TimeSpan?, string?>(StartBeforeEndValidation))" Required />
                 <MudTimePicker Label="@LApp["till"]" @bind-Time="_training.TimeEnd" Validation="@(new Func<TimeSpan?, string?>(EndAfterStartValidation))" Required />
-                <MudSelect T="TrainingType" Label="@L["Training type"]" AnchorOrigin="Origin.BottomCenter" @bind-Value="_training.TrainingType" Required>
-                @foreach (TrainingType trainingType in Enum.GetValues(typeof(TrainingType)))
+                <MudSelect T="Guid?" Label="@L["Training type"]" AnchorOrigin="Origin.BottomCenter" Value="_training.RoosterTrainingTypeId" ValueChanged="RoosterTrainingTypeChanged" Required>
+                @foreach (PlannerTrainingType trainingType in TrainingTypes.OrderBy(x=>x.Order))
                     {
-                        <MudSelectItem T="TrainingType" Value="@trainingType">@L[trainingType.ToString()]</MudSelectItem>
+                        <MudSelectItem T="Guid?" Value="@trainingType.Id">@trainingType.Name</MudSelectItem>
                     }
                 </MudSelect>
                 <MudSwitchM3 Label="@L["Count to training target"]" T="bool" @bind-Checked="_training.CountToTrainingTarget" />

@@ -22,12 +22,12 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.4" NoWarn="NU1605" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.4" NoWarn="NU1605" />
-		<PackageReference Include="Microsoft.Identity.Web" Version="2.5.0" />
-		<PackageReference Include="Microsoft.Identity.Web.UI" Version="2.5.0" />
+		<PackageReference Include="Microsoft.Identity.Web" Version="2.6.1" />
+		<PackageReference Include="Microsoft.Identity.Web.UI" Version="2.6.1" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -14,9 +14,10 @@ public sealed partial class EditTrainingDialog : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
+    [Parameter] public List<PlannerTrainingType>? TrainingTypes { get; set; }
     [Parameter] public PlannedTraining? Planner { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }
-    [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter] public DrogeCodeGlobal Global { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
@@ -37,7 +38,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 TimeEnd = Planner.DateEnd.TimeOfDay,
                 IsNew = false,
                 Name = Planner.Name,
-                TrainingType = Planner.TrainingType,
+                RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
                 CountToTrainingTarget = Planner.CountToTrainingTarget,
             };
         }
@@ -70,6 +71,16 @@ public sealed partial class EditTrainingDialog : IDisposable
         return null;
     }
 
+    private async Task RoosterTrainingTypeChanged(Guid? newType)
+    {
+        _training!.RoosterTrainingTypeId = newType;
+        var trainingType = TrainingTypes!.FirstOrDefault(x => x.Id == newType);
+        if (trainingType != null && trainingType.CountToTrainingTarget != _training!.CountToTrainingTarget)
+        {
+            _training.CountToTrainingTarget = trainingType.CountToTrainingTarget;
+        }
+    }
+
     private async Task OnSubmit()
     {
         _form?.Validate();
@@ -95,7 +106,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             await _scheduleRepository.PatchTraining(_training, _cls.Token);
             var dateStart = (_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeStart ?? throw new ArgumentNullException("TimeStart is null"));
             var dateEnd = (_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"));
-            Planner.TrainingType = _training.TrainingType;
+            Planner.RoosterTrainingTypeId = _training.RoosterTrainingTypeId;
             Planner.Name = _training.Name;
             Planner.DateStart = dateStart;
             Planner.DateEnd = dateEnd;

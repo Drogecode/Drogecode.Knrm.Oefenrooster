@@ -23,6 +23,6 @@
 }
 
 table, tbody, tr, td {
-    /* Fix issue in FireFox */
+    /* Fixes issue in FireFox */
     vertical-align: top;
 }

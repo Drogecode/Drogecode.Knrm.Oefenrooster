@@ -24,7 +24,7 @@ public sealed partial class Global : IDisposable
     private bool _isAuthenticated;
     private string _name = string.Empty;
 
-    private bool _clickedUpdate;
+    private bool? _clickedUpdate;
 
 
     protected override void OnInitialized()
@@ -47,8 +47,7 @@ public sealed partial class Global : IDisposable
 
     private async Task UpdateDatabase()
     {
-        _clickedUpdate = true;
-        await configurationRepository.UpgradeDatabaseAsync();
+        _clickedUpdate = await configurationRepository.UpgradeDatabaseAsync();
     }
 
     private void AddUser()
