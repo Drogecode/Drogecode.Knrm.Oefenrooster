@@ -6,8 +6,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class GraphService : IGraphService
 {
-    public void InitializeGraph(Settings settings)
+    public void InitializeGraph()
     {
+        var settings = Settings.LoadSettings();
         GraphHelper.InitializeGraphForAppOnlyAuth(settings);
     }
 
@@ -67,5 +68,10 @@ public class GraphService : IGraphService
             Console.WriteLine($"Error getting user by ID: {ex.Message}");
             return null;
         }
+    }
+
+    public async Task<UserCollectionResponse> NextUsersPage(UserCollectionResponse users)
+    {
+        return await GraphHelper.NextUsersPage(users);
     }
 }

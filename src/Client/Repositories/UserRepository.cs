@@ -33,4 +33,9 @@ public class UserRepository
         var successfull = await request.Content.ReadFromJsonAsync<bool>();
         return successfull;
     }
+    public async Task<bool> SyncAllUsersAsync()
+    {
+        var request = await _httpClient.GetFromJsonAsync<bool>("api/User/SyncAllUsers");
+        return request;
+    }
 }

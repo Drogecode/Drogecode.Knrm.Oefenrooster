@@ -5,10 +5,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 
 public interface IGraphService
 {
-    void InitializeGraph(Settings settings);
+    void InitializeGraph();
 
     Task<string?> GetAccessTokenAsync();
 
     Task<UserCollectionResponse?> ListUsersAsync();
     Task<DirectoryObjectCollectionResponse?> GetGroupForUser(string userId);
+    Task<UserCollectionResponse> NextUsersPage(UserCollectionResponse users);
 }

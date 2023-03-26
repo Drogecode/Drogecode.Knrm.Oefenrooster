@@ -3,6 +3,7 @@ using Azure.Identity;
 using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
+using Microsoft.Graph.Users;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Helpers;
 
@@ -66,6 +67,12 @@ public static class GraphHelper
             // Sort by display name
             config.QueryParameters.Orderby = new[] { "displayName" };
         });
+    }
+    public static async Task<UserCollectionResponse> NextUsersPage(UserCollectionResponse userPage)
+    {
+        var nextPageRequest = new UsersRequestBuilder(userPage.OdataNextLink, _appClient.RequestAdapter);
+        var nextPage = await nextPageRequest.GetAsync();
+        return nextPage;
     }
 
     public static async Task<DirectoryObjectCollectionResponse?> TaskGetGroupForUser(string userId)

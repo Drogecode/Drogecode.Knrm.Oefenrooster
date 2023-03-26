@@ -1,9 +1,12 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Graph;
+using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph.Models;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
+using Tavis.UriTemplates;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
@@ -15,12 +18,14 @@ public class UserController : ControllerBase
     private readonly ILogger<UserController> _logger;
     private readonly IUserService _userService;
     private readonly IAuditService _auditService;
+    private readonly IGraphService _graphService;
 
-    public UserController(ILogger<UserController> logger, IUserService userService, IAuditService auditService)
+    public UserController(ILogger<UserController> logger, IUserService userService, IAuditService auditService, IGraphService graphService)
     {
         _logger = logger;
         _userService = userService;
         _auditService = auditService;
+        _graphService = graphService;
     }
 
     [HttpGet]
@@ -98,6 +103,51 @@ public class UserController : ControllerBase
         {
             _logger.LogError(ex, "Exception in UpdateUser");
             return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<bool>> SyncAllUsers()
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var userName = User?.FindFirstValue("name") ?? throw new Exception("No userName found");
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            _graphService.InitializeGraph();
+            var existingUsers = await _userService.GetAllUsers(customerId);
+            var users = await _graphService.ListUsersAsync();
+            if (users?.Value != null)
+            {
+                while (true)
+                {
+                    foreach (var user in users.Value)
+                    {
+                        if (user.Id != null && user.DisplayName != null && user.Mail != null)
+                        {
+                            var id = new Guid(user.Id);
+                            var newUserResponse = await _userService.GetOrSetUserFromDb(id, user.DisplayName, user.Mail, customerId);
+                            var index = existingUsers.FindIndex(x => x.Id == id);
+                            if (index != -1)
+                                existingUsers.RemoveAt(index);
+                        }
+                    }
+                    if (users.OdataNextLink != null)
+                        users = await _graphService.NextUsersPage(users);
+                    else break;
+                }
+            }
+            if (existingUsers.Count > 0)
+            {
+                await _userService.MarkUsersDeleted(existingUsers, userId, customerId);
+            }
+            await _auditService.Log(userId, AuditType.SyncAllUsers, customerId);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in SyncAllUsers");
+            return false;
         }
     }
 }

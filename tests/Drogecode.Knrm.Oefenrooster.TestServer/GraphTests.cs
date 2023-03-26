@@ -15,8 +15,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer
         [Fact]
         public async Task InitializeGraphTest()
         {
-            var settings = Settings.LoadSettings();
-            _graphService.InitializeGraph(settings);
+            _graphService.InitializeGraph();
             var token = await _graphService.GetAccessTokenAsync();
             Assert.NotNull(token);
             Assert.False(string.IsNullOrEmpty(token));
@@ -25,8 +24,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer
         [Fact]
         public async Task GetUserListTest()
         {
-            var settings = Settings.LoadSettings();
-            _graphService.InitializeGraph(settings);
+            _graphService.InitializeGraph();
             var userPage = await _graphService.ListUsersAsync();
             Assert.NotNull(userPage?.Value);
             Assert.NotEmpty(userPage.Value);
@@ -35,8 +33,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer
         [Fact]
         public async Task GetGroupForUserTest()
         {
-            var settings = Settings.LoadSettings();
-            _graphService.InitializeGraph(settings);
+            _graphService.InitializeGraph();
             var userPage = await _graphService.ListUsersAsync();
             Assert.NotNull(userPage?.Value);
             Assert.NotEmpty(userPage.Value);

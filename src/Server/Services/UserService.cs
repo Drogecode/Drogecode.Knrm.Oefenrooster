@@ -24,7 +24,7 @@ public class UserService : IUserService
                 Id = dbUser.Id,
                 Name = dbUser.Name,
                 Created = dbUser.Created,
-                LastLogin= dbUser.LastLogin,
+                LastLogin = dbUser.LastLogin,
                 UserFunctionId = dbUser.UserFunctionId,
             });
         }
@@ -39,7 +39,7 @@ public class UserService : IUserService
 
     public async Task<DrogeUser> GetOrSetUserFromDb(Guid userId, string userName, string userEmail, Guid customerId)
     {
-        var userObj = _database.Users.Where(u => u.Id == userId && u.DeletedOn == null).FirstOrDefault();
+        var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
         if (userObj == null)
         {
             var result = _database.Users.Add(new DbUsers
@@ -58,6 +58,7 @@ public class UserService : IUserService
             userObj.LastLogin = DateTime.UtcNow;
             userObj.Name = userName;
             userObj.Email = userEmail;
+            userObj.DeletedOn = null;
             if (userObj.UserFunctionId == null || userObj.UserFunctionId == Guid.Empty)
             {
                 var defaultFunction = await _database.UserFunctions.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Default);
@@ -73,7 +74,7 @@ public class UserService : IUserService
             _database.Users.Update(userObj);
             await _database.SaveChangesAsync();
         }
-        return DbUserToSharedUser(userObj);
+        return DbUserToSharedUser(userObj!);
     }
 
     private DrogeUser DbUserToSharedUser(DbUsers dbUsers)
@@ -83,8 +84,8 @@ public class UserService : IUserService
             Id = dbUsers.Id,
             Name = dbUsers.Name,
             Created = dbUsers.Created,
-            LastLogin= dbUsers.LastLogin,
-            UserFunctionId= dbUsers.UserFunctionId,
+            LastLogin = dbUsers.LastLogin,
+            UserFunctionId = dbUsers.UserFunctionId,
         };
     }
 
@@ -112,6 +113,20 @@ public class UserService : IUserService
             CustomerId = customerId,
             UserFunctionId = user.UserFunctionId,
         });
+        return await _database.SaveChangesAsync() > 0;
+    }
+
+    public async Task<bool> MarkUsersDeleted (List<DrogeUser> existingUsers, Guid userId, Guid customerId)
+    {
+        foreach(var user in existingUsers)
+        {
+            var dbUser = await _database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null);
+            if (dbUser != null)
+            {
+                dbUser.DeletedOn = DateTime.UtcNow;
+                dbUser.DeletedBy = userId;
+            }
+        }
         return await _database.SaveChangesAsync() > 0;
     }
 }

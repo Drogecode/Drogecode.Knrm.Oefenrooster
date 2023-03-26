@@ -14,7 +14,7 @@ public sealed partial class Global : IDisposable
     [Inject] private IStringLocalizer<Global> L { get; set; } = default!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
-    [Inject] private ConfigurationRepository configurationRepository { get; set; } = default!;
+    [Inject] private ConfigurationRepository _configurationRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
     private ClaimsPrincipal _user;
@@ -25,6 +25,7 @@ public sealed partial class Global : IDisposable
     private string _name = string.Empty;
 
     private bool? _clickedUpdate;
+    private bool? _usersSynced;
 
 
     protected override void OnInitialized()
@@ -47,7 +48,12 @@ public sealed partial class Global : IDisposable
 
     private async Task UpdateDatabase()
     {
-        _clickedUpdate = await configurationRepository.UpgradeDatabaseAsync();
+        _clickedUpdate = await _configurationRepository.UpgradeDatabaseAsync();
+    }
+
+    private async Task SyncUsers()
+    {
+        _usersSynced = await _userRepository.SyncAllUsersAsync();
     }
 
     private void AddUser()
