@@ -7,13 +7,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class GraphService : IGraphService
 {
     private readonly ILogger<GraphService> _logger;
-    public GraphService(ILogger<GraphService> logger)
+    private readonly IConfiguration _configuration;
+    public GraphService(
+        ILogger<GraphService> logger,
+        IConfiguration configuration)
     {
         _logger = logger;
+        _configuration = configuration;
     }
     public void InitializeGraph()
     {
-        var settings = Settings.LoadSettings();
+        var settings = Settings.LoadSettings(_configuration);
         _logger.LogInformation($"start ClientSecret: {settings?.ClientSecret?[..3] ?? "Is null"}");
         GraphHelper.InitializeGraphForAppOnlyAuth(settings);
     }
