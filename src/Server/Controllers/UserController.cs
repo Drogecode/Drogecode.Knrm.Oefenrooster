@@ -126,20 +126,25 @@ public class UserController : ControllerBase
                         if (user.Id != null && user.DisplayName != null && user.Mail != null)
                         {
                             var id = new Guid(user.Id);
-                            var newUserResponse = await _userService.GetOrSetUserFromDb(id, user.DisplayName, user.Mail, customerId);
                             var index = existingUsers.FindIndex(x => x.Id == id);
                             if (index != -1)
                                 existingUsers.RemoveAt(index);
+                            var groups = await _graphService.GetGroupForUser(user.Id);
+                            if (groups?.Value != null)
+                            {
+                                
+                            }
+                            var newUserResponse = await _userService.GetOrSetUserFromDb(id, user.DisplayName, user.Mail, customerId);
                         }
                     }
                     if (users.OdataNextLink != null)
                         users = await _graphService.NextUsersPage(users);
                     else break;
                 }
-            }
-            if (existingUsers.Count > 0)
-            {
-                await _userService.MarkUsersDeleted(existingUsers, userId, customerId);
+                if (existingUsers.Count > 0)
+                {
+                    await _userService.MarkUsersDeleted(existingUsers, userId, customerId);
+                }
             }
             await _auditService.Log(userId, AuditType.SyncAllUsers, customerId);
             return true;

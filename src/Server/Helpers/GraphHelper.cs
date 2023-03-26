@@ -16,7 +16,7 @@ public static class GraphHelper
     // Client configured with app-only authentication
     private static GraphServiceClient? _appClient;
 
-    public static void InitializeGraphForAppOnlyAuth(Settings settings)
+    public static void InitializeGraphForAppOnlyAuth(Settings? settings)
     {
         _settings = settings;
 
@@ -28,6 +28,12 @@ public static class GraphHelper
 
         if (_clientSecretCredential == null)
         {
+            if (string.IsNullOrEmpty(_settings.TenantId))
+                throw new System.NullReferenceException("TenantId cannot be null");
+            if (string.IsNullOrEmpty(_settings.ClientId))
+                throw new System.NullReferenceException("ClientId cannot be null");
+            if (string.IsNullOrEmpty(_settings.ClientSecret))
+                throw new System.NullReferenceException("ClientSecret cannot be null");
             _clientSecretCredential = new ClientSecretCredential(
                 _settings.TenantId, _settings.ClientId, _settings.ClientSecret);
         }
