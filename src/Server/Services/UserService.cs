@@ -56,6 +56,8 @@ public class UserService : IUserService
         if (userObj != null)
         {
             userObj.LastLogin = DateTime.UtcNow;
+            userObj.Name = userName;
+            userObj.Email = userEmail;
             if (userObj.UserFunctionId == null || userObj.UserFunctionId == Guid.Empty)
             {
                 var defaultFunction = await _database.UserFunctions.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Default);
