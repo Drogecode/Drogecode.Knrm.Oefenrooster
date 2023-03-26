@@ -67,4 +67,14 @@ public static class GraphHelper
             config.QueryParameters.Orderby = new[] { "displayName" };
         });
     }
+
+    public static async Task<DirectoryObjectCollectionResponse?> TaskGetGroupForUser(string userId)
+    {
+        // Ensure client isn't null
+        _ = _appClient ??
+            throw new System.NullReferenceException("Graph has not been initialized for app-only auth");
+
+        var result = await _appClient.Users[userId].TransitiveMemberOf.GetAsync();
+        return result;
+    }
 }

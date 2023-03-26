@@ -38,14 +38,6 @@ public class GraphService : IGraphService
                 return null;
             }
 
-            // Output each users's details
-            foreach (var user in userPage.Value)
-            {
-                Console.WriteLine($"User: {user.DisplayName ?? "NO NAME"}");
-                Console.WriteLine($"  ID: {user.Id}");
-                Console.WriteLine($"  Email: {user.Mail ?? "NO EMAIL"}");
-            }
-
             // If NextPageRequest is not null, there are more users
             // available on the server
             // Access the next page like:
@@ -63,8 +55,17 @@ public class GraphService : IGraphService
         }
     }
 
-    public async Task MakeGraphCallAsync()
+    public async Task<DirectoryObjectCollectionResponse?> GetGroupForUser(string userId)
     {
-        // TODO
+        try
+        {
+            var result = await GraphHelper.TaskGetGroupForUser(userId);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting user by ID: {ex.Message}");
+            return null;
+        }
     }
 }

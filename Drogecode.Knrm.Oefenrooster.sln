@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{E8B45E7F-F232-42C9-8C8D-330D104D4C43}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.TestServer", "..\Drogecode.Knrm.Oefenrooster.TestServer\Drogecode.Knrm.Oefenrooster.TestServer.csproj", "{D8CDEEEF-D77E-4420-8313-8EF3457D0F1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.TestServer", "tests\Drogecode.Knrm.Oefenrooster.TestServer\Drogecode.Knrm.Oefenrooster.TestServer.csproj", "{2C3B2883-7EA8-49B9-8AC0-6F38DCF1FC40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{E8B45E7F-F232-42C9-8C8D-330D104D4C43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8B45E7F-F232-42C9-8C8D-330D104D4C43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8B45E7F-F232-42C9-8C8D-330D104D4C43}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D8CDEEEF-D77E-4420-8313-8EF3457D0F1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D8CDEEEF-D77E-4420-8313-8EF3457D0F1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D8CDEEEF-D77E-4420-8313-8EF3457D0F1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D8CDEEEF-D77E-4420-8313-8EF3457D0F1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C3B2883-7EA8-49B9-8AC0-6F38DCF1FC40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C3B2883-7EA8-49B9-8AC0-6F38DCF1FC40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C3B2883-7EA8-49B9-8AC0-6F38DCF1FC40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C3B2883-7EA8-49B9-8AC0-6F38DCF1FC40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

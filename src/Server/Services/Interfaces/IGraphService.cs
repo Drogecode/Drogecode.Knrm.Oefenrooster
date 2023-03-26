@@ -10,6 +10,5 @@ public interface IGraphService
     Task<string?> GetAccessTokenAsync();
 
     Task<UserCollectionResponse?> ListUsersAsync();
-
-    Task MakeGraphCallAsync();
+    Task<DirectoryObjectCollectionResponse?> GetGroupForUser(string userId);
 }
