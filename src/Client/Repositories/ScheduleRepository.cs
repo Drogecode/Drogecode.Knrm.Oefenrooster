@@ -89,7 +89,7 @@ public class ScheduleRepository
         request.EnsureSuccessStatusCode();
     }
 
-    internal async Task<List<PlannerTrainingType>> GetTrainingTypes(CancellationToken token)
+    internal async Task<List<PlannerTrainingType>> GetTrainingTypes(CancellationToken token = default)
     {
         var schedule = await _httpClient.GetFromJsonAsync<List<PlannerTrainingType>>($"api/Schedule/GetTrainingTypes", token);
         return schedule;
