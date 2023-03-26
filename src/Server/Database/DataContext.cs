@@ -342,6 +342,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Name = "Kompas oefening",
                 ColorLight = "#bdbdbdff",
                 ColorDark = "#ffffff4c",
+                Order = 10,
                 CountToTrainingTarget = true,
                 IsDefault = true,
             }));
@@ -351,7 +352,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "EHBO",
                 ColorLight = "rgb(214,129,0)",
-                ColorDark = "rgb(214,143,0)"
+                ColorDark = "rgb(214,143,0)",
+                Order = 20,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -359,7 +361,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "een op een",
                 ColorLight = "rgb(25,169,140)",
-                ColorDark = ""
+                ColorDark = "",
+                Order = 30,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -367,7 +370,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Brandweer",
                 ColorLight = "rgb(242,28,13)",
-                ColorDark = "rgb(244,47,70)"
+                ColorDark = "rgb(244,47,70)",
+                Order = 40,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -375,7 +379,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "HRB",
                 ColorLight = "rgb(0,235,98)",
-                ColorDark = "rgb(13,222,156)"
+                ColorDark = "rgb(13,222,156)",
+                Order = 50,
             }));
         }
         #endregion

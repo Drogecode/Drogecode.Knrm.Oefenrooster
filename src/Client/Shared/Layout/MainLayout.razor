@@ -64,7 +64,7 @@
                 {
                     @($".trainingType-{trainingType.Id}")
                     @("{")
-                        @($"background-color: {(_isDarkMode ? trainingType.ColorDark : trainingType.ColorLight)};")
+                        @($"background-color: {(_isDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)};")
                     @("}")
                 }
                 </style>

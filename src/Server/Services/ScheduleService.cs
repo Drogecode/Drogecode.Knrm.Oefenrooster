@@ -398,6 +398,7 @@ public class ScheduleService : IScheduleService
                 Name = type.Name,
                 CountToTrainingTarget = type.CountToTrainingTarget,
                 IsDefault = type.IsDefault,
+                Order = type.Order,
             };
             if (!string.IsNullOrEmpty(type.ColorLight))
                 newType.ColorLight = type.ColorLight;
