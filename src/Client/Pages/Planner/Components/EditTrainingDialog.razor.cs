@@ -71,6 +71,16 @@ public sealed partial class EditTrainingDialog : IDisposable
         return null;
     }
 
+    private async Task RoosterTrainingTypeChanged(Guid? newType)
+    {
+        _training!.RoosterTrainingTypeId = newType;
+        var trainingType = TrainingTypes!.FirstOrDefault(x => x.Id == newType);
+        if (trainingType != null && trainingType.CountToTrainingTarget != _training!.CountToTrainingTarget)
+        {
+            _training.CountToTrainingTarget = trainingType.CountToTrainingTarget;
+        }
+    }
+
     private async Task OnSubmit()
     {
         _form?.Validate();
