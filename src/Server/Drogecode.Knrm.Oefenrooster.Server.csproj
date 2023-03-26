@@ -10,12 +10,6 @@
 		<DockerfileContext>..\..</DockerfileContext>
 		<DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<None Include="appsettings*.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
 	
 	<ItemGroup>
 		<PackageReference Include="Azure.Identity" Version="1.8.2" />
