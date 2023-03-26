@@ -13,7 +13,7 @@
         <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
             @foreach (var training in _trainings)
             {
-                <IndexCard Training="training" Style="@GetStyle(training)" />
+                <IndexCard Training="training" />
             }
         </MudPaper>
     }

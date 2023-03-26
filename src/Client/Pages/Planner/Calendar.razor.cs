@@ -17,14 +17,12 @@ public sealed partial class Calendar : IDisposable
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
     private List<CustomItem> _events = new();
-    private List<PlannerTrainingType>? _trainingTypes;
     private CancellationTokenSource _cls = new();
     private bool _updating;
 
     protected override async Task OnInitializedAsync()
     {
         Global.NewTrainingAddedAsync += HandleNewTraining;
-        _trainingTypes = await _scheduleRepository.GetTrainingTypes(_cls.Token);
     }
 
     private async Task SetCalenderForMonth(DateRange dateRange)
@@ -39,14 +37,12 @@ public sealed partial class Calendar : IDisposable
             scheduleForUser.From = DateOnly.FromDateTime(trainingsInWeek[0].DateStart);
             foreach (var training in trainingsInWeek)
             {
-                var trainingType = (_trainingTypes?.FirstOrDefault(x => x.Id == training.RoosterTrainingTypeId)) ?? (_trainingTypes?.FirstOrDefault(x => x.IsDefault));
                 _events.Add(new CustomItem
                 {
                     Start = training.DateStart,
                     End = training.DateEnd,
                     Training = training,
-                    Text = training.Availabilty.ToString() ?? "",
-                    ColorStyle = PlannerHelper.HeaderStyle(trainingType)
+                    Text = training.Availabilty.ToString() ?? ""
                 });
             }
         }
@@ -75,14 +71,12 @@ public sealed partial class Calendar : IDisposable
             RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId
         };
         var date = DateOnly.FromDateTime(newTraining.Date ?? throw new UnreachableException("newTraining.Date is null after null check"));
-        var trainingType = _trainingTypes?.FirstOrDefault(x => x.Id == newTraining.RoosterTrainingTypeId);
         _events.Add(new CustomItem
         {
             Start = asTraining.DateStart,
             End = asTraining.DateEnd,
             Training = asTraining,
             Text = asTraining.Availabilty.ToString() ?? "",
-            ColorStyle = PlannerHelper.HeaderStyle(trainingType)
         });
         StateHasChanged();
     }
@@ -95,6 +89,5 @@ public sealed partial class Calendar : IDisposable
     private class CustomItem : CalendarItem
     {
         public Training? Training { get; set; }
-        public string ColorStyle { get; set; } = $"background-color: {MudBlazor.Color.Default}";
     }
 }

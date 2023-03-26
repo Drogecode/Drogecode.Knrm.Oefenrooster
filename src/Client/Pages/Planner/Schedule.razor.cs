@@ -50,13 +50,11 @@ public sealed partial class Schedule : IDisposable
             scheduleForUser.From = DateOnly.FromDateTime(trainingsInRange[0].DateStart);
             foreach (var training in trainingsInRange)
             {
-                var trainingType = (_trainingTypes?.FirstOrDefault(x => x.Id == training.RoosterTrainingTypeId)) ?? (_trainingTypes?.FirstOrDefault(x => x.IsDefault));
                 _events.Add(new CustomItem
                 {
                     Start = training.DateStart,
                     End = training.DateEnd,
                     Training = training,
-                    ColorStyle = PlannerHelper.HeaderStyle(trainingType)
                 });
             }
         }
@@ -71,6 +69,5 @@ public sealed partial class Schedule : IDisposable
     private class CustomItem : CalendarItem
     {
         public PlannedTraining? Training { get; set; }
-        public string ColorStyle { get; set; } = $"background-color: {MudBlazor.Color.Default}";
     }
 }

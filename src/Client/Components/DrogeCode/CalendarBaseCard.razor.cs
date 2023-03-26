@@ -9,7 +9,6 @@ public sealed partial class CalendarBaseCard : IDisposable
 {
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Parameter, EditorRequired] public TrainingAdvance Training { get; set; } = default!;
-    [Parameter, EditorRequired] public string Style { get; set; } = default!;
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public EventCallback OnClickCallback { get; set; }
     [Parameter] public EventCallback OnClickSettings { get; set; }
