@@ -4,19 +4,28 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-@if (_users != null && _userTrainingCounter != null)
+@if (_functions != null && _users != null && _userTrainingCounter != null)
 {
     <MudPaper>
         <MudList Clickable="false">
-            @foreach (var user in _userTrainingCounter)
-            {
-                var name = _users.FirstOrDefault(x=>x.Id == user.UserId)?.Name;
-                <MudListItem Text=@($"{name} : {@user.Count}") />
-            }
             <MudDivider />
-            @foreach(var user in _users.Where(x=>!_userTrainingCounter.Any(y=>y.UserId == x.Id)))
+            @foreach (var function in _functions.OrderBy(x => x.Order))
             {
-                <MudListItem Text=@($"{user.Name} : {L["No training"]}") />
+                @foreach (var user in _userTrainingCounter)
+                {
+                    var dbUser = _users.FirstOrDefault(x => x.Id == user.UserId && x.UserFunctionId == function.Id);
+                    @if (dbUser != null)
+                    {
+                        <MudListItem Style="@(function.TrainingTarget > user.Count ? "color: var(--mud-palette-error-lighten)" : "")" Text=@($"{dbUser.Name} : {@user.Count}") />
+                    }
+                }
+            }
+            @foreach (var function in _functions.Where(x => x.TrainingTarget > 0).OrderBy(x => x.Order))
+            {
+                @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id && !_userTrainingCounter.Any(y => y.UserId == x.Id)).OrderBy(x=>x.Name))
+                {
+                    <MudListItem Style="color: var(--mud-palette-error)" Text=@($"{user.Name} : {L["No training"]}") />
+                }
             }
         </MudList>
     </MudPaper>

@@ -5,7 +5,7 @@
 <CalendarBaseCard Width="100%" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" ContentClass="@(Planner.IsCreated ? "" : "DrogeCode-card-content-not-created")">
     @if (Functions != null && Users != null)
     {
-        @foreach (var function in Functions.OrderBy(x => x.Order))
+        @foreach (var function in Functions.Where(x=>x.Active).OrderBy(x => x.Order))
         {
             @if (Planner.PlanUsers.Any(x => x.PlannedFunctionId == function.Id))
             {

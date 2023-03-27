@@ -30,7 +30,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ScheduleForUserResponse>> ForUser(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token)
+    public async Task<ActionResult<ScheduleForUserResponse>> ForUser(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token = default)
     {
         try
         {
@@ -47,7 +47,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ScheduleForAllResponse>> ForAll(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token)
+    public async Task<ActionResult<ScheduleForAllResponse>> ForAll(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token = default)
     {
         try
         {
@@ -64,7 +64,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<bool>> PatchTraining(EditTraining patchedTraining, CancellationToken token)
+    public async Task<ActionResult<bool>> PatchTraining(EditTraining patchedTraining, CancellationToken token = default)
     {
         try
         {
@@ -86,7 +86,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> AddTraining(EditTraining newTraining, CancellationToken token)
+    public async Task<ActionResult<Guid>> AddTraining(EditTraining newTraining, CancellationToken token = default)
     {
         try
         {
@@ -109,7 +109,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Training>> PatchScheduleForUser(Training training, CancellationToken token)
+    public async Task<ActionResult<Training>> PatchScheduleForUser(Training training, CancellationToken token = default)
     {
         try
         {
@@ -126,7 +126,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> PatchAvailabilityUser(PatchScheduleUserRequest body, CancellationToken token)
+    public async Task<ActionResult> PatchAvailabilityUser(PatchScheduleUserRequest body, CancellationToken token = default)
     {
         try
         {
@@ -143,7 +143,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> OtherScheduleUser(OtherScheduleUserRequest body, CancellationToken token)
+    public async Task<ActionResult> OtherScheduleUser(OtherScheduleUserRequest body, CancellationToken token = default)
     {
         try
         {
@@ -160,7 +160,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> GetScheduledTrainingsForUser(CancellationToken token)
+    public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> GetScheduledTrainingsForUser(CancellationToken token = default)
     {
         try
         {
@@ -178,7 +178,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<PlannerTrainingType>>> GetTrainingTypes(CancellationToken token)
+    public async Task<ActionResult<List<PlannerTrainingType>>> GetTrainingTypes(CancellationToken token = default)
     {
         try
         {

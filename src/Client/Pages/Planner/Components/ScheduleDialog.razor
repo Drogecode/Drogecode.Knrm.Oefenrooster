@@ -38,7 +38,7 @@
             <MudExpansionPanels>
                 @if (Functions != null && Users != null)
                 {
-                    @foreach (var function in Functions.OrderBy(x => x.Order))
+                    @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
                     {
                         @if (Users.Any(x => x.UserFunctionId == function.Id) || Planner.PlanUsers.Any(x => x.PlannedFunctionId == function.Id) || function.TrainingOnly)
                         {
@@ -142,7 +142,7 @@
                     @LApp["Available"]
                 </MudText>
             }
-            @foreach (var function in Functions.OrderBy(x => x.Order))
+            @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
             {
                 @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available && x.PlannedFunctionId == function.Id))
                 {
@@ -167,7 +167,7 @@
                     @L["Other users"]
                 </MudText>
             }
-            @foreach (var function in Functions.OrderBy(x => x.Order))
+            @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
             {
                 @if (Users.Any(x => x.UserFunctionId == function.Id) || Planner.PlanUsers.Any(x => x.PlannedFunctionId == function.Id))
                 {

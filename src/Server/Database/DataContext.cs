@@ -230,35 +230,45 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Kompas leider",
                 Order = 10,
-                TrainingOnly = true
+                Active = true,
+                TrainingOnly = true,
+                TrainingTarget = 0,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("48db5dd5-cb72-4365-9bf5-959691dc54f2"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Schipper",
-                Order = 20
+                Order = 20,
+                Active = true,
+                TrainingTarget = 2,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("cf6e6afa-8aa5-4b3d-8198-fb5e86faf53c"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Schipper I.O.",
-                Order = 30
+                Order = 30,
+                Active = true,
+                TrainingTarget = 2,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("35ad11b8-d3f2-4960-b1e8-d41aaccd188a"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Opstapper",
-                Order = 60
+                Order = 60,
+                Active = true,
+                TrainingTarget = 2,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("feb3641f-9941-4db7-a202-14263d706516"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Aankomend opstapper",
-                Order = 70
+                Order = 70,
+                Active = true,
+                TrainingTarget = 2,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
@@ -266,14 +276,18 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Opstapper op proef",
                 Order = 80,
-                Default = true
+                Default = true,
+                Active = true,
+                TrainingTarget = 0,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("5c49fc5c-25eb-48c2-a746-74ac3a030d48"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "HRB Aankomend opstapper",
-                Order = 100
+                Order = 100,
+                Active = true,
+                TrainingTarget = 0,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
@@ -281,14 +295,27 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Waarnemer",
                 Order = 180,
-                TrainingOnly = true
+                Active = true,
+                TrainingOnly = true,
+                TrainingTarget = 0,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("0a0a2c2d-15c7-4205-93a2-621de3c30db1"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Extra",
-                Order = 300
+                Order = 300,
+                Active = true,
+                TrainingTarget = 0,
+            }));
+            modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
+            {
+                Id = new Guid("a23f1f39-275e-4e21-901f-4878b73d3ede"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "Inactief",
+                Order = 400,
+                TrainingTarget = 0,
+                Active = false
             }));
         }
 

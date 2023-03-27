@@ -46,7 +46,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<DrogeUser>> Get()
+    public async Task<ActionResult<DrogeUser>> Get(CancellationToken token = default)
     {
         try
         {
@@ -66,7 +66,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<bool>> AddUser(DrogeUser user)
+    public async Task<ActionResult<bool>> AddUser(DrogeUser user, CancellationToken token = default)
     {
         try
         {
@@ -87,7 +87,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<bool>> UpdateUser(DrogeUser user)
+    public async Task<ActionResult<bool>> UpdateUser(DrogeUser user, CancellationToken token = default)
     {
         try
         {
@@ -107,7 +107,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<bool>> SyncAllUsers()
+    public async Task<ActionResult<bool>> SyncAllUsers(CancellationToken token = default)
     {
         try
         {
@@ -119,9 +119,10 @@ public class UserController : ControllerBase
             var users = await _graphService.ListUsersAsync();
             if (users?.Value != null)
             {
+                await _auditService.Log(userId, AuditType.SyncAllUsers, customerId);
                 while (true)
                 {
-                    foreach (var user in users.Value)
+                    foreach (var user in users!.Value!)
                     {
                         if (user.Id != null && user.DisplayName != null && user.Mail != null)
                         {
@@ -132,7 +133,7 @@ public class UserController : ControllerBase
                             var groups = await _graphService.GetGroupForUser(user.Id);
                             if (groups?.Value != null)
                             {
-                                
+
                             }
                             var newUserResponse = await _userService.GetOrSetUserFromDb(id, user.DisplayName, user.Mail, customerId);
                         }
@@ -146,7 +147,8 @@ public class UserController : ControllerBase
                     await _userService.MarkUsersDeleted(existingUsers, userId, customerId);
                 }
             }
-            await _auditService.Log(userId, AuditType.SyncAllUsers, customerId);
+            else
+                return false;
             return true;
         }
         catch (Exception ex)

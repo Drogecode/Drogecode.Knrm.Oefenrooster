@@ -20,8 +20,10 @@ public class FunctionService : IFunctionService
                 Id = function.Id,
                 Name = function.Name,
                 Order = function.Order,
+                TrainingTarget = function.TrainingTarget,
                 TrainingOnly = function.TrainingOnly,
-                Default = function.Default
+                Default = function.Default,
+                Active = function.Active,
             });
         }
         return result;

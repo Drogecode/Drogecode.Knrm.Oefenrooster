@@ -10,10 +10,12 @@ public class DbUserFunctions
     public Guid CustomerId { get; set; }
     public string Name { get; set; }
     public int Order { get; set; }
+    public int TrainingTarget { get; set; }
     public bool TrainingOnly { get; set; }
     public bool Default { get; set; }
+    public bool Active { get; set; }
 
     public DbCustomers Customer { get; set; }
     public ICollection<DbUsers>? Users { get; set; }
-    public ICollection<DbRoosterAvailable>? RoosterAvailables{ get; set; }
+    public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
 }
