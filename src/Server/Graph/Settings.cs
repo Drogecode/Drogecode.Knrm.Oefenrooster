@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Graph.Models.ExternalConnectors;
+
 namespace Drogecode.Knrm.Oefenrooster.Server.Graph;
 
 public class Settings
@@ -9,7 +11,12 @@ public class Settings
 
     public static Settings LoadSettings(IConfiguration configuration)
     {
-        return configuration.GetRequiredSection("AzureAd").Get<Settings>() ??
-            throw new Exception("Could not load app settings. See README for configuration instructions.");
+        return new Settings
+        {
+
+            ClientId = configuration.GetValue<string>("AzureAd:ClientId"),
+            ClientSecret = configuration.GetValue<string>("AzureAd:ClientSecret"),
+            TenantId = configuration.GetValue<string>("AzureAd:TenantId")
+        };
     }
 }
