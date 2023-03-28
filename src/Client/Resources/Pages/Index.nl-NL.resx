@@ -123,4 +123,7 @@
   <data name="No future trainings" xml:space="preserve">
     <value>Geen aankomende oefeningen</value>
   </data>
+  <data name="Pinned trainings" xml:space="preserve">
+    <value>Vastgezette trainingen</value>
+  </data>
 </root>

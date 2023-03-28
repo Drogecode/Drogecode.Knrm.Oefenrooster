@@ -22,6 +22,8 @@
                     }
                 </MudSelect>
                 <MudSwitchM3 Label="@L["Count to training target"]" T="bool" @bind-Checked="_training.CountToTrainingTarget" />
+                <MudDivider/>
+                <MudSwitchM3 Label="@L["Pin to dashboard"]" T="bool" @bind-Checked="_training.Pin" />
                 @if (Vehicles != null)
                 {
                     <MudText Typo="Typo.h4">@L["Which vehicle?"]</MudText>

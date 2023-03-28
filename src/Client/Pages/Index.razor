@@ -2,16 +2,38 @@
 @attribute [Authorize]
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Components
 @using System.Text;
+@using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
 <PageTitle>Dashboard</PageTitle>
+
+@if (_pinnedTrainings != null)
+{
+    @if (_pinnedTrainings.Count() > 0)
+    {
+        <MudText Typo="Typo.h3">@L["Pinned trainings"]</MudText>
+        <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+            @foreach (var training in _pinnedTrainings)
+            {
+                <CalendarCard Width="200px" Training="training" />
+            }
+        </MudPaper>
+    }
+}
+else
+{
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+}
 
 <MudText Typo="Typo.h3">@L["Future trainings"]</MudText>
 
-@if (_trainings != null)
+@if (_futureTrainings != null)
 {
-    @if (_trainings.Count() > 0)
+    @if (_futureTrainings.Count() > 0)
     {
         <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-            @foreach (var training in _trainings)
+            @foreach (var training in _futureTrainings)
             {
                 <IndexCard Training="training" />
             }

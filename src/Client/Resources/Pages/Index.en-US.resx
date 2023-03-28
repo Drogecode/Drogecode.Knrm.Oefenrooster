@@ -123,4 +123,7 @@
   <data name="No future trainings" xml:space="preserve">
     <value>No future trainings</value>
   </data>
+  <data name="Pinned trainings" xml:space="preserve">
+    <value>Pinned trainings</value>
+  </data>
 </root>

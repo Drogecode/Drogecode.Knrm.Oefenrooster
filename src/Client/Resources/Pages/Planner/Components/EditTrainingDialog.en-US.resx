@@ -144,6 +144,9 @@
   <data name="OneOnOne" xml:space="preserve">
     <value>One on one</value>
   </data>
+  <data name="Pin to dashboard" xml:space="preserve">
+    <value>Pin to dashboard</value>
+  </data>
   <data name="Start time past end time" xml:space="preserve">
     <value>Start time past end time</value>
   </data>

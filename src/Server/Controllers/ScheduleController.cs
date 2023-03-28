@@ -178,6 +178,24 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
+    public async Task<ActionResult<GetPinnedTrainingsForUserResponse>> GetPinnedTrainingsForUser(CancellationToken token = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var fromDate = DateTime.Today.ToUniversalTime();
+            GetPinnedTrainingsForUserResponse result = await _scheduleService.GetPinnedTrainingsForUser(userId, customerId, fromDate, token);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetPinnedTrainingsForUser");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
     public async Task<ActionResult<List<PlannerTrainingType>>> GetTrainingTypes(CancellationToken token = default)
     {
         try

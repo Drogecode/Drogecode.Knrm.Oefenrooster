@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using System.Data;
+using System.Runtime.Intrinsics.X86;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -52,6 +53,7 @@ public class ScheduleService : IScheduleService
                         RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                         VehicleId = ava?.VehicleId,
                         CountToTrainingTarget = training.CountToTrainingTarget,
+                        Pin = training.Pin,
                     });
                     if (training.RoosterDefaultId != null)
                         defaultsFound.Add(training.RoosterDefaultId);
@@ -68,7 +70,8 @@ public class ScheduleService : IScheduleService
                         DateEnd = scheduleDate.ToDateTime(def.TimeEnd, DateTimeKind.Utc),
                         Availabilty = Availabilty.None,
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
-                        CountToTrainingTarget = def.CountToTrainingTarget
+                        CountToTrainingTarget = def.CountToTrainingTarget,
+                        Pin = false,
                     });
                 }
             }
@@ -131,6 +134,7 @@ public class ScheduleService : IScheduleService
         oldTraining.DateStart = dateStart;
         oldTraining.DateEnd = dateEnd;
         oldTraining.CountToTrainingTarget = patchedTraining.CountToTrainingTarget;
+        oldTraining.Pin = patchedTraining.Pin;
         _database.RoosterTrainings.Update(oldTraining);
         return (await _database.SaveChangesAsync()) > 0;
     }
@@ -148,6 +152,7 @@ public class ScheduleService : IScheduleService
             DateStart = dateStart,
             DateEnd = dateEnd,
             CountToTrainingTarget = newTraining.CountToTrainingTarget,
+            Pin = newTraining.Pin,
         };
         return await AddTrainingInternalAsync(customerId, training, token);
     }
@@ -168,6 +173,7 @@ public class ScheduleService : IScheduleService
             DateStart = training.DateStart,
             DateEnd = training.DateEnd,
             CountToTrainingTarget = training.CountToTrainingTarget,
+            Pin = training.Pin,
         });
         return (await _database.SaveChangesAsync()) > 0;
     }
@@ -181,7 +187,7 @@ public class ScheduleService : IScheduleService
             CustomerId = customerId,
             TrainingId = training.TrainingId ?? throw new NoNullAllowedException("TrainingId is still null while adding available"),
             Date = training.DateStart,
-            Available = training.Availabilty
+            Available = training.Availabilty,
         });
         return (await _database.SaveChangesAsync()) > 0;
     }
@@ -226,6 +232,7 @@ public class ScheduleService : IScheduleService
                         IsCreated = true,
                         RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                         CountToTrainingTarget = training.CountToTrainingTarget,
+                        Pin = training.Pin,
                     };
                     foreach (var a in ava)
                     {
@@ -270,7 +277,8 @@ public class ScheduleService : IScheduleService
                         DateEnd = scheduleDate.ToDateTime(def.TimeEnd, DateTimeKind.Utc),
                         IsCreated = false,
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
-                        CountToTrainingTarget = def.CountToTrainingTarget
+                        CountToTrainingTarget = def.CountToTrainingTarget,
+                        Pin = false
                     });
                 }
             }
@@ -340,7 +348,7 @@ public class ScheduleService : IScheduleService
                     UserFunctionId = body.FunctionId,
                     Date = training.DateStart,
                     Available = Availabilty.None,
-                    Assigned = body.Assigned,
+                    Assigned = body.Assigned
                 };
                 _database.RoosterAvailables.Add(ava);
                 await _database.SaveChangesAsync(token);
@@ -380,7 +388,32 @@ public class ScheduleService : IScheduleService
                 Availabilty = schedul.Available,
                 Assigned = schedul.Assigned,
                 RoosterTrainingTypeId = schedul.Training.RoosterTrainingTypeId,
-                VehicleId = schedul.VehicleId
+                VehicleId = schedul.VehicleId,
+            });
+        }
+        return result;
+    }
+
+    public async Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUser(Guid userId, Guid customerId, DateTime fromDate, CancellationToken token)
+    {
+        var result = new GetPinnedTrainingsForUserResponse();
+        var trainings = await _database.RoosterTrainings.Include(i => i.RoosterAvailables!.Where(r => r.CustomerId == customerId && r.UserId == userId)).Where(x => x.CustomerId == customerId && x.Pin && x.DateStart >= fromDate && (x.RoosterAvailables == null || !x.RoosterAvailables.Any(r => r.Available > 0))).OrderBy(x => x.DateStart).ToListAsync(cancellationToken: token);
+        foreach (var training in trainings)
+        {
+            var availabilty = training.RoosterAvailables?.FirstOrDefault(r => r.CustomerId == customerId && r.UserId == userId);
+            result.Trainings.Add(new Training
+            {
+                TrainingId = training.Id,
+                DefaultId = training.RoosterDefaultId,
+                Name = training.Name,
+                DateStart = training.DateStart,
+                DateEnd = training.DateEnd,
+                Availabilty = availabilty?.Available,
+                Assigned = availabilty?.Assigned ?? false,
+                RoosterTrainingTypeId = training.RoosterTrainingTypeId,
+                VehicleId = availabilty?.VehicleId,
+                CountToTrainingTarget = training.CountToTrainingTarget,
+                Pin = training.Pin,
             });
         }
         return result;

@@ -76,6 +76,12 @@ public class ScheduleRepository
         return schedule;
     }
 
+    public async Task<GetPinnedTrainingsForUserResponse?> GetPinnedTrainingsForUser(CancellationToken token)
+    {
+        var schedule = await _httpClient.GetFromJsonAsync<GetPinnedTrainingsForUserResponse>($"api/Schedule/GetPinnedTrainingsForUser", token);
+        return schedule;
+    }
+
     internal async Task OtherScheduleUser(bool assigned, Guid? trainingId, Guid functionId, DrogeUser user, CancellationToken token)
     {
         var body = new OtherScheduleUserRequest
