@@ -54,7 +54,7 @@ public class UserController : ControllerBase
             var userName = User?.FindFirstValue("name") ?? throw new Exception("No userName found");
             var userEmail = User?.FindFirstValue("preferred_username") ?? throw new Exception("No userEmail found");
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var result = await _userService.GetOrSetUserFromDb(userId, userName, userEmail, customerId);
+            var result = await _userService.GetOrSetUserFromDb(userId, userName, userEmail, customerId, true);
 
             return result;
         }
@@ -133,9 +133,9 @@ public class UserController : ControllerBase
                             var groups = await _graphService.GetGroupForUser(user.Id);
                             if (groups?.Value != null)
                             {
-
+                                //ToDo
                             }
-                            var newUserResponse = await _userService.GetOrSetUserFromDb(id, user.DisplayName, user.Mail, customerId);
+                            var newUserResponse = await _userService.GetOrSetUserFromDb(id, user.DisplayName, user.Mail, customerId, false);
                         }
                     }
                     if (users.OdataNextLink != null)

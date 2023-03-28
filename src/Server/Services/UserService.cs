@@ -37,7 +37,7 @@ public class UserService : IUserService
         return DbUserToSharedUser(userObj);
     }
 
-    public async Task<DrogeUser> GetOrSetUserFromDb(Guid userId, string userName, string userEmail, Guid customerId)
+    public async Task<DrogeUser> GetOrSetUserFromDb(Guid userId, string userName, string userEmail, Guid customerId, bool setLastOnline)
     {
         var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
         if (userObj == null)
@@ -55,7 +55,8 @@ public class UserService : IUserService
         }
         if (userObj != null)
         {
-            userObj.LastLogin = DateTime.UtcNow;
+            if (setLastOnline)
+                userObj.LastLogin = DateTime.UtcNow;
             userObj.Name = userName;
             userObj.Email = userEmail;
             userObj.DeletedOn = null;
@@ -116,9 +117,9 @@ public class UserService : IUserService
         return await _database.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> MarkUsersDeleted (List<DrogeUser> existingUsers, Guid userId, Guid customerId)
+    public async Task<bool> MarkUsersDeleted(List<DrogeUser> existingUsers, Guid userId, Guid customerId)
     {
-        foreach(var user in existingUsers)
+        foreach (var user in existingUsers)
         {
             var dbUser = await _database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null);
             if (dbUser != null)
