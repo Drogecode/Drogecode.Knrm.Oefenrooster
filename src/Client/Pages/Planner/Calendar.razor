@@ -5,7 +5,8 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-<MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
+<MudAlert Severity="Severity.Normal" Variant="Variant.Filled">The reactor type is RBMK-1000</MudAlert>
+<MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false ShowDatePicker=false>
     <CellTemplate>
         @{
             var training = ((CustomItem)context).Training;
