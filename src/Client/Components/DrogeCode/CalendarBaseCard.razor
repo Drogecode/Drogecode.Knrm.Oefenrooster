@@ -15,6 +15,10 @@
                 }
             </CardHeaderContent>
             <CardHeaderActions>
+                @if (OnClickHistory.HasDelegate)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.History" Color="Color.Default" OnClick="()=>OnClickHistory.InvokeAsync()" />
+                }
                 @if (OnClickSettings.HasDelegate)
                 {
                     <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" OnClick="()=>OnClickSettings.InvokeAsync()" />

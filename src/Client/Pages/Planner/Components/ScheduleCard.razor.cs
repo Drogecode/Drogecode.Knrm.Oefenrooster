@@ -61,6 +61,14 @@ public sealed partial class ScheduleCard : IDisposable
         _dialogProvider.Show<EditTrainingDialog>(L["Configure training"], parameters, options);
     }
 
+    private void OpenHistoryDialog()
+    {
+        var parameters = new DialogParameters {
+        };
+        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        _dialogProvider.Show<TrainingHistoryDialog>(L["Training history"], parameters, options);
+    }
+
     private void RefreshMe()
     {
         StateHasChanged();
