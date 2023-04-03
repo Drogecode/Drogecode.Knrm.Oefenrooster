@@ -18,7 +18,7 @@ public class AuditService : IAuditService
                  Id = Guid.NewGuid(),
                  UserId = user,
                  CustomerId = customer,
-                 AuditType = (int)auditType,
+                 AuditType = auditType,
                  Note = note,
                  ObjectKey = objectKey,
                  ObjectName = objectName,

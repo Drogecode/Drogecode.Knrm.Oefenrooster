@@ -10,7 +10,7 @@ public class DbAudit
     [Key] public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public Guid? CustomerId { get; set; }
-    public int AuditType { get; set; }
+    public AuditType AuditType { get; set; }
     public string? Note { get; set; }
     public Guid? ObjectKey { get; set; }
     public string? ObjectName { get; set; }

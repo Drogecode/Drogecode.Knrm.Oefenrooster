@@ -1,12 +1,10 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
-using Drogecode.Knrm.Oefenrooster.Server.Services;
-using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Graph;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
@@ -126,13 +124,14 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> PatchAvailabilityUser(PatchScheduleUserRequest body, CancellationToken token = default)
+    public async Task<ActionResult> PatchAssignedUser(PatchAssignedUserRequest body, CancellationToken token = default)
     {
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            await _scheduleService.PatchAvailabilityUserAsync(userId, customerId, body, token);
+            await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, token);
+            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { TrainingId =body.TrainingId, Assigned = body?.User?.Assigned}), body?.User?.UserId);
             return Ok();
         }
         catch (Exception ex)
@@ -143,13 +142,14 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> OtherScheduleUser(OtherScheduleUserRequest body, CancellationToken token = default)
+    public async Task<ActionResult> PutAssignedUser(OtherScheduleUserRequest body, CancellationToken token = default)
     {
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            await _scheduleService.OtherScheduleUserAsync(userId, customerId, body, token);
+            await _scheduleService.PutAssignedUserAsync(userId, customerId, body, token);
+            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { TrainingId = body.TrainingId, Assigned = body?.Assigned }), body?.UserId);
             return Ok();
         }
         catch (Exception ex)

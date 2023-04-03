@@ -14,4 +14,5 @@ public enum AuditType
     AddTraining = 3,
     PatchTraining = 4,
     SyncAllUsers = 5,
+    PatchAssignedUser = 6,
 }

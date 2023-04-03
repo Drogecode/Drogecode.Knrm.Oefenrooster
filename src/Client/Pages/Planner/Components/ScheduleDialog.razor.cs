@@ -66,10 +66,11 @@ public sealed partial class ScheduleDialog : IDisposable
         await _scheduleRepository.PatchAvailabilityUser(Planner.TrainingId, user, _cls.Token);
         await Refresh.CallRequestRefreshAsync();
     }
+
     private async Task CheckChanged(bool toggled, DrogeUser user, Guid functionId)
     {
         //Add to schedule with a new status to indicate it was not set by the user.
-        await _scheduleRepository.OtherScheduleUser(toggled, Planner.TrainingId, functionId, user, _cls.Token);
+        await _scheduleRepository.PutAssignedUser(toggled, Planner.TrainingId, functionId, user, _cls.Token);
         var planuser = Planner.PlanUsers.FirstOrDefault(x => x.UserId == user.Id);
         if (planuser == null)
         {

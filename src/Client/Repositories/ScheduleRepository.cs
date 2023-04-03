@@ -62,12 +62,12 @@ public class ScheduleRepository
 
     public async Task PatchAvailabilityUser(Guid? trainingId, PlanUser user, CancellationToken token)
     {
-        var body = new PatchScheduleUserRequest
+        var body = new PatchAssignedUserRequest
         {
             TrainingId = trainingId,
             User = user,
         };
-        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/PatchAvailabilityUser", body, token);
+        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/PatchAssignedUser", body, token);
         request.EnsureSuccessStatusCode();
     }
     public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(CancellationToken token)
@@ -82,7 +82,7 @@ public class ScheduleRepository
         return schedule;
     }
 
-    internal async Task OtherScheduleUser(bool assigned, Guid? trainingId, Guid functionId, DrogeUser user, CancellationToken token)
+    internal async Task PutAssignedUser(bool assigned, Guid? trainingId, Guid functionId, DrogeUser user, CancellationToken token)
     {
         var body = new OtherScheduleUserRequest
         {
@@ -91,7 +91,7 @@ public class ScheduleRepository
             UserId = user.Id,
             Assigned = assigned
         };
-        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/OtherScheduleUser", body, token);
+        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/PutAssignedUser", body, token);
         request.EnsureSuccessStatusCode();
     }
 

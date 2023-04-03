@@ -290,7 +290,7 @@ public class ScheduleService : IScheduleService
         return result;
     }
 
-    public async Task PatchAvailabilityUserAsync(Guid userId, Guid customerId, PatchScheduleUserRequest body, CancellationToken token)
+    public async Task PatchAssignedUserAsync(Guid userId, Guid customerId, PatchAssignedUserRequest body, CancellationToken token)
     {
         if (body.User == null || body.TrainingId == null)
         {
@@ -315,7 +315,7 @@ public class ScheduleService : IScheduleService
         await _database.SaveChangesAsync(token);
     }
 
-    public async Task OtherScheduleUserAsync(Guid userId, Guid customerId, OtherScheduleUserRequest body, CancellationToken token)
+    public async Task PutAssignedUserAsync(Guid userId, Guid customerId, OtherScheduleUserRequest body, CancellationToken token)
     {
         if (body.UserId == null || body.TrainingId == null || body.FunctionId == null)
         {
