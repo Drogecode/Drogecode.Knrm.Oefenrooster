@@ -1,7 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-using Microsoft.Graph.Models;
 using MudBlazor;
-using System.Net.Http.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 

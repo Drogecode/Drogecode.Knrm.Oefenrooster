@@ -2,10 +2,8 @@
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Microsoft.Extensions.Localization;
-using Microsoft.Graph;
 using MudBlazor;
 using System.Security.Claims;
-using System.Text;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 

@@ -11,7 +11,6 @@ module.exports = {
         '../**/*.razor.cs'
     ],
     plugins: [
-        require('@tailwindcss/line-clamp'),
         require('@tailwindcss/forms')
     ]
 }
