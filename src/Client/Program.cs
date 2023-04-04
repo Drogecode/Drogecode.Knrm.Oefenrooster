@@ -9,6 +9,9 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using MudBlazor;
 using MudExtensions.Services;
 using Blazored.LocalStorage;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Factories;
+using Drogecode.Knrm.Oefenrooster.Client.Extensions;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -34,12 +37,18 @@ builder.Services.AddScoped<VehicleRepository>();
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Drogecode.Knrm.Oefenrooster.ServerAPI"));
 
-builder.Services.AddMsalAuthentication(options =>
+builder.Services.AddMsalAuthentication<RemoteAuthenticationState, CustomUserAccount>(options =>
 {
     builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
     options.ProviderOptions.DefaultAccessTokenScopes.Add(builder.Configuration.GetSection("ServerApi")["Scopes"]);
     options.ProviderOptions.LoginMode = "redirect";
-});
+}).AddAccountClaimsPrincipalFactory<RemoteAuthenticationState, CustomUserAccount, CustomAccountFactory>(); ;
+
+var baseUrl = builder.Configuration.GetSection("MicrosoftGraph")["BaseUrl"];
+var scopes = builder.Configuration.GetSection("MicrosoftGraph:Scopes")
+    .Get<List<string>>();
+
+builder.Services.AddGraphClient(baseUrl, scopes);
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
