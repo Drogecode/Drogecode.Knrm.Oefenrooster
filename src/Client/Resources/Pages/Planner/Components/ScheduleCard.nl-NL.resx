@@ -129,6 +129,9 @@
   <data name="Configure training" xml:space="preserve">
     <value>Configureer oefening</value>
   </data>
+  <data name="Edit history" xml:space="preserve">
+    <value>Wijzigings geschiedenis</value>
+  </data>
   <data name="Maybe" xml:space="preserve">
     <value>Misschien</value>
   </data>

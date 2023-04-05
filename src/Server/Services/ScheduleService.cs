@@ -389,6 +389,7 @@ public class ScheduleService : IScheduleService
                 Assigned = schedul.Assigned,
                 RoosterTrainingTypeId = schedul.Training.RoosterTrainingTypeId,
                 VehicleId = schedul.VehicleId,
+                Pin = schedul.Training.Pin
             });
         }
         return result;

@@ -4,6 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
@@ -40,6 +41,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 Name = Planner.Name,
                 RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
                 CountToTrainingTarget = Planner.CountToTrainingTarget,
+                Pin = Planner.Pin
             };
         }
         else
@@ -103,6 +105,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         }
         else if (Planner != null)
         {
+            Console.WriteLine(JsonSerializer.Serialize(_training));
             await _scheduleRepository.PatchTraining(_training, _cls.Token);
             var dateStart = (_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeStart ?? throw new ArgumentNullException("TimeStart is null"));
             var dateEnd = (_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"));
@@ -110,6 +113,8 @@ public sealed partial class EditTrainingDialog : IDisposable
             Planner.Name = _training.Name;
             Planner.DateStart = dateStart;
             Planner.DateEnd = dateEnd;
+            Planner.CountToTrainingTarget = _training.CountToTrainingTarget;
+            Planner.Pin = _training.Pin;
             if (Refresh != null)
                 await Refresh.CallRequestRefreshAsync();
         }

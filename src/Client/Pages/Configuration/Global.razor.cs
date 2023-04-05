@@ -51,7 +51,13 @@ public sealed partial class Global : IDisposable
 
     private async Task SyncUsers()
     {
+        _usersSynced = null;
         _usersSynced = await _userRepository.SyncAllUsersAsync();
+        if (_usersSynced == true)
+        {
+            _users = await _userRepository.GetAllUsersAsync();
+            StateHasChanged();
+        }
     }
 
     private void AddUser()
