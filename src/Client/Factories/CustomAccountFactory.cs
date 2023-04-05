@@ -58,7 +58,7 @@ public class CustomAccountFactory : AccountClaimsPrincipalFactory<CustomUserAcco
                             user.OfficeLocation ?? "Not set"));
                     }
 
-                    var memberships = await client.Users[account?.Oid].MemberOf.GetAsync();
+                    var memberships = await client.Users[account?.Oid].TransitiveMemberOf.GetAsync();
 
                     if (memberships is not null)
                     {

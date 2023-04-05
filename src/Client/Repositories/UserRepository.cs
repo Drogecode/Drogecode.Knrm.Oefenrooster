@@ -11,6 +11,12 @@ public class UserRepository
         _httpClient = httpClient;
     }
 
+    public async Task SetClaims()
+    {
+        var request = await _httpClient.GetAsync("api/User/SetClaims");
+        request.EnsureSuccessStatusCode();
+    }
+
     public async Task<List<DrogeUser>?> GetAllUsersAsync()
     {
         var dbUser = await _httpClient.GetFromJsonAsync<List<DrogeUser>>("api/User/GetAll");

@@ -1,8 +1,22 @@
 ﻿@layout LandingLayout
 @page "/authentication/{action}"
+@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-<RemoteAuthenticatorView Action="@Action" />
+<RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="test">
+    <LogInFailed>
+        <MudText>@L["Login failed"]</MudText>
+    </LogInFailed>
+</RemoteAuthenticatorView>
 
-@code{
+
+@code {
+    [Inject] private IStringLocalizer<Authentication> L { get; set; } = default!;
+    [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Parameter] public string? Action { get; set; }
+
+    public async Task test()
+    {
+        await _userRepository.SetClaims();
+        await _userRepository.GetCurrentUserAsync();
+    }
 }

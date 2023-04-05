@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Graph.Models;
 using Microsoft.Identity.Web.Resource;
@@ -26,6 +27,40 @@ public class UserController : ControllerBase
         _userService = userService;
         _auditService = auditService;
         _graphService = graphService;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> SetClaims()
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            
+            _graphService.InitializeGraph();
+            var groups = await _graphService.GetGroupForUser(userId.ToString());
+            if (groups?.Value != null)
+            {
+                var claimsIdentity = new ClaimsIdentity(IdentityConstants.ApplicationScheme);
+                foreach (var group in groups.Value)
+                {
+                    switch(group.Id)
+                    {
+                        case "7c8f439a-074d-4ef6-8c85-eb836b046a26":
+                            claimsIdentity.AddClaim(new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "test"));
+                            break;
+                    }
+                }
+                User.AddIdentity(claimsIdentity);
+            }
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in SetClaims");
+            return BadRequest();
+        }
     }
 
     [HttpGet]

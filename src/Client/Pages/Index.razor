@@ -26,6 +26,10 @@ else
     <MudSkeleton />
 }
 
+<AuthorizeView Roles="test">
+    test roles
+</AuthorizeView>
+
 <MudText Typo="Typo.h3">@L["Future trainings"]</MudText>
 
 @if (_futureTrainings != null)

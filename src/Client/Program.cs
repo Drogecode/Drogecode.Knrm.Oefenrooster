@@ -42,13 +42,7 @@ builder.Services.AddMsalAuthentication<RemoteAuthenticationState, CustomUserAcco
     builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
     options.ProviderOptions.DefaultAccessTokenScopes.Add(builder.Configuration.GetSection("ServerApi")["Scopes"]);
     options.ProviderOptions.LoginMode = "redirect";
-}).AddAccountClaimsPrincipalFactory<RemoteAuthenticationState, CustomUserAccount, CustomAccountFactory>(); ;
-
-var baseUrl = builder.Configuration.GetSection("MicrosoftGraph")["BaseUrl"];
-var scopes = builder.Configuration.GetSection("MicrosoftGraph:Scopes")
-    .Get<List<string>>();
-
-builder.Services.AddGraphClient(baseUrl, scopes);
+});
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
