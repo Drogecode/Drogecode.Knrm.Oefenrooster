@@ -12,6 +12,7 @@ public sealed partial class CalendarCard : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Parameter, EditorRequired] public Training Training { get; set; } = default!;
     [Parameter] public string Width { get; set; } = "100%";
+    [Parameter] public bool ShowDate { get; set; } = false;
     private CancellationTokenSource _cls = new();
     private bool _updating;
 

@@ -13,7 +13,7 @@
         <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
             @foreach (var training in _pinnedTrainings)
             {
-                <CalendarCard Width="200px" Training="training" />
+                <CalendarCard Width="200px" Training="training" ShowDate=true />
             }
         </MudPaper>
     }

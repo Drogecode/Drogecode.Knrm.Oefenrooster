@@ -4,33 +4,6 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-@if (_functions != null && _users != null && _userTrainingCounter != null)
-{
-    <MudPaper>
-        <MudList Clickable="false">
-            <MudDivider />
-            @foreach (var function in _functions.OrderBy(x => x.Order))
-            {
-                @foreach (var user in _userTrainingCounter)
-                {
-                    var dbUser = _users.FirstOrDefault(x => x.Id == user.UserId && x.UserFunctionId == function.Id);
-                    @if (dbUser != null)
-                    {
-                        <MudListItem Style="@(function.TrainingTarget > user.Count ? "color: var(--mud-palette-error-lighten)" : "")" Text=@($"{dbUser.Name} : {@user.Count}") />
-                    }
-                }
-            }
-            @foreach (var function in _functions.Where(x => x.TrainingTarget > 0).OrderBy(x => x.Order))
-            {
-                @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id && !_userTrainingCounter.Any(y => y.UserId == x.Id)).OrderBy(x=>x.Name))
-                {
-                    <MudListItem Style="color: var(--mud-palette-error)" Text=@($"{user.Name} : {L["No training"]}") />
-                }
-            }
-        </MudList>
-    </MudPaper>
-}
-
 <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
     <CellTemplate>
         @{
@@ -42,3 +15,38 @@
         }
     </CellTemplate>
 </MudCalendar>
+
+@if (_functions != null && _users != null && _userTrainingCounter != null)
+{
+    <MudPaper>
+
+        <MudGrid Spacing="2" Justify="Justify.Center">
+            @foreach (var function in _functions.OrderBy(x => x.Order))
+            {
+                @foreach (var user in _userTrainingCounter)
+                {
+                    var dbUser = _users.FirstOrDefault(x => x.Id == user.UserId && x.UserFunctionId == function.Id);
+                    @if (dbUser != null)
+                    {
+                        <MudItem xs="12" sm="6" md="4" lg="3">
+                            <MudText Style="@(function.TrainingTarget > user.Count ? "color: var(--mud-palette-error-lighten)" : "")">
+                                @($"{dbUser.Name} : {@user.Count}")
+                            </MudText>
+                        </MudItem>
+                    }
+                }
+            }
+            @foreach (var function in _functions.Where(x => x.TrainingTarget > 0).OrderBy(x => x.Order))
+            {
+                @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id && !_userTrainingCounter.Any(y => y.UserId == x.Id)).OrderBy(x => x.Name))
+                {
+                    <MudItem xs="12" sm="6" md="4" lg="3">
+                        <MudText Style="color: var(--mud-palette-error)">
+                            @($"{user.Name} : {L["No training"]}")
+                        </MudText>
+                    </MudItem>
+                }
+            }
+        </MudGrid>
+    </MudPaper>
+}

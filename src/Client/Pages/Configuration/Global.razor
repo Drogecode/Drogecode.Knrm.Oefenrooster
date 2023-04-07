@@ -36,7 +36,7 @@ else if (_usersSynced == false)
                 @if (_users.Any(x => x.UserFunctionId == function.Id))
                 {
                     <MudText>@function.Name</MudText>
-                    @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id))
+                    @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id).OrderBy(x=>x.Name))
                     {
                         <MudListItem OnClick="()=>ChangeUser(user)" Text="@user.Name" />
                     }

@@ -21,7 +21,7 @@
 		<PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="7.0.4" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.4" />
-		<PackageReference Include="Microsoft.Graph" Version="5.4.0" />
+		<PackageReference Include="Microsoft.Graph" Version="5.5.0" />
 		<PackageReference Include="MudBlazor" Version="6.2.1-dev3" />
 	</ItemGroup>
 

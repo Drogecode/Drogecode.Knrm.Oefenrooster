@@ -10,6 +10,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbAudit> Audits { get; set; }
         public DbSet<DbUsers> Users { get; set; }
         public DbSet<DbUserFunctions> UserFunctions { get; set; }
+        public DbSet<DbUserDefaultAvailable> UserDefaultAvailables{ get; set; }
+        public DbSet<DbUserHolidays> UserHolidays { get; set; }
         public DbSet<DbCustomers> Customers { get; set; }
         public DbSet<DbRoosterDefault> RoosterDefaults { get; set; }
         public DbSet<DbRoosterTraining> RoosterTrainings { get; set; }
@@ -49,6 +51,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserFunctions>(e => { e.Property(e => e.Order).IsRequired(); });
             modelBuilder.Entity<DbUserFunctions>(e => { e.Property(e => e.CustomerId).IsRequired(); });
             modelBuilder.Entity<DbUserFunctions>().HasOne(p => p.Customer).WithMany(g => g.UserFunctions).HasForeignKey(s => s.CustomerId).IsRequired();
+
+            //UserDefaultAvailables
+            modelBuilder.Entity<DbUserDefaultAvailable>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserDefaultAvailable>().HasOne(p => p.Customer).WithMany(g => g.UserDefaultAvailables).HasForeignKey(s => s.CustomerId).IsRequired();
+            modelBuilder.Entity<DbUserDefaultAvailable>().HasOne(p => p.User).WithMany(g => g.UserDefaultAvailables).HasForeignKey(s => s.UserId).IsRequired();
+            modelBuilder.Entity<DbUserDefaultAvailable>().HasOne(p => p.RoosterDefault).WithMany(g => g.UserDefaultAvailables).HasForeignKey(s => s.RoosterDefaultId).IsRequired();
+
+            //UserHolidays
+            modelBuilder.Entity<DbUserHolidays>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserHolidays>().HasOne(p => p.Customer).WithMany(g => g.UserHolidays).HasForeignKey(s => s.CustomerId).IsRequired();
+            modelBuilder.Entity<DbUserHolidays>().HasOne(p => p.User).WithMany(g => g.UserHolidays).HasForeignKey(s => s.UserId).IsRequired();
 
             // Rooster available
             modelBuilder.Entity<DbRoosterAvailable>(e => { e.Property(e => e.Id).IsRequired(); });
@@ -404,10 +417,28 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             {
                 Id = new Guid("be12f5d9-b6f9-45d5-bd5f-6b74d7706a53"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                Name = "HRB",
+                Name = "HRB oefening",
                 ColorLight = "rgb(0,235,98)",
                 ColorDark = "rgb(13,222,156)",
                 Order = 50,
+            }));
+            modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
+            {
+                Id = new Guid("6153a297-9486-43de-91e8-22d107da2b21"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "Evenement",
+                ColorLight = "#63806f",
+                ColorDark = "#3b4d42",
+                Order = 60,
+            }));
+            modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
+            {
+                Id = new Guid("61646e7b-5257-4928-87fe-f1ac8ef1ef41"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "Techniek",
+                ColorLight = "#919454",
+                ColorDark = "#5f6138",
+                Order = 70,
             }));
         }
         #endregion

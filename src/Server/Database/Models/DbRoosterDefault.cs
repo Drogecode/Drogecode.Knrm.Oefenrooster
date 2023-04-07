@@ -19,4 +19,5 @@ public class DbRoosterDefault
     public DbCustomers Customer { get; set; }
     public DbRoosterTrainingType? RoosterTrainingType { get; set; }
     public ICollection<DbRoosterTraining>? RoosterTrainings { get; set; }
+    public ICollection<DbUserDefaultAvailable>? UserDefaultAvailables { get; set; }
 }
