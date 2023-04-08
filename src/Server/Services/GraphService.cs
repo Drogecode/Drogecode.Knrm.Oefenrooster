@@ -15,9 +15,12 @@ public class GraphService : IGraphService
         _logger = logger;
         _configuration = configuration;
     }
-    public void InitializeGraph()
+    public void InitializeGraph(Settings? settings = null)
     {
-        var settings = Settings.LoadSettings(_configuration);
+        if (settings == null)
+        {
+            settings = Settings.LoadSettings(_configuration);
+        }
         _logger.LogInformation($"start ClientSecret: {settings?.ClientSecret?[..3] ?? "Is null"}");
         GraphHelper.InitializeGraphForAppOnlyAuth(settings);
     }
@@ -83,5 +86,10 @@ public class GraphService : IGraphService
     public async Task<UserCollectionResponse> NextUsersPage(UserCollectionResponse users)
     {
         return await GraphHelper.NextUsersPage(users);
+    }
+
+    public async Task GetLists()
+    {
+        await GraphHelper.GetLists();
     }
 }

@@ -15,7 +15,8 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer
         [Fact]
         public async Task InitializeGraphTest()
         {
-            _graphService.InitializeGraph();
+            var settings = Settings.LoadSettingsLikeThis();
+            _graphService.InitializeGraph(settings);
             var token = await _graphService.GetAccessTokenAsync();
             Assert.NotNull(token);
             Assert.False(string.IsNullOrEmpty(token));
@@ -24,7 +25,8 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer
         [Fact]
         public async Task GetUserListTest()
         {
-            _graphService.InitializeGraph();
+            var settings = Settings.LoadSettingsLikeThis();
+            _graphService.InitializeGraph(settings);
             var userPage = await _graphService.ListUsersAsync();
             Assert.NotNull(userPage?.Value);
             Assert.NotEmpty(userPage.Value);
@@ -33,7 +35,8 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer
         [Fact]
         public async Task GetGroupForUserTest()
         {
-            _graphService.InitializeGraph();
+            var settings = Settings.LoadSettingsLikeThis();
+            _graphService.InitializeGraph(settings);
             var userPage = await _graphService.ListUsersAsync();
             Assert.NotNull(userPage?.Value);
             Assert.NotEmpty(userPage.Value);
@@ -43,6 +46,14 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer
                 var userResult = _graphService.GetGroupForUser(user.Id);
                 Assert.NotNull(userResult);
             }
+        }
+
+        [Fact]
+        public async Task GetLists()
+        {
+            var settings = Settings.LoadSettingsLikeThis();
+            _graphService.InitializeGraph(settings);
+            await _graphService.GetLists();
         }
 
     }

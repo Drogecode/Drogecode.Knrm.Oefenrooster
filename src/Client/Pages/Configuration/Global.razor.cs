@@ -47,6 +47,7 @@ public sealed partial class Global : IDisposable
     private async Task UpdateDatabase()
     {
         _clickedUpdate = await _configurationRepository.UpgradeDatabaseAsync();
+        StateHasChanged();
     }
 
     private async Task SyncUsers()
