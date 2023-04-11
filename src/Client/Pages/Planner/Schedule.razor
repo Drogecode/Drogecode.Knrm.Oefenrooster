@@ -20,7 +20,7 @@
 {
     <MudPaper>
 
-        <MudGrid Spacing="2" Justify="Justify.Center">
+        <MudGrid Spacing="2" Justify="Justify.FlexStart">
             @foreach (var function in _functions.OrderBy(x => x.Order))
             {
                 @foreach (var user in _userTrainingCounter)
