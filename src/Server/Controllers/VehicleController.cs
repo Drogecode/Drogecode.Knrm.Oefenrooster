@@ -24,7 +24,7 @@ public class VehicleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<DrogeVehicle>>> GetAll()
+    public async Task<ActionResult<List<DrogeVehicle>>> GetAll(CancellationToken token = default)
     {
         try
         {
@@ -41,7 +41,7 @@ public class VehicleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<DrogeLinkVehicleTraining>>> GetForTraining(Guid trainingId)
+    public async Task<ActionResult<List<DrogeLinkVehicleTraining>>> GetForTraining(Guid trainingId, CancellationToken token = default)
     {
         try
         {
@@ -58,7 +58,7 @@ public class VehicleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<DrogeLinkVehicleTraining>> UpdateLinkVehicleTraining(DrogeLinkVehicleTraining link)
+    public async Task<ActionResult<DrogeLinkVehicleTraining>> UpdateLinkVehicleTraining(DrogeLinkVehicleTraining link, CancellationToken token = default)
     {
         try
         {

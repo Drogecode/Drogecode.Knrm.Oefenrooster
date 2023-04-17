@@ -25,6 +25,7 @@ builder.Services.AddMudServices(config =>
 builder.Services.AddMudExtensions();
 builder.Services.AddBlazoredLocalStorage();
 
+builder.Services.AddScoped<CalendarItemRepository>();
 builder.Services.AddScoped<ConfigurationRepository>();
 builder.Services.AddScoped<FunctionRepository>();
 builder.Services.AddScoped<ScheduleRepository>();

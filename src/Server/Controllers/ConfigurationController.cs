@@ -32,7 +32,7 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<bool>> UpgradeDatabase()
+    public async Task<ActionResult<bool>> UpgradeDatabase(CancellationToken token = default)
     {
         try
         {
@@ -55,7 +55,7 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<UpdateDetails>> NewVersionAvailable(string clientVersion)
+    public async Task<ActionResult<UpdateDetails>> NewVersionAvailable(string clientVersion, CancellationToken token = default)
     {
         try
         {
@@ -73,7 +73,7 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<bool> InstallingActive()
+    public ActionResult<bool> InstallingActive(CancellationToken token = default)
     {
         try
         {

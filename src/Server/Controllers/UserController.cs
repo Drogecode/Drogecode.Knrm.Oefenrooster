@@ -29,7 +29,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<DrogeUser>>> GetAll()
+    public async Task<ActionResult<List<DrogeUser>>> GetAll(CancellationToken token = default)
     {
         try
         {

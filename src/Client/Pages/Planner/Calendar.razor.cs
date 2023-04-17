@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Helpers;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Heron.MudCalendar;
 using Microsoft.Extensions.Localization;
@@ -14,9 +15,11 @@ public sealed partial class Calendar : IDisposable
     [Inject] private IStringLocalizer<Calendar> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
+    [Inject] private CalendarItemRepository _calendarItemRepository { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
     private List<CustomItem> _events = new();
+    private List<RoosterItemMonth>? _monthItems;
     private CancellationTokenSource _cls = new();
     private bool _updating;
 
@@ -44,6 +47,15 @@ public sealed partial class Calendar : IDisposable
                     Training = training,
                     Text = training.Availabilty.ToString() ?? ""
                 });
+            }
+        }
+        var month = PlannerHelper.ForMonth(dateRange);
+        if (month != null)
+        {
+            var d = await _calendarItemRepository.GetMonthItemAsync(month.Value.Year, month.Value.Month, _cls.Token);
+            if (d?.MonthItems != null)
+            {
+                _monthItems = d.MonthItems;
             }
         }
         _updating = false;

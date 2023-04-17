@@ -5,7 +5,13 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-<MudAlert Severity="Severity.Normal" Variant="Variant.Filled">Hier komt het oefen thema van de maand!</MudAlert>
+@if (_monthItems != null)
+{
+    @foreach(var item in _monthItems.OrderBy(x => x.Order))
+    {
+        <MudAlert Severity="@item.Severity" Variant="Variant.Filled">@item.Text</MudAlert>
+    }
+}
 <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
     <CellTemplate>
         @{

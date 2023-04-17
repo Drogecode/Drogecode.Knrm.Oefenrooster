@@ -17,6 +17,8 @@ public class DbCustomers
     public ICollection<DbUserHolidays>? UserHolidays { get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
     public ICollection<DbRoosterDefault>? RoosterDefaults { get; set; }
+    public ICollection<DbRoosterItemDay>? RoosterItemDays { get; set; }
+    public ICollection<DbRoosterItemMonth>? RoosterItemMonths { get; set; }
     public ICollection<DbRoosterTraining>? RoosterTrainings { get; set; }
     public ICollection<DbRoosterTrainingType>? RoosterTrainingTypes { get; set; }
     public ICollection<DbAudit>? Audits { get; set; }

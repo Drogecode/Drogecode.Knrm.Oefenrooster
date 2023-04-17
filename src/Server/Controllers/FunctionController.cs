@@ -21,7 +21,7 @@ public class FunctionController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<DrogeFunction>>> GetAll()
+    public async Task<ActionResult<List<DrogeFunction>>> GetAll(CancellationToken token = default)
     {
         try
         {

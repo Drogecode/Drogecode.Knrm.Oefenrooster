@@ -1,7 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-using MudBlazor;
-
-namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
+﻿namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 
 public class ScheduleRepository
 {
@@ -18,24 +15,11 @@ public class ScheduleRepository
     }
     public async Task<ScheduleForAllResponse?> ScheduleForAll(DateRange dateRange, CancellationToken token)
     {
-        int forMonth = 0;
-        var findMonth = dateRange.Start!.Value;
-        while (forMonth == 0)
-        {
-            Console.WriteLine(findMonth);
-            if (findMonth.Day != 1)
-            {
-                if (findMonth.Month == dateRange.End!.Value.Month)
-                    break;
-                findMonth = findMonth.AddDays(1);
-                continue;
-            }
-            forMonth = findMonth.Month;
-            break;
-        }
-        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForAllResponse>($"api/Schedule/ForAll?forMonth={forMonth}&yearStart={dateRange.Start!.Value.Year}&monthStart={dateRange.Start!.Value.Month}&dayStart={dateRange.Start!.Value.Day}&yearEnd={dateRange.End!.Value.Year}&monthEnd={dateRange.End!.Value.Month}&dayEnd={dateRange.End!.Value.Day}", token);
+        DateTime? forMonth = PlannerHelper.ForMonth(dateRange);
+        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForAllResponse>($"api/Schedule/ForAll?forMonth={forMonth?.Month ?? 0}&yearStart={dateRange.Start!.Value.Year}&monthStart={dateRange.Start!.Value.Month}&dayStart={dateRange.Start!.Value.Day}&yearEnd={dateRange.End!.Value.Year}&monthEnd={dateRange.End!.Value.Month}&dayEnd={dateRange.End!.Value.Day}", token);
         return schedule;
     }
+
     public async Task<Training> PatchScheduleForUser(Training training, CancellationToken token)
     {
         var request = await _httpClient.PostAsJsonAsync($"api/Schedule/PatchScheduleForUser", training, token);

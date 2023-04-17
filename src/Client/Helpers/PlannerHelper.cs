@@ -32,4 +32,25 @@ public static class PlannerHelper
         else
             return $"background-color: {color}";
     }
+
+    public static DateTime? ForMonth(DateRange dateRange)
+    {
+        DateTime? forMonth = null;
+        var findMonth = dateRange.Start!.Value;
+        while (forMonth == null)
+        {
+            Console.WriteLine(findMonth);
+            if (findMonth.Day != 1)
+            {
+                if (findMonth.Month == dateRange.End!.Value.Month)
+                    break;
+                findMonth = findMonth.AddDays(1);
+                continue;
+            }
+            forMonth = findMonth;
+            break;
+        }
+
+        return forMonth;
+    }
 }
