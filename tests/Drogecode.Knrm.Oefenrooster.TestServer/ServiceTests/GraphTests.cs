@@ -2,7 +2,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 
-namespace Drogecode.Knrm.Oefenrooster.TestServer
+namespace Drogecode.Knrm.Oefenrooster.TestServer.ServiceTests
 {
     public class GraphTests
     {

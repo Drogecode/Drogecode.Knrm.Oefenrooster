@@ -31,4 +31,10 @@ public class ConfigurationRepository
         var response = await _httpClient.GetFromJsonAsync<bool?>("api/Configuration/InstallingActive");
         return response;
     }
+
+    public async Task<bool?> UpdateSpecialDates()
+    {
+        var response = await _httpClient.GetFromJsonAsync<bool?>("api/Configuration/UpdateSpecialDates");
+        return response;
+    }
 }

@@ -24,6 +24,7 @@ public sealed partial class Global : IDisposable
 
     private bool? _clickedUpdate;
     private bool? _usersSynced;
+    private bool? _specialDatesUpdated;
 
 
     protected override void OnInitialized()
@@ -59,6 +60,11 @@ public sealed partial class Global : IDisposable
             _users = await _userRepository.GetAllUsersAsync();
             StateHasChanged();
         }
+    }
+    private async Task UpdateSpecialDates()
+    {
+        _specialDatesUpdated =  await _configurationRepository.UpdateSpecialDates();
+        StateHasChanged();
     }
 
     private void AddUser()

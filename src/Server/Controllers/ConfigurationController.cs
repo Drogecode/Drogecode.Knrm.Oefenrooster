@@ -5,6 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using Nager.Holiday;
 using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
@@ -78,6 +79,26 @@ public class ConfigurationController : ControllerBase
         try
         {
             return _configuration.GetValue<bool>("Drogecode:Installing");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in InstallingActive");
+            return false;
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<bool>> UpdateSpecialDates(CancellationToken token = default)
+    {
+        try
+        {
+            using var holidayClient = new HolidayClient();
+            var currentYear = DateTime.Now.Year;
+            for(int i = currentYear; i < currentYear + 10; i++)
+            {
+                var holidays = await holidayClient.GetHolidaysAsync(i, "nl");
+            }
+            return true;
         }
         catch (Exception ex)
         {

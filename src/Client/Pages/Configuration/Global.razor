@@ -9,11 +9,11 @@
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateDatabase">@L["Update database"]</MudButton>
 @if (_clickedUpdate == true)
 {
-    <MudText Typo="Typo.body1">Dude!</MudText>
+    <MudText Typo="Typo.body1">Database updated!</MudText>
 }
 else if (_clickedUpdate == false)
 {
-    <MudText Typo="Typo.body1">Something went wrong :')</MudText>
+    <MudText Typo="Typo.body1">Something went wrong, while updating database :')</MudText>
 }
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddUser">Voeg test user toe</MudButton>
@@ -25,6 +25,15 @@ else if (_clickedUpdate == false)
 else if (_usersSynced == false)
 {
     <MudText Typo="Typo.body1">Something went wrong while syncing users :')</MudText>
+}
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateSpecialDates">Update special dates (not working yet)</MudButton>
+@if (_specialDatesUpdated == true)
+{
+    <MudText Typo="Typo.body1">special dates bijgewerkt</MudText>
+}
+else if (_specialDatesUpdated == false)
+{
+    <MudText Typo="Typo.body1">Something went wrong while updating special dates :')</MudText>
 }
 
 @if (_users != null && _functions != null)

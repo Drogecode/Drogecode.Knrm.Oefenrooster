@@ -4,6 +4,8 @@ using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer;
 public class Setup : Xunit.Di.Setup
@@ -34,6 +36,8 @@ public class Setup : Xunit.Di.Setup
             services.AddScoped<ConfigurationController>();
             services.AddScoped<ScheduleController>();
             services.AddScoped<UserController>();
+
+            services.AddScoped(typeof(ILogger<>), typeof(NullLogger<>));
         });
     }
 }
