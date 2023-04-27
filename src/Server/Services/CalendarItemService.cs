@@ -2,6 +2,7 @@
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
+[EndpointGroupName("CalendarItem")]
 public class CalendarItemService : ICalendarItemService
 {
     private readonly ILogger<CalendarItemService> _logger;
