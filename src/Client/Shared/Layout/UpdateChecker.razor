@@ -4,23 +4,31 @@
     [Inject] private IStringLocalizer<UpdateChecker> L { get; set; } = default!;
     [Inject] ConfigurationRepository _configurationRepository { get; set; } = default!;
     [Inject] ISnackbar Snackbar { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
     private UpdateDetails? _updateDetails;
     protected override async Task OnInitializedAsync()
     {
         while (true)
         {
             _updateDetails = await _configurationRepository.NewVersionAvailable();
-            if (_updateDetails?.NewVersionAvailable == true)
+            if (_updateDetails?.NewVersionAvailable == true || true)
             {
                 var config = (SnackbarOptions options) =>
                 {
                     options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
                     options.RequireInteraction = true;
+                    options.Action = L["Click to reload"];
+                    options.ActionColor = Color.Inherit;
+                    options.Onclick = snackbar =>
+                    {
+                        Navigation.NavigateTo(Navigation.Uri, true);
+                        return Task.CompletedTask;
+                    };
                 };
                 Snackbar.Add(L["Update available"], configure: config, key: "outdated");
             }
 
-            await Task.Delay(1000 * 60);
+            await Task.Delay(1000 * 30);
         }
     }
 }
