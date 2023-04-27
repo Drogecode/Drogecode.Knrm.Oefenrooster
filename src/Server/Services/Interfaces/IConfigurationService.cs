@@ -1,6 +1,9 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
+﻿using Nager.Holiday;
+
+namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 
 public interface IConfigurationService
 {
     Task<bool> UpgradeDatabase();
+    Task<bool> AddSpecialDay(Guid customerId, PublicHoliday holiday, CancellationToken token);
 }

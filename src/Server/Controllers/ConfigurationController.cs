@@ -92,11 +92,17 @@ public class ConfigurationController : ControllerBase
     {
         try
         {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             using var holidayClient = new HolidayClient();
             var currentYear = DateTime.Now.Year;
             for(int i = currentYear; i < currentYear + 10; i++)
             {
                 var holidays = await holidayClient.GetHolidaysAsync(i, "nl");
+                if (holidays == null) continue;
+                foreach(var holiday in holidays)
+                {
+                   await _configurationService.AddSpecialDay(customerId, holiday, token);
+                }
             }
             return true;
         }

@@ -3,23 +3,38 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+@using MudBlazor.Extensions;
+@using MudBlazor;
 
 @if (_monthItems != null)
 {
-    @foreach(var item in _monthItems.OrderBy(x => x.Order))
+    @foreach (var item in _monthItems.OrderBy(x => x.Order))
     {
         <MudAlert Severity="@item.Severity" Variant="Variant.Filled">@item.Text</MudAlert>
     }
 }
 <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
     <CellTemplate>
-        @{
-            var training = ((CustomItem)context).Training;
-        }
-        @if (training != null)
+        @if (context is DrogeCodeCalendarItem)
         {
-            <CalendarCard Training="training"/>
+            var training = ((DrogeCodeCalendarItem)context).Training;
+            @if (training != null)
+            {
+                <CalendarCard Training="training" />
+            }
+        }
+        else if (context is RoosterItemDayCalendarItem)
+        {
+            var dayItem = ((RoosterItemDayCalendarItem)context).ItemDay;
+            @if (dayItem != null)
+            {
+                <div class="d-flex gap-1">
+                    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Secondary" Size="Size.Small" />
+                    <div>@dayItem.Text</div>
+                </div>
+            }
         }
     </CellTemplate>
 </MudCalendar>

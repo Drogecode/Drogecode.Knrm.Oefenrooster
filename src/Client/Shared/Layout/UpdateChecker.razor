@@ -11,7 +11,7 @@
         while (true)
         {
             _updateDetails = await _configurationRepository.NewVersionAvailable();
-            if (_updateDetails?.NewVersionAvailable == true || true)
+            if (_updateDetails?.NewVersionAvailable == true)
             {
                 var config = (SnackbarOptions options) =>
                 {

@@ -18,7 +18,7 @@ public sealed partial class Calendar : IDisposable
     [Inject] private CalendarItemRepository _calendarItemRepository { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
-    private List<CustomItem> _events = new();
+    private List<CalendarItem> _events = new();
     private List<RoosterItemMonth>? _monthItems;
     private CancellationTokenSource _cls = new();
     private bool _updating;
@@ -40,7 +40,7 @@ public sealed partial class Calendar : IDisposable
             scheduleForUser.From = DateOnly.FromDateTime(trainingsInWeek[0].DateStart);
             foreach (var training in trainingsInWeek)
             {
-                _events.Add(new CustomItem
+                _events.Add(new DrogeCodeCalendarItem
                 {
                     Start = training.DateStart,
                     End = training.DateEnd,
@@ -52,17 +52,28 @@ public sealed partial class Calendar : IDisposable
         var month = PlannerHelper.ForMonth(dateRange);
         if (month != null)
         {
-            var d = await _calendarItemRepository.GetMonthItemAsync(month.Value.Year, month.Value.Month, _cls.Token);
-            if (d?.MonthItems != null)
+            var monthItems = await _calendarItemRepository.GetMonthItemAsync(month.Value.Year, month.Value.Month, _cls.Token);
+            _monthItems = monthItems?.MonthItems;
+            var dayItems = await _calendarItemRepository.GetDayItemsAsync(dateRange, _cls.Token);
+            if (dayItems?.DayItems != null)
             {
-                _monthItems = d.MonthItems;
+                foreach (var dayItem in dayItems.DayItems)
+                {
+                    _events.Add(new RoosterItemDayCalendarItem
+                    {
+                        Start = dayItem.DateStart,
+                        End = dayItem.DateEnd,
+                        AllDay = dayItem.IsFullDay,
+                        ItemDay = dayItem,
+                    });
+                }
             }
         }
         _updating = false;
         StateHasChanged();
     }
 
-    private async Task OnChange(CustomItem customItem)
+    private async Task OnChange(DrogeCodeCalendarItem customItem)
     {
         if (_updating) return;
         _updating = true;
@@ -83,7 +94,7 @@ public sealed partial class Calendar : IDisposable
             RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId
         };
         var date = DateOnly.FromDateTime(newTraining.Date ?? throw new UnreachableException("newTraining.Date is null after null check"));
-        _events.Add(new CustomItem
+        _events.Add(new DrogeCodeCalendarItem
         {
             Start = asTraining.DateStart,
             End = asTraining.DateEnd,
@@ -98,8 +109,12 @@ public sealed partial class Calendar : IDisposable
         Global.NewTrainingAddedAsync -= HandleNewTraining;
         _cls.Cancel();
     }
-    private class CustomItem : CalendarItem
+    private class DrogeCodeCalendarItem : CalendarItem
     {
         public Training? Training { get; set; }
+    }
+    private class RoosterItemDayCalendarItem : CalendarItem
+    {
+        public RoosterItemDay? ItemDay { get; set; }
     }
 }
