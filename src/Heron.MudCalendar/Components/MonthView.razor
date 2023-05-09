@@ -1,0 +1,98 @@
+@namespace Heron.MudCalendar
+@inherits CalendarViewBase
+
+@Render
+
+@code {
+
+    /// <summary>
+    /// Renders the component.
+    /// </summary>
+    protected virtual RenderFragment Render =>
+        @<div class="@Classname">
+            <table>
+                <thead>
+                    @RenderHeader
+                </thead>
+                <tbody>
+                    @RenderBody
+                </tbody>
+            </table>
+        </div>;
+
+    /// <summary>
+    /// Renders the header of the component that contains the day names.
+    /// </summary>
+    protected virtual RenderFragment RenderHeader =>
+        @<tr>
+            @for (var i = 0; i < 7; i++)
+            {
+                <th>
+                    @RenderDayTitle(i)
+                </th>
+            }
+        </tr>;
+
+    /// <summary>
+    /// Renders the day name.
+    /// </summary>
+    protected virtual RenderFragment RenderDayTitle(int day) => __builder => { __builder.AddContent(1, Cells[day].Date.ToString("ddd")); };
+
+    /// <summary>
+    /// Renders the main body of the month view.
+    /// </summary>
+    protected virtual RenderFragment RenderBody => __builder =>
+    {
+        for (var week = 0; week < Cells.Count / 7; week++)
+        {
+            <tr style="@RowStyle">
+                @for (var i = week * 7; i < (week + 1) * 7; i++)
+                {
+                    var cell = Cells[i];
+                    @RenderCell(cell)
+                }
+            </tr>
+        }
+    };
+
+    /// <summary>
+    /// Renders an individual cell.
+    /// </summary>
+    protected virtual RenderFragment RenderCell(CalendarCell cell) =>
+        @<td>
+            <div class="mud-cal-month-cell" style="@DayStyle(cell)">
+                @if (Calendar.CellClicked.HasDelegate)
+                {
+                    <div @onclick="() => OnCellLinkClicked(cell)" Class="mud-cal-month-link">
+                        @RenderCellDayNumber(cell)
+                        @RenderCellContents(cell)
+                    </div>   
+                }
+                else
+                {
+                    @RenderCellDayNumber(cell)
+                    @RenderCellContents(cell)
+                }
+            </div>
+        </td>;
+
+    /// <summary>
+    /// Renders the day number of the cell.
+    /// </summary>
+    protected virtual RenderFragment RenderCellDayNumber(CalendarCell cell) =>
+        @<div class="@DayClassname(cell)">
+            @cell.Date.Day
+        </div>;
+
+    /// <summary>
+    /// Renders the contents of the cell.
+    /// </summary>
+    protected virtual RenderFragment RenderCellContents(CalendarCell cell) =>
+        @<div class="mud-cal-month-cell-events">
+            @foreach (var item in cell.Items)
+                {
+                    @CellTemplate?.Invoke(item)
+                }
+        </div>;
+
+}

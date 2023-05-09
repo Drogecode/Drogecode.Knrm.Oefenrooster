@@ -13,6 +13,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.TestServer", "tests\Drogecode.Knrm.Oefenrooster.TestServer\Drogecode.Knrm.Oefenrooster.TestServer.csproj", "{2C3B2883-7EA8-49B9-8AC0-6F38DCF1FC40}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Heron.MudCalendar", "src\Heron.MudCalendar\Heron.MudCalendar.csproj", "{93D32C31-D7C0-4AFB-ABAA-7D3866EC8C16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{2C3B2883-7EA8-49B9-8AC0-6F38DCF1FC40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C3B2883-7EA8-49B9-8AC0-6F38DCF1FC40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C3B2883-7EA8-49B9-8AC0-6F38DCF1FC40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93D32C31-D7C0-4AFB-ABAA-7D3866EC8C16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93D32C31-D7C0-4AFB-ABAA-7D3866EC8C16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93D32C31-D7C0-4AFB-ABAA-7D3866EC8C16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93D32C31-D7C0-4AFB-ABAA-7D3866EC8C16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
