@@ -40,14 +40,19 @@ else if (_specialDatesUpdated == false)
 {
     <MudPaper Width="700px">
         <MudList Clickable="false">
-            @foreach (var function in _functions.OrderBy(x=>x.Order))
+            @foreach (var function in _functions.OrderBy(x => x.Order))
             {
                 @if (_users.Any(x => x.UserFunctionId == function.Id))
                 {
                     <MudText>@function.Name</MudText>
-                    @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id).OrderBy(x=>x.Name))
+                    @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id).OrderBy(x => x.Name))
                     {
-                        <MudListItem OnClick="()=>ChangeUser(user)" Text="@user.Name" />
+                        <MudListItem OnClick="()=>ChangeUser(user)">
+                            <div class="flex space-x-4">
+                                <div>@user.Name</div>
+                                <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin" />
+                            </div>
+                        </MudListItem>
                     }
                 }
             }

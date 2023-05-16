@@ -1,0 +1,14 @@
+﻿@if (DateTimeNotNull.CompareTo(DateTime.MinValue) == 0)
+{
+	<p>-</p>
+}
+else
+{
+	<div class="flex space-x-3">
+		<div>@DatePrefix</div>
+		@if (!string.IsNullOrEmpty(DateStringFormat))
+		{
+			<div>@DateTimeNotNull.ToString(@DateStringFormat, CultureInfo.InvariantCulture)</div>
+		}
+	</div>
+}
