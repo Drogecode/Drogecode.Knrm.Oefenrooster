@@ -34,17 +34,22 @@ var groupNames = new List<string>
 {
 "CalendarItem"
 };
-builder.Services.AddSwaggerGen(c =>
+var runningInContainers = string.Equals(builder.Configuration["DOTNET_RUNNING_IN_CONTAINER"], "true");
+if (!runningInContainers)
 {
-    //c.UseInlineDefinitionsForEnums();
-    c.CustomOperationIds(d => d.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor ? controllerActionDescriptor.MethodInfo.Name : d.ActionDescriptor.AttributeRouteInfo?.Name);
-    groupNames.ForEach(x => c.SwaggerDoc(x, new OpenApiInfo { Title = x.Split('.').LastOrDefault(), Version = "v1" }));
-
-    c.DocInclusionPredicate((controllerName, apiDescription) =>
+    // This does not work in containers.
+    builder.Services.AddSwaggerGen(c =>
     {
-        return !string.IsNullOrEmpty(apiDescription.GroupName) && string.CompareOrdinal(controllerName, apiDescription.GroupName) == 0 && groupNames.Contains(apiDescription.GroupName);
+        //c.UseInlineDefinitionsForEnums();
+        c.CustomOperationIds(d => d.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor ? controllerActionDescriptor.MethodInfo.Name : d.ActionDescriptor.AttributeRouteInfo?.Name);
+        groupNames.ForEach(x => c.SwaggerDoc(x, new OpenApiInfo { Title = x.Split('.').LastOrDefault(), Version = "v1" }));
+
+        c.DocInclusionPredicate((controllerName, apiDescription) =>
+        {
+            return !string.IsNullOrEmpty(apiDescription.GroupName) && string.CompareOrdinal(controllerName, apiDescription.GroupName) == 0 && groupNames.Contains(apiDescription.GroupName);
+        });
     });
-});
+}
 #endif
 
 var app = builder.Build();
@@ -72,19 +77,23 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 #if DEBUG
-// Only run in debug because it fails on the azure app service! (and is not necessary)
-app.UseSwagger();
-// Configure the Swagger generator and create a JSON file for each controller.
-var swaggerProvider = app.Services.GetRequiredService<ISwaggerProvider>();
-
-foreach (var controllerName in groupNames)
+if (!runningInContainers)
 {
-    var swaggerDoc = swaggerProvider.GetSwagger(controllerName);
-    var fileName = $"{controllerName}.json";
-    using var stream = new MemoryStream();
-    swaggerDoc.SerializeAsJson(stream, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
-    var asstring = Encoding.UTF8.GetString(stream.ToArray());
-    File.WriteAllText(Path.Combine("../ClientGenerator/OpenAPIs", fileName), asstring);
+    // This does not work in containers.
+    // Only run in debug because it fails on the azure app service! (and is not necessary)
+    app.UseSwagger();
+    // Configure the Swagger generator and create a JSON file for each controller.
+    var swaggerProvider = app.Services.GetRequiredService<ISwaggerProvider>();
+
+    foreach (var controllerName in groupNames)
+    {
+        var swaggerDoc = swaggerProvider.GetSwagger(controllerName);
+        var fileName = $"{controllerName}.json";
+        using var stream = new MemoryStream();
+        swaggerDoc.SerializeAsJson(stream, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
+        var asstring = Encoding.UTF8.GetString(stream.ToArray());
+        File.WriteAllText(Path.Combine("../ClientGenerator/OpenAPIs", fileName), asstring);
+    }
 }
 #endif
 
