@@ -1,25 +1,27 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
+﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+
+namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 
 public class VehicleRepository
 {
-    private readonly HttpClient _httpClient;
+    private readonly IVehicleClient _vehicleClient;
 
-    public VehicleRepository(HttpClient httpClient)
+    public VehicleRepository(IVehicleClient vehicleClient)
     {
-        _httpClient = httpClient;
+        _vehicleClient = vehicleClient;
     }
 
     public async Task<List<DrogeVehicle>?> GetAllVehiclesAsync()
     {
-        var dbVehicle = await _httpClient.GetFromJsonAsync<List<DrogeVehicle>>("api/Vehicle/GetAll");
-        return dbVehicle;
+        var dbVehicle = await _vehicleClient.GetAllAsync();
+        return dbVehicle.ToList();
     }
 
     public async Task<List<DrogeLinkVehicleTraining>?> GetForTrainingAsync(Guid trainingId)
     {
 
-        var dbVehicle = await _httpClient.GetFromJsonAsync<List<DrogeLinkVehicleTraining>>($"api/Vehicle/GetForTraining?trainingId={trainingId}");
-        return dbVehicle;
+        var dbVehicle = await _vehicleClient.GetForTrainingAsync(trainingId);
+        return dbVehicle.ToList();
     }
 
     public async Task<DrogeLinkVehicleTraining?> UpdateLinkVehicleTrainingAsync(DrogeLinkVehicleTraining link)
@@ -28,8 +30,7 @@ public class VehicleRepository
         {
             throw new ArgumentNullException($"link.RoosterTrainingId is empty");
         }
-        var request = await _httpClient.PostAsJsonAsync("api/Vehicle/UpdateLinkVehicleTraining", link);
-        var successfull = await request.Content.ReadFromJsonAsync<DrogeLinkVehicleTraining>();
+        var successfull = await _vehicleClient.UpdateLinkVehicleTrainingAsync(link);
         return successfull;
     }
 }

@@ -1,19 +1,19 @@
-﻿using System.Net.Http;
+﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 
 public class FunctionRepository
 {
-    private readonly HttpClient _httpClient;
+    private readonly IFunctionClient _functionClient;
 
-    public FunctionRepository(HttpClient httpClient)
+    public FunctionRepository(IFunctionClient functionClient)
     {
-        _httpClient = httpClient;
+        _functionClient = functionClient;
     }
 
     public async Task<List<DrogeFunction>?> GetAllFunctionsAsync()
     {
-        var dbUser = await _httpClient.GetFromJsonAsync<List<DrogeFunction>>("api/Function/GetAll");
-        return dbUser;
+        var dbUser = await _functionClient.GetAllAsync();
+        return dbUser.ToList();
     }
 }

@@ -1,70 +1,65 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
+﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+
+namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 
 public class ScheduleRepository
 {
-    private readonly HttpClient _httpClient;
+    private readonly IScheduleClient _scheduleClient;
 
-    public ScheduleRepository(HttpClient httpClient)
+    public ScheduleRepository(IScheduleClient scheduleClient)
     {
-        _httpClient = httpClient;
+        _scheduleClient = scheduleClient;
     }
-    public async Task<ScheduleForUserResponse?> CalendarForUser(DateRange dateRange, CancellationToken token)
+    public async Task<ScheduleForUserResponse?> CalendarForUser(DateRange dateRange, CancellationToken clt)
     {
-        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForUserResponse>($"api/Schedule/ForUser?yearStart={dateRange.Start!.Value.Year}&monthStart={dateRange.Start!.Value.Month}&dayStart={dateRange.Start!.Value.Day}&yearEnd={dateRange.End!.Value.Year}&monthEnd={dateRange.End!.Value.Month}&dayEnd={dateRange.End!.Value.Day}", token);
+        var schedule = await _scheduleClient.ForUserAsync(dateRange.Start!.Value.Year, dateRange.Start!.Value.Month, dateRange.Start!.Value.Day, dateRange.End!.Value.Year, dateRange.End!.Value.Month, dateRange.End!.Value.Day, clt);
         return schedule;
     }
-    public async Task<ScheduleForAllResponse?> ScheduleForAll(DateRange dateRange, CancellationToken token)
+    public async Task<ScheduleForAllResponse?> ScheduleForAll(DateRange dateRange, CancellationToken clt)
     {
         DateTime? forMonth = PlannerHelper.ForMonth(dateRange);
-        var schedule = await _httpClient.GetFromJsonAsync<ScheduleForAllResponse>($"api/Schedule/ForAll?forMonth={forMonth?.Month ?? 0}&yearStart={dateRange.Start!.Value.Year}&monthStart={dateRange.Start!.Value.Month}&dayStart={dateRange.Start!.Value.Day}&yearEnd={dateRange.End!.Value.Year}&monthEnd={dateRange.End!.Value.Month}&dayEnd={dateRange.End!.Value.Day}", token);
+        var schedule = await _scheduleClient.ForAllAsync(forMonth?.Month ?? 0, dateRange.Start!.Value.Year, dateRange.Start!.Value.Month, dateRange.Start!.Value.Day, dateRange.End!.Value.Year, dateRange.End!.Value.Month, dateRange.End!.Value.Day, clt);
         return schedule;
     }
 
-    public async Task<Training> PatchScheduleForUser(Training training, CancellationToken token)
+    public async Task<Training> PatchScheduleForUser(Training training, CancellationToken clt)
     {
-        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/PatchScheduleForUser", training, token);
-        var result = await request.Content.ReadFromJsonAsync<Training>(cancellationToken: token);
-
+        var result = await _scheduleClient.PatchScheduleForUserAsync(training, clt);
         return result;
     }
-    public async Task<bool> PatchTraining(EditTraining patchedTraining, CancellationToken token)
+    public async Task<bool> PatchTraining(EditTraining patchedTraining, CancellationToken clt)
     {
-        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/PatchTraining", patchedTraining, token);
-        var result = await request.Content.ReadFromJsonAsync<bool>(cancellationToken: token);
-
+        var result = await _scheduleClient.PatchTrainingAsync(patchedTraining, clt);
         return result;
     }
-    public async Task<Guid> AddTraining(EditTraining newTraining, CancellationToken token)
+    public async Task<Guid> AddTraining(EditTraining newTraining, CancellationToken clt)
     {
-        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/AddTraining", newTraining, token);
-        var result = await request.Content.ReadFromJsonAsync<Guid>(cancellationToken: token);
-
+        var result = await _scheduleClient.AddTrainingAsync(newTraining, clt);
         return result;
     }
 
-    public async Task PatchAvailabilityUser(Guid? trainingId, PlanUser user, CancellationToken token)
+    public async Task PatchAvailabilityUser(Guid? trainingId, PlanUser user, CancellationToken clt)
     {
         var body = new PatchAssignedUserRequest
         {
             TrainingId = trainingId,
             User = user,
         };
-        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/PatchAssignedUser", body, token);
-        request.EnsureSuccessStatusCode();
+        await _scheduleClient.PatchAssignedUserAsync(body, clt);
     }
-    public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(CancellationToken token)
+    public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(CancellationToken clt)
     {
-        var schedule = await _httpClient.GetFromJsonAsync<GetScheduledTrainingsForUserResponse>($"api/Schedule/GetScheduledTrainingsForUser", token);
+        var schedule = await _scheduleClient.GetScheduledTrainingsForUserAsync(clt);
         return schedule;
     }
 
-    public async Task<GetPinnedTrainingsForUserResponse?> GetPinnedTrainingsForUser(CancellationToken token)
+    public async Task<GetPinnedTrainingsForUserResponse?> GetPinnedTrainingsForUser(CancellationToken clt)
     {
-        var schedule = await _httpClient.GetFromJsonAsync<GetPinnedTrainingsForUserResponse>($"api/Schedule/GetPinnedTrainingsForUser", token);
+        var schedule = await _scheduleClient.GetPinnedTrainingsForUserAsync(clt);
         return schedule;
     }
 
-    internal async Task PutAssignedUser(bool assigned, Guid? trainingId, Guid functionId, DrogeUser user, CancellationToken token)
+    internal async Task PutAssignedUser(bool assigned, Guid? trainingId, Guid functionId, DrogeUser user, CancellationToken clt)
     {
         var body = new OtherScheduleUserRequest
         {
@@ -73,13 +68,12 @@ public class ScheduleRepository
             UserId = user.Id,
             Assigned = assigned
         };
-        var request = await _httpClient.PostAsJsonAsync($"api/Schedule/PutAssignedUser", body, token);
-        request.EnsureSuccessStatusCode();
+        await _scheduleClient.PutAssignedUserAsync(body, clt);
     }
 
-    internal async Task<List<PlannerTrainingType>> GetTrainingTypes(CancellationToken token = default)
+    internal async Task<List<PlannerTrainingType>> GetTrainingTypes(CancellationToken clt = default)
     {
-        var schedule = await _httpClient.GetFromJsonAsync<List<PlannerTrainingType>>($"api/Schedule/GetTrainingTypes", token);
-        return schedule;
+        var schedule = await _scheduleClient.GetTrainingTypesAsync(clt);
+        return schedule.ToList();
     }
 }
