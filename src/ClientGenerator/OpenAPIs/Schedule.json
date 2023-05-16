@@ -1,0 +1,912 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Schedule",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/Schedule/ForUser": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "ForUser",
+        "parameters": [
+          {
+            "name": "yearStart",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "monthStart",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dayStart",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "yearEnd",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "monthEnd",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dayEnd",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleForUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleForUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleForUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Schedule/ForAll": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "ForAll",
+        "parameters": [
+          {
+            "name": "forMonth",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "yearStart",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "monthStart",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dayStart",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "yearEnd",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "monthEnd",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dayEnd",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleForAllResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleForAllResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleForAllResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Schedule/PatchTraining": {
+      "post": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "PatchTraining",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditTraining"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditTraining"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditTraining"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Schedule/AddTraining": {
+      "post": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "AddTraining",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditTraining"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditTraining"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditTraining"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Schedule/PatchScheduleForUser": {
+      "post": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "PatchScheduleForUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Training"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Training"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Training"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Training"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Training"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Training"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Schedule/PatchAssignedUser": {
+      "post": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "PatchAssignedUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchAssignedUserRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchAssignedUserRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchAssignedUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Schedule/PutAssignedUser": {
+      "post": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "PutAssignedUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OtherScheduleUserRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OtherScheduleUserRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OtherScheduleUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Schedule/GetScheduledTrainingsForUser": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "GetScheduledTrainingsForUser",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Schedule/GetPinnedTrainingsForUser": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "GetPinnedTrainingsForUser",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPinnedTrainingsForUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPinnedTrainingsForUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPinnedTrainingsForUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Schedule/GetTrainingTypes": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "GetTrainingTypes",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PlannerTrainingType"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PlannerTrainingType"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PlannerTrainingType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Availabilty": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "EditTraining": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "roosterTrainingTypeId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "timeStart": {
+            "$ref": "#/components/schemas/TimeSpan"
+          },
+          "timeEnd": {
+            "$ref": "#/components/schemas/TimeSpan"
+          },
+          "isNew": {
+            "type": "boolean"
+          },
+          "countToTrainingTarget": {
+            "type": "boolean"
+          },
+          "pin": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetPinnedTrainingsForUserResponse": {
+        "type": "object",
+        "properties": {
+          "trainings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Training"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetScheduledTrainingsForUserResponse": {
+        "type": "object",
+        "properties": {
+          "trainings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Training"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OtherScheduleUserRequest": {
+        "type": "object",
+        "properties": {
+          "trainingId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "functionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "assigned": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PatchAssignedUserRequest": {
+        "type": "object",
+        "properties": {
+          "trainingId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "user": {
+            "$ref": "#/components/schemas/PlanUser"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlanUser": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userFunctionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "plannedFunctionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "vehicleId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "availabilty": {
+            "$ref": "#/components/schemas/Availabilty"
+          },
+          "assigned": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlannedTraining": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "roosterTrainingTypeId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "trainingId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "defaultId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "vehicleId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "dateStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dateEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "countToTrainingTarget": {
+            "type": "boolean"
+          },
+          "updated": {
+            "type": "boolean"
+          },
+          "pin": {
+            "type": "boolean"
+          },
+          "planUsers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanUser"
+            },
+            "nullable": true
+          },
+          "isCreated": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlannerTrainingType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "colorLight": {
+            "type": "string",
+            "nullable": true
+          },
+          "colorDark": {
+            "type": "string",
+            "nullable": true
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "countToTrainingTarget": {
+            "type": "boolean"
+          },
+          "isDefault": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ScheduleForAllResponse": {
+        "type": "object",
+        "properties": {
+          "planners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlannedTraining"
+            },
+            "nullable": true
+          },
+          "userTrainingCounters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserTrainingCounter"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ScheduleForUserResponse": {
+        "type": "object",
+        "properties": {
+          "trainings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Training"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TimeSpan": {
+        "type": "object",
+        "properties": {
+          "ticks": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "days": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "hours": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "milliseconds": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "microseconds": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "nanoseconds": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "minutes": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "seconds": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "totalDays": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalHours": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalMilliseconds": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalMicroseconds": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalNanoseconds": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalMinutes": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "totalSeconds": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Training": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "roosterTrainingTypeId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "trainingId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "defaultId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "vehicleId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "dateStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dateEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "countToTrainingTarget": {
+            "type": "boolean"
+          },
+          "updated": {
+            "type": "boolean"
+          },
+          "pin": {
+            "type": "boolean"
+          },
+          "availabilty": {
+            "$ref": "#/components/schemas/Availabilty"
+          },
+          "assigned": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserTrainingCounter": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

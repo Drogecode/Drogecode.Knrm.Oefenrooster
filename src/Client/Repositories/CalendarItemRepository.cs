@@ -1,27 +1,27 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
-using MudBlazor;
+﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 
 public class CalendarItemRepository
 {
-    private readonly HttpClient _httpClient;
+    private readonly ICalendarItemClient _calendarItemClient;
 
-    public CalendarItemRepository(HttpClient httpClient)
+    public CalendarItemRepository(ICalendarItemClient calendarItemClient)
     {
-        _httpClient = httpClient;
+        _calendarItemClient = calendarItemClient;
     }
 
-    public async Task<GetMonthItemResponse?> GetMonthItemAsync(int year, int month, CancellationToken token)
+    public async Task<GetMonthItemResponse?> GetMonthItemAsync(int year, int month, CancellationToken clt)
     {
-        var response = await _httpClient.GetFromJsonAsync<GetMonthItemResponse>($"api/CalendarItem/GetMonthItems?year={year}&month={month}");
+        var response = await _calendarItemClient.GetMonthItemsAsync(year, month, clt);
         return response;
+
     }
 
-    public async Task<GetDayItemResponse?> GetDayItemsAsync(DateRange dateRange, CancellationToken token)
+    public async Task<GetDayItemResponse?> GetDayItemsAsync(DateRange dateRange, CancellationToken clt)
     {
-        DateTime? forMonth = PlannerHelper.ForMonth(dateRange);
-        var response = await _httpClient.GetFromJsonAsync<GetDayItemResponse>($"api/CalendarItem/GetDayItems?forMonth={forMonth?.Month ?? 0}&yearStart={dateRange.Start!.Value.Year}&monthStart={dateRange.Start!.Value.Month}&dayStart={dateRange.Start!.Value.Day}&yearEnd={dateRange.End!.Value.Year}&monthEnd={dateRange.End!.Value.Month}&dayEnd={dateRange.End!.Value.Day}");
+        var response = await _calendarItemClient.GetDayItemsAsync(dateRange.Start!.Value.Year, dateRange.Start!.Value.Month, dateRange.Start!.Value.Day, dateRange.End!.Value.Year, dateRange.End!.Value.Month, dateRange.End!.Value.Day, clt);
         return response;
     }
 }

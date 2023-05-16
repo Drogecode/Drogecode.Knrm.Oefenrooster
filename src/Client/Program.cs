@@ -1,14 +1,15 @@
+using Blazored.LocalStorage;
 using Drogecode.Knrm.Oefenrooster.Client;
+using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using MudBlazor.Services;
-using System.Globalization;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.JSInterop;
-using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using MudBlazor;
+using MudBlazor.Services;
 using MudExtensions.Services;
-using Blazored.LocalStorage;
+using System.Globalization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -25,12 +26,19 @@ builder.Services.AddMudServices(config =>
 builder.Services.AddMudExtensions();
 builder.Services.AddBlazoredLocalStorage();
 
-builder.Services.AddScoped<CalendarItemRepository>();
-builder.Services.AddScoped<ConfigurationRepository>();
-builder.Services.AddScoped<FunctionRepository>();
-builder.Services.AddScoped<ScheduleRepository>();
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<VehicleRepository>();
+builder.Services.TryAddScoped<ICalendarItemClient, CalendarItemClient>();
+builder.Services.TryAddScoped<IConfigurationClient, ConfigurationClient>();
+builder.Services.TryAddScoped<IFunctionClient, FunctionClient>();
+builder.Services.TryAddScoped<IScheduleClient, ScheduleClient>();
+builder.Services.TryAddScoped<IUserClient, UserClient>();
+builder.Services.TryAddScoped<IVehicleClient, VehicleClient>();
+
+builder.Services.TryAddScoped<CalendarItemRepository>();
+builder.Services.TryAddScoped<ConfigurationRepository>();
+builder.Services.TryAddScoped<FunctionRepository>();
+builder.Services.TryAddScoped<ScheduleRepository>();
+builder.Services.TryAddScoped<UserRepository>();
+builder.Services.TryAddScoped<VehicleRepository>();
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Drogecode.Knrm.Oefenrooster.ServerAPI"));

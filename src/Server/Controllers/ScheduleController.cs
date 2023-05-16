@@ -11,6 +11,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [ApiController]
 [Route("api/[controller]/[action]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+[ApiExplorerSettings(GroupName = "Schedule")]
 public class ScheduleController : ControllerBase
 {
     private readonly ILogger<ScheduleController> _logger;

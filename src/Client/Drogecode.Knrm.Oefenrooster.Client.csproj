@@ -21,11 +21,12 @@
 		<PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="7.0.5" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.5" />
-		<PackageReference Include="Microsoft.Graph" Version="5.9.0" />
+		<PackageReference Include="Microsoft.Graph" Version="5.10.0" />
 		<PackageReference Include="MudBlazor" Version="6.2.3" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\ClientGenerator\Drogecode.Knrm.Oefenrooster.ClientGenerator.csproj" />
 		<ProjectReference Include="..\Shared\Drogecode.Knrm.Oefenrooster.Shared.csproj" />
 	</ItemGroup>
 

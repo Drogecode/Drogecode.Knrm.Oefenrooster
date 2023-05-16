@@ -13,6 +13,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.TestServer", "tests\Drogecode.Knrm.Oefenrooster.TestServer\Drogecode.Knrm.Oefenrooster.TestServer.csproj", "{2C3B2883-7EA8-49B9-8AC0-6F38DCF1FC40}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.ClientGenerator", "src\ClientGenerator\Drogecode.Knrm.Oefenrooster.ClientGenerator.csproj", "{AC063140-0166-40EF-ACFB-62DFD45EE787}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{2C3B2883-7EA8-49B9-8AC0-6F38DCF1FC40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C3B2883-7EA8-49B9-8AC0-6F38DCF1FC40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C3B2883-7EA8-49B9-8AC0-6F38DCF1FC40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC063140-0166-40EF-ACFB-62DFD45EE787}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC063140-0166-40EF-ACFB-62DFD45EE787}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC063140-0166-40EF-ACFB-62DFD45EE787}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC063140-0166-40EF-ACFB-62DFD45EE787}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
