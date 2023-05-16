@@ -16,7 +16,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 
-builder.Services.AddHttpClient("Drogecode.Knrm.Oefenrooster.Server", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+builder.Services.AddHttpClient("Drogecode.Knrm.Oefenrooster.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
     .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 builder.Services.AddMudServices(config =>
@@ -26,19 +26,19 @@ builder.Services.AddMudServices(config =>
 builder.Services.AddMudExtensions();
 builder.Services.AddBlazoredLocalStorage();
 
-builder.Services.TryAddScoped<CalendarItemRepository>();
-builder.Services.TryAddScoped<ConfigurationRepository>();
-builder.Services.TryAddScoped<FunctionRepository>();
-builder.Services.TryAddScoped<ScheduleRepository>();
-builder.Services.TryAddScoped<UserRepository>();
-builder.Services.TryAddScoped<VehicleRepository>();
-
 builder.Services.TryAddScoped<ICalendarItemClient, CalendarItemClient>();
 builder.Services.TryAddScoped<IConfigurationClient, ConfigurationClient>();
 builder.Services.TryAddScoped<IFunctionClient, FunctionClient>();
 builder.Services.TryAddScoped<IScheduleClient, ScheduleClient>();
 builder.Services.TryAddScoped<IUserClient, UserClient>();
 builder.Services.TryAddScoped<IVehicleClient, VehicleClient>();
+
+builder.Services.TryAddScoped<CalendarItemRepository>();
+builder.Services.TryAddScoped<ConfigurationRepository>();
+builder.Services.TryAddScoped<FunctionRepository>();
+builder.Services.TryAddScoped<ScheduleRepository>();
+builder.Services.TryAddScoped<UserRepository>();
+builder.Services.TryAddScoped<VehicleRepository>();
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.TryAddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Drogecode.Knrm.Oefenrooster.ServerAPI"));
