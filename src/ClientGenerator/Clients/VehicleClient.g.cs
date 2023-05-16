@@ -55,13 +55,11 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class VehicleClient : IVehicleClient
     {
-        private string _baseUrl = "";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
 
-        public VehicleClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        public VehicleClient(System.Net.Http.HttpClient httpClient)
         {
-            BaseUrl = baseUrl;
             _httpClient = httpClient;
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
         }
@@ -71,12 +69,6 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             var settings = new Newtonsoft.Json.JsonSerializerSettings();
             UpdateJsonSerializerSettings(settings);
             return settings;
-        }
-
-        public string BaseUrl
-        {
-            get { return _baseUrl; }
-            set { _baseUrl = value; }
         }
 
         protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
@@ -100,7 +92,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeVehicle>> GetAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Vehicle/GetAll");
+            urlBuilder_.Append("api/Vehicle/GetAll");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -174,7 +166,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeLinkVehicleTraining>> GetForTrainingAsync(System.Guid? trainingId, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Vehicle/GetForTraining?");
+            urlBuilder_.Append("api/Vehicle/GetForTraining?");
             if (trainingId != null)
             {
                 urlBuilder_.Append(System.Uri.EscapeDataString("trainingId") + "=").Append(System.Uri.EscapeDataString(ConvertToString(trainingId, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
@@ -253,7 +245,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<DrogeLinkVehicleTraining> UpdateLinkVehicleTrainingAsync(DrogeLinkVehicleTraining body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Vehicle/UpdateLinkVehicleTraining");
+            urlBuilder_.Append("api/Vehicle/UpdateLinkVehicleTraining");
 
             var client_ = _httpClient;
             var disposeClient_ = false;

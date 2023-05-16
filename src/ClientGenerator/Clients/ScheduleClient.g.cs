@@ -118,13 +118,11 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ScheduleClient : IScheduleClient
     {
-        private string _baseUrl = "";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
 
-        public ScheduleClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        public ScheduleClient(System.Net.Http.HttpClient httpClient)
         {
-            BaseUrl = baseUrl;
             _httpClient = httpClient;
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
         }
@@ -134,12 +132,6 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             var settings = new Newtonsoft.Json.JsonSerializerSettings();
             UpdateJsonSerializerSettings(settings);
             return settings;
-        }
-
-        public string BaseUrl
-        {
-            get { return _baseUrl; }
-            set { _baseUrl = value; }
         }
 
         protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
@@ -163,7 +155,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<ScheduleForUserResponse> ForUserAsync(int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Schedule/ForUser?");
+            urlBuilder_.Append("api/Schedule/ForUser?");
             if (yearStart != null)
             {
                 urlBuilder_.Append(System.Uri.EscapeDataString("yearStart") + "=").Append(System.Uri.EscapeDataString(ConvertToString(yearStart, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
@@ -262,7 +254,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int? forMonth, int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Schedule/ForAll?");
+            urlBuilder_.Append("api/Schedule/ForAll?");
             if (forMonth != null)
             {
                 urlBuilder_.Append(System.Uri.EscapeDataString("forMonth") + "=").Append(System.Uri.EscapeDataString(ConvertToString(forMonth, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
@@ -365,7 +357,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<bool> PatchTrainingAsync(EditTraining body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Schedule/PatchTraining");
+            urlBuilder_.Append("api/Schedule/PatchTraining");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -443,7 +435,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<System.Guid> AddTrainingAsync(EditTraining body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Schedule/AddTraining");
+            urlBuilder_.Append("api/Schedule/AddTraining");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -521,7 +513,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<Training> PatchScheduleForUserAsync(Training body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Schedule/PatchScheduleForUser");
+            urlBuilder_.Append("api/Schedule/PatchScheduleForUser");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -599,7 +591,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task PatchAssignedUserAsync(PatchAssignedUserRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Schedule/PatchAssignedUser");
+            urlBuilder_.Append("api/Schedule/PatchAssignedUser");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -671,7 +663,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task PutAssignedUserAsync(OtherScheduleUserRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Schedule/PutAssignedUser");
+            urlBuilder_.Append("api/Schedule/PutAssignedUser");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -743,7 +735,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUserAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Schedule/GetScheduledTrainingsForUser");
+            urlBuilder_.Append("api/Schedule/GetScheduledTrainingsForUser");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -817,7 +809,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUserAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Schedule/GetPinnedTrainingsForUser");
+            urlBuilder_.Append("api/Schedule/GetPinnedTrainingsForUser");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -891,7 +883,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<PlannerTrainingType>> GetTrainingTypesAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Schedule/GetTrainingTypes");
+            urlBuilder_.Append("api/Schedule/GetTrainingTypes");
 
             var client_ = _httpClient;
             var disposeClient_ = false;

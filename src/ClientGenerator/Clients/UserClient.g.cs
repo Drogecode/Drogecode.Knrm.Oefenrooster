@@ -73,13 +73,11 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class UserClient : IUserClient
     {
-        private string _baseUrl = "";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
 
-        public UserClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        public UserClient(System.Net.Http.HttpClient httpClient)
         {
-            BaseUrl = baseUrl;
             _httpClient = httpClient;
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
         }
@@ -89,12 +87,6 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             var settings = new Newtonsoft.Json.JsonSerializerSettings();
             UpdateJsonSerializerSettings(settings);
             return settings;
-        }
-
-        public string BaseUrl
-        {
-            get { return _baseUrl; }
-            set { _baseUrl = value; }
         }
 
         protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
@@ -118,7 +110,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeUser>> GetAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/User/GetAll");
+            urlBuilder_.Append("api/User/GetAll");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -192,7 +184,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<DrogeUser> GetAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/User/Get");
+            urlBuilder_.Append("api/User/Get");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -266,7 +258,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<bool> AddUserAsync(DrogeUser body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/User/AddUser");
+            urlBuilder_.Append("api/User/AddUser");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -344,7 +336,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<bool> UpdateUserAsync(DrogeUser body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/User/UpdateUser");
+            urlBuilder_.Append("api/User/UpdateUser");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -422,7 +414,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<bool> SyncAllUsersAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/User/SyncAllUsers");
+            urlBuilder_.Append("api/User/SyncAllUsers");
 
             var client_ = _httpClient;
             var disposeClient_ = false;

@@ -26,6 +26,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\ClientGenerator\Drogecode.Knrm.Oefenrooster.ClientGenerator.csproj" />
 		<ProjectReference Include="..\Shared\Drogecode.Knrm.Oefenrooster.Shared.csproj" />
 	</ItemGroup>
 

@@ -64,13 +64,11 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ConfigurationClient : IConfigurationClient
     {
-        private string _baseUrl = "";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
 
-        public ConfigurationClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        public ConfigurationClient(System.Net.Http.HttpClient httpClient)
         {
-            BaseUrl = baseUrl;
             _httpClient = httpClient;
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
         }
@@ -80,12 +78,6 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             var settings = new Newtonsoft.Json.JsonSerializerSettings();
             UpdateJsonSerializerSettings(settings);
             return settings;
-        }
-
-        public string BaseUrl
-        {
-            get { return _baseUrl; }
-            set { _baseUrl = value; }
         }
 
         protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
@@ -109,7 +101,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<bool> UpgradeDatabaseAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Configuration/UpgradeDatabase");
+            urlBuilder_.Append("api/Configuration/UpgradeDatabase");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -183,7 +175,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<UpdateDetails> NewVersionAvailableAsync(string clientVersion, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Configuration/NewVersionAvailable?");
+            urlBuilder_.Append("api/Configuration/NewVersionAvailable?");
             if (clientVersion != null)
             {
                 urlBuilder_.Append(System.Uri.EscapeDataString("clientVersion") + "=").Append(System.Uri.EscapeDataString(ConvertToString(clientVersion, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
@@ -262,7 +254,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<bool> InstallingActiveAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Configuration/InstallingActive");
+            urlBuilder_.Append("api/Configuration/InstallingActive");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -336,7 +328,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<bool> UpdateSpecialDatesAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Configuration/UpdateSpecialDates");
+            urlBuilder_.Append("api/Configuration/UpdateSpecialDates");
 
             var client_ = _httpClient;
             var disposeClient_ = false;

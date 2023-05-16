@@ -46,13 +46,11 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CalendarItemClient : ICalendarItemClient
     {
-        private string _baseUrl = "";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
 
-        public CalendarItemClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        public CalendarItemClient(System.Net.Http.HttpClient httpClient)
         {
-            BaseUrl = baseUrl;
             _httpClient = httpClient;
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
         }
@@ -62,12 +60,6 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             var settings = new Newtonsoft.Json.JsonSerializerSettings();
             UpdateJsonSerializerSettings(settings);
             return settings;
-        }
-
-        public string BaseUrl
-        {
-            get { return _baseUrl; }
-            set { _baseUrl = value; }
         }
 
         protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
@@ -91,7 +83,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<GetMonthItemResponse> GetMonthItemsAsync(int? year, int? month, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/CalendarItem/GetMonthItems?");
+            urlBuilder_.Append("api/CalendarItem/GetMonthItems?");
             if (year != null)
             {
                 urlBuilder_.Append(System.Uri.EscapeDataString("year") + "=").Append(System.Uri.EscapeDataString(ConvertToString(year, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
@@ -174,7 +166,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/CalendarItem/GetDayItems?");
+            urlBuilder_.Append("api/CalendarItem/GetDayItems?");
             if (yearStart != null)
             {
                 urlBuilder_.Append(System.Uri.EscapeDataString("yearStart") + "=").Append(System.Uri.EscapeDataString(ConvertToString(yearStart, System.Globalization.CultureInfo.InvariantCulture))).Append("&");

@@ -13,27 +13,27 @@
 	<ItemGroup>
 		<OpenApiReference Include="OpenAPIs\CalendarItem.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="CalendarItemClient">
 			<OutputPath>../Clients/CalendarItemClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Configuration.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ConfigurationClient">
 			<OutputPath>../Clients/ConfigurationClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Function.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="FunctionClient">
 			<OutputPath>../Clients/FunctionClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Schedule.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ScheduleClient">
 			<OutputPath>../Clients/ScheduleClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\User.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="UserClient">
 			<OutputPath>../Clients/UserClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Vehicle.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="VehicleClient">
 			<OutputPath>../Clients/VehicleClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
 		</OpenApiReference>
 	</ItemGroup>
 
@@ -42,9 +42,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3">
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
 		<PackageReference Include="NSwag.ApiDescription.Client" Version="13.19.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
