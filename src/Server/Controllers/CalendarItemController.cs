@@ -11,6 +11,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [ApiController]
 [Route("api/[controller]/[action]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+[ApiExplorerSettings(GroupName = "CalendarItem")]
 public class CalendarItemController : ControllerBase
 {
     private readonly ILogger<CalendarItemController> _logger;

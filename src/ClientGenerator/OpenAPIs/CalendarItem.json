@@ -4,6 +4,245 @@
     "title": "CalendarItem",
     "version": "v1"
   },
-  "paths": { },
-  "components": { }
+  "paths": {
+    "/api/CalendarItem/GetMonthItems": {
+      "get": {
+        "tags": [
+          "CalendarItem"
+        ],
+        "operationId": "GetMonthItems",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMonthItemResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMonthItemResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMonthItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CalendarItem/GetDayItems": {
+      "get": {
+        "tags": [
+          "CalendarItem"
+        ],
+        "operationId": "GetDayItems",
+        "parameters": [
+          {
+            "name": "yearStart",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "monthStart",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dayStart",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "yearEnd",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "monthEnd",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dayEnd",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDayItemResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDayItemResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDayItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CalendarItemType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "GetDayItemResponse": {
+        "type": "object",
+        "properties": {
+          "dayItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RoosterItemDay"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetMonthItemResponse": {
+        "type": "object",
+        "properties": {
+          "monthItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RoosterItemMonth"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RoosterItemDay": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dateStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dateEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isFullDay": {
+            "type": "boolean"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CalendarItemType"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RoosterItemMonth": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/CalendarItemType"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Severity": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
+      }
+    }
+  }
 }
