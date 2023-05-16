@@ -13,6 +13,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [ApiController]
 [Route("api/[controller]/[action]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+[ApiExplorerSettings(GroupName = "Configuration")]
 public class ConfigurationController : ControllerBase
 {
     private readonly ILogger<ConfigurationController> _logger;

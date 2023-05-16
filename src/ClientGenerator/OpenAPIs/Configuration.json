@@ -1,0 +1,154 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Configuration",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/Configuration/UpgradeDatabase": {
+      "get": {
+        "tags": [
+          "Configuration"
+        ],
+        "operationId": "UpgradeDatabase",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Configuration/NewVersionAvailable": {
+      "get": {
+        "tags": [
+          "Configuration"
+        ],
+        "operationId": "NewVersionAvailable",
+        "parameters": [
+          {
+            "name": "clientVersion",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Configuration/InstallingActive": {
+      "get": {
+        "tags": [
+          "Configuration"
+        ],
+        "operationId": "InstallingActive",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Configuration/UpdateSpecialDates": {
+      "get": {
+        "tags": [
+          "Configuration"
+        ],
+        "operationId": "UpdateSpecialDates",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UpdateDetails": {
+        "type": "object",
+        "properties": {
+          "newVersionAvailable": {
+            "type": "boolean"
+          },
+          "installing": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

@@ -32,7 +32,12 @@ builder.Services.AddDbContextPool<DataContext>(options => options.UseNpgsql(buil
 // Only run in debug because it fails on the azure app service! (and is not necessary)
 var groupNames = new List<string>
 {
-"CalendarItem"
+    "CalendarItem",
+    "Configuration",
+    "Function",
+    "Schedule",
+    "User",
+    "Vehicle"
 };
 var runningInContainers = string.Equals(builder.Configuration["DOTNET_RUNNING_IN_CONTAINER"], "true");
 if (!runningInContainers)

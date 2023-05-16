@@ -13,7 +13,27 @@
 	<ItemGroup>
 		<OpenApiReference Include="OpenAPIs\CalendarItem.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="CalendarItemClient">
 			<OutputPath>../Clients/CalendarItemClient.g.cs</OutputPath>
-		<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem</Options>
+		</OpenApiReference>
+		<OpenApiReference Include="OpenAPIs\Configuration.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ConfigurationClient">
+			<OutputPath>../Clients/ConfigurationClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration</Options>
+		</OpenApiReference>
+		<OpenApiReference Include="OpenAPIs\Function.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="FunctionClient">
+			<OutputPath>../Clients/FunctionClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
+		</OpenApiReference>
+		<OpenApiReference Include="OpenAPIs\Schedule.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ScheduleClient">
+			<OutputPath>../Clients/ScheduleClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule</Options>
+		</OpenApiReference>
+		<OpenApiReference Include="OpenAPIs\User.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="UserClient">
+			<OutputPath>../Clients/UserClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
+		</OpenApiReference>
+		<OpenApiReference Include="OpenAPIs\Vehicle.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="VehicleClient">
+			<OutputPath>../Clients/VehicleClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
 		</OpenApiReference>
 	</ItemGroup>
 
@@ -36,7 +56,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Shared\Drogecode.Knrm.Oefenrooster.Shared.csproj" />
+		<ProjectReference Include="..\Shared\Drogecode.Knrm.Oefenrooster.Shared.csproj" />
 	</ItemGroup>
 
 </Project>
