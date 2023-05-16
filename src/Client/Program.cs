@@ -41,7 +41,7 @@ builder.Services.TryAddScoped<UserRepository>();
 builder.Services.TryAddScoped<VehicleRepository>();
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
-builder.Services.TryAddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Drogecode.Knrm.Oefenrooster.ServerAPI"));
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Drogecode.Knrm.Oefenrooster.ServerAPI"));
 
 builder.Services.AddMsalAuthentication(options =>
 {
