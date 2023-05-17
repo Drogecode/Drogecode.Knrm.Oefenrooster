@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Drogecode.Knrm.Oefenrooster.PreCom.Models;
 using Newtonsoft.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Drogecode.Knrm.Oefenrooster.PreCom;
 
@@ -102,6 +104,14 @@ public class PreComClient
     public async Task SetAvailabilityForAlarmMessage(int msgInID, bool available, CancellationToken cancellationToken = default)
     {
         _ = await Post<object>($"api/User/SetAvailabilityForAlarmMessage?msgInID={msgInID}&available={available}", cancellationToken: cancellationToken);
+    }
+
+    public async Task SendMessage(MsgSend msgSend, CancellationToken cancellationToken = default)
+    {
+        var json = JsonConvert.SerializeObject(msgSend);
+        var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+        var result = await Post<object>("api/Msg/SendMessage", content: stringContent, cancellationToken: cancellationToken);
+        var jsonResult = JsonConvert.SerializeObject(result);
     }
 
     protected virtual async Task<T> Get<T>(string url, CancellationToken cancellationToken)
