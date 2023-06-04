@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
+﻿using Drogecode.Knrm.Oefenrooster.PreCom.Models;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Drogecode.Knrm.Oefenrooster.PreCom.Models;
-using Newtonsoft.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Drogecode.Knrm.Oefenrooster.PreCom;
 
