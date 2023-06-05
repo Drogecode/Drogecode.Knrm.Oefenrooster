@@ -8,17 +8,13 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
 public sealed partial class ScheduleCalendar
 {
-    [Inject] private IStringLocalizer<Schedule> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<ScheduleCalendar> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
-    [Inject] private UserRepository _userRepository { get; set; } = default!;
-    [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
-    [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
-    [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; } = default!;
-    [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; } = default!;
-    [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; } = default!;
-    [Parameter, EditorRequired] public List<PlannerTrainingType>? TrainingTypes { get; set; } = default!;
-    private LinkedList<List<PlannedTraining>> _scheduleForUser = new();
+    [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
+    [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
+    [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; }
+    [Parameter, EditorRequired] public List<PlannerTrainingType>? TrainingTypes { get; set; }
     private CancellationTokenSource _cls = new();
     private List<CustomItem> _events = new();
     private List<UserTrainingCounter>? _userTrainingCounter;
