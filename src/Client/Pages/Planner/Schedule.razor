@@ -4,49 +4,17 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-<MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
-    <CellTemplate>
-        @{
-            var training = ((CustomItem)context).Training;
-        }
-        @if (training != null)
-        {
-            <ScheduleCard Planner="training" Users="_users" Functions="_functions" Vehicles="_vehicles" TrainingTypes="_trainingTypes" />
-        }
-    </CellTemplate>
-</MudCalendar>
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+    <MudIconButton Icon="@Icons.Material.Filled.CalendarMonth" aria-label="calendar" OnClick="()=>{_view = Enums.ScheduleView.Calendar;}" Disabled="@(_view == Enums.ScheduleView.Calendar)" />
+    <MudIconButton Icon="@Icons.Material.Filled.TableRows" aria-label="calendar" OnClick="()=>{_view = Enums.ScheduleView.Table;}" Disabled="@(_view == Enums.ScheduleView.Table)" />
+</MudButtonGroup>
 
-@if (_functions != null && _users != null && _userTrainingCounter != null)
+@switch (_view)
 {
-    <MudPaper>
-
-        <MudGrid Spacing="2" Justify="Justify.FlexStart">
-            @foreach (var function in _functions.OrderBy(x => x.Order))
-            {
-                @foreach (var user in _userTrainingCounter)
-                {
-                    var dbUser = _users.FirstOrDefault(x => x.Id == user.UserId && x.UserFunctionId == function.Id);
-                    @if (dbUser != null)
-                    {
-                        <MudItem xs="12" sm="6" md="4" lg="3">
-                            <MudText Style="@(function.TrainingTarget > user.Count ? "color: var(--mud-palette-error-lighten)" : "")">
-                                @($"{dbUser.Name} : {@user.Count}")
-                            </MudText>
-                        </MudItem>
-                    }
-                }
-            }
-            @foreach (var function in _functions.Where(x => x.TrainingTarget > 0).OrderBy(x => x.Order))
-            {
-                @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id && !_userTrainingCounter.Any(y => y.UserId == x.Id)).OrderBy(x => x.Name))
-                {
-                    <MudItem xs="12" sm="6" md="4" lg="3">
-                        <MudText Style="color: var(--mud-palette-error)">
-                            @($"{user.Name} : {L["No training"]}")
-                        </MudText>
-                    </MudItem>
-                }
-            }
-        </MudGrid>
-    </MudPaper>
+    case Enums.ScheduleView.Calendar:
+        <ScheduleCalendar Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" />
+        break;
+    case Enums.ScheduleView.Table:
+        <ScheduleTable Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" />
+        break;
 }

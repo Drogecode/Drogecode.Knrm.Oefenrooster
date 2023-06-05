@@ -1,0 +1,20 @@
+﻿<MudText Typo="Typo.h3">Comming soon!</MudText>
+
+
+<MudDataGrid Items="@Users" HorizontalScrollbar="true" Bordered="true" Dense="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" StickyLeft="true" />
+        <PropertyColumn Property="x => x.Created" />
+        <PropertyColumn Property="x => x.UserFunctionId" HeaderStyle="white-space:nowrap">
+            <HeaderTemplate>
+                @((MarkupString)$"This is a really long column{string.Join("", Enumerable.Repeat("&nbsp;", 1000))}...")
+            </HeaderTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.LastLogin" />
+        <TemplateColumn StickyRight="true">
+            <CellTemplate>
+                <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="@Size.Small" />
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
