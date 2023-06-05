@@ -5,40 +5,47 @@
     <MudButton>@_month.ToString(_month.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy")</MudButton>
     <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos" OnClick="()=>SetMonth(_month.AddMonths(1))" Disabled="_updating"></MudIconButton>
 </MudButtonGroup>
+@if (Users != null)
+{
 
-<MudDataGrid Items="@Users" HorizontalScrollbar="true" Bordered="true" Dense="true" Groupable="true" SortMode="SortMode.None">
-    <Columns>
-        <PropertyColumn Property="x => x.UserFunctionId" Title="Category" Grouping GroupBy="@_groupBy" Hidden SortBy="x=> Functions?.FirstOrDefault(y => y.Id == x.UserFunctionId)?.Order">
-            <GroupTemplate>
-                @{
-                    var function = Functions?.FirstOrDefault(x => x.Id == (Guid)@context.Grouping.Key);
-                }
-                <span style="font-weight:bold">@function?.Name <MudChip Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small">total @context.Grouping.Count()</MudChip></span>
-            </GroupTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.Name" StickyLeft="true" />
-        @foreach (var item in _events)
-        {
-            <PropertyColumn Property="x =>x.Id" Class="@($"trainingType-{item.RoosterTrainingTypeId}")">
-                <HeaderTemplate>
-                    @item.DateStart.ToString("dddd")
-                    <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="item.DateStart" /> @item.Name
-                </HeaderTemplate>
-                <CellTemplate>
+    <MudDataGrid Items="@Users.OrderBy(x => Functions?.FirstOrDefault(y => y.Id == x.UserFunctionId)?.Order)" HorizontalScrollbar="true" Bordered="true" Dense="true" Groupable="true" SortMode="SortMode.None">
+        <Columns>
+            <PropertyColumn Property="x => x.UserFunctionId" Title="Category"    
+        Grouping
+            GroupBy="@_groupBy"     
+        Hidden
+            SortBy="x=> Functions?.FirstOrDefault(y => y.Id == x.UserFunctionId)?.Order">
+                <GroupTemplate>
                     @{
-                        var training = item.PlanUsers.FirstOrDefault(x => x.UserId == @context.Item.Id);
+                        var function = Functions?.FirstOrDefault(x => x.Id == (Guid)@context.Grouping.Key);
                     }
-                    <div>
-                        @if (training != null)
-                        {
-                            @training.Availabilty @training.Assigned
-                        }
-                    </div>
-                </CellTemplate>
+                    <span style="font-weight:bold">@function?.Name <MudChip Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small">total @context.Grouping.Count()</MudChip></span>
+                </GroupTemplate>
             </PropertyColumn>
-        }
-    </Columns>
-</MudDataGrid>
+            <PropertyColumn Property="x => x.Name" StickyLeft="true" />
+            @foreach (var item in _events)
+            {
+                <PropertyColumn Property="x =>x.Id" Class="@($"trainingType-{item.RoosterTrainingTypeId}")">
+                    <HeaderTemplate>
+                        @item.DateStart.ToString("dddd")
+                        <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="item.DateStart" /> @item.Name
+                    </HeaderTemplate>
+                    <CellTemplate>
+                        @{
+                            var training = item.PlanUsers.FirstOrDefault(x => x.UserId == @context.Item.Id);
+                        }
+                        <div>
+                            @if (training != null)
+                            {
+                                @training.Availabilty @training.Assigned
+                            }
+                        </div>
+                    </CellTemplate>
+                </PropertyColumn>
+            }
+        </Columns>
+    </MudDataGrid>
+}
 
 <ScheduleCounter Users="Users" Functions="Functions" UserTrainingCounter="_userTrainingCounter" />
 
