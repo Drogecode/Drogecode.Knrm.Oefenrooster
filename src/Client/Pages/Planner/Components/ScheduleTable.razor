@@ -1,13 +1,21 @@
 ﻿<MudText Typo="Typo.h3">Comming soon!</MudText>
 
 <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
-    <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIosNew" OnClick="()=>SetMonth(_month.AddMonths(-1))"></MudIconButton>
-    <MudButton>@_month.ToString(_month.Year == DateTime.Today.Year ? "MMMM" : "YYYY MMMM")</MudButton>
-    <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos" OnClick="()=>SetMonth(_month.AddMonths(1))"></MudIconButton>
+    <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIosNew" OnClick="()=>SetMonth(_month.AddMonths(-1))" Disabled="_updating"></MudIconButton>
+    <MudButton>@_month.ToString(_month.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy")</MudButton>
+    <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos" OnClick="()=>SetMonth(_month.AddMonths(1))" Disabled="_updating"></MudIconButton>
 </MudButtonGroup>
 
-<MudDataGrid Items="@Users" HorizontalScrollbar="true" Bordered="true" Dense="true">
+<MudDataGrid Items="@Users" HorizontalScrollbar="true" Bordered="true" Dense="true" Groupable="true" SortMode="SortMode.None">
     <Columns>
+        <PropertyColumn Property="x => x.UserFunctionId" Title="Category" Grouping GroupBy="@_groupBy" Hidden SortBy="x=> Functions?.FirstOrDefault(y => y.Id == x.UserFunctionId)?.Order">
+            <GroupTemplate>
+                @{
+                    var function = Functions?.FirstOrDefault(x => x.Id == (Guid)@context.Grouping.Key);
+                }
+                <span style="font-weight:bold">@function?.Name <MudChip Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small">total @context.Grouping.Count()</MudChip></span>
+            </GroupTemplate>
+        </PropertyColumn>
         <PropertyColumn Property="x => x.Name" StickyLeft="true" />
         @foreach (var item in _events)
         {
@@ -33,3 +41,10 @@
 </MudDataGrid>
 
 <ScheduleCounter Users="Users" Functions="Functions" UserTrainingCounter="_userTrainingCounter" />
+
+@code {
+    Func<DrogeUser, object> _groupBy = x =>
+    {
+        return x.UserFunctionId;
+    };
+}

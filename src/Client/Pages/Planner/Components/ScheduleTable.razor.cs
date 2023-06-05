@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Microsoft.Extensions.Localization;
+using static MudBlazor.CategoryTypes;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
