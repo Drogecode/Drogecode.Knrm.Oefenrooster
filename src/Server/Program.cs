@@ -37,7 +37,8 @@ var groupNames = new List<string>
     "Function",
     "Schedule",
     "User",
-    "Vehicle"
+    "Vehicle",
+    "SharePoint"
 };
 var runningInContainers = string.Equals(builder.Configuration["DOTNET_RUNNING_IN_CONTAINER"], "true");
 if (!runningInContainers)
