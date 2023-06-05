@@ -6,7 +6,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
-public sealed partial class ScheduleCalendar
+public sealed partial class ScheduleCalendar : IDisposable
 {
     [Inject] private IStringLocalizer<ScheduleCalendar> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;

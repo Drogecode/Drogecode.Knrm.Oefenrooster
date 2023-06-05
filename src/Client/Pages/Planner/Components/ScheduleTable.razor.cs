@@ -1,10 +1,12 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
-public sealed partial class ScheduleTable
+public sealed partial class ScheduleTable : IDisposable
 {
+    [Inject] private IStringLocalizer<ScheduleTable> L { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; } = default!;
@@ -15,6 +17,24 @@ public sealed partial class ScheduleTable
     private bool _updating;
     private List<PlannedTraining> _events = new();
     private List<UserTrainingCounter>? _userTrainingCounter;
+    private DateTime _month;
+
+    private async Task<DateTime> SetMonth(DateTime dateTime)
+    {
+        _month = dateTime;
+        DateRange dateRange = new DateRange
+        {
+            Start = new DateTime(dateTime.Year, dateTime.Month, 1),
+            End = new DateTime(dateTime.Year, dateTime.Month, DateTime.DaysInMonth(dateTime.Year, dateTime.Month))
+        };
+        await SetCalenderForMonth(dateRange);
+        return _month;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SetMonth(DateTime.Today);
+    }
 
     private async Task SetCalenderForMonth(DateRange dateRange)
     {
@@ -36,5 +56,10 @@ public sealed partial class ScheduleTable
         }
         _updating = false;
         StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _cls.Cancel();
     }
 }

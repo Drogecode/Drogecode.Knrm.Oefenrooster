@@ -1,22 +1,35 @@
 ﻿<MudText Typo="Typo.h3">Comming soon!</MudText>
 
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+    <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIosNew" OnClick="()=>SetMonth(_month.AddMonths(-1))"></MudIconButton>
+    <MudButton>@_month.ToString(_month.Year == DateTime.Today.Year ? "MMMM" : "YYYY MMMM")</MudButton>
+    <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos" OnClick="()=>SetMonth(_month.AddMonths(1))"></MudIconButton>
+</MudButtonGroup>
 
 <MudDataGrid Items="@Users" HorizontalScrollbar="true" Bordered="true" Dense="true">
     <Columns>
         <PropertyColumn Property="x => x.Name" StickyLeft="true" />
-        <PropertyColumn Property="x => x.Created" />
-        <PropertyColumn Property="x => x.UserFunctionId" HeaderStyle="white-space:nowrap">
-            <HeaderTemplate>
-                @((MarkupString)$"This is a really long column{string.Join("", Enumerable.Repeat("&nbsp;", 1000))}...")
-            </HeaderTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.LastLogin" />
-        <TemplateColumn StickyRight="true">
-            <CellTemplate>
-                <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="@Size.Small" />
-            </CellTemplate>
-        </TemplateColumn>
+        @foreach (var item in _events)
+        {
+            <PropertyColumn Property="x =>x.Id" Class="@($"trainingType-{item.RoosterTrainingTypeId}")">
+                <HeaderTemplate>
+                    @item.DateStart.ToString("dddd")
+                    <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="item.DateStart" /> @item.Name
+                </HeaderTemplate>
+                <CellTemplate>
+                    @{
+                        var training = item.PlanUsers.FirstOrDefault(x => x.UserId == @context.Item.Id);
+                    }
+                    <div>
+                        @if (training != null)
+                        {
+                            @training.Availabilty @training.Assigned
+                        }
+                    </div>
+                </CellTemplate>
+            </PropertyColumn>
+        }
     </Columns>
 </MudDataGrid>
 
-<ScheduleCounter Users="Users" Functions="Functions" UserTrainingCounter="_userTrainingCounter"/>
+<ScheduleCounter Users="Users" Functions="Functions" UserTrainingCounter="_userTrainingCounter" />
