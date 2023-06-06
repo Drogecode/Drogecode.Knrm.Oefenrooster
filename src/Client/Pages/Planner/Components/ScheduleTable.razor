@@ -13,7 +13,8 @@
                   GroupBy="@_groupBy"
                   GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
                   GroupFooterClass="mb-4"
-                  Dense="true">
+                  Dense="true"
+                  Bordered="true">
             <ColGroup>
                 <col style="width: 60px;" />
                 <col />
@@ -26,7 +27,7 @@
                 <MudTh>@L["Name"]</MudTh>
                 @foreach (var item in _events)
                 {
-                    <MudTh>
+                    <MudTh Class="@($"trainingType-{item.RoosterTrainingTypeId}")">
                         @item.DateStart.ToString("dddd")
                         <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="item.DateStart" /> @item.Name
                     </MudTh>
@@ -34,30 +35,24 @@
             </HeaderContent>
             <GroupHeaderTemplate>
                 <MudTh Class="mud-table-cell-custom-group" colspan="5">
-                    @($"{Functions?.FirstOrDefault(y => y.Id == (Guid)context.Key)?.Name ?? "Unknown"}")
+                    @($"{Functions?.FirstOrDefault(y => y.Id == (Guid)context.Key)?.Name ?? L["Unknown"]}")
                 </MudTh>
             </GroupHeaderTemplate>
             <RowTemplate>
                 <MudTd Class="DrogeCode-sticky-column" DataLabel="@L["Name"]">@context.Name</MudTd>
                 @foreach (var item in _events)
                 {
-                    <MudTd DataLabel="@L["Name"]">
-                        @{
-                            var training = item.PlanUsers.FirstOrDefault(x => x.UserId == @context.Id);
+                    var training = item.PlanUsers.FirstOrDefault(x => x.UserId == @context.Id);
+                    <MudTd Class="@(training == null ? "" : training.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available ? "bg-green-400" : training.Availabilty == Oefenrooster.Shared.Enums.Availabilty.NotAvailable ? "bg-red-400" : training.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Maybe ? "bg-orange-400" : "")" DataLabel="@L["Name"]">
+                        @if (training?.Assigned == true)
+                        {
+                            @(Vehicles?.FirstOrDefault(x => x.Id == training.VehicleId)?.Code ?? Vehicles?.FirstOrDefault(x => x.Default)?.Code ?? L["Assigned"])
                         }
-                        <div>
-                            @if (training != null)
-                            {
-                                @training.Availabilty @training.Assigned
-                            }
-                        </div>
                     </MudTd>
                 }
             </RowTemplate>
         </MudTable>
     }
-
-    <ScheduleCounter Users="Users" Functions="Functions" UserTrainingCounter="_userTrainingCounter" />
 </div>
 @code {
     TableGroupDefinition<DrogeUser> _groupBy = new()
