@@ -1,38 +1,49 @@
-﻿<MudText Typo="Typo.h3">Comming soon!</MudText>
+﻿<div>
+    <MudText Typo="Typo.h3">Comming soon!</MudText>
 
-<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
-    <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIosNew" OnClick="()=>SetMonth(_month.AddMonths(-1))" Disabled="_updating"></MudIconButton>
-    <MudButton>@_month.ToString(_month.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy")</MudButton>
-    <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos" OnClick="()=>SetMonth(_month.AddMonths(1))" Disabled="_updating"></MudIconButton>
-</MudButtonGroup>
-@if (Users != null)
-{
-
-    <MudDataGrid Items="@Users.OrderBy(x => Functions?.FirstOrDefault(y => y.Id == x.UserFunctionId)?.Order)" HorizontalScrollbar="true" Bordered="true" Dense="true" Groupable="true" SortMode="SortMode.None">
-        <Columns>
-            <PropertyColumn Property="x => x.UserFunctionId" Title="Category"    
-        Grouping
-            GroupBy="@_groupBy"     
-        Hidden
-            SortBy="x=> Functions?.FirstOrDefault(y => y.Id == x.UserFunctionId)?.Order">
-                <GroupTemplate>
-                    @{
-                        var function = Functions?.FirstOrDefault(x => x.Id == (Guid)@context.Grouping.Key);
-                    }
-                    <span style="font-weight:bold">@function?.Name <MudChip Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small">total @context.Grouping.Count()</MudChip></span>
-                </GroupTemplate>
-            </PropertyColumn>
-            <PropertyColumn Property="x => x.Name" StickyLeft="true" />
-            @foreach (var item in _events)
-            {
-                <PropertyColumn Property="x =>x.Id" Class="@($"trainingType-{item.RoosterTrainingTypeId}")">
-                    <HeaderTemplate>
+    <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+        <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIosNew" OnClick="()=>SetMonth(_month.AddMonths(-1))" Disabled="_updating"></MudIconButton>
+        <MudButton>@_month.ToString(_month.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy")</MudButton>
+        <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos" OnClick="()=>SetMonth(_month.AddMonths(1))" Disabled="_updating"></MudIconButton>
+    </MudButtonGroup>
+    @if (Users != null)
+    {
+        <MudTable Hover="true" Breakpoint="Breakpoint.Sm"
+                  Items="@Users.OrderBy(x => Functions?.FirstOrDefault(y => y.Id == x.UserFunctionId)?.Order).ThenBy(x=>x.Name)"
+                  GroupBy="@_groupBy"
+                  GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
+                  GroupFooterClass="mb-4"
+                  Dense="true">
+            <ColGroup>
+                <col style="width: 60px;" />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+            </ColGroup>
+            <HeaderContent>
+                <MudTh>@L["Name"]</MudTh>
+                @foreach (var item in _events)
+                {
+                    <MudTh>
                         @item.DateStart.ToString("dddd")
                         <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="item.DateStart" /> @item.Name
-                    </HeaderTemplate>
-                    <CellTemplate>
+                    </MudTh>
+                }
+            </HeaderContent>
+            <GroupHeaderTemplate>
+                <MudTh Class="mud-table-cell-custom-group" colspan="5">
+                    @($"{Functions?.FirstOrDefault(y => y.Id == (Guid)context.Key)?.Name ?? "Unknown"}")
+                </MudTh>
+            </GroupHeaderTemplate>
+            <RowTemplate>
+                <MudTd Class="DrogeCode-sticky-column" DataLabel="@L["Name"]">@context.Name</MudTd>
+                @foreach (var item in _events)
+                {
+                    <MudTd DataLabel="@L["Name"]">
                         @{
-                            var training = item.PlanUsers.FirstOrDefault(x => x.UserId == @context.Item.Id);
+                            var training = item.PlanUsers.FirstOrDefault(x => x.UserId == @context.Id);
                         }
                         <div>
                             @if (training != null)
@@ -40,18 +51,21 @@
                                 @training.Availabilty @training.Assigned
                             }
                         </div>
-                    </CellTemplate>
-                </PropertyColumn>
-            }
-        </Columns>
-    </MudDataGrid>
-}
+                    </MudTd>
+                }
+            </RowTemplate>
+        </MudTable>
+    }
 
-<ScheduleCounter Users="Users" Functions="Functions" UserTrainingCounter="_userTrainingCounter" />
-
+    <ScheduleCounter Users="Users" Functions="Functions" UserTrainingCounter="_userTrainingCounter" />
+</div>
 @code {
-    Func<DrogeUser, object> _groupBy = x =>
-    {
-        return x.UserFunctionId;
-    };
+    TableGroupDefinition<DrogeUser> _groupBy = new()
+        {
+            GroupName = "Group",
+            Indentation = false,
+            Expandable = true,
+            IsInitiallyExpanded = true,
+            Selector = (e) => e.UserFunctionId
+        };
 }
