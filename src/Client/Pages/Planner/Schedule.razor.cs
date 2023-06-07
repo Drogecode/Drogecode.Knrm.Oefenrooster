@@ -30,7 +30,7 @@ public sealed partial class Schedule : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        _users = await _userRepository.GetAllUsersAsync();
+        _users = await _userRepository.GetAllUsersAsync(false);
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
         _trainingTypes = await _scheduleRepository.GetTrainingTypes(_cls.Token);

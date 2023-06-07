@@ -30,12 +30,12 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<DrogeUser>>> GetAll(CancellationToken token = default)
+    public async Task<ActionResult<List<DrogeUser>>> GetAll(bool includeHidden, CancellationToken token = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var result = await _userService.GetAllUsers(customerId);
+            var result = await _userService.GetAllUsers(customerId, includeHidden);
 
             return result;
         }
@@ -116,7 +116,7 @@ public class UserController : ControllerBase
             var userName = User?.FindFirstValue("name") ?? throw new Exception("No userName found");
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             _graphService.InitializeGraph();
-            var existingUsers = await _userService.GetAllUsers(customerId);
+            var existingUsers = await _userService.GetAllUsers(customerId, true);
             var users = await _graphService.ListUsersAsync();
             if (users?.Value != null)
             {

@@ -13,10 +13,10 @@ public class UserService : IUserService
         _database = database;
     }
 
-    public async Task<List<DrogeUser>> GetAllUsers(Guid customerId)
+    public async Task<List<DrogeUser>> GetAllUsers(Guid customerId, bool includeHidden)
     {
         var result = new List<DrogeUser>();
-        var dbUsers = _database.Users.Where(u => u.CustomerId == customerId && u.DeletedOn == null);
+        var dbUsers = _database.Users.Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.Active));
         foreach (var dbUser in dbUsers)
         {
             result.Add(new DrogeUser

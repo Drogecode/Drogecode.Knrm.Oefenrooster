@@ -11,9 +11,9 @@ public class UserRepository
         _userClient = userClient;
     }
 
-    public async Task<List<DrogeUser>?> GetAllUsersAsync()
+    public async Task<List<DrogeUser>?> GetAllUsersAsync(bool includeHidden)
     {
-        var dbUser = await _userClient.GetAllAsync();
+        var dbUser = await _userClient.GetAllAsync(includeHidden);
         return dbUser.ToList();
     }
     public async Task<DrogeUser?> GetCurrentUserAsync()

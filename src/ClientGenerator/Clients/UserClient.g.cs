@@ -25,12 +25,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     {
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeUser>> GetAllAsync();
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeUser>> GetAllAsync(bool? includeHidden);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeUser>> GetAllAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeUser>> GetAllAsync(bool? includeHidden, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -99,18 +99,23 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeUser>> GetAllAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeUser>> GetAllAsync(bool? includeHidden)
         {
-            return GetAllAsync(System.Threading.CancellationToken.None);
+            return GetAllAsync(includeHidden, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeUser>> GetAllAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeUser>> GetAllAsync(bool? includeHidden, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/User/GetAll");
+            urlBuilder_.Append("api/User/GetAll?");
+            if (includeHidden != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("includeHidden") + "=").Append(System.Uri.EscapeDataString(ConvertToString(includeHidden, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
 
             var client_ = _httpClient;
             var disposeClient_ = false;
