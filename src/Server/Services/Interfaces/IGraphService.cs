@@ -13,4 +13,5 @@ public interface IGraphService
     Task<DirectoryObjectCollectionResponse?> GetGroupForUser(string userId);
     Task<UserCollectionResponse> NextUsersPage(UserCollectionResponse users);
     Task GetLists();
+    Task<object> GetListTrainingUser(string userName, Guid userId, int count, Guid customerId, CancellationToken clt);
 }

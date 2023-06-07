@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Graph;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -13,21 +16,37 @@ public class SharePointController : ControllerBase
 {
     private readonly ILogger<SharePointController> _logger;
     private readonly IConfiguration _configuration;
-    private readonly IConfigurationService _configurationService;
     private readonly IAuditService _auditService;
     private readonly IGraphService _graphService;
 
     public SharePointController(
         ILogger<SharePointController> logger,
         IConfiguration configuration,
-        IConfigurationService configurationService,
         IAuditService auditService,
         IGraphService graphService)
     {
         _logger = logger;
         _configuration = configuration;
-        _configurationService = configurationService;
         _auditService = auditService;
         _graphService = graphService;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<bool>> GetLastTrainingsForCurrentUser(int count, CancellationToken clt = default)
+    {
+        try
+        {
+            var userName = User?.FindFirstValue("name") ?? throw new Exception("No userName found");
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            _graphService.InitializeGraph();
+            var result = await _graphService.GetListTrainingUser(userName, userId, count, customerId, clt);
+            return Ok(true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetLastTrainingsForCurrentUser");
+            return BadRequest();
+        }
     }
 }

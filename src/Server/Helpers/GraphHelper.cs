@@ -1,6 +1,7 @@
 ﻿using Azure.Core;
 using Azure.Identity;
 using Drogecode.Knrm.Oefenrooster.Server.Graph;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Graph.Users;
@@ -15,6 +16,16 @@ public static class GraphHelper
     private static ClientSecretCredential? _clientSecretCredential;
     // Client configured with app-only authentication
     private static GraphServiceClient? _appClient;
+
+    private static List<SharePointUser>? _userList;
+
+    ///consts for KNRM huizen, if used by other organizations should be moved to db.
+    private const string KNRM_HUIZEN = "dorus1824.sharepoint.com,282e3a78-e28a-4db9-a30f-0244d23b05c9,411e2e34-56c5-4219-8624-30bd89032f48";
+    private const string STARTPAGINA = "dorus1824.sharepoint.com,834aa582-3cac-4e12-96fd-3aecebd36e4b,e7847792-243f-4564-a8f8-1ca2793e5f98";
+    private const string HRB = "dorus1824.sharepoint.com,02bec1eb-b5d1-4ace-b064-d21cd2986efc,eb674d8f-15ee-4b6f-9467-8015ed5231e7";
+    private const string ID_USERS_KNRM = "5DA01E6F-41A5-4230-A0FB-7E7E0582037E";
+    private const string ID_ACTION_REPORTS_KNRM_HUIZEN = "2a6cf2ae-964a-4a63-9229-dcb820924bd5";
+    private const string ID_OTHER_REPORTS_KNRM_HUIZEN = "7fff5890-2100-406a-89d9-f07978bda321";
 
     public static void InitializeGraphForAppOnlyAuth(Settings? settings)
     {
@@ -99,29 +110,17 @@ public static class GraphHelper
     {
         try
         {
-            var KNRMHUIZEN = "dorus1824.sharepoint.com,282e3a78-e28a-4db9-a30f-0244d23b05c9,411e2e34-56c5-4219-8624-30bd89032f48";
-            var startpagina = "dorus1824.sharepoint.com,834aa582-3cac-4e12-96fd-3aecebd36e4b,e7847792-243f-4564-a8f8-1ca2793e5f98";
-            var HRB = "dorus1824.sharepoint.com,02bec1eb-b5d1-4ace-b064-d21cd2986efc,eb674d8f-15ee-4b6f-9467-8015ed5231e7";
-
-            var actieRaportenId = "2a6cf2ae-964a-4a63-9229-dcb820924bd5";
-            var overigeRaportenId = "7fff5890-2100-406a-89d9-f07978bda321";
-            var actieRaporten = await _appClient.Sites[startpagina].Lists[actieRaportenId].GetAsync();
-            var overigeRaporten = await _appClient.Sites[startpagina].Lists[overigeRaportenId].GetAsync();
-
-            var actieColumns = await _appClient.Sites[startpagina].Lists[actieRaportenId].Columns.GetAsync();
-            string d = string.Empty;
-
-            /*var actieItems = await _appClient.Sites[startpagina].Lists[actieRaportenId].Items.GetAsync((requestConfiguration) =>
-            {
-                requestConfiguration.QueryParameters.Expand = new string[] { "fields(select=Boot)" };
-            });*/
-            var actieItems = await _appClient.Sites[startpagina].Lists[actieRaportenId].Items.GetAsync();
-            var overigeItems = await _appClient.Sites[startpagina].Lists[overigeRaportenId].Items.GetAsync();
+            if (_appClient == null) return;
+            var actieRaporten = await _appClient.Sites[STARTPAGINA].Lists[ID_ACTION_REPORTS_KNRM_HUIZEN].GetAsync();
+            var overigeRaporten = await _appClient.Sites[STARTPAGINA].Lists[ID_OTHER_REPORTS_KNRM_HUIZEN].GetAsync();
+            var actieColumns = await _appClient.Sites[STARTPAGINA].Lists[ID_ACTION_REPORTS_KNRM_HUIZEN].Columns.GetAsync();
+            var actieItems = await _appClient.Sites[STARTPAGINA].Lists[ID_ACTION_REPORTS_KNRM_HUIZEN].Items.GetAsync();
+            var overigeItems = await _appClient.Sites[STARTPAGINA].Lists[ID_OTHER_REPORTS_KNRM_HUIZEN].Items.GetAsync();
 
             foreach (var actie in actieItems.Value)
             {
                 Console.WriteLine(actie.Name);
-                var det = await _appClient.Sites[startpagina].Lists[actieRaportenId].Items[actie.Id].GetAsync();
+                var det = await _appClient.Sites[STARTPAGINA].Lists[ID_ACTION_REPORTS_KNRM_HUIZEN].Items[actie.Id].GetAsync();
                 Console.WriteLine(det.Fields.AdditionalData.Count);
             }
         }
@@ -129,14 +128,83 @@ public static class GraphHelper
         {
             Console.WriteLine(ex.Message);
         }
-        /*var sites = await _appClient.Sites.GetAsync();
-        foreach (var site in sites.Value)
+    }
+
+    internal async static Task<object> GetListTraining(string userName, Guid userId, Guid customerId)
+    {
+        if (_appClient == null || customerId != DefaultSettingsHelper.KnrmHuizenId) return null;
+        var users = await FindSharePointUsers(userName);
+
+        var spUser = users.FirstOrDefault(x => string.Compare(x.Name, userName) == 0);
+
+        var overigeRaporten = await _appClient.Sites[STARTPAGINA].Lists[ID_OTHER_REPORTS_KNRM_HUIZEN].GetAsync();
+
+        var overigeItems = await _appClient.Sites[STARTPAGINA].Lists[ID_OTHER_REPORTS_KNRM_HUIZEN].Items.GetAsync((requestConfiguration) =>
         {
-            var lists = await _appClient.Sites[startpagina].Lists.GetAsync();
-            foreach (var list in lists.Value)
+            requestConfiguration.QueryParameters.Expand = new string[] { "fields" };
+        });
+        var listItems = await _appClient.Sites[$"{STARTPAGINA}"].Lists[$"{ID_OTHER_REPORTS_KNRM_HUIZEN}"].Items.GetAsync();
+        foreach (var det in overigeItems.Value.OrderByDescending(x=>x.CreatedDateTime))
+        {
+            if (det?.Fields?.AdditionalData == null) continue;
+            var schipperId = det.Fields.AdditionalData["SchipperLookupId"]?.ToString();
+            if (string.Compare(schipperId, spUser.Id) == 0)
             {
-                Console.WriteLine(list.Name);
+                continue;
             }
-        }*/
+            var op1 = det.Fields.AdditionalData["Opstapper_x0020_1LookupId"]?.ToString();
+            if (string.Compare(op1, spUser.Id) == 0)
+            {
+                continue;
+            }
+            var op2 = det.Fields.AdditionalData["Opstapper_x0020_2LookupId"]?.ToString();
+            if (string.Compare(op2, spUser.Id) == 0)
+            {
+                continue;
+            }
+            var op3 = det.Fields.AdditionalData["Opstapper_x0020_3LookupId"]?.ToString();
+            if (string.Compare(op3, spUser.Id) == 0)
+            {
+                continue;
+            }
+            var op4 = det.Fields.AdditionalData["Opstapper_x0020_4LookupId"]?.ToString();
+            if (string.Compare(op4, spUser.Id) == 0)
+            {
+                continue;
+            }
+            var op5 = det.Fields.AdditionalData["Opstapper_x0020_5LookupId"]?.ToString();
+            if (string.Compare(op5, spUser.Id) == 0)
+            {
+                continue;
+            }
+        }
+        return overigeItems;
+    }
+
+    private static async Task<List<SharePointUser>> FindSharePointUsers(string userName)
+    {
+        if (_userList != null && !_userList.Any(x => string.Compare(x.Name, userName) == 0))
+            return _userList;
+        var allUsers = await _appClient.Sites[STARTPAGINA].Lists[ID_USERS_KNRM].Items.GetAsync((requestConfiguration) =>
+        {
+            requestConfiguration.QueryParameters.Expand = new string[] { "fields" };
+        });
+        var spUsers = new List<SharePointUser>();
+        foreach (var det in allUsers.Value)
+        {
+            spUsers.Add(new SharePointUser
+            {
+                Id = det.Id,
+                Name = det.Fields.AdditionalData["Title"].ToString()
+            });
+        }
+        _userList = spUsers;
+        return _userList;
+    }
+
+    private class SharePointUser
+    {
+        public string Id;
+        public string Name;
     }
 }

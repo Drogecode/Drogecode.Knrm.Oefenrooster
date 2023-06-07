@@ -30,6 +30,7 @@ builder.Services.TryAddScoped<ICalendarItemClient, CalendarItemClient>();
 builder.Services.TryAddScoped<IConfigurationClient, ConfigurationClient>();
 builder.Services.TryAddScoped<IFunctionClient, FunctionClient>();
 builder.Services.TryAddScoped<IScheduleClient, ScheduleClient>();
+builder.Services.TryAddScoped<ISharePointClient, SharePointClient>();
 builder.Services.TryAddScoped<IUserClient, UserClient>();
 builder.Services.TryAddScoped<IVehicleClient, VehicleClient>();
 
@@ -37,6 +38,7 @@ builder.Services.TryAddScoped<CalendarItemRepository>();
 builder.Services.TryAddScoped<ConfigurationRepository>();
 builder.Services.TryAddScoped<FunctionRepository>();
 builder.Services.TryAddScoped<ScheduleRepository>();
+builder.Services.TryAddScoped<SharePointRepository>();
 builder.Services.TryAddScoped<UserRepository>();
 builder.Services.TryAddScoped<VehicleRepository>();
 

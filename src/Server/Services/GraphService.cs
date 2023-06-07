@@ -92,4 +92,10 @@ public class GraphService : IGraphService
     {
         await GraphHelper.GetLists();
     }
+
+    public async Task<object> GetListTrainingUser(string userName, Guid userId, int count, Guid customerId, CancellationToken clt)
+    {
+        var d = await GraphHelper.GetListTraining(userName, userId, customerId);
+        return d;
+    }
 }

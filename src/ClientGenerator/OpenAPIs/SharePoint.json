@@ -4,6 +4,47 @@
     "title": "SharePoint",
     "version": "v1"
   },
-  "paths": { },
+  "paths": {
+    "/api/SharePoint/GetLastTrainingsForCurrentUser": {
+      "get": {
+        "tags": [
+          "SharePoint"
+        ],
+        "operationId": "GetLastTrainingsForCurrentUser",
+        "parameters": [
+          {
+            "name": "count",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "components": { }
 }
