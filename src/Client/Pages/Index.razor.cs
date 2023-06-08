@@ -1,6 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Helpers;
-using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.Extensions.Localization;
 
@@ -15,12 +13,15 @@ public sealed partial class Index : IDisposable
     private List<Training>? _futureTrainings;
     private List<Training>? _pinnedTrainings;
     private List<SharePointTraining>? _sharePointTrainings;
+    private List<SharePointAction>? _sharePointActions;
     protected override async Task OnParametersSetAsync()
     {
         var dbUser = await _userRepository.GetCurrentUserAsync();//Force creation of user.
         _futureTrainings = (await _scheduleRepository.GetScheduledTrainingsForUser(_cls.Token))?.Trainings;
         StateHasChanged();
         _pinnedTrainings = (await _scheduleRepository.GetPinnedTrainingsForUser(_cls.Token))?.Trainings;
+        StateHasChanged();
+        _sharePointActions = await _sharePointRepository.GetLastActionsForCurrentUser(_cls.Token);
         StateHasChanged();
         _sharePointTrainings = await _sharePointRepository.GetLastTrainingsForCurrentUser(_cls.Token);
     }

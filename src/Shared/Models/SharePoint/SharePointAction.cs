@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 
-public class SharePointTraining
+public class SharePointAction
 {
     public string? Description { get; set; }
     public string? Title { get; set; }

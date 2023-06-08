@@ -50,4 +50,23 @@ public class SharePointController : ControllerBase
             return BadRequest();
         }
     }
+
+    [HttpGet]
+    public async Task<ActionResult<List<SharePointAction>>> GetLastActionsForCurrentUser(int count, CancellationToken clt = default)
+    {
+        try
+        {
+            var userName = User?.FindFirstValue("name") ?? throw new Exception("No userName found");
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            _graphService.InitializeGraph();
+            var result = await _graphService.GetListActionsUser(userName, userId, count, customerId, clt);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetLastActionsForCurrentUser");
+            return BadRequest();
+        }
+    }
 }

@@ -16,4 +16,9 @@ public class SharePointRepository
     {
        return (await _sharePointClient.GetLastTrainingsForCurrentUserAsync(5, clt)).ToList();
     }
+
+    public async Task<List<SharePointAction>> GetLastActionsForCurrentUser(CancellationToken clt)
+    {
+       return (await _sharePointClient.GetLastActionsForCurrentUserAsync(5, clt)).ToList();
+    }
 }

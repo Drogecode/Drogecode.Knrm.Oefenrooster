@@ -206,6 +206,72 @@ public static class GraphHelper
         return trainings.OrderByDescending(x => x.Start).ToList();
     }
 
+    internal async static Task<List<SharePointAction>> GetListActions(string userName, Guid userId, Guid customerId)
+    {
+        if (_appClient == null || customerId != DefaultSettingsHelper.KnrmHuizenId) return null;
+        var users = await FindSharePointUsers(userName);
+
+        var spUser = users.FirstOrDefault(x => string.Compare(x.Name, userName) == 0);
+
+        var overigeRaporten = await _appClient.Sites[STARTPAGINA].Lists[ID_ACTION_REPORTS_KNRM_HUIZEN].GetAsync();
+
+        var overigeItems = await _appClient.Sites[STARTPAGINA].Lists[ID_ACTION_REPORTS_KNRM_HUIZEN].Items.GetAsync((config) =>
+        {
+            config.QueryParameters.Expand = new string[] { "fields" };
+            config.QueryParameters.Top = 25;
+        });
+        var trainings = new List<SharePointAction>();
+        while (overigeItems?.Value != null)
+        {
+            foreach (var det in overigeItems.Value)
+            {
+                var isUser = false;
+                if (det?.Fields?.AdditionalData == null) continue;
+                var schipperId = det.Fields.AdditionalData.ContainsKey("SchipperLookupId") ? det.Fields.AdditionalData["SchipperLookupId"]?.ToString() : "";
+                if (string.Compare(schipperId, spUser.Id) == 0)
+                {
+                    isUser = true;
+                }
+                var op1 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_1LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_1LookupId"]?.ToString() : "";
+                if (string.Compare(op1, spUser.Id) == 0)
+                {
+                    isUser = true;
+                }
+                var op2 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_2LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_2LookupId"]?.ToString() : "";
+                if (string.Compare(op2, spUser.Id) == 0)
+                {
+                    isUser = true;
+                }
+                var op3 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_3LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_3LookupId"]?.ToString() : "";
+                if (string.Compare(op3, spUser.Id) == 0)
+                {
+                    isUser = true;
+                }
+                var op4 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_4LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_4LookupId"]?.ToString() : "";
+                if (string.Compare(op4, spUser.Id) == 0)
+                {
+                    isUser = true;
+                }
+                var op5 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_5LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_5LookupId"]?.ToString() : "";
+                if (string.Compare(op5, spUser.Id) == 0)
+                {
+                    isUser = true;
+                }
+                if (!isUser) continue;
+                trainings.Add(new SharePointAction
+                {
+                    Description = det.Fields.AdditionalData.ContainsKey("Bijzonderheden_x0020_Oproep") ? det.Fields.AdditionalData["Bijzonderheden_x0020_Oproep"]!.ToString() : "",
+                    Title = det.Fields.AdditionalData.ContainsKey("LinkTitle") ? det.Fields.AdditionalData["LinkTitle"]!.ToString() : "",
+                    Start = det.Fields.AdditionalData.ContainsKey("Oproep_x0020__x0028_uren_x0029_") ? (DateTime)det.Fields.AdditionalData["Oproep_x0020__x0028_uren_x0029_"] : DateTime.MinValue,
+                });
+            }
+            if (overigeItems.OdataNextLink != null)
+                overigeItems = await NextListPage(overigeItems);
+            else break;
+        }
+        return trainings.OrderByDescending(x => x.Start).ToList();
+    }
+
     private static async Task<List<SharePointUser>> FindSharePointUsers(string userName)
     {
         if (_userList != null && !_userList.Any(x => string.Compare(x.Name, userName) == 0))

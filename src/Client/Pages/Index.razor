@@ -51,6 +51,26 @@ else
     <MudSkeleton />
     <MudSkeleton />
 }
+@if (_sharePointActions != null)
+{
+    @if (_sharePointActions.Count() > 0)
+    {
+        <MudText Typo="Typo.h3">@L["Five most recent actions from SharePoint"]</MudText>
+        <MudList>
+            @foreach (var action in _sharePointActions)
+            {
+                <MudListItem>@action.Description</MudListItem>
+            }
+        </MudList>
+    }
+}
+else
+{
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+}
 @if (_sharePointTrainings != null)
 {
     @if (_sharePointTrainings.Count() > 0)

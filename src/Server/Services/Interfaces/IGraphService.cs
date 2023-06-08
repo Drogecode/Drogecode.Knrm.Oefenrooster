@@ -15,4 +15,5 @@ public interface IGraphService
     Task<UserCollectionResponse> NextUsersPage(UserCollectionResponse users);
     Task GetLists();
     Task<List<SharePointTraining>> GetListTrainingUser(string userName, Guid userId, int count, Guid customerId, CancellationToken clt);
+    Task<List<SharePointAction>> GetListActionsUser(string userName, Guid userId, int count, Guid customerId, CancellationToken clt);
 }
