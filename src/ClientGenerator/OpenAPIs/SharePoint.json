@@ -27,17 +27,26 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "boolean"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SharePointTraining"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "boolean"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SharePointTraining"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "boolean"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SharePointTraining"
+                  }
                 }
               }
             }
@@ -46,5 +55,18 @@
       }
     }
   },
-  "components": { }
+  "components": {
+    "schemas": {
+      "SharePointTraining": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
 }

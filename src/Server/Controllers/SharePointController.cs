@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -32,7 +33,7 @@ public class SharePointController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<bool>> GetLastTrainingsForCurrentUser(int count, CancellationToken clt = default)
+    public async Task<ActionResult<List<SharePointTraining>>> GetLastTrainingsForCurrentUser(int count, CancellationToken clt = default)
     {
         try
         {
@@ -41,7 +42,7 @@ public class SharePointController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             _graphService.InitializeGraph();
             var result = await _graphService.GetListTrainingUser(userName, userId, count, customerId, clt);
-            return Ok(true);
+            return Ok(result);
         }
         catch (Exception ex)
         {

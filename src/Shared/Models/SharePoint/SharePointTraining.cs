@@ -8,5 +8,8 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 
 public class SharePointTraining
 {
-    public string Description { get; set; }
+    public string? Description { get; set; }
+    public string? Title { get; set; }
+    public DateTime Start { get; set; }
+
 }

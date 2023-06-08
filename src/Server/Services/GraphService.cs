@@ -1,5 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph.Models;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -7,12 +9,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class GraphService : IGraphService
 {
     private readonly ILogger<GraphService> _logger;
+    private readonly IMemoryCache _memoryCache;
     private readonly IConfiguration _configuration;
+
+    private const string USER_SP_TRAININGS = "usrSPTrai_{0}";
     public GraphService(
         ILogger<GraphService> logger,
+        IMemoryCache memoryCache,
         IConfiguration configuration)
     {
         _logger = logger;
+        _memoryCache = memoryCache;
         _configuration = configuration;
     }
     public void InitializeGraph(Settings? settings = null)
@@ -93,9 +100,14 @@ public class GraphService : IGraphService
         await GraphHelper.GetLists();
     }
 
-    public async Task<object> GetListTrainingUser(string userName, Guid userId, int count, Guid customerId, CancellationToken clt)
+    public async Task<List<SharePointTraining>> GetListTrainingUser(string userName, Guid userId, int count, Guid customerId, CancellationToken clt)
     {
-        var d = await GraphHelper.GetListTraining(userName, userId, customerId);
-        return d;
+        _memoryCache.TryGetValue<List<SharePointTraining>>(string.Format("USER_SP_TRAININGS", userId), out var sharePointTrainings);
+        if (sharePointTrainings == null)
+        {
+             sharePointTrainings = await GraphHelper.GetListTraining(userName, userId, customerId);
+            _ = _memoryCache.Set(string.Format("USER_SP_TRAININGS", userId), sharePointTrainings, DateTimeOffset.UtcNow.AddMinutes(5));
+        }
+        return sharePointTrainings.Take(count).ToList();
     }
 }

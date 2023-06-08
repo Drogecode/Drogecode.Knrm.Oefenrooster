@@ -16,6 +16,7 @@
 
 namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 {
+    using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -23,12 +24,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     {
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<bool> GetLastTrainingsForCurrentUserAsync(int? count);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<SharePointTraining>> GetLastTrainingsForCurrentUserAsync(int? count);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<bool> GetLastTrainingsForCurrentUserAsync(int? count, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<SharePointTraining>> GetLastTrainingsForCurrentUserAsync(int? count, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -61,7 +62,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<bool> GetLastTrainingsForCurrentUserAsync(int? count)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<SharePointTraining>> GetLastTrainingsForCurrentUserAsync(int? count)
         {
             return GetLastTrainingsForCurrentUserAsync(count, System.Threading.CancellationToken.None);
         }
@@ -69,7 +70,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<bool> GetLastTrainingsForCurrentUserAsync(int? count, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<SharePointTraining>> GetLastTrainingsForCurrentUserAsync(int? count, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/SharePoint/GetLastTrainingsForCurrentUser?");
@@ -111,7 +112,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<bool>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<SharePointTraining>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
