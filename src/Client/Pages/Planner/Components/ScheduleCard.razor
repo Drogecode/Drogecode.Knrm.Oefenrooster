@@ -14,7 +14,7 @@
                 <MudText Typo="Typo.caption">@function.Name @available / @total </MudText><br/>*@
                 @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id))
                 {
-                    <MudText>@assignedUser.Name</MudText>
+                    <MudText>@assignedUser.Name@(assignedUser.PlannedFunctionId != assignedUser.UserFunctionId ? $" - {LApp["as"]} {function.Name}" : "")</MudText>
                 }
             }
         }

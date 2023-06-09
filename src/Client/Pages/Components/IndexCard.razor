@@ -1,4 +1,8 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Client.Helpers
 <CalendarBaseCard Training="@Training" ReplaceEmtyName=true>
     <MudText Color="@PlannerHelper.ColorAvailabilty(Training.Availabilty)" Typo="Typo.subtitle2">@LApp[Training?.Availabilty.ToString() ?? "None"]</MudText>
+    @if (Functions != null && Training.PlannedFunctionId != User?.UserFunctionId && Functions.Any(x => x.Id == Training.PlannedFunctionId))
+    {
+        <MudChip Color="Color.Info">@($"{LApp["as"]} - {Functions.FirstOrDefault(x => x.Id == Training.PlannedFunctionId)?.Name}")</MudChip>
+    }
 </CalendarBaseCard>

@@ -92,7 +92,7 @@
                         {
                             <MudItem xs="@_colmn5">
                                 <MudText Typo="Typo.body2">
-                                    @L["as"] @(" ") @Functions.FirstOrDefault(x=>x.Id == user.PlannedFunctionId)?.Name
+                                    @($"{LApp["as"]} {Functions.FirstOrDefault(x=>x.Id == user.PlannedFunctionId)?.Name}")
                                 </MudText>
                             </MudItem>
                         }

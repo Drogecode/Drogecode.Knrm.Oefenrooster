@@ -123,13 +123,4 @@
   <data name="One moment" xml:space="preserve">
     <value>One moment</value>
   </data>
-  <data name="Switch to Dark Theme" xml:space="preserve">
-    <value>Switch to Dark Theme</value>
-  </data>
-  <data name="Switch to Light Theme" xml:space="preserve">
-    <value>Switch to Light Theme</value>
-  </data>
-  <data name="Switch to system" xml:space="preserve">
-    <value>Switch to system</value>
-  </data>
 </root>

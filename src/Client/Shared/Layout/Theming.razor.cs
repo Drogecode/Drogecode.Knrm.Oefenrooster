@@ -9,7 +9,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 
 public sealed partial class Theming : IDisposable
 {
-    [Inject] private IStringLocalizer<MainLayout> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<Theming> L { get; set; } = default!;
     [Inject] private ILocalStorageService LocalStorage { get; set; } = default!;
     [Parameter, EditorRequired] public DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter, EditorRequired] public MudThemeProvider MudThemeProvider { get; set; } = default!;

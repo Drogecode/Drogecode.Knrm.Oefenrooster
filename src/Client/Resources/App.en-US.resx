@@ -123,6 +123,9 @@
   <data name="Add week" xml:space="preserve">
     <value>Add week</value>
   </data>
+  <data name="as" xml:space="preserve">
+    <value>as</value>
+  </data>
   <data name="Assigned" xml:space="preserve">
     <value>Assigned</value>
   </data>

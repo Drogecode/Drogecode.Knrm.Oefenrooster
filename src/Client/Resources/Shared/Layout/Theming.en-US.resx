@@ -117,22 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Available users" xml:space="preserve">
-    <value>Available users</value>
+  <data name="Switch to Dark Theme" xml:space="preserve">
+    <value>Switch to Dark Theme</value>
   </data>
-  <data name="Available {0}" xml:space="preserve">
-    <value>Available {0}</value>
+  <data name="Switch to Light Theme" xml:space="preserve">
+    <value>Switch to Light Theme</value>
   </data>
-  <data name="No vehicle selected" xml:space="preserve">
-    <value>No vehicle selected</value>
-  </data>
-  <data name="Other users" xml:space="preserve">
-    <value>Other users</value>
-  </data>
-  <data name="Selected vehicles" xml:space="preserve">
-    <value>Selected vehicles</value>
-  </data>
-  <data name="vehicle" xml:space="preserve">
-    <value>vehicle</value>
+  <data name="Switch to system" xml:space="preserve">
+    <value>Switch to system</value>
   </data>
 </root>

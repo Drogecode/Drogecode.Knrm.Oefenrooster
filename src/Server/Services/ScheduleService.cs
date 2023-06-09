@@ -370,6 +370,7 @@ public class ScheduleService : IScheduleService
     {
         var result = new GetScheduledTrainingsForUserResponse();
         var scheduled = await _database.RoosterAvailables.Include(i => i.Training).Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Date >= fromDate).OrderBy(x => x.Date).ToListAsync(cancellationToken: token);
+        var user = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.Id == userId).FirstOrDefault();
         foreach (var schedul in scheduled)
         {
 
@@ -389,6 +390,7 @@ public class ScheduleService : IScheduleService
                 Assigned = schedul.Assigned,
                 RoosterTrainingTypeId = schedul.Training.RoosterTrainingTypeId,
                 VehicleId = schedul.VehicleId,
+                PlannedFunctionId = schedul.UserFunctionId ?? user?.UserFunctionId,
                 Pin = schedul.Training.Pin
             });
         }
