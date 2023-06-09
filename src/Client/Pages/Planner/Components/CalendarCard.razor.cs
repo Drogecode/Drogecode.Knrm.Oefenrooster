@@ -13,6 +13,7 @@ public sealed partial class CalendarCard : IDisposable
     [Parameter, EditorRequired] public Training Training { get; set; } = default!;
     [Parameter] public string Width { get; set; } = "100%";
     [Parameter] public bool ShowDate { get; set; } = false;
+    [Parameter] public bool ShowDayOfWeek { get; set; } = false;
     private CancellationTokenSource _cls = new();
     private bool _updating;
 

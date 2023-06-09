@@ -18,18 +18,18 @@ public sealed partial class ScheduleTable : IDisposable
     private bool _updating;
     private List<PlannedTraining> _events = new();
     private List<UserTrainingCounter>? _userTrainingCounter;
-    private DateTime _month;
+    private DateTime? _month;
 
-    private async Task<DateTime> SetMonth(DateTime dateTime)
+    private async Task SetMonth(DateTime? dateTime)
     {
+        if (dateTime == null) return;
         _month = dateTime;
         DateRange dateRange = new DateRange
         {
-            Start = new DateTime(dateTime.Year, dateTime.Month, 1),
-            End = new DateTime(dateTime.Year, dateTime.Month, DateTime.DaysInMonth(dateTime.Year, dateTime.Month))
+            Start = new DateTime(dateTime.Value.Year, dateTime.Value.Month, 1),
+            End = new DateTime(dateTime.Value.Year, dateTime.Value.Month, DateTime.DaysInMonth(dateTime.Value.Year, dateTime.Value.Month))
         };
         await SetCalenderForMonth(dateRange);
-        return _month;
     }
 
     protected override async Task OnInitializedAsync()

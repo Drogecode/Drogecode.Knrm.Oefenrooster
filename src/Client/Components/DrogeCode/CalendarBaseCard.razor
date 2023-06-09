@@ -26,6 +26,10 @@
             </CardHeaderActions>
         </MudCardHeader>
         <MudCardContent Class="@ContentClass">
+            @if(ShowDayOfWeek)
+            {
+                <MudText Typo="Typo.subtitle2">@Training.DateStart.ToString("dddd")</MudText>
+            }
             @if (ShowDate)
             {
                 <MudText Typo="Typo.subtitle2">@Training.DateStart.ToString(DateTime.Today.Year == Training.DateStart.Year ? "MMM dd" : "yyyy MMM dd")</MudText>

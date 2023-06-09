@@ -1,11 +1,7 @@
 ﻿<div>
     <MudText Typo="Typo.h3">Comming soon!</MudText>
 
-    <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
-        <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIosNew" OnClick="()=>SetMonth(_month.AddMonths(-1))" Disabled="_updating"></MudIconButton>
-        <MudButton>@_month.ToString(_month.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy")</MudButton>
-        <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos" OnClick="()=>SetMonth(_month.AddMonths(1))" Disabled="_updating"></MudIconButton>
-    </MudButtonGroup>
+    <MonthSelector Month="_month" MonthChanged="SetMonth"/>
     @if (Users != null)
     {
         <MudTable Hover="true" Breakpoint="Breakpoint.Sm"

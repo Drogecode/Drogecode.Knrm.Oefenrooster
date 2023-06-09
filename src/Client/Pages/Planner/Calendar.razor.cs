@@ -22,10 +22,22 @@ public sealed partial class Calendar : IDisposable
     private List<RoosterItemMonth>? _monthItems;
     private CancellationTokenSource _cls = new();
     private bool _updating;
+    private DateTime? _month;
 
     protected override async Task OnInitializedAsync()
     {
         Global.NewTrainingAddedAsync += HandleNewTraining;
+    }
+    private async Task SetMonth(DateTime? dateTime)
+    {
+        if (dateTime == null) return;
+        _month = dateTime;
+        DateRange dateRange = new DateRange
+        {
+            Start = new DateTime(dateTime.Value.Year, dateTime.Value.Month, 1),
+            End = new DateTime(dateTime.Value.Year, dateTime.Value.Month, DateTime.DaysInMonth(dateTime.Value.Year, dateTime.Value.Month))
+        };
+        await SetCalenderForMonth(dateRange);
     }
 
     private async Task SetCalenderForMonth(DateRange dateRange)
@@ -49,10 +61,10 @@ public sealed partial class Calendar : IDisposable
                 });
             }
         }
-        var month = PlannerHelper.ForMonth(dateRange);
-        if (month != null)
+        _month = PlannerHelper.ForMonth(dateRange);
+        if (_month != null)
         {
-            var monthItems = await _calendarItemRepository.GetMonthItemAsync(month.Value.Year, month.Value.Month, _cls.Token);
+            var monthItems = await _calendarItemRepository.GetMonthItemAsync(_month.Value.Year, _month.Value.Month, _cls.Token);
             _monthItems = monthItems?.MonthItems;
             var dayItems = await _calendarItemRepository.GetDayItemsAsync(dateRange, _cls.Token);
             if (dayItems?.DayItems != null)

@@ -17,6 +17,7 @@ public sealed partial class CalendarBaseCard : IDisposable
     [Parameter] public string Width { get; set; } = "200px";
     [Parameter] public bool ReplaceEmtyName { get; set; }
     [Parameter] public bool ShowDate { get; set; } = true;
+    [Parameter] public bool ShowDayOfWeek { get; set; } = false;
     private CancellationTokenSource _cls = new();
 
     public void Dispose()
