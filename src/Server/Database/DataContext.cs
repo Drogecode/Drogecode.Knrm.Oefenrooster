@@ -550,6 +550,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 ColorDark = "#5f6138",
                 Order = 70,
             }));
+            modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
+            {
+                Id = new Guid("68be785c-1226-4280-a110-bd87f328951f"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "Proeve van Bekwaamheid",
+                ColorLight = "#000000",
+                Order = 80,
+            }));
         }
         #endregion
     }
