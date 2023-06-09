@@ -2,7 +2,7 @@
 @inherits LayoutComponentBase
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
+<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -42,9 +42,7 @@
                     <MudMenuItem Href="/user/profile">Profile</MudMenuItem>
                     <MudMenuItem @onclick="BeginLogout">Logout</MudMenuItem>
                 </MudMenu>
-                <MudTooltip Duration="1000" Text="@(_darkModeToggle == DarkLightMode.System ? @L["Switch to Light Theme"] : _darkModeToggle == DarkLightMode.Dark ? @L["Switch to system"] : @L["Switch to Dark Theme"])">
-                    <MudIconButton Icon="@(_darkModeToggle == DarkLightMode.System ? @Icons.Material.Filled.AutoMode :_darkModeToggle == DarkLightMode.Dark ? @Icons.Material.Rounded.LightMode : @Icons.Material.Outlined.DarkMode)" Color="Color.Inherit" OnClick="@ToggleDarkLight" />
-                </MudTooltip>
+                <Theming Global="_global" MudThemeProvider="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode"/>
             </MudAppBar>
             <CascadingValue Value="_global">
                 <MudDrawer @bind-Open="@_drawerOpen">

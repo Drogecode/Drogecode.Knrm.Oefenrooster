@@ -1,0 +1,4 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+<MudTooltip Duration="1000" Text="@(DarkModeToggle == DarkLightMode.System ? @L["Switch to Light Theme"] : DarkModeToggle == DarkLightMode.Dark ? @L["Switch to system"] : @L["Switch to Dark Theme"])">
+    <MudIconButton Icon="@(DarkModeToggle == DarkLightMode.System ? @Icons.Material.Filled.AutoMode :DarkModeToggle == DarkLightMode.Dark ? @Icons.Material.Rounded.DarkMode : @Icons.Material.Outlined.LightMode)" Color="Color.Inherit" OnClick="@ToggleDarkLight" />
+</MudTooltip>

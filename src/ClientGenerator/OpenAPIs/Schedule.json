@@ -631,6 +631,9 @@
           "assigned": {
             "type": "boolean"
           },
+          "clickedFunction": {
+            "type": "boolean"
+          },
           "name": {
             "type": "string",
             "nullable": true

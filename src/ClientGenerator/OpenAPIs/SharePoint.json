@@ -109,6 +109,10 @@
       "SharePointAction": {
         "type": "object",
         "properties": {
+          "number": {
+            "type": "number",
+            "format": "double"
+          },
           "description": {
             "type": "string",
             "nullable": true
@@ -120,9 +124,25 @@
           "start": {
             "type": "string",
             "format": "date-time"
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SharePointUser"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
+      },
+      "SharePointRole": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "SharePointTraining": {
         "type": "object",
@@ -138,6 +158,34 @@
           "start": {
             "type": "string",
             "format": "date-time"
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SharePointUser"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharePointUser": {
+        "type": "object",
+        "properties": {
+          "sharePointID": {
+            "type": "string",
+            "nullable": true
+          },
+          "drogeCodeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "$ref": "#/components/schemas/SharePointRole"
           }
         },
         "additionalProperties": false
