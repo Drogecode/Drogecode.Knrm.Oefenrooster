@@ -162,32 +162,32 @@ public static class GraphHelper
                 var isUser = false;
                 if (det?.Fields?.AdditionalData == null) continue;
                 var schipperId = det.Fields.AdditionalData.ContainsKey("SchipperLookupId") ? det.Fields.AdditionalData["SchipperLookupId"]?.ToString() : "";
-                if (string.Compare(schipperId, spUser.Id) == 0)
+                if (string.Compare(schipperId, spUser.SharePointID) == 0)
                 {
                     isUser = true;
                 }
                 var op1 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_1LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_1LookupId"]?.ToString() : "";
-                if (string.Compare(op1, spUser.Id) == 0)
+                if (string.Compare(op1, spUser.SharePointID) == 0)
                 {
                     isUser = true;
                 }
                 var op2 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_2LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_2LookupId"]?.ToString() : "";
-                if (string.Compare(op2, spUser.Id) == 0)
+                if (string.Compare(op2, spUser.SharePointID) == 0)
                 {
                     isUser = true;
                 }
                 var op3 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_3LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_3LookupId"]?.ToString() : "";
-                if (string.Compare(op3, spUser.Id) == 0)
+                if (string.Compare(op3, spUser.SharePointID) == 0)
                 {
                     isUser = true;
                 }
                 var op4 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_4LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_4LookupId"]?.ToString() : "";
-                if (string.Compare(op4, spUser.Id) == 0)
+                if (string.Compare(op4, spUser.SharePointID) == 0)
                 {
                     isUser = true;
                 }
                 var op5 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_5LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_5LookupId"]?.ToString() : "";
-                if (string.Compare(op5, spUser.Id) == 0)
+                if (string.Compare(op5, spUser.SharePointID) == 0)
                 {
                     isUser = true;
                 }
@@ -220,56 +220,50 @@ public static class GraphHelper
             config.QueryParameters.Expand = new string[] { "fields" };
             config.QueryParameters.Top = 25;
         });
-        var trainings = new List<SharePointAction>();
+        var actions = new List<SharePointAction>();
         while (overigeItems?.Value != null)
         {
             foreach (var det in overigeItems.Value)
             {
                 var isUser = false;
                 if (det?.Fields?.AdditionalData == null) continue;
-                var schipperId = det.Fields.AdditionalData.ContainsKey("SchipperLookupId") ? det.Fields.AdditionalData["SchipperLookupId"]?.ToString() : "";
-                if (string.Compare(schipperId, spUser.Id) == 0)
-                {
-                    isUser = true;
-                }
-                var op1 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_1LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_1LookupId"]?.ToString() : "";
-                if (string.Compare(op1, spUser.Id) == 0)
-                {
-                    isUser = true;
-                }
-                var op2 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_2LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_2LookupId"]?.ToString() : "";
-                if (string.Compare(op2, spUser.Id) == 0)
-                {
-                    isUser = true;
-                }
-                var op3 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_3LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_3LookupId"]?.ToString() : "";
-                if (string.Compare(op3, spUser.Id) == 0)
-                {
-                    isUser = true;
-                }
-                var op4 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_4LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_4LookupId"]?.ToString() : "";
-                if (string.Compare(op4, spUser.Id) == 0)
-                {
-                    isUser = true;
-                }
-                var op5 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_5LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_5LookupId"]?.ToString() : "";
-                if (string.Compare(op5, spUser.Id) == 0)
-                {
-                    isUser = true;
-                }
+                var action = new SharePointAction();
+                isUser = GetUser(spUser, users, det, isUser, "SchipperLookupId", SharePointRole.Schipper, action) || isUser;
+                isUser = GetUser(spUser, users, det, isUser, "Opstapper_x0020_1LookupId", SharePointRole.Opstapper, action) || isUser;
+                isUser = GetUser(spUser, users, det, isUser, "Opstapper_x0020_2LookupId", SharePointRole.Opstapper, action) || isUser;
+                isUser = GetUser(spUser, users, det, isUser, "Opstapper_x0020_3LookupId", SharePointRole.Opstapper, action) || isUser;
+                isUser = GetUser(spUser, users, det, isUser, "Opstapper_x0020_4LookupId", SharePointRole.Opstapper, action) || isUser;
+                isUser = GetUser(spUser, users, det, isUser, "Opstapper_x0020_5LookupId", SharePointRole.Opstapper, action) || isUser;
                 if (!isUser) continue;
-                trainings.Add(new SharePointAction
-                {
-                    Description = det.Fields.AdditionalData.ContainsKey("Bijzonderheden_x0020_Oproep") ? det.Fields.AdditionalData["Bijzonderheden_x0020_Oproep"]!.ToString() : "",
-                    Title = det.Fields.AdditionalData.ContainsKey("LinkTitle") ? det.Fields.AdditionalData["LinkTitle"]!.ToString() : "",
-                    Start = det.Fields.AdditionalData.ContainsKey("Oproep_x0020__x0028_uren_x0029_") ? (DateTime)det.Fields.AdditionalData["Oproep_x0020__x0028_uren_x0029_"] : DateTime.MinValue,
-                });
+                double number = -1;
+                if (det.Fields.AdditionalData.ContainsKey("Actie_x0020_nummer"))
+                    _ = double.TryParse(det.Fields.AdditionalData["Actie_x0020_nummer"].ToString(), out number);
+                action.Number = number;
+                action.Start = det.Fields.AdditionalData.ContainsKey("Oproep_x0020__x0028_uren_x0029_") ? (DateTime)det.Fields.AdditionalData["Oproep_x0020__x0028_uren_x0029_"] : DateTime.MinValue;
+                action.Title = det.Fields.AdditionalData.ContainsKey("LinkTitle") ? det.Fields.AdditionalData["LinkTitle"]!.ToString() : "";
+                action.Description = det.Fields.AdditionalData.ContainsKey("Bijzonderheden_x0020_Oproep") ? det.Fields.AdditionalData["Bijzonderheden_x0020_Oproep"]!.ToString() : "";
+                actions.Add(action);
             }
             if (overigeItems.OdataNextLink != null)
                 overigeItems = await NextListPage(overigeItems);
             else break;
         }
-        return trainings.OrderByDescending(x => x.Start).ToList();
+        return actions.OrderByDescending(x => x.Start).ToList();
+    }
+
+    private static bool GetUser(SharePointUser? spUser, List<SharePointUser> users, ListItem det, bool isUser, string key, SharePointRole role, SharePointAction action)
+    {
+        var sharePointID = det.Fields.AdditionalData.ContainsKey(key) ? det.Fields.AdditionalData[key]?.ToString() : "";
+        if (sharePointID == null) return false;
+        if (string.Compare(sharePointID, spUser.SharePointID) == 0)
+        {
+            isUser = true;
+        }
+        var user = users.FirstOrDefault(x=>x.SharePointID == sharePointID);
+        if (user == null) return isUser;
+        user.Role = role;
+        action.Users.Add(user);
+        return isUser;
     }
 
     private static async Task<List<SharePointUser>> FindSharePointUsers(string userName)
@@ -289,7 +283,7 @@ public static class GraphHelper
                 if (det?.Fields?.AdditionalData == null || det.Id == null || det?.Fields?.AdditionalData?.ContainsKey("Title") != true) continue;
                 spUsers.Add(new SharePointUser
                 {
-                    Id = det.Id,
+                    SharePointID = det.Id,
                     Name = det.Fields.AdditionalData["Title"].ToString()
                 });
             }
@@ -299,13 +293,5 @@ public static class GraphHelper
         }
         _userList = spUsers;
         return _userList;
-    }
-
-
-
-    private class SharePointUser
-    {
-        public string Id;
-        public string Name;
     }
 }

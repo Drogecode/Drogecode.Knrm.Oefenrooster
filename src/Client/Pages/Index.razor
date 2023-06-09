@@ -3,6 +3,7 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Components
 @using System.Text;
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 <PageTitle>Dashboard</PageTitle>
 
 @if (_pinnedTrainings != null)
@@ -56,12 +57,34 @@ else
     @if (_sharePointActions.Count() > 0)
     {
         <MudText Typo="Typo.h3">@L["Five most recent actions from SharePoint"]</MudText>
-        <MudList>
-            @foreach (var action in _sharePointActions)
-            {
-                <MudListItem>@action.Description</MudListItem>
-            }
-        </MudList>
+
+        <MudDataGrid Items="@_sharePointActions"
+                     ReadOnly="true" EditMode="@DataGridEditMode.Cell">
+            <Columns>
+                <HierarchyColumn T="SharePointAction" />
+                <PropertyColumn Property="x => x.Number" Title="Nr" />
+                <PropertyColumn Property="x => x.Start" />
+                <PropertyColumn Property="x => x.Title" />
+            </Columns>
+            <ChildRowContent>
+                <MudCard>
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">@context.Item.Title</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudText>@context.Item.Description</MudText>
+                        <MudList>
+                            @foreach (var user in context.Item.Users)
+                            {
+                                <MudListItem>@user.Name - @user.Role</MudListItem>
+                            }
+                        </MudList>
+                    </MudCardContent>
+                </MudCard>
+            </ChildRowContent>
+        </MudDataGrid>
     }
 }
 else
