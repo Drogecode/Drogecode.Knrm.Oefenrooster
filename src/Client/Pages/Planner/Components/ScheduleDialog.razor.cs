@@ -25,7 +25,6 @@ public sealed partial class ScheduleDialog : IDisposable
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
     private List<DrogeVehicle>? _vehicleInfoForThisTraining;
     private int _vehicleCount;
-    private bool _layoutAB;
     private int _colmn1 = 1;
     private int _colmn2 = 3;
     private int _colmn3 = 3;
@@ -114,6 +113,14 @@ public sealed partial class ScheduleDialog : IDisposable
     private async Task VehicleSelectionChanged(PlanUser user, Guid? id)
     {
         user.VehicleId = id;
+        await _scheduleRepository.PatchAvailabilityUser(Planner.TrainingId, user, _cls.Token);
+        await Refresh.CallRequestRefreshAsync();
+    }
+
+    private async Task FunctionSelectionChanged(PlanUser user, Guid? id)
+    {
+        user.ClickedFunction = false;
+        user.PlannedFunctionId = id;
         await _scheduleRepository.PatchAvailabilityUser(Planner.TrainingId, user, _cls.Token);
         await Refresh.CallRequestRefreshAsync();
     }
