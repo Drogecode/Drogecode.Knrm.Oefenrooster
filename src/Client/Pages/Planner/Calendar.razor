@@ -16,7 +16,7 @@
     }
 }
 <div class="d-none d-md-flex">
-    <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
+    <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false CurrentDay="_month ?? DateTime.Today">
         <CellTemplate>
             @if (context is DrogeCodeCalendarItem)
             {
