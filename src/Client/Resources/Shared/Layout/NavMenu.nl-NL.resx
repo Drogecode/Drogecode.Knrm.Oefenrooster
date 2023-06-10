@@ -129,10 +129,16 @@
   <data name="Dashboard" xml:space="preserve">
     <value>Dashboard</value>
   </data>
+  <data name="Defaults" xml:space="preserve">
+    <value>Standaard</value>
+  </data>
   <data name="Schedule" xml:space="preserve">
     <value>Indeling</value>
   </data>
   <data name="Training" xml:space="preserve">
     <value>Oefening</value>
+  </data>
+  <data name="Vacations" xml:space="preserve">
+    <value>Vakanties</value>
   </data>
 </root>
