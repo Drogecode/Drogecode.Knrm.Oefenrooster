@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.Extensions.Localization;
+using Microsoft.Graph.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages;
@@ -11,15 +12,24 @@ public sealed partial class Index : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private SharePointRepository _sharePointRepository{ get; set; } = default!;
+    [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private DrogeUser? _user;
     private List<DrogeFunction>? _functions;
-    private List<Training>? _futureTrainings;
+    private List<PlannedTraining>? _futureTrainings;
     private List<Training>? _pinnedTrainings;
     private List<SharePointTraining>? _sharePointTrainings;
     private List<SharePointAction>? _sharePointActions;
+    private List<DrogeUser>? _users;
+    private List<DrogeVehicle>? _vehicles;
+    private List<PlannerTrainingType>? _trainingTypes;
     protected override async Task OnParametersSetAsync()
     {
+        _users = await _userRepository.GetAllUsersAsync(false);
+        _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
+        _trainingTypes = await _scheduleRepository.GetTrainingTypes(_cls.Token);
+
+
         _user = await _userRepository.GetCurrentUserAsync();//Force creation of user.
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _futureTrainings = (await _scheduleRepository.GetScheduledTrainingsForUser(_cls.Token))?.Trainings;

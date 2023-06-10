@@ -23,7 +23,6 @@ public sealed partial class Schedule : IDisposable
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
     private List<DrogeVehicle>? _vehicles;
-    private List<UserTrainingCounter>? _userTrainingCounter;
     private List<PlannerTrainingType>? _trainingTypes;
     private bool _updating;
     private ScheduleView _view = ScheduleView.Calendar;

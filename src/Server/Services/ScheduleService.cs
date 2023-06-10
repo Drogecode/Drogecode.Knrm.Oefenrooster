@@ -369,8 +369,8 @@ public class ScheduleService : IScheduleService
     public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime fromDate, CancellationToken token)
     {
         var result = new GetScheduledTrainingsForUserResponse();
-        var scheduled = await _database.RoosterAvailables.Include(i => i.Training).Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Date >= fromDate).OrderBy(x => x.Date).ToListAsync(cancellationToken: token);
-        var user = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.Id == userId).FirstOrDefault();
+        var scheduled = await _database.RoosterAvailables.Include(i => i.Training.RoosterAvailables).Include(i => i.Training.RoosterAvailables).Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Date >= fromDate).OrderBy(x => x.Date).ToListAsync(cancellationToken: token);
+        var users = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
         foreach (var schedul in scheduled)
         {
 
@@ -379,19 +379,28 @@ public class ScheduleService : IScheduleService
                 _logger.LogWarning("No training found for schedule '{ScheduleId}'", schedul.Id);
                 continue;
             }
-            result.Trainings.Add(new Training
+            result.Trainings.Add(new PlannedTraining
             {
                 TrainingId = schedul.TrainingId,
                 DefaultId = schedul.TrainingId,
                 Name = schedul.Training.Name,
                 DateStart = schedul.Training.DateStart,
                 DateEnd = schedul.Training.DateEnd,
-                Availabilty = schedul.Available,
-                Assigned = schedul.Assigned,
                 RoosterTrainingTypeId = schedul.Training.RoosterTrainingTypeId,
                 VehicleId = schedul.VehicleId,
-                PlannedFunctionId = schedul.UserFunctionId ?? user?.UserFunctionId,
-                Pin = schedul.Training.Pin
+                PlannedFunctionId = schedul.UserFunctionId ?? users?.FirstOrDefault(x => x.Id == userId)?.UserFunctionId,
+                Pin = schedul.Training.Pin,
+                IsCreated = true,
+                PlanUsers = schedul.Training.RoosterAvailables?.Select(a => new PlanUser
+                {
+                    UserId = a.UserId,
+                    Availabilty = a.Available,
+                    Assigned = a.Assigned,
+                    Name = users?.FirstOrDefault(x => x.Id == a.UserId)?.Name ?? "Name not found",
+                    PlannedFunctionId = a.UserFunctionId ?? users?.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId,
+                    UserFunctionId = users?.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId,
+                    VehicleId = a.VehicleId,
+                }).ToList()
             });
         }
         return result;

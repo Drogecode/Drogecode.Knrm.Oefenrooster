@@ -109,10 +109,6 @@
       "SharePointAction": {
         "type": "object",
         "properties": {
-          "number": {
-            "type": "number",
-            "format": "double"
-          },
           "description": {
             "type": "string",
             "nullable": true
@@ -131,6 +127,10 @@
               "$ref": "#/components/schemas/SharePointUser"
             },
             "nullable": true
+          },
+          "number": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false

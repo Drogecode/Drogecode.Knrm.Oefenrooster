@@ -2,21 +2,24 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-<CalendarBaseCard Width="100%" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" OnClickHistory="OpenHistoryDialog" ShowDate=false ContentClass="@(Planner.IsCreated ? "" : "DrogeCode-card-content-not-created")">
+<CalendarBaseCard Width="@Width" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" OnClickHistory="OpenHistoryDialog" ShowDate=false ContentClass="@(Planner.IsCreated ? "" : "DrogeCode-card-content-not-created")">
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
     @if (Functions != null && Users != null)
     {
-        @foreach (var function in Functions.Where(x=>x.Active).OrderBy(x => x.Order))
-        {
-            @if (Planner.PlanUsers.Any(x => x.PlannedFunctionId == function.Id))
+        <MudList>
+            @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
             {
-                @*var available = @Planner.PlanUsers.Where(x => x.Availabilty == Availabilty.Available && x.PlannedFunctionId == function.Id).Count();
-                var total = @Planner.PlanUsers.Where(x => x.PlannedFunctionId == function.Id).Count();
-                <MudText Typo="Typo.caption">@function.Name @available / @total </MudText><br/>*@
-                @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id))
+                @if (Planner.PlanUsers.Any(x => x.PlannedFunctionId == function.Id))
                 {
-                    <MudText>@assignedUser.Name@(assignedUser.PlannedFunctionId != assignedUser.UserFunctionId ? $" - {LApp["as"]} {function.Name}" : "")</MudText>
+                    @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id))
+                    {
+                        <MudListItem>@assignedUser.Name@(assignedUser.PlannedFunctionId != assignedUser.UserFunctionId ? $" - {LApp["as"]} {function.Name}" : "")</MudListItem>
+                    }
                 }
             }
-        }
+        </MudList>
     }
 </CalendarBaseCard>

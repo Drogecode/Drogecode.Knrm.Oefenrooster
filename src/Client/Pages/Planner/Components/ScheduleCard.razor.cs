@@ -20,6 +20,9 @@ public sealed partial class ScheduleCard : IDisposable
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
     [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter, EditorRequired] public List<PlannerTrainingType>? TrainingTypes { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string Width { get; set; } = "100%";
+    [Parameter] public bool ReplaceEmtyName { get; set; }
     private RefreshModel _refreshModel = new();
     private bool _updating;
 

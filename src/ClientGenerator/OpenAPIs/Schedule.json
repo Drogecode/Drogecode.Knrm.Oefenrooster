@@ -558,7 +558,7 @@
           "trainings": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Training"
+              "$ref": "#/components/schemas/PlannedTraining"
             },
             "nullable": true
           }

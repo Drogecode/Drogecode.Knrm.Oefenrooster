@@ -10,14 +10,19 @@ public sealed partial class IndexCard : IDisposable
 {
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Parameter, EditorRequired] public DrogeUser? User { get; set; }
-    [Parameter, EditorRequired] public Training Training { get; set; } = default!;
+    [Parameter, EditorRequired] public PlannedTraining Training { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
+    [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; }
+    [Parameter, EditorRequired] public List<PlannerTrainingType>? TrainingTypes { get; set; }
+    [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
     private CancellationTokenSource _cls = new();
+    private PlanUser? _planUser;
 
     protected override void OnParametersSet()
     {
-        if (Training.Availabilty == Availabilty.None)
-            Training.Availabilty = null;
+        _planUser = Training?.PlanUsers?.FirstOrDefault(x => x.UserId == User?.Id);
+        if (_planUser?.Availabilty == Availabilty.None)
+            _planUser.Availabilty = null;
     }
 
     public void Dispose()

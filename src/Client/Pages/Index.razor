@@ -36,7 +36,7 @@ else
         <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
             @foreach (var training in _futureTrainings)
             {
-                <IndexCard User="_user" Training="training" Functions="_functions" />
+                <IndexCard User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" />
             }
         </MudPaper>
     }

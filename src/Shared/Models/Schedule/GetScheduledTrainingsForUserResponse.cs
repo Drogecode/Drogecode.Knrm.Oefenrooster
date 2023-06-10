@@ -8,5 +8,5 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
 public class GetScheduledTrainingsForUserResponse
 {
-    public List<Training> Trainings { get; set; } = new List<Training>();
+    public List<PlannedTraining> Trainings { get; set; } = new List<PlannedTraining>();
 }
