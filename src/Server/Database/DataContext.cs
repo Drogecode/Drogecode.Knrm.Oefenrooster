@@ -537,8 +537,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = new Guid("6153a297-9486-43de-91e8-22d107da2b21"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Evenement",
-                ColorLight = "#63806f",
-                ColorDark = "#3b4d42",
+                ColorLight = "#ADD8E6",
+                ColorDark = "#3BB9FF",
                 Order = 60,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType

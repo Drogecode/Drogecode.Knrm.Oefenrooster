@@ -63,6 +63,10 @@
                     @($".trainingType-{trainingType.Id}")
                     @("{")
                         @($"background-color: {(_isDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)};")
+                        if(!string.IsNullOrEmpty(trainingType.TextColorLight))
+                        {
+                            @($"color: {(_isDarkMode ? string.IsNullOrEmpty(trainingType.TextColorDark) ? trainingType.TextColorLight : trainingType.TextColorDark : trainingType.TextColorLight)};")
+                        }
                     @("}")
                 }
                 </style>

@@ -14,6 +14,8 @@ public class PlannerTrainingType
     public string? Name { get; set; }
     public string ColorLight { get; set; } = Colors.Grey.Lighten1;
     public string ColorDark { get; set; } = string.Empty;
+    public string? TextColorLight { get; set; }
+    public string? TextColorDark { get; set; }
     public int Order { get; set; }
     public bool CountToTrainingTarget { get; set; }
     public bool IsDefault { get; set; }

@@ -449,6 +449,10 @@ public class ScheduleService : IScheduleService
                 newType.ColorLight = type.ColorLight;
             if (!string.IsNullOrEmpty(type.ColorDark))
                 newType.ColorDark = type.ColorDark;
+            if (!string.IsNullOrEmpty(type.TextColorLight))
+                newType.TextColorLight = type.TextColorLight;
+            if (!string.IsNullOrEmpty(type.TextColorDark))
+                newType.TextColorDark = type.TextColorDark;
             result.Add(newType);
         }
         return result;
