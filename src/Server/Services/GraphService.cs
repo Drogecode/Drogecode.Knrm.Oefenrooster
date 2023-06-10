@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph.Models;
+using Microsoft.Identity.Client;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -107,16 +108,22 @@ public class GraphService : IGraphService
     public async Task<List<SharePointAction>> GetListActionsUser(string userName, Guid userId, int count, Guid customerId, CancellationToken clt)
     {
         _memoryCache.TryGetValue<List<SharePointAction>>(string.Format(USER_SP_ACTIONS, customerId, userId, count), out var sharePointActionsUser);
-        if (sharePointActionsUser == null) {
+        if (sharePointActionsUser == null)
+        {
+            var cacheOptions = new MemoryCacheEntryOptions();
             _memoryCache.TryGetValue<List<SharePointAction>>(string.Format(SP_ACTIONS, customerId), out var sharePointActions);
             if (sharePointActions == null)
             {
                 var users = await GetAllSharePointUsers(customerId, clt);
                 sharePointActions = await GraphHelper.GetListActions(customerId, users);
-                _ = _memoryCache.Set(string.Format(SP_ACTIONS, customerId), sharePointActions, DateTimeOffset.UtcNow.AddMinutes(30));
+                cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(30));
+                cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
+                _ = _memoryCache.Set(string.Format(SP_ACTIONS, customerId), sharePointActions, cacheOptions);
             }
+            cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(5));
+            cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
             sharePointActionsUser = sharePointActions.Where(x => x.Users.Any(y => string.Compare(y.Name, userName) == 0)).Take(count).ToList();
-            _ = _memoryCache.Set(string.Format(USER_SP_ACTIONS,customerId, userId, count), sharePointActionsUser, DateTimeOffset.UtcNow.AddMinutes(5));
+            _ = _memoryCache.Set(string.Format(USER_SP_ACTIONS,customerId, userId, count), sharePointActionsUser, cacheOptions);
         }
         return sharePointActionsUser;
     }
@@ -126,15 +133,20 @@ public class GraphService : IGraphService
         _memoryCache.TryGetValue<List<SharePointTraining>>(string.Format(USER_SP_TRAININGS, customerId, userId, count), out var sharePointTrainingsUser);
         if (sharePointTrainingsUser == null)
         {
+            var cacheOptions = new MemoryCacheEntryOptions();
             _memoryCache.TryGetValue<List<SharePointTraining>>(string.Format(SP_TRAININGS, customerId), out var sharePointTrainings);
             if (sharePointTrainings == null)
             {
                 var users = await GetAllSharePointUsers(customerId, clt);
                 sharePointTrainings = await GraphHelper.GetListTraining(customerId, users);
-                _ = _memoryCache.Set(string.Format(SP_TRAININGS, customerId), sharePointTrainings, DateTimeOffset.UtcNow.AddMinutes(30));
+                cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(30));
+                cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
+                _ = _memoryCache.Set(string.Format(SP_TRAININGS, customerId), sharePointTrainings, cacheOptions);
             }
             sharePointTrainingsUser = sharePointTrainings.Where(x => x.Users.Any(y => string.Compare(y.Name, userName) == 0)).Take(count).ToList();
-            _ = _memoryCache.Set(string.Format(USER_SP_TRAININGS, customerId, userId, count), sharePointTrainingsUser, DateTimeOffset.UtcNow.AddMinutes(5));
+            cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(5));
+            cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
+            _ = _memoryCache.Set(string.Format(USER_SP_TRAININGS, customerId, userId, count), sharePointTrainingsUser, cacheOptions);
         }
         return sharePointTrainingsUser;
     }
