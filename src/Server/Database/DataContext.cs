@@ -521,6 +521,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Name = "Brandweer",
                 ColorLight = "rgb(242,28,13)",
                 ColorDark = "rgb(244,47,70)",
+                TextColorLight = "#FFFFFF",
+                TextColorDark = "#C0C0C0",
                 Order = 40,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
@@ -557,6 +559,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Name = "Proeve van Bekwaamheid",
                 ColorLight = "#000000",
                 Order = 80,
+                TextColorLight = "#FFFFFF",
+                TextColorDark = "#C0C0C0",
             }));
         }
         #endregion

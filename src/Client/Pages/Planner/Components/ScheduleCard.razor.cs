@@ -23,6 +23,7 @@ public sealed partial class ScheduleCard : IDisposable
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public string Width { get; set; } = "100%";
     [Parameter] public bool ReplaceEmtyName { get; set; }
+    [Parameter] public bool ShowDate { get; set; }
     private RefreshModel _refreshModel = new();
     private bool _updating;
 
@@ -66,7 +67,8 @@ public sealed partial class ScheduleCard : IDisposable
 
     private void OpenHistoryDialog()
     {
-        var parameters = new DialogParameters {
+        var parameters = new DialogParameters
+        {
         };
         var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
         _dialogProvider.Show<TrainingHistoryDialog>(L["Edit history"], parameters, options);
