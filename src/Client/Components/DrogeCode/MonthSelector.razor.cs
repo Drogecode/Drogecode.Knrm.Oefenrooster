@@ -14,10 +14,6 @@ public sealed partial class MonthSelector
         {
             if (_month == value) return;
             _month = value;
-            if (MonthChanged.HasDelegate)
-            {
-                MonthChanged.InvokeAsync(value);
-            }
         }
     }
     private DateTime? _month;
@@ -26,5 +22,9 @@ public sealed partial class MonthSelector
     private void SetMonth(DateTime dateTime)
     {
         Month = dateTime;
+        if (MonthChanged.HasDelegate)
+        {
+            MonthChanged.InvokeAsync(dateTime);
+        }
     }
 }
