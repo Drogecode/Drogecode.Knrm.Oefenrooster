@@ -6,6 +6,7 @@ module.exports = {
         extend: {}
     },
     content: [
+        './tailwindHelper.html',
         '../**/*.html',
         '../**/*.razor',
         '../**/*.razor.cs'

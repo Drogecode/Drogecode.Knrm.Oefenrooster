@@ -24,6 +24,22 @@ public static class PlannerHelper
         }
     }
 
+    public static string StyleAvailabilty(Availabilty? availabilty)
+    {
+        switch (availabilty)
+        {
+            case Availabilty.Available:
+                return "bg-green-400";
+            case Availabilty.NotAvailable:
+                return "bg-red-400";
+            case Availabilty.Maybe:
+                return "bg-orange-400";
+            case Availabilty.None:
+            default:
+                return "";
+        }
+    }
+
     public static string HeaderStyle(PlannerTrainingType? trainingType, bool isDark = false)
     {
         var color = isDark ? trainingType?.ColorDark : trainingType?.ColorLight;

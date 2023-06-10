@@ -668,6 +668,11 @@
             "format": "uuid",
             "nullable": true
           },
+          "plannedFunctionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "dateStart": {
             "type": "string",
             "format": "date-time"
@@ -866,6 +871,11 @@
             "nullable": true
           },
           "vehicleId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "plannedFunctionId": {
             "type": "string",
             "format": "uuid",
             "nullable": true

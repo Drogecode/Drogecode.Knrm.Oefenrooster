@@ -1,14 +1,15 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Client.Pages.Components
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Pages.Components;
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-@using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-@using Drogecode.Knrm.Oefenrooster.Client.Helpers
+@using Drogecode.Knrm.Oefenrooster.Client.Helpers;
+@using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 <CalendarBaseCard Width="@Width" Training="@Training" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek">
-    <MudCardActions>
-        <MudSelect T="Availabilty?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="Training.Availabilty" SelectedValuesChanged="OnChange" AdornmentColor="@PlannerHelper.ColorAvailabilty(Training.Availabilty)">
-            <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
-            <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
-            <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
-        </MudSelect>
-    </MudCardActions>
+    <MudPaper Class="@PlannerHelper.StyleAvailabilty(Training.Availabilty)">
+    <MudSelect T="Availabilty?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="Training.Availabilty" SelectedValuesChanged="OnChange" AdornmentColor="@PlannerHelper.ColorAvailabilty(Training.Availabilty)">
+        <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
+        <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
+        <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
+    </MudSelect>
+    </MudPaper>
 </CalendarBaseCard>

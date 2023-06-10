@@ -39,7 +39,7 @@
                 @foreach (var item in _events)
                 {
                     var training = item.PlanUsers.FirstOrDefault(x => x.UserId == @context.Id);
-                    <MudTd Class="@(training == null ? "" : training.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available ? "bg-green-400" : training.Availabilty == Oefenrooster.Shared.Enums.Availabilty.NotAvailable ? "bg-red-400" : training.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Maybe ? "bg-orange-400" : "")" DataLabel="@L["Name"]">
+                    <MudTd Class="@PlannerHelper.StyleAvailabilty(training?.Availabilty)" DataLabel="@L["Name"]">
                         @if (training?.Assigned == true)
                         {
                             @(Vehicles?.FirstOrDefault(x => x.Id == training.VehicleId)?.Code ?? Vehicles?.FirstOrDefault(x => x.Default)?.Code ?? L["Assigned"])
