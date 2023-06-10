@@ -3,11 +3,14 @@ using Azure.Identity;
 using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Graph.Sites.Item.Lists.Item.Items;
 using Microsoft.Graph.Users;
+using System;
+using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Helpers;
 
@@ -19,8 +22,6 @@ public static class GraphHelper
     private static ClientSecretCredential? _clientSecretCredential;
     // Client configured with app-only authentication
     private static GraphServiceClient? _appClient;
-
-    private static List<SharePointUser>? _userList;
 
     ///consts for KNRM huizen, if used by other organizations should be moved to db.
     private const string KNRM_HUIZEN = "dorus1824.sharepoint.com,282e3a78-e28a-4db9-a30f-0244d23b05c9,411e2e34-56c5-4219-8624-30bd89032f48";
@@ -140,136 +141,8 @@ public static class GraphHelper
         }
     }
 
-    internal async static Task<List<SharePointTraining>> GetListTraining(string userName, Guid userId, Guid customerId)
+    internal static async Task<List<SharePointUser>> FindSharePointUsers()
     {
-        if (_appClient == null || customerId != DefaultSettingsHelper.KnrmHuizenId) return null;
-        var users = await FindSharePointUsers(userName);
-
-        var spUser = users.FirstOrDefault(x => string.Compare(x.Name, userName) == 0);
-
-        var overigeRaporten = await _appClient.Sites[STARTPAGINA].Lists[ID_OTHER_REPORTS_KNRM_HUIZEN].GetAsync();
-
-        var overigeItems = await _appClient.Sites[STARTPAGINA].Lists[ID_OTHER_REPORTS_KNRM_HUIZEN].Items.GetAsync((config) =>
-        {
-            config.QueryParameters.Expand = new string[] { "fields" };
-            config.QueryParameters.Top = 25;
-        });
-        var trainings = new List<SharePointTraining>();
-        while (overigeItems?.Value != null)
-        {
-            foreach (var det in overigeItems.Value)
-            {
-                var isUser = false;
-                if (det?.Fields?.AdditionalData == null) continue;
-                var schipperId = det.Fields.AdditionalData.ContainsKey("SchipperLookupId") ? det.Fields.AdditionalData["SchipperLookupId"]?.ToString() : "";
-                if (string.Compare(schipperId, spUser.SharePointID) == 0)
-                {
-                    isUser = true;
-                }
-                var op1 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_1LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_1LookupId"]?.ToString() : "";
-                if (string.Compare(op1, spUser.SharePointID) == 0)
-                {
-                    isUser = true;
-                }
-                var op2 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_2LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_2LookupId"]?.ToString() : "";
-                if (string.Compare(op2, spUser.SharePointID) == 0)
-                {
-                    isUser = true;
-                }
-                var op3 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_3LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_3LookupId"]?.ToString() : "";
-                if (string.Compare(op3, spUser.SharePointID) == 0)
-                {
-                    isUser = true;
-                }
-                var op4 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_4LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_4LookupId"]?.ToString() : "";
-                if (string.Compare(op4, spUser.SharePointID) == 0)
-                {
-                    isUser = true;
-                }
-                var op5 = det.Fields.AdditionalData.ContainsKey("Opstapper_x0020_5LookupId") ? det.Fields.AdditionalData["Opstapper_x0020_5LookupId"]?.ToString() : "";
-                if (string.Compare(op5, spUser.SharePointID) == 0)
-                {
-                    isUser = true;
-                }
-                if (!isUser) continue;
-                trainings.Add(new SharePointTraining
-                {
-                    Description = det.Fields.AdditionalData.ContainsKey("Bijzonderheden_x0020_Oproep") ? det.Fields.AdditionalData["Bijzonderheden_x0020_Oproep"]!.ToString() : "",
-                    Title = det.Fields.AdditionalData.ContainsKey("LinkTitle") ? det.Fields.AdditionalData["LinkTitle"]!.ToString() : "",
-                    Start = det.Fields.AdditionalData.ContainsKey("Aanvang_x0020_O_x0026_O_x0020__x") ? (DateTime)det.Fields.AdditionalData["Aanvang_x0020_O_x0026_O_x0020__x"] : DateTime.MinValue,
-                });
-            }
-            if (overigeItems.OdataNextLink != null)
-                overigeItems = await NextListPage(overigeItems);
-            else break;
-        }
-        return trainings.OrderByDescending(x => x.Start).ToList();
-    }
-
-    internal async static Task<List<SharePointAction>> GetListActions(string userName, Guid userId, Guid customerId)
-    {
-        if (_appClient == null || customerId != DefaultSettingsHelper.KnrmHuizenId) return null;
-        var users = await FindSharePointUsers(userName);
-
-        var spUser = users.FirstOrDefault(x => string.Compare(x.Name, userName) == 0);
-
-        var overigeRaporten = await _appClient.Sites[STARTPAGINA].Lists[ID_ACTION_REPORTS_KNRM_HUIZEN].GetAsync();
-
-        var overigeItems = await _appClient.Sites[STARTPAGINA].Lists[ID_ACTION_REPORTS_KNRM_HUIZEN].Items.GetAsync((config) =>
-        {
-            config.QueryParameters.Expand = new string[] { "fields" };
-            config.QueryParameters.Top = 25;
-        });
-        var actions = new List<SharePointAction>();
-        while (overigeItems?.Value != null)
-        {
-            foreach (var det in overigeItems.Value)
-            {
-                var isUser = false;
-                if (det?.Fields?.AdditionalData == null) continue;
-                var action = new SharePointAction();
-                isUser = GetUser(spUser, users, det, isUser, "SchipperLookupId", SharePointRole.Schipper, action) || isUser;
-                isUser = GetUser(spUser, users, det, isUser, "Opstapper_x0020_1LookupId", SharePointRole.Opstapper, action) || isUser;
-                isUser = GetUser(spUser, users, det, isUser, "Opstapper_x0020_2LookupId", SharePointRole.Opstapper, action) || isUser;
-                isUser = GetUser(spUser, users, det, isUser, "Opstapper_x0020_3LookupId", SharePointRole.Opstapper, action) || isUser;
-                isUser = GetUser(spUser, users, det, isUser, "Opstapper_x0020_4LookupId", SharePointRole.Opstapper, action) || isUser;
-                isUser = GetUser(spUser, users, det, isUser, "Opstapper_x0020_5LookupId", SharePointRole.Opstapper, action) || isUser;
-                if (!isUser) continue;
-                double number = -1;
-                if (det.Fields.AdditionalData.ContainsKey("Actie_x0020_nummer"))
-                    _ = double.TryParse(det.Fields.AdditionalData["Actie_x0020_nummer"].ToString(), out number);
-                action.Number = number;
-                action.Start = det.Fields.AdditionalData.ContainsKey("Oproep_x0020__x0028_uren_x0029_") ? (DateTime)det.Fields.AdditionalData["Oproep_x0020__x0028_uren_x0029_"] : DateTime.MinValue;
-                action.Title = det.Fields.AdditionalData.ContainsKey("LinkTitle") ? det.Fields.AdditionalData["LinkTitle"]!.ToString() : "";
-                action.Description = det.Fields.AdditionalData.ContainsKey("Bijzonderheden_x0020_Oproep") ? det.Fields.AdditionalData["Bijzonderheden_x0020_Oproep"]!.ToString() : "";
-                actions.Add(action);
-            }
-            if (overigeItems.OdataNextLink != null)
-                overigeItems = await NextListPage(overigeItems);
-            else break;
-        }
-        return actions.OrderByDescending(x => x.Start).ToList();
-    }
-
-    private static bool GetUser(SharePointUser? spUser, List<SharePointUser> users, ListItem det, bool isUser, string key, SharePointRole role, SharePointAction action)
-    {
-        var sharePointID = det.Fields.AdditionalData.ContainsKey(key) ? det.Fields.AdditionalData[key]?.ToString() : "";
-        if (sharePointID == null) return false;
-        if (string.Compare(sharePointID, spUser.SharePointID) == 0)
-        {
-            isUser = true;
-        }
-        var user = users.FirstOrDefault(x=>x.SharePointID == sharePointID);
-        if (user == null) return isUser;
-        user.Role = role;
-        action.Users.Add(user);
-        return isUser;
-    }
-
-    private static async Task<List<SharePointUser>> FindSharePointUsers(string userName)
-    {
-        if (_userList != null && !_userList.Any(x => string.Compare(x.Name, userName) == 0))
-            return _userList;
         var allUsers = await _appClient.Sites[STARTPAGINA].Lists[ID_USERS_KNRM].Items.GetAsync((config) =>
         {
             config.QueryParameters.Expand = new string[] { "fields" };
@@ -291,7 +164,92 @@ public static class GraphHelper
                 allUsers = await NextListPage(allUsers);
             else break;
         }
-        _userList = spUsers;
-        return _userList;
+        return spUsers;
+    }
+
+    internal async static Task<List<SharePointTraining>> GetListTraining(Guid customerId, List<SharePointUser> users)
+    {
+        if (_appClient == null || customerId != DefaultSettingsHelper.KnrmHuizenId) return null;
+
+        var overigeRaporten = await _appClient.Sites[STARTPAGINA].Lists[ID_OTHER_REPORTS_KNRM_HUIZEN].GetAsync();
+
+        var overigeItems = await _appClient.Sites[STARTPAGINA].Lists[ID_OTHER_REPORTS_KNRM_HUIZEN].Items.GetAsync((config) =>
+        {
+            config.QueryParameters.Expand = new string[] { "fields" };
+            config.QueryParameters.Top = 25;
+        });
+        var trainings = new List<SharePointTraining>();
+        while (overigeItems?.Value != null)
+        {
+            foreach (var det in overigeItems.Value)
+            {
+                if (det?.Fields?.AdditionalData == null) continue;
+                var training = new SharePointTraining();
+                GetUser(users, det, "SchipperLookupId", SharePointRole.Schipper, training);
+                GetUser(users, det, "Opstapper_x0020_1LookupId", SharePointRole.Opstapper, training);
+                GetUser(users, det, "Opstapper_x0020_2LookupId", SharePointRole.Opstapper, training);
+                GetUser(users, det, "Opstapper_x0020_3LookupId", SharePointRole.Opstapper, training);
+                GetUser(users, det, "Opstapper_x0020_4LookupId", SharePointRole.Opstapper, training);
+                GetUser(users, det, "Opstapper_x0020_5LookupId", SharePointRole.Opstapper, training);
+                training.Start = det.Fields.AdditionalData.ContainsKey("Aanvang_x0020_O_x0026_O_x0020__x") ? (DateTime)det.Fields.AdditionalData["Aanvang_x0020_O_x0026_O_x0020__x"] : DateTime.MinValue;
+                training.Title = det.Fields.AdditionalData.ContainsKey("LinkTitle") ? det.Fields.AdditionalData["LinkTitle"]!.ToString() : "";
+                training.Description = det.Fields.AdditionalData.ContainsKey("Bijzonderheden_x0020_Oproep") ? det.Fields.AdditionalData["Bijzonderheden_x0020_Oproep"]!.ToString() : "";
+                trainings.Add(training);
+            }
+            if (overigeItems.OdataNextLink != null)
+                overigeItems = await NextListPage(overigeItems);
+            else break;
+        }
+        return trainings.OrderByDescending(x => x.Start).ToList();
+    }
+
+    internal async static Task<List<SharePointAction>> GetListActions(Guid customerId, List<SharePointUser> users)
+    {
+        if (_appClient == null || customerId != DefaultSettingsHelper.KnrmHuizenId) return new List<SharePointAction>();
+
+        var overigeRaporten = await _appClient.Sites[STARTPAGINA].Lists[ID_ACTION_REPORTS_KNRM_HUIZEN].GetAsync();
+
+        var overigeItems = await _appClient.Sites[STARTPAGINA].Lists[ID_ACTION_REPORTS_KNRM_HUIZEN].Items.GetAsync((config) =>
+        {
+            config.QueryParameters.Expand = new string[] { "fields" };
+            config.QueryParameters.Top = 25;
+        });
+        var actions = new List<SharePointAction>();
+        while (overigeItems?.Value != null)
+        {
+            foreach (var det in overigeItems.Value)
+            {
+                if (det?.Fields?.AdditionalData == null) continue;
+                var action = new SharePointAction();
+                GetUser(users, det, "SchipperLookupId", SharePointRole.Schipper, action);
+                GetUser(users, det, "Opstapper_x0020_1LookupId", SharePointRole.Opstapper, action);
+                GetUser(users, det, "Opstapper_x0020_2LookupId", SharePointRole.Opstapper, action);
+                GetUser(users, det, "Opstapper_x0020_3LookupId", SharePointRole.Opstapper, action);
+                GetUser(users, det, "Opstapper_x0020_4LookupId", SharePointRole.Opstapper, action);
+                GetUser( users, det, "Opstapper_x0020_5LookupId", SharePointRole.Opstapper, action);
+                double number = -1;
+                if (det.Fields.AdditionalData.ContainsKey("Actie_x0020_nummer"))
+                    _ = double.TryParse(det.Fields.AdditionalData["Actie_x0020_nummer"].ToString(), out number);
+                action.Number = number;
+                action.Start = det.Fields.AdditionalData.ContainsKey("Oproep_x0020__x0028_uren_x0029_") ? (DateTime)det.Fields.AdditionalData["Oproep_x0020__x0028_uren_x0029_"] : DateTime.MinValue;
+                action.Title = det.Fields.AdditionalData.ContainsKey("LinkTitle") ? det.Fields.AdditionalData["LinkTitle"]!.ToString() : "";
+                action.Description = det.Fields.AdditionalData.ContainsKey("Bijzonderheden_x0020_Oproep") ? det.Fields.AdditionalData["Bijzonderheden_x0020_Oproep"]!.ToString() : "";
+                actions.Add(action);
+            }
+            if (overigeItems.OdataNextLink != null)
+                overigeItems = await NextListPage(overigeItems);
+            else break;
+        }
+        return actions.OrderByDescending(x => x.Start).ToList();
+    }
+
+    private static void GetUser(List<SharePointUser> users, ListItem det, string key, SharePointRole role, SharePointListBase listBase)
+    {
+        var sharePointID = det.Fields.AdditionalData.ContainsKey(key) ? det.Fields.AdditionalData[key]?.ToString() : "";
+        if (sharePointID == null) return ;
+        var user = users.FirstOrDefault(x => x.SharePointID == sharePointID);
+        if (user == null) return ;
+        user.Role = role;
+        listBase.Users.Add(user);
     }
 }

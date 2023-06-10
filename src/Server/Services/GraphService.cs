@@ -12,8 +12,11 @@ public class GraphService : IGraphService
     private readonly IMemoryCache _memoryCache;
     private readonly IConfiguration _configuration;
 
-    private const string USER_SP_TRAININGS = "usrSPTrai_{0}";
-    private const string USER_SP_ACTIONS = "usrSPAct_{0}";
+    private const string SP_USERS = "SPUsrs_{0}";
+    private const string SP_ACTIONS = "usrSPAct_{0}";
+    private const string SP_TRAININGS = "usrSPTrai_{0}";
+    private const string USER_SP_ACTIONS = "usrSPAct_{0}_{1}_{2}";
+    private const string USER_SP_TRAININGS = "usrSPTrai_{0}_{1}_{2}";
     public GraphService(
         ILogger<GraphService> logger,
         IMemoryCache memoryCache,
@@ -101,25 +104,50 @@ public class GraphService : IGraphService
         await GraphHelper.GetLists();
     }
 
-    public async Task<List<SharePointTraining>> GetListTrainingUser(string userName, Guid userId, int count, Guid customerId, CancellationToken clt)
-    {
-        _memoryCache.TryGetValue<List<SharePointTraining>>(string.Format(USER_SP_TRAININGS, userId), out var sharePointTrainings);
-        if (sharePointTrainings == null)
-        {
-             sharePointTrainings = await GraphHelper.GetListTraining(userName, userId, customerId);
-            _ = _memoryCache.Set(string.Format(USER_SP_TRAININGS, userId), sharePointTrainings, DateTimeOffset.UtcNow.AddMinutes(5));
-        }
-        return sharePointTrainings.Take(count).ToList();
-    }
-
     public async Task<List<SharePointAction>> GetListActionsUser(string userName, Guid userId, int count, Guid customerId, CancellationToken clt)
     {
-        _memoryCache.TryGetValue<List<SharePointAction>>(string.Format(USER_SP_ACTIONS, userId), out var sharePointTrainings);
-        if (sharePointTrainings == null)
-        {
-             sharePointTrainings = await GraphHelper.GetListActions(userName, userId, customerId);
-            _ = _memoryCache.Set(string.Format(USER_SP_ACTIONS, userId), sharePointTrainings, DateTimeOffset.UtcNow.AddMinutes(5));
+        _memoryCache.TryGetValue<List<SharePointAction>>(string.Format(USER_SP_ACTIONS, customerId, userId, count), out var sharePointActionsUser);
+        if (sharePointActionsUser == null) {
+            _memoryCache.TryGetValue<List<SharePointAction>>(string.Format(SP_ACTIONS, customerId), out var sharePointActions);
+            if (sharePointActions == null)
+            {
+                var users = await GetAllSharePointUsers(customerId, clt);
+                sharePointActions = await GraphHelper.GetListActions(customerId, users);
+                _ = _memoryCache.Set(string.Format(SP_ACTIONS, customerId), sharePointActions, DateTimeOffset.UtcNow.AddMinutes(30));
+            }
+            sharePointActionsUser = sharePointActions.Where(x => x.Users.Any(y => string.Compare(y.Name, userName) == 0)).Take(count).ToList();
+            _ = _memoryCache.Set(string.Format(USER_SP_ACTIONS,customerId, userId, count), sharePointActionsUser, DateTimeOffset.UtcNow.AddMinutes(5));
         }
-        return sharePointTrainings.Take(count).ToList();
+        return sharePointActionsUser;
+    }
+
+    public async Task<List<SharePointTraining>> GetListTrainingUser(string userName, Guid userId, int count, Guid customerId, CancellationToken clt)
+    {
+        _memoryCache.TryGetValue<List<SharePointTraining>>(string.Format(USER_SP_TRAININGS, customerId, userId, count), out var sharePointTrainingsUser);
+        if (sharePointTrainingsUser == null)
+        {
+            _memoryCache.TryGetValue<List<SharePointTraining>>(string.Format(SP_TRAININGS, customerId), out var sharePointTrainings);
+            if (sharePointTrainings == null)
+            {
+                var users = await GetAllSharePointUsers(customerId, clt);
+                sharePointTrainings = await GraphHelper.GetListTraining(customerId, users);
+                _ = _memoryCache.Set(string.Format(SP_TRAININGS, customerId), sharePointTrainings, DateTimeOffset.UtcNow.AddMinutes(30));
+            }
+            sharePointTrainingsUser = sharePointTrainings.Where(x => x.Users.Any(y => string.Compare(y.Name, userName) == 0)).Take(count).ToList();
+            _ = _memoryCache.Set(string.Format(USER_SP_TRAININGS, customerId, userId, count), sharePointTrainingsUser, DateTimeOffset.UtcNow.AddMinutes(5));
+        }
+        return sharePointTrainingsUser;
+    }
+
+    private async Task<List<SharePointUser>> GetAllSharePointUsers(Guid customerId, CancellationToken clt)
+    {
+
+        _memoryCache.TryGetValue<List<SharePointUser>>(string.Format(SP_USERS, customerId), out var sharePointUsers);
+        if (sharePointUsers == null)
+        {
+            sharePointUsers = await GraphHelper.FindSharePointUsers();
+            _ = _memoryCache.Set(string.Format(SP_USERS, customerId), sharePointUsers, DateTimeOffset.UtcNow.AddMinutes(30));
+        }
+        return sharePointUsers;
     }
 }
