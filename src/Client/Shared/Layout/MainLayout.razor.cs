@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Localization;
@@ -11,20 +12,23 @@ public sealed partial class MainLayout : IDisposable
     [Inject] private SignOutSessionStateManager SignOutManager { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
+    [Inject] private IOfflineService _offlineService { get; set; } = default!;
 
     private DrogeCodeGlobal _global { get; set; } = new();
     private MudThemeProvider _mudThemeProvider = new();
     private IDictionary<NotificationMessage, bool> _messages = null;
     private List<PlannerTrainingType>? _trainingTypes;
     private bool _isDarkMode;
+    private bool _isAuthenticated;
+    private bool _isOffline;
     private bool _drawerOpen = true;
     private bool _settingsOpen = true;
     private bool _newNotificationsAvailable = false;
-    private bool _isAuthenticated;
 
     protected override async Task OnParametersSetAsync()
     {
         _global.RefreshRequested += RefreshMe;
+        _offlineService.OfflineStatusChanged += OfflineStatusChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -69,6 +73,12 @@ public sealed partial class MainLayout : IDisposable
     public void ToggleOpen()
     {
         _settingsOpen = !_settingsOpen;
+    }
+
+    private void OfflineStatusChanged()
+    {
+        _isOffline = _offlineService.Offline;
+        RefreshMe();
     }
 
     private void RefreshMe()
