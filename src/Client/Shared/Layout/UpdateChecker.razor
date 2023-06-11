@@ -1,8 +1,10 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+@using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 @code {
     [Inject] private IStringLocalizer<UpdateChecker> L { get; set; } = default!;
     [Inject] ConfigurationRepository _configurationRepository { get; set; } = default!;
+    [Inject] IOfflineService _offlineService { get; set; } = default!;
     [Inject] ISnackbar Snackbar { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     private UpdateDetails? _updateDetails;
@@ -10,25 +12,37 @@
     {
         while (true)
         {
-            _updateDetails = await _configurationRepository.NewVersionAvailable();
-            if (_updateDetails?.NewVersionAvailable == true)
+            try
             {
-                var config = (SnackbarOptions options) =>
+                _updateDetails = await _configurationRepository.NewVersionAvailable();
+                if (_updateDetails?.NewVersionAvailable == true)
                 {
-                    options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
-                    options.RequireInteraction = true;
-                    options.Action = L["Click to reload"];
-                    options.ActionColor = Color.Inherit;
-                    options.Onclick = snackbar =>
+                    var config = (SnackbarOptions options) =>
                     {
-                        Navigation.NavigateTo(Navigation.Uri, true);
-                        return Task.CompletedTask;
+                        options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
+                        options.RequireInteraction = true;
+                        options.Action = L["Click to reload"];
+                        options.ActionColor = Color.Inherit;
+                        options.Onclick = snackbar =>
+                        {
+                            Navigation.NavigateTo(Navigation.Uri, true);
+                            return Task.CompletedTask;
+                        };
                     };
-                };
-                Snackbar.Add(L["Update available"], configure: config, key: "outdated");
+                    Snackbar.Add(L["Update available"], configure: config, key: "outdated");
+                }
+                _offlineService.Offline = false;
+            }
+            catch(Exception ex)
+            {
+                DebugHelper.WriteLine(ex);
+                _offlineService.Offline = true;
+            }
+            finally
+            {
+                await Task.Delay(1000 * 30);
             }
 
-            await Task.Delay(1000 * 30);
         }
     }
 }

@@ -1,12 +1,8 @@
-﻿using Blazored.LocalStorage;
-using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Localization;
-using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 public sealed partial class MainLayout : IDisposable

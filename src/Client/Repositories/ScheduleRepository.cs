@@ -1,14 +1,19 @@
-﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Services;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 
 public class ScheduleRepository
 {
     private readonly IScheduleClient _scheduleClient;
+    private readonly IOfflineService _offlineService;
 
-    public ScheduleRepository(IScheduleClient scheduleClient)
+    public ScheduleRepository(IScheduleClient scheduleClient, IOfflineService offlineService)
     {
         _scheduleClient = scheduleClient;
+        _offlineService = offlineService;
     }
     public async Task<ScheduleForUserResponse?> CalendarForUser(DateRange dateRange, CancellationToken clt)
     {
@@ -47,9 +52,12 @@ public class ScheduleRepository
         };
         await _scheduleClient.PatchAssignedUserAsync(body, clt);
     }
-    public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(CancellationToken clt)
+    public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(Guid? userId, CancellationToken clt)
     {
-        var schedule = await _scheduleClient.GetScheduledTrainingsForUserAsync(clt);
+        if (userId == null) return null;
+        var schedule = await _offlineService.CachedRequestAsync(string.Format("trFoUse_{0}", userId),
+            async () => { return await _scheduleClient.GetScheduledTrainingsForUserAsync(clt); },
+            clt: clt);
         return schedule;
     }
 

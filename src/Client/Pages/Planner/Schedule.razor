@@ -3,6 +3,7 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+<PageTitle>Planner</PageTitle>
 
 <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
     <MudIconButton Icon="@Icons.Material.Filled.CalendarMonth" aria-label="calendar" OnClick="()=>{_view = Enums.ScheduleView.Calendar;}" Disabled="@(_view == Enums.ScheduleView.Calendar)" />

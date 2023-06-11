@@ -32,7 +32,7 @@ public sealed partial class Index : IDisposable
 
         _user = await _userRepository.GetCurrentUserAsync();//Force creation of user.
         _functions = await _functionRepository.GetAllFunctionsAsync();
-        _futureTrainings = (await _scheduleRepository.GetScheduledTrainingsForUser(_cls.Token))?.Trainings;
+        _futureTrainings = (await _scheduleRepository.GetScheduledTrainingsForUser(_user?.Id, _cls.Token))?.Trainings;
         StateHasChanged();
         _pinnedTrainings = (await _scheduleRepository.GetPinnedTrainingsForUser(_cls.Token))?.Trainings;
         StateHasChanged();

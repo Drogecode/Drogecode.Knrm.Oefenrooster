@@ -1,6 +1,9 @@
 using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using Drogecode.Knrm.Oefenrooster.Client;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Client.Services;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
@@ -15,6 +18,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 
 builder.Services.AddHttpClient("Drogecode.Knrm.Oefenrooster.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
     .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
@@ -25,6 +29,7 @@ builder.Services.AddMudServices(config =>
 });
 builder.Services.AddMudExtensions();
 builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddBlazoredSessionStorage();
 
 builder.Services.TryAddScoped<ICalendarItemClient, CalendarItemClient>();
 builder.Services.TryAddScoped<IConfigurationClient, ConfigurationClient>();
@@ -41,6 +46,9 @@ builder.Services.TryAddScoped<ScheduleRepository>();
 builder.Services.TryAddScoped<SharePointRepository>();
 builder.Services.TryAddScoped<UserRepository>();
 builder.Services.TryAddScoped<VehicleRepository>();
+
+builder.Services.TryAddScoped<ILocalStorageExpireService, LocalStorageExpireService>();
+builder.Services.TryAddScoped<IOfflineService, OfflineService>();
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Drogecode.Knrm.Oefenrooster.ServerAPI"));

@@ -10,10 +10,12 @@
 
 	<ItemGroup>
 	  <Content Remove="wwwroot\js\empty.ts" />
+	  <Content Remove="wwwroot\js\LocalStorageAccessor.ts" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
+		<PackageReference Include="Blazored.SessionStorage" Version="2.3.0" />
 		<PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.5.0.2" />
 		<PackageReference Include="Heron.MudCalendar" Version="1.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.5" />
@@ -21,6 +23,7 @@
 		<PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="7.0.5" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.5" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Graph" Version="5.12.0" />
 		<PackageReference Include="MudBlazor" Version="6.4.1" />
 	</ItemGroup>
@@ -36,6 +39,7 @@
 
 	<ItemGroup>
 	  <TypeScriptCompile Include="wwwroot\js\empty.ts" />
+	  <TypeScriptCompile Include="wwwroot\js\LocalStorageAccessor.ts" />
 	</ItemGroup>
 
 	<ItemGroup>
