@@ -26,26 +26,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DrogeUser"
-                  }
+                  "$ref": "#/components/schemas/MultipleDrogeUsersResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DrogeUser"
-                  }
+                  "$ref": "#/components/schemas/MultipleDrogeUsersResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DrogeUser"
-                  }
+                  "$ref": "#/components/schemas/MultipleDrogeUsersResponse"
                 }
               }
             }
@@ -65,17 +56,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/DrogeUser"
+                  "$ref": "#/components/schemas/GetDrogeUserResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DrogeUser"
+                  "$ref": "#/components/schemas/GetDrogeUserResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DrogeUser"
+                  "$ref": "#/components/schemas/GetDrogeUserResponse"
                 }
               }
             }
@@ -129,7 +120,8 @@
               }
             }
           }
-        }
+        },
+        "deprecated": true
       }
     },
     "/api/User/UpdateUser": {
@@ -163,17 +155,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/UpdateUserResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/UpdateUserResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/UpdateUserResponse"
                 }
               }
             }
@@ -193,17 +185,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/SyncAllUsersResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/SyncAllUsersResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/SyncAllUsersResponse"
                 }
               }
             }
@@ -237,6 +229,64 @@
             "type": "string",
             "format": "uuid",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetDrogeUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "drogeUser": {
+            "$ref": "#/components/schemas/DrogeUser"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MultipleDrogeUsersResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "drogeUsers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrogeUser"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SyncAllUsersResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

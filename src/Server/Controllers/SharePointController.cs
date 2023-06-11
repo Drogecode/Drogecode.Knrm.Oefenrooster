@@ -33,7 +33,7 @@ public class SharePointController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<SharePointTraining>>> GetLastTrainingsForCurrentUser(int count, CancellationToken clt = default)
+    public async Task<ActionResult<MultipleSharePointTrainingsResponse>> GetLastTrainingsForCurrentUser(int count, CancellationToken clt = default)
     {
         try
         {
@@ -42,7 +42,7 @@ public class SharePointController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             _graphService.InitializeGraph();
             var result = await _graphService.GetListTrainingUser(userName, userId, count, customerId, clt);
-            return Ok(result);
+            return Ok(new MultipleSharePointTrainingsResponse { SharePointTrainings = result });
         }
         catch (Exception ex)
         {
@@ -52,7 +52,7 @@ public class SharePointController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<SharePointAction>>> GetLastActionsForCurrentUser(int count, CancellationToken clt = default)
+    public async Task<ActionResult<MultipleSharePointActionsResponse>> GetLastActionsForCurrentUser(int count, CancellationToken clt = default)
     {
         try
         {
@@ -62,7 +62,7 @@ public class SharePointController : ControllerBase
 
             _graphService.InitializeGraph();
             var result = await _graphService.GetListActionsUser(userName, userId, count, customerId, clt);
-            return Ok(result);
+            return Ok(new MultipleSharePointActionsResponse { SharePointActions = result });
         }
         catch (Exception ex)
         {

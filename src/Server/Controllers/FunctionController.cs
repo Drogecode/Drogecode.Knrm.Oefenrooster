@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
@@ -22,14 +23,14 @@ public class FunctionController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<DrogeFunction>>> GetAll(CancellationToken token = default)
+    public async Task<ActionResult<MultipleFunctionsResponse>> GetAll(CancellationToken token = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _functionService.GetAllFunctions(customerId);
 
-            return result;
+            return Ok(new MultipleFunctionsResponse { Functions = result });
         }
         catch (Exception ex)
         {

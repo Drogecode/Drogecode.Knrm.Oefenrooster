@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 

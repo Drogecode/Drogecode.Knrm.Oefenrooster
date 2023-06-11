@@ -55,7 +55,6 @@ public static class PlannerHelper
         var findMonth = dateRange.Start!.Value;
         while (forMonth == null)
         {
-            Console.WriteLine(findMonth);
             if (findMonth.Day != 1)
             {
                 if (findMonth.Month == dateRange.End!.Value.Month)

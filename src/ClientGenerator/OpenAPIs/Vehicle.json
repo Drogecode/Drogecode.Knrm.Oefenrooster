@@ -17,26 +17,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DrogeVehicle"
-                  }
+                  "$ref": "#/components/schemas/MultipleVehicleResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DrogeVehicle"
-                  }
+                  "$ref": "#/components/schemas/MultipleVehicleResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DrogeVehicle"
-                  }
+                  "$ref": "#/components/schemas/MultipleVehicleResponse"
                 }
               }
             }
@@ -66,26 +57,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DrogeLinkVehicleTraining"
-                  }
+                  "$ref": "#/components/schemas/MultipleVehicleTrainingLinkResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DrogeLinkVehicleTraining"
-                  }
+                  "$ref": "#/components/schemas/MultipleVehicleTrainingLinkResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DrogeLinkVehicleTraining"
-                  }
+                  "$ref": "#/components/schemas/MultipleVehicleTrainingLinkResponse"
                 }
               }
             }
@@ -124,17 +106,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/DrogeLinkVehicleTraining"
+                  "$ref": "#/components/schemas/DrogeLinkVehicleTrainingResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DrogeLinkVehicleTraining"
+                  "$ref": "#/components/schemas/DrogeLinkVehicleTrainingResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DrogeLinkVehicleTraining"
+                  "$ref": "#/components/schemas/DrogeLinkVehicleTrainingResponse"
                 }
               }
             }
@@ -167,30 +149,45 @@
         },
         "additionalProperties": false
       },
-      "DrogeVehicle": {
+      "DrogeLinkVehicleTrainingResponse": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "code": {
-            "type": "string",
-            "nullable": true
-          },
-          "order": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "default": {
+          "success": {
             "type": "boolean"
           },
-          "active": {
+          "offline": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MultipleVehicleResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MultipleVehicleTrainingLinkResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "drogeLinkVehicleTrainingLinks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrogeLinkVehicleTraining"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

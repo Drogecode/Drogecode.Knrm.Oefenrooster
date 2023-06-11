@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 
-public class GetMonthItemResponse
+public class GetMonthItemResponse : BaseResponse
 {
     public List<RoosterItemMonth>? MonthItems { get; set; }
 }

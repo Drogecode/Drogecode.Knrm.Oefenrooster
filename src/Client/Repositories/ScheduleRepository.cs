@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 
@@ -27,20 +28,20 @@ public class ScheduleRepository
         return schedule;
     }
 
-    public async Task<Training> PatchScheduleForUser(Training training, CancellationToken clt)
+    public async Task<Training?> PatchScheduleForUser(Training training, CancellationToken clt)
     {
         var result = await _scheduleClient.PatchScheduleForUserAsync(training, clt);
-        return result;
+        return result.PatchedTraining;
     }
     public async Task<bool> PatchTraining(EditTraining patchedTraining, CancellationToken clt)
     {
         var result = await _scheduleClient.PatchTrainingAsync(patchedTraining, clt);
-        return result;
+        return result.Success;
     }
     public async Task<Guid> AddTraining(EditTraining newTraining, CancellationToken clt)
     {
         var result = await _scheduleClient.AddTrainingAsync(newTraining, clt);
-        return result;
+        return result.NewId;
     }
 
     public async Task PatchAvailabilityUser(Guid? trainingId, PlanUser user, CancellationToken clt)
@@ -79,9 +80,9 @@ public class ScheduleRepository
         await _scheduleClient.PutAssignedUserAsync(body, clt);
     }
 
-    internal async Task<List<PlannerTrainingType>> GetTrainingTypes(CancellationToken clt = default)
+    internal async Task<List<PlannerTrainingType>?> GetTrainingTypes(CancellationToken clt = default)
     {
         var schedule = await _scheduleClient.GetTrainingTypesAsync(clt);
-        return schedule.ToList();
+        return schedule.PlannerTrainingTypes?.ToList();
     }
 }

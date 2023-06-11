@@ -148,6 +148,12 @@
       "GetDayItemResponse": {
         "type": "object",
         "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
           "dayItems": {
             "type": "array",
             "items": {
@@ -161,6 +167,12 @@
       "GetMonthItemResponse": {
         "type": "object",
         "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
           "monthItems": {
             "type": "array",
             "items": {

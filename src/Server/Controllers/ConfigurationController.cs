@@ -34,17 +34,17 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<bool>> UpgradeDatabase(CancellationToken token = default)
+    public async Task<ActionResult<UpgradeDatabaseResponse>> UpgradeDatabase(CancellationToken token = default)
     {
         try
         {
-            bool result = false;
+            UpgradeDatabaseResponse result = new UpgradeDatabaseResponse { Success = false };
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var installing = _configuration.GetValue<bool>("Drogecode:Installing");
             if (installing || userId == DefaultSettingsHelper.IdTaco)
             {
-                result = await _configurationService.UpgradeDatabase();
+                result.Success = await _configurationService.UpgradeDatabase();
                 await _auditService.Log(userId, AuditType.DataBaseUpgrade, customerId);
             }
             return Ok(result);
@@ -57,15 +57,15 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<UpdateDetails>> NewVersionAvailable(string clientVersion, CancellationToken token = default)
+    public async Task<ActionResult<VersionDetailResponse>> NewVersionAvailable(string clientVersion, CancellationToken token = default)
     {
         try
         {
-            var response = new UpdateDetails
+            var response = new VersionDetailResponse
             {
                 NewVersionAvailable = string.Compare(DefaultSettingsHelper.CURRENT_VERSION, clientVersion, StringComparison.OrdinalIgnoreCase) != 0
             };
-            return response;
+            return Ok(response);
         }
         catch (Exception ex)
         {
@@ -75,42 +75,42 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<bool> InstallingActive(CancellationToken token = default)
+    public ActionResult<InstallingActiveResponse> InstallingActive(CancellationToken token = default)
     {
         try
         {
-            return _configuration.GetValue<bool>("Drogecode:Installing");
+            return Ok(new InstallingActiveResponse { Success = _configuration.GetValue<bool>("Drogecode:Installing") });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in InstallingActive");
-            return false;
+            return new InstallingActiveResponse { Success = false };
         }
     }
 
     [HttpGet]
-    public async Task<ActionResult<bool>> UpdateSpecialDates(CancellationToken token = default)
+    public async Task<ActionResult<UpdateSpecialDatesResponse>> UpdateSpecialDates(CancellationToken token = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             using var holidayClient = new HolidayClient();
             var currentYear = DateTime.Now.Year;
-            for(int i = currentYear; i < currentYear + 10; i++)
+            for (int i = currentYear; i < currentYear + 10; i++)
             {
                 var holidays = await holidayClient.GetHolidaysAsync(i, "nl");
                 if (holidays == null) continue;
-                foreach(var holiday in holidays)
+                foreach (var holiday in holidays)
                 {
-                   await _configurationService.AddSpecialDay(customerId, holiday, token);
+                    await _configurationService.AddSpecialDay(customerId, holiday, token);
                 }
             }
-            return true;
+            return Ok(new UpdateSpecialDatesResponse { Success = true });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in InstallingActive");
-            return false;
+            return new UpdateSpecialDatesResponse { Success = false };
         }
     }
 }

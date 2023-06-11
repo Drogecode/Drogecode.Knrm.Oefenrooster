@@ -7,7 +7,7 @@
     [Inject] IOfflineService _offlineService { get; set; } = default!;
     [Inject] ISnackbar Snackbar { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
-    private UpdateDetails? _updateDetails;
+    private VersionDetailResponse? _updateDetails;
     protected override async Task OnInitializedAsync()
     {
         while (true)

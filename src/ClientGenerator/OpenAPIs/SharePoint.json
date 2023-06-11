@@ -27,26 +27,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SharePointTraining"
-                  }
+                  "$ref": "#/components/schemas/MultipleSharePointTrainingsResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SharePointTraining"
-                  }
+                  "$ref": "#/components/schemas/MultipleSharePointTrainingsResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SharePointTraining"
-                  }
+                  "$ref": "#/components/schemas/MultipleSharePointTrainingsResponse"
                 }
               }
             }
@@ -76,26 +67,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SharePointAction"
-                  }
+                  "$ref": "#/components/schemas/MultipleSharePointActionsResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SharePointAction"
-                  }
+                  "$ref": "#/components/schemas/MultipleSharePointActionsResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SharePointAction"
-                  }
+                  "$ref": "#/components/schemas/MultipleSharePointActionsResponse"
                 }
               }
             }
@@ -106,86 +88,26 @@
   },
   "components": {
     "schemas": {
-      "SharePointAction": {
+      "MultipleSharePointActionsResponse": {
         "type": "object",
         "properties": {
-          "description": {
-            "type": "string",
-            "nullable": true
+          "success": {
+            "type": "boolean"
           },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "start": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "users": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SharePointUser"
-            },
-            "nullable": true
-          },
-          "number": {
-            "type": "number",
-            "format": "double"
+          "offline": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
       },
-      "SharePointRole": {
-        "enum": [
-          0,
-          1,
-          2
-        ],
-        "type": "integer",
-        "format": "int32"
-      },
-      "SharePointTraining": {
+      "MultipleSharePointTrainingsResponse": {
         "type": "object",
         "properties": {
-          "description": {
-            "type": "string",
-            "nullable": true
+          "success": {
+            "type": "boolean"
           },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "start": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "users": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SharePointUser"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "SharePointUser": {
-        "type": "object",
-        "properties": {
-          "sharePointID": {
-            "type": "string",
-            "nullable": true
-          },
-          "drogeCodeId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "role": {
-            "$ref": "#/components/schemas/SharePointRole"
+          "offline": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

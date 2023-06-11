@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
 using System.Diagnostics.CodeAnalysis;
@@ -105,7 +106,6 @@ public sealed partial class EditTrainingDialog : IDisposable
         }
         else if (Planner != null)
         {
-            Console.WriteLine(JsonSerializer.Serialize(_training));
             await _scheduleRepository.PatchTraining(_training, _cls.Token);
             var dateStart = (_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeStart ?? throw new ArgumentNullException("TimeStart is null"));
             var dateEnd = (_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"));
@@ -126,14 +126,12 @@ public sealed partial class EditTrainingDialog : IDisposable
         var link = _linkVehicleTraining?.FirstOrDefault(x => x.Vehicle == vehicle.Id);
         if (link != null)
         {
-            Console.WriteLine("d is not null");
             link.IsSelected = toggled;
             if (!_training!.IsNew)
                 await _vehicleRepository.UpdateLinkVehicleTrainingAsync(link);
         }
         else
         {
-            Console.WriteLine("d is null");
             link = new DrogeLinkVehicleTraining
             {
                 Id = null,
@@ -146,8 +144,6 @@ public sealed partial class EditTrainingDialog : IDisposable
                 var newLink = await _vehicleRepository.UpdateLinkVehicleTrainingAsync(link);
                 if (newLink != null)
                     _linkVehicleTraining?.Add(newLink);
-                else
-                    Console.WriteLine("Failed to add new link");
             }
             else
             {

@@ -17,26 +17,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DrogeFunction"
-                  }
+                  "$ref": "#/components/schemas/MultipleFunctionsResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DrogeFunction"
-                  }
+                  "$ref": "#/components/schemas/MultipleFunctionsResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DrogeFunction"
-                  }
+                  "$ref": "#/components/schemas/MultipleFunctionsResponse"
                 }
               }
             }
@@ -74,6 +65,25 @@
           },
           "active": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MultipleFunctionsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "functions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrogeFunction"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

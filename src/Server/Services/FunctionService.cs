@@ -1,4 +1,6 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Server.Services;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
+
+namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class FunctionService : IFunctionService
 {

@@ -1,4 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 public interface IUserService

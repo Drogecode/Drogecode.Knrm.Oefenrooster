@@ -4,7 +4,7 @@
 // </auto-generated>
 //----------------------
 
-using Drogecode.Knrm.Oefenrooster.Shared.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
 #pragma warning disable 114 // Disable "CS0114 '{derivedDto}.RaisePropertyChanged(String)' hides inherited member 'dtoBase.RaisePropertyChanged(String)'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword."
@@ -25,30 +25,30 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     {
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeVehicle>> GetAllAsync();
+        System.Threading.Tasks.Task<MultipleVehicleResponse> GetAllAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeVehicle>> GetAllAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<MultipleVehicleResponse> GetAllAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeLinkVehicleTraining>> GetForTrainingAsync(System.Guid? trainingId);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeLinkVehicleTraining>> GetForTrainingAsync(System.Guid? trainingId, System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<DrogeLinkVehicleTraining> UpdateLinkVehicleTrainingAsync(DrogeLinkVehicleTraining body);
+        System.Threading.Tasks.Task<MultipleVehicleTrainingLinkResponse> GetForTrainingAsync(System.Guid? trainingId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<DrogeLinkVehicleTraining> UpdateLinkVehicleTrainingAsync(DrogeLinkVehicleTraining body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<MultipleVehicleTrainingLinkResponse> GetForTrainingAsync(System.Guid? trainingId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<DrogeLinkVehicleTrainingResponse> UpdateLinkVehicleTrainingAsync(DrogeLinkVehicleTraining body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<DrogeLinkVehicleTrainingResponse> UpdateLinkVehicleTrainingAsync(DrogeLinkVehicleTraining body, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -81,7 +81,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeVehicle>> GetAllAsync()
+        public virtual System.Threading.Tasks.Task<MultipleVehicleResponse> GetAllAsync()
         {
             return GetAllAsync(System.Threading.CancellationToken.None);
         }
@@ -89,7 +89,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeVehicle>> GetAllAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<MultipleVehicleResponse> GetAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Vehicle/GetAll");
@@ -126,7 +126,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<DrogeVehicle>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<MultipleVehicleResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -155,7 +155,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeLinkVehicleTraining>> GetForTrainingAsync(System.Guid? trainingId)
+        public virtual System.Threading.Tasks.Task<MultipleVehicleTrainingLinkResponse> GetForTrainingAsync(System.Guid? trainingId)
         {
             return GetForTrainingAsync(trainingId, System.Threading.CancellationToken.None);
         }
@@ -163,7 +163,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<DrogeLinkVehicleTraining>> GetForTrainingAsync(System.Guid? trainingId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<MultipleVehicleTrainingLinkResponse> GetForTrainingAsync(System.Guid? trainingId, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Vehicle/GetForTraining?");
@@ -205,7 +205,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<DrogeLinkVehicleTraining>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<MultipleVehicleTrainingLinkResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -234,7 +234,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<DrogeLinkVehicleTraining> UpdateLinkVehicleTrainingAsync(DrogeLinkVehicleTraining body)
+        public virtual System.Threading.Tasks.Task<DrogeLinkVehicleTrainingResponse> UpdateLinkVehicleTrainingAsync(DrogeLinkVehicleTraining body)
         {
             return UpdateLinkVehicleTrainingAsync(body, System.Threading.CancellationToken.None);
         }
@@ -242,7 +242,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<DrogeLinkVehicleTraining> UpdateLinkVehicleTrainingAsync(DrogeLinkVehicleTraining body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<DrogeLinkVehicleTrainingResponse> UpdateLinkVehicleTrainingAsync(DrogeLinkVehicleTraining body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Vehicle/UpdateLinkVehicleTraining");
@@ -283,7 +283,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<DrogeLinkVehicleTraining>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<DrogeLinkVehicleTrainingResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);

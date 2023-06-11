@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -25,14 +26,14 @@ public class VehicleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<DrogeVehicle>>> GetAll(CancellationToken token = default)
+    public async Task<ActionResult<MultipleVehicleResponse>> GetAll(CancellationToken token = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _vehicleService.GetAllVehicles(customerId);
 
-            return Ok(result);
+            return Ok(new MultipleVehicleResponse { DrogeVehicles = result });
         }
         catch (Exception ex)
         {
@@ -42,14 +43,14 @@ public class VehicleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<DrogeLinkVehicleTraining>>> GetForTraining(Guid trainingId, CancellationToken token = default)
+    public async Task<ActionResult<MultipleVehicleTrainingLinkResponse>> GetForTraining(Guid trainingId, CancellationToken token = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _vehicleService.GetForTraining(customerId, trainingId);
 
-            return Ok(result);
+            return Ok(new MultipleVehicleTrainingLinkResponse { DrogeLinkVehicleTrainingLinks = result });
         }
         catch (Exception ex)
         {
@@ -59,16 +60,16 @@ public class VehicleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<DrogeLinkVehicleTraining>> UpdateLinkVehicleTraining(DrogeLinkVehicleTraining link, CancellationToken token = default)
+    public async Task<ActionResult<DrogeLinkVehicleTrainingResponse>> UpdateLinkVehicleTraining(DrogeLinkVehicleTraining link, CancellationToken token = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _vehicleService.UpdateLinkVehicleTraining(customerId, link);
 
-            return Ok(result);
+            return Ok(new DrogeLinkVehicleTrainingResponse { DrogeLinkVehicleTraining = result });
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in UpdateLinkVehicleTraining");
             return BadRequest();

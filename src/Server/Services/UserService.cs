@@ -1,5 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Shared.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Graph;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;

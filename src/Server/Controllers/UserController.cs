@@ -1,12 +1,13 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
-using Drogecode.Knrm.Oefenrooster.Shared.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Graph.Models;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
 using Tavis.UriTemplates;
+using ZXing;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
@@ -30,14 +31,14 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<DrogeUser>>> GetAll(bool includeHidden, CancellationToken token = default)
+    public async Task<ActionResult<MultipleDrogeUsersResponse>> GetAll(bool includeHidden, CancellationToken token = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _userService.GetAllUsers(customerId, includeHidden);
 
-            return result;
+            return Ok(new MultipleDrogeUsersResponse { DrogeUsers = result });
         }
         catch (Exception ex)
         {
@@ -47,7 +48,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<DrogeUser>> Get(CancellationToken token = default)
+    public async Task<ActionResult<GetDrogeUserResponse>> Get(CancellationToken token = default)
     {
         try
         {
@@ -57,7 +58,7 @@ public class UserController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _userService.GetOrSetUserFromDb(userId, userName, userEmail, customerId, true);
 
-            return result;
+            return Ok(new GetDrogeUserResponse { DrogeUser = result });
         }
         catch (Exception ex)
         {
@@ -67,6 +68,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
+    [Obsolete("Use AD")]
     public async Task<ActionResult<bool>> AddUser(DrogeUser user, CancellationToken token = default)
     {
         try
@@ -88,7 +90,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<bool>> UpdateUser(DrogeUser user, CancellationToken token = default)
+    public async Task<ActionResult<UpdateUserResponse>> UpdateUser(DrogeUser user, CancellationToken token = default)
     {
         try
         {
@@ -98,7 +100,7 @@ public class UserController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _userService.UpdateUser(user, userId, userName, userEmail, customerId);
 
-            return result;
+            return Ok(new UpdateUserResponse { Success = result });
         }
         catch (Exception ex)
         {
@@ -108,7 +110,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<bool>> SyncAllUsers(CancellationToken token = default)
+    public async Task<ActionResult<SyncAllUsersResponse>> SyncAllUsers(CancellationToken token = default)
     {
         try
         {
@@ -149,13 +151,13 @@ public class UserController : ControllerBase
                 }
             }
             else
-                return false;
-            return true;
+                return Ok(new SyncAllUsersResponse { Success = false });
+            return Ok(new SyncAllUsersResponse { Success = true });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in SyncAllUsers");
-            return false;
+            return Ok(new SyncAllUsersResponse { Success = false });
         }
     }
 }

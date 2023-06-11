@@ -16,10 +16,10 @@ public class ConfigurationRepository
     public async Task<bool> UpgradeDatabaseAsync()
     {
         var response = await _configurationClient.UpgradeDatabaseAsync();
-        return response;
+        return response.Success;
     }
 
-    public async Task<UpdateDetails?> NewVersionAvailable()
+    public async Task<VersionDetailResponse?> NewVersionAvailable()
     {
         var clientVersion = DefaultSettingsHelper.CURRENT_VERSION;
         var response = await _configurationClient.NewVersionAvailableAsync(clientVersion);
@@ -29,12 +29,12 @@ public class ConfigurationRepository
     public async Task<bool?> InstallingActive()
     {
         var response = await _configurationClient.InstallingActiveAsync();
-        return response;
+        return response.Success;
     }
 
     public async Task<bool?> UpdateSpecialDates()
     {
         var response = await _configurationClient.UpdateSpecialDatesAsync();
-        return response;
+        return response.Success;
     }
 }

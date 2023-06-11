@@ -1,4 +1,6 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Server.Services;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
+
+namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class VehicleService : IVehicleService
 {

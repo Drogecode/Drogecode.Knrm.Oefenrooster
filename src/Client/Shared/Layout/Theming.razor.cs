@@ -71,7 +71,6 @@ public sealed partial class Theming : IDisposable
         {
             if (_darkModeToggle == value) return;
             _darkModeToggle = value;
-            Console.WriteLine($"{counter} : {value}");
             counter++;
             RefreshMe();
             if (_localUserSettings == null)
@@ -108,7 +107,6 @@ public sealed partial class Theming : IDisposable
     {
         if (!_watchStarted)
         {
-            Console.WriteLine($"Start watch: {DarkModeToggle} {IsDarkMode}");
             _watchStarted = true;
             await MudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
         }
@@ -118,7 +116,6 @@ public sealed partial class Theming : IDisposable
     {
         if (DarkModeToggle == DarkLightMode.System)
         {
-            Console.WriteLine($"System dark light changed: {newValue}");
             IsDarkMode = newValue;
             RefreshMe();
             await Global.CallDarkLightChangedAsync(IsDarkMode);

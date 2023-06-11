@@ -1,6 +1,9 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Enums;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Heron.MudCalendar;
 using Microsoft.Extensions.Localization;
 

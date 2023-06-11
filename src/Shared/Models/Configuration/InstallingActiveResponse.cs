@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 
-public class UpdateDetails
+public class InstallingActiveResponse : BaseResponse
 {
-    public bool NewVersionAvailable { get; set; }
-    public bool Installing { get; set; }
 }

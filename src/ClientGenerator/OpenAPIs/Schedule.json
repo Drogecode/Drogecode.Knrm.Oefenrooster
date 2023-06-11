@@ -204,17 +204,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/PatchTrainingResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/PatchTrainingResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/PatchTrainingResponse"
                 }
               }
             }
@@ -253,20 +253,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "string",
-                  "format": "uuid"
+                  "$ref": "#/components/schemas/AddTrainingResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "string",
-                  "format": "uuid"
+                  "$ref": "#/components/schemas/AddTrainingResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "string",
-                  "format": "uuid"
+                  "$ref": "#/components/schemas/AddTrainingResponse"
                 }
               }
             }
@@ -305,17 +302,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Training"
+                  "$ref": "#/components/schemas/PatchScheduleForUserResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Training"
+                  "$ref": "#/components/schemas/PatchScheduleForUserResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Training"
+                  "$ref": "#/components/schemas/PatchScheduleForUserResponse"
                 }
               }
             }
@@ -459,26 +456,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlannerTrainingType"
-                  }
+                  "$ref": "#/components/schemas/MultiplePlannerTrainingTypesResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlannerTrainingType"
-                  }
+                  "$ref": "#/components/schemas/MultiplePlannerTrainingTypesResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PlannerTrainingType"
-                  }
+                  "$ref": "#/components/schemas/MultiplePlannerTrainingTypesResponse"
                 }
               }
             }
@@ -489,6 +477,22 @@
   },
   "components": {
     "schemas": {
+      "AddTrainingResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "newId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
       "Availabilty": {
         "enum": [
           0,
@@ -542,6 +546,12 @@
       "GetPinnedTrainingsForUserResponse": {
         "type": "object",
         "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
           "trainings": {
             "type": "array",
             "items": {
@@ -555,10 +565,35 @@
       "GetScheduledTrainingsForUserResponse": {
         "type": "object",
         "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
           "trainings": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PlannedTraining"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MultiplePlannerTrainingTypesResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "plannerTrainingTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlannerTrainingType"
             },
             "nullable": true
           }
@@ -599,6 +634,33 @@
           },
           "user": {
             "$ref": "#/components/schemas/PlanUser"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PatchScheduleForUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "patchedTraining": {
+            "$ref": "#/components/schemas/Training"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PatchTrainingResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -722,6 +784,14 @@
             "type": "string",
             "nullable": true
           },
+          "textColorLight": {
+            "type": "string",
+            "nullable": true
+          },
+          "textColorDark": {
+            "type": "string",
+            "nullable": true
+          },
           "order": {
             "type": "integer",
             "format": "int32"
@@ -738,6 +808,12 @@
       "ScheduleForAllResponse": {
         "type": "object",
         "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
           "planners": {
             "type": "array",
             "items": {
@@ -758,6 +834,12 @@
       "ScheduleForUserResponse": {
         "type": "object",
         "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
           "trainings": {
             "type": "array",
             "items": {
