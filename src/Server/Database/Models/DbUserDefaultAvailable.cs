@@ -12,8 +12,9 @@ public class DbUserDefaultAvailable
     public Guid CustomerId { get; set; }
     public Guid RoosterDefaultId { get; set; }
     public Availabilty? Available { get; set; }
-    public DateTime? From { get; set; }
-    public DateTime? Till { get; set; }
+    public DateTime? ValidFrom { get; set; }
+    public DateTime? ValidUntil { get; set; }
+    public bool Assigned { get; set; }
 
     public DbCustomers Customer { get; set; }
     public DbUsers User { get; set; }

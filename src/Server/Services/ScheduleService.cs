@@ -2,6 +2,8 @@
 using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Graph.Models.TermStore;
 using System.Data;
 using System.Runtime.Intrinsics.X86;
 
@@ -22,7 +24,9 @@ public class ScheduleService : IScheduleService
         var result = new ScheduleForUserResponse();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
-        var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= startDate && x.ValidUntil >= startDate);
+        var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= startDate && x.ValidUntil >= tillDate);
+        var defaultAveUser = await _database.UserDefaultAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: token);
+        var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: token);
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate);
         var availables = await _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate).ToListAsync(cancellationToken: token);
         var roosterTrainingTypes = await _database.RoosterTrainingTypes.Where(x => x.CustomerId == customerId).ToListAsync(cancellationToken: token);
@@ -33,14 +37,37 @@ public class ScheduleService : IScheduleService
         {
             var defaultsFound = new List<Guid?>();
             var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek);
-            var start = scheduleDate.ToDateTime(new TimeOnly(0, 0, 0, 0), DateTimeKind.Utc);
-            var end = scheduleDate.ToDateTime(new TimeOnly(23, 59, 59, 999), DateTimeKind.Utc);
+            var start = scheduleDate.ToDateTime(new TimeOnly(0, 0, 0), DateTimeKind.Utc);
+            var end = scheduleDate.ToDateTime(new TimeOnly(23, 59, 59), DateTimeKind.Utc);
             var trainingsToday = trainings.Where(x => x.DateStart >= start && x.DateStart <= end);
             if (trainingsToday != null)
             {
                 foreach (var training in trainingsToday)
                 {
                     var ava = availables.FirstOrDefault(x => x.TrainingId == training.Id);
+                    DbUserDefaultAvailable? defAvaForUser = null;
+                    var availabilty = ava?.Available;
+                    var setBy = ava?.SetBy;
+
+                    if (availabilty is null || setBy == AvailabilitySetBy.DefaultAvailable)
+                    {
+                        var userHoliday = userHolidays.FirstOrDefault(x => x.ValidFrom <= start && x.ValidUntil >= end);
+                        if (userHoliday?.Available != null)
+                        {
+                            availabilty = userHoliday.Available;
+                            setBy = AvailabilitySetBy.Holiday;
+                        }
+                    }
+                    if (availabilty is null)
+                    {
+                        defAvaForUser = defaultAveUser.FirstOrDefault(x => x.RoosterDefaultId == training.RoosterDefaultId && x.ValidFrom <= start && x.ValidUntil >= end);
+                        if (defAvaForUser?.Available != null)
+                        {
+                            availabilty = defAvaForUser.Available;
+                            setBy = AvailabilitySetBy.DefaultAvailable;
+                        }
+                    }
+
                     result.Trainings.Add(new Training
                     {
                         DefaultId = training.RoosterDefaultId,
@@ -48,7 +75,8 @@ public class ScheduleService : IScheduleService
                         Name = training.Name,
                         DateStart = training.DateStart,
                         DateEnd = training.DateEnd,
-                        Availabilty = ava?.Available,
+                        Availabilty = availabilty,
+                        SetBy = setBy ?? AvailabilitySetBy.None,
                         Assigned = ava?.Assigned ?? false,
                         RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                         VehicleId = ava?.VehicleId,
@@ -63,12 +91,25 @@ public class ScheduleService : IScheduleService
             {
                 if (!defaultsFound.Contains(def.Id))
                 {
+                    var userHoliday = userHolidays.FirstOrDefault(x => x.ValidFrom <= start && x.ValidUntil >= end);
+                    var availabilty = userHoliday?.Available;
+                    var setBy = availabilty == null ? AvailabilitySetBy.None : AvailabilitySetBy.Holiday;
+                    if (availabilty is null)
+                    {
+                        var defAvaForUser = defaultAveUser?.FirstOrDefault(x => x.RoosterDefaultId == def.Id  && x.ValidFrom <= start && x.ValidUntil >= end);
+                        if (defAvaForUser?.Available != null)
+                        {
+                            availabilty = defAvaForUser.Available;
+                            setBy = AvailabilitySetBy.DefaultAvailable;
+                        }
+                    }
                     result.Trainings.Add(new Training
                     {
                         DefaultId = def.Id,
                         DateStart = scheduleDate.ToDateTime(def.TimeStart, DateTimeKind.Utc),
                         DateEnd = scheduleDate.ToDateTime(def.TimeEnd, DateTimeKind.Utc),
-                        Availabilty = Availabilty.None,
+                        Availabilty = availabilty ?? Availabilty.None,
+                        SetBy = setBy,
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget,
                         Pin = false,
@@ -192,9 +233,10 @@ public class ScheduleService : IScheduleService
         return (await _database.SaveChangesAsync()) > 0;
     }
 
-    private async Task<bool> PatchAvailableInternalAsync(DbRoosterAvailable? available, Training training)
+    private async Task<bool> PatchAvailableInternalAsync(DbRoosterAvailable available, Training training)
     {
-        available!.Available = training.Availabilty;
+        available.Available = training.Availabilty;
+        available.SetBy = training.SetBy;
         _database.RoosterAvailables.Update(available);
         return (await _database.SaveChangesAsync()) > 0;
     }

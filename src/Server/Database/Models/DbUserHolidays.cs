@@ -11,8 +11,8 @@ public class DbUserHolidays
     public Guid UserId { get; set; }
     public Guid CustomerId { get; set; }
     public Availabilty? Available { get; set; }
-    public DateTime? From { get; set; }
-    public DateTime? Till { get; set; }
+    public DateTime? ValidFrom { get; set; }
+    public DateTime? ValidUntil { get; set; }
 
     public DbCustomers Customer { get; set; }
     public DbUsers User { get; set; }

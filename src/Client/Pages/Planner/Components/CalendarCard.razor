@@ -4,7 +4,7 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @using Drogecode.Knrm.Oefenrooster.Client.Helpers;
 @using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
-<CalendarBaseCard Width="@Width" Training="@Training" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek">
+<CalendarBaseCard Width="@Width" Training="@Training" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" SetBy="@Training.SetBy">
     <MudPaper Class="@PlannerHelper.StyleAvailabilty(Training.Availabilty)">
     <MudSelect T="Availabilty?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="Training.Availabilty" SelectedValuesChanged="OnChange" AdornmentColor="@PlannerHelper.ColorAvailabilty(Training.Availabilty)">
         <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>

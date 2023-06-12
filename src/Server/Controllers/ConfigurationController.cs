@@ -1,11 +1,10 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
-using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
-using Drogecode.Knrm.Oefenrooster.Shared.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using Nager.Holiday;
+using System.Diagnostics;
 using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
@@ -51,6 +50,9 @@ public class ConfigurationController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in UpgradeDatabase");
             return BadRequest();
         }

@@ -15,6 +15,15 @@
                 }
             </CardHeaderContent>
             <CardHeaderActions>
+                @switch (SetBy)
+                {
+                    case AvailabilitySetBy.DefaultAvailable:
+                        <MudIcon Icon="@Icons.Material.Filled.AutoGraph" />
+                        break;
+                    case AvailabilitySetBy.Holiday:
+                        <MudIcon Icon="@Icons.Material.Filled.WbSunny" />
+                        break;
+                }
                 @if (OnClickHistory.HasDelegate)
                 {
                     <MudIconButton Icon="@Icons.Material.Filled.History" Color="Color.Default" OnClick="()=>OnClickHistory.InvokeAsync()" />

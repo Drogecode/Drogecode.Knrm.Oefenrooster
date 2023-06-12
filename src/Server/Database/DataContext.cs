@@ -115,6 +115,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             SetUserFunctions(modelBuilder);
             SetVehicles(modelBuilder);
             SetRoosterTrainingTypes(modelBuilder);
+            SetUserDefaultAvailable(modelBuilder);
+            SetUserHolidays(modelBuilder);
         }
 
         #region Default data
@@ -151,7 +153,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             {
                 e.HasData(new DbRoosterDefault
                 {
-                    Id = new Guid("7b4693a8-ae9c-430f-9119-49a6ecbfeb54"),
+                    Id = DefaultSettingsHelper.DefaultRoosterTuesday,
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                     WeekDay = DayOfWeek.Tuesday,
                     TimeStart = new TimeOnly(19, 30),
@@ -193,7 +195,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             {
                 e.HasData(new DbRoosterDefault
                 {
-                    Id = new Guid("2bdaccc0-e9f7-40c1-ae76-d9ed66e4a978"),
+                    Id = DefaultSettingsHelper.DefaultRoosterSaturdayMorning,
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                     WeekDay = DayOfWeek.Saturday,
                     TimeStart = new TimeOnly(10, 00),
@@ -561,6 +563,43 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 80,
                 TextColorLight = "#FFFFFF",
                 TextColorDark = "#C0C0C0",
+            }));
+        }
+        private void SetUserDefaultAvailable(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DbUserDefaultAvailable>(e => e.HasData(new DbUserDefaultAvailable
+            {
+                Id = new Guid("edcfed1c-693b-4320-bb2e-6a1b79b6fa57"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                UserId = DefaultSettingsHelper.IdTaco,
+                RoosterDefaultId = DefaultSettingsHelper.DefaultRoosterTuesday,
+                Available = Availabilty.Available,
+                ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
+                ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
+                Assigned = false,
+            }));
+            modelBuilder.Entity<DbUserDefaultAvailable>(e => e.HasData(new DbUserDefaultAvailable
+            {
+                Id = new Guid("fd320130-5345-4c32-b660-5c0504061345"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                UserId = DefaultSettingsHelper.IdTaco,
+                RoosterDefaultId = DefaultSettingsHelper.DefaultRoosterSaturdayMorning,
+                Available = Availabilty.Maybe,
+                ValidFrom = new DateTime(2023, 6, 12, 0, 0, 0, DateTimeKind.Utc),
+                ValidUntil = new DateTime(2023, 9, 30, 23, 59, 59, DateTimeKind.Utc),
+                Assigned = true,
+            }));
+        }
+        private void SetUserHolidays(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DbUserHolidays>(e => e.HasData(new DbUserHolidays
+            {
+                Id = new Guid("20e1f57d-20cb-48d2-8e0c-c4a0f83e4446"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                UserId = DefaultSettingsHelper.IdTaco,
+                Available = Availabilty.NotAvailable,
+                ValidFrom = new DateTime(2023, 7, 5, 0, 0, 0, DateTimeKind.Utc),
+                ValidUntil = new DateTime(2023, 10, 17, 23, 59, 59, DateTimeKind.Utc),
             }));
         }
         #endregion

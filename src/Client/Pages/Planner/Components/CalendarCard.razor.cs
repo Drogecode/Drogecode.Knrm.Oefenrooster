@@ -27,6 +27,7 @@ public sealed partial class CalendarCard : IDisposable
     {
         if (_updating) return;
         _updating = true;
+        Training.SetBy = AvailabilitySetBy.User;
         var updatedTraining = await _scheduleRepository.PatchScheduleForUser(Training, _cls.Token);
         Training = updatedTraining;
         _updating = false;

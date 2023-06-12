@@ -12,7 +12,7 @@
         <MudList>
             @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
             {
-                @if (Planner.PlanUsers.Any(x => x.PlannedFunctionId == function.Id))
+                @if (Planner.PlanUsers?.Any(x => x.PlannedFunctionId == function.Id) == true)
                 {
                     @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id))
                     {
