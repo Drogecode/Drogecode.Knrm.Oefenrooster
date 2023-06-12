@@ -1,7 +1,5 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 <div>
-    <MudText Typo="Typo.h3">Coming soon!</MudText>
-
     <MonthSelector Month="_month" MonthChanged="SetMonth"/>
     @if (Users != null)
     {
@@ -10,16 +8,10 @@
                   GroupBy="@_groupBy"
                   GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
                   GroupFooterClass="mb-4"
+                  FixedHeader="true"
+                  Height=" calc(100vh - 200px)"
                   Dense="true"
                   Bordered="true">
-            <ColGroup>
-                <col style="width: 60px;" />
-                <col />
-                <col />
-                <col />
-                <col />
-                <col />
-            </ColGroup>
             <HeaderContent>
                 <MudTh>@L["Name"]</MudTh>
                 @foreach (var item in _events)
@@ -39,7 +31,7 @@
                 <MudTd Class="DrogeCode-sticky-column" DataLabel="@L["Name"]">@context.Name</MudTd>
                 @foreach (var item in _events)
                 {
-                    var training = item.PlanUsers.FirstOrDefault(x => x.UserId == @context.Id);
+                    var training = item.PlanUsers?.FirstOrDefault(x => x.UserId == @context.Id);
                     <MudTd Class="@PlannerHelper.StyleAvailabilty(training?.Availabilty)" DataLabel="@L["Name"]">
                         @if (training?.Assigned == true)
                         {
