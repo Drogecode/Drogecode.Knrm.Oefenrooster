@@ -2,10 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Graph.Models.TermStore;
 using System.Data;
-using System.Runtime.Intrinsics.X86;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -24,7 +21,7 @@ public class ScheduleService : IScheduleService
         var result = new ScheduleForUserResponse();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
-        var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= startDate && x.ValidUntil >= tillDate);
+        var defaults = await _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: token);
         var defaultAveUser = await _database.UserDefaultAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: token);
         var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: token);
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate);
@@ -36,9 +33,9 @@ public class ScheduleService : IScheduleService
         do
         {
             var defaultsFound = new List<Guid?>();
-            var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek);
             var start = scheduleDate.ToDateTime(new TimeOnly(0, 0, 0), DateTimeKind.Utc);
             var end = scheduleDate.ToDateTime(new TimeOnly(23, 59, 59), DateTimeKind.Utc);
+            var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek && x.ValidFrom <= start && x.ValidUntil >= end);
             var trainingsToday = trainings.Where(x => x.DateStart >= start && x.DateStart <= end);
             if (trainingsToday != null)
             {
@@ -96,7 +93,7 @@ public class ScheduleService : IScheduleService
                     var setBy = availabilty == null ? AvailabilitySetBy.None : AvailabilitySetBy.Holiday;
                     if (availabilty is null)
                     {
-                        var defAvaForUser = defaultAveUser?.FirstOrDefault(x => x.RoosterDefaultId == def.Id  && x.ValidFrom <= start && x.ValidUntil >= end);
+                        var defAvaForUser = defaultAveUser?.FirstOrDefault(x => x.RoosterDefaultId == def.Id && x.ValidFrom <= start && x.ValidUntil >= end);
                         if (defAvaForUser?.Available != null)
                         {
                             availabilty = defAvaForUser.Available;
@@ -247,7 +244,7 @@ public class ScheduleService : IScheduleService
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
         var users = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
-        var defaults = _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= startDate && x.ValidUntil >= startDate);
+        var defaults = await _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: token);
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).ToList();
         var availables = _database.RoosterAvailables.Include(i => i.User).Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
 
@@ -255,9 +252,9 @@ public class ScheduleService : IScheduleService
         do
         {
             var defaultsFound = new List<Guid?>();
-            var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek);
             var start = scheduleDate.ToDateTime(new TimeOnly(0, 0, 0, 0), DateTimeKind.Utc);
             var end = scheduleDate.ToDateTime(new TimeOnly(23, 59, 59, 999), DateTimeKind.Utc);
+            var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek && x.ValidFrom <= start && x.ValidUntil >= end);
             var trainingsToday = trainings.Where(x => x.DateStart >= start && x.DateStart <= end).ToList();
             if (trainingsToday.Count > 0)
             {
