@@ -117,8 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Configure your default availabilty here" xml:space="preserve">
+    <value>Configure your default availabilty here.</value>
+  </data>
+  <data name="Current setting" xml:space="preserve">
+    <value>Current setting</value>
+  </data>
   <data name="Default schedule" xml:space="preserve">
     <value>Default schedule</value>
+  </data>
+  <data name="TimeEnd" xml:space="preserve">
+    <value>End time</value>
+  </data>
+  <data name="TimeStart" xml:space="preserve">
+    <value>Start time</value>
   </data>
   <data name="Weekday" xml:space="preserve">
     <value>Weekday</value>

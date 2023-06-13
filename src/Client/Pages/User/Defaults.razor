@@ -3,42 +3,51 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 <PageTitle>@L["Default schedule"]</PageTitle>
 
-<MudDataGrid Items="@_defaultSchedules"
-             ReadOnly="true" EditMode="@DataGridEditMode.Cell">
-    <Columns>
-        <HierarchyColumn T="DefaultSchedule" />
-        <PropertyColumn Property="x => x.WeekDay" Title="@L["Weekday"]" />
-        <PropertyColumn Property="x => x.TimeStart" />
-        <PropertyColumn Property="x => x.TimeEnd" />
-        <PropertyColumn Property="x => x.ValidFromDefault" />
-        <PropertyColumn Property="x => x.ValidUntilDefault" />
-        <PropertyColumn Property="x => x.Available" />
-    </Columns>
-    <ChildRowContent>
-        <MudCard>
-            <MudCardHeader>
-                <CardHeaderContent>
-                    <MudText Typo="Typo.h6">@context.Item.UserDefaultAvailableId</MudText>
-                </CardHeaderContent>
-            </MudCardHeader>
-            <MudCardContent>
-                <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
-                    <MudDatePicker Label="@LApp["From"]" @bind-date="context.Item.TimeStart" Required />
-                    <MudTimePicker Label="@LApp["till"]" @bind-date="context.Item.TimeEnd" Required />
-                    <MudSelect T="Availabilty?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="context.Item.Available" AdornmentColor="@PlannerHelper.ColorAvailabilty(context.Item.Available)" Required>
-                        <MudSelectItem T="Availabilty?" Value="Availabilty.None">@LApp["None"]</MudSelectItem>
-                        <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
-                        <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
-                        <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
-                    </MudSelect>
-                </MudForm>
-            </MudCardContent>
-            <MudCardActions>
-                <MudButton Color="Color.Primary" OnClick="()=>OnSubmit(context.Item.Id)">@LApp["save"]</MudButton>
+@if (_defaultSchedules is not null)
+{
+    <MudDataGrid Items="@_defaultSchedules.OrderBy(x=> x.WeekDay).ThenBy(x=>x.TimeStart)"
+                 ReadOnly="true" EditMode="@DataGridEditMode.Cell">
+        <Columns>
+            <HierarchyColumn T="DefaultSchedule" />
+            <PropertyColumn Property="x => x.WeekDay" Title="@L["Weekday"]" />
+            <PropertyColumn Property="x => x.TimeStart" Title="@L["TimeStart"]" />
+            <PropertyColumn Property="x => x.TimeEnd" Title="@L["TimeEnd"]"/>
+            @*<PropertyColumn Property="x => x.ValidFromDefault" />
+            <PropertyColumn Property="x => x.ValidUntilDefault" />*@
+            <PropertyColumn Property="x => x.Available" Title="@L["Current setting"]" />
+        </Columns>
+        <ChildRowContent>
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">@L["Configure your default availabilty here"]</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudPaper Class="pa-4">
+                        <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
+                            @*<MudDatePicker Label="@LApp["From"]" @bind-date="context.Item.ValidFromUser" Required />
+                            <MudDatePicker Label="@LApp["till"]" @bind-date="context.Item.ValidUntilUser" Required />*@
+                            <MudSelect T="Availabilty?" Variant="Variant.Text" @bind-Value="context.Item.Available" Required>
+                                <MudSelectItem T="Availabilty?" Value="Availabilty.None">@LApp["None"]</MudSelectItem>
+                                <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
+                                <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
+                                <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
+                            </MudSelect>
+                        </MudForm>
+                    </MudPaper>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Color="Color.Primary" OnClick="()=>OnSubmit(context.Item.Id)">@LApp["save"]</MudButton>
                 </MudCardActions>
-        </MudCard>
-    </ChildRowContent>
-    <PagerContent>
-        <MudDataGridPager T="DefaultSchedule" />
-    </PagerContent>
-</MudDataGrid>
+            </MudCard>
+        </ChildRowContent>
+    </MudDataGrid>
+}
+else
+{
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+}

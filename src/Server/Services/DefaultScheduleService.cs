@@ -44,15 +44,15 @@ public class DefaultScheduleService : IDefaultScheduleService
     public async Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUser(DefaultSchedule body, Guid customerId, Guid userId)
     {
         var dbDefault = _database.RoosterDefaults.Include(x => x.UserDefaultAvailables.Where(y => y.UserId == userId))?.FirstOrDefault(x => x.Id == body.Id);
-        if (dbDefault is null) return new PatchDefaultScheduleForUserResponse { Success = false };
+        if (dbDefault is null || body.ValidFromUser is null || body.ValidUntilUser is null) return new PatchDefaultScheduleForUserResponse { Success = false };
         DbUserDefaultAvailable? userDefault;
         if (dbDefault.UserDefaultAvailables?.Any(y => y.UserId == userId) == true)
         {
             userDefault = dbDefault.UserDefaultAvailables.FirstOrDefault(y => y.UserId == userId);
             userDefault!.Available = body.Available;
             userDefault.Assigned = body.Assigned;
-            userDefault.ValidFrom = body.ValidFromUser;
-            userDefault.ValidUntil = body.ValidUntilUser;
+            userDefault.ValidFrom = DateTime.UtcNow;
+            userDefault.ValidUntil = DateTime.MaxValue;
             _database.UserDefaultAvailables.Update(userDefault);
             _database.SaveChanges();
         }
@@ -66,8 +66,8 @@ public class DefaultScheduleService : IDefaultScheduleService
                 RoosterDefaultId = body.Id,
                 Available = body.Available,
                 Assigned = body.Assigned,
-                ValidFrom = body.ValidFromUser,
-                ValidUntil = body.ValidUntilUser
+                ValidFrom = DateTime.UtcNow,
+                ValidUntil = DateTime.MaxValue
             };
             _database.UserDefaultAvailables.Add(userDefault);
         }
