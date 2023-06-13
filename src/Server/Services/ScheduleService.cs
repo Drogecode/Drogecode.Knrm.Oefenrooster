@@ -2,8 +2,11 @@
 using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
+using Microsoft.Graph.Models;
 using System.Data;
 using System.Runtime.Intrinsics.X86;
+using ZXing.Aztec.Internal;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -121,34 +124,11 @@ public class ScheduleService : IScheduleService
         }
     }
 
-    public async Task<Training> PatchScheduleForUserAsync(Guid userId, Guid customerId, Training training, CancellationToken token)
+    public async Task<Training> PatchScheduleForUserAsync(Guid userId, Guid customerId, Training training, CancellationToken clt)
     {
         training.Updated = false;
-        DbRoosterTraining? dbTraining = null;
-        if (training.TrainingId == null || training.TrainingId == Guid.Empty)
-        {
-            dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.RoosterDefaultId == training.DefaultId && x.DateStart == training.DateStart && x.DateEnd == training.DateEnd);
-            if (dbTraining == null)
-            {
-                training.TrainingId = Guid.NewGuid();
-                if (!await AddTrainingInternalAsync(customerId, training, token)) return training;
-            }
-            else
-                training.TrainingId = dbTraining.Id;
-        }
-        token = CancellationToken.None;
-        if (dbTraining == null)
-            dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == training.TrainingId);
-        if (dbTraining == null)
-        {
-            if (!await AddTrainingInternalAsync(customerId, training, token)) return training;
-            dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == training.TrainingId);
-            if (dbTraining == null)
-            {
-                _logger.LogWarning("Two tries to add training {date} for user {userId} from customer {customerId} failed", training.DateStart, userId, customerId);
-                return training;
-            }
-        }
+        var dbTraining = await CreateAndGetTraining(userId, customerId, training, clt);
+        if (dbTraining is null) return training;
         var available = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.TrainingId == dbTraining.Id);
         if (available == null)
         {
@@ -157,6 +137,37 @@ public class ScheduleService : IScheduleService
         else if (!await PatchAvailableInternalAsync(available, training)) return training;
         training.Updated = true;
         return training;
+    }
+
+    private async Task<DbRoosterTraining?> CreateAndGetTraining(Guid userId, Guid customerId, TrainingAdvance? training, CancellationToken clt)
+    {
+        DbRoosterTraining? dbTraining = null;
+        if (training == null) return dbTraining;
+        if (training.TrainingId == null || training.TrainingId == Guid.Empty)
+        {
+            dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.RoosterDefaultId == training.DefaultId && x.DateStart == training.DateStart && x.DateEnd == training.DateEnd);
+            if (dbTraining == null)
+            {
+                training.TrainingId = Guid.NewGuid();
+                if (!await AddTrainingInternalAsync(customerId, training, clt)) return dbTraining;
+            }
+            else
+                training.TrainingId = dbTraining.Id;
+        }
+        clt = CancellationToken.None;
+        if (dbTraining == null)
+            dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == training.TrainingId);
+        if (dbTraining == null)
+        {
+            if (!await AddTrainingInternalAsync(customerId, training, clt)) return dbTraining;
+            dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == training.TrainingId);
+            if (dbTraining == null)
+            {
+                _logger.LogWarning("Two tries to add training {date} for user {userId} from customer {customerId} failed", training.DateStart, userId, customerId);
+                return dbTraining;
+            }
+        }
+        return dbTraining;
     }
 
     public async Task<bool> PatchTraining(Guid customerId, EditTraining patchedTraining, CancellationToken token)
@@ -195,7 +206,7 @@ public class ScheduleService : IScheduleService
         return await AddTrainingInternalAsync(customerId, training, token);
     }
 
-    private async Task<bool> AddTrainingInternalAsync(Guid customerId, Training training, CancellationToken token)
+    private async Task<bool> AddTrainingInternalAsync(Guid customerId, TrainingAdvance training, CancellationToken token)
     {
         if (training.Name?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)
             throw new DrogeCodeToLongException();
@@ -243,12 +254,12 @@ public class ScheduleService : IScheduleService
         var result = new ScheduleForAllResponse();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
-        var users = _database.Users.Include(x=>x.UserDefaultAvailables).Where(x => x.CustomerId == customerId && x.DeletedOn == null);
+        var users = _database.Users.Include(x => x.UserDefaultAvailables).Where(x => x.CustomerId == customerId && x.DeletedOn == null);
         var defaults = await _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: token);
         var defaultAveUser = await _database.UserDefaultAvailables.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: token);
         var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: token);
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).ToList();
-        var availables = _database.RoosterAvailables.Include(i => i.User).Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
+        var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.Date >= startDate && x.Date <= tillDate).ToList();
 
         var scheduleDate = DateOnly.FromDateTime(startDate);
         do
@@ -278,7 +289,7 @@ public class ScheduleService : IScheduleService
                     foreach (var user in users)
                     {
                         if (user == null) continue;
-                        var a = ava.FirstOrDefault(x=> x.UserId == user.Id);
+                        var a = ava.FirstOrDefault(x => x.UserId == user.Id);
                         Availabilty? availabilty = a?.Available;
                         AvailabilitySetBy? setBy = a?.SetBy;
                         GetAvailability(defaultAveUser, userHolidays, start, end, training.RoosterDefaultId, user.Id, ref availabilty, ref setBy);
@@ -338,6 +349,7 @@ public class ScheduleService : IScheduleService
                             SetBy = setBy ?? AvailabilitySetBy.None,
                             Assigned = false,
                             Name = user.Name ?? "Name not found",
+                            PlannedFunctionId = user.UserFunctionId,
                             UserFunctionId = user.UserFunctionId,
                         });
                     }
@@ -352,51 +364,82 @@ public class ScheduleService : IScheduleService
         return result;
     }
 
-    public async Task PatchAssignedUserAsync(Guid userId, Guid customerId, PatchAssignedUserRequest body, CancellationToken token)
+    public async Task<Guid?> PatchAssignedUserAsync(Guid userId, Guid customerId, PatchAssignedUserRequest body, CancellationToken clt)
     {
-        if (body.User == null || body.TrainingId == null)
+        if (body.User == null)
         {
-            _logger.LogWarning("user is null {UserIsNull} or trainingId is null {TrainingIsNull}", body.User == null, body.TrainingId == null);
-            return;
+            _logger.LogWarning("user is null {UserIsNull}", body.User == null);
+            return null;
+        }
+        if (body.TrainingId == null)
+        {
+            var training = await CreateAndGetTraining(userId, customerId, body.Training, clt);
+            if (training != null)
+            {
+                body.TrainingId = training.Id;
+                body.Training!.TrainingId = training.Id;
+            }
+            else
+            {
+                _logger.LogWarning("Unable to find or create training");
+                return null;
+            }
         }
         if (!_database.RoosterTrainings.Any(x => x.CustomerId == customerId && x.Id == body.TrainingId))
         {
             _logger.LogWarning("No training with '{Id}' found", body.TrainingId);
-            return;
+            return body.TrainingId;
         }
-        var ava = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.TrainingId == body.TrainingId && x.UserId == body.User.UserId, cancellationToken: token);
+        var ava = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.TrainingId == body.TrainingId && x.UserId == body.User.UserId, cancellationToken: clt);
         if (ava == null)
         {
-            _logger.LogWarning("No ava with '{Id}' found for user '{User}'", body.TrainingId, body.User.UserId);
-            return;
+            await PutAssignedUserAsync(userId, customerId, new OtherScheduleUserRequest
+            {
+                Assigned = body.User.Assigned,
+                FunctionId = null,
+                TrainingId = body.TrainingId,
+                UserId = body.User.UserId,
+                Training = body.Training,
+            }, clt);
+            ava = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.TrainingId == body.TrainingId && x.UserId == body.User.UserId, cancellationToken: clt);
+            if (ava == null)
+            {
+                _logger.LogWarning("No RoosterAvailable with '{Id}' found for user '{User}' when Assigned = '{Assigned}'", body.TrainingId, body.User.UserId, body.User.Assigned);
+                return body.TrainingId;
+            }
         }
         ava.Assigned = body.User.Assigned;
         ava.UserFunctionId = body.User.PlannedFunctionId;
         ava.VehicleId = body.User.VehicleId;
         _database.RoosterAvailables.Update(ava);
-        await _database.SaveChangesAsync(token);
+        await _database.SaveChangesAsync(clt);
+        return body.TrainingId;
     }
 
-    public async Task PutAssignedUserAsync(Guid userId, Guid customerId, OtherScheduleUserRequest body, CancellationToken token)
+    public async Task PutAssignedUserAsync(Guid userId, Guid customerId, OtherScheduleUserRequest body, CancellationToken clt)
     {
-        if (body.UserId == null || body.TrainingId == null || body.FunctionId == null)
+        if (body.UserId == null || body.TrainingId == null)
         {
-            _logger.LogWarning("userId is null {UserIsNull} or trainingId is null {TrainingIsNull} or functionId is null {FunctionId}", body.UserId == null, body.TrainingId == null, body.FunctionId == null);
+            _logger.LogWarning("userId is null {UserIsNull} or trainingId is null {TrainingIsNull}", body.UserId == null, body.TrainingId == null);
             return;
         }
-        var user = await _database.Users.FirstOrDefaultAsync(x => x.Id == userId && x.DeletedOn == null && x.CustomerId == customerId, cancellationToken: token);
+        var user = await _database.Users.FirstOrDefaultAsync(x => x.Id == userId && x.DeletedOn == null && x.CustomerId == customerId, cancellationToken: clt);
         if (user == null)
         {
             _logger.LogWarning("No user with '{Id}' found", body.UserId);
             return;
         }
-        var training = await _database.RoosterTrainings.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == body.TrainingId, cancellationToken: token);
+        if (body.FunctionId == null)
+        {
+            body.FunctionId = user.UserFunctionId;
+        }
+        var training = await CreateAndGetTraining(userId, customerId, body.Training, clt);
         if (training == null)
         {
             _logger.LogWarning("No training with '{Id}' found", body.TrainingId);
             return;
         }
-        var ava = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.TrainingId == body.TrainingId && x.UserId == body.UserId, cancellationToken: token);
+        var ava = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.TrainingId == body.TrainingId && x.UserId == body.UserId, cancellationToken: clt);
         if (ava == null)
         {
             if (body.Assigned)// only add to db if assigned.
@@ -413,7 +456,7 @@ public class ScheduleService : IScheduleService
                     Assigned = body.Assigned
                 };
                 _database.RoosterAvailables.Add(ava);
-                await _database.SaveChangesAsync(token);
+                await _database.SaveChangesAsync(clt);
             }
         }
         else
@@ -424,7 +467,7 @@ public class ScheduleService : IScheduleService
             else
                 ava.UserFunctionId = null;
             _database.RoosterAvailables.Update(ava);
-            await _database.SaveChangesAsync(token);
+            await _database.SaveChangesAsync(clt);
         }
     }
 

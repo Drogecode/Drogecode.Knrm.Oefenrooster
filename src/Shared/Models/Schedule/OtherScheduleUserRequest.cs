@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,4 +13,5 @@ public class OtherScheduleUserRequest
     public Guid? FunctionId { get; set; }
     public Guid? UserId { get; set; }
     public bool Assigned { get; set; }
+    public TrainingAdvance? Training { get; set; }
 }

@@ -37,22 +37,15 @@ public sealed partial class ScheduleCard : IDisposable
 
     private void OpenScheduleDialog()
     {
-        if (Planner.IsCreated)
-        {
-            var parameters = new DialogParameters {
+        var parameters = new DialogParameters {
                 { "Planner", Planner },
                 { "Refresh", _refreshModel },
                 { "Users", Users },
                 { "Functions", Functions},
                 { "Vehicles", Vehicles }
             };
-            DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-            _dialogProvider.Show<ScheduleDialog>(L["Schedule people for this training"], parameters, options);
-        }
-        else
-        {
-            SnackbarService.Add(L["Requires one person to set their availability"]);
-        }
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        _dialogProvider.Show<ScheduleDialog>(L["Schedule people for this training"], parameters, options);
     }
 
     private void OpenConfigDialog()

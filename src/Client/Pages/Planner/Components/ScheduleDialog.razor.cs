@@ -65,14 +65,14 @@ public sealed partial class ScheduleDialog : IDisposable
             user.PlannedFunctionId = functionId;
         else
             user.PlannedFunctionId = user.UserFunctionId;
-        await _scheduleRepository.PatchAvailabilityUser(Planner.TrainingId, user, _cls.Token);
+        await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, Planner, user, _cls.Token);
         await Refresh.CallRequestRefreshAsync();
     }
 
     private async Task CheckChanged(bool toggled, DrogeUser user, Guid functionId)
     {
         //Add to schedule with a new status to indicate it was not set by the user.
-        await _scheduleRepository.PutAssignedUser(toggled, Planner.TrainingId, functionId, user, _cls.Token);
+        await _scheduleRepository.PutAssignedUser(toggled, Planner.TrainingId, functionId, user, Planner, _cls.Token);
         var planuser = Planner.PlanUsers.FirstOrDefault(x => x.UserId == user.Id);
         if (planuser == null)
         {
@@ -84,7 +84,6 @@ public sealed partial class ScheduleDialog : IDisposable
                 Availabilty = Availabilty.None,
                 Assigned = toggled,
                 Name = user.Name,
-
             });
         }
         else
@@ -116,7 +115,7 @@ public sealed partial class ScheduleDialog : IDisposable
     private async Task VehicleSelectionChanged(PlanUser user, Guid? id)
     {
         user.VehicleId = id;
-        await _scheduleRepository.PatchAvailabilityUser(Planner.TrainingId, user, _cls.Token);
+        await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, null, user, _cls.Token);
         await Refresh.CallRequestRefreshAsync();
     }
 
@@ -124,7 +123,7 @@ public sealed partial class ScheduleDialog : IDisposable
     {
         user.ClickedFunction = false;
         user.PlannedFunctionId = id;
-        await _scheduleRepository.PatchAvailabilityUser(Planner.TrainingId, user, _cls.Token);
+        await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, null, user, _cls.Token);
         await Refresh.CallRequestRefreshAsync();
     }
 

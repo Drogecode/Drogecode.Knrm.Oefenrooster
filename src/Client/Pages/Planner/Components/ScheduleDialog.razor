@@ -118,13 +118,13 @@
                         </MudItem>
                         <MudItem xs="@_colmn3">
                             <MudText Typo="Typo.subtitle2">
-                                @LApp[@user.Availabilty.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")")
+                                @LApp[(user.Availabilty ?? Availabilty.None).ToString()]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")")
                             </MudText>
                         </MudItem>
                     </MudGrid>
                 }
             }
-            @if (Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty != Oefenrooster.Shared.Enums.Availabilty.Available) || Users.Any(x => !Planner.PlanUsers.Any(y => y.UserId == x.Id)))
+            @if (Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty != Availabilty.Available) || Users.Any(x => !Planner.PlanUsers.Any(y => y.UserId == x.Id)))
             {
                 <MudText Typo="Typo.h5">
                     @L["Other users"]
@@ -134,7 +134,7 @@
             {
                 @if (Users.Any(x => x.UserFunctionId == function.Id) || Planner.PlanUsers.Any(x => x.PlannedFunctionId == function.Id))
                 {
-                    @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty != Oefenrooster.Shared.Enums.Availabilty.Available && x.PlannedFunctionId == function.Id).OrderBy(o => o.Availabilty))
+                    @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty != Availabilty.Available && x.PlannedFunctionId == function.Id).OrderBy(o => o.Availabilty))
                     {
                         <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                             <MudItem xs="@_colmn1">
@@ -145,11 +145,10 @@
                             </MudItem>
                             <MudItem xs="@_colmn3">
                                 <MudText Typo="Typo.subtitle2">
-                                    @LApp[@user.Availabilty.ToString() ?? ""]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")")
+                                    @LApp[(user.Availabilty ?? Availabilty.None).ToString()]  @(" - (") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name @(")")
                                 </MudText>
                             </MudItem>
                         </MudGrid>
-
                     }
                     @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
                     {

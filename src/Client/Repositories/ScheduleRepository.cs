@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
@@ -44,12 +45,13 @@ public class ScheduleRepository
         return result.NewId;
     }
 
-    public async Task PatchAvailabilityUser(Guid? trainingId, PlanUser user, CancellationToken clt)
+    public async Task PatchAssignedUser(Guid? trainingId, TrainingAdvance? training, PlanUser user, CancellationToken clt)
     {
         var body = new PatchAssignedUserRequest
         {
             TrainingId = trainingId,
             User = user,
+            Training = training
         };
         await _scheduleClient.PatchAssignedUserAsync(body, clt);
     }
@@ -68,14 +70,15 @@ public class ScheduleRepository
         return schedule;
     }
 
-    internal async Task PutAssignedUser(bool assigned, Guid? trainingId, Guid functionId, DrogeUser user, CancellationToken clt)
+    internal async Task PutAssignedUser(bool assigned, Guid? trainingId, Guid functionId, DrogeUser user, TrainingAdvance? training, CancellationToken clt)
     {
         var body = new OtherScheduleUserRequest
         {
             TrainingId = trainingId,
             FunctionId = functionId,
             UserId = user.Id,
-            Assigned = assigned
+            Assigned = assigned,
+            Training = training
         };
         await _scheduleClient.PutAssignedUserAsync(body, clt);
     }
