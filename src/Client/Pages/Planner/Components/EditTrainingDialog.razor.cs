@@ -63,6 +63,10 @@ public sealed partial class EditTrainingDialog : IDisposable
         {
             return L["Start time past end time"];
         }
+        if (_training is not null && timeStart is not null && _training.TimeEnd is null)
+        {
+            _training!.TimeEnd = timeStart.Value.Add(new TimeSpan(2, 0, 0));
+        }
         return null;
     }
     private string? EndAfterStartValidation(TimeSpan? timeEnd)

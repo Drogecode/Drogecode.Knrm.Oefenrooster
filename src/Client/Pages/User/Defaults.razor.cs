@@ -1,7 +1,9 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User;
 
@@ -13,6 +15,9 @@ public sealed partial class Defaults : IDisposable
     private CancellationTokenSource _cls = new();
     private List<DefaultSchedule>? _defaultSchedules { get; set; }
     private bool _updating;
+    private bool _success;
+    private string[] _errors = Array.Empty<string>();
+    [AllowNull] private MudForm _form;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -30,6 +35,23 @@ public sealed partial class Defaults : IDisposable
             {
                 schedule.UserDefaultAvailableId = patched.UserDefaultAvailableId;
             }
+        }
+        _updating = false;
+    }
+    private async Task OnSubmit(Guid id)
+    {
+        _updating = true;
+        var schedule = _defaultSchedules?.FirstOrDefault(s => s.Id == id);
+        _form?.Validate();
+        if (!_form?.IsValid == true || schedule is null)
+        {
+            _updating = false;
+            return;
+        }
+        var patched = await _defaultScheduleRepository.PatchDefaultScheduleForUser(schedule, _cls.Token);
+        if (patched is not null)
+        {
+            schedule.UserDefaultAvailableId = patched.UserDefaultAvailableId;
         }
         _updating = false;
     }

@@ -22,13 +22,20 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <MudSelect T="Availabilty?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="context.Item.Available" SelectedValuesChanged="()=>OnChange(context.Item.Id)" AdornmentColor="@PlannerHelper.ColorAvailabilty(context.Item.Available)">
-                    <MudSelectItem T="Availabilty?" Value="Availabilty.None">@LApp["None"]</MudSelectItem>
-                    <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
-                    <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
-                    <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
-                </MudSelect>
+                <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
+                    <MudDatePicker Label="@LApp["From"]" @bind-date="context.Item.TimeStart" Required />
+                    <MudTimePicker Label="@LApp["till"]" @bind-date="context.Item.TimeEnd" Required />
+                    <MudSelect T="Availabilty?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="context.Item.Available" AdornmentColor="@PlannerHelper.ColorAvailabilty(context.Item.Available)" Required>
+                        <MudSelectItem T="Availabilty?" Value="Availabilty.None">@LApp["None"]</MudSelectItem>
+                        <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
+                        <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
+                        <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
+                    </MudSelect>
+                </MudForm>
             </MudCardContent>
+            <MudCardActions>
+                <MudButton Color="Color.Primary" OnClick="()=>OnSubmit(context.Item.Id)">@LApp["save"]</MudButton>
+                </MudCardActions>
         </MudCard>
     </ChildRowContent>
     <PagerContent>
