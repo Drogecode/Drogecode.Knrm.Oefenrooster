@@ -1,0 +1,207 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "DefaultSchedule",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/DefaultSchedule/GetAll": {
+      "get": {
+        "tags": [
+          "DefaultSchedule"
+        ],
+        "operationId": "GetAll",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleDefaultSchedulesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleDefaultSchedulesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleDefaultSchedulesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DefaultSchedule/PatchDefaultScheduleForUser": {
+      "patch": {
+        "tags": [
+          "DefaultSchedule"
+        ],
+        "operationId": "PatchDefaultScheduleForUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefaultSchedule"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefaultSchedule"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefaultSchedule"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchDefaultScheduleForUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchDefaultScheduleForUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchDefaultScheduleForUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Availabilty": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "DayOfWeek": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "DefaultSchedule": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roosterTrainingTypeId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "userDefaultAvailableId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "weekDay": {
+            "$ref": "#/components/schemas/DayOfWeek"
+          },
+          "available": {
+            "$ref": "#/components/schemas/Availabilty"
+          },
+          "timeStart": {
+            "type": "string",
+            "format": "time"
+          },
+          "timeEnd": {
+            "type": "string",
+            "format": "time"
+          },
+          "validFromDefault": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validUntilDefault": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validFromUser": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "validUntilUser": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "countToTrainingTarget": {
+            "type": "boolean"
+          },
+          "assigned": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MultipleDefaultSchedulesResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "defaultSchedules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefaultSchedule"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PatchDefaultScheduleForUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "patched": {
+            "$ref": "#/components/schemas/DefaultSchedule"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

@@ -493,6 +493,16 @@
         },
         "additionalProperties": false
       },
+      "AvailabilitySetBy": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "Availabilty": {
         "enum": [
           0,
@@ -981,6 +991,9 @@
           },
           "availabilty": {
             "$ref": "#/components/schemas/Availabilty"
+          },
+          "setBy": {
+            "$ref": "#/components/schemas/AvailabilitySetBy"
           },
           "assigned": {
             "type": "boolean"

@@ -157,6 +157,37 @@
           },
           "offline": {
             "type": "boolean"
+          },
+          "drogeLinkVehicleTraining": {
+            "$ref": "#/components/schemas/DrogeLinkVehicleTraining"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrogeVehicle": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "default": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -169,6 +200,13 @@
           },
           "offline": {
             "type": "boolean"
+          },
+          "drogeVehicles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrogeVehicle"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

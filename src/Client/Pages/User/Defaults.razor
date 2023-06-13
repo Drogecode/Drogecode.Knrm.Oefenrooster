@@ -1,2 +1,37 @@
 ﻿@page "/user/defaults"
-<h3>Defaults</h3>
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
+<PageTitle>@L["Default schedule"]</PageTitle>
+
+<MudDataGrid Items="@_defaultSchedules"
+             ReadOnly="true" EditMode="@DataGridEditMode.Cell">
+    <Columns>
+        <HierarchyColumn T="DefaultSchedule" />
+        <PropertyColumn Property="x => x.WeekDay" Title="@L["Weekday"]" />
+        <PropertyColumn Property="x => x.TimeStart" />
+        <PropertyColumn Property="x => x.TimeEnd" />
+        <PropertyColumn Property="x => x.ValidFromDefault" />
+        <PropertyColumn Property="x => x.ValidUntilDefault" />
+        <PropertyColumn Property="x => x.Available" />
+    </Columns>
+    <ChildRowContent>
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">@context.Item.UserDefaultAvailableId</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudSelect T="Availabilty?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="context.Item.Available" SelectedValuesChanged="()=>OnChange(context.Item.Id)" AdornmentColor="@PlannerHelper.ColorAvailabilty(context.Item.Available)">
+                    <MudSelectItem T="Availabilty?" Value="Availabilty.None">@LApp["None"]</MudSelectItem>
+                    <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
+                    <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
+                    <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
+                </MudSelect>
+            </MudCardContent>
+        </MudCard>
+    </ChildRowContent>
+    <PagerContent>
+        <MudDataGridPager T="DefaultSchedule" />
+    </PagerContent>
+</MudDataGrid>

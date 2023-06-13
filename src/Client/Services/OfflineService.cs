@@ -13,7 +13,6 @@ public class OfflineService : IOfflineService
     private readonly ISessionStorageService _sessionStorageService;
     private static bool _offline;
     private static bool _mockOffline;
-    private static DateTime _lastOffline;
     public event Action? OfflineStatusChanged;
 
     public OfflineService(
@@ -37,7 +36,6 @@ public class OfflineService : IOfflineService
         set
         {
             if (_offline == value) return;
-            _lastOffline = DateTime.UtcNow;
             _offline = value;
             CallOfflineStatusChanged();
         }

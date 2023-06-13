@@ -33,6 +33,7 @@ builder.Services.AddBlazoredSessionStorage();
 
 builder.Services.TryAddScoped<ICalendarItemClient, CalendarItemClient>();
 builder.Services.TryAddScoped<IConfigurationClient, ConfigurationClient>();
+builder.Services.TryAddScoped<IDefaultScheduleClient, DefaultScheduleClient>();
 builder.Services.TryAddScoped<IFunctionClient, FunctionClient>();
 builder.Services.TryAddScoped<IScheduleClient, ScheduleClient>();
 builder.Services.TryAddScoped<ISharePointClient, SharePointClient>();
@@ -41,6 +42,7 @@ builder.Services.TryAddScoped<IVehicleClient, VehicleClient>();
 
 builder.Services.TryAddScoped<CalendarItemRepository>();
 builder.Services.TryAddScoped<ConfigurationRepository>();
+builder.Services.TryAddScoped<DefaultScheduleRepository>();
 builder.Services.TryAddScoped<FunctionRepository>();
 builder.Services.TryAddScoped<ScheduleRepository>();
 builder.Services.TryAddScoped<SharePointRepository>();

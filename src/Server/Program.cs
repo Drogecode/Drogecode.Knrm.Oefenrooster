@@ -20,6 +20,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<ICalendarItemService, CalendarItemService>();
 builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
+builder.Services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
 builder.Services.AddScoped<IGraphService, GraphService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
@@ -38,7 +39,8 @@ var groupNames = new List<string>
     "Schedule",
     "User",
     "Vehicle",
-    "SharePoint"
+    "SharePoint",
+    "DefaultSchedule"
 };
 var runningInContainers = string.Equals(builder.Configuration["DOTNET_RUNNING_IN_CONTAINER"], "true");
 if (!runningInContainers)

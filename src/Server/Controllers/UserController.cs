@@ -69,7 +69,7 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Obsolete("Use AD")]
-    public async Task<ActionResult<bool>> AddUser(DrogeUser user, CancellationToken token = default)
+    public async Task<ActionResult<bool>> AddUser([FromBody] DrogeUser user, CancellationToken token = default)
     {
         try
         {
@@ -90,7 +90,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<UpdateUserResponse>> UpdateUser(DrogeUser user, CancellationToken token = default)
+    public async Task<ActionResult<UpdateUserResponse>> UpdateUser([FromBody] DrogeUser user, CancellationToken token = default)
     {
         try
         {

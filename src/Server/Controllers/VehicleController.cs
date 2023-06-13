@@ -60,7 +60,7 @@ public class VehicleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<DrogeLinkVehicleTrainingResponse>> UpdateLinkVehicleTraining(DrogeLinkVehicleTraining link, CancellationToken token = default)
+    public async Task<ActionResult<DrogeLinkVehicleTrainingResponse>> UpdateLinkVehicleTraining([FromBody] DrogeLinkVehicleTraining link, CancellationToken token = default)
     {
         try
         {

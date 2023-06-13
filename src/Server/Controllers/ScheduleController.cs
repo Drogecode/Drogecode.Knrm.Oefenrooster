@@ -63,7 +63,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<PatchTrainingResponse>> PatchTraining(EditTraining patchedTraining, CancellationToken token = default)
+    public async Task<ActionResult<PatchTrainingResponse>> PatchTraining([FromBody] EditTraining patchedTraining, CancellationToken token = default)
     {
         try
         {
@@ -85,7 +85,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<AddTrainingResponse>> AddTraining(EditTraining newTraining, CancellationToken token = default)
+    public async Task<ActionResult<AddTrainingResponse>> AddTraining([FromBody] EditTraining newTraining, CancellationToken token = default)
     {
         try
         {
@@ -108,7 +108,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<PatchScheduleForUserResponse>> PatchScheduleForUser(Training training, CancellationToken token = default)
+    public async Task<ActionResult<PatchScheduleForUserResponse>> PatchScheduleForUser([FromBody] Training training, CancellationToken token = default)
     {
         try
         {
@@ -125,7 +125,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> PatchAssignedUser(PatchAssignedUserRequest body, CancellationToken token = default)
+    public async Task<ActionResult> PatchAssignedUser([FromBody] PatchAssignedUserRequest body, CancellationToken token = default)
     {
         try
         {
@@ -143,7 +143,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> PutAssignedUser(OtherScheduleUserRequest body, CancellationToken token = default)
+    public async Task<ActionResult> PutAssignedUser([FromBody] OtherScheduleUserRequest body, CancellationToken token = default)
     {
         try
         {
