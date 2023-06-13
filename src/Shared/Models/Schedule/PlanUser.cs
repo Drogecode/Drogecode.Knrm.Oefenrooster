@@ -14,6 +14,7 @@ public class PlanUser
     public Guid? PlannedFunctionId { get; set; }
     public Guid? VehicleId { get; set; }
     public Availabilty? Availabilty { get; set; }
+    public AvailabilitySetBy SetBy { get; set; }
     public bool Assigned { get; set; }
     public bool ClickedFunction { get; set; }
     public string Name { get; set; } = "Some dude!";
