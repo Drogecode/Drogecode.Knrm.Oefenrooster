@@ -45,10 +45,9 @@ public class DefaultScheduleService : IDefaultScheduleService
     {
         var dbDefault = _database.RoosterDefaults.Include(x => x.UserDefaultAvailables.Where(y => y.UserId == userId))?.FirstOrDefault(x => x.Id == body.Id);
         if (dbDefault is null || body.ValidFromUser is null || body.ValidUntilUser is null) return new PatchDefaultScheduleForUserResponse { Success = false };
-        DbUserDefaultAvailable? userDefault;
-        if (dbDefault.UserDefaultAvailables?.Any(y => y.UserId == userId) == true)
+        var userDefault = dbDefault.UserDefaultAvailables?.FirstOrDefault(y => y.UserId == userId);
+        if (userDefault?.ValidFrom?.Date.Equals(DateTime.UtcNow.Date) == true)
         {
-            userDefault = dbDefault.UserDefaultAvailables.FirstOrDefault(y => y.UserId == userId);
             userDefault!.Available = body.Available;
             userDefault.Assigned = body.Assigned;
             userDefault.ValidFrom = DateTime.UtcNow;
@@ -58,6 +57,11 @@ public class DefaultScheduleService : IDefaultScheduleService
         }
         else
         {
+            if (userDefault is not null)
+            {
+                userDefault.ValidUntil = DateTime.UtcNow.AddDays(-1);
+                _database.UserDefaultAvailables.Update(userDefault);
+            }
             userDefault = new DbUserDefaultAvailable
             {
                 Id = Guid.NewGuid(),
