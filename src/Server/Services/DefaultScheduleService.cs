@@ -44,7 +44,7 @@ public class DefaultScheduleService : IDefaultScheduleService
     public async Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUser(DefaultSchedule body, Guid customerId, Guid userId)
     {
         var dbDefault = _database.RoosterDefaults.Include(x => x.UserDefaultAvailables.Where(y => y.UserId == userId))?.FirstOrDefault(x => x.Id == body.Id);
-        if (dbDefault is null || body.ValidFromUser is null || body.ValidUntilUser is null) return new PatchDefaultScheduleForUserResponse { Success = false };
+        if (dbDefault is null) return new PatchDefaultScheduleForUserResponse { Success = false };
         var userDefault = dbDefault.UserDefaultAvailables?.FirstOrDefault(y => y.UserId == userId);
         if (userDefault?.ValidFrom?.Date.Equals(DateTime.UtcNow.Date) == true)
         {
@@ -53,7 +53,6 @@ public class DefaultScheduleService : IDefaultScheduleService
             userDefault.ValidFrom = DateTime.UtcNow;
             userDefault.ValidUntil = DateTime.MaxValue;
             _database.UserDefaultAvailables.Update(userDefault);
-            _database.SaveChanges();
         }
         else
         {

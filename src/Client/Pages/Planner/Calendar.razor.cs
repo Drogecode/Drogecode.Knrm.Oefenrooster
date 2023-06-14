@@ -85,15 +85,6 @@ public sealed partial class Calendar : IDisposable
         StateHasChanged();
     }
 
-    private async Task OnChange(DrogeCodeCalendarItem customItem)
-    {
-        if (_updating) return;
-        _updating = true;
-        var updatedTraining = await _scheduleRepository.PatchScheduleForUser(customItem.Training, _cls.Token);
-        customItem.Training = updatedTraining;
-        _updating = false;
-    }
-
     private async Task HandleNewTraining(EditTraining newTraining)
     {
         if (newTraining.Date == null) return;

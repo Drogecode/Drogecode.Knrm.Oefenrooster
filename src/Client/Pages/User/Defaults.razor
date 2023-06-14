@@ -22,7 +22,7 @@
                     </CardHeaderContent>
                 </MudCardHeader>
                 <MudCardContent>
-                    <MudSelect T="Availabilty?" Variant="Variant.Text" Value="context.Item.Available" SelectedValuesChanged="()=>OnChange(context.Item.Id)" AdornmentColor="@PlannerHelper.ColorAvailabilty(context.Item.Available)">
+                    <MudSelect T="Availabilty?" Variant="Variant.Text" @bind-Value="context.Item.Available" SelectedValuesChanged="()=>OnChange(context.Item)" AdornmentColor="@PlannerHelper.ColorAvailabilty(context.Item.Available)">
                         <MudSelectItem T="Availabilty?" Value="Availabilty.None">@LApp["None"]</MudSelectItem>
                         <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
                         <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>

@@ -71,10 +71,10 @@
                 {
                     @($".trainingType-{trainingType.Id}")
                     @("{")
-                        @($"background-color: {(_isDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)};")
+                        @($"background-color: {(_isDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)}  !important;")
                         if(!string.IsNullOrEmpty(trainingType.TextColorLight))
                         {
-                            @($"color: {(_isDarkMode ? string.IsNullOrEmpty(trainingType.TextColorDark) ? trainingType.TextColorLight : trainingType.TextColorDark : trainingType.TextColorLight)};")
+                            @($"color: {(_isDarkMode ? string.IsNullOrEmpty(trainingType.TextColorDark) ? trainingType.TextColorLight : trainingType.TextColorDark : trainingType.TextColorLight)}  !important;")
                         }
                     @("}")
                 }

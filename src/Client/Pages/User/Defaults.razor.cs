@@ -23,11 +23,10 @@ public sealed partial class Defaults : IDisposable
     {
         _defaultSchedules = await _defaultScheduleRepository.GetAll(_cls.Token);
     }
-    private async Task OnChange(Guid id)
+    private async Task OnChange(DefaultSchedule schedule)
     {
         if (_updating) return;
         _updating = true;
-        var schedule = _defaultSchedules?.FirstOrDefault(s => s.Id == id);
         if (schedule is not null)
         {
             var patched = await _defaultScheduleRepository.PatchDefaultScheduleForUser(schedule, _cls.Token);

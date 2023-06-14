@@ -100,16 +100,16 @@ public class ScheduleService : IScheduleService
     private static void GetAvailability(List<DbUserDefaultAvailable>? defaultAveUser, List<DbUserHolidays> userHolidays, DateTime start, DateTime end, Guid? roosterDefaultId, Guid? userId, ref Availabilty? availabilty, ref AvailabilitySetBy? setBy)
     {
         DbUserDefaultAvailable? defAvaForUser = null;
-        if (availabilty is null && setBy != AvailabilitySetBy.User)
+        if ((setBy != AvailabilitySetBy.User && setBy is null) || availabilty is null || availabilty == Availabilty.None)
         {
-            var userHoliday = userHolidays.FirstOrDefault(x => x.ValidFrom <= start && x.ValidUntil >= end);
+            var userHoliday = userHolidays.FirstOrDefault(x => x.ValidFrom <= start && x.ValidUntil >= end && (userId is null || x.UserId == userId));
             if (userHoliday?.Available != null)
             {
                 availabilty = userHoliday.Available;
                 setBy = AvailabilitySetBy.Holiday;
             }
         }
-        if (availabilty is null && setBy != AvailabilitySetBy.User && setBy != AvailabilitySetBy.Holiday)
+        if ((setBy != AvailabilitySetBy.User && setBy != AvailabilitySetBy.Holiday && setBy is null) || availabilty is null || availabilty == Availabilty.None)
         {
             defAvaForUser = defaultAveUser?.FirstOrDefault(x => x.RoosterDefaultId == roosterDefaultId && x.ValidFrom <= start && x.ValidUntil >= end && (userId is null || x.UserId == userId));
             if (defAvaForUser?.Available != null)
@@ -237,6 +237,7 @@ public class ScheduleService : IScheduleService
             TrainingId = training.TrainingId ?? throw new NoNullAllowedException("TrainingId is still null while adding available"),
             Date = training.DateStart,
             Available = training.Availabilty,
+            SetBy = training.SetBy
         });
         return (await _database.SaveChangesAsync()) > 0;
     }
@@ -515,9 +516,15 @@ public class ScheduleService : IScheduleService
     {
         var result = new GetPinnedTrainingsForUserResponse();
         var trainings = await _database.RoosterTrainings.Include(i => i.RoosterAvailables!.Where(r => r.CustomerId == customerId && r.UserId == userId)).Where(x => x.CustomerId == customerId && x.Pin && x.DateStart >= fromDate && (x.RoosterAvailables == null || !x.RoosterAvailables.Any(r => r.Available > 0))).OrderBy(x => x.DateStart).ToListAsync(cancellationToken: token);
+        var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom >= fromDate).ToListAsync(cancellationToken: token);
+        var defaultAveUser = await _database.UserDefaultAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom >= fromDate).ToListAsync(cancellationToken: token);
+
         foreach (var training in trainings)
         {
-            var availabilty = training.RoosterAvailables?.FirstOrDefault(r => r.CustomerId == customerId && r.UserId == userId);
+            var ava = training.RoosterAvailables?.FirstOrDefault(r => r.CustomerId == customerId && r.UserId == userId);
+            Availabilty? availabilty = ava?.Available;
+            AvailabilitySetBy? setBy = ava?.SetBy;
+            GetAvailability(defaultAveUser, userHolidays, training.DateStart, training.DateEnd, training.RoosterDefaultId, null, ref availabilty, ref setBy);
             result.Trainings.Add(new Training
             {
                 TrainingId = training.Id,
@@ -525,10 +532,11 @@ public class ScheduleService : IScheduleService
                 Name = training.Name,
                 DateStart = training.DateStart,
                 DateEnd = training.DateEnd,
-                Availabilty = availabilty?.Available,
-                Assigned = availabilty?.Assigned ?? false,
+                Availabilty = availabilty,
+                SetBy = setBy ?? AvailabilitySetBy.None,
+                Assigned = ava?.Assigned ?? false,
                 RoosterTrainingTypeId = training.RoosterTrainingTypeId,
-                VehicleId = availabilty?.VehicleId,
+                VehicleId = ava?.VehicleId,
                 CountToTrainingTarget = training.CountToTrainingTarget,
                 Pin = training.Pin,
             });
