@@ -298,7 +298,7 @@ public class ScheduleService : IScheduleService
                             UserId = user.Id,
                             Availabilty = availabilty,
                             SetBy = setBy ?? AvailabilitySetBy.None,
-                            Assigned = a?.Assigned == false,
+                            Assigned = a?.Assigned ?? false,
                             Name = user.Name ?? "Name not found",
                             PlannedFunctionId = a?.UserFunctionId ?? user.UserFunctionId,
                             UserFunctionId = user.UserFunctionId,

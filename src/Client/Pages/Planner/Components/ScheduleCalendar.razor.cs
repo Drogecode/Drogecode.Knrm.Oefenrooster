@@ -29,6 +29,7 @@ public sealed partial class ScheduleCalendar : IDisposable
         if (_updating || dateRange.Start == null) return;
         _updating = true;
         _events = new();
+        _userTrainingCounter = null;
         TrainingWeek scheduleForUser = new();
         var scheduleForAll = await _scheduleRepository.ScheduleForAll(dateRange, _cls.Token);
         if (scheduleForAll == null) return;

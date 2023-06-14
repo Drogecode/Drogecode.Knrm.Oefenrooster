@@ -630,6 +630,9 @@
           },
           "assigned": {
             "type": "boolean"
+          },
+          "training": {
+            "$ref": "#/components/schemas/TrainingAdvance"
           }
         },
         "additionalProperties": false
@@ -644,6 +647,9 @@
           },
           "user": {
             "$ref": "#/components/schemas/PlanUser"
+          },
+          "training": {
+            "$ref": "#/components/schemas/TrainingAdvance"
           }
         },
         "additionalProperties": false
@@ -699,6 +705,9 @@
           },
           "availabilty": {
             "$ref": "#/components/schemas/Availabilty"
+          },
+          "setBy": {
+            "$ref": "#/components/schemas/AvailabilitySetBy"
           },
           "assigned": {
             "type": "boolean"
@@ -996,6 +1005,58 @@
             "$ref": "#/components/schemas/AvailabilitySetBy"
           },
           "assigned": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrainingAdvance": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "roosterTrainingTypeId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "trainingId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "defaultId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "vehicleId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "plannedFunctionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "dateStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dateEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "countToTrainingTarget": {
+            "type": "boolean"
+          },
+          "updated": {
+            "type": "boolean"
+          },
+          "pin": {
             "type": "boolean"
           }
         },
