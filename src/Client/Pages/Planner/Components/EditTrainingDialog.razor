@@ -16,13 +16,13 @@
                 <MudTimePicker Label="@L["From"]" @bind-Time="_training.TimeStart" Validation="@(new Func<TimeSpan?, string?>(StartBeforeEndValidation))" Required />
                 <MudTimePicker Label="@LApp["till"]" @bind-Time="_training.TimeEnd" Validation="@(new Func<TimeSpan?, string?>(EndAfterStartValidation))" Required />
                 <MudSelect T="Guid?" Label="@L["Training type"]" AnchorOrigin="Origin.BottomCenter" Value="_training.RoosterTrainingTypeId" ValueChanged="RoosterTrainingTypeChanged" Required>
-                @foreach (PlannerTrainingType trainingType in TrainingTypes.OrderBy(x=>x.Order))
+                @foreach (PlannerTrainingType trainingType in TrainingTypes.OrderBy(x => x.Order))
                     {
                         <MudSelectItem T="Guid?" Value="@trainingType.Id">@trainingType.Name</MudSelectItem>
                     }
                 </MudSelect>
                 <MudSwitchM3 Label="@L["Count to training target"]" T="bool" @bind-Checked="_training.CountToTrainingTarget" />
-                <MudDivider/>
+                <MudDivider />
                 <MudSwitchM3 Label="@L["Pin to dashboard"]" T="bool" @bind-Checked="_training.Pin" />
                 @if (Vehicles != null)
                 {
@@ -40,8 +40,11 @@
         }
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
-        <MudButton Color="Color.Primary" OnClick="OnSubmit">@LApp["save"]</MudButton>
+        @if (_training?.IsNew == true)
+        {
+            <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
+            <MudButton Color="Color.Primary" OnClick="OnSubmit">@LApp["save"]</MudButton>
+        }
     </DialogActions>
 </MudDialog>
 
