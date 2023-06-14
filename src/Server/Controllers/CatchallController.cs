@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Route("api/[controller]")]
@@ -17,11 +18,11 @@ public class CatchallController : ControllerBase
 
     [Route("{**catchAll}")]
     [HttpPost("post", Order = int.MaxValue)]
-    public IActionResult Post([FromBody] string value, string catchAll)
+    public IActionResult Post([FromBody] object value, string? catchAll)
     {
         try
         {
-            _auditService.Log(Guid.Empty, AuditType.CatchAll, Guid.Empty, $"{value} : {catchAll}", objectName: "POST catch all");
+            _auditService.Log(Guid.Empty, AuditType.CatchAll, Guid.Empty, $"{JsonSerializer.Serialize(value)} : {catchAll}", objectName: "POST catch all");
             return Ok();
         }
         catch (Exception ex)
