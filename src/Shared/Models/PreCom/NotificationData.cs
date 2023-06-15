@@ -9,20 +9,20 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 
 public class NotificationData
 {
-    public Data _data { get; set; }
-    public bool _remoteNotificationCompleteCallbackCalled { get; set; }
-    public bool _isRemote { get; set; }
-    public Guid _notificationId { get; set; }
-    public string _alert { get; set; }
-    public string _sound { get; set; }
-    public int _contentAvailable { get; set; }
+    public Data Data { get; set; }
+    public bool remoteNotificationCompleteCallbackCalled { get; set; }
+    public bool IsRemote { get; set; }
+    public Guid NotificationId { get; set; }
+    public string Alert { get; set; }
+    public string Sound { get; set; }
+    public int ContentAvailable { get; set; }
 }
 public class Data
 {
-    public ActionData actionData { get; set; }
-    public bool remote { get; set; }
-    public Guid notificationId { get; set; }
-    public string priority { get; set; }
+    public ActionData ActionData { get; set; }
+    public bool Remote { get; set; }
+    public Guid NotificationId { get; set; }
+    public string Priority { get; set; }
 }
 
 public class ActionData
