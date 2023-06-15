@@ -21,6 +21,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbRoosterTrainingType> RoosterTrainingTypes { get; set; }
         public DbSet<DbRoosterAvailable> RoosterAvailables { get; set; }
         public DbSet<DbVehicles> Vehicles { get; set; }
+        public DbSet<DbPreComAlert> PreComAlerts { get; set; }
 
         public DbSet<DbLinkVehicleTraining> LinkVehicleTraining { get; set; }
 
@@ -102,6 +103,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             // Vehicles
             modelBuilder.Entity<DbVehicles>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbVehicles>().HasOne(p => p.Customer).WithMany(g => g.Vehicles).HasForeignKey(s => s.CustomerId).IsRequired();
+            // PreComAlerts
+            modelBuilder.Entity<DbPreComAlert>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbPreComAlert>().HasOne(p => p.Customer).WithMany(g => g.PreComAlerts).HasForeignKey(s => s.CustomerId).IsRequired();
 
             //// Links
             // Vehicles <--> Rooster available

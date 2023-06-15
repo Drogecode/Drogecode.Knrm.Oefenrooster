@@ -23,5 +23,6 @@ public class DbCustomers
     public ICollection<DbRoosterTrainingType>? RoosterTrainingTypes { get; set; }
     public ICollection<DbAudit>? Audits { get; set; }
     public ICollection<DbVehicles>? Vehicles { get; set; }
-    public ICollection<DbLinkVehicleTraining>? LinkVehicleTrainings{ get; set; }
+    public ICollection<DbLinkVehicleTraining>? LinkVehicleTrainings { get; set; }
+    public ICollection<DbPreComAlert>? PreComAlerts { get; set; }
 }
