@@ -25,6 +25,8 @@ builder.Services.AddResponseCompression(opts =>
        new[] { "application/octet-stream" });
 });
 
+builder.Services.AddSingleton<PreComHub>();
+
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<ICalendarItemService, CalendarItemService>();
 builder.Services.AddScoped<IConfigurationService, ConfigurationService>();

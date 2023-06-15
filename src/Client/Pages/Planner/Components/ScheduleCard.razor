@@ -3,7 +3,7 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-<CalendarBaseCard ReplaceEmtyName="@ReplaceEmtyName" Width="@Width" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" OnClickHistory="OpenHistoryDialog" ShowDate="@ShowDate" ContentClass="@(Planner.IsCreated ? "" : "DrogeCode-card-content-not-created")">
+<CalendarBaseCard ReplaceEmtyName="@ReplaceEmtyName" Width="@Width" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" OnClickHistory="OpenHistoryDialog" ShowDate="@ShowDate">
     @if (ChildContent != null)
     {
         @ChildContent

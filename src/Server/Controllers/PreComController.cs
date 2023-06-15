@@ -1,14 +1,15 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
 using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
-[Route("api/[controller]")]
 [ApiController]
+[Route("api/[controller]/[action]")]
 [ApiExplorerSettings(GroupName = "PreCom")]
 public class PreComController : ControllerBase
 {
@@ -29,7 +30,6 @@ public class PreComController : ControllerBase
     }
 
     [HttpPost]
-    [Route("WebHook")]
     public async Task<IActionResult> WebHook([FromBody] object body)
     {
         try
@@ -50,6 +50,7 @@ public class PreComController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<MultiplePreComAlertsResponse>> AllAlerts(CancellationToken clt)
     {
@@ -59,6 +60,7 @@ public class PreComController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             if (userId != DefaultSettingsHelper.IdTaco) return Unauthorized("User not me");
             MultiplePreComAlertsResponse result = await _preComService.GetAllAlerts(customerId);
+            await _preComHub.SendMessage("PreCom", "bliep blop hello");
 
             return Ok(result);
         }

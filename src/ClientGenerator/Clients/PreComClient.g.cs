@@ -155,7 +155,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<MultiplePreComAlertsResponse> AllAlertsAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/PreCom");
+            urlBuilder_.Append("api/PreCom/AllAlerts");
 
             var client_ = _httpClient;
             var disposeClient_ = false;

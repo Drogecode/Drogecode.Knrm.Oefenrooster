@@ -35,11 +35,13 @@ public sealed partial class MainLayout : IDisposable
             .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
             .Build();
 
-        _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        _hubConnection.On<string, string>("ReceivePrecomAlert", (user, message) =>
         {
             var config = (SnackbarOptions options) =>
             {
                 options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
+                options.RequireInteraction = true;
+                options.ShowCloseIcon = true;
             };
             Snackbar.Add($"PreCom: {message}", Severity.Error, configure: config, key: "precom");
         });
