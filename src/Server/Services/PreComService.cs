@@ -40,5 +40,6 @@ public class PreComService : IPreComService
             Raw = raw,
             SendTime = sendTime
         });
+        _database.SaveChanges();
     }
 }
