@@ -28,8 +28,8 @@ public class CatchallController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in CatchallController CatchAll Post");
-            return BadRequest("Exception in CatchallController CatchAll Post");
+            _logger.LogError(ex, "Exception in CatchallController CatchAll POST");
+            return BadRequest("Exception in CatchallController CatchAll POST");
         }
     }
 }

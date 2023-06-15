@@ -58,6 +58,7 @@ if (!runningInContainers)
         });
     });
 }
+builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 #endif
 
 var app = builder.Build();
