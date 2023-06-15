@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
@@ -22,7 +23,7 @@ public class CatchallController : ControllerBase
     {
         try
         {
-            _auditService.Log(Guid.Empty, AuditType.CatchAll, Guid.Empty, $"{JsonSerializer.Serialize(value)} : {catchAll}", objectName: "POST catch all");
+            _auditService.Log(DefaultSettingsHelper.IdTaco, AuditType.CatchAll, DefaultSettingsHelper.KnrmHuizenId, $"{JsonSerializer.Serialize(value)} : {catchAll}", objectName: "POST catch all");
             return Ok($"Got it {JsonSerializer.Serialize(value)} : {catchAll}");
         }
         catch (Exception ex)
