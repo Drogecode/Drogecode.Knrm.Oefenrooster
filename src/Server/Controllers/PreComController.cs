@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.Mvc;
@@ -14,14 +15,17 @@ public class PreComController : ControllerBase
     private readonly ILogger<PreComController> _logger;
     private readonly IPreComService _preComService;
     private readonly IAuditService _auditService;
+    private readonly PreComHub _preComHub;
     public PreComController(
         ILogger<PreComController> logger,
         IPreComService preComService,
-        IAuditService auditService)
+        IAuditService auditService,
+        PreComHub preComHub)
     {
         _logger = logger;
         _preComService = preComService;
         _auditService = auditService;
+        _preComHub = preComHub;
     }
 
     [HttpPost]
@@ -33,8 +37,10 @@ public class PreComController : ControllerBase
             _logger.LogInformation("Resived PreCom message");
             var data = body as NotificationData;
             _logger.LogInformation($"Message is '{data?._alert}'");
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            await _preComService.WriteAlertToDb(customerId, data?._notificationId, data?._data?.actionData?.Timestamp, data?._alert ?? "No alert found by hui.nu webhook", JsonSerializer.Serialize(body));
+            var customerId = DefaultSettingsHelper.KnrmHuizenId;
+            var alert = data?._alert ?? "No alert found by hui.nu webhook";
+            await _preComService.WriteAlertToDb(customerId, data?._notificationId, data?._data?.actionData?.Timestamp, alert, JsonSerializer.Serialize(body));
+            await _preComHub.SendMessage("PreCom", alert);
             return Ok();
         }
         catch (Exception ex)

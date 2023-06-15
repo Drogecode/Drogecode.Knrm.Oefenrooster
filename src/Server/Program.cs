@@ -7,6 +7,8 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.OpenApi.Extensions;
 using System.Text;
+using Microsoft.AspNetCore.ResponseCompression;
+using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddSignalR();
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+       new[] { "application/octet-stream" });
+});
 
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<ICalendarItemService, CalendarItemService>();
@@ -64,7 +72,7 @@ if (!runningInContainers)
 #endif
 
 var app = builder.Build();
-
+app.UseResponseCompression();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -110,6 +118,7 @@ if (!runningInContainers)
 
 app.MapRazorPages();
 app.MapControllers();
+app.MapHub<PreComHub>("/hub/precomhub");
 app.MapFallbackToFile("index.html");
 
 app.Run();

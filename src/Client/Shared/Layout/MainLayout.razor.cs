@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
@@ -13,17 +14,38 @@ public sealed partial class MainLayout : IDisposable
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private IOfflineService _offlineService { get; set; } = default!;
+    [Inject] private ISnackbar Snackbar { get; set; } = default!;
 
     private DrogeCodeGlobal _global { get; set; } = new();
     private MudThemeProvider _mudThemeProvider = new();
     private IDictionary<NotificationMessage, bool> _messages = null;
     private List<PlannerTrainingType>? _trainingTypes;
+    private HubConnection? _hubConnection;
+    private List<string> _hubmessages = new();
     private bool _isDarkMode;
     private bool _isAuthenticated;
     private bool _isOffline;
     private bool _drawerOpen = true;
     private bool _settingsOpen = true;
     private bool _newNotificationsAvailable = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
+            .Build();
+
+        _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            var config = (SnackbarOptions options) =>
+            {
+                options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
+            };
+            Snackbar.Add($"PreCom: {message}", Severity.Error, configure: config, key: "precom");
+        });
+
+        await _hubConnection.StartAsync();
+    }
 
     protected override async Task OnParametersSetAsync()
     {
