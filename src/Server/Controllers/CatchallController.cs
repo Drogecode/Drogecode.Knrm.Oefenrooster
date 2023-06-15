@@ -23,12 +23,12 @@ public class CatchallController : ControllerBase
         try
         {
             _auditService.Log(Guid.Empty, AuditType.CatchAll, Guid.Empty, $"{JsonSerializer.Serialize(value)} : {catchAll}", objectName: "POST catch all");
-            return Ok();
+            return Ok($"Got it {JsonSerializer.Serialize(value)} : {catchAll}");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in CatchallController CatchAll Post");
-            return BadRequest();
+            return BadRequest("Exception in CatchallController CatchAll Post");
         }
     }
 }
