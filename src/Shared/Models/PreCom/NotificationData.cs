@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
+﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 
 public class NotificationData
 {
@@ -15,6 +8,7 @@ public class NotificationData
     public Guid _notificationId { get; set; }
     public string _alert { get; set; }
     public string _sound { get; set; }
+    public string _category { get; set; }
     public int _contentAvailable { get; set; }
 }
 public class Data
@@ -27,6 +21,7 @@ public class Data
 
 public class ActionData
 {
+    public string MsgInID { get; set; }
     public string MsgOutID { get; set; }
     public string ControlID { get; set; }
     public DateTime Timestamp { get; set; }
