@@ -35,11 +35,12 @@ public class PreComController : ControllerBase
         try
         {
             _logger.LogInformation("Resived PreCom message");
-            var data = body as NotificationData;
-            _logger.LogInformation($"Message is '{data?.Alert}'");
+            var data = JsonSerializer.Deserialize<NotificationData>(JsonSerializer.Serialize(body));
+            _logger.LogInformation($"Message is '{data?._alert}'");
             var customerId = DefaultSettingsHelper.KnrmHuizenId;
-            var alert = data?.Alert ?? "No alert found by hui.nu webhook";
-            await _preComService.WriteAlertToDb(customerId, data?.NotificationId, data?.Data?.ActionData?.Timestamp, alert, JsonSerializer.Serialize(body));
+            var alert = data?._alert ?? "No alert found by hui.nu webhook";
+            var timestamp = DateTime.SpecifyKind(data?._data?.actionData?.Timestamp ?? DateTime.MinValue, DateTimeKind.Utc);
+            await _preComService.WriteAlertToDb(customerId, data?._notificationId, timestamp, alert, JsonSerializer.Serialize(body));
             await _preComHub.SendMessage("PreCom", alert);
             return Ok();
         }
