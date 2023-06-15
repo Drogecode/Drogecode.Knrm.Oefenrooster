@@ -4,7 +4,7 @@
 @if (_alerts is not null)
 {
     <MudList>
-        @foreach (var alert in _alerts.OrderBy(x=>x.SendTime))
+        @foreach (var alert in _alerts.OrderByDescending(x=>x.SendTime))
         {
             <MudListItem>@alert.Alert</MudListItem>
         }

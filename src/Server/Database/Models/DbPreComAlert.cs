@@ -10,8 +10,12 @@ public class DbPreComAlert
     public Guid? CustomerId { get; set; }
     public Guid? NotificationId { get; set; }
     public string? Alert { get; set; }
+    /// <summary>
+    /// Only to complete the object, not all fields are always returned.
+    /// </summary>
     public string? Raw { get; set; }
     public DateTime? SendTime { get; set; }
+    public int? Priority { get; set; }
 
     public DbCustomers? Customer { get; set; }
 }

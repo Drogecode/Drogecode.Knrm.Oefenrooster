@@ -40,7 +40,8 @@ public class PreComController : ControllerBase
             var customerId = DefaultSettingsHelper.KnrmHuizenId;
             var alert = data?._alert ?? "No alert found by hui.nu webhook";
             var timestamp = DateTime.SpecifyKind(data?._data?.actionData?.Timestamp ?? DateTime.MinValue, DateTimeKind.Utc);
-            await _preComService.WriteAlertToDb(customerId, data?._notificationId, timestamp, alert, JsonSerializer.Serialize(body));
+            var prioParsed = int.TryParse(data?._data?.priority, out int priority);
+            await _preComService.WriteAlertToDb(customerId, data?._notificationId, timestamp, alert, prioParsed ? priority: null, JsonSerializer.Serialize(body));
             await _preComHub.SendMessage("PreCom", alert);
             return Ok();
         }
