@@ -11,6 +11,7 @@ public class DbPreComAlert
     public Guid? NotificationId { get; set; }
     public string? Alert { get; set; }
     public string? Raw { get; set; }
+    public DateTime? SendTime { get; set; }
 
     public DbCustomers? Customer { get; set; }
 }

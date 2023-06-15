@@ -29,5 +29,5 @@ public class ActionData
 {
     public string MsgOutID { get; set; }
     public string ControlID { get; set; }
-    public string Timestamp { get; set; }
+    public DateTime Timestamp { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -12,13 +13,32 @@ public class PreComService : IPreComService
         _database = database;
     }
 
-    public async Task WriteAlertToDb(Guid customerId, Guid? notificationId, string alert, string raw)
+    public async Task<MultiplePreComAlertsResponse> GetAllAlerts(Guid customerId)
     {
-        _database.PreComAlerts.Add(new DbPreComAlert { 
+        var result = new MultiplePreComAlertsResponse { PreComAlerts = new List<PreComAlert>() };
+        var fromDb = _database.PreComAlerts.Where(x => x.CustomerId == customerId);
+        foreach (var alert in fromDb)
+        {
+            result.PreComAlerts.Add(new PreComAlert
+            {
+                Id = alert.Id,
+                NotificationId = alert.NotificationId,
+                Alert = alert.Alert,
+                SendTime = alert.SendTime,
+            });
+        }
+        return result;
+    }
+
+    public async Task WriteAlertToDb(Guid customerId, Guid? notificationId, DateTime? sendTime, string alert, string raw)
+    {
+        _database.PreComAlerts.Add(new DbPreComAlert
+        {
             CustomerId = customerId,
             NotificationId = notificationId,
             Alert = alert,
-            Raw = raw
+            Raw = raw,
+            SendTime = sendTime
         });
     }
 }

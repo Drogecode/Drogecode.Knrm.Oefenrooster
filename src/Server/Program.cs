@@ -42,7 +42,8 @@ var groupNames = new List<string>
     "User",
     "Vehicle",
     "SharePoint",
-    "DefaultSchedule"
+    "DefaultSchedule",
+    "PreCom"
 };
 var runningInContainers = string.Equals(builder.Configuration["DOTNET_RUNNING_IN_CONTAINER"], "true");
 if (!runningInContainers)

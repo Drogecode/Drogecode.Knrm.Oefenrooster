@@ -1,0 +1,107 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "PreCom",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/PreCom/WebHook": {
+      "post": {
+        "tags": [
+          "PreCom"
+        ],
+        "operationId": "WebHook",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { }
+            },
+            "text/json": {
+              "schema": { }
+            },
+            "application/*+json": {
+              "schema": { }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/PreCom": {
+      "get": {
+        "tags": [
+          "PreCom"
+        ],
+        "operationId": "AllAlerts",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultiplePreComAlertsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultiplePreComAlertsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultiplePreComAlertsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MultiplePreComAlertsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "preComAlerts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreComAlert"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PreComAlert": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "notificationId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "alert": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

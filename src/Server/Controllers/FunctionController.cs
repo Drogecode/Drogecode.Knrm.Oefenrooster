@@ -23,6 +23,7 @@ public class FunctionController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<MultipleFunctionsResponse>> GetAll(CancellationToken token = default)
     {
         try

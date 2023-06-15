@@ -1,0 +1,12 @@
+﻿@page "/precom/alerts"
+<MudText Typo="Typo.h1">Precom alerts</MudText>
+
+@if (_alerts is not null)
+{
+    <MudList>
+        @foreach (var alert in _alerts.OrderBy(x=>x.SendTime))
+        {
+            <MudListItem>@alert.Alert</MudListItem>
+        }
+    </MudList>
+}

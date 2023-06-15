@@ -132,6 +132,9 @@
   <data name="Defaults" xml:space="preserve">
     <value>Standaard</value>
   </data>
+  <data name="PreCom alerts" xml:space="preserve">
+    <value>PreCom meldingen</value>
+  </data>
   <data name="Schedule" xml:space="preserve">
     <value>Indeling</value>
   </data>
