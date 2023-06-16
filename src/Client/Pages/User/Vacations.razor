@@ -1,3 +1,28 @@
 ﻿@page "/user/vacations"
 @attribute [Authorize]
-<h3>Vacations</h3>
+<PageTitle>@L["Vacations"]</PageTitle>
+<MudText Typo="Typo.h4">@L["Add and change vacations"]</MudText>
+
+@if (_holidays is not null)
+{
+    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick='()=>{Console.WriteLine("add");}'>@L["Add new vacation"]</MudButton>
+    <MudTable Items="_holidays">
+        <HeaderContent>
+            <MudTh>@L["From"]</MudTh>
+            <MudTh>@L["Till"]</MudTh>
+            <MudTh>@L["Edit"]</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="@L["From"]">@context.ValidFrom</MudTd>
+            <MudTd DataLabel="@L["Till"]">@context.ValidUntil</MudTd>
+            <MudTd DataLabel="@L["Edit"]"><MudButton OnClick='()=>{Console.WriteLine("cool");}'>@L["Edit"]</MudButton></MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+else
+{
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+}
