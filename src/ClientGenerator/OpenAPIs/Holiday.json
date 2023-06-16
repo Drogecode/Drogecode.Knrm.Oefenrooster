@@ -154,6 +154,9 @@
           },
           "patched": {
             "$ref": "#/components/schemas/Holiday"
+          },
+          "isNew": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

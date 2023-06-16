@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 
-public class MultipleSharePointTrainingsResponse : BaseResponse
+public class MultipleSharePointTrainingsResponse : BaseMultipleResponse
 {
     public List<SharePointTraining>? SharePointTrainings { get; set; }
 }

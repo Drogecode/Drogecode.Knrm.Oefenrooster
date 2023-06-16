@@ -19,6 +19,14 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
@@ -54,6 +62,14 @@
         "parameters": [
           {
             "name": "count",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skip",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -97,6 +113,10 @@
           "offline": {
             "type": "boolean"
           },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
           "sharePointActions": {
             "type": "array",
             "items": {
@@ -115,6 +135,10 @@
           },
           "offline": {
             "type": "boolean"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
           },
           "sharePointTrainings": {
             "type": "array",

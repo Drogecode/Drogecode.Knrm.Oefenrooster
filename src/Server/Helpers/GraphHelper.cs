@@ -191,7 +191,9 @@ public static class GraphHelper
                 GetUser(users, det, "Opstapper_x0020_3LookupId", SharePointRole.Opstapper, training);
                 GetUser(users, det, "Opstapper_x0020_4LookupId", SharePointRole.Opstapper, training);
                 GetUser(users, det, "Opstapper_x0020_5LookupId", SharePointRole.Opstapper, training);
-                training.Start = det.Fields.AdditionalData.ContainsKey("Aanvang_x0020_O_x0026_O_x0020__x") ? (DateTime)det.Fields.AdditionalData["Aanvang_x0020_O_x0026_O_x0020__x"] : DateTime.MinValue;
+                var start = det.Fields.AdditionalData.ContainsKey("Aanvang_x0020_O_x0026_O_x0020__x") ? (DateTime)det.Fields.AdditionalData["Aanvang_x0020_O_x0026_O_x0020__x"] : DateTime.MinValue;
+                start = DateTime.SpecifyKind(start, DateTimeKind.Utc);
+                training.Start = start;
                 training.Title = det.Fields.AdditionalData.ContainsKey("LinkTitle") ? det.Fields.AdditionalData["LinkTitle"]!.ToString() : "";
                 training.Description = det.Fields.AdditionalData.ContainsKey("Bijzonderheden_x0020_Oproep") ? det.Fields.AdditionalData["Bijzonderheden_x0020_Oproep"]!.ToString() : "";
                 trainings.Add(training);
@@ -230,8 +232,10 @@ public static class GraphHelper
                 double number = -1;
                 if (det.Fields.AdditionalData.ContainsKey("Actie_x0020_nummer"))
                     _ = double.TryParse(det.Fields.AdditionalData["Actie_x0020_nummer"].ToString(), out number);
+                var start = det.Fields.AdditionalData.ContainsKey("Oproep_x0020__x0028_uren_x0029_") ? (DateTime)det.Fields.AdditionalData["Oproep_x0020__x0028_uren_x0029_"] : DateTime.MinValue;
+                start = DateTime.SpecifyKind(start, DateTimeKind.Utc);
                 action.Number = number;
-                action.Start = det.Fields.AdditionalData.ContainsKey("Oproep_x0020__x0028_uren_x0029_") ? (DateTime)det.Fields.AdditionalData["Oproep_x0020__x0028_uren_x0029_"] : DateTime.MinValue;
+                action.Start = start;
                 action.Title = det.Fields.AdditionalData.ContainsKey("LinkTitle") ? det.Fields.AdditionalData["LinkTitle"]!.ToString() : "";
                 action.Description = det.Fields.AdditionalData.ContainsKey("Bijzonderheden_x0020_Oproep") ? det.Fields.AdditionalData["Bijzonderheden_x0020_Oproep"]!.ToString() : "";
                 actions.Add(action);

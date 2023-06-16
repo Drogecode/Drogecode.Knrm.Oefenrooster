@@ -16,8 +16,8 @@ public class GraphService : IGraphService
     private const string SP_USERS = "SPUsrs_{0}";
     private const string SP_ACTIONS = "usrSPAct_{0}";
     private const string SP_TRAININGS = "usrSPTrai_{0}";
-    private const string USER_SP_ACTIONS = "usrSPAct_{0}_{1}_{2}";
-    private const string USER_SP_TRAININGS = "usrSPTrai_{0}_{1}_{2}";
+    private const string USER_SP_ACTIONS = "usrSPAct_{0}_{1}_{2}_{3}";
+    private const string USER_SP_TRAININGS = "usrSPTrai_{0}_{1}_{2}_{3}";
     public GraphService(
         ILogger<GraphService> logger,
         IMemoryCache memoryCache,
@@ -105,9 +105,9 @@ public class GraphService : IGraphService
         await GraphHelper.GetLists();
     }
 
-    public async Task<List<SharePointAction>> GetListActionsUser(string userName, Guid userId, int count, Guid customerId, CancellationToken clt)
+    public async Task<MultipleSharePointActionsResponse> GetListActionsUser(string userName, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
-        _memoryCache.TryGetValue<List<SharePointAction>>(string.Format(USER_SP_ACTIONS, customerId, userId, count), out var sharePointActionsUser);
+        _memoryCache.TryGetValue<MultipleSharePointActionsResponse>(string.Format(USER_SP_ACTIONS, customerId, userId, count, skip), out var sharePointActionsUser);
         if (sharePointActionsUser == null)
         {
             var cacheOptions = new MemoryCacheEntryOptions();
@@ -122,20 +122,25 @@ public class GraphService : IGraphService
             }
             cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(5));
             cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
-            sharePointActionsUser = sharePointActions.Where(x => x.Users.Any(y => string.Compare(y.Name, userName) == 0)).Take(count).ToList();
-            _ = _memoryCache.Set(string.Format(USER_SP_ACTIONS,customerId, userId, count), sharePointActionsUser, cacheOptions);
+            var listWhere = sharePointActions?.Where(x => x.Users.Any(y => string.Compare(y.Name, userName) == 0));
+            sharePointActionsUser = new MultipleSharePointActionsResponse
+            {
+                SharePointActions = listWhere?.Skip(skip).Take(count).ToList(),
+                TotalCount = listWhere?.Count() ?? -1
+            };
+            _ = _memoryCache.Set(string.Format(USER_SP_ACTIONS, customerId, userId, count, skip), sharePointActionsUser, cacheOptions);
         }
         return sharePointActionsUser;
     }
 
-    public async Task<List<SharePointTraining>> GetListTrainingUser(string userName, Guid userId, int count, Guid customerId, CancellationToken clt)
+    public async Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(string userName, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
-        _memoryCache.TryGetValue<List<SharePointTraining>>(string.Format(USER_SP_TRAININGS, customerId, userId, count), out var sharePointTrainingsUser);
-        if (sharePointTrainingsUser == null)
+        _memoryCache.TryGetValue<MultipleSharePointTrainingsResponse>(string.Format(USER_SP_TRAININGS, customerId, userId, count, skip), out var sharePointTrainingsUser);
+        if (sharePointTrainingsUser is null)
         {
             var cacheOptions = new MemoryCacheEntryOptions();
             _memoryCache.TryGetValue<List<SharePointTraining>>(string.Format(SP_TRAININGS, customerId), out var sharePointTrainings);
-            if (sharePointTrainings == null)
+            if (sharePointTrainings is null)
             {
                 var users = await GetAllSharePointUsers(customerId, clt);
                 sharePointTrainings = await GraphHelper.GetListTraining(customerId, users);
@@ -143,10 +148,15 @@ public class GraphService : IGraphService
                 cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
                 _ = _memoryCache.Set(string.Format(SP_TRAININGS, customerId), sharePointTrainings, cacheOptions);
             }
-            sharePointTrainingsUser = sharePointTrainings.Where(x => x.Users.Any(y => string.Compare(y.Name, userName) == 0)).Take(count).ToList();
+            var listWhere = sharePointTrainings?.Where(x => x.Users.Any(y => string.Compare(y.Name, userName) == 0));
+            sharePointTrainingsUser = new MultipleSharePointTrainingsResponse
+            {
+                SharePointTrainings = listWhere?.Skip(skip).Take(count).ToList(),
+                TotalCount = listWhere?.Count() ?? -1
+            };
             cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(5));
             cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
-            _ = _memoryCache.Set(string.Format(USER_SP_TRAININGS, customerId, userId, count), sharePointTrainingsUser, cacheOptions);
+            _ = _memoryCache.Set(string.Format(USER_SP_TRAININGS, customerId, userId, count, skip), sharePointTrainingsUser, cacheOptions);
         }
         return sharePointTrainingsUser;
     }

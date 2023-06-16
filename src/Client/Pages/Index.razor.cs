@@ -39,9 +39,9 @@ public sealed partial class Index : IDisposable
         StateHasChanged();
         _pinnedTrainings = (await _scheduleRepository.GetPinnedTrainingsForUser(_cls.Token))?.Trainings;
         StateHasChanged();
-        _sharePointActions = await _sharePointRepository.GetLastActionsForCurrentUser(_cls.Token);
+        _sharePointActions = await _sharePointRepository.GetLastActionsForCurrentUser(10, 0, _cls.Token);
         StateHasChanged();
-        _sharePointTrainings = await _sharePointRepository.GetLastTrainingsForCurrentUser(_cls.Token);
+        _sharePointTrainings = await _sharePointRepository.GetLastTrainingsForCurrentUser(10, 0, _cls.Token);
     }
 
     public void Dispose()

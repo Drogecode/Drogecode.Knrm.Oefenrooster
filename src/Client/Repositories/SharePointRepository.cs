@@ -15,15 +15,15 @@ public class SharePointRepository
         _offlineService = offlineService;
     }
 
-    public async Task<List<SharePointTraining>?> GetLastTrainingsForCurrentUser(CancellationToken clt)
+    public async Task<List<SharePointTraining>?> GetLastTrainingsForCurrentUser(int count, int skip, CancellationToken clt)
     {
-        var result = await _sharePointClient.GetLastTrainingsForCurrentUserAsync(5, clt);
+        var result = await _sharePointClient.GetLastTrainingsForCurrentUserAsync(count, skip, clt);
         return result.SharePointTrainings?.ToList();
     }
 
-    public async Task<List<SharePointAction>?> GetLastActionsForCurrentUser(CancellationToken clt)
+    public async Task<List<SharePointAction>?> GetLastActionsForCurrentUser(int count, int skip, CancellationToken clt)
     {
-        var result = await _sharePointClient.GetLastActionsForCurrentUserAsync(5, clt);
+        var result = await _sharePointClient.GetLastActionsForCurrentUserAsync(count, skip, clt);
         return result.SharePointActions?.ToList();
     }
 }

@@ -25,21 +25,21 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     {
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsForCurrentUserAsync(int? count);
+        System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsForCurrentUserAsync(int? count, int? skip);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsForCurrentUserAsync(int? count, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsForCurrentUserAsync(int? count, int? skip, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsForCurrentUserAsync(int? count);
+        System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsForCurrentUserAsync(int? count, int? skip);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsForCurrentUserAsync(int? count, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsForCurrentUserAsync(int? count, int? skip, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -72,21 +72,25 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsForCurrentUserAsync(int? count)
+        public virtual System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsForCurrentUserAsync(int? count, int? skip)
         {
-            return GetLastTrainingsForCurrentUserAsync(count, System.Threading.CancellationToken.None);
+            return GetLastTrainingsForCurrentUserAsync(count, skip, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsForCurrentUserAsync(int? count, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsForCurrentUserAsync(int? count, int? skip, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/SharePoint/GetLastTrainingsForCurrentUser?");
             if (count != null)
             {
                 urlBuilder_.Append(System.Uri.EscapeDataString("count") + "=").Append(System.Uri.EscapeDataString(ConvertToString(count, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (skip != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("skip") + "=").Append(System.Uri.EscapeDataString(ConvertToString(skip, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             urlBuilder_.Length--;
 
@@ -151,21 +155,25 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsForCurrentUserAsync(int? count)
+        public virtual System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsForCurrentUserAsync(int? count, int? skip)
         {
-            return GetLastActionsForCurrentUserAsync(count, System.Threading.CancellationToken.None);
+            return GetLastActionsForCurrentUserAsync(count, skip, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsForCurrentUserAsync(int? count, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsForCurrentUserAsync(int? count, int? skip, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/SharePoint/GetLastActionsForCurrentUser?");
             if (count != null)
             {
                 urlBuilder_.Append(System.Uri.EscapeDataString("count") + "=").Append(System.Uri.EscapeDataString(ConvertToString(count, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (skip != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("skip") + "=").Append(System.Uri.EscapeDataString(ConvertToString(skip, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             urlBuilder_.Length--;
 

@@ -33,16 +33,17 @@ public class SharePointController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<MultipleSharePointTrainingsResponse>> GetLastTrainingsForCurrentUser(int count, CancellationToken clt = default)
+    public async Task<ActionResult<MultipleSharePointTrainingsResponse>> GetLastTrainingsForCurrentUser(int count, int skip, CancellationToken clt = default)
     {
         try
         {
+            if (count > 30) return Forbid();
             var userName = User?.FindFirstValue("name") ?? throw new Exception("No userName found");
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             _graphService.InitializeGraph();
-            var result = await _graphService.GetListTrainingUser(userName, userId, count, customerId, clt);
-            return Ok(new MultipleSharePointTrainingsResponse { SharePointTrainings = result });
+            var result = await _graphService.GetListTrainingUser(userName, userId, count, skip, customerId, clt);
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -52,17 +53,18 @@ public class SharePointController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<MultipleSharePointActionsResponse>> GetLastActionsForCurrentUser(int count, CancellationToken clt = default)
+    public async Task<ActionResult<MultipleSharePointActionsResponse>> GetLastActionsForCurrentUser(int count, int skip, CancellationToken clt = default)
     {
         try
         {
+            if (count > 30) return Forbid();
             var userName = User?.FindFirstValue("name") ?? throw new Exception("No userName found");
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
 
             _graphService.InitializeGraph();
-            var result = await _graphService.GetListActionsUser(userName, userId, count, customerId, clt);
-            return Ok(new MultipleSharePointActionsResponse { SharePointActions = result });
+            var result = await _graphService.GetListActionsUser(userName, userId, count, skip, customerId, clt);
+            return Ok(result);
         }
         catch (Exception ex)
         {
