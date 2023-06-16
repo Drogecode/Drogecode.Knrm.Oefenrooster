@@ -9,7 +9,7 @@ public sealed partial class Alerts : IDisposable
     [Inject] private PreComRepository _preComRepository { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<PreComAlert>? _alerts;
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         _alerts = await _preComRepository.GetAll(_cls.Token);
     }
