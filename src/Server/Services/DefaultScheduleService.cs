@@ -45,7 +45,7 @@ public class DefaultScheduleService : IDefaultScheduleService
     {
         var dbDefault = _database.RoosterDefaults.Include(x => x.UserDefaultAvailables.Where(y => y.UserId == userId))?.FirstOrDefault(x => x.Id == body.Id);
         if (dbDefault is null) return new PatchDefaultScheduleForUserResponse { Success = false };
-        var userDefault = dbDefault.UserDefaultAvailables?.FirstOrDefault(y => y.UserId == userId);
+        var userDefault = dbDefault.UserDefaultAvailables?.FirstOrDefault(y => y.UserId == userId && y.Id == body.UserDefaultAvailableId);
         if (userDefault?.ValidFrom?.Date.Equals(DateTime.UtcNow.Date) == true)
         {
             userDefault!.Available = body.Available;

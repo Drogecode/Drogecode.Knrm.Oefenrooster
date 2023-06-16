@@ -33,6 +33,7 @@ builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 builder.Services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
 builder.Services.AddScoped<IGraphService, GraphService>();
+builder.Services.AddScoped<IHolidayService, HolidayService>();
 builder.Services.AddScoped<IPreComService, PreComService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -53,6 +54,7 @@ var groupNames = new List<string>
     "Vehicle",
     "SharePoint",
     "DefaultSchedule",
+    "Holiday",
     "PreCom"
 };
 var runningInContainers = string.Equals(builder.Configuration["DOTNET_RUNNING_IN_CONTAINER"], "true");

@@ -103,6 +103,11 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "priority": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false

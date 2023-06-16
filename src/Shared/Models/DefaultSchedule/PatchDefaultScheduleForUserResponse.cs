@@ -8,5 +8,5 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 
 public class PatchDefaultScheduleForUserResponse : BaseResponse
 {
-public DefaultSchedule? Patched { get; set; }
+    public DefaultSchedule? Patched { get; set; }
 }
