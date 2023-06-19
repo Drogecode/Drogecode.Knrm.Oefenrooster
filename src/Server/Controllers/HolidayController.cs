@@ -50,6 +50,27 @@ public class HolidayController : ControllerBase
         }
     }
 
+    [HttpPut]
+    public async Task<ActionResult<PutHolidaysForUserResponse>> PutHolidayForUser([FromBody] Holiday body)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            PutHolidaysForUserResponse result = await _holidayService.PutHolidaysForUser(body, customerId, userId);
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in PutHolidaysForUser");
+            return BadRequest();
+        }
+    }
+
     [HttpPatch]
     public async Task<ActionResult<PatchHolidaysForUserResponse>> PatchHolidayForUser([FromBody] Holiday body)
     {

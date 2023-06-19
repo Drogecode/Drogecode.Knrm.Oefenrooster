@@ -23,9 +23,15 @@ public class HolidayRepository
         return result.Holidays;
     }
 
-    public async Task<Holiday?> PatchhHolidayForUser(Holiday body, CancellationToken clt)
+    public async Task<PutHolidaysForUserResponse?> PutHolidayForUser(Holiday body, CancellationToken clt)
+    {
+        var result = await _holidayClient.PutHolidayForUserAsync(body, clt);
+        return result;
+    }
+
+    public async Task<PatchHolidaysForUserResponse?> PatchHolidayForUser(Holiday body, CancellationToken clt)
     {
         var result = await _holidayClient.PatchHolidayForUserAsync(body, clt);
-        return result.Patched;
+        return result;
     }
 }

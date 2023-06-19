@@ -9,6 +9,7 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 
 public class Holiday
 {
+    public string? Description { get; set; }
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public Availabilty? Available { get; set; }

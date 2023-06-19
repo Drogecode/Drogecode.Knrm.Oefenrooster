@@ -5,17 +5,26 @@
 
 @if (_holidays is not null)
 {
-    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick='()=>{Console.WriteLine("add");}'>@L["Add new vacation"]</MudButton>
-    <MudTable Items="_holidays">
+    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{OpenVacationDialog(null, true);}">@L["Add new vacation"]</MudButton>
+    <MudTable Items="_holidays.OrderByDescending(x=>x.ValidFrom)">
         <HeaderContent>
+            <MudTh>@L["Description"]</MudTh>
             <MudTh>@L["From"]</MudTh>
             <MudTh>@L["Till"]</MudTh>
             <MudTh>@L["Edit"]</MudTh>
         </HeaderContent>
         <RowTemplate>
+            <MudTd DataLabel="@L["From"]">@context.Description</MudTd>
             <MudTd DataLabel="@L["From"]">@context.ValidFrom</MudTd>
             <MudTd DataLabel="@L["Till"]">@context.ValidUntil</MudTd>
-            <MudTd DataLabel="@L["Edit"]"><MudButton OnClick='()=>{Console.WriteLine("cool");}'>@L["Edit"]</MudButton></MudTd>
+            <MudTd DataLabel="@L["Edit"]">
+                @if (context.ValidUntil!.Value.CompareTo(DateTime.UtcNow) > 0)
+                {
+                    <MudButton OnClick="()=>{OpenVacationDialog(context, false);}">
+                        @L["Edit"]
+                    </MudButton>
+                }
+            </MudTd>
         </RowTemplate>
     </MudTable>
 }

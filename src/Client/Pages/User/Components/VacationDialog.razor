@@ -1,0 +1,17 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+<MudDialog>
+    <DialogContent>
+        @if (Holiday is not null)
+        {
+            <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
+                <MudTextField Label="@L["Description"]" @bind-Value="Holiday.Description" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" />
+                <MudDatePicker Label="@L["Valid from"]" @bind-Date="Holiday.ValidFrom" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))" Required />
+                <MudDatePicker Label="@L["Valid till"]" @bind-Date="Holiday.ValidUntil" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" Required />
+            </MudForm>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">@LApp["Ok"]</MudButton>
+    </DialogActions>
+</MudDialog>

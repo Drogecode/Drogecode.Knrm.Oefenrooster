@@ -1,8 +1,13 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components;
+using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Microsoft.Extensions.Localization;
+using Microsoft.Graph.Models;
 using System.Diagnostics.CodeAnalysis;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User;
 
@@ -10,9 +15,11 @@ public sealed partial class Vacations : IDisposable
 {
     [Inject] private IStringLocalizer<Vacations> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
+    [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private HolidayRepository _holidayRepository { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<Holiday>? _holidays { get; set; }
+    private RefreshModel _refreshModel = new();
     private bool _updating;
     private bool _success;
     private string[] _errors = Array.Empty<string>();
@@ -21,33 +28,29 @@ public sealed partial class Vacations : IDisposable
     protected override async Task OnParametersSetAsync()
     {
         _holidays = await _holidayRepository.GetAll(_cls.Token);
+        _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
     }
-    private async Task OnChange(Holiday holiday)
+
+    private void OpenVacationDialog(Holiday? holiday, bool isNew)
     {
-        if (_updating) return;
-        _updating = true;
-        if (holiday is not null)
-        {
-            var patched = await _holidayRepository.PatchhHolidayForUser(holiday, _cls.Token);
-        }
-        _updating = false;
+        var parameters = new DialogParameters {
+            { "Holiday", holiday },
+            { "IsNew", isNew},
+            { "Refresh", _refreshModel },
+        };
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        _dialogProvider.Show<VacationDialog>(L["Edit holiday"], parameters, options);
     }
-    private async Task OnSubmit(Guid id)
+
+    private async Task RefreshMeAsync()
     {
-        _updating = true;
-        var schedule = _holidays?.FirstOrDefault(s => s.Id == id);
-        _form?.Validate();
-        if (!_form?.IsValid == true || schedule is null)
-        {
-            _updating = false;
-            return;
-        }
-        var patched = await _holidayRepository.PatchhHolidayForUser(schedule, _cls.Token);
-        _updating = false;
+        _holidays = await _holidayRepository.GetAll(_cls.Token);
+        StateHasChanged();
     }
 
     public void Dispose()
     {
         _cls.Cancel();
+        _refreshModel.RefreshRequestedAsync -= RefreshMeAsync;
     }
 }

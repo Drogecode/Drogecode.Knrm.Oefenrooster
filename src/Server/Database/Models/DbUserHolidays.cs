@@ -13,6 +13,7 @@ public class DbUserHolidays
     public Availabilty? Available { get; set; }
     public DateTime? ValidFrom { get; set; }
     public DateTime? ValidUntil { get; set; }
+    public string? Description { get; set; }
 
     public DbCustomers Customer { get; set; }
     public DbUsers User { get; set; }

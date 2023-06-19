@@ -25,6 +25,7 @@ public class HolidayService : IHolidayService
             {
                 Id = dbHoliday.Id,
                 UserId = userId,
+                Description = dbHoliday.Description,
                 Available = dbHoliday.Available,
                 ValidFrom = dbHoliday.ValidFrom,
                 ValidUntil = dbHoliday.ValidUntil,
@@ -33,37 +34,45 @@ public class HolidayService : IHolidayService
         return list;
     }
 
+    public async Task<PutHolidaysForUserResponse> PutHolidaysForUser(Holiday body, Guid customerId, Guid userId)
+    {
+        if (body is null) return new PutHolidaysForUserResponse { Success = false };
+        if (body.ValidUntil is not null && body.ValidUntil.Value.CompareTo(DateTime.UtcNow) <= 0) return new PutHolidaysForUserResponse { Success = false };
+        if (body.ValidFrom is not null && body.ValidFrom.Value.CompareTo(DateTime.UtcNow) <= 0) body.ValidFrom = DateTime.UtcNow;
+        var dbHoliday = new DbUserHolidays
+        {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            Description= body.Description,
+            CustomerId = customerId,
+            Available = body.Available,
+            ValidFrom = DateTime.SpecifyKind(body.ValidFrom!.Value, DateTimeKind.Utc),
+            ValidUntil = DateTime.SpecifyKind(body.ValidUntil!.Value, DateTimeKind.Utc)
+        };
+        body.Id = dbHoliday.Id;
+        body.ValidFrom = dbHoliday.ValidFrom;
+        _database.UserHolidays.Add(dbHoliday);
+        _database.SaveChanges();
+        return new PutHolidaysForUserResponse
+        {
+            Success = true,
+            Put = body
+        };
+    }
+
     public async Task<PatchHolidaysForUserResponse> PatchHolidaysForUser(Holiday body, Guid customerId, Guid userId)
     {
         var dbHoliday = _database.UserHolidays.FirstOrDefault(x => x.Id == body.Id);
-        if (dbHoliday is null || true) return new PatchHolidaysForUserResponse { Success = false }; //Not ready
-        if (dbHoliday?.ValidFrom?.Date.Equals(DateTime.UtcNow.Date) == true)
-        {
-            dbHoliday!.Available = body.Available;
-            dbHoliday.ValidFrom = body.ValidFrom;
-            dbHoliday.ValidUntil = body.ValidUntil;
-            _database.UserHolidays.Update(dbHoliday);
-        }
-        else
-        {
-            if (dbHoliday is not null)
-            {
-                dbHoliday.ValidUntil = DateTime.UtcNow.AddDays(-1);
-                _database.UserHolidays.Update(dbHoliday);
-            }
-            dbHoliday = new DbUserHolidays
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                CustomerId = customerId,
-                Available = body.Available,
-                ValidFrom = DateTime.UtcNow,
-                ValidUntil = body.ValidUntil,
-            };
-            body.Id = dbHoliday.Id;
-            body.ValidFrom = dbHoliday.ValidFrom;
-            _database.UserHolidays.Add(dbHoliday);
-        }
+        if (dbHoliday is null) return new PatchHolidaysForUserResponse { Success = false };
+        if (dbHoliday.ValidUntil is not null && dbHoliday.ValidUntil.Value.CompareTo(DateTime.UtcNow) <= 0) return new PatchHolidaysForUserResponse { Success = false };
+        if (dbHoliday.ValidFrom is not null && dbHoliday.ValidFrom.Value.CompareTo(DateTime.UtcNow) <= 0) body.ValidFrom = dbHoliday.ValidFrom;
+
+        dbHoliday.Description = body.Description;
+        dbHoliday.Available = body.Available;
+        dbHoliday.ValidFrom = DateTime.SpecifyKind(body.ValidFrom!.Value, DateTimeKind.Utc);
+        dbHoliday.ValidUntil = DateTime.SpecifyKind(body.ValidUntil!.Value, DateTimeKind.Utc);
+        _database.UserHolidays.Update(dbHoliday);
+
         _database.SaveChanges();
         return new PatchHolidaysForUserResponse
         {
