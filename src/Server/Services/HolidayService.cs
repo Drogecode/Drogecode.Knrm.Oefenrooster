@@ -46,8 +46,8 @@ public class HolidayService : IHolidayService
             Description= body.Description,
             CustomerId = customerId,
             Available = body.Available,
-            ValidFrom = DateTime.SpecifyKind(body.ValidFrom!.Value, DateTimeKind.Utc),
-            ValidUntil = DateTime.SpecifyKind(body.ValidUntil!.Value, DateTimeKind.Utc)
+            ValidFrom = body.ValidFrom!.Value,
+            ValidUntil = body.ValidUntil!.Value
         };
         body.Id = dbHoliday.Id;
         body.ValidFrom = dbHoliday.ValidFrom;
@@ -69,8 +69,8 @@ public class HolidayService : IHolidayService
 
         dbHoliday.Description = body.Description;
         dbHoliday.Available = body.Available;
-        dbHoliday.ValidFrom = DateTime.SpecifyKind(body.ValidFrom!.Value, DateTimeKind.Utc);
-        dbHoliday.ValidUntil = DateTime.SpecifyKind(body.ValidUntil!.Value, DateTimeKind.Utc);
+        dbHoliday.ValidFrom = body.ValidFrom!.Value;
+        dbHoliday.ValidUntil = body.ValidUntil!.Value;
         _database.UserHolidays.Update(dbHoliday);
 
         _database.SaveChanges();

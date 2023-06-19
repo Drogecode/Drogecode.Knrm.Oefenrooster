@@ -47,8 +47,10 @@ public sealed partial class VacationDialog : IDisposable
     private async Task Submit()
     {
         await _form.Validate();
-        if (!_form.IsValid || Holiday is null) return;
+        if (!_form.IsValid || Holiday is null || Holiday.ValidUntil is null || Holiday.ValidFrom is null) return;
         Holiday.Available = Availabilty.NotAvailable;
+        Holiday.ValidFrom = DateTime.SpecifyKind(Holiday.ValidFrom.Value, DateTimeKind.Local).ToUniversalTime();
+        Holiday.ValidUntil = new DateTime(Holiday.ValidUntil.Value.Year, Holiday.ValidUntil.Value.Month, Holiday.ValidUntil.Value.Day, 23, 59, 59, DateTimeKind.Local).ToUniversalTime();
         if (IsNew == true)
         {
             var result = await _holidayRepository.PutHolidayForUser(Holiday, _cls.Token);

@@ -1,6 +1,7 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 <div>
-    <MonthSelector Month="_month" MonthChanged="SetMonth"/>
+    <MonthSelector Month="_month" MonthChanged="SetMonth" />
     @if (Users != null)
     {
         <MudTable Hover="true" Breakpoint="Breakpoint.Sm"
@@ -33,6 +34,15 @@
                 {
                     var training = item.PlanUsers?.FirstOrDefault(x => x.UserId == @context.Id);
                     <MudTd Class="@PlannerHelper.StyleAvailabilty(training?.Availabilty)" DataLabel="@L["Name"]">
+                        @switch (training?.SetBy)
+                        {
+                            case AvailabilitySetBy.DefaultAvailable:
+                                <MudIcon Icon="@Icons.Material.Filled.AutoGraph" />
+                                break;
+                            case AvailabilitySetBy.Holiday:
+                                <MudIcon Icon="@Icons.Material.Filled.WbSunny" />
+                                break;
+                        }
                         @if (training?.Assigned == true)
                         {
                             @(Vehicles?.FirstOrDefault(x => x.Id == training.VehicleId)?.Code ?? Vehicles?.FirstOrDefault(x => x.Default)?.Code ?? L["Assigned"])
