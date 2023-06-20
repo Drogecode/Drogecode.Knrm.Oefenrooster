@@ -21,4 +21,13 @@ public class DebugHelper
         if (!LogToConsole) return;
         Console.WriteLine(exception);
     }
+    /// <summary>
+    /// Only write message and exception to console when debugging is true;
+    /// </summary>
+    /// <param name="exception">Exception to log</param>
+    public static void WriteLine(string message, Exception exception)
+    {
+        if (!LogToConsole) return;
+        Console.WriteLine(message, exception);
+    }
 }

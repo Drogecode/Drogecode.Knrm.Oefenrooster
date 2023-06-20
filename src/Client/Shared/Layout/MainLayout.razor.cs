@@ -22,6 +22,7 @@ public sealed partial class MainLayout : IDisposable
     private List<PlannerTrainingType>? _trainingTypes;
     private HubConnection? _hubConnection;
     private List<string> _hubmessages = new();
+    private CancellationTokenSource _cls = new();
     private bool _isDarkMode;
     private bool _isAuthenticated;
     private bool _isOffline;
@@ -31,22 +32,29 @@ public sealed partial class MainLayout : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
-            .Build();
-
-        _hubConnection.On<string, string>("ReceivePrecomAlert", (user, message) =>
+        try
         {
-            var config = (SnackbarOptions options) =>
-            {
-                options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
-                options.RequireInteraction = true;
-                options.ShowCloseIcon = true;
-            };
-            Snackbar.Add($"PreCom: {message}", Severity.Error, configure: config, key: "precom");
-        });
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
+                .Build();
 
-        await _hubConnection.StartAsync();
+            _hubConnection.On<string, string>("ReceivePrecomAlert", (user, message) =>
+            {
+                var config = (SnackbarOptions options) =>
+                {
+                    options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
+                    options.RequireInteraction = true;
+                    options.ShowCloseIcon = true;
+                };
+                Snackbar.Add($"PreCom: {message}", Severity.Error, configure: config, key: "precom");
+            });
+
+            await _hubConnection.StartAsync(_cls.Token);
+        }
+        catch (HttpRequestException ex)
+        {
+            DebugHelper.WriteLine("Faild to start hubconnection.", ex);
+        }
     }
 
     protected override async Task OnParametersSetAsync()
@@ -113,5 +121,6 @@ public sealed partial class MainLayout : IDisposable
     public void Dispose()
     {
         _global.RefreshRequested -= RefreshMe;
+        _cls.Cancel();
     }
 }
