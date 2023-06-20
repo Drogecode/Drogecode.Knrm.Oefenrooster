@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Extensions;
 using System.Text;
 using Microsoft.AspNetCore.ResponseCompression;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,12 @@ builder.Services.AddResponseCompression(opts =>
        new[] { "application/octet-stream" });
 });
 
+builder.Services.AddDbContextPool<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("postgresDB")));
+builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
+{
+    ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+});
+
 builder.Services.AddSingleton<PreComHub>();
 
 builder.Services.AddScoped<IAuditService, AuditService>();
@@ -38,9 +45,6 @@ builder.Services.AddScoped<IPreComService, PreComService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
-
-builder.Services.AddDbContextPool<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("postgresDB")));
-builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 
 #if DEBUG
 // Only run in debug because it fails on the azure app service! (and is not necessary)

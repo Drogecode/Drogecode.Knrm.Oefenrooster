@@ -21,7 +21,6 @@ public sealed partial class MainLayout : IDisposable
     private IDictionary<NotificationMessage, bool> _messages = null;
     private List<PlannerTrainingType>? _trainingTypes;
     private HubConnection? _hubConnection;
-    private List<string> _hubmessages = new();
     private CancellationTokenSource _cls = new();
     private bool _isDarkMode;
     private bool _isAuthenticated;
