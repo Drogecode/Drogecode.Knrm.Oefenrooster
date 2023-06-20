@@ -228,7 +228,7 @@ public static class GraphHelper
                 GetUser(users, det, "Opstapper_x0020_2LookupId", SharePointRole.Opstapper, action);
                 GetUser(users, det, "Opstapper_x0020_3LookupId", SharePointRole.Opstapper, action);
                 GetUser(users, det, "Opstapper_x0020_4LookupId", SharePointRole.Opstapper, action);
-                GetUser( users, det, "Opstapper_x0020_5LookupId", SharePointRole.Opstapper, action);
+                GetUser(users, det, "Opstapper_x0020_5LookupId", SharePointRole.Opstapper, action);
                 double number = -1;
                 if (det.Fields.AdditionalData.ContainsKey("Actie_x0020_nummer"))
                     _ = double.TryParse(det.Fields.AdditionalData["Actie_x0020_nummer"].ToString(), out number);
@@ -247,12 +247,32 @@ public static class GraphHelper
         return actions.OrderByDescending(x => x.Start).ToList();
     }
 
+    internal static async Task<DateTime> ListTrainingLastUpdate(Guid customerId)
+    {
+        if (_appClient == null || customerId != DefaultSettingsHelper.KnrmHuizenId) return DateTime.MinValue;
+        return await ListLastModified(STARTPAGINA, ID_OTHER_REPORTS_KNRM_HUIZEN);
+    }
+
+    internal static async Task<DateTime> ListActionLastUpdate(Guid customerId)
+    {
+        if (_appClient == null || customerId != DefaultSettingsHelper.KnrmHuizenId) return DateTime.MinValue;
+        return await ListLastModified(STARTPAGINA, ID_ACTION_REPORTS_KNRM_HUIZEN);
+    }
+
+    private static async Task<DateTime> ListLastModified(string site, string idlist)
+    {
+        if (_appClient == null) return DateTime.MinValue;
+        var list = await _appClient.Sites[site].Lists[idlist].GetAsync();
+        if (list?.LastModifiedDateTime is null) return DateTime.MinValue;
+        return list.LastModifiedDateTime.Value.DateTime;
+    }
+
     private static void GetUser(List<SharePointUser> users, ListItem det, string key, SharePointRole role, SharePointListBase listBase)
     {
         var sharePointID = det.Fields.AdditionalData.ContainsKey(key) ? det.Fields.AdditionalData[key]?.ToString() : "";
-        if (sharePointID == null) return ;
+        if (sharePointID == null) return;
         var user = users.FirstOrDefault(x => x.SharePointID == sharePointID);
-        if (user == null) return ;
+        if (user == null) return;
         user.Role = role;
         listBase.Users.Add(user);
     }

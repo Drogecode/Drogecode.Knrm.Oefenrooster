@@ -3,7 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph.Models;
-using Microsoft.Identity.Client;
+using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -15,7 +15,9 @@ public class GraphService : IGraphService
 
     private const string SP_USERS = "SPUsrs_{0}";
     private const string SP_ACTIONS = "usrSPAct_{0}";
+    private const string SP_ACTIONS_EXP = "usrSPActEx_{0}";
     private const string SP_TRAININGS = "usrSPTrai_{0}";
+    private const string SP_TRAININGS_EXP = "usrSPTraiEx_{0}";
     private const string USER_SP_ACTIONS = "usrSPAct_{0}_{1}_{2}_{3}";
     private const string USER_SP_TRAININGS = "usrSPTrai_{0}_{1}_{2}_{3}";
     public GraphService(
@@ -107,18 +109,40 @@ public class GraphService : IGraphService
 
     public async Task<MultipleSharePointActionsResponse> GetListActionsUser(string userName, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
-        _memoryCache.TryGetValue<MultipleSharePointActionsResponse>(string.Format(USER_SP_ACTIONS, customerId, userId, count, skip), out var sharePointActionsUser);
+        var sw = Stopwatch.StartNew();
+        var keyExp = string.Format(SP_ACTIONS_EXP, customerId);
+        var keyActions = string.Format(SP_ACTIONS, customerId);
+        var keyUserActions = string.Format(USER_SP_ACTIONS, customerId, userId, count, skip);
+        var cacheOptions = new MemoryCacheEntryOptions();
+        _memoryCache.TryGetValue<UpdatedCheck>(keyExp, out var lastupdated);
+        if (lastupdated is null)
+            lastupdated = new UpdatedCheck();
+        if (lastupdated.NextCheck.CompareTo(DateTime.UtcNow) < 0)
+        {
+            var newLastUpdated = await GraphHelper.ListActionLastUpdate(customerId);
+            if (!newLastUpdated.Equals(DateTime.MinValue) && !newLastUpdated.Equals(lastupdated))
+            {
+                _memoryCache.Remove(keyActions);
+                _memoryCache.Remove(keyUserActions);
+                lastupdated.LastUpdated = newLastUpdated;
+                _logger.LogInformation("There are changes in the action list");
+            }
+            lastupdated.NextCheck = DateTime.UtcNow.AddMinutes(5);
+            cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(120));
+            cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(240));
+            _ = _memoryCache.Set(keyExp, lastupdated, cacheOptions);
+        }
+        _memoryCache.TryGetValue<MultipleSharePointActionsResponse>(keyUserActions, out var sharePointActionsUser);
         if (sharePointActionsUser == null)
         {
-            var cacheOptions = new MemoryCacheEntryOptions();
-            _memoryCache.TryGetValue<List<SharePointAction>>(string.Format(SP_ACTIONS, customerId), out var sharePointActions);
+            _memoryCache.TryGetValue<List<SharePointAction>>(keyActions, out var sharePointActions);
             if (sharePointActions == null)
             {
                 var users = await GetAllSharePointUsers(customerId, clt);
                 sharePointActions = await GraphHelper.GetListActions(customerId, users);
                 cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(30));
                 cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
-                _ = _memoryCache.Set(string.Format(SP_ACTIONS, customerId), sharePointActions, cacheOptions);
+                _ = _memoryCache.Set(keyActions, sharePointActions, cacheOptions);
             }
             cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(5));
             cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
@@ -128,25 +152,49 @@ public class GraphService : IGraphService
                 SharePointActions = listWhere?.Skip(skip).Take(count).ToList(),
                 TotalCount = listWhere?.Count() ?? -1
             };
-            _ = _memoryCache.Set(string.Format(USER_SP_ACTIONS, customerId, userId, count, skip), sharePointActionsUser, cacheOptions);
+            _ = _memoryCache.Set(keyUserActions, sharePointActionsUser, cacheOptions);
         }
+        sw.Stop();
+        sharePointActionsUser.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return sharePointActionsUser;
     }
 
     public async Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(string userName, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
-        _memoryCache.TryGetValue<MultipleSharePointTrainingsResponse>(string.Format(USER_SP_TRAININGS, customerId, userId, count, skip), out var sharePointTrainingsUser);
+        var sw = Stopwatch.StartNew();
+        var keyExp = string.Format(SP_TRAININGS_EXP, customerId);
+        var keyTrainings = string.Format(SP_TRAININGS, customerId);
+        var keyUserTrainings = string.Format(USER_SP_TRAININGS, customerId, userId, count, skip);
+        var cacheOptions = new MemoryCacheEntryOptions();
+        _memoryCache.TryGetValue<UpdatedCheck>(keyExp, out var lastupdated);
+        if (lastupdated is null)
+            lastupdated = new UpdatedCheck();
+        if (lastupdated.NextCheck.CompareTo(DateTime.UtcNow) < 0)
+        {
+            var newLastUpdated = await GraphHelper.ListTrainingLastUpdate(customerId);
+            if (!newLastUpdated.Equals(DateTime.MinValue) && !newLastUpdated.Equals(lastupdated))
+            {
+                _memoryCache.Remove(keyTrainings);
+                _memoryCache.Remove(keyUserTrainings);
+                lastupdated.LastUpdated = newLastUpdated;
+                _logger.LogInformation("There are changes in the training list");
+            }
+            lastupdated.NextCheck = DateTime.UtcNow.AddMinutes(5);
+            cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(120));
+            cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(240));
+            _ = _memoryCache.Set(keyExp, lastupdated, cacheOptions);
+        }
+        _memoryCache.TryGetValue<MultipleSharePointTrainingsResponse>(keyUserTrainings, out var sharePointTrainingsUser);
         if (sharePointTrainingsUser is null)
         {
-            var cacheOptions = new MemoryCacheEntryOptions();
-            _memoryCache.TryGetValue<List<SharePointTraining>>(string.Format(SP_TRAININGS, customerId), out var sharePointTrainings);
+            _memoryCache.TryGetValue<List<SharePointTraining>>(keyTrainings, out var sharePointTrainings);
             if (sharePointTrainings is null)
             {
                 var users = await GetAllSharePointUsers(customerId, clt);
                 sharePointTrainings = await GraphHelper.GetListTraining(customerId, users);
                 cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(30));
                 cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
-                _ = _memoryCache.Set(string.Format(SP_TRAININGS, customerId), sharePointTrainings, cacheOptions);
+                _ = _memoryCache.Set(keyTrainings, sharePointTrainings, cacheOptions);
             }
             var listWhere = sharePointTrainings?.Where(x => x.Users.Any(y => string.Compare(y.Name, userName) == 0));
             sharePointTrainingsUser = new MultipleSharePointTrainingsResponse
@@ -156,8 +204,10 @@ public class GraphService : IGraphService
             };
             cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(5));
             cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
-            _ = _memoryCache.Set(string.Format(USER_SP_TRAININGS, customerId, userId, count, skip), sharePointTrainingsUser, cacheOptions);
+            _ = _memoryCache.Set(keyUserTrainings, sharePointTrainingsUser, cacheOptions);
         }
+        sw.Stop();
+        sharePointTrainingsUser.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return sharePointTrainingsUser;
     }
 
@@ -171,5 +221,11 @@ public class GraphService : IGraphService
             _ = _memoryCache.Set(string.Format(SP_USERS, customerId), sharePointUsers, DateTimeOffset.UtcNow.AddMinutes(30));
         }
         return sharePointUsers;
+    }
+
+    private class UpdatedCheck
+    {
+        public DateTime LastUpdated { get; set; }
+        public DateTime NextCheck { get; set; }
     }
 }
