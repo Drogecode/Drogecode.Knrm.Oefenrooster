@@ -19,6 +19,7 @@ public sealed partial class VacationDialog : IDisposable
     [Parameter] public bool? IsNew { get; set; }
 
     private CancellationTokenSource _cls = new();
+    private Holiday? _originalHoliday { get; set; }
     private bool _success;
     private string[] _errors = Array.Empty<string>();
     [AllowNull] private MudForm _form;
@@ -29,21 +30,31 @@ public sealed partial class VacationDialog : IDisposable
         {
             Holiday = new Holiday();
         }
+        _originalHoliday = (Holiday?)Holiday?.Clone();
     }
 
     public string? ValidateStartDate(DateTime? newValue)
     {
+        if (newValue == _originalHoliday?.ValidFrom) return null;
         if (newValue == null) return L["No value for start date"];
-        if (newValue.Value.CompareTo(DateTime.UtcNow) < 0) return L["Should not be in the past"];
+        if (newValue.Value.CompareTo(DateTime.UtcNow.Date) < 0) return L["Should not be in the past"];
         return null;
     }
     public string? ValidateTillDate(DateTime? newValue)
     {
+        if (newValue == _originalHoliday?.ValidUntil) return null;
         if (newValue == null || Holiday is null) return L["No value for till date"];
-        if (newValue.Value.CompareTo(DateTime.UtcNow) < 0) return L["Should not be in the past"];
+        if (newValue.Value.CompareTo(DateTime.UtcNow.Date) < 0) return L["Should not be in the past"];
         if (newValue.Value.CompareTo(Holiday.ValidFrom) < 0) return L["Should not be before start date"];
         return null;
     }
+
+    public bool DateInPast(DateTime? dateTime)
+    {
+        if (dateTime is null) return false;
+        return dateTime.Value.CompareTo(DateTime.UtcNow.Date) <= 0;
+    }
+
     private async Task Submit()
     {
         await _form.Validate();

@@ -1,12 +1,10 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Server.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
-using Microsoft.Graph.Models;
 using System.Data;
-using System.Runtime.Intrinsics.X86;
-using ZXing.Aztec.Internal;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -48,7 +46,7 @@ public class ScheduleService : IScheduleService
                     var ava = availables.FirstOrDefault(x => x.TrainingId == training.Id);
                     Availabilty? availabilty = ava?.Available;
                     AvailabilitySetBy? setBy = ava?.SetBy;
-                    GetAvailability(defaultAveUser, userHolidays, start, end, training.RoosterDefaultId, null, ref availabilty, ref setBy);
+                    GetAvailability(defaultAveUser, userHolidays, training.DateStart, training.DateEnd, training.RoosterDefaultId, null, ref availabilty, ref setBy);
 
                     result.Trainings.Add(new Training
                     {
@@ -75,12 +73,14 @@ public class ScheduleService : IScheduleService
                 {
                     Availabilty? availabilty = null;
                     AvailabilitySetBy? setBy = null;
-                    GetAvailability(defaultAveUser, userHolidays, start, end, def.Id, null, ref availabilty, ref setBy);
+                    var trainingStart = scheduleDate.ToDateTime(def.TimeStart).DateTimeWithZone(def.TimeZone);
+                    var trainingEnd = scheduleDate.ToDateTime(def.TimeEnd).DateTimeWithZone(def.TimeZone);
+                    GetAvailability(defaultAveUser, userHolidays, trainingStart, trainingEnd, def.Id, null, ref availabilty, ref setBy);
                     result.Trainings.Add(new Training
                     {
                         DefaultId = def.Id,
-                        DateStart = scheduleDate.ToDateTime(def.TimeStart, DateTimeKind.Utc),
-                        DateEnd = scheduleDate.ToDateTime(def.TimeEnd, DateTimeKind.Utc),
+                        DateStart = trainingStart,
+                        DateEnd = trainingEnd,
                         Availabilty = availabilty ?? Availabilty.None,
                         SetBy = setBy ?? AvailabilitySetBy.None,
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
@@ -96,6 +96,7 @@ public class ScheduleService : IScheduleService
 
         return result;
     }
+
 
     private static void GetAvailability(List<DbUserDefaultAvailable>? defaultAveUser, List<DbUserHolidays> userHolidays, DateTime start, DateTime end, Guid? roosterDefaultId, Guid? userId, ref Availabilty? availabilty, ref AvailabilitySetBy? setBy)
     {
@@ -293,7 +294,7 @@ public class ScheduleService : IScheduleService
                         var a = ava.FirstOrDefault(x => x.UserId == user.Id);
                         Availabilty? availabilty = a?.Available;
                         AvailabilitySetBy? setBy = a?.SetBy;
-                        GetAvailability(defaultAveUser, userHolidays, start, end, training.RoosterDefaultId, user.Id, ref availabilty, ref setBy);
+                        GetAvailability(defaultAveUser, userHolidays, training.DateStart, training.DateEnd, training.RoosterDefaultId, user.Id, ref availabilty, ref setBy);
                         newPlanner.PlanUsers.Add(new PlanUser
                         {
                             UserId = user.Id,
@@ -328,11 +329,13 @@ public class ScheduleService : IScheduleService
             {
                 if (!defaultsFound.Contains(def.Id))
                 {
+                    var trainingStart = scheduleDate.ToDateTime(def.TimeStart).DateTimeWithZone(def.TimeZone);
+                    var trainingEnd = scheduleDate.ToDateTime(def.TimeEnd).DateTimeWithZone(def.TimeZone);
                     var newPlanner = new PlannedTraining
                     {
                         DefaultId = def.Id,
-                        DateStart = scheduleDate.ToDateTime(def.TimeStart, DateTimeKind.Utc),
-                        DateEnd = scheduleDate.ToDateTime(def.TimeEnd, DateTimeKind.Utc),
+                        DateStart = trainingStart,
+                        DateEnd = trainingEnd,
                         IsCreated = false,
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget,
@@ -342,7 +345,7 @@ public class ScheduleService : IScheduleService
                     {
                         Availabilty? availabilty = null;
                         AvailabilitySetBy? setBy = null;
-                        GetAvailability(defaultAveUser, userHolidays, start, end, def.Id, user.Id, ref availabilty, ref setBy);
+                        GetAvailability(defaultAveUser, userHolidays, trainingStart, trainingEnd, def.Id, user.Id, ref availabilty, ref setBy);
                         newPlanner.PlanUsers.Add(new PlanUser
                         {
                             UserId = user.Id,

@@ -149,6 +149,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
                     ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
                     RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
+                    TimeZone = "Europe/Amsterdam",
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -163,6 +164,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
                     ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
                     RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
+                    TimeZone = "Europe/Amsterdam",
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -177,6 +179,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
                     ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
                     RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
+                    TimeZone = "Europe/Amsterdam",
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -191,6 +194,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
                     ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
                     RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
+                    TimeZone = "Europe/Amsterdam",
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -205,6 +209,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
                     ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
                     RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
+                    TimeZone = "Europe/Amsterdam",
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -219,6 +224,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
                     ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
                     RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
+                    TimeZone = "Europe/Amsterdam",
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -233,6 +239,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
                     ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
                     RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
+                    TimeZone = "Europe/Amsterdam",
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -247,6 +254,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, DateTimeKind.Utc),
                     ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, DateTimeKind.Utc),
                     RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
+                    TimeZone = "Europe/Amsterdam",
                 });
             });
         }

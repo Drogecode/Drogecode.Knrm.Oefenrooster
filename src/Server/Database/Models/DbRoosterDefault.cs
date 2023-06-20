@@ -14,6 +14,7 @@ public class DbRoosterDefault
     public TimeOnly TimeEnd { get; set; }
     public DateTime ValidFrom { get; set; }
     public DateTime ValidUntil { get; set; }
+    public string TimeZone { get; set; } = string.Empty;
     public bool CountToTrainingTarget { get; set; } = true;
 
     public DbCustomers Customer { get; set; }
