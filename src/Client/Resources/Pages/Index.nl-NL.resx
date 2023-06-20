@@ -120,6 +120,9 @@
   <data name="Actions" xml:space="preserve">
     <value>Acties</value>
   </data>
+  <data name="Description" xml:space="preserve">
+    <value>Omschrijving</value>
+  </data>
   <data name="Future trainings" xml:space="preserve">
     <value>Aankomende oefeningen</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="Planner" xml:space="preserve">
     <value>Planning</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Vanaf</value>
   </data>
   <data name="Trainings" xml:space="preserve">
     <value>Oefeningen</value>

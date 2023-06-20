@@ -5,6 +5,8 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+@using System.Web;
+@using System.Text.RegularExpressions;
 <PageTitle>Dashboard</PageTitle>
 
 <MudTabs Rounded="true">
@@ -67,8 +69,8 @@
                     <Columns>
                         <HierarchyColumn T="SharePointAction" />
                         <PropertyColumn Property="x => x.Number" Title="Nr" />
-                        <PropertyColumn Property="x => x.Start.ToLocalTime()" />
-                        <PropertyColumn Property="x => x.Title" />
+                        <PropertyColumn Property="x => x.Start.ToLocalTime()" Title="@L["Start"]" />
+                        <PropertyColumn Property="x => x.ShortDescription" Title="@L["Description"]" />
                     </Columns>
                     <ChildRowContent>
                         <MudCard>
@@ -78,9 +80,9 @@
                                 </CardHeaderContent>
                             </MudCardHeader>
                             <MudCardContent>
-                                <MudText>@context.Item.Description</MudText>
-                                <MudList>
-                                    @foreach (var user in context.Item.Users)
+                                <MudText>@((MarkupString)Regex.Replace(HttpUtility.HtmlEncode(@context.Item.Description ?? string.Empty), "\r?\n|\r", "<br />"))</MudText>
+                                    <MudList>
+                                        @foreach (var user in context.Item.Users)
                                     {
                                         <MudListItem>@user.Name - @user.Role</MudListItem>
                                     }
@@ -110,8 +112,8 @@
                              ReadOnly="true" EditMode="@DataGridEditMode.Cell">
                     <Columns>
                         <HierarchyColumn T="SharePointTraining" />
-                        <PropertyColumn Property="x => x.Start.ToLocalTime()" />
-                        <PropertyColumn Property="x => x.Title" />
+                        <PropertyColumn Property="x => x.Start.ToLocalTime()" Title="@L["Start"]" />
+                        <PropertyColumn Property="x => x.Title" Title="@L["Description"]" />
                     </Columns>
                     <ChildRowContent>
                         <MudCard>
@@ -121,9 +123,9 @@
                                 </CardHeaderContent>
                             </MudCardHeader>
                             <MudCardContent>
-                                <MudText>@context.Item.Description</MudText>
-                                <MudList>
-                                    @foreach (var user in context.Item.Users)
+                                <MudText>@((MarkupString)Regex.Replace(HttpUtility.HtmlEncode(@context.Item.Description ?? string.Empty), "\r?\n|\r", "<br />"))</MudText>
+                                    <MudList>
+                                        @foreach (var user in context.Item.Users)
                                     {
                                         <MudListItem>@user.Name - @user.Role</MudListItem>
                                     }

@@ -237,6 +237,7 @@ public static class GraphHelper
                 action.Number = number;
                 action.Start = start;
                 action.Title = det.Fields.AdditionalData.ContainsKey("LinkTitle") ? det.Fields.AdditionalData["LinkTitle"]!.ToString() : "";
+                action.ShortDescription = det.Fields.AdditionalData.ContainsKey("Korte_x0020_Omschrijving") ? det.Fields.AdditionalData["Korte_x0020_Omschrijving"]!.ToString() : "";
                 action.Description = det.Fields.AdditionalData.ContainsKey("Bijzonderheden_x0020_Oproep") ? det.Fields.AdditionalData["Bijzonderheden_x0020_Oproep"]!.ToString() : "";
                 actions.Add(action);
             }
