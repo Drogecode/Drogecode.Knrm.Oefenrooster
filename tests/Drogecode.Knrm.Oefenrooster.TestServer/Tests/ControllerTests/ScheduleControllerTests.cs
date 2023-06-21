@@ -11,7 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Drogecode.Knrm.Oefenrooster.TestServer.ControllerTests;
+namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
 public class ScheduleControllerTests : BaseTest
 {

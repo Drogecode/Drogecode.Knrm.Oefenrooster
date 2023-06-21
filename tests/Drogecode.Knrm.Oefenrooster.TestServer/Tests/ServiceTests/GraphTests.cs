@@ -2,7 +2,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 
-namespace Drogecode.Knrm.Oefenrooster.TestServer.ServiceTests
+namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ServiceTests
 {
     public class GraphTests
     {
@@ -12,7 +12,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.ServiceTests
             _graphService = graphService;
         }
 
-        [Fact (Skip = "Do not talk to real SharePoint")]
+        [Fact(Skip = "Do not talk to real SharePoint")]
         public async Task InitializeGraphTest()
         {
             var settings = Settings.LoadSettingsLikeThis();

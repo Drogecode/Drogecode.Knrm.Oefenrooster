@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.PreCom", "src\PreCom\Drogecode.Knrm.Oefenrooster.PreCom.csproj", "{F036668C-313D-4B99-AC60-0F6C1918187B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drogecode.Knrm.Oefenrooster.TestClient", "tests\Drogecode.Knrm.Oefenrooster.TestClient\Drogecode.Knrm.Oefenrooster.TestClient.csproj", "{6C88A283-DE9A-4DBE-858F-7B0DA45587B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{F036668C-313D-4B99-AC60-0F6C1918187B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F036668C-313D-4B99-AC60-0F6C1918187B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F036668C-313D-4B99-AC60-0F6C1918187B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C88A283-DE9A-4DBE-858F-7B0DA45587B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C88A283-DE9A-4DBE-858F-7B0DA45587B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C88A283-DE9A-4DBE-858F-7B0DA45587B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C88A283-DE9A-4DBE-858F-7B0DA45587B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

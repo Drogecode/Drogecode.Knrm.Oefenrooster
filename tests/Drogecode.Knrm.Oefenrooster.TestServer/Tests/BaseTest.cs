@@ -10,7 +10,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Drogecode.Knrm.Oefenrooster.TestServer;
+namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests;
 
 public class BaseTest
 {
