@@ -32,8 +32,8 @@
     public void DateShrinkLastYearTest([Frozen] IStringLocalizer<DateToString> L)
     {
         Services.AddSingleton(L);
-        var date = new DateTime(2021, 12, 01, 7, 30, 15).DateTimeWithZone("Europe/Amsterdam");//UTC time
-        var cut = RenderComponent<DateToString>(parameter => parameter.Add(p => p.DateTimeUtc, date).Add(p => p.ShowDayOfWeek, false).Add(p => p.ShowTime, true));
+        var date = new DateTime(2021, 12, 01, 7, 30, 15);
+        var cut = RenderComponent<DateToString>(parameter => parameter.Add(p => p.DateTimeLocal, date).Add(p => p.ShowDayOfWeek, false).Add(p => p.ShowTime, true));
         cut.Markup.Should().Contain("7:30");
         cut.Markup.Should().NotContain("7:31");
         cut.Markup.Should().Contain("01 Dec 2021 7:30");
@@ -44,8 +44,8 @@
     public void DateShrinkThisYearTest([Frozen] IStringLocalizer<DateToString> L)
     {
         Services.AddSingleton(L);
-        var date = new DateTime(DateTime.Today.Year, 1, 1, 7, 30, 15).DateTimeWithZone("Europe/Amsterdam");//UTC time
-        var cut = RenderComponent<DateToString>(parameter => parameter.Add(p => p.DateTimeUtc, date).Add(p => p.ShowDayOfWeek, true).Add(p => p.ShowTime, true));
+        var date = new DateTime(DateTime.Today.Year, 1, 1, 7, 30, 15);
+        var cut = RenderComponent<DateToString>(parameter => parameter.Add(p => p.DateTimeLocal, date).Add(p => p.ShowDayOfWeek, true).Add(p => p.ShowTime, true));
         cut.Markup.Should().Contain("7:30");
         cut.Markup.Should().NotContain("7:31");
         cut.Markup.Should().Contain("01 Jan 7:30");
