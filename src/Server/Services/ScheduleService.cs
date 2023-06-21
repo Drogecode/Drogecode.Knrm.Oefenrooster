@@ -5,6 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using System.Data;
+using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -20,6 +21,7 @@ public class ScheduleService : IScheduleService
 
     public async Task<ScheduleForUserResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token)
     {
+        var sw = Stopwatch.StartNew();
         var result = new ScheduleForUserResponse();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
@@ -94,6 +96,8 @@ public class ScheduleService : IScheduleService
 
         } while (scheduleDate <= till);
 
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
 
@@ -125,19 +129,28 @@ public class ScheduleService : IScheduleService
         }
     }
 
-    public async Task<Training> PatchScheduleForUserAsync(Guid userId, Guid customerId, Training training, CancellationToken clt)
+    public async Task<PatchScheduleForUserResponse> PatchScheduleForUserAsync(Guid userId, Guid customerId, Training training, CancellationToken clt)
     {
+        var sw = Stopwatch.StartNew();
         training.Updated = false;
+        var result = new PatchScheduleForUserResponse
+        {
+            PatchedTraining = training
+        };
         var dbTraining = await CreateAndGetTraining(userId, customerId, training, clt);
-        if (dbTraining is null) return training;
+        if (dbTraining is null) return result;
         var available = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.TrainingId == dbTraining.Id);
         if (available == null)
         {
-            if (!await AddAvailableInternalAsync(userId, customerId, training)) return training;
+            if (!await AddAvailableInternalAsync(userId, customerId, training)) return result;
         }
-        else if (!await PatchAvailableInternalAsync(available, training)) return training;
+        else if (!await PatchAvailableInternalAsync(available, training)) return result;
         training.Updated = true;
-        return training;
+        result.Success = true;
+        result.PatchedTraining = training;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
     }
 
     private async Task<DbRoosterTraining?> CreateAndGetTraining(Guid userId, Guid customerId, TrainingAdvance? training, CancellationToken clt)
@@ -171,10 +184,12 @@ public class ScheduleService : IScheduleService
         return dbTraining;
     }
 
-    public async Task<bool> PatchTraining(Guid customerId, EditTraining patchedTraining, CancellationToken token)
+    public async Task<PatchTrainingResponse> PatchTraining(Guid customerId, EditTraining patchedTraining, CancellationToken token)
     {
+        var sw = Stopwatch.StartNew();
+        var result = new PatchTrainingResponse();
         var oldTraining = await _database.RoosterTrainings.FindAsync(new object?[] { patchedTraining.Id }, cancellationToken: token);
-        if (oldTraining == null) return false;
+        if (oldTraining == null) return result;
         if (patchedTraining.Name?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)
             throw new DrogeCodeToLongException();
         DateTime dateStart = ((patchedTraining.Date ?? throw new ArgumentNullException("Date is null")) + (patchedTraining.TimeStart ?? throw new ArgumentNullException("TimeStart is null"))).ToUniversalTime();
@@ -186,11 +201,17 @@ public class ScheduleService : IScheduleService
         oldTraining.CountToTrainingTarget = patchedTraining.CountToTrainingTarget;
         oldTraining.Pin = patchedTraining.Pin;
         _database.RoosterTrainings.Update(oldTraining);
-        return (await _database.SaveChangesAsync()) > 0;
+        result.Success = (await _database.SaveChangesAsync()) > 0;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
     }
 
-    public async Task<bool> AddTrainingAsync(Guid customerId, EditTraining newTraining, Guid trainingId, CancellationToken token)
+    public async Task<AddTrainingResponse> AddTrainingAsync(Guid customerId, EditTraining newTraining, Guid trainingId, CancellationToken token)
     {
+        var sw = Stopwatch.StartNew();
+        var result = new AddTrainingResponse();
+        result.NewId = trainingId;
         DateTime dateStart = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("TimeStart is null"))).ToUniversalTime();
         DateTime dateEnd = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"))).ToUniversalTime();
         var training = new Training
@@ -204,7 +225,10 @@ public class ScheduleService : IScheduleService
             CountToTrainingTarget = newTraining.CountToTrainingTarget,
             Pin = newTraining.Pin,
         };
-        return await AddTrainingInternalAsync(customerId, training, token);
+        result.Success = await AddTrainingInternalAsync(customerId, training, token);
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
     }
 
     private async Task<bool> AddTrainingInternalAsync(Guid customerId, TrainingAdvance training, CancellationToken token)
@@ -253,6 +277,7 @@ public class ScheduleService : IScheduleService
 
     public async Task<ScheduleForAllResponse> ScheduleForAllAsync(Guid userId, Guid customerId, int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token)
     {
+        var sw = Stopwatch.StartNew();
         var result = new ScheduleForAllResponse();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
@@ -364,7 +389,9 @@ public class ScheduleService : IScheduleService
             scheduleDate = scheduleDate.AddDays(1);
 
         } while (scheduleDate <= DateOnly.FromDateTime(tillDate));
-
+        result.Success = true;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
 
@@ -477,6 +504,7 @@ public class ScheduleService : IScheduleService
 
     public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime fromDate, CancellationToken token)
     {
+        var sw = Stopwatch.StartNew();
         var result = new GetScheduledTrainingsForUserResponse();
         var scheduled = await _database.RoosterAvailables.Include(i => i.Training.RoosterAvailables).Include(i => i.Training.RoosterAvailables).Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Date >= fromDate).OrderBy(x => x.Date).ToListAsync(cancellationToken: token);
         var users = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
@@ -512,6 +540,8 @@ public class ScheduleService : IScheduleService
                 }).ToList()
             });
         }
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
 

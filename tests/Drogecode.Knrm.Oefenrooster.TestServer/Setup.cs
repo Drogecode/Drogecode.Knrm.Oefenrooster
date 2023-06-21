@@ -1,11 +1,14 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
+using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer;
 public class Setup : Xunit.Di.Setup
@@ -24,6 +27,7 @@ public class Setup : Xunit.Di.Setup
         ConfigureServices((context, services) =>
         {
             services.AddMemoryCache();
+            services.AddDbContext<DataContext>(c=> c.UseInMemoryDatabase("MyXunitDb"));
 
             services.AddScoped<IAuditService, AuditService>();
             services.AddScoped<IConfigurationService, ConfigurationService>();

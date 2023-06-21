@@ -53,7 +53,7 @@ public class ScheduleController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             ScheduleForAllResponse result = await _scheduleService.ScheduleForAllAsync(userId, customerId, forMonth, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, token);
-            return Ok(result);
+            return result;
         }
         catch (Exception ex)
         {
@@ -69,13 +69,13 @@ public class ScheduleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            bool result = await _scheduleService.PatchTraining(customerId, patchedTraining, token);
-            if (result)
+            PatchTrainingResponse result = await _scheduleService.PatchTraining(customerId, patchedTraining, token);
+            if (result.Success)
                 await _auditService.Log(userId, AuditType.PatchTraining, customerId, objectKey: patchedTraining.Id, objectName: patchedTraining.Name);
             else
                 await _auditService.Log(userId, AuditType.PatchTraining, customerId, "Failed", patchedTraining.Id, patchedTraining.Name);
 
-            return Ok(new PatchTrainingResponse { Success = result });
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -93,12 +93,12 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var trainingId = Guid.NewGuid();
             var result = await _scheduleService.AddTrainingAsync(customerId, newTraining, trainingId, token);
-            if (result)
+            if (result.Success)
                 await _auditService.Log(userId, AuditType.AddTraining, customerId, objectKey: trainingId, objectName: newTraining.Name);
             else
                 await _auditService.Log(userId, AuditType.AddTraining, customerId, "Failed", trainingId, newTraining.Name);
 
-            return Ok(new AddTrainingResponse { NewId = trainingId, Success = true });
+            return result;
         }
         catch (Exception ex)
         {
@@ -115,7 +115,7 @@ public class ScheduleController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _scheduleService.PatchScheduleForUserAsync(userId, customerId, training, token);
-            return Ok(new PatchScheduleForUserResponse { PatchedTraining = result, Success = true });
+            return Ok( result);
         }
         catch (Exception ex)
         {

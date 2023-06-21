@@ -12,7 +12,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.ServiceTests
             _graphService = graphService;
         }
 
-        [Fact]
+        [Fact (Skip = "Do not talk to real SharePoint")]
         public async Task InitializeGraphTest()
         {
             var settings = Settings.LoadSettingsLikeThis();
@@ -22,7 +22,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.ServiceTests
             Assert.False(string.IsNullOrEmpty(token));
         }
 
-        [Fact]
+        [Fact(Skip = "Do not talk to real SharePoint")]
         public async Task GetUserListTest()
         {
             var settings = Settings.LoadSettingsLikeThis();
@@ -32,7 +32,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.ServiceTests
             Assert.NotEmpty(userPage.Value);
         }
 
-        [Fact]
+        [Fact(Skip = "Do not talk to real SharePoint")]
         public async Task GetGroupForUserTest()
         {
             var settings = Settings.LoadSettingsLikeThis();
@@ -48,7 +48,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.ServiceTests
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Do not talk to real SharePoint")]
         public async Task GetLists()
         {
             var settings = Settings.LoadSettingsLikeThis();
