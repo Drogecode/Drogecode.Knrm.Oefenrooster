@@ -239,6 +239,7 @@ public static class GraphHelper
                 action.Title = det.Fields.AdditionalData.ContainsKey("LinkTitle") ? det.Fields.AdditionalData["LinkTitle"]!.ToString() : "";
                 action.ShortDescription = det.Fields.AdditionalData.ContainsKey("Korte_x0020_Omschrijving") ? det.Fields.AdditionalData["Korte_x0020_Omschrijving"]!.ToString() : "";
                 action.Description = det.Fields.AdditionalData.ContainsKey("Bijzonderheden_x0020_Oproep") ? det.Fields.AdditionalData["Bijzonderheden_x0020_Oproep"]!.ToString() : "";
+                action.Prio = det.Fields.AdditionalData.ContainsKey("Priotiteit_x0020_Alarmering") ? det.Fields.AdditionalData["Priotiteit_x0020_Alarmering"]!.ToString() : "";
                 actions.Add(action);
             }
             if (overigeItems.OdataNextLink != null)

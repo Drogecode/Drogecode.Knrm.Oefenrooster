@@ -10,4 +10,5 @@ public class SharePointAction : SharePointListBase
 {
     public double Number { get; set; }
     public string? ShortDescription { get; set; }
+    public string? Prio { get; set; }
 }

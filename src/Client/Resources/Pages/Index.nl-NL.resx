@@ -141,6 +141,9 @@
   <data name="Planner" xml:space="preserve">
     <value>Planning</value>
   </data>
+  <data name="Prio" xml:space="preserve">
+    <value>Prio</value>
+  </data>
   <data name="Start" xml:space="preserve">
     <value>Vanaf</value>
   </data>
