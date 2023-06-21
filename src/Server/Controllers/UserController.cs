@@ -38,7 +38,7 @@ public class UserController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _userService.GetAllUsers(customerId, includeHidden);
 
-            return Ok(new MultipleDrogeUsersResponse { DrogeUsers = result });
+            return result;
         }
         catch (Exception ex)
         {
@@ -117,7 +117,7 @@ public class UserController : ControllerBase
             var userName = User?.FindFirstValue("name") ?? throw new Exception("No userName found");
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             _graphService.InitializeGraph();
-            var existingUsers = await _userService.GetAllUsers(customerId, true);
+            var existingUsers = (await _userService.GetAllUsers(customerId, true)).DrogeUsers;
             var users = await _graphService.ListUsersAsync();
             if (users?.Value != null)
             {

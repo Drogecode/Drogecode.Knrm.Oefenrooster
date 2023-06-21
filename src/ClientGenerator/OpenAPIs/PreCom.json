@@ -73,6 +73,10 @@
           "offline": {
             "type": "boolean"
           },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "preComAlerts": {
             "type": "array",
             "items": {

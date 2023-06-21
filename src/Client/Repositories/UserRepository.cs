@@ -29,7 +29,7 @@ public class UserRepository
     }
     public async Task<bool> AddUserAsync(DrogeUser user)
     {
-        var successfull = await _userClient.AddUserAsync(user);
+        var successfull = (await _userClient.AddUserAsync(user)).Success;
         return successfull;
     }
     public async Task<bool> SyncAllUsersAsync()

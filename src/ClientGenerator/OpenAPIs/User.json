@@ -105,23 +105,22 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/AddUserResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/AddUserResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/AddUserResponse"
                 }
               }
             }
           }
-        },
-        "deprecated": true
+        }
       }
     },
     "/api/User/UpdateUser": {
@@ -206,6 +205,27 @@
   },
   "components": {
     "schemas": {
+      "AddUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DrogeUser": {
         "type": "object",
         "properties": {
@@ -242,6 +262,10 @@
           "offline": {
             "type": "boolean"
           },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "drogeUser": {
             "$ref": "#/components/schemas/DrogeUser"
           }
@@ -256,6 +280,10 @@
           },
           "offline": {
             "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           },
           "drogeUsers": {
             "type": "array",
@@ -275,6 +303,10 @@
           },
           "offline": {
             "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           }
         },
         "additionalProperties": false
@@ -287,6 +319,10 @@
           },
           "offline": {
             "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           }
         },
         "additionalProperties": false

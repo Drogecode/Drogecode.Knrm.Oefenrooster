@@ -186,6 +186,10 @@
           "offline": {
             "type": "boolean"
           },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "holidays": {
             "type": "array",
             "items": {
@@ -205,6 +209,10 @@
           "offline": {
             "type": "boolean"
           },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "patched": {
             "$ref": "#/components/schemas/Holiday"
           }
@@ -219,6 +227,10 @@
           },
           "offline": {
             "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           },
           "put": {
             "$ref": "#/components/schemas/Holiday"

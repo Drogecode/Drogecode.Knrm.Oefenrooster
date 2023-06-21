@@ -486,6 +486,10 @@
           "offline": {
             "type": "boolean"
           },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "newId": {
             "type": "string",
             "format": "uuid"
@@ -562,6 +566,10 @@
           "offline": {
             "type": "boolean"
           },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "trainings": {
             "type": "array",
             "items": {
@@ -581,6 +589,10 @@
           "offline": {
             "type": "boolean"
           },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "trainings": {
             "type": "array",
             "items": {
@@ -599,6 +611,10 @@
           },
           "offline": {
             "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           },
           "plannerTrainingTypes": {
             "type": "array",
@@ -663,6 +679,10 @@
           "offline": {
             "type": "boolean"
           },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "patchedTraining": {
             "$ref": "#/components/schemas/Training"
           }
@@ -677,6 +697,10 @@
           },
           "offline": {
             "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           }
         },
         "additionalProperties": false
@@ -833,6 +857,10 @@
           "offline": {
             "type": "boolean"
           },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "planners": {
             "type": "array",
             "items": {
@@ -858,6 +886,10 @@
           },
           "offline": {
             "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           },
           "trainings": {
             "type": "array",

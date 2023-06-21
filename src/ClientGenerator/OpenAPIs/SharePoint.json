@@ -113,6 +113,10 @@
           "offline": {
             "type": "boolean"
           },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "totalCount": {
             "type": "integer",
             "format": "int32"
@@ -136,6 +140,10 @@
           "offline": {
             "type": "boolean"
           },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "totalCount": {
             "type": "integer",
             "format": "int32"
@@ -153,11 +161,11 @@
       "SharePointAction": {
         "type": "object",
         "properties": {
-          "description": {
+          "title": {
             "type": "string",
             "nullable": true
           },
-          "title": {
+          "description": {
             "type": "string",
             "nullable": true
           },
@@ -175,6 +183,14 @@
           "number": {
             "type": "number",
             "format": "double"
+          },
+          "shortDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "prio": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -191,11 +207,11 @@
       "SharePointTraining": {
         "type": "object",
         "properties": {
-          "description": {
+          "title": {
             "type": "string",
             "nullable": true
           },
-          "title": {
+          "description": {
             "type": "string",
             "nullable": true
           },

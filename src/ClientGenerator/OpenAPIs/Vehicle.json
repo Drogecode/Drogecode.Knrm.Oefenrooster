@@ -158,6 +158,10 @@
           "offline": {
             "type": "boolean"
           },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "drogeLinkVehicleTraining": {
             "$ref": "#/components/schemas/DrogeLinkVehicleTraining"
           }
@@ -201,6 +205,10 @@
           "offline": {
             "type": "boolean"
           },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "drogeVehicles": {
             "type": "array",
             "items": {
@@ -219,6 +227,10 @@
           },
           "offline": {
             "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           },
           "drogeLinkVehicleTrainingLinks": {
             "type": "array",

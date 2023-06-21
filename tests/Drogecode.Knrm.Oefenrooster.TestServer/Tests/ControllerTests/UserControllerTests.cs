@@ -16,4 +16,18 @@ public class UserControllerTests : BaseTest
         _userController = userController;
     }
 
+    [Fact]
+    public async Task GetAllTest()
+    {
+        var users = await _userController.GetAll(true);
+        Assert.NotNull(users?.Value?.DrogeUsers?.Count);
+        Assert.True(users.Value.Success);
+        users.Value.DrogeUsers.Should().Contain(x => x.Id == UserId);
+        var newUser = await AddUser("GetAllTest"); 
+        var users2 = await _userController.GetAll(true);
+        Assert.NotNull(users2?.Value?.DrogeUsers?.Count);
+        Assert.True(users2.Value.Success);
+        users2.Value.DrogeUsers.Should().Contain(x => x.Id == UserId);
+        users2.Value.DrogeUsers.Should().Contain(x=>x.Id == newUser);
+    }
 }

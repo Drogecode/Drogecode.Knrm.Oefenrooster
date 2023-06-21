@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Graph;
+using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class UserService : IUserService
@@ -13,13 +14,14 @@ public class UserService : IUserService
         _database = database;
     }
 
-    public async Task<List<DrogeUser>> GetAllUsers(Guid customerId, bool includeHidden)
+    public async Task<MultipleDrogeUsersResponse> GetAllUsers(Guid customerId, bool includeHidden)
     {
-        var result = new List<DrogeUser>();
+        var sw = Stopwatch.StartNew();
+        var result = new MultipleDrogeUsersResponse { DrogeUsers = new List<DrogeUser>() };
         var dbUsers = _database.Users.Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.Active));
         foreach (var dbUser in dbUsers)
         {
-            result.Add(new DrogeUser
+            result.DrogeUsers.Add(new DrogeUser
             {
                 Id = dbUser.Id,
                 Name = dbUser.Name,
@@ -28,6 +30,9 @@ public class UserService : IUserService
                 UserFunctionId = dbUser.UserFunctionId,
             });
         }
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        result.Success = true;
         return result;
     }
 

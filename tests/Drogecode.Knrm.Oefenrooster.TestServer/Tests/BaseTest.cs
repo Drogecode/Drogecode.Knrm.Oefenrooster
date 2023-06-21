@@ -26,13 +26,18 @@ public class BaseTest : IAsyncLifetime
     }
     public async Task InitializeAsync()
     {
-       var result = await UserController.AddUser(new DrogeUser
+        UserId = await AddUser(USER_NAME);
+    }
+
+    protected async Task<Guid> AddUser(string name)
+    {
+        var result = await UserController.AddUser(new DrogeUser
         {
-            Name = USER_NAME
+            Name = name
         });
         Assert.NotNull(result?.Value?.UserId);
         Assert.True(result.Value.Success);
-        UserId = result.Value.UserId ?? throw new Exception("Failed to get UserId for new test user");
+        return result.Value.UserId ?? throw new Exception("Failed to get UserId for new test user");
     }
 
     public Task DisposeAsync()

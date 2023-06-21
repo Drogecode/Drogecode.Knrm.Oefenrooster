@@ -3,7 +3,7 @@
 namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 public interface IUserService
 {
-    Task<List<DrogeUser>> GetAllUsers(Guid customerId, bool includeHidden);
+    Task<MultipleDrogeUsersResponse> GetAllUsers(Guid customerId, bool includeHidden);
     Task<DrogeUser?> GetUserFromDb(Guid userId);
     Task<DrogeUser> GetOrSetUserFromDb(Guid userId, string userName, string userEmail, Guid customerId, bool setLastOnline);
     Task<AddUserResponse> AddUser(DrogeUser user, Guid customerId);

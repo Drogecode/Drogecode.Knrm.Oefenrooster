@@ -177,6 +177,10 @@
           "offline": {
             "type": "boolean"
           },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "defaultSchedules": {
             "type": "array",
             "items": {
@@ -195,6 +199,10 @@
           },
           "offline": {
             "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           },
           "patched": {
             "$ref": "#/components/schemas/DefaultSchedule"

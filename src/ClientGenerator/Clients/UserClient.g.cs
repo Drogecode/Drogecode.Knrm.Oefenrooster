@@ -43,14 +43,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        System.Threading.Tasks.Task<bool> AddUserAsync(DrogeUser body);
+        System.Threading.Tasks.Task<AddUserResponse> AddUserAsync(DrogeUser body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        System.Threading.Tasks.Task<bool> AddUserAsync(DrogeUser body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<AddUserResponse> AddUserAsync(DrogeUser body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -254,8 +252,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        public virtual System.Threading.Tasks.Task<bool> AddUserAsync(DrogeUser body)
+        public virtual System.Threading.Tasks.Task<AddUserResponse> AddUserAsync(DrogeUser body)
         {
             return AddUserAsync(body, System.Threading.CancellationToken.None);
         }
@@ -263,8 +260,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        [System.Obsolete]
-        public virtual async System.Threading.Tasks.Task<bool> AddUserAsync(DrogeUser body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<AddUserResponse> AddUserAsync(DrogeUser body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/User/AddUser");
@@ -305,7 +301,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<bool>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<AddUserResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
