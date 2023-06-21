@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Localization;
 using System.Text;
 using System.Text.RegularExpressions;
+using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode
 {
@@ -12,6 +13,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode
         [Parameter] public bool ShowDayOfWeek { get; set; }
         [Parameter] public bool ShowTime { get; set; }
         [Parameter] public bool? ShowDate { get; set; }
+        [Parameter] public string? TimeZoneString { get; set; }
         private bool _showDate = true;
         public DateTime DateTimeNotNull { get; set; }
         public string DateStringFormat { get; set; } = string.Empty;
@@ -19,7 +21,8 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode
 
         protected override void OnParametersSet()
         {
-            //This could give the opposite issue if the production server is running in utc....
+            if (!string.IsNullOrEmpty(TimeZoneString) && DateTimeUtc is not null)
+                DateTimeUtc = DateTimeUtc.Value.DateTimeWithZone(TimeZoneString);
             DateTimeNotNull = DateTimeUtc?.ToLocalTime() ?? DateTimeLocal ?? DateTime.MinValue;
             if (ShowDate == null)
                 _showDate = DateTimeNotNull.Date.CompareTo(DateTime.Today) != 0;

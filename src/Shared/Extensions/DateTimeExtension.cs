@@ -1,4 +1,4 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Server.Extensions;
+﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 
 public static class DateTimeExtension
 {

@@ -1,5 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Server.Extensions;
+using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
