@@ -1,4 +1,4 @@
-name: dotnet package
+name: On push
 
 on: [push]
 
@@ -17,8 +17,8 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
       - name: Install dependencies
-        run: dotnet restore
+        run: dotnet restore ./Drogecode.Knrm.Oefenrooster.sln
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build  src/Server/Drogecode.Knrm.Oefenrooster.Server.csproj --configuration Release --no-restore
       - name: Test
-        run: dotnet test --no-restore --verbosity normal
+        run: dotnet test ./Drogecode.Knrm.Oefenrooster.sln --no-restore --verbosity normal
