@@ -103,8 +103,9 @@ public class UserService : IUserService
         return false;
     }
 
-    public async Task<bool> AddUser(DrogeUser user, Guid customerId)
+    public async Task<AddUserResponse> AddUser(DrogeUser user, Guid customerId)
     {
+        var result = new AddUserResponse();
         _database.Users.Add(new DbUsers
         {
             Id = user.Id,
@@ -114,7 +115,9 @@ public class UserService : IUserService
             CustomerId = customerId,
             UserFunctionId = user.UserFunctionId,
         });
-        return await _database.SaveChangesAsync() > 0;
+        result.UserId = user.Id;
+        result.Success = await _database.SaveChangesAsync() > 0;
+        return result;
     }
 
     public async Task<bool> MarkUsersDeleted(List<DrogeUser> existingUsers, Guid userId, Guid customerId)

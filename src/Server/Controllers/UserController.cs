@@ -68,8 +68,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    [Obsolete("Use AD")]
-    public async Task<ActionResult<bool>> AddUser([FromBody] DrogeUser user, CancellationToken token = default)
+    public async Task<ActionResult<AddUserResponse>> AddUser([FromBody] DrogeUser user, CancellationToken token = default)
     {
         try
         {
