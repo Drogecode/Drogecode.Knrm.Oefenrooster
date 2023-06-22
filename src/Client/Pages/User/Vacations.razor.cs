@@ -42,6 +42,11 @@ public sealed partial class Vacations : IDisposable
         _dialogProvider.Show<VacationDialog>(L["Edit holiday"], parameters, options);
     }
 
+    private async Task Delete(Holiday? holiday, bool isNew)
+    {
+
+    }
+
     private async Task RefreshMeAsync()
     {
         _holidays = await _holidayRepository.GetAll(_cls.Token);

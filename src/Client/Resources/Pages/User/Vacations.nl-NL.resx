@@ -123,6 +123,9 @@
   <data name="Add new vacation" xml:space="preserve">
     <value>Maak nieuwe vakantie aan</value>
   </data>
+  <data name="Description" xml:space="preserve">
+    <value>Beschrijving</value>
+  </data>
   <data name="Edit" xml:space="preserve">
     <value>Bewerk</value>
   </data>

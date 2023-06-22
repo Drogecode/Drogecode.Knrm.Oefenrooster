@@ -37,8 +37,9 @@ public class HolidayService : IHolidayService
     public async Task<PutHolidaysForUserResponse> PutHolidaysForUser(Holiday body, Guid customerId, Guid userId)
     {
         if (body is null) return new PutHolidaysForUserResponse { Success = false };
-        if (body.ValidUntil is not null && body.ValidUntil.Value.CompareTo(DateTime.UtcNow) <= 0) return new PutHolidaysForUserResponse { Success = false };
-        if (body.ValidFrom is not null && body.ValidFrom.Value.CompareTo(DateTime.UtcNow) <= 0) body.ValidFrom = DateTime.UtcNow;
+        if (body.ValidUntil is not null && body.ValidUntil.Value.CompareTo(DateTime.Today) <= 0) return new PutHolidaysForUserResponse { Success = false };
+        if (body.ValidFrom is not null && body.ValidFrom.Value.CompareTo(DateTime.Today) < 0) body.ValidFrom = DateTime.Today;
+        if (body!.ValidUntil!.Value.CompareTo(body.ValidFrom) < 0) return new PutHolidaysForUserResponse { Success = false };
         var dbHoliday = new DbUserHolidays
         {
             Id = Guid.NewGuid(),

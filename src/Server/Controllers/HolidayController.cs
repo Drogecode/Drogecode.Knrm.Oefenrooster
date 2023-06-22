@@ -38,7 +38,7 @@ public class HolidayController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             List<Holiday> result = await _holidayService.GetAllHolidaysForUser(customerId, userId);
 
-            return Ok(new MultipleHolidaysResponse { Holidays = result });
+            return new MultipleHolidaysResponse { Holidays = result };
         }
         catch (Exception ex)
         {
@@ -57,9 +57,9 @@ public class HolidayController : ControllerBase
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            PutHolidaysForUserResponse result = await _holidayService.PutHolidaysForUser(body, customerId, userId);
+            var result = await _holidayService.PutHolidaysForUser(body, customerId, userId);
 
-            return Ok(result);
+            return result;
         }
         catch (Exception ex)
         {

@@ -32,6 +32,7 @@ public class Setup : Xunit.Di.Setup
             services.AddScoped<IAuditService, AuditService>();
             services.AddScoped<IConfigurationService, ConfigurationService>();
             services.AddScoped<IFunctionService, FunctionService>();
+            services.AddScoped<IHolidayService, HolidayService>();
             services.AddScoped<IGraphService, GraphService>();
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<IUserService, UserService>();
@@ -39,6 +40,7 @@ public class Setup : Xunit.Di.Setup
 
             services.AddScoped<ConfigurationController>();
             services.AddScoped<FunctionController>();
+            services.AddScoped<HolidayController>();
             services.AddScoped<ScheduleController>();
             services.AddScoped<UserController>();
 

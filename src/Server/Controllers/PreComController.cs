@@ -62,8 +62,6 @@ public class PreComController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             if (userId != DefaultSettingsHelper.IdTaco) return Unauthorized("User not me");
             MultiplePreComAlertsResponse result = await _preComService.GetAllAlerts(customerId);
-            await _preComHub.SendMessage("PreCom", "bliep blop hello");
-
             return Ok(result);
         }
         catch (Exception ex)

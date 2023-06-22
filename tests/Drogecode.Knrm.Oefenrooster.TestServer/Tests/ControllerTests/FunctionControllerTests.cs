@@ -10,7 +10,8 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 public class FunctionControllerTests : BaseTest
 {
     public FunctionControllerTests(UserController userController,
-        FunctionController functionController) : base(userController, functionController)
+        FunctionController functionController,
+        HolidayController holidayController) : base(userController, functionController, holidayController)
     {
     }
 
@@ -40,8 +41,8 @@ public class FunctionControllerTests : BaseTest
         var result = await FunctionController.GetAll();
         Assert.NotNull(result?.Value?.Functions);
         result.Value.Success.Should().Be(true);
-        result.Value.Functions.Should().Contain(x=> x.Id == DefaultFunction);
-        result.Value.Functions.Should().Contain(x=> x.Id == newFunction);
+        result.Value.Functions.Should().Contain(x => x.Id == DefaultFunction);
+        result.Value.Functions.Should().Contain(x => x.Id == newFunction);
         result.Value.ElapsedMilliseconds.Should().NotBe(-1);
     }
 }

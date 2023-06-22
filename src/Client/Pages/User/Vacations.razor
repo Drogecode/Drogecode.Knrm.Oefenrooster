@@ -20,10 +20,9 @@
             <MudTd DataLabel="@L["Edit"]">
                 @if (context.ValidUntil!.Value.CompareTo(DateTime.UtcNow) > 0)
                 {
-                    <MudButton OnClick="()=>{OpenVacationDialog(context, false);}">
-                        @L["Edit"]
-                    </MudButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenVacationDialog(context, false);}" />
                 }
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="()=>{Delete(context, false);}" />
             </MudTd>
         </RowTemplate>
     </MudTable>

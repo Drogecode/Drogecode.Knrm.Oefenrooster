@@ -1,5 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -17,17 +19,23 @@ public class BaseTest : IAsyncLifetime
 {
     protected const string USER_NAME = "xUnit user";
     protected const string FUNCTION_DEFAULT = "xUnit default function";
+    protected const string HOLIDAY_DEFAULT = "xUnit default holiday";
     protected Guid UserId { get; private set; }
     protected Guid DefaultFunction { get; private set; }
+    protected Guid DefaultHoliday { get; private set; }
     protected readonly UserController UserController;
     protected readonly FunctionController FunctionController;
+    protected readonly HolidayController HolidayController;
     public BaseTest(UserController userController,
-        FunctionController functionController)
+        FunctionController functionController,
+        HolidayController holidayController)
     {
         UserController = userController;
         FunctionController = functionController;
+        HolidayController = holidayController;
         MockAuthenticatedUser(userController);
         MockAuthenticatedUser(functionController);
+        MockAuthenticatedUser(holidayController);
 
     }
 
@@ -35,6 +43,7 @@ public class BaseTest : IAsyncLifetime
     {
         UserId = await AddUser(USER_NAME);
         DefaultFunction = await AddFunction(FUNCTION_DEFAULT, true);
+        DefaultHoliday = await AddHoliday(HOLIDAY_DEFAULT);
     }
 
     protected async Task<Guid> AddUser(string name)
@@ -50,7 +59,7 @@ public class BaseTest : IAsyncLifetime
 
     protected async Task<Guid> AddFunction(string name, bool isDefault)
     {
-        var result = await FunctionController.AddFunction(new Shared.Models.Function.DrogeFunction
+        var result = await FunctionController.AddFunction(new DrogeFunction
         {
             Name = name,
             TrainingTarget = 2,
@@ -59,6 +68,18 @@ public class BaseTest : IAsyncLifetime
         });
         Assert.NotNull(result?.Value?.NewFunction);
         return result.Value.NewFunction.Id;
+    }
+
+    protected async Task<Guid> AddHoliday(string description)
+    {
+        var result = await HolidayController.PutHolidayForUser(new Holiday { 
+            Description = description,
+            ValidFrom = DateTime.Today,
+            ValidUntil = DateTime.Today.AddDays(2),
+        });
+        Assert.NotNull(result?.Value?.Put?.Id);
+        return result.Value.Put.Id;
+
     }
 
     public Task DisposeAsync()

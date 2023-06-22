@@ -13,7 +13,8 @@ public class UserControllerTests : BaseTest
 {
 
     public UserControllerTests(UserController userController,
-        FunctionController functionController) : base(userController, functionController)
+        FunctionController functionController,
+        HolidayController holidayController) : base(userController, functionController, holidayController)
     {
     }
 
