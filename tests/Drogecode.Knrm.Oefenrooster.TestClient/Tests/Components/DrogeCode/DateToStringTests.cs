@@ -1,8 +1,16 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
-@using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
-@using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
-@inherits TestContext
-@code {
+﻿using AutoFixture.Xunit2;
+using Bunit;
+using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
+using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
+using FakeItEasy;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
+
+namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Components.DrogeCode;
+
+public class DateToStringTests : TestContext
+{
     [Theory]
     [AutoFakeItEasyData]
     public void DateShrinkTodayTest([Frozen] IStringLocalizer<DateToString> L)
