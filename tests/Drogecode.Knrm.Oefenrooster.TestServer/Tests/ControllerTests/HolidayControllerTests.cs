@@ -39,7 +39,8 @@ public class HolidayControllerTests : BaseTest
             ValidUntil = DateTime.Today.AddDays(2),
         });
         Assert.NotNull(result?.Value?.Put);
-        result.Value.Put.ValidFrom.Should().Be(DateTime.Today);
+        Assert.NotNull(result.Value.Put.ValidFrom);
+        result.Value.Put.ValidFrom.Value.Date.Should().Be(DateTime.Today);
         result.Value.Put.ValidUntil.Should().Be(DateTime.Today.AddDays(2));
     }
     [Fact]
@@ -68,12 +69,30 @@ public class HolidayControllerTests : BaseTest
     }
 
     [Fact]
-    public async Task GetAll()
+    public async Task GetTest()
+    {
+        var result = await HolidayController.Get(DefaultHoliday);
+        Assert.NotNull(result?.Value?.Holiday);
+        Assert.True(result.Value.Success);
+        result.Value.Holiday.Id.Should().Be(DefaultHoliday);
+        result.Value.Holiday.Description.Should().Be(HOLIDAY_DEFAULT);
+    }
+
+    [Fact]
+    public async Task GetAllTest()
     {
         var newHoliday = await AddHoliday("GetAll");
         var result = await HolidayController.GetAll();
         Assert.NotNull(result?.Value?.Holidays);
         result.Value.Holidays.Should().Contain(x=>x.Id == DefaultHoliday);
         result.Value.Holidays.Should().Contain(x=>x.Id == newHoliday);
+    }
+
+    [Fact]
+    public async Task DeleteTest()
+    {
+        var result = await HolidayController.Delete(DefaultHoliday);
+        Assert.NotNull(result?.Value?.Success);
+        Assert.True(result.Value.Success);
     }
 }

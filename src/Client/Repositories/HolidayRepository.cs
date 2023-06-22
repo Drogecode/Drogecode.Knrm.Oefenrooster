@@ -34,4 +34,10 @@ public class HolidayRepository
         var result = await _holidayClient.PatchHolidayForUserAsync(body, clt);
         return result;
     }
+
+    public async Task<DeleteResonse> Delete(Guid id, CancellationToken clt)
+    {
+        var result = await _holidayClient.DeleteAsync(id, clt);
+        return result;
+    }
 }

@@ -42,9 +42,12 @@ public sealed partial class Vacations : IDisposable
         _dialogProvider.Show<VacationDialog>(L["Edit holiday"], parameters, options);
     }
 
-    private async Task Delete(Holiday? holiday, bool isNew)
+    private async Task Delete(Holiday? holiday)
     {
-
+        var response = await _holidayRepository.Delete(holiday!.Id, _cls.Token);
+        if (response != null && response.Success) {
+            await RefreshMeAsync();
+        }
     }
 
     private async Task RefreshMeAsync()
