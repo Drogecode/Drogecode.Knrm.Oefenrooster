@@ -5,6 +5,55 @@
     "version": "v1"
   },
   "paths": {
+    "/api/Function/AddFunction": {
+      "put": {
+        "tags": [
+          "Function"
+        ],
+        "operationId": "AddFunction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeFunction"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeFunction"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeFunction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddFunctionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddFunctionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddFunctionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Function/GetAll": {
       "get": {
         "tags": [
@@ -38,6 +87,25 @@
   },
   "components": {
     "schemas": {
+      "AddFunctionResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "newFunction": {
+            "$ref": "#/components/schemas/DrogeFunction"
+          }
+        },
+        "additionalProperties": false
+      },
       "DrogeFunction": {
         "type": "object",
         "properties": {

@@ -38,6 +38,7 @@ public class Setup : Xunit.Di.Setup
             services.AddScoped<IVehicleService, VehicleService>();
 
             services.AddScoped<ConfigurationController>();
+            services.AddScoped<FunctionController>();
             services.AddScoped<ScheduleController>();
             services.AddScoped<UserController>();
 

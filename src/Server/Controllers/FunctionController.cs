@@ -22,20 +22,36 @@ public class FunctionController : ControllerBase
         _functionService = functionService;
     }
 
-    [HttpGet]
-    [Authorize]
-    public async Task<ActionResult<MultipleFunctionsResponse>> GetAll(CancellationToken token = default)
+    [HttpPut]
+    public async Task<ActionResult<AddFunctionResponse>> AddFunction(DrogeFunction function, CancellationToken clt = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var result = await _functionService.GetAllFunctions(customerId);
+            AddFunctionResponse result = await _functionService.AddFunction(function, customerId, clt);
 
-            return Ok(new MultipleFunctionsResponse { Functions = result });
+            return result;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in UpgradeDatabase");
+            _logger.LogError(ex, "Exception in AddFunction");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<MultipleFunctionsResponse>> GetAll(CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var result = await _functionService.GetAllFunctions(customerId, clt);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetAll functions");
             return BadRequest();
         }
     }

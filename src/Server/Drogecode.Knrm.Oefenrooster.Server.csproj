@@ -46,7 +46,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Graph\" />
+		<InternalsVisibleTo Include="Drogecode.Knrm.Oefenrooster.TestServer" />
 	</ItemGroup>
 
 </Project>

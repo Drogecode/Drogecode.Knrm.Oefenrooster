@@ -17,8 +17,9 @@ public class ScheduleControllerTests : BaseTest
 {
     private readonly ScheduleController _scheduleController;
 
-    public ScheduleControllerTests(ScheduleController scheduleController
-        , UserController userController) : base(userController)
+    public ScheduleControllerTests(ScheduleController scheduleController,
+        FunctionController functionController
+        , UserController userController) : base(userController, functionController)
     {
         _scheduleController = scheduleController;
         MockAuthenticatedUser(_scheduleController);

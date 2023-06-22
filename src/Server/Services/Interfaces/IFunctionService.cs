@@ -4,5 +4,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 
 public interface IFunctionService
 {
-    Task<List<DrogeFunction>> GetAllFunctions(Guid customerId);
+    Task<AddFunctionResponse> AddFunction(DrogeFunction function, Guid customerId, CancellationToken clt);
+    Task<MultipleFunctionsResponse> GetAllFunctions(Guid customerId, CancellationToken clt);
 }
