@@ -22,6 +22,13 @@ public class UserRepository
         var dbUser = await _userClient.GetAsync();
         return dbUser.DrogeUser;
     }
+
+    public async Task<DrogeUser?> GetById(Guid id)
+    {
+        var result = await _userClient.GetByIdAsync(id);
+        return result.User;
+    }
+
     public async Task<bool> UpdateUserAsync(DrogeUser user)
     {
         var successfull = await _userClient.UpdateUserAsync(user);

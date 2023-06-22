@@ -22,6 +22,7 @@ public sealed partial class NavMenu : IDisposable
     private CancellationTokenSource _cls = new();
     private string _uriCalendar = "/planner/calendar";
     private string _uriSchedule = "/planner/schedule";
+    private string _uriPlannerUser = "/planner/user";
     private bool _showSettings;
 
     protected override async Task OnInitializedAsync()

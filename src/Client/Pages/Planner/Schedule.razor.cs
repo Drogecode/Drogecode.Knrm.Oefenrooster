@@ -20,7 +20,9 @@ public sealed partial class Schedule : IDisposable
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
     [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
+    [Parameter] public string? View { get; set; }
     private LinkedList<List<PlannedTraining>> _scheduleForUser = new();
     private CancellationTokenSource _cls = new();
     private List<DrogeUser>? _users;
@@ -32,10 +34,19 @@ public sealed partial class Schedule : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
+        if (!string.IsNullOrEmpty(View) && View.Equals("Table"))
+            _view = ScheduleView.Table;
         _users = await _userRepository.GetAllUsersAsync(false);
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
         _trainingTypes = await _scheduleRepository.GetTrainingTypes(_cls.Token);
+    }
+
+    public void ChangeView(ScheduleView newView)
+    {
+        if (_view == newView) return;
+        _view = newView;
+        Navigation.NavigateTo($"/planner/schedule/{newView}");
     }
 
     public void Dispose()

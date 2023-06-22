@@ -67,17 +67,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ScheduleForUserResponse"
+                  "$ref": "#/components/schemas/MultipleTrainingsResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ScheduleForUserResponse"
+                  "$ref": "#/components/schemas/MultipleTrainingsResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ScheduleForUserResponse"
+                  "$ref": "#/components/schemas/MultipleTrainingsResponse"
                 }
               }
             }
@@ -414,6 +414,46 @@
         }
       }
     },
+    "/api/Schedule/AllTrainingsForUser": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "AllTrainingsForUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Schedule/GetPinnedTrainingsForUser": {
       "get": {
         "tags": [
@@ -620,6 +660,29 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PlannerTrainingType"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MultipleTrainingsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "trainings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Training"
             },
             "nullable": true
           }
@@ -872,29 +935,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/UserTrainingCounter"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ScheduleForUserResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          },
-          "offline": {
-            "type": "boolean"
-          },
-          "elapsedMilliseconds": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "trainings": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Training"
             },
             "nullable": true
           }

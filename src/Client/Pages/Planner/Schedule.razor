@@ -1,5 +1,7 @@
 ﻿@page "/planner/schedule"
+@page "/planner/schedule/{View}"
 @attribute [Authorize]
+@using Drogecode.Knrm.Oefenrooster.Client.Enums;
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
@@ -7,8 +9,8 @@
 <PageTitle>Planner</PageTitle>
 
 <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
-    <MudIconButton Icon="@Icons.Material.Filled.CalendarMonth" aria-label="calendar" OnClick="()=>{_view = Enums.ScheduleView.Calendar;}" Disabled="@(_view == Enums.ScheduleView.Calendar)" />
-    <MudIconButton Icon="@Icons.Material.Filled.TableRows" aria-label="calendar" OnClick="()=>{_view = Enums.ScheduleView.Table;}" Disabled="@(_view == Enums.ScheduleView.Table)" />
+    <MudIconButton Icon="@Icons.Material.Filled.CalendarMonth" aria-label="calendar" OnClick="()=>{ChangeView(ScheduleView.Calendar);}" Disabled="@(_view == Enums.ScheduleView.Calendar)" />
+    <MudIconButton Icon="@Icons.Material.Filled.TableRows" aria-label="calendar" OnClick="()=>{ChangeView(ScheduleView.Table);}" Disabled="@(_view == Enums.ScheduleView.Table)" />
 </MudButtonGroup>
 
 @switch (_view)

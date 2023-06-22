@@ -18,7 +18,7 @@ public class UserService : IUserService
     {
         var sw = Stopwatch.StartNew();
         var result = new MultipleDrogeUsersResponse { DrogeUsers = new List<DrogeUser>() };
-        var dbUsers = _database.Users.Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.Active));
+        var dbUsers = _database.Users.Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.Active)).OrderBy(x=>x.Name);
         foreach (var dbUser in dbUsers)
         {
             result.DrogeUsers.Add(new DrogeUser

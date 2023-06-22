@@ -9,6 +9,7 @@
     <MudNavLink Icon="@Icons.Material.Filled.WbSunny" Href="/user/vacations" Match="NavLinkMatch.Prefix">@L["Vacations"]</MudNavLink>
     @if (_showSettings)
     {
+        <MudNavLink Icon="@Icons.Material.Filled.VerifiedUser" Href="@_uriPlannerUser" Match="NavLinkMatch.Prefix">@L["User details"]</MudNavLink>
         <MudNavLink Icon="@Icons.Material.Filled.SecurityUpdateWarning" Href="/precom/alerts" Match="NavLinkMatch.Prefix">@L["PreCom alerts"]</MudNavLink>
         <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/configuration/global" Match="NavLinkMatch.Prefix">@L["Configuration"]</MudNavLink>
     }

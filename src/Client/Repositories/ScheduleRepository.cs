@@ -17,7 +17,7 @@ public class ScheduleRepository
         _scheduleClient = scheduleClient;
         _offlineService = offlineService;
     }
-    public async Task<ScheduleForUserResponse?> CalendarForUser(DateRange dateRange, CancellationToken clt)
+    public async Task<MultipleTrainingsResponse?> CalendarForUser(DateRange dateRange, CancellationToken clt)
     {
         var schedule = await _scheduleClient.ForUserAsync(dateRange.Start!.Value.Year, dateRange.Start!.Value.Month, dateRange.Start!.Value.Day, dateRange.End!.Value.Year, dateRange.End!.Value.Month, dateRange.End!.Value.Day, clt);
         return schedule;
@@ -55,11 +55,21 @@ public class ScheduleRepository
         };
         await _scheduleClient.PatchAssignedUserAsync(body, clt);
     }
+
     public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(Guid? userId, CancellationToken clt)
     {
-        if (userId == null) return null;
+        if (userId is null) return null;
         var schedule = await _offlineService.CachedRequestAsync(string.Format("trFoUse_{0}", userId),
             async () => { return await _scheduleClient.GetScheduledTrainingsForUserAsync(clt); },
+            clt: clt);
+        return schedule;
+    }
+
+    public async Task<GetScheduledTrainingsForUserResponse?> AllTrainingsForUser(Guid? userId, CancellationToken clt)
+    {
+        if (userId is null) return null;
+        var schedule = await _offlineService.CachedRequestAsync(string.Format("AlltrFoUse_{0}", userId),
+            async () => { return await _scheduleClient.AllTrainingsForUserAsync(userId, clt); },
             clt: clt);
         return schedule;
     }

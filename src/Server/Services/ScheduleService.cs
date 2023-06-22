@@ -19,10 +19,10 @@ public class ScheduleService : IScheduleService
         _database = database;
     }
 
-    public async Task<ScheduleForUserResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token)
+    public async Task<MultipleTrainingsResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token)
     {
         var sw = Stopwatch.StartNew();
-        var result = new ScheduleForUserResponse();
+        var result = new MultipleTrainingsResponse();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
         var defaults = await _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: token);
@@ -502,11 +502,11 @@ public class ScheduleService : IScheduleService
         }
     }
 
-    public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime fromDate, CancellationToken token)
+    public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime? fromDate, CancellationToken token)
     {
         var sw = Stopwatch.StartNew();
         var result = new GetScheduledTrainingsForUserResponse();
-        var scheduled = await _database.RoosterAvailables.Include(i => i.Training.RoosterAvailables).Include(i => i.Training.RoosterAvailables).Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Date >= fromDate).OrderBy(x => x.Date).ToListAsync(cancellationToken: token);
+        var scheduled = await _database.RoosterAvailables.Include(i => i.Training.RoosterAvailables).Include(i => i.Training.RoosterAvailables).Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && (fromDate == null || x.Date >= fromDate)).OrderBy(x => x.Date).ToListAsync(cancellationToken: token);
         var users = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
         foreach (var schedul in scheduled)
         {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-public class ScheduleForUserResponse : BaseResponse
+public class MultipleTrainingsResponse : BaseResponse
 {
     public List<Training> Trainings { get; set; } = new List<Training>();
 }

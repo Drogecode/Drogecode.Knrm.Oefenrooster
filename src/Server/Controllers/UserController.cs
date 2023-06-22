@@ -67,6 +67,21 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpGet]
+    public async Task<ActionResult<GetByIdResponse>> GetById(Guid id, CancellationToken clt = default)
+    {
+        try
+        {
+            var result = await _userService.GetUserFromDb(id);
+            return new GetByIdResponse { User = result, Success = true };
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetById");
+            return BadRequest();
+        }
+    }
+
     [HttpPost]
     public async Task<ActionResult<AddUserResponse>> AddUser([FromBody] DrogeUser user, CancellationToken token = default)
     {
