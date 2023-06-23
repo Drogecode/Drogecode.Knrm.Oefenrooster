@@ -1,19 +1,20 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
 public class HolidayControllerTests : BaseTest
 {
-    public HolidayControllerTests(UserController userController,
-    FunctionController functionController,
-    HolidayController holidayController) : base(userController, functionController, holidayController)
+    private readonly IDateTimeServiceMock _dateTimeServiceMock;
+    public HolidayControllerTests(
+        IDateTimeService dateTimeServiceMock,
+        UserController userController,
+        FunctionController functionController,
+        HolidayController holidayController) : base(userController, functionController, holidayController)
     {
+        _dateTimeServiceMock = (IDateTimeServiceMock)dateTimeServiceMock;
     }
 
     [Fact]
@@ -84,8 +85,8 @@ public class HolidayControllerTests : BaseTest
         var newHoliday = await AddHoliday("GetAll");
         var result = await HolidayController.GetAll();
         Assert.NotNull(result?.Value?.Holidays);
-        result.Value.Holidays.Should().Contain(x=>x.Id == DefaultHoliday);
-        result.Value.Holidays.Should().Contain(x=>x.Id == newHoliday);
+        result.Value.Holidays.Should().Contain(x => x.Id == DefaultHoliday);
+        result.Value.Holidays.Should().Contain(x => x.Id == newHoliday);
     }
 
     [Fact]
@@ -94,5 +95,56 @@ public class HolidayControllerTests : BaseTest
         var result = await HolidayController.Delete(DefaultHoliday);
         Assert.NotNull(result?.Value?.Success);
         Assert.True(result.Value.Success);
+        var resultGet = await HolidayController.Get(DefaultHoliday);
+        Assert.NotNull(resultGet?.Value?.Success);
+        Assert.False(resultGet.Value.Success);
+    }
+
+    [Fact]
+    public async Task DeleteFullPastTest()
+    {
+        _dateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-5));
+        var holiday = new Holiday
+        {
+            Description = "AddHolidayTest",
+            ValidFrom = DateTime.Today.AddDays(-4),
+            ValidUntil = DateTime.Today.AddDays(-1),
+        };
+        var resultPut = await HolidayController.PutHolidayForUser(holiday);
+        Assert.NotNull(resultPut?.Value?.Put);
+        Assert.True(resultPut.Value.Success);
+        _dateTimeServiceMock.SetMockDateTime(null);
+        var result = await HolidayController.Delete(resultPut.Value.Put.Id);
+        Assert.NotNull(result?.Value?.Success);
+        Assert.False(result.Value.Success);
+        var resultGet = await HolidayController.Get(resultPut.Value.Put.Id);
+        Assert.NotNull(resultGet?.Value?.Holiday);
+        Assert.True(resultGet.Value.Success);
+        resultGet.Value.Holiday.ValidFrom.Should().Be(holiday.ValidFrom);
+        resultGet.Value.Holiday.ValidUntil.Should().Be(holiday.ValidUntil);
+    }
+
+    [Fact]
+    public async Task DeleteStartPastTest()
+    {
+        _dateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-5));
+        var holiday = new Holiday
+        {
+            Description = "AddHolidayTest",
+            ValidFrom = DateTime.Today.AddDays(-4),
+            ValidUntil = DateTime.Today.AddDays(2),
+        };
+        var resultPut = await HolidayController.PutHolidayForUser(holiday);
+        Assert.NotNull(resultPut?.Value?.Put);
+        Assert.True(resultPut.Value.Success);
+        _dateTimeServiceMock.SetMockDateTime(null);
+        var result = await HolidayController.Delete(resultPut.Value.Put.Id);
+        Assert.NotNull(result?.Value?.Success);
+        Assert.True(result.Value.Success);
+        var resultGet = await HolidayController.Get(resultPut.Value.Put.Id);
+        Assert.NotNull(resultGet?.Value?.Holiday?.ValidUntil);
+        Assert.True(resultGet.Value.Success);
+        resultGet.Value.Holiday.ValidFrom.Should().Be(holiday.ValidFrom);
+        resultGet.Value.Holiday.ValidUntil.Value.Date.Should().Be(DateTime.Today);
     }
 }

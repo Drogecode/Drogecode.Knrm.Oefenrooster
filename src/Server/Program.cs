@@ -10,6 +10,8 @@ using System.Text;
 using Microsoft.AspNetCore.ResponseCompression;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +35,7 @@ builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceO
 });
 
 builder.Services.AddSingleton<PreComHub>();
+builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
 
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<ICalendarItemService, CalendarItemService>();

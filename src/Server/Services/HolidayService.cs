@@ -1,18 +1,24 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Database;
+using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class HolidayService : IHolidayService
 {
     private readonly ILogger<HolidayService> _logger;
-    private readonly Database.DataContext _database;
-    public HolidayService(ILogger<HolidayService> logger, Database.DataContext database)
+    private readonly DataContext _database;
+    private readonly IDateTimeService _dateTimeService;
+    public HolidayService(ILogger<HolidayService> logger,
+        DataContext database,
+        IDateTimeService dateTimeService)
     {
         _logger = logger;
         _database = database;
+        _dateTimeService = dateTimeService;
     }
 
     public async Task<List<Holiday>> GetAllHolidaysForUser(Guid customerId, Guid userId, CancellationToken clt)
@@ -56,8 +62,8 @@ public class HolidayService : IHolidayService
     public async Task<PutHolidaysForUserResponse> PutHolidaysForUser(Holiday body, Guid customerId, Guid userId, CancellationToken clt)
     {
         if (body is null) return new PutHolidaysForUserResponse { Success = false };
-        if (body.ValidUntil is not null && body.ValidUntil.Value.CompareTo(DateTime.Today) <= 0) return new PutHolidaysForUserResponse { Success = false };
-        if (body.ValidFrom is not null && body.ValidFrom.Value.CompareTo(DateTime.Today) < 0) body.ValidFrom = DateTime.UtcNow;
+        if (body.ValidUntil is not null && body.ValidUntil.Value.CompareTo(_dateTimeService.Today()) <= 0) return new PutHolidaysForUserResponse { Success = false };
+        if (body.ValidFrom is not null && body.ValidFrom.Value.CompareTo(_dateTimeService.Today()) < 0) body.ValidFrom = _dateTimeService.UtcNow();
         if (body!.ValidUntil!.Value.CompareTo(body.ValidFrom) < 0) return new PutHolidaysForUserResponse { Success = false };
         var dbHoliday = body.ToDbHoliday();
         dbHoliday.Id = Guid.NewGuid();
@@ -78,8 +84,8 @@ public class HolidayService : IHolidayService
     {
         var dbHoliday = _database.UserHolidays.FirstOrDefault(x => x.Id == body.Id);
         if (dbHoliday is null) return new PatchHolidaysForUserResponse { Success = false };
-        if (dbHoliday.ValidUntil is not null && dbHoliday.ValidUntil.Value.CompareTo(DateTime.UtcNow) <= 0) return new PatchHolidaysForUserResponse { Success = false };
-        if (dbHoliday.ValidFrom is not null && dbHoliday.ValidFrom.Value.CompareTo(DateTime.UtcNow) <= 0) body.ValidFrom = dbHoliday.ValidFrom;
+        if (dbHoliday.ValidUntil is not null && dbHoliday.ValidUntil.Value.CompareTo(_dateTimeService.UtcNow()) <= 0) return new PatchHolidaysForUserResponse { Success = false };
+        if (dbHoliday.ValidFrom is not null && dbHoliday.ValidFrom.Value.CompareTo(_dateTimeService.UtcNow()) <= 0) body.ValidFrom = dbHoliday.ValidFrom;
 
         dbHoliday.Description = body.Description;
         dbHoliday.Available = body.Available;
@@ -99,10 +105,10 @@ public class HolidayService : IHolidayService
     {
         var result = new DeleteResonse();
         var dbHoliday = await _database.UserHolidays.FirstOrDefaultAsync(x => x.Id == id && x.CustomerId == customerId && x.UserId == userId, clt);
-        if (dbHoliday?.ValidUntil is null || dbHoliday.ValidUntil.Value.CompareTo(DateTime.UtcNow) <= 0) return result;
-        if (dbHoliday.ValidFrom is not null && dbHoliday.ValidFrom.Value.CompareTo(DateTime.UtcNow) <= 0)
+        if (dbHoliday?.ValidUntil is null || dbHoliday.ValidUntil.Value.CompareTo(_dateTimeService.UtcNow()) <= 0) return result;
+        if (dbHoliday.ValidFrom is not null && dbHoliday.ValidFrom.Value.CompareTo(_dateTimeService.UtcNow()) <= 0)
         {
-            dbHoliday.ValidUntil = DateTime.UtcNow;
+            dbHoliday.ValidUntil = _dateTimeService.UtcNow();
             _database.UserHolidays.Update(dbHoliday);
         }
         else

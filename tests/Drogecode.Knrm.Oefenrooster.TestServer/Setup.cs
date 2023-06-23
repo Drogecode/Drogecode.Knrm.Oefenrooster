@@ -2,6 +2,9 @@
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services;
+using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +31,8 @@ public class Setup : Xunit.Di.Setup
         {
             services.AddMemoryCache();
             services.AddDbContext<DataContext>(c=> c.UseInMemoryDatabase("MyXunitDb"));
+
+            services.AddSingleton<IDateTimeService, DateTimeServiceMock>();
 
             services.AddScoped<IAuditService, AuditService>();
             services.AddScoped<IConfigurationService, ConfigurationService>();

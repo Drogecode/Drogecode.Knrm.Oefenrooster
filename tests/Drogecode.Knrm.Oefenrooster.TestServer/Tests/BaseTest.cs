@@ -74,7 +74,7 @@ public class BaseTest : IAsyncLifetime
     {
         var result = await HolidayController.PutHolidayForUser(new Holiday { 
             Description = description,
-            ValidFrom = DateTime.Today,
+            ValidFrom = DateTime.Today.AddDays(1),
             ValidUntil = DateTime.Today.AddDays(2),
         });
         Assert.NotNull(result?.Value?.Put?.Id);
