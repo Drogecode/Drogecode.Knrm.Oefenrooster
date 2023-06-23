@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -10,15 +11,15 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly UserManager<ApplicationUser> _userManager;
+    /*private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;
-    }
+    }*/
 
-    [HttpPost]
+    /*[HttpPost]
     public async Task<IActionResult> Login(LoginRequest request)
     {
         var user = await _userManager.FindByNameAsync(request.UserName);
@@ -27,9 +28,16 @@ public class AuthController : ControllerBase
         if (!singInResult.Succeeded) return BadRequest("Invalid password");
         await _signInManager.SignInAsync(user, request.RememberMe);
         return Ok();
-    }
+    }*/
 
     [HttpPost]
+    public async Task logincallback([FromForm] string id_token, [FromForm] string state, [FromForm] string session_state, [FromForm] string code)
+    {
+        var d = JsonSerializer.Serialize(id_token);
+        Console.WriteLine(d);
+    }
+
+    /*[HttpPost]
     public async Task<IActionResult> Register(RegisterRequest parameters)
     {
         var user = new ApplicationUser();
@@ -61,5 +69,5 @@ public class AuthController : ControllerBase
             Claims = User.Claims
             .ToDictionary(c => c.Type, c => c.Value)
         };
-    }
+    }*/
 }

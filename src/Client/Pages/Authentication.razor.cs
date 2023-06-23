@@ -14,9 +14,9 @@ public sealed partial class Authentication
             case "login":
                 var tenant = "d9754755-b054-4a9c-a77f-da42a4009365";
                 var clientId = "1ca47bae-d6c1-495e-9b90-c32b244fdde2";
-                var responseType = "token";
-                var redirectUrl = $"{Navigation.BaseUri}authentication/login-callback";
-                var responseMode = "query";
+                var responseType = "id_token";
+                var redirectUrl = $"{Navigation.BaseUri}api/auth/logincallback";
+                var responseMode = "form_post";
                 var url = $"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize?client_id={clientId}&response_type={responseType}&redirect_uri={redirectUrl}&response_mode={responseMode}&scope=openid&state=12345&nonce=678910";
                 Navigation.NavigateTo(url);
                 break;
