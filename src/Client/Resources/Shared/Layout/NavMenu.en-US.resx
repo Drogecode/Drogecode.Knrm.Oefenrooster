@@ -141,6 +141,9 @@
   <data name="Training" xml:space="preserve">
     <value>Training</value>
   </data>
+  <data name="User details" xml:space="preserve">
+    <value>User details</value>
+  </data>
   <data name="Vacations" xml:space="preserve">
     <value>Vacations</value>
   </data>

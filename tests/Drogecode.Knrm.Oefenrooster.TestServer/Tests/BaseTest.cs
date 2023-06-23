@@ -2,6 +2,8 @@
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -20,19 +22,27 @@ public class BaseTest : IAsyncLifetime
     protected const string USER_NAME = "xUnit user";
     protected const string FUNCTION_DEFAULT = "xUnit default function";
     protected const string HOLIDAY_DEFAULT = "xUnit default holiday";
+    protected const string TRAINING_DEFAULT = "xUnit default training";
     protected Guid UserId { get; private set; }
     protected Guid DefaultFunction { get; private set; }
     protected Guid DefaultHoliday { get; private set; }
+    protected Guid DefaultTraining { get; private set; }
+    protected Guid DefaultAssignedTraining { get; private set; }
+    protected readonly ScheduleController ScheduleController;
     protected readonly UserController UserController;
     protected readonly FunctionController FunctionController;
     protected readonly HolidayController HolidayController;
-    public BaseTest(UserController userController,
+    public BaseTest(
+        ScheduleController scheduleController,
+        UserController userController,
         FunctionController functionController,
         HolidayController holidayController)
     {
+        ScheduleController = scheduleController;
         UserController = userController;
         FunctionController = functionController;
         HolidayController = holidayController;
+        MockAuthenticatedUser(scheduleController);
         MockAuthenticatedUser(userController);
         MockAuthenticatedUser(functionController);
         MockAuthenticatedUser(holidayController);
@@ -41,16 +51,19 @@ public class BaseTest : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        UserId = await AddUser(USER_NAME);
         DefaultFunction = await AddFunction(FUNCTION_DEFAULT, true);
+        UserId = await AddUser(USER_NAME);
         DefaultHoliday = await AddHoliday(HOLIDAY_DEFAULT);
+        DefaultTraining = await AddTraining(TRAINING_DEFAULT, false);
+        DefaultAssignedTraining = await AssignTrainingToUser(DefaultTraining, UserId, true);
     }
 
     protected async Task<Guid> AddUser(string name)
     {
         var result = await UserController.AddUser(new DrogeUser
         {
-            Name = name
+            Name = name,
+            UserFunctionId = DefaultFunction,
         });
         Assert.NotNull(result?.Value?.UserId);
         Assert.True(result.Value.Success);
@@ -79,7 +92,43 @@ public class BaseTest : IAsyncLifetime
         });
         Assert.NotNull(result?.Value?.Put?.Id);
         return result.Value.Put.Id;
+    }
 
+    protected async Task<Guid> AddTraining(string name, bool countToTrainingTarget)
+    {
+        var body = new EditTraining
+        {
+            Name = name,
+            Date = DateTime.UtcNow,
+            CountToTrainingTarget = countToTrainingTarget,
+            TimeStart = new TimeOnly(12, 50).ToTimeSpan(),
+            TimeEnd = new TimeOnly(13, 40).ToTimeSpan(),
+        };
+        var result = await ScheduleController.AddTraining(body);
+        Assert.NotNull(result?.Value?.NewId);
+        return result.Value.NewId;
+    }
+    protected async Task<Guid> AssignTrainingToUser(Guid trainingId, Guid userId, bool assigned)
+    {
+        var user = (await UserController.GetById(userId))!.Value!.User;
+        Assert.NotNull(user);
+        var body = new PatchAssignedUserRequest
+        {
+            TrainingId = trainingId,
+            User = new PlanUser
+            {
+                UserId = user.Id,
+                Assigned = assigned,
+                UserFunctionId = DefaultFunction
+            },
+            Training = new TrainingAdvance
+            {
+                TrainingId = trainingId
+            }
+        };
+        var result = await ScheduleController.PatchAssignedUser(body);
+        Assert.NotNull(result?.Value?.IdPatched);
+        return result.Value.IdPatched.Value;
     }
 
     public Task DisposeAsync()

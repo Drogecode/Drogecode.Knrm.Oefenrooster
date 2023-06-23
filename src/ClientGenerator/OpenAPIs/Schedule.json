@@ -347,7 +347,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchAssignedUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchAssignedUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchAssignedUserResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -609,6 +626,13 @@
               "$ref": "#/components/schemas/PlannedTraining"
             },
             "nullable": true
+          },
+          "userMonthInfos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserMonthInfo"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -676,6 +700,27 @@
           },
           "training": {
             "$ref": "#/components/schemas/TrainingAdvance"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PatchAssignedUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "idPatched": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1037,6 +1082,28 @@
           },
           "pin": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserMonthInfo": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "all": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "valid": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

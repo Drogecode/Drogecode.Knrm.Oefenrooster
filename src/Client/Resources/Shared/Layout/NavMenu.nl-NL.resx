@@ -141,6 +141,9 @@
   <data name="Training" xml:space="preserve">
     <value>Oefening</value>
   </data>
+  <data name="User details" xml:space="preserve">
+    <value>Gebruikers gegevens</value>
+  </data>
   <data name="Vacations" xml:space="preserve">
     <value>Vakanties</value>
   </data>

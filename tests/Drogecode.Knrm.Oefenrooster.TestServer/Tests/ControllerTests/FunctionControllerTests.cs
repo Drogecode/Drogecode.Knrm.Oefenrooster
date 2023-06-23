@@ -9,9 +9,11 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
 public class FunctionControllerTests : BaseTest
 {
-    public FunctionControllerTests(UserController userController,
+    public FunctionControllerTests(
+        ScheduleController scheduleController, 
+        UserController userController,
         FunctionController functionController,
-        HolidayController holidayController) : base(userController, functionController, holidayController)
+        HolidayController holidayController) : base(scheduleController, userController, functionController, holidayController)
     {
     }
 

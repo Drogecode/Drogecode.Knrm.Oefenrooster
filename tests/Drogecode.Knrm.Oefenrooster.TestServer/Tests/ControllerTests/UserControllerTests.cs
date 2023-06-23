@@ -12,9 +12,11 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 public class UserControllerTests : BaseTest
 {
 
-    public UserControllerTests(UserController userController,
+    public UserControllerTests(
+        ScheduleController scheduleController, 
+        UserController userController,
         FunctionController functionController,
-        HolidayController holidayController) : base(userController, functionController, holidayController)
+        HolidayController holidayController) : base(scheduleController, userController, functionController, holidayController)
     {
     }
 

@@ -10,10 +10,12 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 public class TrainingTypesControllerTests : BaseTest
 {
     private readonly TrainingTypesController _trainingTypesController;
-    public TrainingTypesControllerTests(TrainingTypesController trainingTypesController,
+    public TrainingTypesControllerTests(
+        ScheduleController scheduleController, 
+        TrainingTypesController trainingTypesController,
         UserController userController,
         FunctionController functionController,
-        HolidayController holidayController) : base(userController, functionController, holidayController)
+        HolidayController holidayController) : base(scheduleController, userController, functionController, holidayController)
     {
         _trainingTypesController = trainingTypesController;
         MockAuthenticatedUser(trainingTypesController);

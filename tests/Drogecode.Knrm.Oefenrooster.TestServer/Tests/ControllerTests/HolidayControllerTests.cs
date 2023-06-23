@@ -9,10 +9,11 @@ public class HolidayControllerTests : BaseTest
 {
     private readonly IDateTimeServiceMock _dateTimeServiceMock;
     public HolidayControllerTests(
+        ScheduleController scheduleController,
         IDateTimeService dateTimeServiceMock,
         UserController userController,
         FunctionController functionController,
-        HolidayController holidayController) : base(userController, functionController, holidayController)
+        HolidayController holidayController) : base(scheduleController, userController, functionController, holidayController)
     {
         _dateTimeServiceMock = (IDateTimeServiceMock)dateTimeServiceMock;
     }
@@ -82,7 +83,7 @@ public class HolidayControllerTests : BaseTest
     [Fact]
     public async Task GetAllTest()
     {
-        var newHoliday = await AddHoliday("GetAll");
+        var newHoliday = await AddHoliday("GetAllTest");
         var result = await HolidayController.GetAll();
         Assert.NotNull(result?.Value?.Holidays);
         result.Value.Holidays.Should().Contain(x => x.Id == DefaultHoliday);
@@ -106,7 +107,7 @@ public class HolidayControllerTests : BaseTest
         _dateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-5));
         var holiday = new Holiday
         {
-            Description = "AddHolidayTest",
+            Description = "DeleteFullPastTest",
             ValidFrom = DateTime.Today.AddDays(-4),
             ValidUntil = DateTime.Today.AddDays(-1),
         };
@@ -130,7 +131,7 @@ public class HolidayControllerTests : BaseTest
         _dateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-5));
         var holiday = new Holiday
         {
-            Description = "AddHolidayTest",
+            Description = "DeleteStartPastTest",
             ValidFrom = DateTime.Today.AddDays(-4),
             ValidUntil = DateTime.Today.AddDays(2),
         };

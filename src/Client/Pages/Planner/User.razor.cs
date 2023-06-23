@@ -23,9 +23,10 @@ public sealed partial class User : IDisposable
     [Parameter] public Guid? Id { get; set; }
     private CancellationTokenSource _cls = new();
     private DrogeUser? _user;
+    private DrogeFunction? _userFunction;
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
-    private List<PlannedTraining>? _trainings;
+    private GetScheduledTrainingsForUserResponse? _trainings;
     private List<DrogeVehicle>? _vehicles;
     private List<PlannerTrainingType>? _trainingTypes;
     protected override async void OnInitialized()
@@ -33,15 +34,16 @@ public sealed partial class User : IDisposable
     }
     protected override async Task OnParametersSetAsync()
     {
-        if (Id is not null)
-        {
-            _user = (await _userRepository.GetById(Id.Value));
-            _trainings = (await _scheduleRepository.AllTrainingsForUser(Id.Value, _cls.Token))?.Trainings;
-        }
         _users = await _userRepository.GetAllUsersAsync(true);
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
         _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(_cls.Token);
+        if (Id is not null)
+        {
+            _user = (await _userRepository.GetById(Id.Value));
+            _trainings = (await _scheduleRepository.AllTrainingsForUser(Id.Value, _cls.Token));
+            _userFunction = _functions?.FirstOrDefault(x => x.Id == _user?.UserFunctionId);
+        }
     }
     private void ClickUser(DrogeUser user)
     {

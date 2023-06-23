@@ -395,14 +395,16 @@ public class ScheduleService : IScheduleService
         return result;
     }
 
-    public async Task<Guid?> PatchAssignedUserAsync(Guid userId, Guid customerId, PatchAssignedUserRequest body, CancellationToken clt)
+    public async Task<PatchAssignedUserResponse> PatchAssignedUserAsync(Guid userId, Guid customerId, PatchAssignedUserRequest body, CancellationToken clt)
     {
+        var result = new PatchAssignedUserResponse();
+        result.IdPatched = body.TrainingId;
         if (body.User == null)
         {
             _logger.LogWarning("user is null {UserIsNull}", body.User == null);
             return null;
         }
-        if (body.TrainingId == null)
+        if (body.TrainingId is null)
         {
             var training = await CreateAndGetTraining(userId, customerId, body.Training, clt);
             if (training != null)
@@ -419,7 +421,7 @@ public class ScheduleService : IScheduleService
         if (!_database.RoosterTrainings.Any(x => x.CustomerId == customerId && x.Id == body.TrainingId))
         {
             _logger.LogWarning("No training with '{Id}' found", body.TrainingId);
-            return body.TrainingId;
+            return result;
         }
         var ava = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.TrainingId == body.TrainingId && x.UserId == body.User.UserId, cancellationToken: clt);
         if (ava == null)
@@ -436,7 +438,7 @@ public class ScheduleService : IScheduleService
             if (ava == null)
             {
                 _logger.LogWarning("No RoosterAvailable with '{Id}' found for user '{User}' when Assigned = '{Assigned}'", body.TrainingId, body.User.UserId, body.User.Assigned);
-                return body.TrainingId;
+                return result;
             }
         }
         ava.Assigned = body.User.Assigned;
@@ -444,7 +446,8 @@ public class ScheduleService : IScheduleService
         ava.VehicleId = body.User.VehicleId;
         _database.RoosterAvailables.Update(ava);
         await _database.SaveChangesAsync(clt);
-        return body.TrainingId;
+        result.Success = true;
+        return result;
     }
 
     public async Task PutAssignedUserAsync(Guid userId, Guid customerId, OtherScheduleUserRequest body, CancellationToken clt)
@@ -454,8 +457,8 @@ public class ScheduleService : IScheduleService
             _logger.LogWarning("userId is null {UserIsNull} or trainingId is null {TrainingIsNull}", body.UserId == null, body.TrainingId == null);
             return;
         }
-        var user = await _database.Users.FirstOrDefaultAsync(x => x.Id == userId && x.DeletedOn == null && x.CustomerId == customerId, cancellationToken: clt);
-        if (user == null)
+        var user = await _database.Users.FirstOrDefaultAsync(x => x.Id == body.UserId && x.DeletedOn == null && x.CustomerId == customerId, cancellationToken: clt);
+        if (user is null)
         {
             _logger.LogWarning("No user with '{Id}' found", body.UserId);
             return;
@@ -465,13 +468,13 @@ public class ScheduleService : IScheduleService
             body.FunctionId = user.UserFunctionId;
         }
         var training = await CreateAndGetTraining(userId, customerId, body.Training, clt);
-        if (training == null)
+        if (training is null)
         {
             _logger.LogWarning("No training with '{Id}' found", body.TrainingId);
             return;
         }
         var ava = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.TrainingId == body.TrainingId && x.UserId == body.UserId, cancellationToken: clt);
-        if (ava == null)
+        if (ava is null)
         {
             if (body.Assigned)// only add to db if assigned.
             {
@@ -539,8 +542,28 @@ public class ScheduleService : IScheduleService
                     VehicleId = a.VehicleId,
                 }).ToList()
             });
+            var userMonthInfo = result.UserMonthInfos.FirstOrDefault(x => x.Year == schedul.Training.DateStart.Year && x.Month == schedul.Training.DateStart.Month);
+            if (userMonthInfo is null)
+            {
+                userMonthInfo = new UserMonthInfo
+                {
+                    Year = schedul.Training.DateStart.Year,
+                    Month = schedul.Training.DateStart.Month,
+                    All = 1,
+                    Valid = schedul.Training.CountToTrainingTarget ? 1 : 0,
+                };
+                result.UserMonthInfos.Add(userMonthInfo);
+            }
+            else
+            {
+                userMonthInfo.All += 1;
+                if (schedul.Training.CountToTrainingTarget)
+                    userMonthInfo.Valid += 1;
+            }
+
         }
         sw.Stop();
+        result.Success = true;
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
