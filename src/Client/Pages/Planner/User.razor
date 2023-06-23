@@ -9,7 +9,7 @@
     {
         <MudPaper Width="700px">
             <MudList Clickable="false">
-                @foreach (var function in _functions.OrderBy(x => x.Order))
+                @foreach (var function in _functions.OrderBy(x => x.Order).Where(x=>x.Active))
                 {
                     @if (_users.Any(x => x.UserFunctionId == function.Id))
                     {
@@ -32,37 +32,39 @@ else
 {
     @if (_trainings != null)
     {
-        <MudText Typo="Typo.h3">@L["Trainings for {0}", _user?.Name ?? "No name"]</MudText>
-        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
-            <MudTabPanel Text="@L["Trainings"]">
-                <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-                    @foreach (var training in _trainings.Trainings)
-                    {
-                        <IndexCard User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" />
-                    }
-                </MudPaper>
-            </MudTabPanel>
-            <MudTabPanel Text="@L["For target"]">
-                @if (_userFunction is not null)
-                {
-                    <MudText Typo="Typo.body1">@L["Target: {0}", _userFunction.TrainingTarget]</MudText>
-                    <MudPaper>
-                        <MudGrid Spacing="2" Justify="Justify.FlexStart">
-                            @foreach (var userMonthInfo in _trainings.UserMonthInfos.OrderByDescending(x => x.Year).ThenByDescending(x => x.Month))
-                            {
-                                <MudItem xs="12" sm="6" md="4" lg="3">
-                                    <MudText Style=@(userMonthInfo.Valid < _userFunction.TrainingTarget ? "color: var(--mud-palette-error)" : "")>
-                                        @(
-                                            $"{new DateTime(userMonthInfo.Year, userMonthInfo.Month, 1).ToString("yyyy MMMM")} - {L["For target"]}: {userMonthInfo.Valid} {L["Total"]}: {userMonthInfo.All}"
-                                            )
-                                    </MudText>
-                                </MudItem>
-                            }
-                        </MudGrid>
+        <MudPaper Elevation="0" Class="p-2">
+            <MudText Typo="Typo.h3">@L["Trainings for {0}", _user?.Name ?? "No name"]</MudText>
+            <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+                <MudTabPanel Text="@L["Trainings"]">
+                    <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+                        @foreach (var training in _trainings.Trainings)
+                        {
+                            <IndexCard User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" />
+                        }
                     </MudPaper>
-                }
-            </MudTabPanel>
-        </MudTabs>
+                </MudTabPanel>
+                <MudTabPanel Text="@L["For target"]">
+                    @if (_userFunction is not null)
+                    {
+                        <MudText Typo="Typo.body1">@L["Target: {0}", _userFunction.TrainingTarget]</MudText>
+                        <MudPaper>
+                            <MudGrid Spacing="2" Justify="Justify.FlexStart">
+                                @foreach (var userMonthInfo in _trainings.UserMonthInfos.OrderByDescending(x => x.Year).ThenByDescending(x => x.Month))
+                                {
+                                    <MudItem xs="12" sm="6" md="4" lg="3">
+                                        <MudText Style=@(userMonthInfo.Valid < _userFunction.TrainingTarget ? "color: var(--mud-palette-error)" : "")>
+                                            @(
+                                                $"{new DateTime(userMonthInfo.Year, userMonthInfo.Month, 1).ToString("yyyy MMMM")} - {L["For target"]}: {userMonthInfo.Valid} {L["Total"]}: {userMonthInfo.All}"
+                                                )
+                                        </MudText>
+                                    </MudItem>
+                                }
+                            </MudGrid>
+                        </MudPaper>
+                    }
+                </MudTabPanel>
+            </MudTabs>
+        </MudPaper>
     }
     else
     {

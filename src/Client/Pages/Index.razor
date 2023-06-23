@@ -10,141 +10,143 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 <PageTitle>Dashboard</PageTitle>
 
-<MudTabs Rounded="true">
-    <MudTabPanel Text="@L["Planner"]">
-        @if (_pinnedTrainings != null)
-        {
-            @if (_pinnedTrainings.Count() > 0)
+<MudPaper Elevation="0" Class="p-2">
+    <MudTabs Rounded="true">
+        <MudTabPanel Text="@L["Planner"]">
+            @if (_pinnedTrainings != null)
             {
-                <MudText Typo="Typo.h3">@L["Pinned trainings"]</MudText>
-                <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-                    @foreach (var training in _pinnedTrainings)
-                    {
-                        <CalendarCard Width="200px" Training="training" ShowDate=true />
-                    }
-                </MudPaper>
-            }
-        }
-        else
-        {
-            <MudSkeleton />
-            <MudSkeleton />
-            <MudSkeleton />
-            <MudSkeleton />
-        }
-        <MudText Typo="Typo.h3">@L["Future trainings"]</MudText>
-
-        @if (_futureTrainings != null)
-        {
-            @if (_futureTrainings.Count() > 0)
-            {
-                <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-                    @foreach (var training in _futureTrainings)
-                    {
-                        <IndexCard User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" />
-                    }
-                </MudPaper>
+                @if (_pinnedTrainings.Count() > 0)
+                {
+                    <MudText Typo="Typo.h3">@L["Pinned trainings"]</MudText>
+                    <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+                        @foreach (var training in _pinnedTrainings)
+                        {
+                            <CalendarCard Width="200px" Training="training" ShowDate=true />
+                        }
+                    </MudPaper>
+                }
             }
             else
             {
-                <MudText Typo="Typo.h4">@L["No future trainings"]</MudText>
+                <MudSkeleton />
+                <MudSkeleton />
+                <MudSkeleton />
+                <MudSkeleton />
             }
-        }
-        else
-        {
-            <MudSkeleton />
-            <MudSkeleton />
-            <MudSkeleton />
-            <MudSkeleton />
-        }
-    </MudTabPanel>
-    <MudTabPanel Text="@L["Actions"]">
-        @if (_sharePointActions != null)
-        {
-            @if (_sharePointActions.Count() > 0)
+            <MudText Typo="Typo.h3">@L["Future trainings"]</MudText>
+
+            @if (_futureTrainings != null)
             {
-                <MudText Typo="Typo.h3">@L["Most recent actions from SharePoint"]</MudText>
-
-                <MudDataGrid Items="@_sharePointActions"
-                             ReadOnly="true" EditMode="@DataGridEditMode.Cell">
-                    <Columns>
-                        <HierarchyColumn T="SharePointAction" />
-                        <PropertyColumn Property="x => x.Number" Title="Nr" />
-                        <PropertyColumn Property="x => x.Start.ToLocalTime()" Title="@L["Start"]" />
-                        <PropertyColumn Property="x => x.ShortDescription" Title="@L["Description"]" />
-                        <PropertyColumn Property="x => x.Prio" Title="@L["Prio"]" />
-                    </Columns>
-                    <ChildRowContent>
-                        <MudCard>
-                            <MudCardHeader>
-                                <CardHeaderContent>
-                                    <MudText Typo="Typo.h6">@context.Item.Title</MudText>
-                                </CardHeaderContent>
-                            </MudCardHeader>
-                            <MudCardContent>
-                                <MudText>@((MarkupString)Regex.Replace(HttpUtility.HtmlEncode(@context.Item.Description ?? string.Empty), "\r?\n|\r", "<br />"))</MudText>
-                                    <MudList>
-                                        @foreach (var user in context.Item.Users)
-                                    {
-                                        <MudListItem>@user.Name - @user.Role</MudListItem>
-                                    }
-                                </MudList>
-                            </MudCardContent>
-                        </MudCard>
-                    </ChildRowContent>
-                </MudDataGrid>
+                @if (_futureTrainings.Count() > 0)
+                {
+                    <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+                        @foreach (var training in _futureTrainings)
+                        {
+                            <IndexCard User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" />
+                        }
+                    </MudPaper>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h4">@L["No future trainings"]</MudText>
+                }
             }
-        }
-        else
-        {
-            <MudSkeleton />
-            <MudSkeleton />
-            <MudSkeleton />
-            <MudSkeleton />
-        }
-    </MudTabPanel>
-    <MudTabPanel Text="@L["Trainings"]">
-        @if (_sharePointTrainings != null)
-        {
-            @if (_sharePointTrainings.Count() > 0)
+            else
             {
-                <MudText Typo="Typo.h3">@L["Most recent trainings from SharePoint"]</MudText>
-
-                <MudDataGrid Items="@_sharePointTrainings"
-                             ReadOnly="true" EditMode="@DataGridEditMode.Cell">
-                    <Columns>
-                        <HierarchyColumn T="SharePointTraining" />
-                        <PropertyColumn Property="x => x.Start.ToLocalTime()" Title="@L["Start"]" />
-                        <PropertyColumn Property="x => x.Title" Title="@L["Description"]" />
-                    </Columns>
-                    <ChildRowContent>
-                        <MudCard>
-                            <MudCardHeader>
-                                <CardHeaderContent>
-                                    <MudText Typo="Typo.h6">@context.Item.Title</MudText>
-                                </CardHeaderContent>
-                            </MudCardHeader>
-                            <MudCardContent>
-                                <MudText>@((MarkupString)Regex.Replace(HttpUtility.HtmlEncode(@context.Item.Description ?? string.Empty), "\r?\n|\r", "<br />"))</MudText>
-                                    <MudList>
-                                        @foreach (var user in context.Item.Users)
-                                    {
-                                        <MudListItem>@user.Name - @user.Role</MudListItem>
-                                    }
-                                </MudList>
-                            </MudCardContent>
-                        </MudCard>
-                    </ChildRowContent>
-                </MudDataGrid>
+                <MudSkeleton />
+                <MudSkeleton />
+                <MudSkeleton />
+                <MudSkeleton />
             }
-        }
-        else
-        {
-            <MudSkeleton />
-            <MudSkeleton />
-            <MudSkeleton />
-            <MudSkeleton />
-        }
+        </MudTabPanel>
+        <MudTabPanel Text="@L["Actions"]">
+            @if (_sharePointActions != null)
+            {
+                @if (_sharePointActions.Count() > 0)
+                {
+                    <MudText Typo="Typo.h3">@L["Most recent actions from SharePoint"]</MudText>
 
-    </MudTabPanel>
-</MudTabs>
+                    <MudDataGrid Items="@_sharePointActions"
+                                 ReadOnly="true" EditMode="@DataGridEditMode.Cell">
+                        <Columns>
+                            <HierarchyColumn T="SharePointAction" />
+                            <PropertyColumn Property="x => x.Number" Title="Nr" />
+                            <PropertyColumn Property="x => x.Start.ToLocalTime()" Title="@L["Start"]" />
+                            <PropertyColumn Property="x => x.ShortDescription" Title="@L["Description"]" />
+                            <PropertyColumn Property="x => x.Prio" Title="@L["Prio"]" />
+                        </Columns>
+                        <ChildRowContent>
+                            <MudCard>
+                                <MudCardHeader>
+                                    <CardHeaderContent>
+                                        <MudText Typo="Typo.h6">@context.Item.Title</MudText>
+                                    </CardHeaderContent>
+                                </MudCardHeader>
+                                <MudCardContent>
+                                    <MudText>@((MarkupString)Regex.Replace(HttpUtility.HtmlEncode(@context.Item.Description ?? string.Empty), "\r?\n|\r", "<br />"))</MudText>
+                                        <MudList>
+                                            @foreach (var user in context.Item.Users)
+                                        {
+                                            <MudListItem>@user.Name - @user.Role</MudListItem>
+                                        }
+                                    </MudList>
+                                </MudCardContent>
+                            </MudCard>
+                        </ChildRowContent>
+                    </MudDataGrid>
+                }
+            }
+            else
+            {
+                <MudSkeleton />
+                <MudSkeleton />
+                <MudSkeleton />
+                <MudSkeleton />
+            }
+        </MudTabPanel>
+        <MudTabPanel Text="@L["Trainings"]">
+            @if (_sharePointTrainings != null)
+            {
+                @if (_sharePointTrainings.Count() > 0)
+                {
+                    <MudText Typo="Typo.h3">@L["Most recent trainings from SharePoint"]</MudText>
+
+                    <MudDataGrid Items="@_sharePointTrainings"
+                                 ReadOnly="true" EditMode="@DataGridEditMode.Cell">
+                        <Columns>
+                            <HierarchyColumn T="SharePointTraining" />
+                            <PropertyColumn Property="x => x.Start.ToLocalTime()" Title="@L["Start"]" />
+                            <PropertyColumn Property="x => x.Title" Title="@L["Description"]" />
+                        </Columns>
+                        <ChildRowContent>
+                            <MudCard>
+                                <MudCardHeader>
+                                    <CardHeaderContent>
+                                        <MudText Typo="Typo.h6">@context.Item.Title</MudText>
+                                    </CardHeaderContent>
+                                </MudCardHeader>
+                                <MudCardContent>
+                                    <MudText>@((MarkupString)Regex.Replace(HttpUtility.HtmlEncode(@context.Item.Description ?? string.Empty), "\r?\n|\r", "<br />"))</MudText>
+                                        <MudList>
+                                            @foreach (var user in context.Item.Users)
+                                        {
+                                            <MudListItem>@user.Name - @user.Role</MudListItem>
+                                        }
+                                    </MudList>
+                                </MudCardContent>
+                            </MudCard>
+                        </ChildRowContent>
+                    </MudDataGrid>
+                }
+            }
+            else
+            {
+                <MudSkeleton />
+                <MudSkeleton />
+                <MudSkeleton />
+                <MudSkeleton />
+            }
+
+        </MudTabPanel>
+    </MudTabs>
+</MudPaper>
