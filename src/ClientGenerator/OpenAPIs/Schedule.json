@@ -483,36 +483,6 @@
           }
         }
       }
-    },
-    "/api/Schedule/GetTrainingTypes": {
-      "get": {
-        "tags": [
-          "Schedule"
-        ],
-        "operationId": "GetTrainingTypes",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultiplePlannerTrainingTypesResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultiplePlannerTrainingTypesResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultiplePlannerTrainingTypesResponse"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
@@ -637,29 +607,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PlannedTraining"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "MultiplePlannerTrainingTypesResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          },
-          "offline": {
-            "type": "boolean"
-          },
-          "elapsedMilliseconds": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "plannerTrainingTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PlannerTrainingType"
             },
             "nullable": true
           }
@@ -866,46 +813,6 @@
             "nullable": true
           },
           "isCreated": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
-      "PlannerTrainingType": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "colorLight": {
-            "type": "string",
-            "nullable": true
-          },
-          "colorDark": {
-            "type": "string",
-            "nullable": true
-          },
-          "textColorLight": {
-            "type": "string",
-            "nullable": true
-          },
-          "textColorDark": {
-            "type": "string",
-            "nullable": true
-          },
-          "order": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "countToTrainingTarget": {
-            "type": "boolean"
-          },
-          "isDefault": {
             "type": "boolean"
           }
         },

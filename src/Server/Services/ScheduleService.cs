@@ -576,31 +576,4 @@ public class ScheduleService : IScheduleService
         }
         return result;
     }
-
-    public async Task<List<PlannerTrainingType>> GetTrainingTypes(Guid customerId, CancellationToken token)
-    {
-        var result = new List<PlannerTrainingType>();
-        var typesFromDb = await _database.RoosterTrainingTypes.Where(x => x.CustomerId == customerId).ToListAsync(cancellationToken: token);
-        foreach (var type in typesFromDb)
-        {
-            var newType = new PlannerTrainingType
-            {
-                Id = type.Id,
-                Name = type.Name,
-                CountToTrainingTarget = type.CountToTrainingTarget,
-                IsDefault = type.IsDefault,
-                Order = type.Order,
-            };
-            if (!string.IsNullOrEmpty(type.ColorLight))
-                newType.ColorLight = type.ColorLight;
-            if (!string.IsNullOrEmpty(type.ColorDark))
-                newType.ColorDark = type.ColorDark;
-            if (!string.IsNullOrEmpty(type.TextColorLight))
-                newType.TextColorLight = type.TextColorLight;
-            if (!string.IsNullOrEmpty(type.TextColorDark))
-                newType.TextColorDark = type.TextColorDark;
-            result.Add(newType);
-        }
-        return result;
-    }
 }

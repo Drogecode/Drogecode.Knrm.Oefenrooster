@@ -48,9 +48,8 @@ public class ScheduleControllerTests : BaseTest
     }
 
     [Fact]
-    public async Task test()
+    public async Task AllTrainingsForUserTest()
     {
-        var result = await _scheduleController.GetTrainingTypes();
-        Assert.NotNull(result);
+
     }
 }

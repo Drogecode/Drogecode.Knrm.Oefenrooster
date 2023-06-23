@@ -3,7 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Client.Helpers;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Heron.MudCalendar;
@@ -17,6 +17,7 @@ public sealed partial class Schedule : IDisposable
     [Inject] private IStringLocalizer<Schedule> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
+    [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
     [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
@@ -39,7 +40,7 @@ public sealed partial class Schedule : IDisposable
         _users = await _userRepository.GetAllUsersAsync(false);
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
-        _trainingTypes = await _scheduleRepository.GetTrainingTypes(_cls.Token);
+        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(_cls.Token);
     }
 
     public void ChangeView(ScheduleView newView)

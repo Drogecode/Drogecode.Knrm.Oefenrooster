@@ -39,6 +39,7 @@ builder.Services.TryAddScoped<IHolidayClient, HolidayClient>();
 builder.Services.TryAddScoped<IPreComClient, PreComClient>();
 builder.Services.TryAddScoped<IScheduleClient, ScheduleClient>();
 builder.Services.TryAddScoped<ISharePointClient, SharePointClient>();
+builder.Services.TryAddScoped<ITrainingTypesClient, TrainingTypesClient>();
 builder.Services.TryAddScoped<IUserClient, UserClient>();
 builder.Services.TryAddScoped<IVehicleClient, VehicleClient>();
 
@@ -50,6 +51,7 @@ builder.Services.TryAddScoped<HolidayRepository>();
 builder.Services.TryAddScoped<PreComRepository>();
 builder.Services.TryAddScoped<ScheduleRepository>();
 builder.Services.TryAddScoped<SharePointRepository>();
+builder.Services.TryAddScoped<TrainingTypesRepository>();
 builder.Services.TryAddScoped<UserRepository>();
 builder.Services.TryAddScoped<VehicleRepository>();
 

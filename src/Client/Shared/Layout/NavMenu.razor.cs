@@ -17,6 +17,7 @@ public sealed partial class NavMenu : IDisposable
     [Inject] private ConfigurationRepository _configurationRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
+    [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
 
     private CancellationTokenSource _cls = new();
@@ -40,7 +41,7 @@ public sealed partial class NavMenu : IDisposable
     }
     private async Task AddTraining()
     {
-        var trainingTypes = await _scheduleRepository.GetTrainingTypes(_cls.Token);
+        var trainingTypes = await _trainingTypesRepository.GetTrainingTypes(_cls.Token);
         var vehicles = await _vehicleRepository.GetAllVehiclesAsync();
         var parameters = new DialogParameters {
             { "Planner", null },

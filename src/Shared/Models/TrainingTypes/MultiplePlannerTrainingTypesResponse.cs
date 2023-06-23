@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+namespace Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 
 public class MultiplePlannerTrainingTypesResponse : BaseResponse
 {

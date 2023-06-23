@@ -212,20 +212,4 @@ public class ScheduleController : ControllerBase
             return BadRequest();
         }
     }
-
-    [HttpGet]
-    public async Task<ActionResult<MultiplePlannerTrainingTypesResponse>> GetTrainingTypes(CancellationToken token = default)
-    {
-        try
-        {
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var result = await _scheduleService.GetTrainingTypes(customerId, token);
-            return Ok(new MultiplePlannerTrainingTypesResponse { PlannerTrainingTypes = result, Success = true });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error in GetTrainingTypes");
-            return BadRequest();
-        }
-    }
 }

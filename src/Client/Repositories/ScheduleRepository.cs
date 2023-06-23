@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
@@ -91,11 +92,5 @@ public class ScheduleRepository
             Training = training
         };
         await _scheduleClient.PutAssignedUserAsync(body, clt);
-    }
-
-    internal async Task<List<PlannerTrainingType>?> GetTrainingTypes(CancellationToken clt = default)
-    {
-        var schedule = await _scheduleClient.GetTrainingTypesAsync(clt);
-        return schedule.PlannerTrainingTypes?.ToList();
     }
 }

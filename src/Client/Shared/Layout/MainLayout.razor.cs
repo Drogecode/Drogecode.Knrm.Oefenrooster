@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -13,6 +14,7 @@ public sealed partial class MainLayout : IDisposable
     [Inject] private SignOutSessionStateManager SignOutManager { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
+    [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
     [Inject] private IOfflineService _offlineService { get; set; } = default!;
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
 
@@ -77,7 +79,7 @@ public sealed partial class MainLayout : IDisposable
         if (_isAuthenticated)
         {
             if (_trainingTypes == null)
-                _trainingTypes = await _scheduleRepository.GetTrainingTypes();
+                _trainingTypes = await _trainingTypesRepository.GetTrainingTypes();
             RefreshMe();
         }
 

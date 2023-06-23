@@ -30,7 +30,7 @@ public class Setup : Xunit.Di.Setup
         ConfigureServices((context, services) =>
         {
             services.AddMemoryCache();
-            services.AddDbContext<DataContext>(c=> c.UseInMemoryDatabase("MyXunitDb"));
+            services.AddDbContext<DataContext>(c => c.UseInMemoryDatabase("MyXunitDb"));
 
             services.AddSingleton<IDateTimeService, DateTimeServiceMock>();
 
@@ -40,6 +40,7 @@ public class Setup : Xunit.Di.Setup
             services.AddScoped<IHolidayService, HolidayService>();
             services.AddScoped<IGraphService, GraphService>();
             services.AddScoped<IScheduleService, ScheduleService>();
+            services.AddScoped<ITrainingTypesService, TrainingTypesService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IVehicleService, VehicleService>();
 
@@ -47,6 +48,7 @@ public class Setup : Xunit.Di.Setup
             services.AddScoped<FunctionController>();
             services.AddScoped<HolidayController>();
             services.AddScoped<ScheduleController>();
+            services.AddScoped<TrainingTypesController>();
             services.AddScoped<UserController>();
 
             services.AddScoped(typeof(ILogger<>), typeof(NullLogger<>));
