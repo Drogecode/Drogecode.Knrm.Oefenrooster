@@ -204,7 +204,7 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var fromDate = DateTime.Today.ToUniversalTime();
             GetPinnedTrainingsForUserResponse result = await _scheduleService.GetPinnedTrainingsForUser(userId, customerId, fromDate, token);
-            return Ok(result);
+            return result;
         }
         catch (Exception ex)
         {

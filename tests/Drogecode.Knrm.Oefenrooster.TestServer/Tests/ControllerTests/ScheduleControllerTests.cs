@@ -137,4 +137,25 @@ public class ScheduleControllerTests : BaseTest
         userMonthInfo.Valid.Should().BeGreaterThanOrEqualTo(2);
         userMonthInfo.Valid.Should().NotBe(userMonthInfo.All);
     }
+
+    [Fact]
+    public async Task GetPinnedTrainingsForUserTest()
+    {
+        var body = new EditTraining
+        {
+            Name = "GetPinnedTrainings",
+            Date = DateTime.UtcNow,
+            CountToTrainingTarget = true,
+            Pin = true,
+            TimeStart = new TimeOnly(12, 50).ToTimeSpan(),
+            TimeEnd = new TimeOnly(13, 40).ToTimeSpan(),
+        };
+        var putResult = await ScheduleController.AddTraining(body);
+        Assert.NotNull(putResult?.Value?.NewId);
+        var Getresult = await ScheduleController.GetPinnedTrainingsForUser();
+        Assert.NotNull(Getresult?.Value?.Trainings);
+        Getresult.Value.Trainings.Should().NotBeEmpty();
+        Getresult.Value.Trainings.Should().Contain(x=>x.TrainingId == putResult.Value.NewId);
+        Getresult.Value.Trainings.Should().NotContain(x=>x.TrainingId == DefaultTraining);
+    }
 }
