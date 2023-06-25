@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -11,6 +12,31 @@ public class TrainingTypesService : ITrainingTypesService
     {
         _logger = logger;
         _database = database;
+    }
+
+    public async Task<PutTrainingTypeResponse> PutTrainingType(PlannerTrainingType plannerTrainingType, Guid customerId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = _database.RoosterTrainingTypes.Add(new DbRoosterTrainingType
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = customerId,
+            Name = plannerTrainingType.Name,
+            ColorLight = plannerTrainingType.ColorLight,
+            ColorDark = plannerTrainingType.ColorDark,
+            TextColorLight = plannerTrainingType.TextColorLight,
+            TextColorDark = plannerTrainingType.TextColorDark,
+            Order = plannerTrainingType.Order,
+            CountToTrainingTarget = plannerTrainingType.CountToTrainingTarget,
+            IsDefault = plannerTrainingType.IsDefault,
+        });
+        await _database.SaveChangesAsync(clt);
+        sw.Stop();
+        return new PutTrainingTypeResponse
+        {
+            Success = true,
+            ElapsedMilliseconds = sw.ElapsedMilliseconds
+        };
     }
 
     public async Task<MultiplePlannerTrainingTypesResponse> GetTrainingTypes(Guid customerId, CancellationToken token)

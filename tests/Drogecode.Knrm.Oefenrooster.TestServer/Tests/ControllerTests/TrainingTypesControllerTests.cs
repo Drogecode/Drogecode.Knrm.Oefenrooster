@@ -1,4 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
+using Microsoft.Extensions.Azure;
+using Microsoft.Graph.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +14,7 @@ public class TrainingTypesControllerTests : BaseTest
 {
     private readonly TrainingTypesController _trainingTypesController;
     public TrainingTypesControllerTests(
-        ScheduleController scheduleController, 
+        ScheduleController scheduleController,
         TrainingTypesController trainingTypesController,
         UserController userController,
         FunctionController functionController,
@@ -19,6 +22,22 @@ public class TrainingTypesControllerTests : BaseTest
     {
         _trainingTypesController = trainingTypesController;
         MockAuthenticatedUser(trainingTypesController);
+    }
+
+    [Fact]
+    public async Task AddTrainingTypeTest()
+    {
+        var result = await _trainingTypesController.Put(new PlannerTrainingType
+        {
+            Name = "AddTrainingTypeTest",
+            ColorLight = "#bdbdbdff",
+            ColorDark = "#ffffff4c",
+            Order = 10,
+            CountToTrainingTarget = true,
+            IsDefault = true,
+        });
+        Assert.NotNull(result?.Value);
+        Assert.True(result.Value.Success);
     }
 
     [Fact]

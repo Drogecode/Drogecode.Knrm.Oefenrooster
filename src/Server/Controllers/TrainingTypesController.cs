@@ -27,13 +27,29 @@ public class TrainingTypesController : ControllerBase
         _auditService = auditService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<MultiplePlannerTrainingTypesResponse>> GetTrainingTypes(CancellationToken token = default)
+    [HttpPut]
+    public async Task<ActionResult<PutTrainingTypeResponse>> Put(PlannerTrainingType PlannerTrainingType, CancellationToken clt = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var result = await _trainingTypesService.GetTrainingTypes(customerId, token);
+            var result = await _trainingTypesService.PutTrainingType(PlannerTrainingType, customerId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetTrainingTypes");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<MultiplePlannerTrainingTypesResponse>> GetTrainingTypes(CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var result = await _trainingTypesService.GetTrainingTypes(customerId, clt);
             return result;
         }
         catch (Exception ex)
