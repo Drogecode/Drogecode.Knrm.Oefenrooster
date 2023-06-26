@@ -15,6 +15,7 @@
                 <MudTh>@L["Color dark"]</MudTh>
                 <MudTh>@L["CountToTrainingTarget"]</MudTh>
                 <MudTh>@L["IsDefault"]</MudTh>
+                <MudTh></MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="@L["Order"]">@context.Order</MudTd>
@@ -27,6 +28,10 @@
                 </MudTd>
                 <MudTd DataLabel="@L["CountToTrainingTarget"]">@context.CountToTrainingTarget</MudTd>
                 <MudTd DataLabel="@L["IsDefault"]">@context.IsDefault</MudTd>
+                <MudTd>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context);}" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenTrainingTypeDialog(context, false);}" />
+                </MudTd>
             </RowTemplate>
         </MudTable>
     }

@@ -35,6 +35,10 @@ public sealed partial class TrainingTypes : IDisposable
         _dialogProvider.Show<TrainingTypeDialog>(L["Edit training type"], parameters, options);
     }
 
+    private async Task Delete(PlannerTrainingType? trainingType)
+    {
+    }
+
     private async Task RefreshMeAsync()
     {
         _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(_cls.Token);
@@ -44,5 +48,6 @@ public sealed partial class TrainingTypes : IDisposable
     public void Dispose()
     {
         _cls.Cancel();
+        _refreshModel.RefreshRequestedAsync -= RefreshMeAsync;
     }
 }
