@@ -1,0 +1,13 @@
+﻿<MudDialog>
+    <DialogContent>
+        @if (TrainingType is not null)
+        {
+            <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
+            </MudForm>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">@LApp["Ok"]</MudButton>
+    </DialogActions>
+</MudDialog>

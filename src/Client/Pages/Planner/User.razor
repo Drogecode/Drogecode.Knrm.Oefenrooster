@@ -9,7 +9,7 @@
     {
         <MudPaper Width="700px">
             <MudList Clickable="false">
-                @foreach (var function in _functions.OrderBy(x => x.Order).Where(x=>x.Active))
+                @foreach (var function in _functions.OrderBy(x => x.Order))
                 {
                     @if (_users.Any(x => x.UserFunctionId == function.Id))
                     {
@@ -30,7 +30,7 @@
 }
 else
 {
-    @if (_trainings != null)
+    @if (_trainings is not null)
     {
         <MudPaper Elevation="0" Class="p-2">
             <MudText Typo="Typo.h3">@L["Trainings for {0}", _user?.Name ?? "No name"]</MudText>

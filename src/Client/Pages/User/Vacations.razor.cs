@@ -33,10 +33,10 @@ public sealed partial class Vacations : IDisposable
 
     private void OpenVacationDialog(Holiday? holiday, bool isNew)
     {
-        var parameters = new DialogParameters {
-            { "Holiday", holiday },
-            { "IsNew", isNew},
-            { "Refresh", _refreshModel },
+        var parameters = new DialogParameters<VacationDialog> {
+            { x=> x.Holiday, holiday },
+            { x=> x.IsNew, isNew},
+            { x=> x.Refresh, _refreshModel },
         };
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
         _dialogProvider.Show<VacationDialog>(L["Edit holiday"], parameters, options);
@@ -45,7 +45,8 @@ public sealed partial class Vacations : IDisposable
     private async Task Delete(Holiday? holiday)
     {
         var response = await _holidayRepository.Delete(holiday!.Id, _cls.Token);
-        if (response != null && response.Success) {
+        if (response != null && response.Success)
+        {
             await RefreshMeAsync();
         }
     }
