@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/api/User/GetAll": {
+    "/api/User/all/{includeHidden}": {
       "get": {
         "tags": [
           "User"
@@ -14,7 +14,8 @@
         "parameters": [
           {
             "name": "includeHidden",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "boolean"
             }
@@ -44,12 +45,12 @@
         }
       }
     },
-    "/api/User/Get": {
+    "/api/User/me": {
       "get": {
         "tags": [
           "User"
         ],
-        "operationId": "Get",
+        "operationId": "GetCurrentUser",
         "responses": {
           "200": {
             "description": "Success",
@@ -74,7 +75,7 @@
         }
       }
     },
-    "/api/User/GetById": {
+    "/api/User/{id}": {
       "get": {
         "tags": [
           "User"
@@ -83,7 +84,8 @@
         "parameters": [
           {
             "name": "id",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -114,7 +116,7 @@
         }
       }
     },
-    "/api/User/AddUser": {
+    "/api/User": {
       "post": {
         "tags": [
           "User"
@@ -161,10 +163,8 @@
             }
           }
         }
-      }
-    },
-    "/api/User/UpdateUser": {
-      "post": {
+      },
+      "patch": {
         "tags": [
           "User"
         ],
@@ -212,8 +212,8 @@
         }
       }
     },
-    "/api/User/SyncAllUsers": {
-      "get": {
+    "/api/User/sync": {
+      "patch": {
         "tags": [
           "User"
         ],

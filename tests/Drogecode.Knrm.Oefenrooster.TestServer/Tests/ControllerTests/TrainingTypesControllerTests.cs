@@ -25,7 +25,7 @@ public class TrainingTypesControllerTests : BaseTest
     [Fact]
     public async Task AddTrainingTypeTest()
     {
-        var result = await TrainingTypesController.Put(new PlannerTrainingType
+        var result = await TrainingTypesController.PostNewTrainingType(new PlannerTrainingType
         {
             Name = "AddTrainingTypeTest",
             ColorLight = "#bdbdbdff",
@@ -36,6 +36,16 @@ public class TrainingTypesControllerTests : BaseTest
         });
         Assert.NotNull(result?.Value);
         Assert.True(result.Value.Success);
+    }
+
+    [Fact]
+    public async Task GetTrainingTypeByIdTest()
+    {
+        var result = await TrainingTypesController.GetById(DefaultTrainingType);
+        Assert.NotNull(result?.Value?.TrainingType);
+        Assert.True(result.Value.Success);
+        result.Value.TrainingType.Id.Should().Be(DefaultTrainingType);
+        result.Value.TrainingType.Name.Should().Be(TRAINING_TYPE_DEFAULT);
     }
 
     [Fact]

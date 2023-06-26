@@ -47,7 +47,7 @@ public class UserControllerTests : BaseTest
     [Fact]
     public async Task GetTest()
     {
-        var user = await UserController.Get();
+        var user = await UserController.GetCurrentUser();
         Assert.NotNull(user?.Value?.DrogeUser);
         user.Value.DrogeUser.Id.Should().Be(DefaultSettingsHelper.IdTaco);
     }

@@ -5,8 +5,8 @@
     "version": "v1"
   },
   "paths": {
-    "/api/Configuration/UpgradeDatabase": {
-      "get": {
+    "/api/Configuration/upgrade-database": {
+      "patch": {
         "tags": [
           "Configuration"
         ],
@@ -35,7 +35,7 @@
         }
       }
     },
-    "/api/Configuration/NewVersionAvailable": {
+    "/api/Configuration/new-version-available/{clientVersion}": {
       "get": {
         "tags": [
           "Configuration"
@@ -44,7 +44,8 @@
         "parameters": [
           {
             "name": "clientVersion",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -74,7 +75,7 @@
         }
       }
     },
-    "/api/Configuration/InstallingActive": {
+    "/api/Configuration/installing-active": {
       "get": {
         "tags": [
           "Configuration"
@@ -104,8 +105,8 @@
         }
       }
     },
-    "/api/Configuration/UpdateSpecialDates": {
-      "get": {
+    "/api/Configuration/update-special-dates": {
+      "patch": {
         "tags": [
           "Configuration"
         ],

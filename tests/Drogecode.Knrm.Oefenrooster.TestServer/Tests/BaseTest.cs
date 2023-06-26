@@ -150,7 +150,7 @@ public class BaseTest : IAsyncLifetime
             CountToTrainingTarget = false,
             IsDefault = false,
         };
-        var result = await TrainingTypesController.Put(body);
+        var result = await TrainingTypesController.PostNewTrainingType(body);
         Assert.NotNull(result?.Value?.NewId);
         Assert.True(result.Value.Success);
         return result.Value.NewId.Value;

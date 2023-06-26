@@ -8,7 +8,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]/")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [ApiExplorerSettings(GroupName = "TrainingTypes")]
 public class TrainingTypesController : ControllerBase
@@ -27,13 +27,14 @@ public class TrainingTypesController : ControllerBase
         _auditService = auditService;
     }
 
-    [HttpPut]
-    public async Task<ActionResult<PutTrainingTypeResponse>> Put(PlannerTrainingType PlannerTrainingType, CancellationToken clt = default)
+    [HttpPost]
+    [Route("")]
+    public async Task<ActionResult<PutTrainingTypeResponse>> PostNewTrainingType([FromBody] PlannerTrainingType PlannerTrainingType, CancellationToken clt = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var result = await _trainingTypesService.PutTrainingType(PlannerTrainingType, customerId, clt);
+            var result = await _trainingTypesService.PostTrainingType(PlannerTrainingType, customerId, clt);
             return result;
         }
         catch (Exception ex)
@@ -44,6 +45,7 @@ public class TrainingTypesController : ControllerBase
     }
 
     [HttpGet]
+    [Route("")]
     public async Task<ActionResult<MultiplePlannerTrainingTypesResponse>> GetTrainingTypes(CancellationToken clt = default)
     {
         try
@@ -55,6 +57,23 @@ public class TrainingTypesController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in GetTrainingTypes");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("{id:guid}")]
+    public async Task<ActionResult<GetTraininTypeByIdResponse>> GetById(Guid id, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            GetTraininTypeByIdResponse result = await _trainingTypesService.GetById(id, customerId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetById");
             return BadRequest();
         }
     }

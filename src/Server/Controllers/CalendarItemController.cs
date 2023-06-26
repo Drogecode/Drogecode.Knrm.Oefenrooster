@@ -9,7 +9,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [ApiExplorerSettings(GroupName = "CalendarItem")]
 public class CalendarItemController : ControllerBase
@@ -32,6 +32,7 @@ public class CalendarItemController : ControllerBase
     }
 
     [HttpGet]
+    [Route("month/{year:int}/{month:int}")]
     public async Task<ActionResult<GetMonthItemResponse>> GetMonthItems(int year, int month, CancellationToken token = default)
     {
         try
@@ -49,6 +50,7 @@ public class CalendarItemController : ControllerBase
     }
 
     [HttpGet]
+    [Route("day/{yearStart:int}/{monthStart:int}/{dayStart:int}/{yearEnd:int}/{monthEnd:int}/{dayEnd:int}")]
     public async Task<ActionResult<GetDayItemResponse>> GetDayItems(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token = default)
     {
         try

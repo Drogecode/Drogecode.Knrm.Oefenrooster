@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/api/CalendarItem/GetMonthItems": {
+    "/api/CalendarItem/month/{year}/{month}": {
       "get": {
         "tags": [
           "CalendarItem"
@@ -14,7 +14,8 @@
         "parameters": [
           {
             "name": "year",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -22,7 +23,8 @@
           },
           {
             "name": "month",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -53,7 +55,7 @@
         }
       }
     },
-    "/api/CalendarItem/GetDayItems": {
+    "/api/CalendarItem/day/{yearStart}/{monthStart}/{dayStart}/{yearEnd}/{monthEnd}/{dayEnd}": {
       "get": {
         "tags": [
           "CalendarItem"
@@ -62,7 +64,8 @@
         "parameters": [
           {
             "name": "yearStart",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -70,7 +73,8 @@
           },
           {
             "name": "monthStart",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -78,7 +82,8 @@
           },
           {
             "name": "dayStart",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -86,7 +91,8 @@
           },
           {
             "name": "yearEnd",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -94,7 +100,8 @@
           },
           {
             "name": "monthEnd",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -102,7 +109,8 @@
           },
           {
             "name": "dayEnd",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
