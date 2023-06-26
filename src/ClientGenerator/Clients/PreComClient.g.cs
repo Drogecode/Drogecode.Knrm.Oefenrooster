@@ -83,7 +83,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task WebHookAsync(object body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/PreCom/WebHook");
+            urlBuilder_.Append("api/PreCom/web-hook");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -155,7 +155,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<MultiplePreComAlertsResponse> AllAlertsAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/PreCom/AllAlerts");
+            urlBuilder_.Append("api/PreCom");
 
             var client_ = _httpClient;
             var disposeClient_ = false;

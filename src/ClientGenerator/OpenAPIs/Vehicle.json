@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/api/Vehicle/GetAll": {
+    "/api/Vehicle": {
       "get": {
         "tags": [
           "Vehicle"
@@ -35,7 +35,7 @@
         }
       }
     },
-    "/api/Vehicle/GetForTraining": {
+    "/api/Vehicle/training/{trainingId}": {
       "get": {
         "tags": [
           "Vehicle"
@@ -44,7 +44,8 @@
         "parameters": [
           {
             "name": "trainingId",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -75,8 +76,8 @@
         }
       }
     },
-    "/api/Vehicle/UpdateLinkVehicleTraining": {
-      "post": {
+    "/api/Vehicle/link-vehicle-training": {
+      "patch": {
         "tags": [
           "Vehicle"
         ],

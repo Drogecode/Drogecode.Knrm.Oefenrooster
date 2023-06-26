@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/api/PreCom/WebHook": {
+    "/api/PreCom/web-hook": {
       "post": {
         "tags": [
           "PreCom"
@@ -31,7 +31,7 @@
         }
       }
     },
-    "/api/PreCom/AllAlerts": {
+    "/api/PreCom": {
       "get": {
         "tags": [
           "PreCom"

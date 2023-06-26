@@ -9,7 +9,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [ApiExplorerSettings(GroupName = "Vehicle")]
 public class VehicleController : ControllerBase
@@ -26,7 +26,8 @@ public class VehicleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<MultipleVehicleResponse>> GetAll(CancellationToken token = default)
+    [Route("")]
+    public async Task<ActionResult<MultipleVehicleResponse>> GetAll(CancellationToken clt = default)
     {
         try
         {
@@ -43,7 +44,8 @@ public class VehicleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<MultipleVehicleTrainingLinkResponse>> GetForTraining(Guid trainingId, CancellationToken token = default)
+    [Route("training/{trainingId:guid}")]
+    public async Task<ActionResult<MultipleVehicleTrainingLinkResponse>> GetForTraining(Guid trainingId, CancellationToken clt = default)
     {
         try
         {
@@ -59,8 +61,9 @@ public class VehicleController : ControllerBase
         }
     }
 
-    [HttpPost]
-    public async Task<ActionResult<DrogeLinkVehicleTrainingResponse>> UpdateLinkVehicleTraining([FromBody] DrogeLinkVehicleTraining link, CancellationToken token = default)
+    [HttpPatch]
+    [Route("link-vehicle-training")]
+    public async Task<ActionResult<DrogeLinkVehicleTrainingResponse>> UpdateLinkVehicleTraining([FromBody] DrogeLinkVehicleTraining link, CancellationToken clt = default)
     {
         try
         {

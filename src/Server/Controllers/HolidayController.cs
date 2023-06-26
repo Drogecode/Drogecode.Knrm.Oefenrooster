@@ -10,7 +10,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [ApiExplorerSettings(GroupName = "Holiday")]
 public class HolidayController : ControllerBase
@@ -30,6 +30,7 @@ public class HolidayController : ControllerBase
     }
 
     [HttpGet]
+    [Route("")]
     public async Task<ActionResult<MultipleHolidaysResponse>> GetAll(CancellationToken clt = default)
     {
         try
@@ -51,6 +52,7 @@ public class HolidayController : ControllerBase
     }
 
     [HttpGet]
+    [Route("{id:guid}")]
     public async Task<ActionResult<GetResponse>> Get(Guid id, CancellationToken clt = default)
     {
         try
@@ -72,6 +74,7 @@ public class HolidayController : ControllerBase
     }
 
     [HttpPut]
+    [Route("")]
     public async Task<ActionResult<PutHolidaysForUserResponse>> PutHolidayForUser([FromBody] Holiday body, CancellationToken clt = default)
     {
         try
@@ -93,6 +96,7 @@ public class HolidayController : ControllerBase
     }
 
     [HttpPatch]
+    [Route("")]
     public async Task<ActionResult<PatchHolidaysForUserResponse>> PatchHolidayForUser([FromBody] Holiday body, CancellationToken clt = default)
     {
         try
@@ -114,6 +118,7 @@ public class HolidayController : ControllerBase
     }
 
     [HttpDelete]
+    [Route("{id:guid}")]
     public async Task<ActionResult<DeleteResonse>> Delete(Guid id, CancellationToken clt = default)
     {
         try

@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 [ApiExplorerSettings(GroupName = "PreCom")]
 public class PreComController : ControllerBase
 {
@@ -30,6 +30,7 @@ public class PreComController : ControllerBase
     }
 
     [HttpPost]
+    [Route("web-hook")]
     public async Task<IActionResult> WebHook([FromBody] object body)
     {
         try
@@ -54,6 +55,7 @@ public class PreComController : ControllerBase
 
     [Authorize]
     [HttpGet]
+    [Route("")]
     public async Task<ActionResult<MultiplePreComAlertsResponse>> AllAlerts(CancellationToken clt)
     {
         try
