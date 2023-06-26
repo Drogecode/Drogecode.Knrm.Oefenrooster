@@ -8,7 +8,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]/")]
+[Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [ApiExplorerSettings(GroupName = "TrainingTypes")]
 public class TrainingTypesController : ControllerBase

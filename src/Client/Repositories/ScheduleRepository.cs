@@ -70,7 +70,7 @@ public class ScheduleRepository
     {
         if (userId is null) return null;
         var schedule = await _offlineService.CachedRequestAsync(string.Format("AlltrFoUse_{0}", userId),
-            async () => { return await _scheduleClient.AllTrainingsForUserAsync(userId, clt); },
+            async () => { return await _scheduleClient.AllTrainingsForUserAsync(userId.Value, clt); },
             clt: clt);
         return schedule;
     }

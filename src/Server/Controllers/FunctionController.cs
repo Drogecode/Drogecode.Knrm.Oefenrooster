@@ -7,7 +7,7 @@ using System.Security.Claims;
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [ApiExplorerSettings(GroupName = "Function")]
 
@@ -23,6 +23,7 @@ public class FunctionController : ControllerBase
     }
 
     [HttpPut]
+    [Route("")]
     public async Task<ActionResult<AddFunctionResponse>> AddFunction(DrogeFunction function, CancellationToken clt = default)
     {
         try
@@ -40,6 +41,7 @@ public class FunctionController : ControllerBase
     }
 
     [HttpGet]
+    [Route("")]
     public async Task<ActionResult<MultipleFunctionsResponse>> GetAll(CancellationToken clt = default)
     {
         try

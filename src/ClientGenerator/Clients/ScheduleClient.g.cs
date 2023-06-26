@@ -25,21 +25,21 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     {
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MultipleTrainingsResponse> ForUserAsync(int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd);
+        System.Threading.Tasks.Task<MultipleTrainingsResponse> ForUserAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MultipleTrainingsResponse> ForUserAsync(int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<MultipleTrainingsResponse> ForUserAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int? forMonth, int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd);
+        System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int? forMonth, int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -97,12 +97,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetScheduledTrainingsForUserResponse> AllTrainingsForUserAsync(System.Guid? id);
+        System.Threading.Tasks.Task<GetScheduledTrainingsForUserResponse> AllTrainingsForUserAsync(System.Guid id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetScheduledTrainingsForUserResponse> AllTrainingsForUserAsync(System.Guid? id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetScheduledTrainingsForUserResponse> AllTrainingsForUserAsync(System.Guid id, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -144,7 +144,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<MultipleTrainingsResponse> ForUserAsync(int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd)
+        public virtual System.Threading.Tasks.Task<MultipleTrainingsResponse> ForUserAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd)
         {
             return ForUserAsync(yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, System.Threading.CancellationToken.None);
         }
@@ -152,35 +152,34 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<MultipleTrainingsResponse> ForUserAsync(int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<MultipleTrainingsResponse> ForUserAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Threading.CancellationToken cancellationToken)
         {
+            if (yearStart == null)
+                throw new System.ArgumentNullException("yearStart");
+
+            if (monthStart == null)
+                throw new System.ArgumentNullException("monthStart");
+
+            if (dayStart == null)
+                throw new System.ArgumentNullException("dayStart");
+
+            if (yearEnd == null)
+                throw new System.ArgumentNullException("yearEnd");
+
+            if (monthEnd == null)
+                throw new System.ArgumentNullException("monthEnd");
+
+            if (dayEnd == null)
+                throw new System.ArgumentNullException("dayEnd");
+
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Schedule/ForUser?");
-            if (yearStart != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("yearStart") + "=").Append(System.Uri.EscapeDataString(ConvertToString(yearStart, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (monthStart != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("monthStart") + "=").Append(System.Uri.EscapeDataString(ConvertToString(monthStart, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (dayStart != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("dayStart") + "=").Append(System.Uri.EscapeDataString(ConvertToString(dayStart, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (yearEnd != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("yearEnd") + "=").Append(System.Uri.EscapeDataString(ConvertToString(yearEnd, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (monthEnd != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("monthEnd") + "=").Append(System.Uri.EscapeDataString(ConvertToString(monthEnd, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (dayEnd != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("dayEnd") + "=").Append(System.Uri.EscapeDataString(ConvertToString(dayEnd, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
+            urlBuilder_.Append("api/Schedule/me/period/{yearStart}/{monthStart}/{dayStart}/{yearEnd}/{monthEnd}/{dayEnd}");
+            urlBuilder_.Replace("{yearStart}", System.Uri.EscapeDataString(ConvertToString(yearStart, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{monthStart}", System.Uri.EscapeDataString(ConvertToString(monthStart, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{dayStart}", System.Uri.EscapeDataString(ConvertToString(dayStart, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{yearEnd}", System.Uri.EscapeDataString(ConvertToString(yearEnd, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{monthEnd}", System.Uri.EscapeDataString(ConvertToString(monthEnd, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{dayEnd}", System.Uri.EscapeDataString(ConvertToString(dayEnd, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -243,7 +242,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int? forMonth, int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd)
+        public virtual System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd)
         {
             return ForAllAsync(forMonth, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, System.Threading.CancellationToken.None);
         }
@@ -251,39 +250,38 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int? forMonth, int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Threading.CancellationToken cancellationToken)
         {
+            if (forMonth == null)
+                throw new System.ArgumentNullException("forMonth");
+
+            if (yearStart == null)
+                throw new System.ArgumentNullException("yearStart");
+
+            if (monthStart == null)
+                throw new System.ArgumentNullException("monthStart");
+
+            if (dayStart == null)
+                throw new System.ArgumentNullException("dayStart");
+
+            if (yearEnd == null)
+                throw new System.ArgumentNullException("yearEnd");
+
+            if (monthEnd == null)
+                throw new System.ArgumentNullException("monthEnd");
+
+            if (dayEnd == null)
+                throw new System.ArgumentNullException("dayEnd");
+
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Schedule/ForAll?");
-            if (forMonth != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("forMonth") + "=").Append(System.Uri.EscapeDataString(ConvertToString(forMonth, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (yearStart != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("yearStart") + "=").Append(System.Uri.EscapeDataString(ConvertToString(yearStart, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (monthStart != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("monthStart") + "=").Append(System.Uri.EscapeDataString(ConvertToString(monthStart, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (dayStart != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("dayStart") + "=").Append(System.Uri.EscapeDataString(ConvertToString(dayStart, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (yearEnd != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("yearEnd") + "=").Append(System.Uri.EscapeDataString(ConvertToString(yearEnd, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (monthEnd != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("monthEnd") + "=").Append(System.Uri.EscapeDataString(ConvertToString(monthEnd, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (dayEnd != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("dayEnd") + "=").Append(System.Uri.EscapeDataString(ConvertToString(dayEnd, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
+            urlBuilder_.Append("api/Schedule/all/period/{forMonth}/{yearStart}/{monthStart}/{dayStart}/{yearEnd}/{monthEnd}/{dayEnd}");
+            urlBuilder_.Replace("{forMonth}", System.Uri.EscapeDataString(ConvertToString(forMonth, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{yearStart}", System.Uri.EscapeDataString(ConvertToString(yearStart, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{monthStart}", System.Uri.EscapeDataString(ConvertToString(monthStart, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{dayStart}", System.Uri.EscapeDataString(ConvertToString(dayStart, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{yearEnd}", System.Uri.EscapeDataString(ConvertToString(yearEnd, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{monthEnd}", System.Uri.EscapeDataString(ConvertToString(monthEnd, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{dayEnd}", System.Uri.EscapeDataString(ConvertToString(dayEnd, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -357,7 +355,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<PatchTrainingResponse> PatchTrainingAsync(EditTraining body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Schedule/PatchTraining");
+            urlBuilder_.Append("api/Schedule/training");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -369,7 +367,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -435,7 +433,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<AddTrainingResponse> AddTrainingAsync(EditTraining body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Schedule/AddTraining");
+            urlBuilder_.Append("api/Schedule/training");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -513,7 +511,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<PatchScheduleForUserResponse> PatchScheduleForUserAsync(Training body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Schedule/PatchScheduleForUser");
+            urlBuilder_.Append("api/Schedule/schedule");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -525,7 +523,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -591,7 +589,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<PatchAssignedUserResponse> PatchAssignedUserAsync(PatchAssignedUserRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Schedule/PatchAssignedUser");
+            urlBuilder_.Append("api/Schedule/assigned-user");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -603,7 +601,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -669,7 +667,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task PutAssignedUserAsync(OtherScheduleUserRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Schedule/PutAssignedUser");
+            urlBuilder_.Append("api/Schedule/assigned-user");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -681,7 +679,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -741,7 +739,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUserAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Schedule/GetScheduledTrainingsForUser");
+            urlBuilder_.Append("api/Schedule/me/scheduled-trainings");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -804,7 +802,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetScheduledTrainingsForUserResponse> AllTrainingsForUserAsync(System.Guid? id)
+        public virtual System.Threading.Tasks.Task<GetScheduledTrainingsForUserResponse> AllTrainingsForUserAsync(System.Guid id)
         {
             return AllTrainingsForUserAsync(id, System.Threading.CancellationToken.None);
         }
@@ -812,15 +810,14 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetScheduledTrainingsForUserResponse> AllTrainingsForUserAsync(System.Guid? id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetScheduledTrainingsForUserResponse> AllTrainingsForUserAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
         {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Schedule/AllTrainingsForUser?");
-            if (id != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("id") + "=").Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
+            urlBuilder_.Append("api/Schedule/training/user/all/{id}");
+            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -894,7 +891,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUserAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Schedule/GetPinnedTrainingsForUser");
+            urlBuilder_.Append("api/Schedule/me/pinned");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
