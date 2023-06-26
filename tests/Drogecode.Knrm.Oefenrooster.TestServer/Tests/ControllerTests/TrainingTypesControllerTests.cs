@@ -58,4 +58,18 @@ public class TrainingTypesControllerTests : BaseTest
         result.Value.PlannerTrainingTypes.Should().Contain(x=>x.Id == DefaultTrainingType);
         result.Value.PlannerTrainingTypes.Should().Contain(x=>x.Id == oneMore);
     }
+
+    [Fact]
+    public async Task PatchTrainingTypeTest()
+    {
+        var resultGetBefore = await TrainingTypesController.GetById(DefaultTrainingType);
+        Assert.NotNull(resultGetBefore?.Value?.TrainingType);
+        resultGetBefore.Value.TrainingType.Name = "PatchTrainingTypeTest";
+        var resultPatched = await TrainingTypesController.PatchTrainingType(resultGetBefore.Value.TrainingType);
+        Assert.NotNull(resultPatched?.Value?.Success);
+        Assert.True(resultPatched.Value.Success);
+        var resultGetAfter = await TrainingTypesController.GetById(DefaultTrainingType);
+        Assert.NotNull(resultGetAfter?.Value?.TrainingType);
+        resultGetAfter.Value.TrainingType.Name.Should().Be("PatchTrainingTypeTest");
+    }
 }

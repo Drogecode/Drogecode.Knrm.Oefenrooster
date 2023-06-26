@@ -14,7 +14,7 @@ public class DbRoosterTraining
     public DateTime DateStart { get; set; }
     public DateTime DateEnd { get; set; }
     public bool CountToTrainingTarget { get; set; }
-    public bool Pin { get; set; }
+    public bool IsPinned { get; set; }
 
     public DbCustomers Customer { get; set; }
     public DbRoosterDefault? RoosterDefault { get; set; }

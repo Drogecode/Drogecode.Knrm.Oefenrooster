@@ -29,12 +29,13 @@ public class TrainingTypesController : ControllerBase
 
     [HttpPost]
     [Route("")]
-    public async Task<ActionResult<PutTrainingTypeResponse>> PostNewTrainingType([FromBody] PlannerTrainingType PlannerTrainingType, CancellationToken clt = default)
+    public async Task<ActionResult<PutTrainingTypeResponse>> PostNewTrainingType([FromBody] PlannerTrainingType plannerTrainingType, CancellationToken clt = default)
     {
         try
         {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var result = await _trainingTypesService.PostTrainingType(PlannerTrainingType, customerId, clt);
+            var result = await _trainingTypesService.PostTrainingType(userId, customerId, plannerTrainingType, clt);
             return result;
         }
         catch (Exception ex)
@@ -74,6 +75,24 @@ public class TrainingTypesController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in GetById");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
+    [Route("")]
+    public async Task<ActionResult<PatchTrainingTypeResponse>> PatchTrainingType([FromBody] PlannerTrainingType plannerTrainingType, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            PatchTrainingTypeResponse result = await _trainingTypesService.PatchTrainingType(userId, customerId, plannerTrainingType, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in PatchTrainingType");
             return BadRequest();
         }
     }

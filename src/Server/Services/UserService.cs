@@ -18,7 +18,7 @@ public class UserService : IUserService
     {
         var sw = Stopwatch.StartNew();
         var result = new MultipleDrogeUsersResponse { DrogeUsers = new List<DrogeUser>() };
-        var dbUsers = _database.Users.Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.Active)).OrderBy(x=>x.Name);
+        var dbUsers = _database.Users.Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.IsActive)).OrderBy(x=>x.Name);
         foreach (var dbUser in dbUsers)
         {
             result.DrogeUsers.Add(new DrogeUser
@@ -67,7 +67,7 @@ public class UserService : IUserService
             userObj.DeletedOn = null;
             if (userObj.UserFunctionId == null || userObj.UserFunctionId == Guid.Empty)
             {
-                var defaultFunction = await _database.UserFunctions.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Default);
+                var defaultFunction = await _database.UserFunctions.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.IsDefault);
                 if (defaultFunction != null)
                 {
                     userObj.UserFunctionId = defaultFunction.Id;
