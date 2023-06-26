@@ -12,22 +12,20 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
 public class TrainingTypesControllerTests : BaseTest
 {
-    private readonly TrainingTypesController _trainingTypesController;
     public TrainingTypesControllerTests(
         ScheduleController scheduleController,
-        TrainingTypesController trainingTypesController,
         UserController userController,
         FunctionController functionController,
-        HolidayController holidayController) : base(scheduleController, userController, functionController, holidayController)
+        HolidayController holidayController,
+        TrainingTypesController trainingTypesController) : 
+        base(scheduleController, userController, functionController, holidayController, trainingTypesController)
     {
-        _trainingTypesController = trainingTypesController;
-        MockAuthenticatedUser(trainingTypesController);
     }
 
     [Fact]
     public async Task AddTrainingTypeTest()
     {
-        var result = await _trainingTypesController.Put(new PlannerTrainingType
+        var result = await TrainingTypesController.Put(new PlannerTrainingType
         {
             Name = "AddTrainingTypeTest",
             ColorLight = "#bdbdbdff",
@@ -43,8 +41,11 @@ public class TrainingTypesControllerTests : BaseTest
     [Fact]
     public async Task GetTrainingTypesTest()
     {
-        var result = await _trainingTypesController.GetTrainingTypes();
+        var oneMore = await AddTrainingType("GetTrainingTypesTest", 30);
+        var result = await TrainingTypesController.GetTrainingTypes();
         Assert.NotNull(result?.Value?.PlannerTrainingTypes);
-        //result.Value.PlannerTrainingTypes.Should().NotBeEmpty();
+        result.Value.PlannerTrainingTypes.Should().NotBeEmpty();
+        result.Value.PlannerTrainingTypes.Should().Contain(x=>x.Id == DefaultTrainingType);
+        result.Value.PlannerTrainingTypes.Should().Contain(x=>x.Id == oneMore);
     }
 }

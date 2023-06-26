@@ -4,6 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -23,29 +24,35 @@ public class BaseTest : IAsyncLifetime
     protected const string FUNCTION_DEFAULT = "xUnit default function";
     protected const string HOLIDAY_DEFAULT = "xUnit default holiday";
     protected const string TRAINING_DEFAULT = "xUnit default training";
+    protected const string TRAINING_TYPE_DEFAULT = "xUnit default training type";
     protected Guid UserId { get; private set; }
     protected Guid DefaultFunction { get; private set; }
     protected Guid DefaultHoliday { get; private set; }
     protected Guid DefaultTraining { get; private set; }
     protected Guid DefaultAssignedTraining { get; private set; }
+    protected Guid DefaultTrainingType { get; private set; }
     protected readonly ScheduleController ScheduleController;
     protected readonly UserController UserController;
     protected readonly FunctionController FunctionController;
     protected readonly HolidayController HolidayController;
+    protected readonly TrainingTypesController TrainingTypesController;
     public BaseTest(
         ScheduleController scheduleController,
         UserController userController,
         FunctionController functionController,
-        HolidayController holidayController)
+        HolidayController holidayController,
+        TrainingTypesController trainingTypesController)
     {
         ScheduleController = scheduleController;
         UserController = userController;
         FunctionController = functionController;
         HolidayController = holidayController;
+        TrainingTypesController = trainingTypesController;
         MockAuthenticatedUser(scheduleController);
         MockAuthenticatedUser(userController);
         MockAuthenticatedUser(functionController);
         MockAuthenticatedUser(holidayController);
+        MockAuthenticatedUser(trainingTypesController);
 
     }
 
@@ -56,6 +63,7 @@ public class BaseTest : IAsyncLifetime
         DefaultHoliday = await AddHoliday(HOLIDAY_DEFAULT);
         DefaultTraining = await AddTraining(TRAINING_DEFAULT, false);
         DefaultAssignedTraining = await AssignTrainingToUser(DefaultTraining, UserId, true);
+        DefaultTrainingType = await AddTrainingType(TRAINING_TYPE_DEFAULT, 20);
     }
 
     protected async Task<Guid> AddUser(string name)
@@ -129,6 +137,23 @@ public class BaseTest : IAsyncLifetime
         var result = await ScheduleController.PatchAssignedUser(body);
         Assert.NotNull(result?.Value?.IdPatched);
         return result.Value.IdPatched.Value;
+    }
+
+    protected async Task<Guid> AddTrainingType(string name, int order)
+    {
+        var body = new PlannerTrainingType
+        {
+            Name = name,
+            ColorLight = "#bdbdbdff",
+            ColorDark = "#ffffff4c",
+            Order = order,
+            CountToTrainingTarget = false,
+            IsDefault = false,
+        };
+        var result = await TrainingTypesController.Put(body);
+        Assert.NotNull(result?.Value?.NewId);
+        Assert.True(result.Value.Success);
+        return result.Value.NewId.Value;
     }
 
     public Task DisposeAsync()

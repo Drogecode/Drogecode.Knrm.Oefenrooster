@@ -17,9 +17,10 @@ public class TrainingTypesService : ITrainingTypesService
     public async Task<PutTrainingTypeResponse> PutTrainingType(PlannerTrainingType plannerTrainingType, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var result = _database.RoosterTrainingTypes.Add(new DbRoosterTrainingType
+        var newId = Guid.NewGuid();
+        _database.RoosterTrainingTypes.Add(new DbRoosterTrainingType
         {
-            Id = Guid.NewGuid(),
+            Id = newId,
             CustomerId = customerId,
             Name = plannerTrainingType.Name,
             ColorLight = plannerTrainingType.ColorLight,
@@ -30,11 +31,12 @@ public class TrainingTypesService : ITrainingTypesService
             CountToTrainingTarget = plannerTrainingType.CountToTrainingTarget,
             IsDefault = plannerTrainingType.IsDefault,
         });
-        await _database.SaveChangesAsync(clt);
+        var success = (await _database.SaveChangesAsync(clt)) > 0;
         sw.Stop();
         return new PutTrainingTypeResponse
         {
-            Success = true,
+            NewId = newId,
+            Success = success,
             ElapsedMilliseconds = sw.ElapsedMilliseconds
         };
     }

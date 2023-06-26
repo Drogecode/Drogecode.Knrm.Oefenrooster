@@ -16,7 +16,9 @@ public class UserControllerTests : BaseTest
         ScheduleController scheduleController, 
         UserController userController,
         FunctionController functionController,
-        HolidayController holidayController) : base(scheduleController, userController, functionController, holidayController)
+        HolidayController holidayController,
+        TrainingTypesController trainingTypesController) :
+        base(scheduleController, userController, functionController, holidayController, trainingTypesController)
     {
     }
 
