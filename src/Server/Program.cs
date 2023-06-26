@@ -12,6 +12,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Services;
+using Drogecode.Knrm.Oefenrooster.Server.Health;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
+builder.Services.AddHealthChecks()
+    .AddCheck<DatabaseHealthCheck>("postgresDB");
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -104,6 +107,7 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.MapHealthChecks("/api/_health");
 
 app.UseAuthentication();
 app.UseAuthorization();
