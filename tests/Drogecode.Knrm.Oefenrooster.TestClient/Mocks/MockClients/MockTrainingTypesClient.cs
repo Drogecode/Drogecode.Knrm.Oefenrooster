@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
+using Microsoft.Graph.Education.Classes.Item.Assignments.Item.Submissions.Item.Return;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ public class MockTrainingTypesClient : ITrainingTypesClient
 {
     public Task<GetTraininTypeByIdResponse> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return GetByIdAsync(id, CancellationToken.None);
     }
 
     public Task<GetTraininTypeByIdResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken)
@@ -41,9 +42,19 @@ public class MockTrainingTypesClient : ITrainingTypesClient
         };
     }
 
-    public Task<PutTrainingTypeResponse> PostNewTrainingTypeAsync(PlannerTrainingType body)
+    public Task<PatchTrainingTypeResponse> PatchTrainingTypeAsync(PlannerTrainingType body)
+    {
+        return PatchTrainingTypeAsync(body, CancellationToken.None);
+    }
+
+    public Task<PatchTrainingTypeResponse> PatchTrainingTypeAsync(PlannerTrainingType body, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
+    }
+
+    public Task<PutTrainingTypeResponse> PostNewTrainingTypeAsync(PlannerTrainingType body)
+    {
+        return PostNewTrainingTypeAsync(body, CancellationToken.None);
     }
 
     public Task<PutTrainingTypeResponse> PostNewTrainingTypeAsync(PlannerTrainingType body, CancellationToken cancellationToken)

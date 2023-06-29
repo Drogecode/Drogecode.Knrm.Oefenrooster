@@ -1,8 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Microsoft.Extensions.Localization;
 using System.Diagnostics.CodeAnalysis;
@@ -38,6 +35,16 @@ public sealed partial class TrainingTypeDialog : IDisposable
     {
         await _form.Validate();
         if (!_form.IsValid) return;
+        bool success;
+        if (IsNew)
+            success = (await _trainingTypesRepository.Post(TrainingType!, _cls.Token)).Success;
+        else
+            success = (await _trainingTypesRepository.Patch(TrainingType!, _cls.Token)).Success;
+        if (success)
+        {
+            if (Refresh is not null) await Refresh.CallRequestRefreshAsync();
+            MudDialog.Close(DialogResult.Ok(true));
+        }
     }
 
     public void Dispose()

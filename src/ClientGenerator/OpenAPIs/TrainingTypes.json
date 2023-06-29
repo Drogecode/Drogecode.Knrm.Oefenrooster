@@ -80,6 +80,53 @@
             }
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "TrainingTypes"
+        ],
+        "operationId": "PatchTrainingType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlannerTrainingType"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlannerTrainingType"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlannerTrainingType"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchTrainingTypeResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchTrainingTypeResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchTrainingTypeResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/TrainingTypes/{id}": {
@@ -164,6 +211,22 @@
               "$ref": "#/components/schemas/PlannerTrainingType"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PatchTrainingTypeResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           }
         },
         "additionalProperties": false

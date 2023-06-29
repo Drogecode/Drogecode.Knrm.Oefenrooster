@@ -3,11 +3,11 @@
         @if (TrainingType is not null)
         {
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
-                <MudTextField T="string" @bind-Value="@TrainingType.Name" Label="@L["Description"]" Required="true" RequiredError="@L["Description is required!"]" />
-                <MudColorPicker Label="@L["Light background"]" @bind-Text="@TrainingType.ColorLight" Style="@($"color: {@TrainingType.ColorLight};")" Placeholder="@L["Select Color"]" />
-                <MudColorPicker Label="@L["Light text"]" @bind-Text="@TrainingType.TextColorLight" Style="@($"color: {@TrainingType.TextColorLight};")" Placeholder="@L["Select Color"]" />
-                <MudColorPicker Label="@L["Dark background"]" @bind-Text="@TrainingType.ColorDark" Style="@($"color: {@TrainingType.ColorDark};")" Placeholder="@L["Select Color"]" />
-                <MudColorPicker Label="@L["Dark text"]" @bind-Text="@TrainingType.TextColorDark" Style="@($"color: {@TrainingType.TextColorDark};")" Placeholder="@L["Select Color"]" />
+                <MudTextField T="string" @bind-Value="@TrainingType.Name" Label="@L["Description"]" Required="true" RequiredError="@L["Description is required"]" />
+                <MudColorPicker Label="@L["Light background"]" @bind-Text="@TrainingType.ColorLight" Style="@($"color: {@TrainingType.ColorLight};")" Placeholder="@L["Select Color"]" DisableToolbar="false" />
+                <MudColorPicker Label="@L["Light text"]" @bind-Text="@TrainingType.TextColorLight" Style="@($"color: {@TrainingType.TextColorLight};")" Placeholder="@L["Select Color"]" DisableToolbar="false" />
+                <MudColorPicker Label="@L["Dark background"]" @bind-Text="@TrainingType.ColorDark" Style="@($"color: {@TrainingType.ColorDark};")" Placeholder="@L["Select Color"]" DisableToolbar="false" />
+                <MudColorPicker Label="@L["Dark text"]" @bind-Text="@TrainingType.TextColorDark" Style="@($"color: {@TrainingType.TextColorDark};")" Placeholder="@L["Select Color"]" DisableToolbar="false" />
                 <MudCheckBox @bind-Checked="@TrainingType.CountToTrainingTarget"></MudCheckBox>
                 <MudCheckBox @bind-Checked="@TrainingType.IsDefault"></MudCheckBox>
             </MudForm>
