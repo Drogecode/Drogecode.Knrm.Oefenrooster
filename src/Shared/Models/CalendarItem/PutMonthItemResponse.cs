@@ -8,4 +8,5 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 
 public class PutMonthItemResponse : BaseResponse
 {
+    public Guid NewId { get; set; }
 }

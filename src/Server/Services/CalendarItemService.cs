@@ -66,6 +66,7 @@ public class CalendarItemService : ICalendarItemService
         dbItem.CreatedOn = DateTime.UtcNow;
         _database.RoosterItemMonths.Add(dbItem);
         result.Success = (await _database.SaveChangesAsync(clt)) > 0;
+        result.NewId = dbItem.Id;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
@@ -82,6 +83,7 @@ public class CalendarItemService : ICalendarItemService
         dbItem.CreatedOn = DateTime.UtcNow;
         _database.RoosterItemDays.Add(dbItem);
         result.Success = (await _database.SaveChangesAsync(clt)) > 0;
+        result.NewId = dbItem.Id;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;

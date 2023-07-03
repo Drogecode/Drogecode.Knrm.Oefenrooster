@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
@@ -25,12 +26,16 @@ public class BaseTest : IAsyncLifetime
     protected const string HOLIDAY_DEFAULT = "xUnit default holiday";
     protected const string TRAINING_DEFAULT = "xUnit default training";
     protected const string TRAINING_TYPE_DEFAULT = "xUnit default training type";
+    protected const string TRAINING_CALENDAR_MONTH = "xUnit month item";
+    protected const string TRAINING_CALENDAR_DAY = "xUnit day item";
     protected Guid UserId { get; private set; }
     protected Guid DefaultFunction { get; private set; }
     protected Guid DefaultHoliday { get; private set; }
     protected Guid DefaultTraining { get; private set; }
     protected Guid DefaultAssignedTraining { get; private set; }
     protected Guid DefaultTrainingType { get; private set; }
+    protected Guid DefaultCalendarMonthItem { get; private set; }
+    protected Guid DefaultCalendarDayItem { get; private set; }
     protected readonly ScheduleController ScheduleController;
     protected readonly UserController UserController;
     protected readonly FunctionController FunctionController;
@@ -68,6 +73,8 @@ public class BaseTest : IAsyncLifetime
         DefaultTraining = await AddTraining(TRAINING_DEFAULT, false);
         DefaultAssignedTraining = await AssignTrainingToUser(DefaultTraining, UserId, true);
         DefaultTrainingType = await AddTrainingType(TRAINING_TYPE_DEFAULT, 20);
+        DefaultCalendarMonthItem = await AddCalendarMonthItem(TRAINING_CALENDAR_MONTH);
+        DefaultCalendarDayItem = await AddCalendarDayItem(TRAINING_CALENDAR_DAY);
     }
 
     protected async Task<Guid> AddUser(string name)
@@ -97,7 +104,8 @@ public class BaseTest : IAsyncLifetime
 
     protected async Task<Guid> AddHoliday(string description)
     {
-        var result = await HolidayController.PutHolidayForUser(new Holiday { 
+        var result = await HolidayController.PutHolidayForUser(new Holiday
+        {
             Description = description,
             ValidFrom = DateTime.Today.AddDays(1),
             ValidUntil = DateTime.Today.AddDays(2),
@@ -159,6 +167,36 @@ public class BaseTest : IAsyncLifetime
         Assert.NotNull(result?.Value?.NewId);
         Assert.True(result.Value.Success);
         return result.Value.NewId.Value;
+    }
+
+    protected async Task<Guid> AddCalendarMonthItem(string name, short? month = null, short? year = null)
+    {
+        month ??= short.Parse(DateTime.Today.Month.ToString());
+        var body = new RoosterItemMonth
+        {
+            Text = name,
+            Type = Shared.Enums.CalendarItemType.Custom,
+            Month = month.Value,
+            Year = year
+        };
+        var result = await CalendarItemController.PutMonthItem(body);
+        Assert.NotNull(result?.Value?.NewId);
+        return result.Value.NewId;
+    }
+
+    protected async Task<Guid> AddCalendarDayItem(string name, DateTime? dateStart = null)
+    {
+        dateStart ??= DateTime.Today.AddDays(7);
+        var body = new RoosterItemDay
+        {
+            Text = name,
+            Type = Shared.Enums.CalendarItemType.Custom,
+            IsFullDay = true,
+            DateStart = dateStart.Value,
+        };
+        var result = await CalendarItemController.PutDayItem(body);
+        Assert.NotNull(result?.Value?.NewId);
+        return result.Value.NewId;
     }
 
     public Task DisposeAsync()
