@@ -309,6 +309,10 @@
           "elapsedMilliseconds": {
             "type": "integer",
             "format": "int64"
+          },
+          "newId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false
@@ -325,6 +329,10 @@
           "elapsedMilliseconds": {
             "type": "integer",
             "format": "int64"
+          },
+          "newId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false
