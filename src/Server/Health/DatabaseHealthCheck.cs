@@ -6,6 +6,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Health;
 public class DatabaseHealthCheck : IHealthCheck
 {
     //https://youtu.be/p2faw9DCSsY
+    //Using NuGet instead of this
     private readonly ILogger<DefaultScheduleService> _logger;
     private readonly Database.DataContext _database;
     public DatabaseHealthCheck(ILogger<DefaultScheduleService> logger, Database.DataContext database)

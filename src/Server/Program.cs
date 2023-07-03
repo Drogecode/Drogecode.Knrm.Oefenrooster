@@ -13,6 +13,8 @@ using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Services;
 using Drogecode.Knrm.Oefenrooster.Server.Health;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +26,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 builder.Services.AddHealthChecks()
-    .AddCheck<DatabaseHealthCheck>("postgresDB");
+    //.AddCheck<DatabaseHealthCheck>("postgresDB")
+    .AddNpgSql(builder.Configuration.GetConnectionString("postgresDB") ?? "nevermind");
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -107,7 +110,10 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.MapHealthChecks("/api/_health");
+app.MapHealthChecks("/api/_health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
