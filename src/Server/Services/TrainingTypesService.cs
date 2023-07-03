@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
+using MudBlazor.Utilities;
 using System.Diagnostics;
 using ZXing.Aztec.Internal;
 
@@ -20,6 +21,7 @@ public class TrainingTypesService : ITrainingTypesService
     {
         var sw = Stopwatch.StartNew();
         var newId = Guid.NewGuid();
+        plannerTrainingType.SecureColors();
         var dbType = plannerTrainingType.ToDb();
         dbType.Id = newId;
         dbType.CustomerId = customerId;
@@ -73,6 +75,7 @@ public class TrainingTypesService : ITrainingTypesService
         var sw = Stopwatch.StartNew();
         var result = new PatchTrainingTypeResponse();
         var typeFromDb = await _database.RoosterTrainingTypes.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == plannerTrainingType.Id, cancellationToken: clt);
+        plannerTrainingType.SecureColors();
         if (typeFromDb is not null)
         {
             typeFromDb.UpdatedBy = userId;
@@ -85,6 +88,7 @@ public class TrainingTypesService : ITrainingTypesService
             typeFromDb.Order = plannerTrainingType.Order;
             typeFromDb.CountToTrainingTarget = plannerTrainingType.CountToTrainingTarget;
             typeFromDb.IsDefault = plannerTrainingType.IsDefault;
+            typeFromDb.IsActive = plannerTrainingType.IsActive;
             _database.RoosterTrainingTypes.Update(typeFromDb);
             result.Success = (await _database.SaveChangesAsync(clt)) > 0;
         }

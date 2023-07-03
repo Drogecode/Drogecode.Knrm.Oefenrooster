@@ -138,6 +138,9 @@
   <data name="Edit training type" xml:space="preserve">
     <value>Edit training type</value>
   </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
   <data name="IsDefault" xml:space="preserve">
     <value>Default</value>
   </data>

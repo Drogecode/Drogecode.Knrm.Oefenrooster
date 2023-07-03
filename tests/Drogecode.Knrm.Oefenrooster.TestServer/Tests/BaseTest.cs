@@ -144,11 +144,12 @@ public class BaseTest : IAsyncLifetime
         var body = new PlannerTrainingType
         {
             Name = name,
-            ColorLight = "#bdbdbdff",
+            ColorLight = "#bdbdbd",
             ColorDark = "#ffffff4c",
             Order = order,
             CountToTrainingTarget = false,
             IsDefault = false,
+            IsActive = true,
         };
         var result = await TrainingTypesController.PostNewTrainingType(body);
         Assert.NotNull(result?.Value?.NewId);

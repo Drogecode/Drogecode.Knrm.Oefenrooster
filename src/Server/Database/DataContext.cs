@@ -509,6 +509,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 IsDefault = true,
                 CreatedBy = DefaultSettingsHelper.IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -520,6 +521,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 20,
                 CreatedBy = DefaultSettingsHelper.IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -531,6 +533,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 30,
                 CreatedBy = DefaultSettingsHelper.IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -544,6 +547,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 40,
                 CreatedBy = DefaultSettingsHelper.IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -555,6 +559,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 50,
                 CreatedBy = DefaultSettingsHelper.IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -566,6 +571,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 60,
                 CreatedBy = DefaultSettingsHelper.IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -577,6 +583,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 70,
                 CreatedBy = DefaultSettingsHelper.IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -589,6 +596,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 TextColorDark = "#C0C0C0",
                 CreatedBy = DefaultSettingsHelper.IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
         }
         #endregion

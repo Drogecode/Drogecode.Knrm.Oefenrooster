@@ -64,12 +64,19 @@ public class TrainingTypesControllerTests : BaseTest
     {
         var resultGetBefore = await TrainingTypesController.GetById(DefaultTrainingType);
         Assert.NotNull(resultGetBefore?.Value?.TrainingType);
+        resultGetBefore.Value.TrainingType.IsActive.Should().BeTrue();
+        resultGetBefore.Value.TrainingType.ColorLight.Should().Be("#bdbdbdff");
         resultGetBefore.Value.TrainingType.Name = "PatchTrainingTypeTest";
+        resultGetBefore.Value.TrainingType.IsActive = false;
+        resultGetBefore.Value.TrainingType.TextColorDark = "#000000";
         var resultPatched = await TrainingTypesController.PatchTrainingType(resultGetBefore.Value.TrainingType);
         Assert.NotNull(resultPatched?.Value?.Success);
         Assert.True(resultPatched.Value.Success);
         var resultGetAfter = await TrainingTypesController.GetById(DefaultTrainingType);
         Assert.NotNull(resultGetAfter?.Value?.TrainingType);
         resultGetAfter.Value.TrainingType.Name.Should().Be("PatchTrainingTypeTest");
+        resultGetAfter.Value.TrainingType.IsActive.Should().BeFalse();
+        resultGetAfter.Value.TrainingType.ColorLight.Should().Be("#bdbdbdff");
+        resultGetAfter.Value.TrainingType.TextColorDark.Should().Be("#000000ff");
     }
 }

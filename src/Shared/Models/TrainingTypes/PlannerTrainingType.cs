@@ -19,6 +19,8 @@ public class PlannerTrainingType : ICloneable
     public int Order { get; set; }
     public bool CountToTrainingTarget { get; set; }
     public bool IsDefault { get; set; }
+    public bool IsActive { get; set; }
+
 
     public object Clone()
     {

@@ -130,13 +130,16 @@
     <value>Kleur in licht</value>
   </data>
   <data name="CountToTrainingTarget" xml:space="preserve">
-    <value>telt voor oefen doel</value>
+    <value>Telt voor oefen doel</value>
   </data>
   <data name="Description" xml:space="preserve">
     <value>Beschrijving</value>
   </data>
   <data name="Edit training type" xml:space="preserve">
     <value>Wijzig oefen type</value>
+  </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>Actief</value>
   </data>
   <data name="IsDefault" xml:space="preserve">
     <value>standaard</value>

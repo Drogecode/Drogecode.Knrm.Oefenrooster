@@ -143,5 +143,4 @@ app.MapRazorPages();
 app.MapControllers();
 app.MapHub<PreComHub>("/hub/precomhub");
 app.MapFallbackToFile("index.html");
-
 app.Run();

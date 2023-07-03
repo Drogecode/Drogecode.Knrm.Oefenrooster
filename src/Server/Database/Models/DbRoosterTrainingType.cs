@@ -20,6 +20,7 @@ public class DbRoosterTrainingType
     public int Order { get; set; }
     public bool CountToTrainingTarget { get; set; }
     public bool IsDefault { get; set; }
+    public bool IsActive { get; set; }
 
     public DbCustomers Customer { get; set; }
     public ICollection<DbRoosterTraining>? RoosterTrainings { get; set; }

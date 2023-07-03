@@ -24,6 +24,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
     private EditTraining? _training;
+    private PlannerTrainingType? _currentTrainingType;
     private bool _success;
     private string[] _errors = Array.Empty<string>();
     [AllowNull] private MudForm _form;
@@ -53,6 +54,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             };
             _linkVehicleTraining = new();
         }
+        _currentTrainingType = TrainingTypes?.FirstOrDefault(x => x.Id == _training?.RoosterTrainingTypeId);
     }
 
     void Cancel() => MudDialog.Cancel();

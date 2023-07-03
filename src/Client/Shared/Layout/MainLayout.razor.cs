@@ -31,6 +31,12 @@ public sealed partial class MainLayout : IDisposable
     private bool _settingsOpen = true;
     private bool _newNotificationsAvailable = false;
 
+    private MudTheme _myCustomTheme = new()
+    {
+        Palette = new PaletteLight(),
+        PaletteDark = new PaletteDark(),
+    };
+
     protected override async Task OnInitializedAsync()
     {
         try

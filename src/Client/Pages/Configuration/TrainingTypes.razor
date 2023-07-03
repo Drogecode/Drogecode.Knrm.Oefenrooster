@@ -7,7 +7,7 @@
     @if (_trainingTypes is not null)
     {
         <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{OpenTrainingTypeDialog(null, true);}">@L["Add new training type"]</MudButton>
-        <MudTable Items="_trainingTypes.OrderBy(x=>x.Order)">
+        <MudTable Items="_trainingTypes.OrderByDescending(x=>x.IsActive).ThenBy(x=>x.Order)">
             <HeaderContent>
                 <MudTh>@L["Order"]</MudTh>
                 <MudTh>@L["Description"]</MudTh>
@@ -15,6 +15,7 @@
                 <MudTh>@L["Color dark"]</MudTh>
                 <MudTh>@L["CountToTrainingTarget"]</MudTh>
                 <MudTh>@L["IsDefault"]</MudTh>
+                <MudTh>@L["IsActive"]</MudTh>
                 <MudTh></MudTh>
             </HeaderContent>
             <RowTemplate>
@@ -28,8 +29,8 @@
                 </MudTd>
                 <MudTd DataLabel="@L["CountToTrainingTarget"]">@context.CountToTrainingTarget</MudTd>
                 <MudTd DataLabel="@L["IsDefault"]">@context.IsDefault</MudTd>
+                <MudTd DataLabel="@L["IsActive"]">@context.IsActive</MudTd>
                 <MudTd>
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context);}" id="@($"delete-trainingtype-{context.Id}")" />
                     <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenTrainingTypeDialog(context, false);}" id="@($"edit-trainingtype-{context.Id}")" />
                 </MudTd>
             </RowTemplate>
