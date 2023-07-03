@@ -29,8 +29,8 @@
                 <MudTd DataLabel="@L["CountToTrainingTarget"]">@context.CountToTrainingTarget</MudTd>
                 <MudTd DataLabel="@L["IsDefault"]">@context.IsDefault</MudTd>
                 <MudTd>
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context);}" />
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenTrainingTypeDialog(context, false);}" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context);}" id="@($"delete-trainingtype-{context.Id}")" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenTrainingTypeDialog(context, false);}" id="@($"edit-trainingtype-{context.Id}")" />
                 </MudTd>
             </RowTemplate>
         </MudTable>

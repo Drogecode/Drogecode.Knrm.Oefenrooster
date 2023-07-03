@@ -11,6 +11,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
 
 public class MockTrainingTypesClient : ITrainingTypesClient
 {
+    public static readonly Guid DEFAULT_PLANNER_TYPE = new("27231399-ff3b-4924-865c-a0f61e6162cd");
     public Task<GetTraininTypeByIdResponse> GetByIdAsync(Guid id)
     {
         return GetByIdAsync(id, CancellationToken.None);
@@ -35,7 +36,7 @@ public class MockTrainingTypesClient : ITrainingTypesClient
             {
                 new PlannerTrainingType()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = DEFAULT_PLANNER_TYPE,
                     Name = "GetTrainingTypesAsync Mock default",
                 }
             }

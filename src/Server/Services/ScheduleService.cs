@@ -509,7 +509,12 @@ public class ScheduleService : IScheduleService
     {
         var sw = Stopwatch.StartNew();
         var result = new GetScheduledTrainingsForUserResponse();
-        var scheduled = await _database.RoosterAvailables.Include(i => i.Training.RoosterAvailables).Include(i => i.Training.RoosterAvailables).Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && (fromDate == null || x.Date >= fromDate)).OrderBy(x => x.Date).ToListAsync(cancellationToken: token);
+        var scheduled = await _database.RoosterAvailables
+            .Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && (fromDate == null || x.Date >= fromDate))
+            .Include(i => i.Training.RoosterAvailables)
+            .Include(i => i.Training.RoosterAvailables)
+            .OrderBy(x => x.Date)
+            .ToListAsync(cancellationToken: token);
         var users = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
         foreach (var schedul in scheduled)
         {

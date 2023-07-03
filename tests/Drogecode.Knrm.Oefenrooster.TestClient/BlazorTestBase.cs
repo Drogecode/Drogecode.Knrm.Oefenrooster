@@ -30,16 +30,13 @@ public abstract class BlazorTestBase : TestContext
         authContext.SetAuthorized("TEST USER");
         authContext.SetClaims(new Claim("http://schemes.random.net/identity/upn", "TEST USER"));
 
-        Services.AddSingleton<IEventListener, EventListener>();
-        Services.AddSingleton<IDialogService, DialogService>();
-        Services.AddSingleton<IScrollManager, ScrollManager>();
-        Services.AddSingleton<ISnackbar, SnackbarService>();
-        Services.AddSingleton<IKeyInterceptorFactory, KeyInterceptorFactory>();
-        Services.AddSingleton<IMudPopoverService, MudPopoverService>();
-        Services.AddSingleton<IBreakpointService, BreakpointService>();
-        Services.AddSingleton<IResizeObserverFactory, ResizeObserverFactory>();
-        Services.AddSingleton<IBrowserWindowSizeProvider, BrowserWindowSizeProvider>();
-        Services.AddSingleton<ISnackbar, SnackbarService>();
+        Services.AddMudServices(options =>
+        {
+            options.SnackbarConfiguration.ShowTransitionDuration = 0;
+            options.SnackbarConfiguration.HideTransitionDuration = 0;
+        });
+        Services.AddScoped(sp => new HttpClient());
+        Services.AddOptions();
 
         this.AddBlazoredLocalStorage();
         this.AddBlazoredSessionStorage();
