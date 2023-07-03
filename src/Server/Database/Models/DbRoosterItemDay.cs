@@ -10,4 +10,6 @@ public class DbRoosterItemDay : RoosterItemDay
     public Guid CustomerId { get; set; }
 
     public DbCustomers Customer { get; set; }
+    public DateTime CreatedOn { get; set; }
+    public Guid CreatedBy { get; set; }
 }

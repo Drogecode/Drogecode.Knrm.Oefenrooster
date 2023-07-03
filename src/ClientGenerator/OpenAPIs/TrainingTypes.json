@@ -267,6 +267,9 @@
           },
           "isDefault": {
             "type": "boolean"
+          },
+          "isActive": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

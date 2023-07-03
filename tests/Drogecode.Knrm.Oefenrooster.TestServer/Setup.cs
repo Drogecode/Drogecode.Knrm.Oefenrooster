@@ -34,6 +34,7 @@ public class Setup : Xunit.Di.Setup
 
             services.AddSingleton<IDateTimeService, DateTimeServiceMock>();
 
+            services.AddScoped<ICalendarItemService, CalendarItemService>();
             services.AddScoped<IAuditService, AuditService>();
             services.AddScoped<IConfigurationService, ConfigurationService>();
             services.AddScoped<IFunctionService, FunctionService>();
@@ -44,6 +45,7 @@ public class Setup : Xunit.Di.Setup
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IVehicleService, VehicleService>();
 
+            services.AddScoped<CalendarItemController>();
             services.AddScoped<ConfigurationController>();
             services.AddScoped<FunctionController>();
             services.AddScoped<HolidayController>();

@@ -40,7 +40,7 @@ public class CalendarItemController : ControllerBase
             var result = new GetMonthItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             result = await _calendarItemService.GetMonthItems(year, month, customerId, token);
-            return Ok(result);
+            return result;
         }
         catch (Exception ex)
         {
@@ -58,11 +58,49 @@ public class CalendarItemController : ControllerBase
             var result = new GetDayItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             result = await _calendarItemService.GetDayItems(yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, customerId, token);
-            return Ok(result);
+            return result;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in GetDayItems");
+            return BadRequest();
+        }
+    }
+
+    [HttpPut]
+    [Route("month")]
+    public async Task<ActionResult<PutMonthItemResponse>> PutMonthItem([FromBody] RoosterItemMonth roosterItemMonth, CancellationToken token = default)
+    {
+        try
+        {
+            var result = new PutMonthItemResponse();
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            result = await _calendarItemService.PutMonthItem(roosterItemMonth, customerId, userId, token);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in PutMonthtem");
+            return BadRequest();
+        }
+    }
+
+    [HttpPut]
+    [Route("day")]
+    public async Task<ActionResult<PutDayItemResponse>> PutDayItem([FromBody] RoosterItemDay roosterItemDay, CancellationToken token = default)
+    {
+        try
+        {
+            var result = new PutDayItemResponse();
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            result = await _calendarItemService.PutDayItem(roosterItemDay, customerId, userId, token);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in PutDayItem");
             return BadRequest();
         }
     }
