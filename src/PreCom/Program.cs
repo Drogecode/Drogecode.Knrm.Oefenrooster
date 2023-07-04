@@ -1,37 +1,83 @@
 ﻿using Drogecode.Knrm.Oefenrooster.PreCom;
-using Drogecode.Knrm.Oefenrooster.PreCom.Models;
+using Drogecode.Knrm.Oefenrooster.PreCom.Enums;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Net.Http.Headers;
 
-var configuration = new ConfigurationBuilder().AddJsonFile($"appsettings.json").AddEnvironmentVariables().Build();
-using HttpClient client = new();
-client.DefaultRequestHeaders.Accept.Clear();
-client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
-client.DefaultRequestHeaders.Add("User-Agent", ".NET Foundation Repository Reporter");
-
-var preComClient = new PreComClient(client, "drogecode");
-await preComClient.Login(configuration.GetRequiredSection("PreCom")["User"] ?? "", configuration.GetRequiredSection("PreCom")["Passwoord"] ?? "");
-var schedulerAppointments = await preComClient.GetUserSchedulerAppointments(DateTime.Today, DateTime.Today.AddDays(7));
-var userGroups = await preComClient.GetAllUserGroups();
-var d = await preComClient.GetAllFunctions(userGroups[0].GroupID, DateTime.Today);
-if (false)
+using var loggerFactory = LoggerFactory.Create(builder =>
 {
-    // Does not work
-    await preComClient.SendMessage(new MsgSend
+    builder
+        .AddFilter("Microsoft", LogLevel.Warning)
+        .AddFilter("System", LogLevel.Warning)
+        .AddFilter("LoggingConsoleApp.Program", LogLevel.Debug)
+        .AddConsole();
+});
+ILogger logger = loggerFactory.CreateLogger<Program>();
+logger.LogInformation("Example log message", logger);
+
+try
+{
+    var configuration = new ConfigurationBuilder().AddJsonFile($"appsettings.json").AddEnvironmentVariables().Build();
+    using HttpClient client = new();
+    client.DefaultRequestHeaders.Accept.Clear();
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
+    client.DefaultRequestHeaders.Add("User-Agent", ".NET Foundation Repository Reporter");
+
+    var preComClient = new PreComClient(client, "drogecode", logger);
+    var sleeper = new Sleeper(logger);
+    int failerCount = 0;
+    DateTime lastRun = DateTime.MinValue;
+    NextRunMode nextRunMode = NextRunMode.None;
+
+    while (true)
     {
-        SendBy = 37398,//7457,
-        CalculateGroupID = userGroups[0].GroupID,
-        ValidFrom = DateTime.Now,
-        Message = "test",
-        Priority = true,
-        Receivers = new List<MsgReceivers>
+        try
         {
-            new MsgReceivers
+            if (nextRunMode != NextRunMode.None)
             {
-                ID = 37398,
-                Type = 0,
+                var user = configuration.GetRequiredSection("PreCom")["User"];
+                var passwoord = configuration.GetRequiredSection("PreCom")["Passwoord"];
+                if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(passwoord))
+                {
+                    logger.LogError("user name '{userNull}' or passwoord '{passwoordNull}' null or empty", string.IsNullOrEmpty(user), string.IsNullOrEmpty(passwoord));
+                    break;
+                }
+                await preComClient.Login(user, passwoord);
+                var worker = new PreComWorker(preComClient, logger);
+                await worker.Work();
             }
+            else
+            {
+                await sleeper.SleepShort();
+            }
+
+            lastRun = DateTime.Now;
+            failerCount = 0;
         }
-    });
+        catch (Exception ex) // Only place to catch unspecified exceptions!
+        {
+            logger.LogError(ex, "failer in main loop");
+            failerCount *= failerCount;
+            if (failerCount == 0)
+                failerCount = 1;
+        }
+        finally
+        {
+            if (failerCount > 0)
+            {
+                var sleepCount = (failerCount) * 60;
+                while (sleepCount > 0)
+                {
+                    await Task.Delay(1000);
+                    sleepCount--;
+                }
+            }
+            nextRunMode = await sleeper.Sleep(lastRun);
+        }
+    }
+
 }
-await Task.Delay(1000);
+catch (Exception ex)
+{
+    logger.LogError(ex, "failer in base!");
+}

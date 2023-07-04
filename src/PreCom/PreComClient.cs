@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.PreCom.Models;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
@@ -11,6 +12,7 @@ public class PreComClient
     static readonly JsonSerializer Serializer = JsonSerializer.CreateDefault();
     readonly string UserAgent = "PreComClient/1.2 (https://github.com/ramonsmits/PreCom.Client) ";
     readonly HttpClient httpClient;
+    readonly ILogger _logger;
 
     public static readonly string[] HourKeys = GenerateHourKeys();
 
@@ -21,10 +23,11 @@ public class PreComClient
         return hourKeys;
     }
 
-    public PreComClient(HttpClient httpClient, string userAgentSuffix)
+    public PreComClient(HttpClient httpClient, string userAgentSuffix, ILogger logger)
     {
         UserAgent += userAgentSuffix;
         this.httpClient = httpClient;
+        this._logger = logger;
         httpClient.DefaultRequestHeaders.Clear();
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
