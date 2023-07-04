@@ -21,10 +21,42 @@ public class SleeperTests
     }
 
     [Fact]
-    public void NextModeFridayTest()
+    public void NextModeFriday8AMTest()
+    {
+        var sleeper = new Sleeper(_logger);
+        var result = sleeper.NextMode(new DateTime(2018, 11, 9, 8, 0, 0)); // friday
+        result.Should().Be(NextRunMode.NextHour);
+    }
+
+    [Fact]
+    public void NextModeFriday7PMTest()
+    {
+        var sleeper = new Sleeper(_logger);
+        var result = sleeper.NextMode(new DateTime(2018, 11, 9, 19, 0, 0)); // friday
+        result.Should().Be(NextRunMode.TodayTomorrow);
+    }
+
+    [Fact]
+    public void NextModeFriday8PMTest()
     {
         var sleeper = new Sleeper(_logger);
         var result = sleeper.NextMode(new DateTime(2018, 11, 9, 20, 0, 0)); // friday
         result.Should().Be(NextRunMode.NextWeek);
+    }
+
+    [Fact]
+    public void NextModeTuseday7PMTest()
+    {
+        var sleeper = new Sleeper(_logger);
+        var result = sleeper.NextMode(new DateTime(2018, 11, 6, 19, 0, 0)); // tuseday
+        result.Should().Be(NextRunMode.TodayTomorrow);
+    }
+
+    [Fact]
+    public void NextModeTuseday8PMTest()
+    {
+        var sleeper = new Sleeper(_logger);
+        var result = sleeper.NextMode(new DateTime(2018, 11, 6, 20, 0, 0)); // tuseday
+        result.Should().Be(NextRunMode.NextHour);
     }
 }

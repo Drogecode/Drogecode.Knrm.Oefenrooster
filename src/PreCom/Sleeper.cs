@@ -44,13 +44,14 @@ public class Sleeper
         switch (nextRun.DayOfWeek)
         {
             case DayOfWeek.Friday:
-                if (nextRun.Hour == 20) return NextRunMode.NextWeek;
+                if (nextRun.Hour == 19) return NextRunMode.TodayTomorrow;
+                else if (nextRun.Hour == 20) return NextRunMode.NextWeek;
                 break;
             case DayOfWeek.Saturday:
                 if (nextRun.Hour == 19) return NextRunMode.NextWeek;
                 break;
             default:
-                if (nextRun.Hour == 10) return NextRunMode.TodayTomorrow;
+                if (nextRun.Hour == 19) return NextRunMode.TodayTomorrow;
                 break;
         }
         if (nextRun.Hour > 7 && nextRun.Hour < 22) return NextRunMode.NextHour;
