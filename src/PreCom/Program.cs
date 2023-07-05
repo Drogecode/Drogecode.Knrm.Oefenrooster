@@ -2,7 +2,12 @@
 using Drogecode.Knrm.Oefenrooster.PreCom.Enums;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using WhatsappBusiness.CloudApi;
+using WhatsappBusiness.CloudApi.Configurations;
+using WhatsappBusiness.CloudApi.Interfaces;
+using WhatsappBusiness.CloudApi.Messages.Requests;
 
 using var loggerFactory = LoggerFactory.Create(builder =>
 {
@@ -48,7 +53,22 @@ try
                 var message = await worker.Work(nextRunMode);
                 if (!string.IsNullOrEmpty(message))
                 {
-                    // Send message frouw WhatsApp
+                    //However, will never work for groups like this :'(
+                    using HttpClient WhatsAppclient = new();
+                    WhatsAppclient.BaseAddress = WhatsAppBusinessRequestEndpoint.BaseAddress;
+                    var whatsAppBusinessClient = new WhatsAppBusinessClient(WhatsAppclient, new WhatsAppBusinessCloudApiConfig
+                    {
+                        WhatsAppBusinessPhoneNumberId = "119008671191114",
+                        WhatsAppBusinessAccountId = "118041241288520",
+                        WhatsAppBusinessId = "630230422459125",
+                        AccessToken = "EAACFeYX2RJwBAGct6j4z8VfPzcfjoA2g6KZByAPyaEfZAFagYbmHfaj3bDx2KYIzkdjZB4yXUaiZBZB9CWDHlNfIYqnXfyW3YI597o3WYlEte4nOXpuVRdVZB3F6H840aUPZBFR8WlyMQ9Owpysf1AYnZApkORNsxCKEG0JgidXxED0joGrqFRDLocwn3TEMJHSiP3h1YiC0mwZDZD",
+                    });
+                    TextMessageRequest textMessageRequest = new TextMessageRequest();
+                    textMessageRequest.To = "+31636215775";
+                    textMessageRequest.Text = new WhatsAppText();
+                    textMessageRequest.Text.Body = message;
+                    textMessageRequest.Text.PreviewUrl = false;
+                    var results = await whatsAppBusinessClient.SendTextMessageAsync(textMessageRequest);
                 }
             }
             else
