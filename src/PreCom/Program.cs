@@ -27,12 +27,13 @@ try
     var sleeper = new Sleeper(logger);
     int failerCount = 0;
     DateTime lastRun = DateTime.MinValue;
-    NextRunMode nextRunMode = NextRunMode.None;
+    NextRunMode nextRunMode = NextRunMode.NextWeek;
 
     while (true)
     {
         try
         {
+            logger.LogInformation("Next run of type '{NextRunMode}'", nextRunMode);
             if (nextRunMode != NextRunMode.None)
             {
                 var user = configuration.GetRequiredSection("PreCom")["User"];
@@ -44,7 +45,11 @@ try
                 }
                 await preComClient.Login(user, passwoord);
                 var worker = new PreComWorker(preComClient, logger);
-                await worker.Work();
+                var message = await worker.Work(nextRunMode);
+                if (!string.IsNullOrEmpty(message))
+                {
+                    // Send message frouw WhatsApp
+                }
             }
             else
             {

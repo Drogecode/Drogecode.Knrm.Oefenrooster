@@ -25,7 +25,7 @@ public class Sleeper
             nextRun = nextRun.AddMinutes(-nextRun.Minute);
             while (true)
             {
-                if (nextRun.CompareTo(DateTime.Now) > 0)
+                if (nextRun.CompareTo(DateTime.Now) <= 0)
                 {
                     return NextMode(nextRun);
                 }
