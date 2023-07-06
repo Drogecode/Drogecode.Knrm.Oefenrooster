@@ -10,7 +10,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [ApiExplorerSettings(GroupName = "SharePoint")]
 public class SharePointController : ControllerBase
@@ -33,6 +33,7 @@ public class SharePointController : ControllerBase
     }
 
     [HttpGet]
+    [Route("training/user/{count:int}/{skip:int}")]
     public async Task<ActionResult<MultipleSharePointTrainingsResponse>> GetLastTrainingsForCurrentUser(int count, int skip, CancellationToken clt = default)
     {
         try
@@ -53,6 +54,7 @@ public class SharePointController : ControllerBase
     }
 
     [HttpGet]
+    [Route("action/user/{count:int}/{skip:int}")]
     public async Task<ActionResult<MultipleSharePointActionsResponse>> GetLastActionsForCurrentUser(int count, int skip, CancellationToken clt = default)
     {
         try

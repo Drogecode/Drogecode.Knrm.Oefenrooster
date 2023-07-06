@@ -39,7 +39,7 @@ else if (_specialDatesUpdated == false)
 
 @if (_users != null && _functions != null)
 {
-    <MudPaper Width="700px">
+    <MudPaper>
         <MudList Clickable="false">
             @foreach (var function in _functions.OrderBy(x => x.Order))
             {

@@ -12,8 +12,8 @@ public class DbUserFunctions
     public int Order { get; set; }
     public int TrainingTarget { get; set; }
     public bool TrainingOnly { get; set; }
-    public bool Default { get; set; }
-    public bool Active { get; set; }
+    public bool IsDefault { get; set; }
+    public bool IsActive { get; set; }
 
     public DbCustomers Customer { get; set; }
     public ICollection<DbUsers>? Users { get; set; }

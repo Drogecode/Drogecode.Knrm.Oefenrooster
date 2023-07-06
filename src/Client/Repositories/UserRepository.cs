@@ -19,7 +19,7 @@ public class UserRepository
     }
     public async Task<DrogeUser?> GetCurrentUserAsync()
     {
-        var dbUser = await _userClient.GetAsync();
+        var dbUser = await _userClient.GetCurrentUserAsync();
         return dbUser.DrogeUser;
     }
 

@@ -13,7 +13,10 @@ public class HolidayControllerTests : BaseTest
         IDateTimeService dateTimeServiceMock,
         UserController userController,
         FunctionController functionController,
-        HolidayController holidayController) : base(scheduleController, userController, functionController, holidayController)
+        HolidayController holidayController,
+        TrainingTypesController trainingTypesController,
+        CalendarItemController calendarItemController) :
+        base(scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController)
     {
         _dateTimeServiceMock = (IDateTimeServiceMock)dateTimeServiceMock;
     }

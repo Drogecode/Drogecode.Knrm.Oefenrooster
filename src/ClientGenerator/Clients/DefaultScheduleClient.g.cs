@@ -83,7 +83,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<MultipleDefaultSchedulesResponse> GetAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/DefaultSchedule/GetAll");
+            urlBuilder_.Append("api/DefaultSchedule");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -157,7 +157,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUserAsync(DefaultSchedule body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/DefaultSchedule/PatchDefaultScheduleForUser");
+            urlBuilder_.Append("api/DefaultSchedule");
 
             var client_ = _httpClient;
             var disposeClient_ = false;

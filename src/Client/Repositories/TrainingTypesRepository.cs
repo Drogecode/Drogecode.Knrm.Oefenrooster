@@ -20,4 +20,15 @@ public class TrainingTypesRepository
         var schedule = await _trainingTypesClient.GetTrainingTypesAsync(clt);
         return schedule.PlannerTrainingTypes?.ToList();
     }
+    internal async Task<PutTrainingTypeResponse> Post(PlannerTrainingType trainingType, CancellationToken clt = default)
+    {
+        var result = await _trainingTypesClient.PostNewTrainingTypeAsync(trainingType, clt);
+        return result;
+    }
+
+    internal async Task<PatchTrainingTypeResponse> Patch(PlannerTrainingType trainingType, CancellationToken clt = default)
+    {
+        var result = await _trainingTypesClient.PatchTrainingTypeAsync(trainingType, clt);
+        return result;
+    }
 }

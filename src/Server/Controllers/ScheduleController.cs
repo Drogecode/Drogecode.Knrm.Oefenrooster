@@ -9,7 +9,7 @@ using System.Text.Json;
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [ApiExplorerSettings(GroupName = "Schedule")]
 public class ScheduleController : ControllerBase
@@ -29,6 +29,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
+    [Route("me/period/{yearStart:int}/{monthStart:int}/{dayStart:int}/{yearEnd:int}/{monthEnd:int}/{dayEnd:int}")]
     public async Task<ActionResult<MultipleTrainingsResponse>> ForUser(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token = default)
     {
         try
@@ -46,6 +47,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
+    [Route("all/period/{forMonth:int}/{yearStart:int}/{monthStart:int}/{dayStart:int}/{yearEnd:int}/{monthEnd:int}/{dayEnd:int}")]
     public async Task<ActionResult<ScheduleForAllResponse>> ForAll(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token = default)
     {
         try
@@ -62,7 +64,8 @@ public class ScheduleController : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPatch]
+    [Route("training")]
     public async Task<ActionResult<PatchTrainingResponse>> PatchTraining([FromBody] EditTraining patchedTraining, CancellationToken token = default)
     {
         try
@@ -85,6 +88,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPost]
+    [Route("training")]
     public async Task<ActionResult<AddTrainingResponse>> AddTraining([FromBody] EditTraining newTraining, CancellationToken token = default)
     {
         try
@@ -107,7 +111,8 @@ public class ScheduleController : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPatch]
+    [Route("schedule")]
     public async Task<ActionResult<PatchScheduleForUserResponse>> PatchScheduleForUser([FromBody] Training training, CancellationToken token = default)
     {
         try
@@ -124,7 +129,8 @@ public class ScheduleController : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPatch]
+    [Route("assigned-user")]
     public async Task<ActionResult<PatchAssignedUserResponse>> PatchAssignedUser([FromBody] PatchAssignedUserRequest body, CancellationToken token = default)
     {
         try
@@ -142,7 +148,8 @@ public class ScheduleController : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPut]
+    [Route("assigned-user")]
     public async Task<ActionResult> PutAssignedUser([FromBody] OtherScheduleUserRequest body, CancellationToken token = default)
     {
         try
@@ -161,6 +168,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
+    [Route("me/scheduled-trainings")]
     public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> GetScheduledTrainingsForUser(CancellationToken token = default)
     {
         try
@@ -179,6 +187,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
+    [Route("training/user/all/{id:guid}")]
     public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> AllTrainingsForUser(Guid id, CancellationToken clt = default)
     {
         try
@@ -196,6 +205,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
+    [Route("me/pinned")]
     public async Task<ActionResult<GetPinnedTrainingsForUserResponse>> GetPinnedTrainingsForUser(CancellationToken token = default)
     {
         try
@@ -204,7 +214,7 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var fromDate = DateTime.Today.ToUniversalTime();
             GetPinnedTrainingsForUserResponse result = await _scheduleService.GetPinnedTrainingsForUser(userId, customerId, fromDate, token);
-            return Ok(result);
+            return result;
         }
         catch (Exception ex)
         {

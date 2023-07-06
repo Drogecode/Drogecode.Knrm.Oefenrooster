@@ -34,8 +34,8 @@ public class FunctionService : IFunctionService
             Order = order,
             TrainingTarget = function.TrainingTarget,
             TrainingOnly = function.TrainingOnly,
-            Default = function.Default,
-            Active = function.Active,
+            IsDefault = function.Default,
+            IsActive = function.Active,
         });
         result.Success = (await _database.SaveChangesAsync(clt) > 0);
         result.NewFunction = function;
@@ -58,8 +58,8 @@ public class FunctionService : IFunctionService
                 Order = function.Order,
                 TrainingTarget = function.TrainingTarget,
                 TrainingOnly = function.TrainingOnly,
-                Default = function.Default,
-                Active = function.Active,
+                Default = function.IsDefault,
+                Active = function.IsActive,
             });
         }
         result.Success = true;

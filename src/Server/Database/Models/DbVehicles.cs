@@ -12,7 +12,8 @@ public class DbVehicles
     public string Code { get; set; }
     public int Order { get; set; }
     public bool IsDefault { get; set; }
-    public bool Active { get; set; }
+    public bool IsActive { get; set; }
+    public Guid? Deletedby { get; set; }
     public DateTime? DeletedOn { get; set; }
 
     public DbCustomers Customer { get; set; }

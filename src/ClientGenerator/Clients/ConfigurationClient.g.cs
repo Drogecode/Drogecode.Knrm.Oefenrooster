@@ -101,7 +101,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<UpgradeDatabaseResponse> UpgradeDatabaseAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Configuration/UpgradeDatabase");
+            urlBuilder_.Append("api/Configuration/upgrade-database");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -109,7 +109,8 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "text/plain");
+                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -174,13 +175,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<VersionDetailResponse> NewVersionAvailableAsync(string clientVersion, System.Threading.CancellationToken cancellationToken)
         {
+            if (clientVersion == null)
+                throw new System.ArgumentNullException("clientVersion");
+
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Configuration/NewVersionAvailable?");
-            if (clientVersion != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("clientVersion") + "=").Append(System.Uri.EscapeDataString(ConvertToString(clientVersion, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
+            urlBuilder_.Append("api/Configuration/new-version-available/{clientVersion}");
+            urlBuilder_.Replace("{clientVersion}", System.Uri.EscapeDataString(ConvertToString(clientVersion, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -254,7 +254,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<InstallingActiveResponse> InstallingActiveAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Configuration/InstallingActive");
+            urlBuilder_.Append("api/Configuration/installing-active");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -328,7 +328,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<UpdateSpecialDatesResponse> UpdateSpecialDatesAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Configuration/UpdateSpecialDates");
+            urlBuilder_.Append("api/Configuration/update-special-dates");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -336,7 +336,8 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "text/plain");
+                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     PrepareRequest(client_, request_, urlBuilder_);

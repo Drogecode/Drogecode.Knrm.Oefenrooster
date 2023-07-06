@@ -1,27 +1,33 @@
-using Drogecode.Knrm.Oefenrooster.Server.Database;
-using Drogecode.Knrm.Oefenrooster.Server.Hubs;
-using Drogecode.Knrm.Oefenrooster.Server.Services;
-using Drogecode.Knrm.Oefenrooster.Shared.Services;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
-using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Identity.Web;
-using Microsoft.OpenApi.Extensions;
+using Drogecode.Knrm.Oefenrooster.Server.Database;
+using Drogecode.Knrm.Oefenrooster.Server.Services;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Extensions;
 using System.Text;
+using Microsoft.AspNetCore.ResponseCompression;
+using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Services;
+using Drogecode.Knrm.Oefenrooster.Server.Health;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
-    
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
+builder.Services.AddHealthChecks()
+    //.AddCheck<DatabaseHealthCheck>("postgresDB")
+    .AddNpgSql(builder.Configuration.GetConnectionString("postgresDB") ?? "nevermind");
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -29,15 +35,6 @@ builder.Services.AddResponseCompression(opts =>
 });
 
 builder.Services.AddDbContextPool<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("postgresDB")));
-/*builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.Cookie.HttpOnly = false;
-    options.Events.OnRedirectToLogin = context =>
-    {
-        context.Response.StatusCode = 401;
-        return Task.CompletedTask;
-    };
-});*/
 builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
 {
     ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
@@ -113,6 +110,10 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.MapHealthChecks("/api/_health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -142,5 +143,4 @@ app.MapRazorPages();
 app.MapControllers();
 app.MapHub<PreComHub>("/hub/precomhub");
 app.MapFallbackToFile("index.html");
-
 app.Run();

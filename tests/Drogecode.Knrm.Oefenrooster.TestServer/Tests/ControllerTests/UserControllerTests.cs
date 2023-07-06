@@ -16,7 +16,10 @@ public class UserControllerTests : BaseTest
         ScheduleController scheduleController, 
         UserController userController,
         FunctionController functionController,
-        HolidayController holidayController) : base(scheduleController, userController, functionController, holidayController)
+        HolidayController holidayController,
+        TrainingTypesController trainingTypesController,
+        CalendarItemController calendarItemController) :
+        base(scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController)
     {
     }
 
@@ -45,7 +48,7 @@ public class UserControllerTests : BaseTest
     [Fact]
     public async Task GetTest()
     {
-        var user = await UserController.Get();
+        var user = await UserController.GetCurrentUser();
         Assert.NotNull(user?.Value?.DrogeUser);
         user.Value.DrogeUser.Id.Should().Be(DefaultSettingsHelper.IdTaco);
     }

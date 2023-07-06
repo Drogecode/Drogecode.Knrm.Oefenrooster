@@ -1,7 +1,6 @@
 ﻿@if (Functions != null && Users != null && UserTrainingCounter != null && UserTrainingCounter.Count > 0)
 {
-    <MudPaper>
-
+    <MudPaper Elevation="0" Class="p-2">
         <MudGrid Spacing="2" Justify="Justify.FlexStart">
             @foreach (var function in Functions.OrderBy(x => x.Order))
             {

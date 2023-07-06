@@ -12,7 +12,7 @@ using ZXing;
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [ApiExplorerSettings(GroupName = "User")]
 public class UserController : ControllerBase
@@ -31,6 +31,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
+    [Route("all/{includeHidden:bool}")]
     public async Task<ActionResult<MultipleDrogeUsersResponse>> GetAll(bool includeHidden, CancellationToken token = default)
     {
         try
@@ -48,7 +49,8 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<GetDrogeUserResponse>> Get(CancellationToken token = default)
+    [Route("me")]
+    public async Task<ActionResult<GetDrogeUserResponse>> GetCurrentUser(CancellationToken token = default)
     {
         try
         {
@@ -68,6 +70,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
+    [Route("{id:guid}")]
     public async Task<ActionResult<GetByIdResponse>> GetById(Guid id, CancellationToken clt = default)
     {
         try
@@ -83,6 +86,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
+    [Route("")]
     public async Task<ActionResult<AddUserResponse>> AddUser([FromBody] DrogeUser user, CancellationToken token = default)
     {
         try
@@ -103,7 +107,8 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPatch]
+    [Route("")]
     public async Task<ActionResult<UpdateUserResponse>> UpdateUser([FromBody] DrogeUser user, CancellationToken token = default)
     {
         try
@@ -123,7 +128,8 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpPatch]
+    [Route("sync")]
     public async Task<ActionResult<SyncAllUsersResponse>> SyncAllUsers(CancellationToken token = default)
     {
         try

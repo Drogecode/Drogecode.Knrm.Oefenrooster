@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/api/Function/AddFunction": {
+    "/api/Function": {
       "put": {
         "tags": [
           "Function"
@@ -52,9 +52,7 @@
             }
           }
         }
-      }
-    },
-    "/api/Function/GetAll": {
+      },
       "get": {
         "tags": [
           "Function"

@@ -34,12 +34,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MultipleVehicleTrainingLinkResponse> GetForTrainingAsync(System.Guid? trainingId);
+        System.Threading.Tasks.Task<MultipleVehicleTrainingLinkResponse> GetForTrainingAsync(System.Guid trainingId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MultipleVehicleTrainingLinkResponse> GetForTrainingAsync(System.Guid? trainingId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<MultipleVehicleTrainingLinkResponse> GetForTrainingAsync(System.Guid trainingId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -92,7 +92,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<MultipleVehicleResponse> GetAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Vehicle/GetAll");
+            urlBuilder_.Append("api/Vehicle");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -155,7 +155,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<MultipleVehicleTrainingLinkResponse> GetForTrainingAsync(System.Guid? trainingId)
+        public virtual System.Threading.Tasks.Task<MultipleVehicleTrainingLinkResponse> GetForTrainingAsync(System.Guid trainingId)
         {
             return GetForTrainingAsync(trainingId, System.Threading.CancellationToken.None);
         }
@@ -163,15 +163,14 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<MultipleVehicleTrainingLinkResponse> GetForTrainingAsync(System.Guid? trainingId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<MultipleVehicleTrainingLinkResponse> GetForTrainingAsync(System.Guid trainingId, System.Threading.CancellationToken cancellationToken)
         {
+            if (trainingId == null)
+                throw new System.ArgumentNullException("trainingId");
+
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Vehicle/GetForTraining?");
-            if (trainingId != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("trainingId") + "=").Append(System.Uri.EscapeDataString(ConvertToString(trainingId, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
+            urlBuilder_.Append("api/Vehicle/training/{trainingId}");
+            urlBuilder_.Replace("{trainingId}", System.Uri.EscapeDataString(ConvertToString(trainingId, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -245,7 +244,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<DrogeLinkVehicleTrainingResponse> UpdateLinkVehicleTrainingAsync(DrogeLinkVehicleTraining body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Vehicle/UpdateLinkVehicleTraining");
+            urlBuilder_.Append("api/Vehicle/link-vehicle-training");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -257,7 +256,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                     var content_ = new System.Net.Http.StringContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     PrepareRequest(client_, request_, urlBuilder_);

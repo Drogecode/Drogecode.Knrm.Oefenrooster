@@ -29,12 +29,14 @@ public sealed partial class User : IDisposable
     private GetScheduledTrainingsForUserResponse? _trainings;
     private List<DrogeVehicle>? _vehicles;
     private List<PlannerTrainingType>? _trainingTypes;
-    protected override async void OnInitialized()
+    protected override void OnInitialized()
     {
+        _trainings = null;
+        StateHasChanged();
     }
     protected override async Task OnParametersSetAsync()
     {
-        _users = await _userRepository.GetAllUsersAsync(true);
+        _users = await _userRepository.GetAllUsersAsync(false);
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
         _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(_cls.Token);

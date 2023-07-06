@@ -365,7 +365,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Kompas leider",
                 Order = 10,
-                Active = true,
+                IsActive = true,
                 TrainingOnly = true,
                 TrainingTarget = 0,
             }));
@@ -375,7 +375,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Schipper",
                 Order = 20,
-                Active = true,
+                IsActive = true,
                 TrainingTarget = 2,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
@@ -384,7 +384,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Schipper I.O.",
                 Order = 30,
-                Active = true,
+                IsActive = true,
                 TrainingTarget = 2,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
@@ -393,7 +393,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Opstapper",
                 Order = 60,
-                Active = true,
+                IsActive = true,
                 TrainingTarget = 2,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
@@ -402,7 +402,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Aankomend opstapper",
                 Order = 70,
-                Active = true,
+                IsActive = true,
                 TrainingTarget = 2,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
@@ -411,8 +411,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Opstapper op proef",
                 Order = 80,
-                Default = true,
-                Active = true,
+                IsDefault = true,
+                IsActive = true,
                 TrainingTarget = 0,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
@@ -421,7 +421,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "HRB Aankomend opstapper",
                 Order = 100,
-                Active = true,
+                IsActive = true,
                 TrainingTarget = 0,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
@@ -430,7 +430,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Waarnemer",
                 Order = 180,
-                Active = true,
+                IsActive = true,
                 TrainingOnly = true,
                 TrainingTarget = 0,
             }));
@@ -440,7 +440,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Extra",
                 Order = 300,
-                Active = true,
+                IsActive = true,
                 TrainingTarget = 0,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
@@ -450,7 +450,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Name = "Inactief",
                 Order = 400,
                 TrainingTarget = 0,
-                Active = false
+                IsActive = false
             }));
         }
 
@@ -463,7 +463,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Name = "Nikolaas Wijsenbeek",
                 Code = "NWI",
                 IsDefault = true,
-                Active = true,
+                IsActive = true,
                 Order = 10,
             }));
             modelBuilder.Entity<DbVehicles>(e => e.HasData(new DbVehicles
@@ -472,7 +472,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "De Huizer",
                 Code = "HZR",
-                Active = true,
+                IsActive = true,
                 Order = 20,
             }));
             modelBuilder.Entity<DbVehicles>(e => e.HasData(new DbVehicles
@@ -481,7 +481,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Vlet",
                 Code = "HZN018",
-                Active = true,
+                IsActive = true,
                 Order = 30,
             }));
             modelBuilder.Entity<DbVehicles>(e => e.HasData(new DbVehicles
@@ -490,7 +490,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Wal",
                 Code = "Wal",
-                Active = true,
+                IsActive = true,
                 Order = 100,
             }));
         }
@@ -507,6 +507,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 10,
                 CountToTrainingTarget = true,
                 IsDefault = true,
+                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -516,6 +519,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 ColorLight = "rgb(214,129,0)",
                 ColorDark = "rgb(214,143,0)",
                 Order = 20,
+                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -525,6 +531,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 ColorLight = "rgb(25,169,140)",
                 ColorDark = "",
                 Order = 30,
+                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -536,6 +545,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 TextColorLight = "#FFFFFF",
                 TextColorDark = "#C0C0C0",
                 Order = 40,
+                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -545,6 +557,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 ColorLight = "rgb(0,235,98)",
                 ColorDark = "rgb(13,222,156)",
                 Order = 50,
+                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -554,6 +569,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 ColorLight = "#ADD8E6",
                 ColorDark = "#3BB9FF",
                 Order = 60,
+                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -563,6 +581,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 ColorLight = "#919454",
                 ColorDark = "#5f6138",
                 Order = 70,
+                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
             modelBuilder.Entity<DbRoosterTrainingType>(e => e.HasData(new DbRoosterTrainingType
             {
@@ -573,6 +594,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 80,
                 TextColorLight = "#FFFFFF",
                 TextColorDark = "#C0C0C0",
+                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
+                IsActive = true,
             }));
         }
         #endregion

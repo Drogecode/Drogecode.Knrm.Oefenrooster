@@ -1,10 +1,8 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Client.Services;
-@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-@using Microsoft.AspNetCore.Components.Authorization;
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @inherits LayoutComponentBase
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" />
+<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" Theme="@_myCustomTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 

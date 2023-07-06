@@ -10,7 +10,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [ApiExplorerSettings(GroupName = "DefaultSchedule")]
 public class DefaultScheduleController : ControllerBase
@@ -30,6 +30,7 @@ public class DefaultScheduleController : ControllerBase
     }
 
     [HttpGet]
+    [Route("")]
     public async Task<ActionResult<MultipleDefaultSchedulesResponse>> GetAll(CancellationToken token = default)
     {
         try
@@ -51,6 +52,7 @@ public class DefaultScheduleController : ControllerBase
     }
 
     [HttpPatch]
+    [Route("")]
     public async Task<ActionResult<PatchDefaultScheduleForUserResponse>> PatchDefaultScheduleForUser([FromBody] DefaultSchedule body)
     {
         try

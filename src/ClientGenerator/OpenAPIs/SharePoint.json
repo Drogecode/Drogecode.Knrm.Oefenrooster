@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/api/SharePoint/GetLastTrainingsForCurrentUser": {
+    "/api/SharePoint/training/user/{count}/{skip}": {
       "get": {
         "tags": [
           "SharePoint"
@@ -14,7 +14,8 @@
         "parameters": [
           {
             "name": "count",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -22,7 +23,8 @@
           },
           {
             "name": "skip",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -53,7 +55,7 @@
         }
       }
     },
-    "/api/SharePoint/GetLastActionsForCurrentUser": {
+    "/api/SharePoint/action/user/{count}/{skip}": {
       "get": {
         "tags": [
           "SharePoint"
@@ -62,7 +64,8 @@
         "parameters": [
           {
             "name": "count",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -70,7 +73,8 @@
           },
           {
             "name": "skip",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"

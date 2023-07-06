@@ -25,7 +25,7 @@ public class VehicleService : IVehicleService
                 Code = dbVehicle.Code,
                 Order = dbVehicle.Order,
                 Default = dbVehicle.IsDefault,
-                Active = dbVehicle.Active,
+                Active = dbVehicle.IsActive,
             });
         }
         return result;

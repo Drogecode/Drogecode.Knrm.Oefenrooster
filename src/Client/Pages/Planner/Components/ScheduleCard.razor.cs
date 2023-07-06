@@ -37,25 +37,27 @@ public sealed partial class ScheduleCard : IDisposable
 
     private void OpenScheduleDialog()
     {
-        var parameters = new DialogParameters {
-                { "Planner", Planner },
-                { "Refresh", _refreshModel },
-                { "Users", Users },
-                { "Functions", Functions},
-                { "Vehicles", Vehicles }
-            };
+        var parameters = new DialogParameters<ScheduleDialog>
+        {
+            { x => x.Planner, Planner },
+            { x => x.Refresh, _refreshModel },
+            { x => x.Users, Users },
+            { x => x.Functions, Functions },
+            { x => x.Vehicles, Vehicles }
+        };
+
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
         _dialogProvider.Show<ScheduleDialog>(L["Schedule people for this training"], parameters, options);
     }
 
     private void OpenConfigDialog()
     {
-        var parameters = new DialogParameters {
-            { "Planner", Planner },
-            { "Refresh", _refreshModel },
-            { "Vehicles", Vehicles },
-            { "Global", Global },
-            { "TrainingTypes", TrainingTypes }
+        var parameters = new DialogParameters<EditTrainingDialog> {
+            { x=>x.Planner, Planner },
+            { x=>x.Refresh, _refreshModel },
+            { x=>x.Vehicles, Vehicles },
+            { x=>x.Global, Global },
+            { x=>x.TrainingTypes, TrainingTypes }
         };
         var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
         _dialogProvider.Show<EditTrainingDialog>(L["Configure training"], parameters, options);
@@ -63,9 +65,7 @@ public sealed partial class ScheduleCard : IDisposable
 
     private void OpenHistoryDialog()
     {
-        var parameters = new DialogParameters
-        {
-        };
+        var parameters = new DialogParameters<TrainingHistoryDialog>();
         var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
         _dialogProvider.Show<TrainingHistoryDialog>(L["Edit history"], parameters, options);
     }

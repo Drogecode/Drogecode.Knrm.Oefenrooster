@@ -10,7 +10,7 @@ using System.Security.Claims;
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [ApiExplorerSettings(GroupName = "Configuration")]
 public class ConfigurationController : ControllerBase
@@ -32,7 +32,8 @@ public class ConfigurationController : ControllerBase
         _auditService = auditService;
     }
 
-    [HttpGet]
+    [HttpPatch]
+    [Route("upgrade-database")]
     public async Task<ActionResult<UpgradeDatabaseResponse>> UpgradeDatabase(CancellationToken token = default)
     {
         try
@@ -59,6 +60,7 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet]
+    [Route("new-version-available/{clientVersion}")]
     public async Task<ActionResult<VersionDetailResponse>> NewVersionAvailable(string clientVersion, CancellationToken token = default)
     {
         try
@@ -77,6 +79,7 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet]
+    [Route("installing-active")]
     public ActionResult<InstallingActiveResponse> InstallingActive(CancellationToken token = default)
     {
         try
@@ -90,7 +93,8 @@ public class ConfigurationController : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpPatch]
+    [Route("update-special-dates")]
     public async Task<ActionResult<UpdateSpecialDatesResponse>> UpdateSpecialDates(CancellationToken token = default)
     {
         try

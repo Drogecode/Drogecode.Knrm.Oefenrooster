@@ -83,7 +83,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<AddFunctionResponse> AddFunctionAsync(DrogeFunction body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Function/AddFunction");
+            urlBuilder_.Append("api/Function");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -161,7 +161,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<MultipleFunctionsResponse> GetAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Function/GetAll");
+            urlBuilder_.Append("api/Function");
 
             var client_ = _httpClient;
             var disposeClient_ = false;

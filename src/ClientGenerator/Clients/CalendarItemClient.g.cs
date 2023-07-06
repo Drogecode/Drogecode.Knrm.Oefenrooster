@@ -25,21 +25,39 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     {
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetMonthItemResponse> GetMonthItemsAsync(int? year, int? month);
+        System.Threading.Tasks.Task<GetMonthItemResponse> GetMonthItemsAsync(int year, int month);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetMonthItemResponse> GetMonthItemsAsync(int? year, int? month, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetMonthItemResponse> GetMonthItemsAsync(int year, int month, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd);
+        System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PutMonthItemResponse> PutMonthItemAsync(RoosterItemMonth body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PutMonthItemResponse> PutMonthItemAsync(RoosterItemMonth body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PutDayItemResponse> PutDayItemAsync(RoosterItemDay body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PutDayItemResponse> PutDayItemAsync(RoosterItemDay body, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -72,7 +90,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetMonthItemResponse> GetMonthItemsAsync(int? year, int? month)
+        public virtual System.Threading.Tasks.Task<GetMonthItemResponse> GetMonthItemsAsync(int year, int month)
         {
             return GetMonthItemsAsync(year, month, System.Threading.CancellationToken.None);
         }
@@ -80,19 +98,18 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetMonthItemResponse> GetMonthItemsAsync(int? year, int? month, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetMonthItemResponse> GetMonthItemsAsync(int year, int month, System.Threading.CancellationToken cancellationToken)
         {
+            if (year == null)
+                throw new System.ArgumentNullException("year");
+
+            if (month == null)
+                throw new System.ArgumentNullException("month");
+
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/CalendarItem/GetMonthItems?");
-            if (year != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("year") + "=").Append(System.Uri.EscapeDataString(ConvertToString(year, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (month != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("month") + "=").Append(System.Uri.EscapeDataString(ConvertToString(month, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
+            urlBuilder_.Append("api/CalendarItem/month/{year}/{month}");
+            urlBuilder_.Replace("{year}", System.Uri.EscapeDataString(ConvertToString(year, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{month}", System.Uri.EscapeDataString(ConvertToString(month, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -155,7 +172,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd)
+        public virtual System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd)
         {
             return GetDayItemsAsync(yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, System.Threading.CancellationToken.None);
         }
@@ -163,35 +180,34 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int? yearStart, int? monthStart, int? dayStart, int? yearEnd, int? monthEnd, int? dayEnd, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Threading.CancellationToken cancellationToken)
         {
+            if (yearStart == null)
+                throw new System.ArgumentNullException("yearStart");
+
+            if (monthStart == null)
+                throw new System.ArgumentNullException("monthStart");
+
+            if (dayStart == null)
+                throw new System.ArgumentNullException("dayStart");
+
+            if (yearEnd == null)
+                throw new System.ArgumentNullException("yearEnd");
+
+            if (monthEnd == null)
+                throw new System.ArgumentNullException("monthEnd");
+
+            if (dayEnd == null)
+                throw new System.ArgumentNullException("dayEnd");
+
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/CalendarItem/GetDayItems?");
-            if (yearStart != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("yearStart") + "=").Append(System.Uri.EscapeDataString(ConvertToString(yearStart, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (monthStart != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("monthStart") + "=").Append(System.Uri.EscapeDataString(ConvertToString(monthStart, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (dayStart != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("dayStart") + "=").Append(System.Uri.EscapeDataString(ConvertToString(dayStart, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (yearEnd != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("yearEnd") + "=").Append(System.Uri.EscapeDataString(ConvertToString(yearEnd, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (monthEnd != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("monthEnd") + "=").Append(System.Uri.EscapeDataString(ConvertToString(monthEnd, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (dayEnd != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("dayEnd") + "=").Append(System.Uri.EscapeDataString(ConvertToString(dayEnd, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
+            urlBuilder_.Append("api/CalendarItem/day/{yearStart}/{monthStart}/{dayStart}/{yearEnd}/{monthEnd}/{dayEnd}");
+            urlBuilder_.Replace("{yearStart}", System.Uri.EscapeDataString(ConvertToString(yearStart, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{monthStart}", System.Uri.EscapeDataString(ConvertToString(monthStart, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{dayStart}", System.Uri.EscapeDataString(ConvertToString(dayStart, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{yearEnd}", System.Uri.EscapeDataString(ConvertToString(yearEnd, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{monthEnd}", System.Uri.EscapeDataString(ConvertToString(monthEnd, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{dayEnd}", System.Uri.EscapeDataString(ConvertToString(dayEnd, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -226,6 +242,162 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<GetDayItemResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<PutMonthItemResponse> PutMonthItemAsync(RoosterItemMonth body)
+        {
+            return PutMonthItemAsync(body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PutMonthItemResponse> PutMonthItemAsync(RoosterItemMonth body, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append("api/CalendarItem/month");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PutMonthItemResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<PutDayItemResponse> PutDayItemAsync(RoosterItemDay body)
+        {
+            return PutDayItemAsync(body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PutDayItemResponse> PutDayItemAsync(RoosterItemDay body, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append("api/CalendarItem/day");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PutDayItemResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
