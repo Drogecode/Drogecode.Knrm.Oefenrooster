@@ -1,6 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Models;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Auth;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
