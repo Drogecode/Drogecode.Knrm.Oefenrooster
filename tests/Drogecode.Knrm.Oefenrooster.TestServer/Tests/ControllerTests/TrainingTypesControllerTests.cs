@@ -24,11 +24,11 @@ public class TrainingTypesControllerTests : BaseTest
     }
 
     [Fact]
-    public async Task AddTrainingTypeTest()
+    public async Task AddTrainingTypeBaseTest()
     {
         var result = await TrainingTypesController.PostNewTrainingType(new PlannerTrainingType
         {
-            Name = "AddTrainingTypeTest",
+            Name = "AddTrainingTypeBaseTest",
             ColorLight = "#bdbdbdff",
             ColorDark = "#ffffff4c",
             Order = 10,
@@ -37,6 +37,27 @@ public class TrainingTypesControllerTests : BaseTest
         });
         Assert.NotNull(result?.Value);
         Assert.True(result.Value.Success);
+    }
+
+    [Fact]
+    public async Task AddTrainingTypeOrderTest()
+    {
+        var type0 = await AddTrainingType("AddTrainingTypeOrderTest", 0);
+        var type1 = await AddTrainingType("AddTrainingTypeOrderTest", 10);
+        var type3 = await AddTrainingType("AddTrainingTypeOrderTest", 30);
+        var resultPost = await TrainingTypesController.PostNewTrainingType(new PlannerTrainingType
+        {
+            Name = "AddTrainingTypeOrderTest",
+            ColorLight = "#bdbdbdff",
+            ColorDark = "#ffffff4c",
+            CountToTrainingTarget = true,
+            IsDefault = true,
+        });
+        Assert.NotNull(resultPost?.Value?.NewId);
+        Assert.True(resultPost.Value.Success);
+        var resultGet = await TrainingTypesController.GetById(resultPost.Value.NewId.Value);
+        Assert.NotNull(resultGet?.Value?.TrainingType);
+        resultGet.Value.TrainingType.Order.Should().Be(40);
     }
 
     [Fact]
@@ -56,8 +77,8 @@ public class TrainingTypesControllerTests : BaseTest
         var result = await TrainingTypesController.GetTrainingTypes();
         Assert.NotNull(result?.Value?.PlannerTrainingTypes);
         result.Value.PlannerTrainingTypes.Should().NotBeEmpty();
-        result.Value.PlannerTrainingTypes.Should().Contain(x=>x.Id == DefaultTrainingType);
-        result.Value.PlannerTrainingTypes.Should().Contain(x=>x.Id == oneMore);
+        result.Value.PlannerTrainingTypes.Should().Contain(x => x.Id == DefaultTrainingType);
+        result.Value.PlannerTrainingTypes.Should().Contain(x => x.Id == oneMore);
     }
 
     [Fact]

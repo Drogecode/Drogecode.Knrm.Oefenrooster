@@ -26,13 +26,14 @@ public sealed partial class TrainingTypes : IDisposable
 
     private void OpenTrainingTypeDialog(PlannerTrainingType? trainingType, bool isNew)
     {
+        var header = isNew ? L["Add new training type"] :  L["Edit training type"];
         var parameters = new DialogParameters<TrainingTypeDialog> {
             { x=> x.TrainingType, trainingType },
             { x=> x.Refresh, _refreshModel },
             { x=> x.IsNew, isNew},
         };
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-        _dialogProvider.Show<TrainingTypeDialog>(L["Edit training type"], parameters, options);
+        _dialogProvider.Show<TrainingTypeDialog>(header, parameters, options);
     }
 
     private async Task Delete(PlannerTrainingType? trainingType)

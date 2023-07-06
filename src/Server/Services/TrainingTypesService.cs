@@ -27,6 +27,11 @@ public class TrainingTypesService : ITrainingTypesService
         dbType.CustomerId = customerId;
         dbType.CreatedBy = userId;
         dbType.CreatedDate = DateTime.UtcNow;
+        if (plannerTrainingType.Order == -1)
+        {
+            var latest = await _database.RoosterTrainingTypes.Where(x => x.CustomerId == customerId).OrderByDescending(x => x.Order).FirstOrDefaultAsync(clt);
+            dbType.Order = (latest?.Order ?? 0) + 10;
+        }
         _database.RoosterTrainingTypes.Add(dbType);
         var success = (await _database.SaveChangesAsync(clt)) > 0;
         sw.Stop();

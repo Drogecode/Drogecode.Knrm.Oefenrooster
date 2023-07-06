@@ -16,7 +16,7 @@ public class PlannerTrainingType : ICloneable
     public string ColorDark { get; set; } = string.Empty;
     public string? TextColorLight { get; set; }
     public string? TextColorDark { get; set; }
-    public int Order { get; set; }
+    public int Order { get; set; } = -1;
     public bool CountToTrainingTarget { get; set; }
     public bool IsDefault { get; set; }
     public bool IsActive { get; set; }
