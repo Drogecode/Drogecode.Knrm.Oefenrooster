@@ -51,6 +51,7 @@ builder.Services.AddScoped<IFunctionService, FunctionService>();
 builder.Services.AddScoped<IGraphService, GraphService>();
 builder.Services.AddScoped<IHolidayService, HolidayService>();
 builder.Services.AddScoped<IPreComService, PreComService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITrainingTypesService, TrainingTypesService>();
@@ -67,6 +68,7 @@ var groupNames = new List<string>
     "User",
     "Vehicle",
     "SharePoint",
+    "Report",
     "DefaultSchedule",
     "Holiday",
     "PreCom",

@@ -1,0 +1,9 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Report",
+    "version": "v1"
+  },
+  "paths": { },
+  "components": { }
+}

@@ -35,6 +35,10 @@
 			<OutputPath>../Clients/PreComClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom</Options>
 		</OpenApiReference>
+		<OpenApiReference Include="OpenAPIs\Report.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ReportClient">
+			<OutputPath>../Clients/ReportClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint</Options>
+		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Schedule.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ScheduleClient">
 			<OutputPath>../Clients/ScheduleClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule</Options>

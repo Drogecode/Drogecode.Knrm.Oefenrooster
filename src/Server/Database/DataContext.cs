@@ -23,6 +23,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbVehicles> Vehicles { get; set; }
         public DbSet<DbPreComAlert> PreComAlerts { get; set; }
 
+        public DbSet<DbReportAction> ReportActions { get; set; }
+        public DbSet<DbReportTraining> ReportTrainings { get; set; }
+        public DbSet<DbReportUser> ReportUsers { get; set; }
+
         public DbSet<DbLinkVehicleTraining> LinkVehicleTraining { get; set; }
 
 
@@ -106,6 +110,18 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             // PreComAlerts
             modelBuilder.Entity<DbPreComAlert>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbPreComAlert>().HasOne(p => p.Customer).WithMany(g => g.PreComAlerts).HasForeignKey(s => s.CustomerId).IsRequired();
+
+            //// Reports
+            // ReportActions
+            modelBuilder.Entity<DbReportAction>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbReportAction>().HasMany<DbReportUser>(p=>p.Users);
+
+            // ReportTrainings
+            modelBuilder.Entity<DbReportTraining>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbReportTraining>().HasMany<DbReportUser>(p => p.Users);
+
+            // ReportUsers
+            modelBuilder.Entity<DbReportUser>(e => { e.Property(e => e.Id).IsRequired(); });
 
             //// Links
             // Vehicles <--> Rooster available
