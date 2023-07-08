@@ -23,4 +23,6 @@ RUN dotnet publish "Drogecode.Knrm.Oefenrooster.Server.csproj" -c Release -o /ap
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+HEALTHCHECK --interval=1m --timeout=3s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost/api/_health || exit 1
 ENTRYPOINT ["dotnet", "Drogecode.Knrm.Oefenrooster.Server.dll"]
