@@ -58,7 +58,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ServiceTests
         }
 
 
-        [Fact]
+        [Fact(Skip = "Do not talk to real Calendar")]
         public async Task CalenderTest()
         {
             var settings = Settings.LoadSettingsLikeThis();
