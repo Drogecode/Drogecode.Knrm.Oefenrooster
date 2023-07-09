@@ -20,6 +20,24 @@ public sealed partial class CalendarBaseCard : IDisposable
     [Parameter] public bool ShowDate { get; set; } = true;
     [Parameter] public bool ShowDayOfWeek { get; set; } = false;
     private CancellationTokenSource _cls = new();
+    private int _iconCount;
+    private bool _showAllIcons = false;
+
+    protected override void OnParametersSet()
+    {
+        _iconCount = 0;
+        switch (SetBy)
+        {
+            case AvailabilitySetBy.DefaultAvailable:
+            case AvailabilitySetBy.Holiday:
+                _iconCount++;
+                break;
+        }
+        if (OnClickHistory.HasDelegate)
+            _iconCount++;
+        if (OnClickSettings.HasDelegate)
+            _iconCount++;
+    }
 
     public void Dispose()
     {

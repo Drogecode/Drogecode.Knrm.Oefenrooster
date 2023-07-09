@@ -15,26 +15,29 @@
                 }
             </CardHeaderContent>
             <CardHeaderActions>
-                @switch (SetBy)
+                @if (_iconCount == 1 || _showAllIcons)
                 {
-                    case AvailabilitySetBy.DefaultAvailable:
-                        <MudIcon Icon="@Icons.Material.Filled.AutoGraph" />
-                        <br />
-                        break;
-                    case AvailabilitySetBy.Holiday:
-                        <MudIcon Icon="@Icons.Material.Filled.WbSunny" />
-                        <br />
-                        break;
+                    @switch (SetBy)
+                    {
+                        case AvailabilitySetBy.DefaultAvailable:
+                            <MudIcon Icon="@Icons.Material.Filled.AutoGraph" />
+                            break;
+                        case AvailabilitySetBy.Holiday:
+                            <MudIcon Icon="@Icons.Material.Filled.WbSunny" />
+                            break;
+                    }
+                    @if (OnClickHistory.HasDelegate)
+                    {
+                        <MudIconButton Class="DrogeCode-card-header-history" Icon="@Icons.Material.Filled.History" Color="Color.Default" OnClick="()=>OnClickHistory.InvokeAsync()" />
+                    }
+                    @if (OnClickSettings.HasDelegate)
+                    {
+                        <MudIconButton Class="DrogeCode-card-header-settings" Icon="@Icons.Material.Filled.Settings" Color="Color.Default" OnClick="()=>OnClickSettings.InvokeAsync()" />
+                    }
                 }
-                @if (OnClickHistory.HasDelegate)
+                else if (_iconCount > 1)
                 {
-                    <MudIconButton Class="DrogeCode-card-header-history" Icon="@Icons.Material.Filled.History" Color="Color.Default" OnClick="()=>OnClickHistory.InvokeAsync()" />
-                    <br />
-                }
-                @if (OnClickSettings.HasDelegate)
-                {
-                    <MudIconButton Class="DrogeCode-card-header-settings" Icon="@Icons.Material.Filled.Settings" Color="Color.Default" OnClick="()=>OnClickSettings.InvokeAsync()" />
-                    <br />
+                    <MudIconButton Class="DrogeCode-card-header-history" Icon="@Icons.Material.Filled.MoreVert" Color="Color.Default" OnClick="()=>_showAllIcons = true" />
                 }
             </CardHeaderActions>
         </MudCardHeader>
