@@ -30,12 +30,11 @@ public class ScheduleControllerTests : BaseTest
     [Fact]
     public async Task AddTrainingTest()
     {
-        var body = new EditTraining
+        var body = new PlannedTraining
         {
             Name = "EditTraining",
-            Date = DateTime.UtcNow,
-            TimeStart = new TimeOnly(12, 50).ToTimeSpan(),
-            TimeEnd = new TimeOnly(13, 40).ToTimeSpan(),
+            DateStart = DateTime.Today.AddHours(12).AddMinutes(50),
+            DateEnd = DateTime.Today.AddHours(13).AddMinutes(40),
         };
         var result = await ScheduleController.AddTraining(body);
         Assert.NotNull(result?.Value?.NewId);
@@ -144,14 +143,13 @@ public class ScheduleControllerTests : BaseTest
     [Fact]
     public async Task GetPinnedTrainingsForUserTest()
     {
-        var body = new EditTraining
+        var body = new PlannedTraining
         {
             Name = "GetPinnedTrainings",
-            Date = DateTime.UtcNow,
+            DateStart = DateTime.Today.AddHours(12).AddMinutes(50),
+            DateEnd = DateTime.Today.AddHours(13).AddMinutes(40),
             CountToTrainingTarget = true,
             Pin = true,
-            TimeStart = new TimeOnly(12, 50).ToTimeSpan(),
-            TimeEnd = new TimeOnly(13, 40).ToTimeSpan(),
         };
         var putResult = await ScheduleController.AddTraining(body);
         Assert.NotNull(putResult?.Value?.NewId);
