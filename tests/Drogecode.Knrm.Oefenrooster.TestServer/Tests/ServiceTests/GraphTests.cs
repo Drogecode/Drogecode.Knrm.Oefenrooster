@@ -56,5 +56,14 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ServiceTests
             await _graphService.GetLists();
         }
 
+
+        [Fact(Skip = "Do not talk to real Calendar")]
+        public async Task CalenderTest()
+        {
+            var settings = Settings.LoadSettingsLikeThis();
+            _graphService.InitializeGraph(settings);
+            await _graphService.AddToCalendar();
+
+        }
     }
 }

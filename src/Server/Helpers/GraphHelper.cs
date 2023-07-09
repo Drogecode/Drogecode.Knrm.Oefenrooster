@@ -278,4 +278,34 @@ public static class GraphHelper
         user.Role = role;
         listBase.Users.Add(user);
     }
+
+    public static async Task<Event> AddToCalendar()
+    {
+        var body = new Event()
+        {
+            Subject = "Test from graph",
+            Body = new ItemBody
+            {
+                ContentType = BodyType.Html,
+                Content = "Does this time work for you?",
+            },
+            Start = new DateTimeTimeZone
+            {
+                DateTime = "2023-07-15T12:00:00",
+                TimeZone = "UTC",
+            },
+            End = new DateTimeTimeZone
+            {
+                DateTime = "2023-07-15T14:00:00",
+                TimeZone = "UTC",
+            },
+        };
+        var result = await _appClient.Users[DefaultSettingsHelper.IdTaco.ToString()].Events.PostAsync(body, (requestConfiguration) =>
+        {
+            requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Pacific Standard Time\"");
+        });
+
+        var fromGet = await _appClient.Users[DefaultSettingsHelper.IdTaco.ToString()].Events[result.Id].GetAsync();
+        return result;
+    }
 }
