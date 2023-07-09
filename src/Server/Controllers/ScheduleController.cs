@@ -153,6 +153,7 @@ public class ScheduleController : ControllerBase
                 {
                     if (!string.IsNullOrEmpty(type?.TrainingType?.Name))
                     {
+                        _graphService.InitializeGraph();
                         var eventResult = await _graphService.AddToCalendar(body.User.UserId, type.TrainingType.Name, body.Training!.DateStart, body.Training.DateEnd);
                         bool patchEventId = await _scheduleService.PatchEventIdForUserAvailible(body.User.UserId, customerId, result.AvailableId, eventResult.Id, clt);
                     }
@@ -164,6 +165,7 @@ public class ScheduleController : ControllerBase
             }
             else if (!string.IsNullOrEmpty(result.CalendarEventId))
             {
+                _graphService.InitializeGraph();
                 await _graphService.DeleteCalendarEvent(body?.User?.UserId, result.CalendarEventId, clt);
             }
             return result;
@@ -190,12 +192,14 @@ public class ScheduleController : ControllerBase
                 var type = await _trainingTypesService.GetById(body.Training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
                 if (!string.IsNullOrEmpty(type?.TrainingType?.Name))
                 {
+                    _graphService.InitializeGraph();
                     var eventResult = await _graphService.AddToCalendar(body.UserId.Value, type.TrainingType.Name, body.Training!.DateStart, body.Training.DateEnd);
                     bool patchEventId = await _scheduleService.PatchEventIdForUserAvailible(body.UserId.Value, customerId, result.AvailableId, eventResult.Id, clt);
                 }
             }
             else if (!string.IsNullOrEmpty(result.CalendarEventId))
             {
+                _graphService.InitializeGraph();
                 await _graphService.DeleteCalendarEvent(body?.UserId, result.CalendarEventId, clt);
             }
             return result;
