@@ -33,12 +33,14 @@ public sealed partial class EditTrainingDialog : IDisposable
         if (Planner?.TrainingId != null)
         {
             _linkVehicleTraining = await _vehicleRepository.GetForTrainingAsync(Planner.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
+            var dateStartLocal = Planner.DateStart.ToLocalTime();
+            var dateEndLocal = Planner.DateEnd.ToLocalTime();
             _training = new()
             {
                 Id = Planner.TrainingId,
-                Date = Planner.DateStart.Date,
-                TimeStart = Planner.DateStart.TimeOfDay,
-                TimeEnd = Planner.DateEnd.TimeOfDay,
+                Date = dateStartLocal.Date,
+                TimeStart = dateStartLocal.TimeOfDay,
+                TimeEnd = dateEndLocal.TimeOfDay,
                 IsNew = false,
                 Name = Planner.Name,
                 RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
@@ -96,9 +98,20 @@ public sealed partial class EditTrainingDialog : IDisposable
         if (!_form?.IsValid == true || _training == null) return;
         if (_training.TimeStart >= _training.TimeEnd) return;
 
+        var dateStart = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeStart ?? throw new ArgumentNullException("TimeStart is null")), DateTimeKind.Local).ToUniversalTime();
+        var dateEnd = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null")), DateTimeKind.Local).ToUniversalTime();
         if (_training.IsNew)
         {
-            var newId = await _scheduleRepository.AddTraining(_training, _cls.Token);
+            Planner = new PlannedTraining
+            {
+                RoosterTrainingTypeId = _training.RoosterTrainingTypeId,
+                Name = _training.Name,
+                DateStart = dateStart,
+                DateEnd = dateEnd,
+                CountToTrainingTarget = _training.CountToTrainingTarget,
+                Pin = _training.Pin,
+            };
+            var newId = await _scheduleRepository.AddTraining(Planner, _cls.Token);
             _training.Id = newId;
             if (_linkVehicleTraining != null)
             {
@@ -112,15 +125,13 @@ public sealed partial class EditTrainingDialog : IDisposable
         }
         else if (Planner != null)
         {
-            await _scheduleRepository.PatchTraining(_training, _cls.Token);
-            var dateStart = (_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeStart ?? throw new ArgumentNullException("TimeStart is null"));
-            var dateEnd = (_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"));
             Planner.RoosterTrainingTypeId = _training.RoosterTrainingTypeId;
             Planner.Name = _training.Name;
             Planner.DateStart = dateStart;
             Planner.DateEnd = dateEnd;
             Planner.CountToTrainingTarget = _training.CountToTrainingTarget;
             Planner.Pin = _training.Pin;
+            await _scheduleRepository.PatchTraining(Planner, _cls.Token);
             if (Refresh != null)
                 await Refresh.CallRequestRefreshAsync();
         }

@@ -184,20 +184,18 @@ public class ScheduleService : IScheduleService
         return dbTraining;
     }
 
-    public async Task<PatchTrainingResponse> PatchTraining(Guid customerId, EditTraining patchedTraining, CancellationToken token)
+    public async Task<PatchTrainingResponse> PatchTraining(Guid customerId, PlannedTraining patchedTraining, CancellationToken token)
     {
         var sw = Stopwatch.StartNew();
         var result = new PatchTrainingResponse();
-        var oldTraining = await _database.RoosterTrainings.FindAsync(new object?[] { patchedTraining.Id }, cancellationToken: token);
+        var oldTraining = await _database.RoosterTrainings.FindAsync(new object?[] { patchedTraining.TrainingId }, cancellationToken: token);
         if (oldTraining == null) return result;
         if (patchedTraining.Name?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)
             throw new DrogeCodeToLongException();
-        DateTime dateStart = ((patchedTraining.Date ?? throw new ArgumentNullException("Date is null")) + (patchedTraining.TimeStart ?? throw new ArgumentNullException("TimeStart is null"))).ToUniversalTime();
-        DateTime dateEnd = ((patchedTraining.Date ?? throw new ArgumentNullException("Date is null")) + (patchedTraining.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"))).ToUniversalTime();
         oldTraining.RoosterTrainingTypeId = patchedTraining.RoosterTrainingTypeId;
         oldTraining.Name = patchedTraining.Name;
-        oldTraining.DateStart = dateStart;
-        oldTraining.DateEnd = dateEnd;
+        oldTraining.DateStart = patchedTraining.DateStart;
+        oldTraining.DateEnd = patchedTraining.DateEnd;
         oldTraining.CountToTrainingTarget = patchedTraining.CountToTrainingTarget;
         oldTraining.IsPinned = patchedTraining.Pin;
         _database.RoosterTrainings.Update(oldTraining);
@@ -207,21 +205,19 @@ public class ScheduleService : IScheduleService
         return result;
     }
 
-    public async Task<AddTrainingResponse> AddTrainingAsync(Guid customerId, EditTraining newTraining, Guid trainingId, CancellationToken token)
+    public async Task<AddTrainingResponse> AddTrainingAsync(Guid customerId, PlannedTraining newTraining, Guid trainingId, CancellationToken token)
     {
         var sw = Stopwatch.StartNew();
         var result = new AddTrainingResponse();
         result.NewId = trainingId;
-        DateTime dateStart = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("TimeStart is null"))).ToUniversalTime();
-        DateTime dateEnd = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"))).ToUniversalTime();
         var training = new Training
         {
             TrainingId = trainingId,
             DefaultId = null,
             RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId,
             Name = newTraining.Name,
-            DateStart = dateStart,
-            DateEnd = dateEnd,
+            DateStart = newTraining.DateStart,
+            DateEnd = newTraining.DateEnd,
             CountToTrainingTarget = newTraining.CountToTrainingTarget,
             Pin = newTraining.Pin,
         };

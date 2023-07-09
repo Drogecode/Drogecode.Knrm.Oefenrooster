@@ -43,21 +43,21 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PatchTrainingResponse> PatchTrainingAsync(EditTraining body);
+        System.Threading.Tasks.Task<PatchTrainingResponse> PatchTrainingAsync(PlannedTraining body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PatchTrainingResponse> PatchTrainingAsync(EditTraining body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<PatchTrainingResponse> PatchTrainingAsync(PlannedTraining body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AddTrainingResponse> AddTrainingAsync(EditTraining body);
+        System.Threading.Tasks.Task<AddTrainingResponse> AddTrainingAsync(PlannedTraining body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AddTrainingResponse> AddTrainingAsync(EditTraining body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<AddTrainingResponse> AddTrainingAsync(PlannedTraining body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -344,7 +344,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<PatchTrainingResponse> PatchTrainingAsync(EditTraining body)
+        public virtual System.Threading.Tasks.Task<PatchTrainingResponse> PatchTrainingAsync(PlannedTraining body)
         {
             return PatchTrainingAsync(body, System.Threading.CancellationToken.None);
         }
@@ -352,7 +352,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PatchTrainingResponse> PatchTrainingAsync(EditTraining body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<PatchTrainingResponse> PatchTrainingAsync(PlannedTraining body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Schedule/training");
@@ -422,7 +422,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<AddTrainingResponse> AddTrainingAsync(EditTraining body)
+        public virtual System.Threading.Tasks.Task<AddTrainingResponse> AddTrainingAsync(PlannedTraining body)
         {
             return AddTrainingAsync(body, System.Threading.CancellationToken.None);
         }
@@ -430,7 +430,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<AddTrainingResponse> AddTrainingAsync(EditTraining body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<AddTrainingResponse> AddTrainingAsync(PlannedTraining body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Schedule/training");

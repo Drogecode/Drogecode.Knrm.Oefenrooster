@@ -66,7 +66,7 @@ public class ScheduleController : ControllerBase
 
     [HttpPatch]
     [Route("training")]
-    public async Task<ActionResult<PatchTrainingResponse>> PatchTraining([FromBody] EditTraining patchedTraining, CancellationToken token = default)
+    public async Task<ActionResult<PatchTrainingResponse>> PatchTraining([FromBody] PlannedTraining patchedTraining, CancellationToken token = default)
     {
         try
         {
@@ -74,9 +74,9 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             PatchTrainingResponse result = await _scheduleService.PatchTraining(customerId, patchedTraining, token);
             if (result.Success)
-                await _auditService.Log(userId, AuditType.PatchTraining, customerId, objectKey: patchedTraining.Id, objectName: patchedTraining.Name);
+                await _auditService.Log(userId, AuditType.PatchTraining, customerId, objectKey: patchedTraining.TrainingId, objectName: patchedTraining.Name);
             else
-                await _auditService.Log(userId, AuditType.PatchTraining, customerId, "Failed", patchedTraining.Id, patchedTraining.Name);
+                await _auditService.Log(userId, AuditType.PatchTraining, customerId, "Failed", patchedTraining.TrainingId, patchedTraining.Name);
 
             return Ok(result);
         }
@@ -89,7 +89,7 @@ public class ScheduleController : ControllerBase
 
     [HttpPost]
     [Route("training")]
-    public async Task<ActionResult<AddTrainingResponse>> AddTraining([FromBody] EditTraining newTraining, CancellationToken token = default)
+    public async Task<ActionResult<AddTrainingResponse>> AddTraining([FromBody] PlannedTraining newTraining, CancellationToken token = default)
     {
         try
         {

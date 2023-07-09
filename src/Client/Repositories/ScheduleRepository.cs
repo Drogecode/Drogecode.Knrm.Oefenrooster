@@ -35,12 +35,12 @@ public class ScheduleRepository
         var result = await _scheduleClient.PatchScheduleForUserAsync(training, clt);
         return result.PatchedTraining;
     }
-    public async Task<bool> PatchTraining(EditTraining patchedTraining, CancellationToken clt)
+    public async Task<bool> PatchTraining(PlannedTraining patchedTraining, CancellationToken clt)
     {
         var result = await _scheduleClient.PatchTrainingAsync(patchedTraining, clt);
         return result.Success;
     }
-    public async Task<Guid> AddTraining(EditTraining newTraining, CancellationToken clt)
+    public async Task<Guid> AddTraining(PlannedTraining newTraining, CancellationToken clt)
     {
         var result = await _scheduleClient.AddTrainingAsync(newTraining, clt);
         return result.NewId;
