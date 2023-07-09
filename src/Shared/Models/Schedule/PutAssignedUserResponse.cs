@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-public class PatchScheduleForUserResponse : BaseResponse
+public class PutAssignedUserResponse : BaseResponse
 {
-    public Training? PatchedTraining { get; set; }
+    public Guid? IdPut { get; set; }
     public Guid? AvailableId { get; set; }
     public string? CalendarEventId { get; set; }
 }

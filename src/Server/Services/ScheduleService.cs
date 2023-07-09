@@ -140,7 +140,7 @@ public class ScheduleService : IScheduleService
         var dbTraining = await CreateAndGetTraining(userId, customerId, training, clt);
         if (dbTraining is null) return result;
         var available = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.TrainingId == dbTraining.Id);
-        if (available == null)
+        if (available is null)
         {
             if (!await AddAvailableInternalAsync(userId, customerId, training)) return result;
         }
@@ -148,6 +148,8 @@ public class ScheduleService : IScheduleService
         training.Updated = true;
         result.Success = true;
         result.PatchedTraining = training;
+        result.AvailableId = available?.Id;
+        result.CalendarEventId = available?.CalendarEventId;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
@@ -443,21 +445,27 @@ public class ScheduleService : IScheduleService
         _database.RoosterAvailables.Update(ava);
         await _database.SaveChangesAsync(clt);
         result.Success = true;
+        result.AvailableId = ava.Id;
+        result.CalendarEventId = ava.CalendarEventId;
         return result;
     }
 
-    public async Task PutAssignedUserAsync(Guid userId, Guid customerId, OtherScheduleUserRequest body, CancellationToken clt)
+    public async Task<PutAssignedUserResponse> PutAssignedUserAsync(Guid userId, Guid customerId, OtherScheduleUserRequest body, CancellationToken clt)
     {
+        var result = new PutAssignedUserResponse
+        {
+            IdPut = body.TrainingId
+        };
         if (body.UserId == null || body.TrainingId == null)
         {
             _logger.LogWarning("userId is null {UserIsNull} or trainingId is null {TrainingIsNull}", body.UserId == null, body.TrainingId == null);
-            return;
+            return result;
         }
         var user = await _database.Users.FirstOrDefaultAsync(x => x.Id == body.UserId && x.DeletedOn == null && x.CustomerId == customerId, cancellationToken: clt);
         if (user is null)
         {
             _logger.LogWarning("No user with '{Id}' found", body.UserId);
-            return;
+            return result;
         }
         if (body.FunctionId == null)
         {
@@ -467,8 +475,9 @@ public class ScheduleService : IScheduleService
         if (training is null)
         {
             _logger.LogWarning("No training with '{Id}' found", body.TrainingId);
-            return;
+            return result;
         }
+        result.IdPut = training.Id;
         var ava = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.TrainingId == body.TrainingId && x.UserId == body.UserId, cancellationToken: clt);
         if (ava is null)
         {
@@ -499,6 +508,9 @@ public class ScheduleService : IScheduleService
             _database.RoosterAvailables.Update(ava);
             await _database.SaveChangesAsync(clt);
         }
+        result.AvailableId = ava?.Id;
+        result.CalendarEventId = ava?.CalendarEventId;
+        return result;
     }
 
     public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime? fromDate, CancellationToken token)
@@ -599,5 +611,14 @@ public class ScheduleService : IScheduleService
             });
         }
         return result;
+    }
+
+    public async Task<bool> PatchEventIdForUserAvailible(Guid userId, Guid customerId, Guid? availableId, string? calendarEventId, CancellationToken clt)
+    {
+        var ava = await _database.RoosterAvailables.FindAsync(availableId, clt);
+        if (ava is null || ava.CustomerId != customerId) { return false; }
+        ava.CalendarEventId = calendarEventId;
+        _database.RoosterAvailables.Update(ava);
+        return (await _database.SaveChangesAsync(clt) > 0);
     }
 }

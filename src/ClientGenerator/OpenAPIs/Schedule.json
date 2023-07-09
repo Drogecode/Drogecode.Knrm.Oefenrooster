@@ -405,7 +405,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutAssignedUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutAssignedUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutAssignedUserResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -691,6 +708,15 @@
             "type": "string",
             "format": "uuid",
             "nullable": true
+          },
+          "availableId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "calendarEventId": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -710,6 +736,15 @@
           },
           "patchedTraining": {
             "$ref": "#/components/schemas/Training"
+          },
+          "availableId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "calendarEventId": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -829,6 +864,36 @@
           },
           "isCreated": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PutAssignedUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "idPut": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "availableId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "calendarEventId": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

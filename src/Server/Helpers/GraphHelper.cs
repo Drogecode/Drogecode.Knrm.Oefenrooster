@@ -279,33 +279,38 @@ public static class GraphHelper
         listBase.Users.Add(user);
     }
 
-    public static async Task<Event> AddToCalendar()
+    public static async Task<Event> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd)
     {
         var body = new Event()
         {
-            Subject = "Test from graph",
+            Subject = description,
             Body = new ItemBody
             {
                 ContentType = BodyType.Html,
-                Content = "Does this time work for you?",
+                Content = description,
             },
             Start = new DateTimeTimeZone
             {
-                DateTime = "2023-07-15T12:00:00",
+                DateTime = dateStart.ToString("o"),
                 TimeZone = "UTC",
             },
             End = new DateTimeTimeZone
             {
-                DateTime = "2023-07-15T14:00:00",
+                DateTime = dateEnd.ToString("o"),
                 TimeZone = "UTC",
             },
         };
-        var result = await _appClient.Users[DefaultSettingsHelper.IdTaco.ToString()].Events.PostAsync(body, (requestConfiguration) =>
+        var result = await _appClient.Users[userId.ToString()].Events.PostAsync(body, (requestConfiguration) =>
         {
             requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Pacific Standard Time\"");
         });
 
-        var fromGet = await _appClient.Users[DefaultSettingsHelper.IdTaco.ToString()].Events[result.Id].GetAsync();
+        var fromGet = await _appClient.Users[userId.ToString()].Events[result.Id].GetAsync();
         return result;
+    }
+
+    internal static async Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt)
+    {
+        await _appClient.Users[userId.ToString()].Events[calendarEventId].DeleteAsync(cancellationToken: clt);
     }
 }

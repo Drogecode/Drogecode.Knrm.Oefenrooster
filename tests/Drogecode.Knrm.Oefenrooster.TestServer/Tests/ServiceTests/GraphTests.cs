@@ -1,6 +1,7 @@
 using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ServiceTests
 {
@@ -57,12 +58,12 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ServiceTests
         }
 
 
-        [Fact(Skip = "Do not talk to real Calendar")]
+        [Fact]
         public async Task CalenderTest()
         {
             var settings = Settings.LoadSettingsLikeThis();
             _graphService.InitializeGraph(settings);
-            await _graphService.AddToCalendar();
+            await _graphService.AddToCalendar(DefaultSettingsHelper.IdTaco, "Test from graph test", DateTime.Today.AddHours(10), DateTime.Today.AddHours(12));
 
         }
     }
