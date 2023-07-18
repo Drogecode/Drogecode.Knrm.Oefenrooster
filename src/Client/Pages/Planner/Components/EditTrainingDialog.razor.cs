@@ -45,7 +45,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 Name = Planner.Name,
                 RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
                 CountToTrainingTarget = Planner.CountToTrainingTarget,
-                Pin = Planner.Pin
+                Pin = Planner.IsPinned
             };
         }
         else
@@ -109,7 +109,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 DateStart = dateStart,
                 DateEnd = dateEnd,
                 CountToTrainingTarget = _training.CountToTrainingTarget,
-                Pin = _training.Pin,
+                IsPinned = _training.Pin,
             };
             var newId = await _scheduleRepository.AddTraining(Planner, _cls.Token);
             _training.Id = newId;
@@ -130,7 +130,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             Planner.DateStart = dateStart;
             Planner.DateEnd = dateEnd;
             Planner.CountToTrainingTarget = _training.CountToTrainingTarget;
-            Planner.Pin = _training.Pin;
+            Planner.IsPinned = _training.Pin;
             await _scheduleRepository.PatchTraining(Planner, _cls.Token);
             if (Refresh != null)
                 await Refresh.CallRequestRefreshAsync();

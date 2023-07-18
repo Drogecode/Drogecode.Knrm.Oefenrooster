@@ -4,6 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
+using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using System.Data;
 using System.Diagnostics;
 
@@ -63,7 +64,7 @@ public class ScheduleService : IScheduleService
                         RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                         VehicleId = ava?.VehicleId,
                         CountToTrainingTarget = training.CountToTrainingTarget,
-                        Pin = training.IsPinned,
+                        IsPinned = training.IsPinned,
                     });
                     if (training.RoosterDefaultId != null)
                         defaultsFound.Add(training.RoosterDefaultId);
@@ -87,7 +88,7 @@ public class ScheduleService : IScheduleService
                         SetBy = setBy ?? AvailabilitySetBy.None,
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget,
-                        Pin = false,
+                        IsPinned = false,
                     });
                 }
             }
@@ -133,23 +134,24 @@ public class ScheduleService : IScheduleService
     {
         var sw = Stopwatch.StartNew();
         training.Updated = false;
-        var result = new PatchScheduleForUserResponse
+        var result = new PatchScheduleForUserResponse();
+        if (training.DateStart.CompareTo(DateTime.UtcNow) >= 0)
         {
-            PatchedTraining = training
-        };
-        var dbTraining = await CreateAndGetTraining(userId, customerId, training, clt);
-        if (dbTraining is null) return result;
-        var available = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.TrainingId == dbTraining.Id);
-        if (available is null)
-        {
-            if (!await AddAvailableInternalAsync(userId, customerId, training)) return result;
+            result.PatchedTraining = training;
+            var dbTraining = await CreateAndGetTraining(userId, customerId, training, clt);
+            if (dbTraining is null) return result;
+            var available = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.TrainingId == dbTraining.Id);
+            if (available is null)
+            {
+                if (!await AddAvailableInternalAsync(userId, customerId, training)) return result;
+            }
+            else if (!await PatchAvailableInternalAsync(available, training)) return result;
+            training.Updated = true;
+            result.Success = true;
+            result.PatchedTraining = training;
+            result.AvailableId = available?.Id;
+            result.CalendarEventId = available?.CalendarEventId;
         }
-        else if (!await PatchAvailableInternalAsync(available, training)) return result;
-        training.Updated = true;
-        result.Success = true;
-        result.PatchedTraining = training;
-        result.AvailableId = available?.Id;
-        result.CalendarEventId = available?.CalendarEventId;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
@@ -199,7 +201,7 @@ public class ScheduleService : IScheduleService
         oldTraining.DateStart = patchedTraining.DateStart;
         oldTraining.DateEnd = patchedTraining.DateEnd;
         oldTraining.CountToTrainingTarget = patchedTraining.CountToTrainingTarget;
-        oldTraining.IsPinned = patchedTraining.Pin;
+        oldTraining.IsPinned = patchedTraining.IsPinned;
         _database.RoosterTrainings.Update(oldTraining);
         result.Success = (await _database.SaveChangesAsync()) > 0;
         sw.Stop();
@@ -221,7 +223,7 @@ public class ScheduleService : IScheduleService
             DateStart = newTraining.DateStart,
             DateEnd = newTraining.DateEnd,
             CountToTrainingTarget = newTraining.CountToTrainingTarget,
-            Pin = newTraining.Pin,
+            IsPinned = newTraining.IsPinned,
         };
         result.Success = await AddTrainingInternalAsync(customerId, training, token);
         sw.Stop();
@@ -245,7 +247,7 @@ public class ScheduleService : IScheduleService
             DateStart = training.DateStart,
             DateEnd = training.DateEnd,
             CountToTrainingTarget = training.CountToTrainingTarget,
-            IsPinned = training.Pin,
+            IsPinned = training.IsPinned,
         });
         return (await _database.SaveChangesAsync()) > 0;
     }
@@ -309,7 +311,7 @@ public class ScheduleService : IScheduleService
                         IsCreated = true,
                         RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                         CountToTrainingTarget = training.CountToTrainingTarget,
-                        Pin = training.IsPinned,
+                        IsPinned = training.IsPinned,
                     };
                     foreach (var user in users)
                     {
@@ -362,7 +364,7 @@ public class ScheduleService : IScheduleService
                         IsCreated = false,
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget,
-                        Pin = false
+                        IsPinned = false
                     };
                     foreach (var user in users)
                     {
@@ -388,6 +390,19 @@ public class ScheduleService : IScheduleService
 
         } while (scheduleDate <= DateOnly.FromDateTime(tillDate));
         result.Success = true;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+
+    public async Task<GetTrainingByIdResponse> GetTrainingById(Guid userId, Guid customerId, Guid id)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new GetTrainingByIdResponse();
+        var dbTraining = await _database.RoosterTrainings.Include(x=>x.RoosterAvailables).FirstOrDefaultAsync(x=>x.Id == id);
+        var training = dbTraining?.ToTraining(userId);
+        result.Training = training;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
@@ -542,7 +557,7 @@ public class ScheduleService : IScheduleService
                 RoosterTrainingTypeId = schedul.Training.RoosterTrainingTypeId,
                 VehicleId = schedul.VehicleId,
                 PlannedFunctionId = schedul.UserFunctionId ?? users?.FirstOrDefault(x => x.Id == userId)?.UserFunctionId,
-                Pin = schedul.Training.IsPinned,
+                IsPinned = schedul.Training.IsPinned,
                 IsCreated = true,
                 PlanUsers = schedul.Training.RoosterAvailables!.Select(a => new PlanUser
                 {
@@ -607,7 +622,7 @@ public class ScheduleService : IScheduleService
                 RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                 VehicleId = ava?.VehicleId,
                 CountToTrainingTarget = training.CountToTrainingTarget,
-                Pin = training.IsPinned,
+                IsPinned = training.IsPinned,
             });
         }
         return result;

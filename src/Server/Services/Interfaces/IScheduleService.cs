@@ -6,6 +6,7 @@ public interface IScheduleService
 {
     Task<MultipleTrainingsResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken clt);
     Task<ScheduleForAllResponse> ScheduleForAllAsync(Guid userId, Guid customerId, int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken clt);
+    Task<GetTrainingByIdResponse> GetTrainingById(Guid userId, Guid customerId, Guid id);
     Task<PatchScheduleForUserResponse> PatchScheduleForUserAsync(Guid userId, Guid customerId, Training training, CancellationToken clt);
     Task<PatchAssignedUserResponse> PatchAssignedUserAsync(Guid userId, Guid customerId, PatchAssignedUserRequest body, CancellationToken clt);
     Task<PatchTrainingResponse> PatchTraining(Guid customerId, PlannedTraining training, CancellationToken clt);

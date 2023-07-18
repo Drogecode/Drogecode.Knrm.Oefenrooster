@@ -17,5 +17,5 @@ public class TrainingAdvance : TrainingBase
     public DateTime DateEnd { get; set; }
     public bool CountToTrainingTarget { get; set; }
     public bool Updated { get; set; }
-    public bool Pin { get; set; }
+    public bool IsPinned { get; set; }
 }

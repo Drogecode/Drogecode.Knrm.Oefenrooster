@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
 using System.Text.Json;
+using ZXing.Aztec.Internal;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
@@ -62,6 +63,23 @@ public class ScheduleController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             ScheduleForAllResponse result = await _scheduleService.ScheduleForAllAsync(userId, customerId, forMonth, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, token);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in ForAll");
+            return BadRequest();
+        }
+    }
+    [HttpGet]
+    [Route("{id:guid}")]
+    public async Task<ActionResult<GetTrainingByIdResponse>> GetTrainingById(Guid id)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            GetTrainingByIdResponse result = await _scheduleService.GetTrainingById(userId, customerId, id);
             return result;
         }
         catch (Exception ex)
@@ -127,11 +145,11 @@ public class ScheduleController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _scheduleService.PatchScheduleForUserAsync(userId, customerId, training, clt);
-            return Ok(result);
+            return result;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in Patch");
+            _logger.LogError(ex, "Error in PatchScheduleForUser");
             return BadRequest();
         }
     }
