@@ -29,42 +29,14 @@ public class ScheduleCardTests : BlazorTestBase
     {
         Localize(L1, L2);
 
-        var function1Id = Guid.NewGuid();
-        var function2Id = Guid.NewGuid();
-        List<DrogeFunction>? functions = new List<DrogeFunction>
-         {
-             new DrogeFunction
-             {
-                 Id = function1Id,
-                 Name = "Test function 1",
-                 Order = 1,
-                 Active = true,
-             },
-             new DrogeFunction
-             {
-                 Id = function2Id,
-                 Name = "Test function 2",
-                 Order = 2,
-                 Active = true,
-             }
-         };
-        var training = new PlannedTraining { 
-            Name = "xUnit meets bUnit", 
-            PlanUsers = new List<PlanUser> 
-            {
-                new PlanUser
-                {
-                    UserFunctionId = function2Id,
-                    PlannedFunctionId = function1Id,
-                    Name = "test user 1",
-                    Assigned = true,
-                }
-            } 
-        };
         var cut = RenderComponent<ScheduleCard>(parameter => parameter
-        .Add(p => p.Planner, training)
-        .Add(p => p.Functions, functions));
+        .Add(p => p.Planner, Training)
+        .Add(p => p.Functions, Functions));
         cut.Markup.Should().Contain("test user 1");
+        cut.Markup.Should().NotContain("test user 2");
+        cut.Markup.Should().NotContain("test user 3");
+        cut.Markup.Should().NotContain("test user 4");
+        cut.Markup.Should().Contain("test user 5");
         cut.Markup.Should().Contain("Test function 1");
         cut.Markup.Should().NotContain("Test function 2");
     }

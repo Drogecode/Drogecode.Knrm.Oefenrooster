@@ -3,12 +3,13 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
 using MudBlazor.Services;
 using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient;
-
 
 
 public abstract class BlazorTestBase : TestContext
@@ -59,4 +60,74 @@ public abstract class BlazorTestBase : TestContext
         Services.AddSingleton<ILocalStorageExpireService, LocalStorageExpireService>();
         Services.AddSingleton<IOfflineService, OfflineService>();
     }
+
+    internal static Guid Function1Id = Guid.NewGuid();
+    internal static Guid Function2Id = Guid.NewGuid();
+    internal static Guid Function3Id = Guid.NewGuid();
+    internal List<DrogeFunction>? Functions = new List<DrogeFunction>
+         {
+             new DrogeFunction
+             {
+                 Id = Function1Id,
+                 Name = "Test function 1",
+                 Order = 1,
+                 Active = true,
+             },
+             new DrogeFunction
+             {
+                 Id = Function2Id,
+                 Name = "Test function 2",
+                 Order = 2,
+                 Active = true,
+             },
+             new DrogeFunction
+             {
+                 Id = Function3Id,
+                 Name = "Test function 3",
+                 Order = 2,
+                 Active = false,
+             }
+         };
+    internal PlannedTraining Training = new PlannedTraining
+    {
+        Name = "xUnit meets bUnit",
+        PlanUsers = new List<PlanUser>
+            {
+                new PlanUser
+                {
+                    UserFunctionId = Function2Id,
+                    PlannedFunctionId = Function1Id,
+                    Name = "test user 1",
+                    Assigned = true,
+                },
+                new PlanUser
+                {
+                    UserFunctionId = Function1Id,
+                    PlannedFunctionId = Function1Id,
+                    Name = "test user 2",
+                    Assigned = false,
+                },
+                new PlanUser
+                {
+                    UserFunctionId = Function3Id,
+                    PlannedFunctionId = Function3Id,
+                    Name = "test user 3",
+                    Assigned = true,
+                },
+                new PlanUser
+                {
+                    UserFunctionId = Function2Id,
+                    PlannedFunctionId = Function3Id,
+                    Name = "test user 4",
+                    Assigned = true,
+                },
+                new PlanUser
+                {
+                    UserFunctionId = Function3Id,
+                    PlannedFunctionId = Function1Id,
+                    Name = "test user 5",
+                    Assigned = true,
+                },
+            }
+    };
 }
