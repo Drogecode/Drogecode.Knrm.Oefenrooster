@@ -182,7 +182,7 @@ public class ScheduleControllerTests : BaseTest
         var triningInPastId = await AddTraining("PatchScheduleForUserPastTest", false, DateTime.Today.AddDays(-1).AddHours(10), DateTime.Today.AddDays(-1).AddHours(12));
         var training = (await ScheduleController.GetTrainingById(triningInPastId))?.Value?.Training;
         Assert.NotNull(training);
-        training.Availabilty.Should().NotBe(Availabilty.Available);
+        training.Availabilty.Should().Be(null);
         training.Availabilty = Availabilty.Available;
         var patchedResult = await ScheduleController.PatchScheduleForUser(training);
         Assert.NotNull(patchedResult?.Value);

@@ -1,21 +1,11 @@
-﻿using AutoFixture;
-using Bunit;
-using MudBlazor.Services;
-using MudBlazor;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using Bunit.TestDoubles;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Bunit.TestDoubles;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Client.Services;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
-using FluentAssertions.Common;
 using Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
+using MudBlazor.Services;
+using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient;
 

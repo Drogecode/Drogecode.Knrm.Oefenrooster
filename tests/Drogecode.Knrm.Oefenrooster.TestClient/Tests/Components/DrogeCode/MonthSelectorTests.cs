@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Components.DrogeCode;
 
-public class MonthSelectorTests : TestContext
+public class MonthSelectorTests : BlazorTestBase
 {
     [Fact]
     public void MonthThisYearTest()

@@ -60,12 +60,12 @@ public sealed partial class Global : IDisposable
         if (_usersSynced == true)
         {
             _users = await _userRepository.GetAllUsersAsync(true);
-            StateHasChanged();
+            await RefreshMeAsync();
         }
     }
     private async Task UpdateSpecialDates()
     {
-        _specialDatesUpdated =  await _configurationRepository.UpdateSpecialDates();
+        _specialDatesUpdated = await _configurationRepository.UpdateSpecialDates();
         StateHasChanged();
     }
 
