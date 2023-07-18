@@ -72,6 +72,7 @@ public abstract class BlazorTestBase : TestContext
                  Name = "Test function 1",
                  Order = 1,
                  Active = true,
+                 TrainingTarget = 2,
              },
              new DrogeFunction
              {
@@ -79,6 +80,7 @@ public abstract class BlazorTestBase : TestContext
                  Name = "Test function 2",
                  Order = 2,
                  Active = true,
+                 TrainingTarget = 0,
              },
              new DrogeFunction
              {
@@ -86,6 +88,7 @@ public abstract class BlazorTestBase : TestContext
                  Name = "Test function 3",
                  Order = 2,
                  Active = false,
+                 TrainingTarget = 2,
              }
          };
     internal PlannedTraining Training = new PlannedTraining

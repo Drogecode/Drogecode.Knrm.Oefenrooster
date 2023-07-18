@@ -4,7 +4,7 @@
         <MudGrid Spacing="2" Justify="Justify.FlexStart">
             @foreach (var function in Functions.OrderBy(x => x.Order))
             {
-                @foreach (var user in UserTrainingCounter)
+                @foreach (var user in UserTrainingCounter.Where(x => x.Count > 0))
                 {
                     var dbUser = Users.FirstOrDefault(x => x.Id == user.UserId && x.UserFunctionId == function.Id);
                     @if (dbUser != null)
@@ -19,7 +19,7 @@
             }
             @foreach (var function in Functions.Where(x => x.TrainingTarget > 0).OrderBy(x => x.Order))
             {
-                @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id && !UserTrainingCounter.Any(y => y.UserId == x.Id)).OrderBy(x => x.Name))
+                @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id && !UserTrainingCounter.Any(y => y.UserId == x.Id && y.Count > 0)).OrderBy(x => x.Name))
                 {
                     <MudItem xs="12" sm="6" md="4" lg="3">
                         <MudText Style="color: var(--mud-palette-error)">
