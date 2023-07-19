@@ -1,13 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
-using Drogecode.Knrm.Oefenrooster.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Pages.Planner.Components;
 
@@ -15,7 +9,7 @@ public class ScheduleCounterTests : BlazorTestBase
 {
     [Theory]
     [AutoFakeItEasyData]
-    public void HasNameTest([Frozen] IStringLocalizer<ScheduleCounter> L1)
+    public void HasNamesTest([Frozen] IStringLocalizer<ScheduleCounter> L1)
     {
         Localize(L1);
 
@@ -23,7 +17,7 @@ public class ScheduleCounterTests : BlazorTestBase
         var userId2 = Guid.NewGuid();
         var userId3 = Guid.NewGuid();
         var userId4 = Guid.NewGuid();
-        List<DrogeUser>? users = new List<DrogeUser>
+        var users = new List<DrogeUser>
         {
             new DrogeUser
             {
@@ -50,7 +44,7 @@ public class ScheduleCounterTests : BlazorTestBase
                 UserFunctionId = Function2Id
             },
         };
-        List<UserTrainingCounter>? trainingCounters = new List<UserTrainingCounter>
+        var trainingCounters = new List<UserTrainingCounter>
         {
             new UserTrainingCounter
             {
@@ -63,10 +57,10 @@ public class ScheduleCounterTests : BlazorTestBase
                 Count = 0
             },
         };
-       var cut = RenderComponent<ScheduleCounter>(parameter => parameter
-        .Add(p => p.Users, users)
-        .Add(p => p.Functions, Functions)
-        .Add(p => p.UserTrainingCounter, trainingCounters));
+        var cut = RenderComponent<ScheduleCounter>(parameter => parameter
+         .Add(p => p.Users, users)
+         .Add(p => p.Functions, Functions)
+         .Add(p => p.UserTrainingCounter, trainingCounters));
         cut.Markup.Should().Contain("user1 : 1");
         cut.Markup.Should().NotContain("user2 : No training");
         cut.Markup.Should().Contain("user3 : No training");

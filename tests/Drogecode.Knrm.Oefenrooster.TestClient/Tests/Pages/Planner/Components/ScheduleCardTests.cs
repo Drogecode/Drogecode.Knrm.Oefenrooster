@@ -1,10 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client;
-using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Pages.Planner.Components;

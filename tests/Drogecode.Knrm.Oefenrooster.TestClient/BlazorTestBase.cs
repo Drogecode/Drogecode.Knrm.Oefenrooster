@@ -5,7 +5,9 @@ using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using Drogecode.Knrm.Oefenrooster.TestClient.Mocks;
 using Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Services;
 using System.Security.Claims;
 
@@ -16,11 +18,12 @@ public abstract class BlazorTestBase : TestContext
 {
     public BlazorTestBase()
     {
-
         var authContext = this.AddTestAuthorization();
         authContext.SetAuthorized("TEST USER");
         authContext.SetClaims(new Claim("http://schemes.random.net/identity/upn", "TEST USER"));
 
+        JSInterop.Mode = JSRuntimeMode.Loose;
+        Services.AddSingleton<NavigationManager>(new MockNavigationManager());
         Services.AddMudServices(options =>
         {
             options.SnackbarConfiguration.ShowTransitionDuration = 0;
