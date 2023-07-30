@@ -14,9 +14,9 @@
     <PackageReference Include="AutoFixture.Xunit2" Version="4.18.0" />
     <PackageReference Include="Blazored.LocalStorage.TestExtensions" Version="4.3.0" />
     <PackageReference Include="Blazored.SessionStorage.TestExtensions" Version="2.3.0" />
-    <PackageReference Include="bunit" Version="1.21.9" />
-    <PackageReference Include="bunit.core" Version="1.21.9" />
-    <PackageReference Include="bunit.web" Version="1.21.9" />
+    <PackageReference Include="bunit" Version="1.22.19" />
+    <PackageReference Include="bunit.core" Version="1.22.19" />
+    <PackageReference Include="bunit.web" Version="1.22.19" />
     <PackageReference Include="FluentAssertions" Version="6.11.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.9" />
