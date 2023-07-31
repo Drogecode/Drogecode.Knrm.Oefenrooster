@@ -164,14 +164,17 @@ public class ScheduleControllerTests : BaseTest
     [Fact]
     public async Task PatchScheduleForUserTest()
     {
-        var training = (await ScheduleController.GetTrainingById(DefaultTraining))?.Value?.Training;
+        var start = DateTime.Today.AddDays(1).AddHours(12);
+        var end = DateTime.Today.AddDays(1).AddHours(14);
+        var trainingId = await AddTraining("PatchScheduleForUserTest", false,start, end);
+        var training = (await ScheduleController.GetTrainingById(trainingId))?.Value?.Training;
         Assert.NotNull(training);
         training.Availabilty.Should().NotBe(Availabilty.Available);
         training.Availabilty = Availabilty.Available;
         var patchedResult = await ScheduleController.PatchScheduleForUser(training);
         Assert.NotNull(patchedResult?.Value);
         Assert.True(patchedResult.Value.Success);
-        var trainingAfterPatch = (await ScheduleController.GetTrainingById(DefaultTraining))?.Value?.Training;
+        var trainingAfterPatch = (await ScheduleController.GetTrainingById(trainingId))?.Value?.Training;
         Assert.NotNull(trainingAfterPatch);
         trainingAfterPatch.Availabilty.Should().Be(Availabilty.Available);
     }

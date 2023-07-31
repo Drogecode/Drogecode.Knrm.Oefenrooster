@@ -116,8 +116,8 @@ public class BaseTest : IAsyncLifetime
 
     protected async Task<Guid> AddTraining(string name, bool countToTrainingTarget, DateTime? dateStart = null, DateTime? dateEnd = null)
     {
-        dateStart ??= DateTime.Today.AddDays(1).AddHours(12).AddMinutes(50);
-        dateEnd ??= DateTime.Today.AddDays(2).AddHours(13).AddMinutes(40);
+        dateStart ??= DateTime.Today.AddHours(12).AddMinutes(50);
+        dateEnd ??= DateTime.Today.AddHours(13).AddMinutes(40);
         var body = new PlannedTraining
         {
             Name = name,
