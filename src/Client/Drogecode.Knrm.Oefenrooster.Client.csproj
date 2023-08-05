@@ -16,21 +16,21 @@
 	<ItemGroup>
 		<PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
 		<PackageReference Include="Blazored.SessionStorage" Version="2.3.0" />
-		<PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.5.3" />
-		<PackageReference Include="Heron.MudCalendar" Version="1.0.8" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.8" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.8" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.8" />
-		<PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="7.0.8" />
+		<PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.5.6" />
+		<PackageReference Include="Heron.MudCalendar" Version="1.0.9" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.9" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.9" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.9" />
+		<PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="7.0.9" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.8" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.9" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Graph" Version="5.16.0" />
+		<PackageReference Include="Microsoft.Graph" Version="5.20.0" />
 		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.1.5">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="MudBlazor" Version="6.6.0" />
+		<PackageReference Include="MudBlazor" Version="6.7.0" />
 	</ItemGroup>
 
 	<ItemGroup>

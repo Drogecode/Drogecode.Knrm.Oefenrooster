@@ -186,6 +186,47 @@
         }
       }
     },
+    "/api/Schedule/{id}": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "GetTrainingById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTrainingByIdResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTrainingByIdResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTrainingByIdResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Schedule/training": {
       "patch": {
         "tags": [
@@ -196,17 +237,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EditTraining"
+                "$ref": "#/components/schemas/PlannedTraining"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/EditTraining"
+                "$ref": "#/components/schemas/PlannedTraining"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/EditTraining"
+                "$ref": "#/components/schemas/PlannedTraining"
               }
             }
           }
@@ -243,17 +284,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EditTraining"
+                "$ref": "#/components/schemas/PlannedTraining"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/EditTraining"
+                "$ref": "#/components/schemas/PlannedTraining"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/EditTraining"
+                "$ref": "#/components/schemas/PlannedTraining"
               }
             }
           }
@@ -405,7 +446,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutAssignedUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutAssignedUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutAssignedUserResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -554,46 +612,6 @@
         "type": "integer",
         "format": "int32"
       },
-      "EditTraining": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "roosterTrainingTypeId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "date": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "timeStart": {
-            "$ref": "#/components/schemas/TimeSpan"
-          },
-          "timeEnd": {
-            "$ref": "#/components/schemas/TimeSpan"
-          },
-          "isNew": {
-            "type": "boolean"
-          },
-          "countToTrainingTarget": {
-            "type": "boolean"
-          },
-          "pin": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
       "GetPinnedTrainingsForUserResponse": {
         "type": "object",
         "properties": {
@@ -643,6 +661,25 @@
               "$ref": "#/components/schemas/UserMonthInfo"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetTrainingByIdResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "training": {
+            "$ref": "#/components/schemas/Training"
           }
         },
         "additionalProperties": false
@@ -731,6 +768,15 @@
             "type": "string",
             "format": "uuid",
             "nullable": true
+          },
+          "availableId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "calendarEventId": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -750,6 +796,15 @@
           },
           "patchedTraining": {
             "$ref": "#/components/schemas/Training"
+          },
+          "availableId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "calendarEventId": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -857,7 +912,7 @@
           "updated": {
             "type": "boolean"
           },
-          "pin": {
+          "isPinned": {
             "type": "boolean"
           },
           "planUsers": {
@@ -869,6 +924,36 @@
           },
           "isCreated": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PutAssignedUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "idPut": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "availableId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "calendarEventId": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -899,86 +984,6 @@
               "$ref": "#/components/schemas/UserTrainingCounter"
             },
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TimeSpan": {
-        "type": "object",
-        "properties": {
-          "ticks": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "days": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "hours": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "milliseconds": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "microseconds": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "nanoseconds": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "minutes": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "seconds": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "totalDays": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalHours": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalMilliseconds": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalMicroseconds": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalNanoseconds": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalMinutes": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalSeconds": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -1029,7 +1034,7 @@
           "updated": {
             "type": "boolean"
           },
-          "pin": {
+          "isPinned": {
             "type": "boolean"
           },
           "availabilty": {
@@ -1090,7 +1095,7 @@
           "updated": {
             "type": "boolean"
           },
-          "pin": {
+          "isPinned": {
             "type": "boolean"
           }
         },

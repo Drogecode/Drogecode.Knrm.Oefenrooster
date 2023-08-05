@@ -114,15 +114,16 @@ public class BaseTest : IAsyncLifetime
         return result.Value.Put.Id;
     }
 
-    protected async Task<Guid> AddTraining(string name, bool countToTrainingTarget)
+    protected async Task<Guid> AddTraining(string name, bool countToTrainingTarget, DateTime? dateStart = null, DateTime? dateEnd = null)
     {
-        var body = new EditTraining
+        dateStart ??= DateTime.Today.AddHours(12).AddMinutes(50);
+        dateEnd ??= DateTime.Today.AddHours(13).AddMinutes(40);
+        var body = new PlannedTraining
         {
             Name = name,
-            Date = DateTime.UtcNow,
+            DateStart = dateStart.Value,
+            DateEnd = dateEnd.Value,
             CountToTrainingTarget = countToTrainingTarget,
-            TimeStart = new TimeOnly(12, 50).ToTimeSpan(),
-            TimeEnd = new TimeOnly(13, 40).ToTimeSpan(),
         };
         var result = await ScheduleController.AddTraining(body);
         Assert.NotNull(result?.Value?.NewId);

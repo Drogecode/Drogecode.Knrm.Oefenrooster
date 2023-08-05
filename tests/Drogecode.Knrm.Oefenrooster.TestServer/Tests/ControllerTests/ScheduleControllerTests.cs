@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
@@ -30,12 +31,11 @@ public class ScheduleControllerTests : BaseTest
     [Fact]
     public async Task AddTrainingTest()
     {
-        var body = new EditTraining
+        var body = new PlannedTraining
         {
             Name = "EditTraining",
-            Date = DateTime.UtcNow,
-            TimeStart = new TimeOnly(12, 50).ToTimeSpan(),
-            TimeEnd = new TimeOnly(13, 40).ToTimeSpan(),
+            DateStart = DateTime.Today.AddHours(12).AddMinutes(50),
+            DateEnd = DateTime.Today.AddHours(13).AddMinutes(40),
         };
         var result = await ScheduleController.AddTraining(body);
         Assert.NotNull(result?.Value?.NewId);
@@ -144,21 +144,54 @@ public class ScheduleControllerTests : BaseTest
     [Fact]
     public async Task GetPinnedTrainingsForUserTest()
     {
-        var body = new EditTraining
+        var body = new PlannedTraining
         {
             Name = "GetPinnedTrainings",
-            Date = DateTime.UtcNow,
+            DateStart = DateTime.Today.AddHours(12).AddMinutes(50),
+            DateEnd = DateTime.Today.AddHours(13).AddMinutes(40),
             CountToTrainingTarget = true,
-            Pin = true,
-            TimeStart = new TimeOnly(12, 50).ToTimeSpan(),
-            TimeEnd = new TimeOnly(13, 40).ToTimeSpan(),
+            IsPinned = true,
         };
         var putResult = await ScheduleController.AddTraining(body);
         Assert.NotNull(putResult?.Value?.NewId);
         var Getresult = await ScheduleController.GetPinnedTrainingsForUser();
         Assert.NotNull(Getresult?.Value?.Trainings);
         Getresult.Value.Trainings.Should().NotBeEmpty();
-        Getresult.Value.Trainings.Should().Contain(x=>x.TrainingId == putResult.Value.NewId);
-        Getresult.Value.Trainings.Should().NotContain(x=>x.TrainingId == DefaultTraining);
+        Getresult.Value.Trainings.Should().Contain(x => x.TrainingId == putResult.Value.NewId);
+        Getresult.Value.Trainings.Should().NotContain(x => x.TrainingId == DefaultTraining);
+    }
+
+    [Fact]
+    public async Task PatchScheduleForUserTest()
+    {
+        var start = DateTime.Today.AddDays(1).AddHours(12);
+        var end = DateTime.Today.AddDays(1).AddHours(14);
+        var trainingId = await AddTraining("PatchScheduleForUserTest", false,start, end);
+        var training = (await ScheduleController.GetTrainingById(trainingId))?.Value?.Training;
+        Assert.NotNull(training);
+        training.Availabilty.Should().NotBe(Availabilty.Available);
+        training.Availabilty = Availabilty.Available;
+        var patchedResult = await ScheduleController.PatchScheduleForUser(training);
+        Assert.NotNull(patchedResult?.Value);
+        Assert.True(patchedResult.Value.Success);
+        var trainingAfterPatch = (await ScheduleController.GetTrainingById(trainingId))?.Value?.Training;
+        Assert.NotNull(trainingAfterPatch);
+        trainingAfterPatch.Availabilty.Should().Be(Availabilty.Available);
+    }
+
+    [Fact]
+    public async Task PatchScheduleForUserPastTest()
+    {
+        var triningInPastId = await AddTraining("PatchScheduleForUserPastTest", false, DateTime.Today.AddDays(-1).AddHours(10), DateTime.Today.AddDays(-1).AddHours(12));
+        var training = (await ScheduleController.GetTrainingById(triningInPastId))?.Value?.Training;
+        Assert.NotNull(training);
+        training.Availabilty.Should().Be(null);
+        training.Availabilty = Availabilty.Available;
+        var patchedResult = await ScheduleController.PatchScheduleForUser(training);
+        Assert.NotNull(patchedResult?.Value);
+        Assert.False(patchedResult.Value.Success);
+        var trainingAfterPatch = (await ScheduleController.GetTrainingById(DefaultTraining))?.Value?.Training;
+        Assert.NotNull(trainingAfterPatch);
+        trainingAfterPatch.Availabilty.Should().Be(null);
     }
 }

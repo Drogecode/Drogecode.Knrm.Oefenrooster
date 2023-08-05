@@ -4,6 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
+using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using System.Data;
 using System.Diagnostics;
 
@@ -63,7 +64,7 @@ public class ScheduleService : IScheduleService
                         RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                         VehicleId = ava?.VehicleId,
                         CountToTrainingTarget = training.CountToTrainingTarget,
-                        Pin = training.IsPinned,
+                        IsPinned = training.IsPinned,
                     });
                     if (training.RoosterDefaultId != null)
                         defaultsFound.Add(training.RoosterDefaultId);
@@ -87,7 +88,7 @@ public class ScheduleService : IScheduleService
                         SetBy = setBy ?? AvailabilitySetBy.None,
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget,
-                        Pin = false,
+                        IsPinned = false,
                     });
                 }
             }
@@ -133,21 +134,24 @@ public class ScheduleService : IScheduleService
     {
         var sw = Stopwatch.StartNew();
         training.Updated = false;
-        var result = new PatchScheduleForUserResponse
+        var result = new PatchScheduleForUserResponse();
+        if (training.DateStart.CompareTo(DateTime.UtcNow) >= 0)
         {
-            PatchedTraining = training
-        };
-        var dbTraining = await CreateAndGetTraining(userId, customerId, training, clt);
-        if (dbTraining is null) return result;
-        var available = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.TrainingId == dbTraining.Id);
-        if (available == null)
-        {
-            if (!await AddAvailableInternalAsync(userId, customerId, training)) return result;
+            result.PatchedTraining = training;
+            var dbTraining = await CreateAndGetTraining(userId, customerId, training, clt);
+            if (dbTraining is null) return result;
+            var available = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.TrainingId == dbTraining.Id);
+            if (available is null)
+            {
+                if (!await AddAvailableInternalAsync(userId, customerId, training)) return result;
+            }
+            else if (!await PatchAvailableInternalAsync(available, training)) return result;
+            training.Updated = true;
+            result.Success = true;
+            result.PatchedTraining = training;
+            result.AvailableId = available?.Id;
+            result.CalendarEventId = available?.CalendarEventId;
         }
-        else if (!await PatchAvailableInternalAsync(available, training)) return result;
-        training.Updated = true;
-        result.Success = true;
-        result.PatchedTraining = training;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
@@ -184,22 +188,20 @@ public class ScheduleService : IScheduleService
         return dbTraining;
     }
 
-    public async Task<PatchTrainingResponse> PatchTraining(Guid customerId, EditTraining patchedTraining, CancellationToken token)
+    public async Task<PatchTrainingResponse> PatchTraining(Guid customerId, PlannedTraining patchedTraining, CancellationToken token)
     {
         var sw = Stopwatch.StartNew();
         var result = new PatchTrainingResponse();
-        var oldTraining = await _database.RoosterTrainings.FindAsync(new object?[] { patchedTraining.Id }, cancellationToken: token);
+        var oldTraining = await _database.RoosterTrainings.FindAsync(new object?[] { patchedTraining.TrainingId }, cancellationToken: token);
         if (oldTraining == null) return result;
         if (patchedTraining.Name?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)
             throw new DrogeCodeToLongException();
-        DateTime dateStart = ((patchedTraining.Date ?? throw new ArgumentNullException("Date is null")) + (patchedTraining.TimeStart ?? throw new ArgumentNullException("TimeStart is null"))).ToUniversalTime();
-        DateTime dateEnd = ((patchedTraining.Date ?? throw new ArgumentNullException("Date is null")) + (patchedTraining.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"))).ToUniversalTime();
         oldTraining.RoosterTrainingTypeId = patchedTraining.RoosterTrainingTypeId;
         oldTraining.Name = patchedTraining.Name;
-        oldTraining.DateStart = dateStart;
-        oldTraining.DateEnd = dateEnd;
+        oldTraining.DateStart = patchedTraining.DateStart;
+        oldTraining.DateEnd = patchedTraining.DateEnd;
         oldTraining.CountToTrainingTarget = patchedTraining.CountToTrainingTarget;
-        oldTraining.IsPinned = patchedTraining.Pin;
+        oldTraining.IsPinned = patchedTraining.IsPinned;
         _database.RoosterTrainings.Update(oldTraining);
         result.Success = (await _database.SaveChangesAsync()) > 0;
         sw.Stop();
@@ -207,23 +209,21 @@ public class ScheduleService : IScheduleService
         return result;
     }
 
-    public async Task<AddTrainingResponse> AddTrainingAsync(Guid customerId, EditTraining newTraining, Guid trainingId, CancellationToken token)
+    public async Task<AddTrainingResponse> AddTrainingAsync(Guid customerId, PlannedTraining newTraining, Guid trainingId, CancellationToken token)
     {
         var sw = Stopwatch.StartNew();
         var result = new AddTrainingResponse();
         result.NewId = trainingId;
-        DateTime dateStart = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("TimeStart is null"))).ToUniversalTime();
-        DateTime dateEnd = ((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"))).ToUniversalTime();
         var training = new Training
         {
             TrainingId = trainingId,
             DefaultId = null,
             RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId,
             Name = newTraining.Name,
-            DateStart = dateStart,
-            DateEnd = dateEnd,
+            DateStart = newTraining.DateStart,
+            DateEnd = newTraining.DateEnd,
             CountToTrainingTarget = newTraining.CountToTrainingTarget,
-            Pin = newTraining.Pin,
+            IsPinned = newTraining.IsPinned,
         };
         result.Success = await AddTrainingInternalAsync(customerId, training, token);
         sw.Stop();
@@ -247,7 +247,7 @@ public class ScheduleService : IScheduleService
             DateStart = training.DateStart,
             DateEnd = training.DateEnd,
             CountToTrainingTarget = training.CountToTrainingTarget,
-            IsPinned = training.Pin,
+            IsPinned = training.IsPinned,
         });
         return (await _database.SaveChangesAsync()) > 0;
     }
@@ -311,7 +311,7 @@ public class ScheduleService : IScheduleService
                         IsCreated = true,
                         RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                         CountToTrainingTarget = training.CountToTrainingTarget,
-                        Pin = training.IsPinned,
+                        IsPinned = training.IsPinned,
                     };
                     foreach (var user in users)
                     {
@@ -364,7 +364,7 @@ public class ScheduleService : IScheduleService
                         IsCreated = false,
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget,
-                        Pin = false
+                        IsPinned = false
                     };
                     foreach (var user in users)
                     {
@@ -390,6 +390,19 @@ public class ScheduleService : IScheduleService
 
         } while (scheduleDate <= DateOnly.FromDateTime(tillDate));
         result.Success = true;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+
+    public async Task<GetTrainingByIdResponse> GetTrainingById(Guid userId, Guid customerId, Guid id)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new GetTrainingByIdResponse();
+        var dbTraining = await _database.RoosterTrainings.Include(x=>x.RoosterAvailables).FirstOrDefaultAsync(x=>x.Id == id);
+        var training = dbTraining?.ToTraining(userId);
+        result.Training = training;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
@@ -447,21 +460,27 @@ public class ScheduleService : IScheduleService
         _database.RoosterAvailables.Update(ava);
         await _database.SaveChangesAsync(clt);
         result.Success = true;
+        result.AvailableId = ava.Id;
+        result.CalendarEventId = ava.CalendarEventId;
         return result;
     }
 
-    public async Task PutAssignedUserAsync(Guid userId, Guid customerId, OtherScheduleUserRequest body, CancellationToken clt)
+    public async Task<PutAssignedUserResponse> PutAssignedUserAsync(Guid userId, Guid customerId, OtherScheduleUserRequest body, CancellationToken clt)
     {
+        var result = new PutAssignedUserResponse
+        {
+            IdPut = body.TrainingId
+        };
         if (body.UserId == null || body.TrainingId == null)
         {
             _logger.LogWarning("userId is null {UserIsNull} or trainingId is null {TrainingIsNull}", body.UserId == null, body.TrainingId == null);
-            return;
+            return result;
         }
         var user = await _database.Users.FirstOrDefaultAsync(x => x.Id == body.UserId && x.DeletedOn == null && x.CustomerId == customerId, cancellationToken: clt);
         if (user is null)
         {
             _logger.LogWarning("No user with '{Id}' found", body.UserId);
-            return;
+            return result;
         }
         if (body.FunctionId == null)
         {
@@ -471,8 +490,9 @@ public class ScheduleService : IScheduleService
         if (training is null)
         {
             _logger.LogWarning("No training with '{Id}' found", body.TrainingId);
-            return;
+            return result;
         }
+        result.IdPut = training.Id;
         var ava = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.TrainingId == body.TrainingId && x.UserId == body.UserId, cancellationToken: clt);
         if (ava is null)
         {
@@ -503,6 +523,9 @@ public class ScheduleService : IScheduleService
             _database.RoosterAvailables.Update(ava);
             await _database.SaveChangesAsync(clt);
         }
+        result.AvailableId = ava?.Id;
+        result.CalendarEventId = ava?.CalendarEventId;
+        return result;
     }
 
     public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime? fromDate, CancellationToken token)
@@ -534,7 +557,7 @@ public class ScheduleService : IScheduleService
                 RoosterTrainingTypeId = schedul.Training.RoosterTrainingTypeId,
                 VehicleId = schedul.VehicleId,
                 PlannedFunctionId = schedul.UserFunctionId ?? users?.FirstOrDefault(x => x.Id == userId)?.UserFunctionId,
-                Pin = schedul.Training.IsPinned,
+                IsPinned = schedul.Training.IsPinned,
                 IsCreated = true,
                 PlanUsers = schedul.Training.RoosterAvailables!.Select(a => new PlanUser
                 {
@@ -599,9 +622,18 @@ public class ScheduleService : IScheduleService
                 RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                 VehicleId = ava?.VehicleId,
                 CountToTrainingTarget = training.CountToTrainingTarget,
-                Pin = training.IsPinned,
+                IsPinned = training.IsPinned,
             });
         }
         return result;
+    }
+
+    public async Task<bool> PatchEventIdForUserAvailible(Guid userId, Guid customerId, Guid? availableId, string? calendarEventId, CancellationToken clt)
+    {
+        var ava = await _database.RoosterAvailables.FindAsync(availableId, clt);
+        if (ava is null || ava.CustomerId != customerId) { return false; }
+        ava.CalendarEventId = calendarEventId;
+        _database.RoosterAvailables.Update(ava);
+        return (await _database.SaveChangesAsync(clt) > 0);
     }
 }

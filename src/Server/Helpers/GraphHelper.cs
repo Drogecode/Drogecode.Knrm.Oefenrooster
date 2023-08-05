@@ -278,4 +278,39 @@ public static class GraphHelper
         user.Role = role;
         listBase.Users.Add(user);
     }
+
+    public static async Task<Event> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd)
+    {
+        var body = new Event()
+        {
+            Subject = description,
+            Body = new ItemBody
+            {
+                ContentType = BodyType.Html,
+                Content = description,
+            },
+            Start = new DateTimeTimeZone
+            {
+                DateTime = dateStart.ToString("o"),
+                TimeZone = "UTC",
+            },
+            End = new DateTimeTimeZone
+            {
+                DateTime = dateEnd.ToString("o"),
+                TimeZone = "UTC",
+            },
+        };
+        var result = await _appClient.Users[userId.ToString()].Events.PostAsync(body, (requestConfiguration) =>
+        {
+            requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Pacific Standard Time\"");
+        });
+
+        var fromGet = await _appClient.Users[userId.ToString()].Events[result.Id].GetAsync();
+        return result;
+    }
+
+    internal static async Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt)
+    {
+        await _appClient.Users[userId.ToString()].Events[calendarEventId].DeleteAsync(cancellationToken: clt);
+    }
 }

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Components.DrogeCode;
 
-public class DateToStringTests : TestContext
+public class DateToStringTests : BlazorTestBase
 {
     [Theory]
     [AutoFakeItEasyData]

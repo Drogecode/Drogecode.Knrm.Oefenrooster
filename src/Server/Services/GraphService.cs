@@ -203,6 +203,17 @@ public class GraphService : IGraphService
         return sharePointUsers;
     }
 
+    public async Task<Event> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd)
+    {
+        var result = await GraphHelper.AddToCalendar(userId, description, dateStart, dateEnd);
+        return result;
+    }
+
+    public async Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt)
+    {
+        await GraphHelper.DeleteCalendarEvent(userId, calendarEventId, clt);
+    }
+
     private class UpdatedCheck
     {
         public DateTime LastUpdated { get; set; }

@@ -16,4 +16,6 @@ public interface IGraphService
     Task GetLists();
     Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(string userName, Guid userId, int count, int skip, Guid customerId, CancellationToken clt);
     Task<MultipleSharePointActionsResponse> GetListActionsUser(string userName, Guid userId, int count, int skip, Guid customerId, CancellationToken clt);
+    Task<Event> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd);
+    Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt);
 }

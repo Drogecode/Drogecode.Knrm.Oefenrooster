@@ -67,5 +67,4 @@ public class TrainingTypeDialogTests : BlazorTestBase
         A.CallTo(() => L2["Description"]).Returns(new LocalizedString("Description", "Description"));
         A.CallTo(() => L2["Description"]).Returns(new LocalizedString("Description", "Description"));
     }
-
 }
