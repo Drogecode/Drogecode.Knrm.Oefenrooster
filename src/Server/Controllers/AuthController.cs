@@ -33,10 +33,11 @@ public class AuthController : ControllerBase
     [HttpPost]
     public async Task logincallback([FromForm] string id_token, [FromForm] string state, [FromForm] string session_state)
     {
-        var d = JsonSerializer.Serialize(id_token);
         var handler = new JwtSecurityTokenHandler();
         var jwtSecurityToken = handler.ReadJwtToken(id_token);
-        Console.WriteLine(d);
+
+        Response.Redirect("/");
+
     }
 
     /*[HttpPost]

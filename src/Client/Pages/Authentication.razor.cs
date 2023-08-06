@@ -13,12 +13,17 @@ public sealed partial class Authentication
         {
             case "login":
                 var tenant = "d9754755-b054-4a9c-a77f-da42a4009365";
+                var policy = "b2c_1_sign_in";
                 var clientId = "1ca47bae-d6c1-495e-9b90-c32b244fdde2";
                 var responseType = "id_token";
                 var redirectUrl = $"{Navigation.BaseUri}api/auth/logincallback";
                 var responseMode = "form_post";
-                var url = $"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize?client_id={clientId}&response_type={responseType}&redirect_uri={redirectUrl}&response_mode={responseMode}&scope=openid&state=12345&nonce=678910";
+                var scope = "openid+profile+email";
+                //var url = $"https://login.microsoftonline.com/{tenant}.onmicrosoft.com/{policy}/oauth2/v2.0/authorize?client_id={clientId}&response_type={responseType}&redirect_uri={redirectUrl}&response_mode={responseMode}&scope=openid&state=arbitrary_data_you_can_receive_in_the_response&nonce=12345";
+                var url = $"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize?client_id={clientId}&response_type={responseType}&redirect_uri={redirectUrl}&response_mode={responseMode}&scope={scope}&state=12345&nonce=678910";
                 Navigation.NavigateTo(url);
+
+
                 break;
             case "login-callback":
                 Console.WriteLine("cool cool");
