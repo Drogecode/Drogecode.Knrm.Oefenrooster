@@ -5,7 +5,6 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.Extensions.Localization;
-using Microsoft.Graph.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages;

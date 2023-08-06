@@ -1,12 +1,4 @@
-﻿using Bunit;
-using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
-using FluentAssertions;
-using Microsoft.Graph.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Components.DrogeCode;
 

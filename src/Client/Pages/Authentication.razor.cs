@@ -1,8 +1,11 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Client.Pages;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Services;
+
+namespace Drogecode.Knrm.Oefenrooster.Client.Pages;
 
 public sealed partial class Authentication
 {
     [Inject] private NavigationManager Navigation { get; set; } = default!;
+    [Inject] private CustomStateProvider CustomStateProvider { get; set; } = default!;
     [Parameter] public string? Action { get; set; }
 
     //https://learn.microsoft.com/nl-nl/azure/active-directory/develop/v2-protocols-oidc
@@ -27,6 +30,7 @@ public sealed partial class Authentication
                 break;
             case "login-callback":
                 Console.WriteLine("cool cool");
+                await CustomStateProvider.loginCallback();
                 break;
         }
     }

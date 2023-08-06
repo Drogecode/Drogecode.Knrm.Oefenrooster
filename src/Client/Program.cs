@@ -6,7 +6,6 @@ using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.JSInterop;
@@ -20,8 +19,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 
-builder.Services.AddHttpClient("Drogecode.Knrm.Oefenrooster.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-    .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+builder.Services.AddHttpClient("Drogecode.Knrm.Oefenrooster.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
 builder.Services.AddMudServices(config =>
 {
@@ -31,6 +29,7 @@ builder.Services.AddMudExtensions();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();
 
+builder.Services.TryAddScoped<IAuthenticationClient, AuthenticationClient>();
 builder.Services.TryAddScoped<ICalendarItemClient, CalendarItemClient>();
 builder.Services.TryAddScoped<IConfigurationClient, ConfigurationClient>();
 builder.Services.TryAddScoped<IDefaultScheduleClient, DefaultScheduleClient>();
@@ -61,12 +60,10 @@ builder.Services.TryAddScoped<IOfflineService, OfflineService>();
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Drogecode.Knrm.Oefenrooster.ServerAPI"));
 
-builder.Services.AddMsalAuthentication(options =>
-{
-    builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
-    options.ProviderOptions.DefaultAccessTokenScopes.Add(builder.Configuration.GetSection("ServerApi")["Scopes"]);
-    options.ProviderOptions.LoginMode = "redirect";
-});
+builder.Services.AddOptions();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<CustomStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
