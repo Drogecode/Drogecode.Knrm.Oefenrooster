@@ -10,11 +10,10 @@
     <MudNavLink Icon="@Icons.Material.Filled.ManageAccounts" Href="@_uriPlannerUser" Match="NavLinkMatch.Prefix">@L["User details"]</MudNavLink>
     <MudNavGroup Title="@L["Configuration"]" Expanded="true">
         <MudNavLink Icon="@Icons.Material.Filled.DirectionsRun" Href="/configuration/training-types" Match="NavLinkMatch.Prefix">@L["Training types"]</MudNavLink>
-        @if (_showSettings)
-        {
+        <AuthorizeView Roles="isSuperGlobalAdmin">
             <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/configuration/global" Match="NavLinkMatch.Prefix">@L["Configuration"]</MudNavLink>
             <MudNavLink Icon="@Icons.Material.Filled.SecurityUpdateWarning" Href="/precom/alerts" Match="NavLinkMatch.Prefix">@L["PreCom alerts"]</MudNavLink>
-        }
+        </AuthorizeView>
     </MudNavGroup>
     <MudDivider />
     <MudNavLink Href="https://dorus1824.sharepoint.com/" Target="_blank" Match="NavLinkMatch.All">@L["Sharepoint"]</MudNavLink>

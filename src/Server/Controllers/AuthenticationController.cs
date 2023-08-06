@@ -66,7 +66,7 @@ public class AuthenticationController : ControllerBase
     public async Task Logincallback([FromForm] string id_token, [FromForm] string state, [FromForm] string session_state, CancellationToken clt = default)
     {
         var found = _memoryCache.Get<GetLoginSecretsResponse>(state);
-        if (found?.Success is not true) return ;
+        if (found?.Success is not true) return;
         _memoryCache.Remove(state);
 
         var handler = new JwtSecurityTokenHandler();
@@ -162,6 +162,8 @@ public class AuthenticationController : ControllerBase
             new("http://schemas.microsoft.com/identity/claims/objectidentifier", userId),
             new("http://schemas.microsoft.com/identity/claims/tenantid", customerId)
         };
+        if (string.Compare(userId, DefaultSettingsHelper.IdTaco.ToString(), true) == 0)
+            claims.Add(new Claim(ClaimTypes.Role, "isSuperGlobalAdmin"));
         /*if (userLoginResponse.Roles == null) return claims;
         foreach (var roleString in userLoginResponse.Roles.Select(role => role.ToString()).Where(roleString => !claims.Any(c => c.Type == ClaimTypes.Role && c.Value == roleString)))
         {

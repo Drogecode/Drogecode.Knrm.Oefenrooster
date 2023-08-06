@@ -24,15 +24,12 @@ public sealed partial class NavMenu : IDisposable
     private string _uriCalendar = "/planner/calendar";
     private string _uriSchedule = "/planner/schedule";
     private string _uriPlannerUser = "/planner/user";
-    private bool _showSettings;
 
     protected override async Task OnInitializedAsync()
     {
         Navigation.LocationChanged += RefreshForSubMenu;
         var installing = await _configurationRepository.InstallingActive();
         var dbUser = await _userRepository.GetCurrentUserAsync();//Force creation of user.
-        if (installing == true || (dbUser != null && dbUser.Id.Equals(DefaultSettingsHelper.IdTaco)))
-            _showSettings = true;
     }
 
     private void RefreshForSubMenu(object sender, LocationChangedEventArgs e)
