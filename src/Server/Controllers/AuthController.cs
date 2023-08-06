@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
+using ZXing.Aztec.Internal;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -32,6 +34,8 @@ public class AuthController : ControllerBase
     public async Task logincallback([FromForm] string id_token, [FromForm] string state, [FromForm] string session_state, [FromForm] string code)
     {
         var d = JsonSerializer.Serialize(id_token);
+        var handler = new JwtSecurityTokenHandler();
+        var jwtSecurityToken = handler.ReadJwtToken(d);
         Console.WriteLine(d);
     }
 
