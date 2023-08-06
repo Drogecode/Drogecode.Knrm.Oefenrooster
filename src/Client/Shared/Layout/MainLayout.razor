@@ -90,7 +90,11 @@
             </MudMainContent>
         </Authorizing>
         <NotAuthorized>
-            @NotAuthorized()
+            <MudMainContent>
+                <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
+                    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">@L["Not authorized"]</MudText>
+                </MudContainer>
+            </MudMainContent>
         </NotAuthorized>
     </AuthorizeView>
 </MudLayout>

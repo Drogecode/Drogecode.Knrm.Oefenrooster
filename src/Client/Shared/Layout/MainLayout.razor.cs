@@ -41,7 +41,11 @@ public sealed partial class MainLayout : IDisposable
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
-            if (!_isAuthenticated) return;
+            if (!_isAuthenticated)
+            {
+                Navigation.NavigateTo("landing_page");
+                return;
+            }
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
                 .Build();
@@ -96,13 +100,6 @@ public sealed partial class MainLayout : IDisposable
     private async Task BeginLogout(MouseEventArgs args)
     {
         Navigation.NavigateTo("authentication/logout");
-    }
-    protected async Task NotAuthorized()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
-        if (!_isAuthenticated)
-            Navigation.NavigateTo("landing_page");
     }
 
     void DrawerToggle()

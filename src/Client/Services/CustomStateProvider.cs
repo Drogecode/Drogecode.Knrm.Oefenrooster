@@ -7,7 +7,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Services;
 
 public class CustomStateProvider : AuthenticationStateProvider
 {
-    private CurrentUser _currentUser;
+    private CurrentUser? _currentUser;
     private IAuthenticationClient _authenticationClient;
     public CustomStateProvider(IAuthenticationClient authenticationClient)
     {
@@ -45,7 +45,7 @@ public class CustomStateProvider : AuthenticationStateProvider
 
     public async Task Logout()
     {
-        //await api.Logout();
+        await _authenticationClient.LogoutAsync();
         _currentUser = null;
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }

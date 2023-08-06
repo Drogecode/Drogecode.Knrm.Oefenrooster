@@ -5,7 +5,37 @@
     "version": "v1"
   },
   "paths": {
-    "/api/Authentication/logincallback": {
+    "/api/Authentication/login-secrets": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "GetLoginSecrets",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLoginSecretsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLoginSecretsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLoginSecretsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Authentication/login-callback": {
       "post": {
         "tags": [
           "Authentication"
@@ -78,6 +108,19 @@
           }
         }
       }
+    },
+    "/api/Authentication": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "Logout",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -102,6 +145,30 @@
             "items": {
               "$ref": "#/components/schemas/StringStringKeyValuePair"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetLoginSecretsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "loginSecret": {
+            "type": "string",
+            "nullable": true
+          },
+          "loginNonce": {
+            "type": "string",
             "nullable": true
           }
         },

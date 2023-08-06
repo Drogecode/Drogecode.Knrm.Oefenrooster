@@ -11,6 +11,11 @@ using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using System.Diagnostics;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using System.Security;
+using System.Security.Cryptography;
+using Microsoft.Extensions.Caching.Memory;
+using static MudBlazor.CategoryTypes;
+using System.Text;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -20,36 +25,54 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 public class AuthenticationController : ControllerBase
 {
     private readonly ILogger<AuthenticationController> _logger;
+    private readonly IMemoryCache _memoryCache;
 
-    public AuthenticationController(ILogger<AuthenticationController> logger)
+    public AuthenticationController(
+        ILogger<AuthenticationController> logger,
+        IMemoryCache memoryCache)
     {
         _logger = logger;
+        _memoryCache = memoryCache;
     }
-    /*private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
-    public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
-    {
-        _userManager = userManager;
-        _signInManager = signInManager;
-    }*/
 
-    /*[HttpPost]
-    public async Task<IActionResult> Login(LoginRequest request)
+    [HttpGet]
+    [Route("login-secrets")]
+    public async Task<ActionResult<GetLoginSecretsResponse>> GetLoginSecrets()
     {
-        var user = await _userManager.FindByNameAsync(request.UserName);
-        if (user == null) return BadRequest("User does not exist");
-        var singInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-        if (!singInResult.Succeeded) return BadRequest("Invalid password");
-        await _signInManager.SignInAsync(user, request.RememberMe);
-        return Ok();
-    }*/
+        try
+        {
+            var response = new GetLoginSecretsResponse
+            {
+                LoginSecret = CreateSecret(64),
+                LoginNonce = CreateSecret(64),
+                Success = true
+            };
+
+            var cacheOptions = new MemoryCacheEntryOptions();
+            cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
+            _memoryCache.Set(response.LoginSecret, response, cacheOptions);
+            return response;
+
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "GetLoginSecrets");
+            return BadRequest();
+        }
+    }
 
     [HttpPost]
-    [Route("logincallback")]
+    [Route("login-callback")]
     public async Task Logincallback([FromForm] string id_token, [FromForm] string state, [FromForm] string session_state, CancellationToken clt = default)
     {
+        var found = _memoryCache.Get<GetLoginSecretsResponse>(state);
+        if (found?.Success is not true) return ;
+        _memoryCache.Remove(state);
+
         var handler = new JwtSecurityTokenHandler();
         var jwtSecurityToken = handler.ReadJwtToken(id_token);
+        if (string.Compare(found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value, false) != 0) return;
+
         await SetUser(jwtSecurityToken, false, clt);
         Response.Redirect("/authentication/login-callback");
     }
@@ -78,8 +101,16 @@ public class AuthenticationController : ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e, "CurrentUserInfo");
-            return BadRequest($"Failed: {e.Message}");
+            return BadRequest();
         }
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync();
+        return Ok();
     }
 
     private async Task SetUser(JwtSecurityToken jwtSecurityToken, bool rememberMe, CancellationToken clt)
@@ -140,37 +171,23 @@ public class AuthenticationController : ControllerBase
         return claims;
     }
 
-    /*[HttpPost]
-    public async Task<IActionResult> Register(RegisterRequest parameters)
+    private string CreateSecret(int length)
     {
-        var user = new ApplicationUser();
-        user.UserName = parameters.UserName;
-        var result = await _userManager.CreateAsync(user, parameters.Password);
-        if (!result.Succeeded) return BadRequest(result.Errors.FirstOrDefault()?.Description);
-        return await Login(new LoginRequest
+        StringBuilder res = new StringBuilder();
+        byte[] random = new byte[1];
+        using (var cryptoProvider = new RNGCryptoServiceProvider())
         {
-            UserName = parameters.UserName,
-            Password = parameters.Password
-        });
+            while (0 < length--)
+            {
+                char rndChar = '\0';
+                do
+                {
+                    cryptoProvider.GetBytes(random);
+                    rndChar = (char)((random[0] % 92) + 33);
+                } while (!char.IsLetterOrDigit(rndChar));
+                res.Append(rndChar);
+            }
+        }
+        return res.ToString();
     }
-
-    [Authorize]
-    [HttpPost]
-    public async Task<IActionResult> Logout()
-    {
-        await _signInManager.SignOutAsync();
-        return Ok();
-    }
-
-    [HttpGet]
-    public CurrentUser CurrentUserInfo()
-    {
-        return new CurrentUser
-        {
-            IsAuthenticated = User.Identity.IsAuthenticated,
-            UserName = User.Identity.Name,
-            Claims = User.Claims
-            .ToDictionary(c => c.Type, c => c.Value)
-        };
-    }*/
 }
