@@ -1,26 +1,32 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Identity.Web;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
+using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
+using Drogecode.Knrm.Oefenrooster.Shared.Services;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using HealthChecks.UI.Client;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.OpenApi.Extensions;
 using System.Text;
-using Microsoft.AspNetCore.ResponseCompression;
-using Drogecode.Knrm.Oefenrooster.Server.Hubs;
-using Microsoft.ApplicationInsights.AspNetCore.Extensions;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
-using Drogecode.Knrm.Oefenrooster.Shared.Services;
-using Drogecode.Knrm.Oefenrooster.Server.Health;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using HealthChecks.UI.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = false;
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+});
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -61,6 +67,7 @@ builder.Services.AddScoped<IVehicleService, VehicleService>();
 // Only run in debug because it fails on the azure app service! (and is not necessary)
 var groupNames = new List<string>
 {
+    "Authentication",
     "CalendarItem",
     "Configuration",
     "Function",

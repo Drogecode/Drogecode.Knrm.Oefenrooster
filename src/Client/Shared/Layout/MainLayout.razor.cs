@@ -3,7 +3,6 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Localization;
 
@@ -11,7 +10,6 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 public sealed partial class MainLayout : IDisposable
 {
     [Inject] private IStringLocalizer<MainLayout> L { get; set; } = default!;
-    [Inject] private SignOutSessionStateManager SignOutManager { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
@@ -41,6 +39,13 @@ public sealed partial class MainLayout : IDisposable
     {
         try
         {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
+            if (!_isAuthenticated)
+            {
+                Navigation.NavigateTo("landing_page");
+                return;
+            }
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
                 .Build();
@@ -78,6 +83,7 @@ public sealed partial class MainLayout : IDisposable
             RefreshMe();
         }
     }
+
     private async Task GetTrainingTypes()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -93,15 +99,7 @@ public sealed partial class MainLayout : IDisposable
 
     private async Task BeginLogout(MouseEventArgs args)
     {
-        await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");
-    }
-    protected async Task NotAuthorized()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
-        if (!_isAuthenticated)
-            Navigation.NavigateTo("landing_page");
     }
 
     void DrawerToggle()

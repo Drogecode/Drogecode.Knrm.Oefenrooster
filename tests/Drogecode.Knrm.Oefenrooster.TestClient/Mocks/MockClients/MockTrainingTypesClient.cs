@@ -1,11 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
-using Microsoft.Graph.Education.Classes.Item.Assignments.Item.Submissions.Item.Return;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
 

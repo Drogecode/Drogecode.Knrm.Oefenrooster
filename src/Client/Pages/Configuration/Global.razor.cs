@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
@@ -12,7 +13,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 public sealed partial class Global : IDisposable
 {
     [Inject] private IStringLocalizer<Global> L { get; set; } = default!;
-    [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+    [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private ConfigurationRepository _configurationRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;

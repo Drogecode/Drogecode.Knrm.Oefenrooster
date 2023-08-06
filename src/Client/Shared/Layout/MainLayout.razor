@@ -1,6 +1,7 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Services;
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @inherits LayoutComponentBase
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject CustomStateProvider AuthenticationStateProvider
 
 <MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" Theme="@_myCustomTheme" />
 <MudDialogProvider />
@@ -89,7 +90,11 @@
             </MudMainContent>
         </Authorizing>
         <NotAuthorized>
-            @NotAuthorized()
+            <MudMainContent>
+                <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
+                    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">@L["Not authorized"]</MudText>
+                </MudContainer>
+            </MudMainContent>
         </NotAuthorized>
     </AuthorizeView>
 </MudLayout>

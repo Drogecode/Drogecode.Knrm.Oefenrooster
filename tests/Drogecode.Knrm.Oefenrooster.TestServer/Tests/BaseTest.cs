@@ -209,8 +209,8 @@ public class BaseTest : IAsyncLifetime
     {
         var claims = new List<Claim>
         {
-            new Claim("name", USER_NAME),
-            new Claim("preferred_username","xUnit@drogecode.nl"),
+            new Claim(ClaimTypes.Name, "xUnit@drogecode.nl"),
+            new Claim("FullName", USER_NAME),
             new Claim("http://schemas.microsoft.com/identity/claims/objectidentifier", DefaultSettingsHelper.IdTaco.ToString()),
             new Claim("http://schemas.microsoft.com/identity/claims/tenantid", DefaultSettingsHelper.KnrmHuizenId.ToString()),
         };
