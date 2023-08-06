@@ -1,6 +1,7 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Services;
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @inherits LayoutComponentBase
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject CustomStateProvider AuthenticationStateProvider
 
 <MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" Theme="@_myCustomTheme" />
 <MudDialogProvider />

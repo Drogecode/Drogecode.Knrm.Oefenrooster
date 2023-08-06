@@ -39,6 +39,9 @@ public sealed partial class MainLayout : IDisposable
     {
         try
         {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
+            if (!_isAuthenticated) return;
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
                 .Build();
@@ -76,6 +79,7 @@ public sealed partial class MainLayout : IDisposable
             RefreshMe();
         }
     }
+
     private async Task GetTrainingTypes()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();

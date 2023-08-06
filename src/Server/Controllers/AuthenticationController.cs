@@ -17,11 +17,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [ApiExplorerSettings(GroupName = "Authentication")]
-public class AuthController : ControllerBase
+public class AuthenticationController : ControllerBase
 {
-    private readonly ILogger<AuthController> _logger;
+    private readonly ILogger<AuthenticationController> _logger;
 
-    public AuthController(ILogger<AuthController> logger)
+    public AuthenticationController(ILogger<AuthenticationController> logger)
     {
         _logger = logger;
     }
@@ -120,12 +120,16 @@ public class AuthController : ControllerBase
 
     public static IEnumerable<Claim> GetClaimsList(JwtSecurityToken jwtSecurityToken)
     {
-        var fullName = $"durp";
+        var email = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "email")?.Value;
+        var fullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value;
+        var userId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "oid")?.Value;
+        var customerId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "tid")?.Value;
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Name, "dam"),
+            new(ClaimTypes.Name, email),
             new("FullName", fullName),
-            new("http://schemas.microsoft.com/identity/claims/objectidentifier", jwtSecurityToken.Claims.FirstOrDefault(x=>x.Type == "oid").Value),
+            new("http://schemas.microsoft.com/identity/claims/objectidentifier", userId),
+            new("http://schemas.microsoft.com/identity/claims/tenantid", customerId)
         };
         /*if (userLoginResponse.Roles == null) return claims;
         foreach (var roleString in userLoginResponse.Roles.Select(role => role.ToString()).Where(roleString => !claims.Any(c => c.Type == ClaimTypes.Role && c.Value == roleString)))

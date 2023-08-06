@@ -83,7 +83,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task LogincallbackAsync(string id_token, string state, string session_state, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Auth/logincallback");
+            urlBuilder_.Append("api/Authentication/logincallback");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -177,7 +177,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<CurrentUser> CurrentUserInfoAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Auth/current-user-info");
+            urlBuilder_.Append("api/Authentication/current-user-info");
 
             var client_ = _httpClient;
             var disposeClient_ = false;

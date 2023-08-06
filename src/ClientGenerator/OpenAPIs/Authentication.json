@@ -5,10 +5,10 @@
     "version": "v1"
   },
   "paths": {
-    "/api/Auth/logincallback": {
+    "/api/Authentication/logincallback": {
       "post": {
         "tags": [
-          "Auth"
+          "Authentication"
         ],
         "operationId": "Logincallback",
         "requestBody": {
@@ -49,10 +49,10 @@
         }
       }
     },
-    "/api/Auth/current-user-info": {
+    "/api/Authentication/current-user-info": {
       "get": {
         "tags": [
-          "Auth"
+          "Authentication"
         ],
         "operationId": "CurrentUserInfo",
         "responses": {
