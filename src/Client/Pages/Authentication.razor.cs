@@ -22,15 +22,12 @@ public sealed partial class Authentication
                 var redirectUrl = $"{Navigation.BaseUri}api/auth/logincallback";
                 var responseMode = "form_post";
                 var scope = "openid+profile+email";
-                //var url = $"https://login.microsoftonline.com/{tenant}.onmicrosoft.com/{policy}/oauth2/v2.0/authorize?client_id={clientId}&response_type={responseType}&redirect_uri={redirectUrl}&response_mode={responseMode}&scope=openid&state=arbitrary_data_you_can_receive_in_the_response&nonce=12345";
                 var url = $"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize?client_id={clientId}&response_type={responseType}&redirect_uri={redirectUrl}&response_mode={responseMode}&scope={scope}&state=12345&nonce=678910";
                 Navigation.NavigateTo(url);
-
-
                 break;
             case "login-callback":
-                Console.WriteLine("cool cool");
                 await CustomStateProvider.loginCallback();
+                Navigation.NavigateTo("/");
                 break;
         }
     }

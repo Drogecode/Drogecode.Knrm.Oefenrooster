@@ -19,7 +19,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 
-builder.Services.AddHttpClient("Drogecode.Knrm.Oefenrooster.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<CustomStateProvider>();
 
 builder.Services.AddMudServices(config =>
 {
@@ -57,13 +58,15 @@ builder.Services.TryAddScoped<VehicleRepository>();
 builder.Services.TryAddScoped<ILocalStorageExpireService, LocalStorageExpireService>();
 builder.Services.TryAddScoped<IOfflineService, OfflineService>();
 
-// Supply HttpClient instances that include access tokens when making requests to the server project
-builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Drogecode.Knrm.Oefenrooster.ServerAPI"));
-
-builder.Services.AddOptions();
-builder.Services.AddAuthorizationCore();
-builder.Services.AddScoped<CustomStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
+builder.Services.AddScoped(sp => new HttpClient
+{
+    BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+});
+builder.Services.AddHttpClient("Long", c =>
+{
+    c.Timeout = TimeSpan.FromSeconds(250);
+});
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 

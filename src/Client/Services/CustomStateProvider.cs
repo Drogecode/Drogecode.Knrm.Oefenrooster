@@ -35,7 +35,6 @@ public class CustomStateProvider : AuthenticationStateProvider
     {
         if (_currentUser != null && _currentUser.IsAuthenticated) return _currentUser;
         _currentUser = await _authenticationClient.CurrentUserInfoAsync();
-        _currentUser = new CurrentUser();
         return _currentUser;
     }
 
