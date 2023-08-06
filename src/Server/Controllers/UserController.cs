@@ -92,8 +92,6 @@ public class UserController : ControllerBase
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var userName = User?.FindFirstValue("name") ?? throw new Exception("No userName found");
-            var userEmail = User?.FindFirstValue("preferred_username") ?? throw new Exception("No userEmail found");
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             user.Id = Guid.NewGuid();
             var result = await _userService.AddUser(user, customerId);
@@ -114,8 +112,8 @@ public class UserController : ControllerBase
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var userName = User?.FindFirstValue("name") ?? throw new Exception("No userName found");
-            var userEmail = User?.FindFirstValue("preferred_username") ?? throw new Exception("No userEmail found");
+            var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
+            var userEmail = User?.FindFirstValue(ClaimTypes.Name) ?? throw new Exception("No userEmail found");
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _userService.UpdateUser(user, userId, userName, userEmail, customerId);
 
@@ -135,7 +133,6 @@ public class UserController : ControllerBase
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var userName = User?.FindFirstValue("name") ?? throw new Exception("No userName found");
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             _graphService.InitializeGraph();
             var existingUsers = (await _userService.GetAllUsers(customerId, true)).DrogeUsers;
