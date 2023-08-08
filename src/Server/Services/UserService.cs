@@ -1,14 +1,14 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-using Microsoft.Graph;
 using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class UserService : IUserService
 {
     private readonly ILogger<UserService> _logger;
-    private readonly Database.DataContext _database;
-    public UserService(ILogger<UserService> logger, Database.DataContext database)
+    private readonly DataContext _database;
+    public UserService(ILogger<UserService> logger, DataContext database)
     {
         _logger = logger;
         _database = database;

@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -28,6 +29,7 @@ public class TrainingTypesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = AccessesNames.AUTH_configure_training_types)]
     [Route("")]
     public async Task<ActionResult<PutTrainingTypeResponse>> PostNewTrainingType([FromBody] PlannerTrainingType plannerTrainingType, CancellationToken clt = default)
     {
@@ -80,6 +82,7 @@ public class TrainingTypesController : ControllerBase
     }
 
     [HttpPatch]
+    [Authorize(Roles = AccessesNames.AUTH_configure_training_types)]
     [Route("")]
     public async Task<ActionResult<PatchTrainingTypeResponse>> PatchTrainingType([FromBody] PlannerTrainingType plannerTrainingType, CancellationToken clt = default)
     {

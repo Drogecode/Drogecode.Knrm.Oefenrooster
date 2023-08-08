@@ -1,4 +1,5 @@
-﻿<MudDialog>
+﻿@attribute [Authorize(Roles = AccessesNames.AUTH_configure_training_types)]
+<MudDialog>
     <DialogContent>
         @if (TrainingType is not null)
         {

@@ -8,13 +8,17 @@
     <MudNavLink Icon="@Icons.Material.Filled.AutoGraph" Href="/user/defaults" Match="NavLinkMatch.Prefix">@L["Defaults"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.WbSunny" Href="/user/vacations" Match="NavLinkMatch.Prefix">@L["Vacations"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.ManageAccounts" Href="@_uriPlannerUser" Match="NavLinkMatch.Prefix">@L["User details"]</MudNavLink>
-    <MudNavGroup Title="@L["Configuration"]" Expanded="true">
-        <MudNavLink Icon="@Icons.Material.Filled.DirectionsRun" Href="/configuration/training-types" Match="NavLinkMatch.Prefix">@L["Training types"]</MudNavLink>
-        <AuthorizeView Roles="isSuperGlobalAdmin">
-            <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/configuration/global" Match="NavLinkMatch.Prefix">@L["Configuration"]</MudNavLink>
-            <MudNavLink Icon="@Icons.Material.Filled.SecurityUpdateWarning" Href="/precom/alerts" Match="NavLinkMatch.Prefix">@L["PreCom alerts"]</MudNavLink>
-        </AuthorizeView>
-    </MudNavGroup>
+    <AuthorizeView Roles="@(AccessesNames.AUTH_configure_training_types + ", " +AccessesNames.AUTH_Taco)">
+        <MudNavGroup Title="@L["Configuration"]" Expanded="true">
+            <AuthorizeView Roles="@AccessesNames.AUTH_configure_training_types" Context="inner">
+                <MudNavLink Icon="@Icons.Material.Filled.DirectionsRun" Href="/configuration/training-types" Match="NavLinkMatch.Prefix">@L["Training types"]</MudNavLink>
+            </AuthorizeView>
+            <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
+                <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/configuration/global" Match="NavLinkMatch.Prefix">@L["Configuration"]</MudNavLink>
+                <MudNavLink Icon="@Icons.Material.Filled.SecurityUpdateWarning" Href="/precom/alerts" Match="NavLinkMatch.Prefix">@L["PreCom alerts"]</MudNavLink>
+            </AuthorizeView>
+        </MudNavGroup>
+    </AuthorizeView>
     <MudDivider />
     <MudNavLink Href="https://dorus1824.sharepoint.com/" Target="_blank" Match="NavLinkMatch.All">@L["Sharepoint"]</MudNavLink>
     <MudDivider />

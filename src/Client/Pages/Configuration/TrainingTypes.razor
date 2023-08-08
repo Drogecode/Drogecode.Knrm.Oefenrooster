@@ -1,5 +1,5 @@
 ﻿@page "/configuration/training-types"
-@attribute [Authorize]
+@attribute [Authorize(Roles = AccessesNames.AUTH_configure_training_types)]
 
 <PageTitle>@L["Training types"]</PageTitle>
 <MudPaper Elevation="0" Class="p-2">

@@ -16,6 +16,7 @@ using System.Security.Cryptography;
 using Microsoft.Extensions.Caching.Memory;
 using static MudBlazor.CategoryTypes;
 using System.Text;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -26,13 +27,16 @@ public class AuthenticationController : ControllerBase
 {
     private readonly ILogger<AuthenticationController> _logger;
     private readonly IMemoryCache _memoryCache;
+    private readonly IUserRoleService _userRoleService;
 
     public AuthenticationController(
         ILogger<AuthenticationController> logger,
-        IMemoryCache memoryCache)
+        IMemoryCache memoryCache,
+        IUserRoleService userRoleService)
     {
         _logger = logger;
         _memoryCache = memoryCache;
+        _userRoleService = userRoleService;
     }
 
     [HttpGet]
@@ -115,7 +119,7 @@ public class AuthenticationController : ControllerBase
 
     private async Task SetUser(JwtSecurityToken jwtSecurityToken, bool rememberMe, CancellationToken clt)
     {
-        var claims = GetClaimsList(jwtSecurityToken);
+        var claims = await GetClaimsList(jwtSecurityToken);
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -149,26 +153,27 @@ public class AuthenticationController : ControllerBase
             authProperties);
     }
 
-    public static IEnumerable<Claim> GetClaimsList(JwtSecurityToken jwtSecurityToken)
+    public async Task<IEnumerable<Claim>> GetClaimsList(JwtSecurityToken jwtSecurityToken)
     {
         var email = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "email")?.Value;
         var fullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value;
         var userId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "oid")?.Value;
-        var customerId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "tid")?.Value;
+        var customerId = new Guid(jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "tid")?.Value ?? throw new Exception("customerId not found"));
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, email),
             new("FullName", fullName),
             new("http://schemas.microsoft.com/identity/claims/objectidentifier", userId),
-            new("http://schemas.microsoft.com/identity/claims/tenantid", customerId)
+            new("http://schemas.microsoft.com/identity/claims/tenantid", customerId.ToString())
         };
         if (string.Compare(userId, DefaultSettingsHelper.IdTaco.ToString(), true) == 0)
-            claims.Add(new Claim(ClaimTypes.Role, "isSuperGlobalAdmin"));
-        /*if (userLoginResponse.Roles == null) return claims;
-        foreach (var roleString in userLoginResponse.Roles.Select(role => role.ToString()).Where(roleString => !claims.Any(c => c.Type == ClaimTypes.Role && c.Value == roleString)))
+            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_Taco));
+        var accesses = await _userRoleService.GetAccessForUser(customerId, jwtSecurityToken.Claims);
+        if (accesses == null) return claims;
+        foreach (var access in accesses)
         {
-            claims.Add(new Claim(ClaimTypes.Role, roleString));
-        }*/
+            claims.Add(new Claim(ClaimTypes.Role, access));
+        }
 
         return claims;
     }

@@ -42,6 +42,7 @@ public class Setup : Xunit.Di.Setup
             services.AddScoped<IGraphService, GraphService>();
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<ITrainingTypesService, TrainingTypesService>();
+            services.AddScoped<IUserRoleService, UserRoleService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IVehicleService, VehicleService>();
 

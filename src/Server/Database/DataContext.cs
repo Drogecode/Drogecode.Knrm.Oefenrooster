@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
@@ -11,6 +12,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbAudit> Audits { get; set; }
         public DbSet<DbUsers> Users { get; set; }
         public DbSet<DbUserFunctions> UserFunctions { get; set; }
+        public DbSet<DbUserRoles> UserRoles { get; set; }
         public DbSet<DbUserDefaultAvailable> UserDefaultAvailables { get; set; }
         public DbSet<DbUserHolidays> UserHolidays { get; set; }
         public DbSet<DbCustomers> Customers { get; set; }
@@ -59,6 +61,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserFunctions>(e => { e.Property(e => e.Order).IsRequired(); });
             modelBuilder.Entity<DbUserFunctions>(e => { e.Property(e => e.CustomerId).IsRequired(); });
             modelBuilder.Entity<DbUserFunctions>().HasOne(p => p.Customer).WithMany(g => g.UserFunctions).HasForeignKey(s => s.CustomerId).IsRequired();
+
+            //UserRoles
+            modelBuilder.Entity<DbUserRoles>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserRoles>().HasOne(p => p.Customer).WithMany(g => g.UserRoles).HasForeignKey(s => s.CustomerId).IsRequired();
 
             //UserDefaultAvailables
             modelBuilder.Entity<DbUserDefaultAvailable>(e => { e.Property(e => e.Id).IsRequired(); });
@@ -133,6 +139,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             SetDefaultRooster(modelBuilder);
             SetRoosterItems(modelBuilder);
             SetUserFunctions(modelBuilder);
+            SetUserRoles(modelBuilder);
             SetVehicles(modelBuilder);
             SetRoosterTrainingTypes(modelBuilder);
         }
@@ -467,6 +474,24 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 400,
                 TrainingTarget = 0,
                 IsActive = false
+            }));
+        }
+
+        private void SetUserRoles(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
+            {
+                Id = new Guid("287359b1-2035-435b-97b0-eb260dc497d6"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "Admin",
+                Accesses = AccessesNames.AUTH_configure_training_types
+            }));
+            modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
+            {
+                Id = new Guid("f6b0c571-9050-40d6-bf58-807981e5ed6e"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "Scheduler",
+                Accesses = AccessesNames.AUTH_scheduler
             }));
         }
 

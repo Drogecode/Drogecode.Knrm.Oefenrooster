@@ -13,6 +13,7 @@ public class DbCustomers
 
     public ICollection<DbUsers>? Users { get; set; }
     public ICollection<DbUserFunctions>? UserFunctions { get; set; }
+    public ICollection<DbUserRoles>? UserRoles { get; set; }
     public ICollection<DbUserDefaultAvailable>? UserDefaultAvailables { get; set; }
     public ICollection<DbUserHolidays>? UserHolidays { get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
