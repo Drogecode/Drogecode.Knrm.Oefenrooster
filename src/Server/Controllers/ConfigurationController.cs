@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,7 @@ public class ConfigurationController : ControllerBase
 
     [HttpPatch]
     [Route("upgrade-database")]
+    [Authorize(Roles = AccessesNames.AUTH_Taco)]
     public async Task<ActionResult<UpgradeDatabaseResponse>> UpgradeDatabase(CancellationToken token = default)
     {
         try
@@ -41,12 +43,8 @@ public class ConfigurationController : ControllerBase
             UpgradeDatabaseResponse result = new UpgradeDatabaseResponse { Success = false };
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var installing = _configuration.GetValue<bool>("Drogecode:Installing");
-            if (installing || userId == DefaultSettingsHelper.IdTaco)
-            {
-                result.Success = await _configurationService.UpgradeDatabase();
-                await _auditService.Log(userId, AuditType.DataBaseUpgrade, customerId);
-            }
+            result.Success = await _configurationService.UpgradeDatabase();
+            await _auditService.Log(userId, AuditType.DataBaseUpgrade, customerId);
             return Ok(result);
         }
         catch (Exception ex)
@@ -95,6 +93,7 @@ public class ConfigurationController : ControllerBase
 
     [HttpPatch]
     [Route("update-special-dates")]
+    [Authorize(Roles = AccessesNames.AUTH_Taco)]
     public async Task<ActionResult<UpdateSpecialDatesResponse>> UpdateSpecialDates(CancellationToken token = default)
     {
         try

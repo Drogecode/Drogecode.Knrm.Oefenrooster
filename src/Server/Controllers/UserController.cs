@@ -1,13 +1,9 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Graph;
-using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Graph.Models;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
-using Tavis.UriTemplates;
-using ZXing;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
@@ -87,6 +83,7 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Route("")]
+    [Authorize(Roles = AccessesNames.AUTH_Taco)]
     public async Task<ActionResult<AddUserResponse>> AddUser([FromBody] DrogeUser user, CancellationToken token = default)
     {
         try
@@ -107,6 +104,7 @@ public class UserController : ControllerBase
 
     [HttpPatch]
     [Route("")]
+    [Authorize(Roles = AccessesNames.AUTH_Taco)]
     public async Task<ActionResult<UpdateUserResponse>> UpdateUser([FromBody] DrogeUser user, CancellationToken token = default)
     {
         try
@@ -128,6 +126,7 @@ public class UserController : ControllerBase
 
     [HttpPatch]
     [Route("sync")]
+    [Authorize(Roles = AccessesNames.AUTH_Taco)]
     public async Task<ActionResult<SyncAllUsersResponse>> SyncAllUsers(CancellationToken token = default)
     {
         try
