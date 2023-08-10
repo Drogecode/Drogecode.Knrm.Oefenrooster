@@ -58,6 +58,7 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     [Route("new-version-available/{clientVersion}")]
     public async Task<ActionResult<VersionDetailResponse>> NewVersionAvailable(string clientVersion, CancellationToken token = default)
     {

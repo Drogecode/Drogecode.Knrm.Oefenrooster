@@ -42,13 +42,15 @@ public class BaseTest : IAsyncLifetime
     protected readonly HolidayController HolidayController;
     protected readonly TrainingTypesController TrainingTypesController;
     protected readonly CalendarItemController CalendarItemController;
+    protected readonly PreComController PreComController;
     public BaseTest(
         ScheduleController scheduleController,
         UserController userController,
         FunctionController functionController,
         HolidayController holidayController,
         TrainingTypesController trainingTypesController,
-        CalendarItemController calendarItemController)
+        CalendarItemController calendarItemController,
+        PreComController preComController)
     {
         ScheduleController = scheduleController;
         UserController = userController;
@@ -56,6 +58,7 @@ public class BaseTest : IAsyncLifetime
         HolidayController = holidayController;
         TrainingTypesController = trainingTypesController;
         CalendarItemController = calendarItemController;
+        PreComController = preComController;
 
         MockAuthenticatedUser(scheduleController);
         MockAuthenticatedUser(userController);
@@ -63,6 +66,7 @@ public class BaseTest : IAsyncLifetime
         MockAuthenticatedUser(holidayController);
         MockAuthenticatedUser(trainingTypesController);
         MockAuthenticatedUser(calendarItemController);
+        MockAuthenticatedUser(preComController);
     }
 
     public async Task InitializeAsync()

@@ -32,7 +32,7 @@ public class PreComController : ControllerBase
     [HttpPost]
     [AllowAnonymous]
     [Route("web-hook")]
-    public async Task<IActionResult> WebHook([FromBody] object body)
+    public async Task<IActionResult> WebHook([FromBody] object body, bool sendToHub = true)
     {
         try
         {
@@ -40,18 +40,21 @@ public class PreComController : ControllerBase
             var customerId = DefaultSettingsHelper.KnrmHuizenId;
             try
             {
-                var data = JsonSerializer.Deserialize<NotificationData>(JsonSerializer.Serialize(body));
+                var ser = JsonSerializer.Serialize(body);
+                var data = JsonSerializer.Deserialize<NotificationData>(ser);
                 _logger.LogInformation($"Message is '{data?._alert}'");
                 var alert = data?._alert ?? "No alert found by hui.nu webhook";
                 var timestamp = DateTime.SpecifyKind(data?._data?.actionData?.Timestamp ?? DateTime.MinValue, DateTimeKind.Utc);
                 var prioParsed = int.TryParse(data?._data?.priority, out int priority);
                 await _preComService.WriteAlertToDb(customerId, data?._notificationId, timestamp, alert, prioParsed ? priority : null, JsonSerializer.Serialize(body));
-                await _preComHub.SendMessage("PreCom", alert);
+                if (sendToHub)
+                    await _preComHub.SendMessage("PreCom", alert);
             }
             catch (Exception ex)
             {
                 await _preComService.WriteAlertToDb(customerId, Guid.Empty, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body));
-                await _preComHub.SendMessage("PreCom", "piep piep");
+                if (sendToHub)
+                    await _preComHub.SendMessage("PreCom", "piep piep");
             }
             return Ok();
         }
@@ -72,7 +75,7 @@ public class PreComController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             if (userId != DefaultSettingsHelper.IdTaco) return Unauthorized("User not me");
             MultiplePreComAlertsResponse result = await _preComService.GetAllAlerts(customerId);
-            return Ok(result);
+            return result;
         }
         catch (Exception ex)
         {

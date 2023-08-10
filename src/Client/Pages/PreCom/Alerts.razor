@@ -4,10 +4,16 @@
 
 @if (_alerts is not null)
 {
-    <MudList>
-        @foreach (var alert in _alerts.OrderByDescending(x=>x.SendTime))
-        {
-            <MudListItem>@alert.Alert</MudListItem>
-        }
-    </MudList>
+    <MudTable Items="@_alerts.OrderByDescending(x=>x.SendTime)" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+        <HeaderContent>
+            <MudTh>Prio</MudTh>
+            <MudTh>Send time</MudTh>
+            <MudTh>Alert</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Prio">@context.Priority</MudTd>
+            <MudTd DataLabel="Send time">@context.SendTime</MudTd>
+            <MudTd DataLabel="Alert">@context.Alert</MudTd>
+        </RowTemplate>
+    </MudTable>
 }

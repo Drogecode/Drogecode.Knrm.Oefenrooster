@@ -27,6 +27,7 @@ public class PreComService : IPreComService
                 SendTime = alert.SendTime,
             });
         }
+        result.Success = true;
         return result;
     }
 

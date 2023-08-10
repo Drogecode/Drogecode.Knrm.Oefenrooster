@@ -1,10 +1,12 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
+using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services;
 using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using NSubstitute;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer;
 public class Setup : Xunit.Di.Setup
@@ -39,6 +42,7 @@ public class Setup : Xunit.Di.Setup
             services.AddScoped<IConfigurationService, ConfigurationService>();
             services.AddScoped<IFunctionService, FunctionService>();
             services.AddScoped<IHolidayService, HolidayService>();
+            services.AddScoped<IPreComService, PreComService>();
             services.AddScoped<IGraphService, GraphService>();
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<ITrainingTypesService, TrainingTypesService>();
@@ -50,9 +54,12 @@ public class Setup : Xunit.Di.Setup
             services.AddScoped<ConfigurationController>();
             services.AddScoped<FunctionController>();
             services.AddScoped<HolidayController>();
+            services.AddScoped<PreComController>();
             services.AddScoped<ScheduleController>();
             services.AddScoped<TrainingTypesController>();
             services.AddScoped<UserController>();
+
+            services.AddScoped<PreComHub>();
 
             services.AddScoped(typeof(ILogger<>), typeof(NullLogger<>));
         });
