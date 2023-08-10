@@ -3,11 +3,11 @@ using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
 using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 [ApiExplorerSettings(GroupName = "PreCom")]
@@ -30,20 +30,29 @@ public class PreComController : ControllerBase
     }
 
     [HttpPost]
+    [AllowAnonymous]
     [Route("web-hook")]
     public async Task<IActionResult> WebHook([FromBody] object body)
     {
         try
         {
             _logger.LogInformation("Resived PreCom message");
-            var data = JsonSerializer.Deserialize<NotificationData>(JsonSerializer.Serialize(body));
-            _logger.LogInformation($"Message is '{data?._alert}'");
             var customerId = DefaultSettingsHelper.KnrmHuizenId;
-            var alert = data?._alert ?? "No alert found by hui.nu webhook";
-            var timestamp = DateTime.SpecifyKind(data?._data?.actionData?.Timestamp ?? DateTime.MinValue, DateTimeKind.Utc);
-            var prioParsed = int.TryParse(data?._data?.priority, out int priority);
-            await _preComService.WriteAlertToDb(customerId, data?._notificationId, timestamp, alert, prioParsed ? priority: null, JsonSerializer.Serialize(body));
-            await _preComHub.SendMessage("PreCom", alert);
+            try
+            {
+                var data = JsonSerializer.Deserialize<NotificationData>(JsonSerializer.Serialize(body));
+                _logger.LogInformation($"Message is '{data?._alert}'");
+                var alert = data?._alert ?? "No alert found by hui.nu webhook";
+                var timestamp = DateTime.SpecifyKind(data?._data?.actionData?.Timestamp ?? DateTime.MinValue, DateTimeKind.Utc);
+                var prioParsed = int.TryParse(data?._data?.priority, out int priority);
+                await _preComService.WriteAlertToDb(customerId, data?._notificationId, timestamp, alert, prioParsed ? priority : null, JsonSerializer.Serialize(body));
+                await _preComHub.SendMessage("PreCom", alert);
+            }
+            catch (Exception ex)
+            {
+                await _preComService.WriteAlertToDb(customerId, Guid.Empty, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body));
+                await _preComHub.SendMessage("PreCom", "piep piep");
+            }
             return Ok();
         }
         catch (Exception ex)
@@ -53,7 +62,6 @@ public class PreComController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpGet]
     [Route("")]
     public async Task<ActionResult<MultiplePreComAlertsResponse>> AllAlerts(CancellationToken clt)
@@ -72,4 +80,21 @@ public class PreComController : ControllerBase
             return BadRequest();
         }
     }
+
+    /*[Route("{**catchAll}")]
+    [AllowAnonymous]
+    [HttpPost("post", Order = int.MaxValue)]
+    public IActionResult Post([FromBody] object value, string? catchAll)
+    {
+        try
+        {
+            _auditService.Log(DefaultSettingsHelper.IdTaco, AuditType.CatchAll, DefaultSettingsHelper.KnrmHuizenId, $"{JsonSerializer.Serialize(value)} : {catchAll}", objectName: "POST catch all");
+            return Ok($"Got it {JsonSerializer.Serialize(value)} : {catchAll}");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in CatchallController CatchAll POST");
+            return BadRequest("Exception in CatchallController CatchAll POST");
+        }
+    }*/
 }

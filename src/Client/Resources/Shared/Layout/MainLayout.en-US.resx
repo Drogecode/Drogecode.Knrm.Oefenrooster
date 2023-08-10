@@ -132,4 +132,7 @@
   <data name="You are offline data could be outdated" xml:space="preserve">
     <value>You are offline, data could be outdated!</value>
   </data>
+  <data name="Not authorized" xml:space="preserve">
+    <value>Not authorized</value>
+  </data>
 </root>
