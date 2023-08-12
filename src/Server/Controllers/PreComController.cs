@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Helpers.JsonConverters;
+using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 using Microsoft.AspNetCore.Authorization;
@@ -40,8 +41,12 @@ public class PreComController : ControllerBase
             var customerId = DefaultSettingsHelper.KnrmHuizenId;
             try
             {
+                var jsonSerializerOptions = new JsonSerializerOptions()
+                {
+                    Converters = { new PreComConverter() }
+                };
                 var ser = JsonSerializer.Serialize(body);
-                var data = JsonSerializer.Deserialize<NotificationData>(ser);
+                var data = JsonSerializer.Deserialize<NotificationDataBase>(ser, jsonSerializerOptions);
                 _logger.LogInformation($"Message is '{data?._alert}'");
                 var alert = data?._alert ?? "No alert found by hui.nu webhook";
                 var timestamp = DateTime.SpecifyKind(data?._data?.actionData?.Timestamp ?? DateTime.MinValue, DateTimeKind.Utc);
