@@ -275,7 +275,7 @@ public class ScheduleService : IScheduleService
         return (await _database.SaveChangesAsync()) > 0;
     }
 
-    public async Task<ScheduleForAllResponse> ScheduleForAllAsync(Guid userId, Guid customerId, int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token)
+    public async Task<ScheduleForAllResponse> ScheduleForAllAsync(Guid userId, Guid customerId, int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, bool countPerUser, CancellationToken token)
     {
         var sw = Stopwatch.StartNew();
         var result = new ScheduleForAllResponse();
@@ -331,7 +331,7 @@ public class ScheduleService : IScheduleService
                             UserFunctionId = user.UserFunctionId,
                             VehicleId = a?.VehicleId
                         });
-                        if (training.CountToTrainingTarget && scheduleDate.Month == forMonth && a?.Assigned == true)
+                        if (countPerUser && training.CountToTrainingTarget && scheduleDate.Month == forMonth && a?.Assigned == true)
                         {
                             var indexUser = result.UserTrainingCounters.FindIndex(X => X.UserId.Equals(a.UserId));
                             if (indexUser >= 0)

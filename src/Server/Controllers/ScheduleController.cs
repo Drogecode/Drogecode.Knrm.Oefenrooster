@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.AspNetCore.Authorization;
@@ -62,7 +63,8 @@ public class ScheduleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            ScheduleForAllResponse result = await _scheduleService.ScheduleForAllAsync(userId, customerId, forMonth, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, token);
+            var countPerUser = User.IsInRole(AccessesNames.AUTH_users_counter);
+            ScheduleForAllResponse result = await _scheduleService.ScheduleForAllAsync(userId, customerId, forMonth, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, countPerUser, token);
             return result;
         }
         catch (Exception ex)
@@ -250,6 +252,7 @@ public class ScheduleController : ControllerBase
 
     [HttpGet]
     [Route("training/user/all/{id:guid}")]
+    [Authorize(Roles = AccessesNames.AUTH_users_details)]
     public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> AllTrainingsForUser(Guid id, CancellationToken clt = default)
     {
         try

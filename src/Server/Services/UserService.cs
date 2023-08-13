@@ -14,7 +14,7 @@ public class UserService : IUserService
         _database = database;
     }
 
-    public async Task<MultipleDrogeUsersResponse> GetAllUsers(Guid customerId, bool includeHidden)
+    public async Task<MultipleDrogeUsersResponse> GetAllUsers(Guid customerId, bool includeHidden, bool includeLastLogin)
     {
         var sw = Stopwatch.StartNew();
         var result = new MultipleDrogeUsersResponse { DrogeUsers = new List<DrogeUser>() };
@@ -26,7 +26,7 @@ public class UserService : IUserService
                 Id = dbUser.Id,
                 Name = dbUser.Name,
                 Created = dbUser.Created,
-                LastLogin = dbUser.LastLogin,
+                LastLogin = includeLastLogin ? dbUser.LastLogin : DateTime.MinValue,
                 UserFunctionId = dbUser.UserFunctionId,
             });
         }
