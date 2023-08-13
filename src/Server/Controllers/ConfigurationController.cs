@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿using Azure;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Microsoft.AspNetCore.Authorization;
@@ -40,11 +41,13 @@ public class ConfigurationController : ControllerBase
     {
         try
         {
+            var sw = Stopwatch.StartNew();
             UpgradeDatabaseResponse result = new UpgradeDatabaseResponse { Success = false };
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             result.Success = await _configurationService.UpgradeDatabase();
             await _auditService.Log(userId, AuditType.DataBaseUpgrade, customerId);
+            result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
             return Ok(result);
         }
         catch (Exception ex)
@@ -64,10 +67,13 @@ public class ConfigurationController : ControllerBase
     {
         try
         {
+            var sw = Stopwatch.StartNew();
             var response = new VersionDetailResponse
             {
                 NewVersionAvailable = string.Compare(DefaultSettingsHelper.CURRENT_VERSION, clientVersion, StringComparison.OrdinalIgnoreCase) != 0
             };
+            sw.Stop();
+            response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
             return Ok(response);
         }
         catch (Exception ex)
@@ -99,6 +105,7 @@ public class ConfigurationController : ControllerBase
     {
         try
         {
+            var sw = Stopwatch.StartNew();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             using var holidayClient = new HolidayClient();
             var currentYear = DateTime.Now.Year;
@@ -111,7 +118,8 @@ public class ConfigurationController : ControllerBase
                     await _configurationService.AddSpecialDay(customerId, holiday, token);
                 }
             }
-            return Ok(new UpdateSpecialDatesResponse { Success = true });
+            sw.Stop();
+            return Ok(new UpdateSpecialDatesResponse { Success = true, ElapsedMilliseconds = sw.ElapsedMilliseconds });
         }
         catch (Exception ex)
         {
