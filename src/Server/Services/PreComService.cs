@@ -25,16 +25,18 @@ public class PreComService : IPreComService
                 NotificationId = alert.NotificationId,
                 Alert = alert.Alert,
                 SendTime = alert.SendTime,
+                Priority = alert.Priority,
             });
         }
         result.Success = true;
         return result;
     }
 
-    public async Task WriteAlertToDb(Guid customerId, Guid? notificationId, DateTime? sendTime, string alert, int? priority, string raw)
+    public async Task WriteAlertToDb(Guid userId, Guid customerId, Guid? notificationId, DateTime? sendTime, string alert, int? priority, string raw)
     {
         _database.PreComAlerts.Add(new DbPreComAlert
         {
+            UserId = userId,
             CustomerId = customerId,
             NotificationId = notificationId,
             Alert = alert,

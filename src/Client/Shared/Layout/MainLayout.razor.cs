@@ -13,6 +13,7 @@ public sealed partial class MainLayout : IDisposable
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
+    [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private IOfflineService _offlineService { get; set; } = default!;
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
 
@@ -48,18 +49,22 @@ public sealed partial class MainLayout : IDisposable
             }
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
-                .Build();
+            .Build();
 
-            _hubConnection.On<string, string>("ReceivePrecomAlert", (user, message) =>
+            var dbUser = await _userRepository.GetCurrentUserAsync();//Force creation of user.
+            if (dbUser?.Id != null && dbUser.Id != Guid.Empty)
             {
-                var config = (SnackbarOptions options) =>
+                _hubConnection.On<string, string>($"ReceivePrecomAlert_{dbUser.Id}", (user, message) =>
                 {
-                    options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
-                    options.RequireInteraction = true;
-                    options.ShowCloseIcon = true;
-                };
-                Snackbar.Add($"PreCom: {message}", Severity.Error, configure: config, key: "precom");
-            });
+                    var config = (SnackbarOptions options) =>
+                    {
+                        options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
+                        options.RequireInteraction = true;
+                        options.ShowCloseIcon = true;
+                    };
+                    Snackbar.Add($"PreCom: {message}", Severity.Error, configure: config, key: "precom");
+                });
+            }
 
             await _hubConnection.StartAsync(_cls.Token);
         }

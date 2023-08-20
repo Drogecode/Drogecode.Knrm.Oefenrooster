@@ -32,8 +32,8 @@ public class PreComController : ControllerBase
 
     [HttpPost]
     [AllowAnonymous]
-    [Route("web-hook")]
-    public async Task<IActionResult> WebHook([FromBody] object body, bool sendToHub = true)
+    [Route("web-hook/{id}")]
+    public async Task<IActionResult> WebHook(Guid id, [FromBody] object body, bool sendToHub = true)
     {
         try
         {
@@ -51,15 +51,15 @@ public class PreComController : ControllerBase
                 var alert = data?._alert ?? "No alert found by hui.nu webhook";
                 var timestamp = DateTime.SpecifyKind(data?._data?.actionData?.Timestamp ?? DateTime.MinValue, DateTimeKind.Utc);
                 var prioParsed = int.TryParse(data?._data?.priority, out int priority);
-                await _preComService.WriteAlertToDb(customerId, data?._notificationId, timestamp, alert, prioParsed ? priority : null, JsonSerializer.Serialize(body));
+                await _preComService.WriteAlertToDb(id, customerId, data?._notificationId, timestamp, alert, prioParsed ? priority : null, JsonSerializer.Serialize(body));
                 if (sendToHub)
-                    await _preComHub.SendMessage("PreCom", alert);
+                    await _preComHub.SendMessage(id, "PreCom", alert);
             }
             catch (Exception ex)
             {
-                await _preComService.WriteAlertToDb(customerId, Guid.Empty, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body));
+                await _preComService.WriteAlertToDb(id, customerId, Guid.Empty, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body));
                 if (sendToHub)
-                    await _preComHub.SendMessage("PreCom", "piep piep");
+                    await _preComHub.SendMessage(id, "PreCom", "piep piep");
             }
             return Ok();
         }
