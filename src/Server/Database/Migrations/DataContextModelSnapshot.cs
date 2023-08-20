@@ -176,6 +176,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<DateTime?>("SendTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");

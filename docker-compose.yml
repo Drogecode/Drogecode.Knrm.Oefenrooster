@@ -7,7 +7,7 @@ services:
     environment:
       - POSTGRES_USER=postgresUser
       - POSTGRES_PASSWORD=postgresPW
-      - POSTGRES_DB=postgresDB
+      - POSTGRES_DB=oefenroosterDebug
     ports:
       - 5432:5432
     volumes: 
@@ -16,7 +16,7 @@ services:
     image: kanman/drogecode.knrm.oefenrooster:latest
     restart: always
     environment:
-      - ConnectionStrings__postgresDB=host=host.docker.internal;port=5432;database=postgresDB;username=postgresUser;password=postgresPW
+      - ConnectionStrings__postgresDB=host=host.docker.internal;port=5432;database=oefenroosterDebug;username=postgresUser;password=postgresPW
     build:
       context: .
       dockerfile: src/Server/Dockerfile

@@ -12,15 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230427175240_v0.0.51")]
-    partial class v0051
+    [Migration("20230820182440_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "7.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -154,6 +154,123 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.ToTable("LinkVehicleTraining");
                 });
 
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbPreComAlert", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Alert")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("NotificationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("Priority")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Raw")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("SendTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("PreComAlert");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportAction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<double>("Number")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Prio")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShortDescription")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ReportActions");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportTraining", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ReportTrainings");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DbReportActionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DbReportTrainingId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DrogeCodeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SharePointID")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DbReportActionId");
+
+                    b.HasIndex("DbReportTrainingId");
+
+                    b.ToTable("ReportUsers");
+                });
+
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterAvailable", b =>
                 {
                     b.Property<Guid>("Id")
@@ -165,6 +282,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Property<int?>("Available")
                         .HasColumnType("integer");
+
+                    b.Property<string>("CalendarEventId")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
@@ -223,6 +343,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<TimeOnly>("TimeStart")
                         .HasColumnType("time without time zone");
 
+                    b.Property<string>("TimeZone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("ValidFrom")
                         .HasColumnType("timestamp with time zone");
 
@@ -249,6 +373,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
                             TimeEnd = new TimeOnly(21, 30, 0),
                             TimeStart = new TimeOnly(19, 30, 0),
+                            TimeZone = "Europe/Amsterdam",
                             ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, 0, DateTimeKind.Utc),
                             ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, 0, DateTimeKind.Utc),
                             WeekDay = 1
@@ -261,6 +386,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
                             TimeEnd = new TimeOnly(21, 30, 0),
                             TimeStart = new TimeOnly(19, 30, 0),
+                            TimeZone = "Europe/Amsterdam",
                             ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, 0, DateTimeKind.Utc),
                             ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, 0, DateTimeKind.Utc),
                             WeekDay = 2
@@ -273,6 +399,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
                             TimeEnd = new TimeOnly(21, 30, 0),
                             TimeStart = new TimeOnly(19, 30, 0),
+                            TimeZone = "Europe/Amsterdam",
                             ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, 0, DateTimeKind.Utc),
                             ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, 0, DateTimeKind.Utc),
                             WeekDay = 3
@@ -285,6 +412,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
                             TimeEnd = new TimeOnly(21, 30, 0),
                             TimeStart = new TimeOnly(19, 30, 0),
+                            TimeZone = "Europe/Amsterdam",
                             ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, 0, DateTimeKind.Utc),
                             ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, 0, DateTimeKind.Utc),
                             WeekDay = 4
@@ -297,6 +425,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
                             TimeEnd = new TimeOnly(13, 0, 0),
                             TimeStart = new TimeOnly(10, 0, 0),
+                            TimeZone = "Europe/Amsterdam",
                             ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, 0, DateTimeKind.Utc),
                             ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, 0, DateTimeKind.Utc),
                             WeekDay = 6
@@ -309,6 +438,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
                             TimeEnd = new TimeOnly(16, 0, 0),
                             TimeStart = new TimeOnly(13, 0, 0),
+                            TimeZone = "Europe/Amsterdam",
                             ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, 0, DateTimeKind.Utc),
                             ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, 0, DateTimeKind.Utc),
                             WeekDay = 6
@@ -321,6 +451,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
                             TimeEnd = new TimeOnly(13, 0, 0),
                             TimeStart = new TimeOnly(10, 0, 0),
+                            TimeZone = "Europe/Amsterdam",
                             ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, 0, DateTimeKind.Utc),
                             ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, 0, DateTimeKind.Utc),
                             WeekDay = 0
@@ -333,6 +464,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
                             TimeEnd = new TimeOnly(16, 0, 0),
                             TimeStart = new TimeOnly(13, 0, 0),
+                            TimeZone = "Europe/Amsterdam",
                             ValidFrom = new DateTime(2022, 9, 4, 0, 0, 0, 0, DateTimeKind.Utc),
                             ValidUntil = new DateTime(2023, 12, 31, 23, 59, 59, 0, DateTimeKind.Utc),
                             WeekDay = 0
@@ -344,6 +476,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
@@ -377,6 +515,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
@@ -409,6 +553,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("857e2ee9-8f2f-407e-9ec8-a0eaa853b957"),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Month = (short)1,
                             Order = 0,
@@ -419,6 +565,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("d7d80ee0-0e73-426f-84b2-2040057c2f7a"),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Month = (short)1,
                             Order = 1,
@@ -429,6 +577,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("5208deef-4529-4a30-a00e-22737cf52183"),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Month = (short)2,
                             Order = 0,
@@ -439,6 +589,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("36e33dc3-8bb8-4096-a127-c3ee04a0e694"),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Month = (short)3,
                             Order = 0,
@@ -449,6 +601,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("01a17983-9bbe-4bfc-b152-f73c1869393d"),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Month = (short)4,
                             Order = 0,
@@ -459,6 +613,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("f9d140f0-58fa-4c9a-a845-0eb5bad2814f"),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Month = (short)5,
                             Order = 0,
@@ -469,6 +625,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("4a009dd3-db02-4668-bbb0-9a9298c23d58"),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Month = (short)6,
                             Order = 0,
@@ -479,6 +637,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("e4c00e6b-14d5-4609-bff3-6a6533557a0b"),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Month = (short)7,
                             Order = 0,
@@ -489,6 +649,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("7696579c-403c-4a98-b30e-b19f1e90ffd0"),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Month = (short)7,
                             Order = 1,
@@ -516,11 +678,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<DateTime>("DateStart")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsPinned")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
-
-                    b.Property<bool>("Pin")
-                        .HasColumnType("boolean");
 
                     b.Property<Guid?>("RoosterDefaultId")
                         .HasColumnType("uuid");
@@ -554,8 +716,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<bool>("CountToTrainingTarget")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsDefault")
                         .HasColumnType("boolean");
@@ -565,6 +736,18 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
+
+                    b.Property<string>("TextColorDark")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TextColorLight")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -579,7 +762,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             ColorDark = "#ffffff4c",
                             ColorLight = "#bdbdbdff",
                             CountToTrainingTarget = true,
+                            CreatedBy = new Guid("04093c7a-11e5-4887-af51-319ecc59efe0"),
+                            CreatedDate = new DateTime(2023, 6, 26, 12, 12, 12, 0, DateTimeKind.Utc),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsActive = true,
                             IsDefault = true,
                             Name = "Kompas oefening",
                             Order = 10
@@ -590,7 +776,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             ColorDark = "rgb(214,143,0)",
                             ColorLight = "rgb(214,129,0)",
                             CountToTrainingTarget = false,
+                            CreatedBy = new Guid("04093c7a-11e5-4887-af51-319ecc59efe0"),
+                            CreatedDate = new DateTime(2023, 6, 26, 12, 12, 12, 0, DateTimeKind.Utc),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsActive = true,
                             IsDefault = false,
                             Name = "EHBO",
                             Order = 20
@@ -601,7 +790,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             ColorDark = "",
                             ColorLight = "rgb(25,169,140)",
                             CountToTrainingTarget = false,
+                            CreatedBy = new Guid("04093c7a-11e5-4887-af51-319ecc59efe0"),
+                            CreatedDate = new DateTime(2023, 6, 26, 12, 12, 12, 0, DateTimeKind.Utc),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsActive = true,
                             IsDefault = false,
                             Name = "een op een",
                             Order = 30
@@ -612,10 +804,15 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             ColorDark = "rgb(244,47,70)",
                             ColorLight = "rgb(242,28,13)",
                             CountToTrainingTarget = false,
+                            CreatedBy = new Guid("04093c7a-11e5-4887-af51-319ecc59efe0"),
+                            CreatedDate = new DateTime(2023, 6, 26, 12, 12, 12, 0, DateTimeKind.Utc),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsActive = true,
                             IsDefault = false,
                             Name = "Brandweer",
-                            Order = 40
+                            Order = 40,
+                            TextColorDark = "#C0C0C0",
+                            TextColorLight = "#FFFFFF"
                         },
                         new
                         {
@@ -623,7 +820,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             ColorDark = "rgb(13,222,156)",
                             ColorLight = "rgb(0,235,98)",
                             CountToTrainingTarget = false,
+                            CreatedBy = new Guid("04093c7a-11e5-4887-af51-319ecc59efe0"),
+                            CreatedDate = new DateTime(2023, 6, 26, 12, 12, 12, 0, DateTimeKind.Utc),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsActive = true,
                             IsDefault = false,
                             Name = "HRB oefening",
                             Order = 50
@@ -631,10 +831,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("6153a297-9486-43de-91e8-22d107da2b21"),
-                            ColorDark = "#3b4d42",
-                            ColorLight = "#63806f",
+                            ColorDark = "#3BB9FF",
+                            ColorLight = "#ADD8E6",
                             CountToTrainingTarget = false,
+                            CreatedBy = new Guid("04093c7a-11e5-4887-af51-319ecc59efe0"),
+                            CreatedDate = new DateTime(2023, 6, 26, 12, 12, 12, 0, DateTimeKind.Utc),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsActive = true,
                             IsDefault = false,
                             Name = "Evenement",
                             Order = 60
@@ -645,10 +848,28 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             ColorDark = "#5f6138",
                             ColorLight = "#919454",
                             CountToTrainingTarget = false,
+                            CreatedBy = new Guid("04093c7a-11e5-4887-af51-319ecc59efe0"),
+                            CreatedDate = new DateTime(2023, 6, 26, 12, 12, 12, 0, DateTimeKind.Utc),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsActive = true,
                             IsDefault = false,
                             Name = "Techniek",
                             Order = 70
+                        },
+                        new
+                        {
+                            Id = new Guid("68be785c-1226-4280-a110-bd87f328951f"),
+                            ColorLight = "#000000",
+                            CountToTrainingTarget = false,
+                            CreatedBy = new Guid("04093c7a-11e5-4887-af51-319ecc59efe0"),
+                            CreatedDate = new DateTime(2023, 6, 26, 12, 12, 12, 0, DateTimeKind.Utc),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsActive = true,
+                            IsDefault = false,
+                            Name = "Proeve van Bekwaamheid",
+                            Order = 80,
+                            TextColorDark = "#C0C0C0",
+                            TextColorLight = "#FFFFFF"
                         });
                 });
 
@@ -658,23 +879,26 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("Assigned")
+                        .HasColumnType("boolean");
+
                     b.Property<int?>("Available")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("From")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<Guid>("RoosterDefaultId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("Till")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ValidFrom")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ValidUntil")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -693,13 +917,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("boolean");
-
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("Default")
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDefault")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
@@ -725,9 +949,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("d23de705-d950-4833-8b94-aa531022d450"),
-                            Active = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Default = false,
+                            IsActive = true,
+                            IsDefault = false,
                             Name = "Kompas leider",
                             Order = 10,
                             TrainingOnly = true,
@@ -736,9 +960,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("48db5dd5-cb72-4365-9bf5-959691dc54f2"),
-                            Active = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Default = false,
+                            IsActive = true,
+                            IsDefault = false,
                             Name = "Schipper",
                             Order = 20,
                             TrainingOnly = false,
@@ -747,9 +971,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("cf6e6afa-8aa5-4b3d-8198-fb5e86faf53c"),
-                            Active = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Default = false,
+                            IsActive = true,
+                            IsDefault = false,
                             Name = "Schipper I.O.",
                             Order = 30,
                             TrainingOnly = false,
@@ -758,9 +982,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("35ad11b8-d3f2-4960-b1e8-d41aaccd188a"),
-                            Active = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Default = false,
+                            IsActive = true,
+                            IsDefault = false,
                             Name = "Opstapper",
                             Order = 60,
                             TrainingOnly = false,
@@ -769,9 +993,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("feb3641f-9941-4db7-a202-14263d706516"),
-                            Active = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Default = false,
+                            IsActive = true,
+                            IsDefault = false,
                             Name = "Aankomend opstapper",
                             Order = 70,
                             TrainingOnly = false,
@@ -780,9 +1004,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("322858f8-fd2c-4e62-b699-92c605adbbf2"),
-                            Active = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Default = true,
+                            IsActive = true,
+                            IsDefault = true,
                             Name = "Opstapper op proef",
                             Order = 80,
                             TrainingOnly = false,
@@ -791,9 +1015,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("5c49fc5c-25eb-48c2-a746-74ac3a030d48"),
-                            Active = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Default = false,
+                            IsActive = true,
+                            IsDefault = false,
                             Name = "HRB Aankomend opstapper",
                             Order = 100,
                             TrainingOnly = false,
@@ -802,9 +1026,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("95427da1-e4d5-442e-962a-b04ab861a2c2"),
-                            Active = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Default = false,
+                            IsActive = true,
+                            IsDefault = false,
                             Name = "Waarnemer",
                             Order = 180,
                             TrainingOnly = true,
@@ -813,9 +1037,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("0a0a2c2d-15c7-4205-93a2-621de3c30db1"),
-                            Active = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Default = false,
+                            IsActive = true,
+                            IsDefault = false,
                             Name = "Extra",
                             Order = 300,
                             TrainingOnly = false,
@@ -824,9 +1048,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("a23f1f39-275e-4e21-901f-4878b73d3ede"),
-                            Active = false,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Default = false,
+                            IsActive = false,
+                            IsDefault = false,
                             Name = "Inactief",
                             Order = 400,
                             TrainingOnly = false,
@@ -846,14 +1070,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("From")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("Till")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ValidFrom")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ValidUntil")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -864,14 +1091,56 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.ToTable("UserHolidays");
                 });
 
-            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbVehicles", b =>
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserRoles", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("boolean");
+                    b.Property<string>("Accesses")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("UserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("287359b1-2035-435b-97b0-eb260dc497d6"),
+                            Accesses = "configure_training-types",
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("f6b0c571-9050-40d6-bf58-807981e5ed6e"),
+                            Accesses = "scheduler",
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "Scheduler"
+                        },
+                        new
+                        {
+                            Id = new Guid("d72ed2e9-911e-4ee5-b07e-cbd5917d432b"),
+                            Accesses = "users_counter,users_details",
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "Users"
+                        });
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbVehicles", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -882,6 +1151,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("Deletedby")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsDefault")
                         .HasColumnType("boolean");
@@ -903,9 +1178,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("4589535c-9064-4448-bc01-3b5a00e9410d"),
-                            Active = true,
                             Code = "NWI",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsActive = true,
                             IsDefault = true,
                             Name = "Nikolaas Wijsenbeek",
                             Order = 10
@@ -913,9 +1188,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("c759950b-8264-4521-9a6e-ff98ad358cc1"),
-                            Active = true,
                             Code = "HZR",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsActive = true,
                             IsDefault = false,
                             Name = "De Huizer",
                             Order = 20
@@ -923,9 +1198,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("5777102a-3c9e-438e-a11f-fafb5f9649b6"),
-                            Active = true,
                             Code = "HZN018",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsActive = true,
                             IsDefault = false,
                             Name = "Vlet",
                             Order = 30
@@ -933,9 +1208,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("f30d1856-2d26-441e-ae6d-935bb26c4852"),
-                            Active = true,
                             Code = "Wal",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsActive = true,
                             IsDefault = false,
                             Name = "Wal",
                             Order = 100
@@ -987,6 +1262,28 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbPreComAlert", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("PreComAlerts")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportUser", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportAction", null)
+                        .WithMany("Users")
+                        .HasForeignKey("DbReportActionId");
+
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportTraining", null)
+                        .WithMany("Users")
+                        .HasForeignKey("DbReportTrainingId");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterAvailable", b =>
@@ -1158,6 +1455,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserRoles", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbVehicles", b =>
                 {
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
@@ -1186,6 +1494,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Navigation("LinkVehicleTrainings");
 
+                    b.Navigation("PreComAlerts");
+
                     b.Navigation("RoosterAvailables");
 
                     b.Navigation("RoosterDefaults");
@@ -1204,9 +1514,21 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Navigation("UserHolidays");
 
+                    b.Navigation("UserRoles");
+
                     b.Navigation("Users");
 
                     b.Navigation("Vehicles");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportAction", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportTraining", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterDefault", b =>
