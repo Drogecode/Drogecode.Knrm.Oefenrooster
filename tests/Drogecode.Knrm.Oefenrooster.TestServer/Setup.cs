@@ -49,6 +49,8 @@ public class Setup : Xunit.Di.Setup
             services.AddScoped<IUserRoleService, UserRoleService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IVehicleService, VehicleService>();
+            services.AddScoped<IUserSettingService, UserSettingService>();
+            services.AddScoped<ICustomerSettingService, CustomerSettingService>();
 
             services.AddScoped<CalendarItemController>();
             services.AddScoped<ConfigurationController>();

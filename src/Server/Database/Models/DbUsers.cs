@@ -22,5 +22,6 @@ public class DbUsers
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
     public ICollection<DbUserDefaultAvailable>? UserDefaultAvailables { get; set; }
     public ICollection<DbUserHolidays>? UserHolidays { get; set; }
+    public ICollection<DbUserSettings>? UserSettings { get; set; }
     public ICollection<DbAudit>? Audits { get; set; }
 }

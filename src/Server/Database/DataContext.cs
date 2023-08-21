@@ -15,7 +15,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbUserRoles> UserRoles { get; set; }
         public DbSet<DbUserDefaultAvailable> UserDefaultAvailables { get; set; }
         public DbSet<DbUserHolidays> UserHolidays { get; set; }
+        public DbSet<DbUserSettings> UserSettings { get; set; }
         public DbSet<DbCustomers> Customers { get; set; }
+        public DbSet<DbCustomerSettings> CustomerSettings { get; set; }
         public DbSet<DbRoosterDefault> RoosterDefaults { get; set; }
         public DbSet<DbRoosterItemDay> RoosterItemDays { get; set; }
         public DbSet<DbRoosterItemMonth> RoosterItemMonths { get; set; }
@@ -48,6 +50,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbCustomers>(e => { e.Property(e => e.Name).IsRequired(); });
             modelBuilder.Entity<DbCustomers>(e => { e.Property(e => e.Created).IsRequired(); });
 
+            // CustomerSettings
+            modelBuilder.Entity<DbCustomerSettings>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbCustomerSettings>().HasOne(p => p.Customer).WithMany(g => g.CustomerSettings).HasForeignKey(s => s.CustomerId).IsRequired();
+
             // Users
             modelBuilder.Entity<DbUsers>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbUsers>(e => { e.Property(e => e.Name).IsRequired(); });
@@ -76,6 +82,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserHolidays>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbUserHolidays>().HasOne(p => p.Customer).WithMany(g => g.UserHolidays).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserHolidays>().HasOne(p => p.User).WithMany(g => g.UserHolidays).HasForeignKey(s => s.UserId).IsRequired();
+
+            //UserSettings
+            modelBuilder.Entity<DbUserSettings>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserSettings>().HasOne(p => p.Customer).WithMany(g => g.UserSettings).HasForeignKey(s => s.CustomerId).IsRequired();
+            modelBuilder.Entity<DbUserSettings>().HasOne(p => p.User).WithMany(g => g.UserSettings).HasForeignKey(s => s.UserId).IsRequired();
 
             // Rooster available
             modelBuilder.Entity<DbRoosterAvailable>(e => { e.Property(e => e.Id).IsRequired(); });
@@ -120,7 +131,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             //// Reports
             // ReportActions
             modelBuilder.Entity<DbReportAction>(e => { e.Property(e => e.Id).IsRequired(); });
-            modelBuilder.Entity<DbReportAction>().HasMany<DbReportUser>(p=>p.Users);
+            modelBuilder.Entity<DbReportAction>().HasMany<DbReportUser>(p => p.Users);
 
             // ReportTrainings
             modelBuilder.Entity<DbReportTraining>(e => { e.Property(e => e.Id).IsRequired(); });

@@ -22,19 +22,22 @@ public class ScheduleController : ControllerBase
     private readonly IAuditService _auditService;
     private readonly IGraphService _graphService;
     private readonly ITrainingTypesService _trainingTypesService;
+    private readonly IUserSettingService _userSettingService;
 
     public ScheduleController(
         ILogger<ScheduleController> logger,
         IScheduleService scheduleService,
         IAuditService auditService,
         IGraphService graphService,
-        ITrainingTypesService trainingTypesService)
+        ITrainingTypesService trainingTypesService,
+        IUserSettingService userSettingService)
     {
         _logger = logger;
         _scheduleService = scheduleService;
         _auditService = auditService;
         _graphService = graphService;
         _trainingTypesService = trainingTypesService;
+        _userSettingService = userSettingService;
     }
 
     [HttpGet]
@@ -166,7 +169,7 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             PatchAssignedUserResponse result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { TrainingId = body.TrainingId, Assigned = body?.User?.Assigned }), body?.User?.UserId);
-            if (body?.User?.Assigned == true && body?.User?.UserId == DefaultSettingsHelper.IdTaco)
+            if (body?.User?.Assigned == true && await _userSettingService.TrainingToCalendar(customerId, userId))
             {
                 var type = await _trainingTypesService.GetById(body.Training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
                 if (string.IsNullOrEmpty(result.CalendarEventId))
@@ -207,7 +210,7 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _scheduleService.PutAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { TrainingId = body.TrainingId, Assigned = body?.Assigned }), body?.UserId);
-            if (body?.Assigned == true && body.UserId == DefaultSettingsHelper.IdTaco)
+            if (body?.Assigned == true && await _userSettingService.TrainingToCalendar(customerId, userId))
             {
                 var type = await _trainingTypesService.GetById(body.Training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
                 if (!string.IsNullOrEmpty(type?.TrainingType?.Name))

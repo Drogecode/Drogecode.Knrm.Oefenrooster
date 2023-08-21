@@ -13,6 +13,7 @@ using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.Diagnostics;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -64,6 +65,8 @@ builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITrainingTypesService, TrainingTypesService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IUserSettingService, UserSettingService>();
+builder.Services.AddScoped<ICustomerSettingService, CustomerSettingService>();
 
 #if DEBUG
 // Only run in debug because it fails on the azure app service! (and is not necessary)
@@ -135,7 +138,12 @@ try
         dbContext.Database.Migrate();
     }
 }
-catch { }
+catch
+{
+#if DEBUG
+    Debugger.Break();
+#endif
+}
 
 
 app.UseAuthentication();

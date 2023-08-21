@@ -311,6 +311,10 @@ public static class GraphHelper
 
     internal static async Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt)
     {
-        await _appClient.Users[userId.ToString()].Events[calendarEventId].DeleteAsync(cancellationToken: clt);
+        var eve = _appClient.Users[userId.ToString()].Events[calendarEventId];
+        if (eve is not null)
+        {
+            await eve.DeleteAsync(cancellationToken: clt);
+        }
     }
 }

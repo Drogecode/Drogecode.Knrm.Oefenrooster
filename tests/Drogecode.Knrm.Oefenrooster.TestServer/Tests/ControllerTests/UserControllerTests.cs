@@ -42,7 +42,7 @@ public class UserControllerTests : BaseTest
         var users = await UserController.GetAll(true);
         Assert.NotNull(users?.Value?.DrogeUsers?.Count);
         Assert.True(users.Value.Success);
-        users.Value.DrogeUsers.Should().Contain(x => x.Id == UserId);
+        users.Value.DrogeUsers.Should().Contain(x => x.Id == DefaultUserId);
         users.Value.DrogeUsers.Should().Contain(x => x.Id == newUser);
     }
 

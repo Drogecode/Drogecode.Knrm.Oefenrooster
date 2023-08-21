@@ -52,7 +52,7 @@ public class ScheduleControllerTests : BaseTest
     [Fact]
     public async Task FailAssignTrainingTest()
     {
-        var user = (await UserController.GetById(UserId))!.Value!.User;
+        var user = (await UserController.GetById(DefaultUserId))!.Value!.User;
         Assert.NotNull(user);
         var training = await AddTraining("AssignTraining", true);
         var body = new PatchAssignedUserRequest
@@ -73,7 +73,7 @@ public class ScheduleControllerTests : BaseTest
     [Fact]
     public async Task AssignTrainingTest()
     {
-        var user = (await UserController.GetById(UserId))!.Value!.User;
+        var user = (await UserController.GetById(DefaultUserId))!.Value!.User;
         Assert.NotNull(user);
         var training = await AddTraining("AssignTraining", true);
         var body = new PatchAssignedUserRequest
@@ -98,7 +98,7 @@ public class ScheduleControllerTests : BaseTest
     [Fact]
     public async Task AllTrainingsForUserSingleTest()
     {
-        var result = await ScheduleController.AllTrainingsForUser(UserId);
+        var result = await ScheduleController.AllTrainingsForUser(DefaultUserId);
         Assert.NotNull(result?.Value);
         Assert.True(result.Value.Success);
         result.Value.Trainings.Should().NotBeEmpty();
@@ -121,13 +121,13 @@ public class ScheduleControllerTests : BaseTest
         var training4 = await AddTraining("AllTrainings_4", true);
         var training5 = await AddTraining("AllTrainings_5", false);
         var training6 = await AddTraining("AllTrainings_6", true);
-        await AssignTrainingToUser(training1, UserId, true);
-        await AssignTrainingToUser(training2, UserId, true);
-        await AssignTrainingToUser(training3, UserId, true);
-        await AssignTrainingToUser(training4, UserId, false);
-        await AssignTrainingToUser(training5, UserId, true);
-        await AssignTrainingToUser(training6, UserId, true);
-        var result = await ScheduleController.AllTrainingsForUser(UserId);
+        await AssignTrainingToUser(training1, DefaultUserId, true);
+        await AssignTrainingToUser(training2, DefaultUserId, true);
+        await AssignTrainingToUser(training3, DefaultUserId, true);
+        await AssignTrainingToUser(training4, DefaultUserId, false);
+        await AssignTrainingToUser(training5, DefaultUserId, true);
+        await AssignTrainingToUser(training6, DefaultUserId, true);
+        var result = await ScheduleController.AllTrainingsForUser(DefaultUserId);
         Assert.NotNull(result?.Value);
         Assert.True(result.Value.Success);
         result.Value.Trainings.Should().NotBeEmpty();

@@ -28,7 +28,7 @@ public class BaseTest : IAsyncLifetime
     protected const string TRAINING_TYPE_DEFAULT = "xUnit default training type";
     protected const string TRAINING_CALENDAR_MONTH = "xUnit month item";
     protected const string TRAINING_CALENDAR_DAY = "xUnit day item";
-    protected Guid UserId { get; private set; }
+    protected Guid DefaultUserId { get; private set; }
     protected Guid DefaultFunction { get; private set; }
     protected Guid DefaultHoliday { get; private set; }
     protected Guid DefaultTraining { get; private set; }
@@ -72,10 +72,10 @@ public class BaseTest : IAsyncLifetime
     public async Task InitializeAsync()
     {
         DefaultFunction = await AddFunction(FUNCTION_DEFAULT, true);
-        UserId = await AddUser(USER_NAME);
+        DefaultUserId = await AddUser(USER_NAME);
         DefaultHoliday = await AddHoliday(HOLIDAY_DEFAULT);
         DefaultTraining = await AddTraining(TRAINING_DEFAULT, false);
-        DefaultAssignedTraining = await AssignTrainingToUser(DefaultTraining, UserId, true);
+        DefaultAssignedTraining = await AssignTrainingToUser(DefaultTraining, DefaultUserId, true);
         DefaultTrainingType = await AddTrainingType(TRAINING_TYPE_DEFAULT, 20);
         DefaultCalendarMonthItem = await AddCalendarMonthItem(TRAINING_CALENDAR_MONTH);
         DefaultCalendarDayItem = await AddCalendarDayItem(TRAINING_CALENDAR_DAY);
