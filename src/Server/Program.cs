@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
-using System;
 using System.Diagnostics;
 using System.Text;
 
@@ -84,7 +83,8 @@ var groupNames = new List<string>
     "DefaultSchedule",
     "Holiday",
     "PreCom",
-    "TrainingTypes"
+    "TrainingTypes",
+    "CustomerSettings"
 };
 var runningInContainers = string.Equals(builder.Configuration["DOTNET_RUNNING_IN_CONTAINER"], "true");
 if (!runningInContainers)

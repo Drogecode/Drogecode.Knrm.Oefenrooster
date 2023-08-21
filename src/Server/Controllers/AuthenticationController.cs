@@ -153,7 +153,7 @@ public class AuthenticationController : ControllerBase
             authProperties);
     }
 
-    public async Task<IEnumerable<Claim>> GetClaimsList(JwtSecurityToken jwtSecurityToken)
+    private async Task<IEnumerable<Claim>> GetClaimsList(JwtSecurityToken jwtSecurityToken)
     {
         var email = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "email")?.Value;
         var fullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value;

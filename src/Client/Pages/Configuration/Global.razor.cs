@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Services;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
@@ -18,6 +19,7 @@ public sealed partial class Global : IDisposable
     [Inject] private ConfigurationRepository _configurationRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
+    [Inject] private ICustomerSettingsClient _customerSettingsClient { get; set; } = default!;
     private ClaimsPrincipal _user;
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
@@ -28,6 +30,7 @@ public sealed partial class Global : IDisposable
     private bool? _clickedUpdate;
     private bool? _usersSynced;
     private bool? _specialDatesUpdated;
+    private bool _settingTrainingToCalendar;
 
 
     protected override void OnInitialized()
@@ -36,6 +39,7 @@ public sealed partial class Global : IDisposable
     }
     protected override async Task OnParametersSetAsync()
     {
+        _settingTrainingToCalendar = await _customerSettingsClient.GetTrainingToCalendarAsync();
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _user = authState.User;
         _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
@@ -46,6 +50,12 @@ public sealed partial class Global : IDisposable
         }
         _users = await _userRepository.GetAllUsersAsync(true);
         _functions = await _functionRepository.GetAllFunctionsAsync();
+    }
+
+    private async ValueTask PatchTrainingToCalendar(bool isChecked)
+    {
+        _settingTrainingToCalendar = isChecked;
+        await _customerSettingsClient.PatchTrainingToCalendarAsync(isChecked);
     }
 
     private async Task UpdateDatabase()

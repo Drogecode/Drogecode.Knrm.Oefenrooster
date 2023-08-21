@@ -5,12 +5,31 @@
     "version": "v1"
   },
   "paths": {
-    "/api/PreCom/web-hook": {
+    "/api/PreCom/web-hook/{id}": {
       "post": {
         "tags": [
           "PreCom"
         ],
         "operationId": "WebHook",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sendToHub",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {

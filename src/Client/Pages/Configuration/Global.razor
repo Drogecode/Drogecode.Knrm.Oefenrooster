@@ -37,6 +37,8 @@ else if (_specialDatesUpdated == false)
     <MudText Typo="Typo.body1">Something went wrong while updating special dates :')</MudText>
 }
 
+<MudSwitch Label="setting training to calendar" Color="Color.Primary" T="bool" Checked="@_settingTrainingToCalendar" CheckedChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))" />
+
 @if (_users != null && _functions != null)
 {
     <MudPaper>

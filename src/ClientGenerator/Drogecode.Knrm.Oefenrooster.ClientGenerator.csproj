@@ -23,6 +23,10 @@
 			<OutputPath>../Clients/ConfigurationClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration</Options>
 		</OpenApiReference>
+		<OpenApiReference Include="OpenAPIs\CustomerSettings.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="CustomerSettingsClient">
+			<OutputPath>../Clients/CustomerSettingsClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false</Options>
+		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\DefaultSchedule.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="DefaultScheduleClient">
 			<OutputPath>../Clients/DefaultScheduleClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule</Options>

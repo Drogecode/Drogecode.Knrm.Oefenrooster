@@ -1,0 +1,60 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "CustomerSettings",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/CustomerSetting/TrainingToCalendar": {
+      "get": {
+        "tags": [
+          "CustomerSetting"
+        ],
+        "operationId": "GetTrainingToCalendar",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "CustomerSetting"
+        ],
+        "operationId": "PatchTrainingToCalendar",
+        "parameters": [
+          {
+            "name": "newValue",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": { }
+}
