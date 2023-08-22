@@ -34,12 +34,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LogincallbackAsync(string id_token, string state, string session_state);
+        System.Threading.Tasks.Task AuthenticatUserAsync(string code, string state, string sessionState, string redirectUrl);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LogincallbackAsync(string id_token, string state, string session_state, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task AuthenticatUserAsync(string code, string state, string sessionState, string redirectUrl, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -164,18 +164,35 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LogincallbackAsync(string id_token, string state, string session_state)
+        public virtual System.Threading.Tasks.Task AuthenticatUserAsync(string code, string state, string sessionState, string redirectUrl)
         {
-            return LogincallbackAsync(id_token, state, session_state, System.Threading.CancellationToken.None);
+            return AuthenticatUserAsync(code, state, sessionState, redirectUrl, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LogincallbackAsync(string id_token, string state, string session_state, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task AuthenticatUserAsync(string code, string state, string sessionState, string redirectUrl, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Authentication/login-callback");
+            urlBuilder_.Append("api/Authentication/authenticat-user?");
+            if (code != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("code") + "=").Append(System.Uri.EscapeDataString(ConvertToString(code, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (state != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("state") + "=").Append(System.Uri.EscapeDataString(ConvertToString(state, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (sessionState != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("sessionState") + "=").Append(System.Uri.EscapeDataString(ConvertToString(sessionState, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (redirectUrl != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("redirectUrl") + "=").Append(System.Uri.EscapeDataString(ConvertToString(redirectUrl, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -183,33 +200,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var boundary_ = System.Guid.NewGuid().ToString();
-                    var content_ = new System.Net.Http.MultipartFormDataContent(boundary_);
-                    content_.Headers.Remove("Content-Type");
-                    content_.Headers.TryAddWithoutValidation("Content-Type", "multipart/form-data; boundary=" + boundary_);
-
-                    if (id_token == null)
-                        throw new System.ArgumentNullException("id_token");
-                    else
-                    {
-                        content_.Add(new System.Net.Http.StringContent(ConvertToString(id_token, System.Globalization.CultureInfo.InvariantCulture)), "id_token");
-                    }
-
-                    if (state == null)
-                        throw new System.ArgumentNullException("state");
-                    else
-                    {
-                        content_.Add(new System.Net.Http.StringContent(ConvertToString(state, System.Globalization.CultureInfo.InvariantCulture)), "state");
-                    }
-
-                    if (session_state == null)
-                        throw new System.ArgumentNullException("session_state");
-                    else
-                    {
-                        content_.Add(new System.Net.Http.StringContent(ConvertToString(session_state, System.Globalization.CultureInfo.InvariantCulture)), "session_state");
-                    }
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 

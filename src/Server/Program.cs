@@ -47,6 +47,7 @@ builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceO
     ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 });
 
+builder.Services.AddHttpClient();
 builder.Services.AddSingleton<PreComHub>();
 builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
 
