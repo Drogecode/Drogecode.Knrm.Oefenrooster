@@ -5,6 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Drogecode.Knrm.Oefenrooster.TestClient.Mocks;
 using Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
 using Microsoft.AspNetCore.Components;
@@ -67,6 +68,8 @@ public abstract class BlazorTestBase : TestContext
     internal static Guid Function1Id = Guid.NewGuid();
     internal static Guid Function2Id = Guid.NewGuid();
     internal static Guid Function3Id = Guid.NewGuid();
+    internal static Guid Vehicle1Id = Guid.NewGuid();
+    internal static Guid Vehicle2Id = Guid.NewGuid();
     internal List<DrogeFunction>? Functions = new List<DrogeFunction>
          {
              new DrogeFunction
@@ -112,6 +115,7 @@ public abstract class BlazorTestBase : TestContext
                     PlannedFunctionId = Function1Id,
                     Name = "test user 2",
                     Assigned = false,
+                    VehicleId = Vehicle2Id,
                 },
                 new PlanUser
                 {
@@ -126,6 +130,7 @@ public abstract class BlazorTestBase : TestContext
                     PlannedFunctionId = Function3Id,
                     Name = "test user 4",
                     Assigned = true,
+                    VehicleId = Vehicle1Id,
                 },
                 new PlanUser
                 {
@@ -133,7 +138,30 @@ public abstract class BlazorTestBase : TestContext
                     PlannedFunctionId = Function1Id,
                     Name = "test user 5",
                     Assigned = true,
+                    VehicleId = Vehicle2Id,
                 },
             }
+    };
+
+    internal List<DrogeVehicle>? Vehicles = new List<DrogeVehicle>
+    {
+        new DrogeVehicle
+        {
+            Id = Vehicle1Id,
+            Default = true,
+            Name = "Vehicle 1 default",
+        },
+        new DrogeVehicle
+        {
+            Id = Vehicle2Id,
+            Default = false,
+            Name = "Vehicle 2 not default",
+        },
+        new DrogeVehicle
+        {
+            Id = Guid.NewGuid(),
+            Default = false,
+            Name = "Vehicle 3 not selected",
+        }
     };
 }

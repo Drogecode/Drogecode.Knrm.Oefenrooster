@@ -27,7 +27,8 @@ public class ScheduleCardTests : BlazorTestBase
 
         var cut = RenderComponent<ScheduleCard>(parameter => parameter
         .Add(p => p.Planner, Training)
-        .Add(p => p.Functions, Functions));
+        .Add(p => p.Functions, Functions)
+        .Add(p => p.Vehicles, Vehicles));
         cut.Markup.Should().Contain("test user 1");
         cut.Markup.Should().NotContain("test user 2");
         cut.Markup.Should().NotContain("test user 3");
@@ -35,6 +36,9 @@ public class ScheduleCardTests : BlazorTestBase
         cut.Markup.Should().Contain("test user 5");
         cut.Markup.Should().Contain("Test function 1");
         cut.Markup.Should().NotContain("Test function 2");
+        cut.Markup.Should().Contain("Vehicle 1 default");
+        cut.Markup.Should().Contain("Vehicle 2 not default");
+        cut.Markup.Should().NotContain("Vehicle 3 not selected");
     }
 
     private void Localize(IStringLocalizer<App> L1, IStringLocalizer<ScheduleCard> L2)
