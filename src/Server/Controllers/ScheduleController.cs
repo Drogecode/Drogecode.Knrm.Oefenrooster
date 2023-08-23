@@ -1,13 +1,12 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
 using System.Text.Json;
-using ZXing.Aztec.Internal;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
@@ -169,30 +168,8 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             PatchAssignedUserResponse result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { TrainingId = body.TrainingId, Assigned = body?.User?.Assigned }), body?.User?.UserId);
-            if (body?.User?.Assigned == true && await _userSettingService.TrainingToCalendar(customerId, body.User.UserId))
-            {
-                var type = await _trainingTypesService.GetById(body.Training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
-                if (string.IsNullOrEmpty(result.CalendarEventId))
-                {
-                    if (!string.IsNullOrEmpty(type?.TrainingType?.Name))
-                    {
-                        _graphService.InitializeGraph();
-                        var eventResult = await _graphService.AddToCalendar(body.User.UserId, type.TrainingType.Name, body.Training!.DateStart, body.Training.DateEnd);
-                        bool patchEventId = await _scheduleService.PatchEventIdForUserAvailible(body.User.UserId, customerId, result.AvailableId, eventResult.Id, clt);
-                    }
-                }
-                else
-                {
-                    await _auditService.Log(userId, AuditType.PatchTraining, customerId, $"Preventing duplicate event '{type?.TrainingType?.Name}' on '{body?.Training?.DateStart.ToString("o")}' : '{body?.Training?.DateEnd.ToString("o")}'");
-                }
-            }
-            else if (!string.IsNullOrEmpty(result.CalendarEventId))
-            {
-                _graphService.InitializeGraph();
-                await _graphService.DeleteCalendarEvent(body?.User?.UserId, result.CalendarEventId, clt);
-                if (body?.User?.UserId is not null)
-                    await _scheduleService.PatchEventIdForUserAvailible(body.User.UserId, customerId, result.AvailableId, null, clt);
-            }
+            if (body?.User?.UserId is not null)
+                await ToOutlookCalendar(body.User.UserId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
             return result;
         }
         catch (Exception ex)
@@ -212,23 +189,8 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _scheduleService.PutAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { TrainingId = body.TrainingId, Assigned = body?.Assigned }), body?.UserId);
-            if (body?.Assigned == true && body?.UserId is not null && await _userSettingService.TrainingToCalendar(customerId, body.UserId.Value))
-            {
-                var type = await _trainingTypesService.GetById(body.Training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
-                if (!string.IsNullOrEmpty(type?.TrainingType?.Name))
-                {
-                    _graphService.InitializeGraph();
-                    var eventResult = await _graphService.AddToCalendar(body.UserId.Value, type.TrainingType.Name, body.Training!.DateStart, body.Training.DateEnd);
-                    bool patchEventId = await _scheduleService.PatchEventIdForUserAvailible(body.UserId.Value, customerId, result.AvailableId, eventResult.Id, clt);
-                }
-            }
-            else if (!string.IsNullOrEmpty(result.CalendarEventId))
-            {
-                _graphService.InitializeGraph();
-                await _graphService.DeleteCalendarEvent(body?.UserId, result.CalendarEventId, clt);
-                if (body?.UserId is not null)
-                    await _scheduleService.PatchEventIdForUserAvailible(body.UserId.Value, customerId, result.AvailableId, null, clt);
-            }
+            if (body?.UserId is not null)
+                await ToOutlookCalendar(body.UserId.Value, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
             return result;
         }
         catch (Exception ex)
@@ -292,6 +254,34 @@ public class ScheduleController : ControllerBase
         {
             _logger.LogError(ex, "Error in GetPinnedTrainingsForUser");
             return BadRequest();
+        }
+    }
+
+    private async Task ToOutlookCalendar(Guid planUserId, bool assigned, TrainingAdvance? training, Guid currentUserId, Guid customerId, Guid? availableId, string? calendarEventId, CancellationToken clt)
+    {
+        if (assigned && await _userSettingService.TrainingToCalendar(customerId, planUserId))
+        {
+            var type = await _trainingTypesService.GetById(training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
+            if (string.IsNullOrEmpty(calendarEventId))
+            {
+                if (!string.IsNullOrEmpty(type?.TrainingType?.Name))
+                {
+                    var text = $"{type.TrainingType.Name} - {training?.Name}";
+                    _graphService.InitializeGraph();
+                    var eventResult = await _graphService.AddToCalendar(planUserId, text, training!.DateStart, training.DateEnd);
+                    await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, eventResult.Id, clt);
+                }
+            }
+            else
+            {
+                await _auditService.Log(currentUserId, AuditType.PatchTraining, customerId, $"Preventing duplicate event '{type?.TrainingType?.Name}' on '{training?.DateStart.ToString("o")}' : '{training?.DateEnd.ToString("o")}'");
+            }
+        }
+        else if (!string.IsNullOrEmpty(calendarEventId))
+        {
+            _graphService.InitializeGraph();
+            await _graphService.DeleteCalendarEvent(planUserId, calendarEventId, clt);
+            await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, null, clt);
         }
     }
 }
