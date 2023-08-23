@@ -52,7 +52,7 @@ public sealed partial class Global : IDisposable
         _functions = await _functionRepository.GetAllFunctionsAsync();
     }
 
-    private async ValueTask PatchTrainingToCalendar(bool isChecked)
+    private async Task PatchTrainingToCalendar(bool isChecked)
     {
         _settingTrainingToCalendar = isChecked;
         await _customerSettingsClient.PatchTrainingToCalendarAsync(isChecked);

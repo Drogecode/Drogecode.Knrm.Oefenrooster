@@ -19,7 +19,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     using System = global::System;
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial interface ICustomerSettingsClient
+    public partial interface IUserSettingsClient
     {
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -42,12 +42,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.19.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CustomerSettingsClient : ICustomerSettingsClient
+    public partial class UserSettingsClient : IUserSettingsClient
     {
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
 
-        public CustomerSettingsClient(System.Net.Http.HttpClient httpClient)
+        public UserSettingsClient(System.Net.Http.HttpClient httpClient)
         {
             _httpClient = httpClient;
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
@@ -81,7 +81,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<bool> GetTrainingToCalendarAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/CustomerSetting/training-to-calendar");
+            urlBuilder_.Append("api/UserSetting/training-to-calendar");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -155,7 +155,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task PatchTrainingToCalendarAsync(bool? newValue, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/CustomerSetting/training-to-calendar?");
+            urlBuilder_.Append("api/UserSetting/training-to-calendar?");
             if (newValue != null)
             {
                 urlBuilder_.Append(System.Uri.EscapeDataString("newValue") + "=").Append(System.Uri.EscapeDataString(ConvertToString(newValue, System.Globalization.CultureInfo.InvariantCulture))).Append("&");

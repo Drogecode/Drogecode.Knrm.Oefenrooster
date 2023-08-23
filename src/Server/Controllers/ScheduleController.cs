@@ -169,7 +169,7 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             PatchAssignedUserResponse result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { TrainingId = body.TrainingId, Assigned = body?.User?.Assigned }), body?.User?.UserId);
-            if (body?.User?.Assigned == true && await _userSettingService.TrainingToCalendar(customerId, userId))
+            if (body?.User?.Assigned == true && await _userSettingService.TrainingToCalendar(customerId, body.User.UserId))
             {
                 var type = await _trainingTypesService.GetById(body.Training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
                 if (string.IsNullOrEmpty(result.CalendarEventId))
@@ -190,6 +190,8 @@ public class ScheduleController : ControllerBase
             {
                 _graphService.InitializeGraph();
                 await _graphService.DeleteCalendarEvent(body?.User?.UserId, result.CalendarEventId, clt);
+                if (body?.User?.UserId is not null)
+                    await _scheduleService.PatchEventIdForUserAvailible(body.User.UserId, customerId, result.AvailableId, null, clt);
             }
             return result;
         }
@@ -210,7 +212,7 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _scheduleService.PutAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { TrainingId = body.TrainingId, Assigned = body?.Assigned }), body?.UserId);
-            if (body?.Assigned == true && await _userSettingService.TrainingToCalendar(customerId, userId))
+            if (body?.Assigned == true && body?.UserId is not null && await _userSettingService.TrainingToCalendar(customerId, body.UserId.Value))
             {
                 var type = await _trainingTypesService.GetById(body.Training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
                 if (!string.IsNullOrEmpty(type?.TrainingType?.Name))
@@ -224,6 +226,8 @@ public class ScheduleController : ControllerBase
             {
                 _graphService.InitializeGraph();
                 await _graphService.DeleteCalendarEvent(body?.UserId, result.CalendarEventId, clt);
+                if (body?.UserId is not null)
+                    await _scheduleService.PatchEventIdForUserAvailible(body.UserId.Value, customerId, result.AvailableId, null, clt);
             }
             return result;
         }

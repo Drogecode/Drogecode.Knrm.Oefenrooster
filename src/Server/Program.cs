@@ -85,7 +85,8 @@ var groupNames = new List<string>
     "Holiday",
     "PreCom",
     "TrainingTypes",
-    "CustomerSettings"
+    "CustomerSettings",
+    "UserSettings"
 };
 var runningInContainers = string.Equals(builder.Configuration["DOTNET_RUNNING_IN_CONTAINER"], "true");
 if (!runningInContainers)
