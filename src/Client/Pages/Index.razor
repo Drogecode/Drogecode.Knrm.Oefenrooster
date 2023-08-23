@@ -65,7 +65,17 @@
                 @if (_sharePointActions.Count() > 0)
                 {
                     <MudText Typo="Typo.h3">@L["Most recent actions from SharePoint"]</MudText>
-
+                    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+                        @if (_users is not null)
+                        {
+                            <MudSelectExtended T="DrogeUser" MultiSelectionTextFunc="@(new Func<List<DrogeUser>, string>(GetMultiSelectionText))" Label="@L["From who"]" MultiSelection="true" @bind-SelectedValues="_selectedUsersAction">
+                                @foreach (var user in _users)
+                                {
+                                    <MudSelectItemExtended T="DrogeUser" Value="@user">@user.Name</MudSelectItemExtended>
+                                }
+                            </MudSelectExtended>
+                        }
+                    </AuthorizeView>
                     <MudDataGrid Items="@_sharePointActions"
                                  ReadOnly="true" EditMode="@DataGridEditMode.Cell">
                         <Columns>

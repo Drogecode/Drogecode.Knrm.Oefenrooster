@@ -25,8 +25,9 @@ public sealed partial class Index : IDisposable
     private List<SharePointTraining>? _sharePointTrainings;
     private List<SharePointAction>? _sharePointActions;
     private List<DrogeUser>? _users;
+    private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
     private List<DrogeVehicle>? _vehicles;
-    private List<PlannerTrainingType>? _trainingTypes;
+    private List<PlannerTrainingType>? _trainingTypes; 
     protected override async Task OnParametersSetAsync()
     {
         _users = await _userRepository.GetAllUsersAsync(false);
@@ -35,6 +36,14 @@ public sealed partial class Index : IDisposable
 
 
         _user = await _userRepository.GetCurrentUserAsync();//Force creation of user.
+        if (_user is not null)
+        {
+            var thisUser = _users!.FirstOrDefault(x => x.Id == _user.Id);
+            if (thisUser is not null)
+            {
+                ((List<DrogeUser>)_selectedUsersAction).Add(thisUser);
+            }
+        }
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _futureTrainings = (await _scheduleRepository.GetScheduledTrainingsForUser(_user?.Id, _cls.Token))?.Trainings;
         StateHasChanged();
@@ -43,6 +52,11 @@ public sealed partial class Index : IDisposable
         _sharePointActions = await _sharePointRepository.GetLastActionsForCurrentUser(10, 0, _cls.Token);
         StateHasChanged();
         _sharePointTrainings = await _sharePointRepository.GetLastTrainingsForCurrentUser(10, 0, _cls.Token);
+    }
+    private string GetMultiSelectionText(List<DrogeUser> selectedValues)
+    {
+        var result = string.Join(", ", selectedValues.Select(x => x.Name));
+        return result;
     }
 
     public void Dispose()

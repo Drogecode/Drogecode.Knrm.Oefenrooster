@@ -123,6 +123,9 @@
   <data name="Description" xml:space="preserve">
     <value>Description</value>
   </data>
+  <data name="From who" xml:space="preserve">
+    <value>From who</value>
+  </data>
   <data name="Future trainings" xml:space="preserve">
     <value>Future trainings</value>
   </data>
