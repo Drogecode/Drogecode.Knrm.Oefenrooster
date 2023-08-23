@@ -1,22 +1,19 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text.Json;
-using ZXing.Aztec.Internal;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
-using System.Diagnostics;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-using System.Security;
-using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using static MudBlazor.CategoryTypes;
+using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using System.Text.RegularExpressions;
+using ZXing.Aztec.Internal;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -28,15 +25,21 @@ public class AuthenticationController : ControllerBase
     private readonly ILogger<AuthenticationController> _logger;
     private readonly IMemoryCache _memoryCache;
     private readonly IUserRoleService _userRoleService;
+    private readonly IConfiguration _configuration;
+    private readonly HttpClient _httpClient;
 
     public AuthenticationController(
         ILogger<AuthenticationController> logger,
         IMemoryCache memoryCache,
-        IUserRoleService userRoleService)
+        IUserRoleService userRoleService,
+        IConfiguration configuration,
+        HttpClient httpClient)
     {
         _logger = logger;
         _memoryCache = memoryCache;
         _userRoleService = userRoleService;
+        _configuration = configuration;
+        _httpClient = httpClient;
     }
 
     [HttpGet]
@@ -45,18 +48,20 @@ public class AuthenticationController : ControllerBase
     {
         try
         {
-            var response = new GetLoginSecretsResponse
+            var codeVerifier = CreateSecret(120);
+            var response = new CacheLoginSecrets
             {
                 LoginSecret = CreateSecret(64),
                 LoginNonce = CreateSecret(64),
+                CodeChallenge = GenerateCodeChallenge(codeVerifier), //BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))
+                CodeVerifier = codeVerifier,
                 Success = true
             };
 
             var cacheOptions = new MemoryCacheEntryOptions();
             cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
             _memoryCache.Set(response.LoginSecret, response, cacheOptions);
-            return response;
-
+            return response as GetLoginSecretsResponse;
         }
         catch (Exception e)
         {
@@ -64,21 +69,84 @@ public class AuthenticationController : ControllerBase
             return BadRequest();
         }
     }
-
-    [HttpPost]
-    [Route("login-callback")]
-    public async Task Logincallback([FromForm] string id_token, [FromForm] string state, [FromForm] string session_state, CancellationToken clt = default)
+    private static string GenerateCodeChallenge(string codeVerifier)
     {
-        var found = _memoryCache.Get<GetLoginSecretsResponse>(state);
-        if (found?.Success is not true) return;
-        _memoryCache.Remove(state);
+        using var sha256 = SHA256.Create();
+        var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
+        var b64Hash = Convert.ToBase64String(hash);
+        var code = Regex.Replace(b64Hash, "\\+", "-");
+        code = Regex.Replace(code, "\\/", "_");
+        code = Regex.Replace(code, "=+$", "");
+        return code;
+    }
 
-        var handler = new JwtSecurityTokenHandler();
-        var jwtSecurityToken = handler.ReadJwtToken(id_token);
-        if (string.Compare(found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value, false) != 0) return;
+    [HttpGet]
+    [Route("authenticat-user")]
+    public async Task<ActionResult<bool>> AuthenticatUser(string code, string state, string sessionState, string redirectUrl, CancellationToken clt = default)
+    {
+        try
+        {
+            string id_token = "";
+            var found = _memoryCache.Get<CacheLoginSecrets>(state);
+            if (found?.Success is not true || found?.CodeVerifier is null)
+            {
+                _logger.LogWarning("fund?.success = `{false}` || found?.CodeVerifier = `{null}`", found?.Success is not true, found?.CodeVerifier is null);
+                return false;
+            }
+            _memoryCache.Remove(state);
+            var tenant = "d9754755-b054-4a9c-a77f-da42a4009365";
+            var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new Exception("no secret found for azure login");
+            var formContent = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("client_id", "a9c68159-901c-449a-83e0-85243364e3cc"),
+                new KeyValuePair<string, string>("scope", "openid profile email"),
+                new KeyValuePair<string, string>("code", code),
+                new KeyValuePair<string, string>("redirect_uri", redirectUrl),
+                new KeyValuePair<string, string>("grant_type", "authorization_code"),
+                new KeyValuePair<string, string>("code_verifier", found.CodeVerifier),
+                new KeyValuePair<string, string>("client_secret", secret),
+            });
+            using (var response = await _httpClient.PostAsync($"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token", formContent))
+            {
+                string responseString = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    var resObj = JsonConvert.DeserializeObject<testje>(responseString);
+                    id_token = resObj.id_token;
+                }
+                else
+                {
+                    _logger.LogWarning("Failed login: {jsonstring}", responseString);
+                    return false;
+                }
+            }
 
-        await SetUser(jwtSecurityToken, false, clt);
-        Response.Redirect("/authentication/login-callback");
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(id_token);
+            if (string.Compare(found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value, false) != 0)
+            {
+                _logger.LogWarning("Nonce is wrong `{cache}` != `{jwt}`", found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value ?? "null");
+                return false; 
+            }
+
+            await SetUser(jwtSecurityToken, false, clt);
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "AuthenticatUser");
+            return false;
+        }
+    }
+
+    private class testje
+    {
+        public string access_token { get; set; }
+        public string token_type { get; set; }
+        public int expires_in { get; set; }
+        public string scope { get; set; }
+        public string refresh_token { get; set; }
+        public string id_token { get; set; }
     }
 
     [HttpGet]

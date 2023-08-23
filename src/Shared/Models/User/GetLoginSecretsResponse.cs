@@ -10,4 +10,10 @@ public class GetLoginSecretsResponse : BaseResponse
 {
     public string? LoginSecret { get; set; }
     public string? LoginNonce { get; set; }
+    public string? CodeChallenge { get; set; }
+}
+
+public class CacheLoginSecrets : GetLoginSecretsResponse
+{
+    public string? CodeVerifier { get; set; }
 }

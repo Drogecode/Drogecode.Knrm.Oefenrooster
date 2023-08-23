@@ -44,7 +44,8 @@ public sealed partial class MainLayout : IDisposable
             _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
             if (!_isAuthenticated)
             {
-                Navigation.NavigateTo("landing_page");
+                if (!Navigation.Uri.Contains("/authentication/login-callback"))
+                    Navigation.NavigateTo("landing_page");
                 return;
             }
             _hubConnection = new HubConnectionBuilder()

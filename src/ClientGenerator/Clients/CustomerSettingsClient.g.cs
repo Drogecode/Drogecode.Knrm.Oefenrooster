@@ -81,7 +81,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task<bool> GetTrainingToCalendarAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/CustomerSetting/TrainingToCalendar");
+            urlBuilder_.Append("api/CustomerSetting/training-to-calendar");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -155,7 +155,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         public virtual async System.Threading.Tasks.Task PatchTrainingToCalendarAsync(bool? newValue, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/CustomerSetting/TrainingToCalendar?");
+            urlBuilder_.Append("api/CustomerSetting/training-to-calendar?");
             if (newValue != null)
             {
                 urlBuilder_.Append(System.Uri.EscapeDataString("newValue") + "=").Append(System.Uri.EscapeDataString(ConvertToString(newValue, System.Globalization.CultureInfo.InvariantCulture))).Append("&");

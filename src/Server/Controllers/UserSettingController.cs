@@ -1,5 +1,4 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -12,16 +11,16 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
-[ApiExplorerSettings(GroupName = "CustomerSettings")]
-public class CustomerSettingController : ControllerBase
+[ApiExplorerSettings(GroupName = "UserSettings")]
+public class UserSettingController : ControllerBase
 {
     private readonly ILogger<CustomerSettingController> _logger;
-    private readonly ICustomerSettingService _customerSettingService;
+    private readonly IUserSettingService _userSettingService;
 
-    public CustomerSettingController(ILogger<CustomerSettingController> logger, ICustomerSettingService customerSettingService)
+    public UserSettingController(ILogger<CustomerSettingController> logger, IUserSettingService userSettingService)
     {
         _logger = logger;
-        _customerSettingService = customerSettingService;
+        _userSettingService = userSettingService;
     }
 
     [HttpGet]
@@ -32,7 +31,7 @@ public class CustomerSettingController : ControllerBase
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            bool result = await _customerSettingService.TrainingToCalendar(customerId);
+            bool result = await _userSettingService.TrainingToCalendar(customerId, userId);
 
             return result;
         }
@@ -55,7 +54,7 @@ public class CustomerSettingController : ControllerBase
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            await _customerSettingService.Patch_TrainingToCalendar(customerId, newValue);
+            await _userSettingService.Patch_TrainingToCalendar(customerId, userId, newValue);
             return Ok();
         }
         catch (Exception ex)
@@ -67,5 +66,4 @@ public class CustomerSettingController : ControllerBase
             return BadRequest();
         }
     }
-
 }

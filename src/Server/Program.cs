@@ -47,6 +47,7 @@ builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceO
     ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 });
 
+builder.Services.AddHttpClient();
 builder.Services.AddSingleton<PreComHub>();
 builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
 
@@ -84,7 +85,8 @@ var groupNames = new List<string>
     "Holiday",
     "PreCom",
     "TrainingTypes",
-    "CustomerSettings"
+    "CustomerSettings",
+    "UserSettings"
 };
 var runningInContainers = string.Equals(builder.Configuration["DOTNET_RUNNING_IN_CONTAINER"], "true");
 if (!runningInContainers)

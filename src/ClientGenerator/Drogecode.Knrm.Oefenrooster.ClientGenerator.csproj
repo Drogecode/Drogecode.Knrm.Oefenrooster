@@ -63,6 +63,10 @@
 			<OutputPath>../Clients/UserClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.User</Options>
 		</OpenApiReference>
+		<OpenApiReference Include="OpenAPIs\UserSettings.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="UserSettingsClient">
+			<OutputPath>../Clients/UserSettingsClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false</Options>
+		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Vehicle.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="VehicleClient">
 			<OutputPath>../Clients/VehicleClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle</Options>

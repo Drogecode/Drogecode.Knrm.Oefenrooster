@@ -4,3 +4,7 @@
 <PageTitle>Profiel</PageTitle>
 <h3>Profile</h3>
 <CultureSelector />
+
+<AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+    <MudSwitch Label="setting training to calendar" Color="Color.Primary" T="bool" Checked="@_settingTrainingToCalendar" CheckedChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))" />
+</AuthorizeView>
