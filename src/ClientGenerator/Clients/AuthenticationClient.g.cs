@@ -34,12 +34,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AuthenticatUserAsync(string code, string state, string sessionState, string redirectUrl);
+        System.Threading.Tasks.Task<bool> AuthenticatUserAsync(string code, string state, string sessionState, string redirectUrl);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AuthenticatUserAsync(string code, string state, string sessionState, string redirectUrl, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<bool> AuthenticatUserAsync(string code, string state, string sessionState, string redirectUrl, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -164,7 +164,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task AuthenticatUserAsync(string code, string state, string sessionState, string redirectUrl)
+        public virtual System.Threading.Tasks.Task<bool> AuthenticatUserAsync(string code, string state, string sessionState, string redirectUrl)
         {
             return AuthenticatUserAsync(code, state, sessionState, redirectUrl, System.Threading.CancellationToken.None);
         }
@@ -172,7 +172,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task AuthenticatUserAsync(string code, string state, string sessionState, string redirectUrl, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<bool> AuthenticatUserAsync(string code, string state, string sessionState, string redirectUrl, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Authentication/authenticat-user?");
@@ -201,6 +201,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -225,7 +226,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<bool>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {

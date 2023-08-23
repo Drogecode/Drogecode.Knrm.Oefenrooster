@@ -82,21 +82,24 @@ public class AuthenticationController : ControllerBase
 
     [HttpGet]
     [Route("authenticat-user")]
-    public async Task AuthenticatUser(string code, string state, string sessionState, string redirectUrl, CancellationToken clt = default)
+    public async Task<ActionResult<bool>> AuthenticatUser(string code, string state, string sessionState, string redirectUrl, CancellationToken clt = default)
     {
         try
         {
             string id_token = "";
             var found = _memoryCache.Get<CacheLoginSecrets>(state);
             if (found?.Success is not true || found?.CodeVerifier is null)
-                return;
+            {
+                _logger.LogWarning("fund?.success = `{false}` || found?.CodeVerifier = `{null}`", found?.Success is not true, found?.CodeVerifier is null);
+                return false;
+            }
             _memoryCache.Remove(state);
             var tenant = "d9754755-b054-4a9c-a77f-da42a4009365";
-            var secret = _configuration.GetValue<string>("AzureAd:ClientSecret") ?? throw new Exception("no secret found for azure");
+            var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new Exception("no secret found for azure login");
             var formContent = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("client_id", "220e1008-1131-4e82-a388-611cd773ddf8"),
-                new KeyValuePair<string, string>("scope", "openid+profile+email"),
+                new KeyValuePair<string, string>("client_id", "a9c68159-901c-449a-83e0-85243364e3cc"),
+                new KeyValuePair<string, string>("scope", "openid profile email"),
                 new KeyValuePair<string, string>("code", code),
                 new KeyValuePair<string, string>("redirect_uri", redirectUrl),
                 new KeyValuePair<string, string>("grant_type", "authorization_code"),
@@ -105,24 +108,34 @@ public class AuthenticationController : ControllerBase
             });
             using (var response = await _httpClient.PostAsync($"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token", formContent))
             {
+                string responseString = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    string responseString = await response.Content.ReadAsStringAsync();
                     var resObj = JsonConvert.DeserializeObject<testje>(responseString);
                     id_token = resObj.id_token;
+                }
+                else
+                {
+                    _logger.LogWarning("Failed login: {jsonstring}", responseString);
+                    return false;
                 }
             }
 
             var handler = new JwtSecurityTokenHandler();
             var jwtSecurityToken = handler.ReadJwtToken(id_token);
-            if (string.Compare(found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value, false) != 0) return;
+            if (string.Compare(found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value, false) != 0)
+            {
+                _logger.LogWarning("Nonce is wrong `{cache}` != `{jwt}`", found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value ?? "null");
+                return false; 
+            }
 
             await SetUser(jwtSecurityToken, false, clt);
-            Response.Redirect("/authentication/login-callback");
+            return true;
         }
         catch (Exception e)
         {
             _logger.LogError(e, "AuthenticatUser");
+            return false;
         }
     }
 

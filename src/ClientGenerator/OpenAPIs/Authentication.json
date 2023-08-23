@@ -73,7 +73,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
           }
         }
       }
@@ -171,10 +188,6 @@
             "nullable": true
           },
           "codeChallenge": {
-            "type": "string",
-            "nullable": true
-          },
-          "codeVerifier": {
             "type": "string",
             "nullable": true
           }
