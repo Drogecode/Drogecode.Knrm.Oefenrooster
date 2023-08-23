@@ -8,7 +8,7 @@ public class DbLinkVehicleTraining
 {
     [Key] public Guid Id { get; set; }
     public Guid RoosterTrainingId { get; set; }
-    public Guid Vehicle { get; set; }
+    public Guid VehicleId { get; set; }
     public Guid CustomerId { get; set; }
     public bool IsSelected { get; set; }
 

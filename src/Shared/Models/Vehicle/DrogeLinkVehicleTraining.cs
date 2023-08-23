@@ -10,6 +10,6 @@ public class DrogeLinkVehicleTraining
 {
     public Guid? Id { get; set; }
     public Guid RoosterTrainingId { get; set; }
-    public Guid Vehicle { get; set; }
+    public Guid VehicleId { get; set; }
     public bool IsSelected { get; set; }
 }

@@ -10,8 +10,8 @@
             <MudGrid Spacing="1" Justify="Justify.FlexStart" Class="pa-1">
                 @foreach (var vehicle in Vehicles)
                 {
-                    var vehicleLink = _linkVehicleTraining?.FirstOrDefault(x => x.Vehicle == vehicle.Id);
-                    @if (vehicleLink?.IsSelected == true || (vehicle.Default == true && vehicleLink == null))
+                    var vehicleLink = _linkVehicleTraining?.FirstOrDefault(x => x.VehicleId == vehicle.Id);
+                    @if (vehicleLink?.IsSelected == true || (vehicle.Default && vehicleLink == null))
                     {
                         hasVehicle = true;
                         <MudItem>

@@ -47,7 +47,7 @@ public sealed partial class ScheduleDialog : IDisposable
             var count = 0;
             foreach (var vehicle in Vehicles.Where(x => x.Active))
             {
-                bool? isSelected = _linkVehicleTraining?.FirstOrDefault(x => x.Vehicle == vehicle.Id)?.IsSelected;
+                bool? isSelected = _linkVehicleTraining?.FirstOrDefault(x => x.VehicleId == vehicle.Id)?.IsSelected;
                 if (isSelected == true || (isSelected == null && vehicle.Default))
                 {
                     _vehicleInfoForThisTraining.Add(vehicle);

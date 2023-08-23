@@ -140,7 +140,7 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private async Task CheckChanged(bool toggled, DrogeVehicle vehicle)
     {
-        var link = _linkVehicleTraining?.FirstOrDefault(x => x.Vehicle == vehicle.Id);
+        var link = _linkVehicleTraining?.FirstOrDefault(x => x.VehicleId == vehicle.Id);
         if (link != null)
         {
             link.IsSelected = toggled;
@@ -153,7 +153,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             {
                 Id = null,
                 IsSelected = toggled,
-                Vehicle = vehicle.Id,
+                VehicleId = vehicle.Id,
                 RoosterTrainingId = Planner?.TrainingId ?? Guid.Empty
             };
             if (!_training!.IsNew)
@@ -167,7 +167,21 @@ public sealed partial class EditTrainingDialog : IDisposable
                 _linkVehicleTraining?.Add(link);
             }
         }
-        StateHasChanged();
+        if (!toggled)
+        {
+            var users = Planner?.PlanUsers?.Where(x => x.VehicleId == vehicle.Id);
+
+            if (users is not null)
+            {
+                foreach (var user in users)
+                {
+                    user.VehicleId = null;
+                }
+            }
+            if (Refresh != null)
+                await Refresh.CallRequestRefreshAsync();
+            StateHasChanged();
+        }
     }
 
     public void Dispose()

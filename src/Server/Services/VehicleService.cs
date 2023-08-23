@@ -41,7 +41,7 @@ public class VehicleService : IVehicleService
             {
                 Id = dbVehicle.Id,
                 RoosterTrainingId = dbVehicle.RoosterTrainingId,
-                Vehicle = dbVehicle.Vehicle,
+                VehicleId = dbVehicle.VehicleId,
                 IsSelected = dbVehicle.IsSelected,
             });
         }
@@ -58,8 +58,8 @@ public class VehicleService : IVehicleService
                 Id = newId,
                 IsSelected = link.IsSelected,
                 RoosterTrainingId = link.RoosterTrainingId,
-                CustomerId= customerId,
-                Vehicle = link.Vehicle,
+                CustomerId = customerId,
+                VehicleId = link.VehicleId,
             });
             await _database.SaveChangesAsync();
             link.Id = newId;
@@ -75,6 +75,15 @@ public class VehicleService : IVehicleService
             }
             foundLink.IsSelected = link.IsSelected;
             _database.LinkVehicleTraining.Update(foundLink);
+            if (!link.IsSelected)
+            {
+                var trainings = _database.RoosterAvailables.Where(x => x.TrainingId == link.RoosterTrainingId && x.VehicleId == link.VehicleId);
+                foreach (var training in trainings)
+                {
+                    training.VehicleId = null;
+                    _database.RoosterAvailables.Update(training);
+                }
+            }
             await _database.SaveChangesAsync();
             return link;
         }
