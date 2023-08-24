@@ -81,6 +81,13 @@ public class ScheduleRepository
         return schedule;
     }
 
+    public async Task<bool> DeleteTraining(Guid? id, CancellationToken clt)
+    {
+        if (id is null) return false;
+        var schedule = await _scheduleClient.DeleteTrainingAsync(id.Value, clt);
+        return schedule;
+    }
+
     internal async Task PutAssignedUser(bool assigned, Guid? trainingId, Guid functionId, DrogeUser user, TrainingAdvance? training, CancellationToken clt)
     {
         var body = new OtherScheduleUserRequest

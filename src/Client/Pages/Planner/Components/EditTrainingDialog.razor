@@ -14,8 +14,8 @@
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
                 <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" />
                 <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Required Disabled="!_training.IsNew" />
-                <MudTimePicker Label="@L["From"]" @bind-Time="_training.TimeStart" Validation="@(new Func<TimeSpan?, string?>(StartBeforeEndValidation))" Required Disabled="!_training.IsNew" />
-                <MudTimePicker Label="@LApp["till"]" @bind-Time="_training.TimeEnd" Validation="@(new Func<TimeSpan?, string?>(EndAfterStartValidation))" Required Disabled="!_training.IsNew" />
+                <MudTimePicker Label="@L["From"]" @bind-Time="_training.TimeStart" Validation="@(new Func<TimeSpan?, string?>(StartBeforeEndValidation))" Required />
+                <MudTimePicker Label="@LApp["till"]" @bind-Time="_training.TimeEnd" Validation="@(new Func<TimeSpan?, string?>(EndAfterStartValidation))" Required />
                 @if (_currentTrainingType?.IsActive == false)
                 {
                     <MudTextField Label="@L["Training type"]" Disabled="true" Value="_currentTrainingType.Name" />
@@ -52,6 +52,14 @@
         {
             <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
             <MudButton Color="Color.Primary" OnClick="OnSubmit">@LApp["save"]</MudButton>
+        }
+        else
+        {
+            if (_showDelete)
+            {
+                <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">@L["Are you sure? This can not be reverted!"]<MudButton Color="Color.Warning" OnClick="Delete">@LApp["Delete"]</MudButton></MudAlert>
+            }
+            <MudButton Color="Color.Warning" OnClick="()=> _showDelete = !_showDelete">@LApp["Delete"]</MudButton>
         }
     </DialogActions>
 </MudDialog>

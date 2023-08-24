@@ -140,7 +140,7 @@
             "type": "string",
             "format": "uuid"
           },
-          "vehicle": {
+          "vehicleId": {
             "type": "string",
             "format": "uuid"
           },

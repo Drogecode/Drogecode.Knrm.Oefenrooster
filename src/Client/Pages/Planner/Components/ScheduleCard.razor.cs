@@ -17,7 +17,7 @@ public sealed partial class ScheduleCard : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private ISnackbar SnackbarService { get; set; } = default!;
-    [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
+    [CascadingParameter] public DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter, EditorRequired] public PlannedTraining Planner { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
@@ -29,10 +29,12 @@ public sealed partial class ScheduleCard : IDisposable
     [Parameter] public bool ShowDate { get; set; }
     private RefreshModel _refreshModel = new();
     private bool _updating;
+    private bool _isDelted;
 
     protected override void OnParametersSet()
     {
         _refreshModel.RefreshRequested += RefreshMe;
+        Global.TrainingDeletedAsync += TrainingDeleted;
     }
 
     private void OpenScheduleDialog()
@@ -68,6 +70,14 @@ public sealed partial class ScheduleCard : IDisposable
         var parameters = new DialogParameters<TrainingHistoryDialog>();
         var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
         _dialogProvider.Show<TrainingHistoryDialog>(L["Edit history"], parameters, options);
+    }
+
+    private async Task TrainingDeleted(Guid id)
+    {
+        if (id == Planner.TrainingId)
+        {
+            _isDelted = true;
+        }
     }
 
     private void RefreshMe()

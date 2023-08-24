@@ -6,7 +6,8 @@ public interface IScheduleService
 {
     Task<MultipleTrainingsResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken clt);
     Task<ScheduleForAllResponse> ScheduleForAllAsync(Guid userId, Guid customerId, int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, bool countPerUser, CancellationToken clt);
-    Task<GetTrainingByIdResponse> GetTrainingById(Guid userId, Guid customerId, Guid id);
+    Task<GetTrainingByIdResponse> GetTrainingById(Guid userId, Guid customerId, Guid trainingId);
+    Task<PlannedTraining?> GetPlannedTrainingById(Guid trainingId);
     Task<PatchScheduleForUserResponse> PatchScheduleForUserAsync(Guid userId, Guid customerId, Training training, CancellationToken clt);
     Task<PatchAssignedUserResponse> PatchAssignedUserAsync(Guid userId, Guid customerId, PatchAssignedUserRequest body, CancellationToken clt);
     Task<PatchTrainingResponse> PatchTraining(Guid customerId, PlannedTraining training, CancellationToken clt);
@@ -15,4 +16,5 @@ public interface IScheduleService
     Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUser(Guid userId, Guid customerId, DateTime fromDate, CancellationToken clt);
     Task<PutAssignedUserResponse> PutAssignedUserAsync(Guid userId, Guid customerId, OtherScheduleUserRequest body, CancellationToken clt);
     Task<bool> PatchEventIdForUserAvailible(Guid userId, Guid customerId, Guid? availableId, string? calendarEventId, CancellationToken clt);
+    Task<bool> DeleteTraining(Guid userId, Guid customerId, Guid trainingId, CancellationToken clt);
 }

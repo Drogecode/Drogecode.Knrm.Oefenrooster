@@ -26,6 +26,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private EditTraining? _training;
     private PlannerTrainingType? _currentTrainingType;
     private bool _success;
+    private bool _showDelete;
     private string[] _errors = Array.Empty<string>();
     [AllowNull] private MudForm _form;
     protected override async Task OnParametersSetAsync()
@@ -181,6 +182,17 @@ public sealed partial class EditTrainingDialog : IDisposable
             if (Refresh != null)
                 await Refresh.CallRequestRefreshAsync();
             StateHasChanged();
+        }
+    }
+
+    private async Task Delete()
+    {
+        var result = await _scheduleRepository.DeleteTraining(_training?.Id, _cls.Token);
+        if (result && Refresh != null)
+        {
+            await Global.CallTrainingDeletedAsync(_training!.Id!.Value);
+            await Refresh.CallRequestRefreshAsync();
+            MudDialog.Close(DialogResult.Ok(true));
         }
     }
 

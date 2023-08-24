@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
@@ -14,7 +15,9 @@ public class ScheduleCardTests : BlazorTestBase
         Localize(L1, L2);
 
         var training = new PlannedTraining { Name = "xUnit meets bUnit" };
-        var cut = RenderComponent<ScheduleCard>(parameter => parameter.Add(p => p.Planner, training));
+        var cut = RenderComponent<ScheduleCard>(parameter => parameter
+        .Add(p => p.Planner, training)
+        .Add(p => p.Global, new DrogeCodeGlobal()));
         cut.Markup.Should().Contain("xUnit meets bUnit");
         cut.Markup.Should().Contain("till with some more text to ensure it is replaced");
     }
@@ -28,7 +31,8 @@ public class ScheduleCardTests : BlazorTestBase
         var cut = RenderComponent<ScheduleCard>(parameter => parameter
         .Add(p => p.Planner, Training)
         .Add(p => p.Functions, Functions)
-        .Add(p => p.Vehicles, Vehicles));
+        .Add(p => p.Vehicles, Vehicles)
+        .Add(p => p.Global, new DrogeCodeGlobal()));
         cut.Markup.Should().Contain("test user 1");
         cut.Markup.Should().NotContain("test user 2");
         cut.Markup.Should().NotContain("test user 3");

@@ -48,7 +48,7 @@ public class ScheduleController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             MultipleTrainingsResponse result = await _scheduleService.ScheduleForUserAsync(userId, customerId, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, token);
-            return Ok(result);
+            return result;
         }
         catch (Exception ex)
         {
@@ -168,7 +168,7 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             PatchAssignedUserResponse result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { TrainingId = body.TrainingId, Assigned = body?.User?.Assigned }), body?.User?.UserId);
-            if (body?.User?.UserId is not null)
+            if (result.Success && body?.User?.UserId is not null)
                 await ToOutlookCalendar(body.User.UserId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
             return result;
         }
@@ -189,7 +189,7 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _scheduleService.PutAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { TrainingId = body.TrainingId, Assigned = body?.Assigned }), body?.UserId);
-            if (body?.UserId is not null)
+            if (result.Success && body?.UserId is not null)
                 await ToOutlookCalendar(body.UserId.Value, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
             return result;
         }
@@ -253,6 +253,36 @@ public class ScheduleController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in GetPinnedTrainingsForUser");
+            return BadRequest();
+        }
+    }
+
+    [HttpDelete]
+    [Route("{id:guid}")]
+    public async Task<ActionResult<bool>> DeleteTraining(Guid id, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var training = await _scheduleService.GetPlannedTrainingById(id);
+            foreach (var user in training.PlanUsers)
+            {
+                user.Assigned = false;
+                var body = new PatchAssignedUserRequest
+                {
+                    TrainingId = id,
+                    User = user,
+                    Training = training
+                };
+                await PatchAssignedUser(body, clt);
+            }
+            var result = await _scheduleService.DeleteTraining(userId, customerId, id, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in DeleteTraining");
             return BadRequest();
         }
     }

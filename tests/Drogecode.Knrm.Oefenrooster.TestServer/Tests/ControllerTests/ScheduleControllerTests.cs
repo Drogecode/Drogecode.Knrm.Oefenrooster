@@ -167,7 +167,7 @@ public class ScheduleControllerTests : BaseTest
     {
         var start = DateTime.Today.AddDays(1).AddHours(12);
         var end = DateTime.Today.AddDays(1).AddHours(14);
-        var trainingId = await AddTraining("PatchScheduleForUserTest", false,start, end);
+        var trainingId = await AddTraining("PatchScheduleForUserTest", false, start, end);
         var training = (await ScheduleController.GetTrainingById(trainingId))?.Value?.Training;
         Assert.NotNull(training);
         training.Availabilty.Should().NotBe(Availabilty.Available);
@@ -194,5 +194,89 @@ public class ScheduleControllerTests : BaseTest
         var trainingAfterPatch = (await ScheduleController.GetTrainingById(DefaultTraining))?.Value?.Training;
         Assert.NotNull(trainingAfterPatch);
         trainingAfterPatch.Availabilty.Should().Be(null);
+    }
+
+    [Fact]
+    public async Task DeleteTrainingBaseTest()
+    {
+        var training = await ScheduleController.GetTrainingById(DefaultTraining);
+        Assert.NotNull(training?.Value?.Training?.TrainingId);
+        var deleteResult = await ScheduleController.DeleteTraining(DefaultTraining);
+        Assert.True(deleteResult?.Value);
+        training = await ScheduleController.GetTrainingById(DefaultTraining);
+        Assert.Null(training?.Value?.Training?.TrainingId);
+    }
+
+    [Fact]
+    public async Task DeleteTraining_NotInPinnedTest()
+    {
+        var trainingId = await AddTraining("DeleteTraining_NotInPinned", false, isPinned: true);
+        var trainings = await ScheduleController.GetPinnedTrainingsForUser(); ;
+        Assert.NotNull(trainings?.Value?.Trainings);
+        trainings.Value.Trainings.Should().Contain(x => x.TrainingId == trainingId);
+        var deleteResult = await ScheduleController.DeleteTraining(trainingId);
+        Assert.True(deleteResult?.Value);
+        trainings = await ScheduleController.GetPinnedTrainingsForUser();
+        Assert.NotNull(trainings?.Value?.Trainings);
+        trainings.Value.Trainings.Should().NotContain(x => x.TrainingId == trainingId);
+    }
+
+    [Fact]
+    public async Task DeleteTraining_NotInAllTrainingsForUserTest()
+    {
+        var trainingId = await AddTraining("NotInAllTrainingsForUser", false);
+        var training = await ScheduleController.GetTrainingById(trainingId);
+        await ScheduleController.PutAssignedUser(new OtherScheduleUserRequest
+        {
+            TrainingId = trainingId,
+            UserId = DefaultUserId,
+            Assigned = true,
+            Training = training.Value!.Training,
+        });
+        var trainings = await ScheduleController.AllTrainingsForUser(DefaultUserId);
+        Assert.NotNull(trainings?.Value?.Trainings);
+        trainings.Value.Trainings.Should().Contain(x => x.TrainingId == trainingId);
+        var deleteResult = await ScheduleController.DeleteTraining(trainingId);
+        Assert.True(deleteResult?.Value);
+        trainings = await ScheduleController.AllTrainingsForUser(DefaultUserId);
+        Assert.NotNull(trainings?.Value?.Trainings);
+        trainings.Value.Trainings.Should().NotContain(x => x.TrainingId == trainingId);
+    }
+
+    [Fact]
+    public async Task DeleteTraining_NotInForUserTest()
+    {
+        var trainingId = await AddTraining("DeleteTraining_NotInForUser", false, new DateTime(2020, 9, 4, 12, 0, 0), new DateTime(2020, 9, 4, 14, 0, 0));
+        var training = await ScheduleController.GetTrainingById(trainingId);
+        await ScheduleController.PutAssignedUser(new OtherScheduleUserRequest
+        {
+            TrainingId = trainingId,
+            UserId = DefaultUserId,
+            Assigned = true,
+            Training = training.Value!.Training,
+        });
+        var trainings = await ScheduleController.ForUser(2020, 9, 1, 2020, 9, 30);
+        Assert.NotNull(trainings?.Value?.Trainings);
+        trainings.Value.Trainings.Should().Contain(x => x.TrainingId == trainingId);
+        var deleteResult = await ScheduleController.DeleteTraining(trainingId);
+        Assert.True(deleteResult?.Value);
+        trainings = await ScheduleController.ForUser(2020, 9, 1, 2020, 9, 30);
+        Assert.NotNull(trainings?.Value?.Trainings);
+        trainings.Value.Trainings.Should().NotContain(x => x.TrainingId == trainingId);
+    }
+
+    [Fact]
+    public async Task DeleteTraining_NotInForAllTest()
+    {
+        var trainingId = await AddTraining("DeleteTraining_NotInForAll", false, new DateTime(2020, 9, 4, 12, 0, 0), new DateTime(2020, 9, 4, 14, 0, 0));
+        var training = await ScheduleController.GetTrainingById(trainingId);
+        var trainings = await ScheduleController.ForAll(9, 2020, 8, 28, 2020, 10, 2);
+        Assert.NotNull(trainings?.Value?.Planners);
+        trainings.Value.Planners.Should().Contain(x => x.TrainingId == trainingId);
+        var deleteResult = await ScheduleController.DeleteTraining(trainingId);
+        Assert.True(deleteResult?.Value);
+        trainings = await ScheduleController.ForAll(9, 2020, 8, 28, 2020, 10, 2);
+        Assert.NotNull(trainings?.Value?.Planners);
+        trainings.Value.Planners.Should().NotContain(x => x.TrainingId == trainingId);
     }
 }

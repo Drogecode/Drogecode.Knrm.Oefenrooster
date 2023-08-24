@@ -5,6 +5,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Models;
 public class DrogeCodeGlobal : RefreshModel
 {
     public event Func<EditTraining, Task>? NewTrainingAddedAsync;
+    public event Func<Guid, Task>? TrainingDeletedAsync;
     public event Func<bool, Task>? DarkLightChangedAsync;
 
     private bool _isDarkMode;
@@ -12,6 +13,12 @@ public class DrogeCodeGlobal : RefreshModel
     public async Task CallNewTrainingAddedAsync(EditTraining arg)
     {
         var task = NewTrainingAddedAsync?.Invoke(arg);
+        if (task != null)
+            await task;
+    }
+    public async Task CallTrainingDeletedAsync(Guid id)
+    {
+        var task = TrainingDeletedAsync?.Invoke(id);
         if (task != null)
             await task;
     }

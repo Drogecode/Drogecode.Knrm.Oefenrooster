@@ -13,8 +13,11 @@ public class DbRoosterTraining
     public string? Name { get; set; }
     public DateTime DateStart { get; set; }
     public DateTime DateEnd { get; set; }
+    public DateTime? DeletedOn { get; set; }
+    public Guid? DeletedBy { get; set; }
     public bool CountToTrainingTarget { get; set; }
     public bool IsPinned { get; set; }
+    public bool IsLocked { get; set; }
 
     public DbCustomers Customer { get; set; }
     public DbRoosterDefault? RoosterDefault { get; set; }

@@ -30,4 +30,35 @@ public static class RoosterTrainingMapper
         }
         return training;
     }
+    public static PlannedTraining ToPlannedTraining(this DbRoosterTraining roosterTraining)
+    {
+        var training = new PlannedTraining
+        {
+            TrainingId = roosterTraining.Id,
+            DefaultId = roosterTraining.RoosterDefaultId,
+            RoosterTrainingTypeId = roosterTraining.RoosterTrainingTypeId,
+            Name = roosterTraining.Name,
+            DateStart = roosterTraining.DateStart,
+            DateEnd = roosterTraining.DateEnd,
+            CountToTrainingTarget = roosterTraining.CountToTrainingTarget,
+            IsPinned = roosterTraining.IsPinned
+        };
+        if (roosterTraining?.RoosterAvailables is not null)
+        {
+            foreach(var ava in roosterTraining.RoosterAvailables)
+            {
+                training.PlanUsers.Add(new PlanUser
+                {
+                    UserId = ava.UserId,
+                    UserFunctionId = ava.User?.UserFunctionId,
+                    PlannedFunctionId = ava.UserFunctionId ?? ava.User?.UserFunctionId,
+                    Assigned = ava.Assigned,
+                    Availabilty = ava.Available,
+                    SetBy = ava.SetBy,
+                    Name = ava.User?.Name ?? "Some dude",
+                });
+            }
+        }
+        return training;
+    }
 }

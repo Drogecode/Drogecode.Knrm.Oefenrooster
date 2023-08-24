@@ -118,7 +118,7 @@ public class BaseTest : IAsyncLifetime
         return result.Value.Put.Id;
     }
 
-    protected async Task<Guid> AddTraining(string name, bool countToTrainingTarget, DateTime? dateStart = null, DateTime? dateEnd = null)
+    protected async Task<Guid> AddTraining(string name, bool countToTrainingTarget, DateTime? dateStart = null, DateTime? dateEnd = null, bool isPinned = false)
     {
         dateStart ??= DateTime.Today.AddHours(12).AddMinutes(50);
         dateEnd ??= DateTime.Today.AddHours(13).AddMinutes(40);
@@ -128,6 +128,7 @@ public class BaseTest : IAsyncLifetime
             DateStart = dateStart.Value,
             DateEnd = dateEnd.Value,
             CountToTrainingTarget = countToTrainingTarget,
+            IsPinned = isPinned,
         };
         var result = await ScheduleController.AddTraining(body);
         Assert.NotNull(result?.Value?.NewId);
