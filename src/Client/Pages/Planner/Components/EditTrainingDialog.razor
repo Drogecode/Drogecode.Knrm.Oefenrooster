@@ -14,16 +14,16 @@
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
                 <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" />
                 <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Required Disabled="!_training.IsNew" />
-                <MudTimePicker Label="@L["From"]" @bind-Time="_training.TimeStart" Validation="@(new Func<TimeSpan?, string?>(StartBeforeEndValidation))" Required />
-                <MudTimePicker Label="@LApp["till"]" @bind-Time="_training.TimeEnd" Validation="@(new Func<TimeSpan?, string?>(EndAfterStartValidation))" Required />
-                @if (_currentTrainingType?.IsActive == false)
+                 <MudTimePicker Label="@L["From"]" @bind-Time="_training.TimeStart" Validation="@(new Func<TimeSpan?, string?>(StartBeforeEndValidation))" Required />
+                 <MudTimePicker Label="@LApp["till"]" @bind-Time="_training.TimeEnd" Validation="@(new Func<TimeSpan?, string?>(EndAfterStartValidation))" Required />
+                 @if (_currentTrainingType?.IsActive == false)
                 {
                     <MudTextField Label="@L["Training type"]" Disabled="true" Value="_currentTrainingType.Name" />
                 }
                 else
                 {
                     <MudSelect T="Guid?" Label="@L["Training type"]" AnchorOrigin="Origin.BottomCenter" Value="_training.RoosterTrainingTypeId" ValueChanged="RoosterTrainingTypeChanged" Required>
-                    @foreach (PlannerTrainingType trainingType in TrainingTypes.Where(x => x.IsActive).OrderBy(x => x.Order))
+                     @foreach (PlannerTrainingType trainingType in TrainingTypes.Where(x => x.IsActive).OrderBy(x => x.Order))
                         {
                             <MudSelectItem T="Guid?" Value="@trainingType.Id">@trainingType.Name</MudSelectItem>
                         }
@@ -48,12 +48,7 @@
         }
     </DialogContent>
     <DialogActions>
-        @if (_training?.IsNew == true)
-        {
-            <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
-            <MudButton Color="Color.Primary" OnClick="OnSubmit">@LApp["save"]</MudButton>
-        }
-        else
+        @if (_training?.IsNew != true)
         {
             if (_showDelete)
             {
@@ -61,6 +56,8 @@
             }
             <MudButton Color="Color.Warning" OnClick="()=> _showDelete = !_showDelete">@LApp["Delete"]</MudButton>
         }
+        <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OnSubmit">@LApp["save"]</MudButton>
     </DialogActions>
 </MudDialog>
 

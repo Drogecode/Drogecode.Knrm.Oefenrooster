@@ -140,7 +140,7 @@ try
         dbContext.Database.Migrate();
     }
 }
-catch
+catch (Exception ex)
 {
 #if DEBUG
     Debugger.Break();
