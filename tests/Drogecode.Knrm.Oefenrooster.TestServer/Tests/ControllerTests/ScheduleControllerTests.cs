@@ -279,4 +279,31 @@ public class ScheduleControllerTests : BaseTest
         Assert.NotNull(trainings?.Value?.Planners);
         trainings.Value.Planners.Should().NotContain(x => x.TrainingId == trainingId);
     }
+
+
+
+    [Fact]
+    public async Task PinnedWhenOtherUserSelectTest()
+    {
+        var trainingId = await AddTraining("PinnedWhenOtherUserSelect", false, DateTime.UtcNow.AddDays(1).AddHours(12), DateTime.UtcNow.AddDays(1).AddHours(14), true);
+        var trainings = await ScheduleController.GetPinnedTrainingsForUser();
+        Assert.NotNull(trainings?.Value?.Trainings);
+        trainings.Value.Trainings.Should().Contain(x => x.TrainingId == trainingId);
+        var training = trainings.Value.Trainings.FirstOrDefault(x => x.TrainingId == trainingId);
+        training.Should().NotBeNull();
+        training!.Availabilty = Availabilty.Available;
+        MockAuthenticatedUser(ScheduleController, DefaultUserId);
+        trainings = await ScheduleController.GetPinnedTrainingsForUser();
+        Assert.NotNull(trainings?.Value?.Trainings);
+        trainings.Value.Trainings.Should().Contain(x => x.TrainingId == trainingId);
+        var patchAssigned = await ScheduleController.PatchScheduleForUser(training, CancellationToken.None);
+        patchAssigned?.Value?.Success.Should().BeTrue();
+        trainings = await ScheduleController.GetPinnedTrainingsForUser();
+        Assert.NotNull(trainings?.Value?.Trainings);
+        trainings.Value.Trainings.Should().NotContain(x => x.TrainingId == trainingId);
+        MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco);
+        trainings = await ScheduleController.GetPinnedTrainingsForUser();
+        Assert.NotNull(trainings?.Value?.Trainings);
+        trainings.Value.Trainings.Should().Contain(x => x.TrainingId == trainingId);
+    }
 }

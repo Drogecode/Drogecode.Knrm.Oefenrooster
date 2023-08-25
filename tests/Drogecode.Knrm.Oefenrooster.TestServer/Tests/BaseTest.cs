@@ -60,13 +60,13 @@ public class BaseTest : IAsyncLifetime
         CalendarItemController = calendarItemController;
         PreComController = preComController;
 
-        MockAuthenticatedUser(scheduleController);
-        MockAuthenticatedUser(userController);
-        MockAuthenticatedUser(functionController);
-        MockAuthenticatedUser(holidayController);
-        MockAuthenticatedUser(trainingTypesController);
-        MockAuthenticatedUser(calendarItemController);
-        MockAuthenticatedUser(preComController);
+        MockAuthenticatedUser(scheduleController, DefaultSettingsHelper.IdTaco);
+        MockAuthenticatedUser(userController, DefaultSettingsHelper.IdTaco);
+        MockAuthenticatedUser(functionController, DefaultSettingsHelper.IdTaco);
+        MockAuthenticatedUser(holidayController, DefaultSettingsHelper.IdTaco);
+        MockAuthenticatedUser(trainingTypesController, DefaultSettingsHelper.IdTaco);
+        MockAuthenticatedUser(calendarItemController, DefaultSettingsHelper.IdTaco);
+        MockAuthenticatedUser(preComController, DefaultSettingsHelper.IdTaco);
     }
 
     public async Task InitializeAsync()
@@ -210,13 +210,13 @@ public class BaseTest : IAsyncLifetime
         return Task.CompletedTask;
     }
 
-    protected void MockAuthenticatedUser(ControllerBase controller)
+    protected void MockAuthenticatedUser(ControllerBase controller, Guid userId)
     {
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, "xUnit@drogecode.nl"),
             new Claim("FullName", USER_NAME),
-            new Claim("http://schemas.microsoft.com/identity/claims/objectidentifier", DefaultSettingsHelper.IdTaco.ToString()),
+            new Claim("http://schemas.microsoft.com/identity/claims/objectidentifier", userId.ToString()),
             new Claim("http://schemas.microsoft.com/identity/claims/tenantid", DefaultSettingsHelper.KnrmHuizenId.ToString()),
         };
         var claimsIdentity = new ClaimsIdentity(

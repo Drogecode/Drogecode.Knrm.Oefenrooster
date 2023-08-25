@@ -619,7 +619,7 @@ public class ScheduleService : IScheduleService
         var result = new GetPinnedTrainingsForUserResponse();
         var trainings = await _database.RoosterTrainings
             .Include(i =>  i.RoosterAvailables!.Where(r => r.CustomerId == customerId && r.UserId == userId))
-            .Where(x => x.CustomerId == customerId && x.IsPinned && x.DeletedOn == null && x.DateStart >= fromDate && (x.RoosterAvailables == null || !x.RoosterAvailables.Any(r => r.Available > 0)))
+            .Where(x => x.CustomerId == customerId && x.IsPinned && x.DeletedOn == null && x.DateStart >= fromDate && (x.RoosterAvailables == null || !x.RoosterAvailables.Any(r => r.UserId == userId && r.Available > 0)))
             .OrderBy(x => x.DateStart)
             .ToListAsync(cancellationToken: token);
         var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom >= fromDate).ToListAsync(cancellationToken: token);
