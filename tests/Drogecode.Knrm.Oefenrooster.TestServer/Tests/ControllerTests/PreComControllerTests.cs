@@ -20,8 +20,9 @@ public class PreComControllerTests : BaseTest
         HolidayController holidayController,
         TrainingTypesController trainingTypesController,
         CalendarItemController calendarItemController,
-        PreComController preComController) :
-        base(scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController)
+        PreComController preComController,
+        VehicleController vehicleController) :
+        base(scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
     {
     }
 

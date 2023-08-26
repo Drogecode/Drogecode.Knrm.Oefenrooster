@@ -13,8 +13,10 @@ public class DbVehicles
     public int Order { get; set; }
     public bool IsDefault { get; set; }
     public bool IsActive { get; set; }
-    public Guid? Deletedby { get; set; }
     public DateTime? DeletedOn { get; set; }
+    public Guid? Deletedby { get; set; }
+    public DateTime? CreatedOn { get; set; }
+    public Guid? Createdby { get; set; }
 
     public DbCustomers Customer { get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }

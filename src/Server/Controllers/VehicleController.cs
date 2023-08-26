@@ -34,7 +34,7 @@ public class VehicleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _vehicleService.GetAllVehicles(customerId);
 
-            return Ok(new MultipleVehicleResponse { DrogeVehicles = result });
+            return new MultipleVehicleResponse { DrogeVehicles = result };
         }
         catch (Exception ex)
         {
@@ -52,11 +52,30 @@ public class VehicleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _vehicleService.GetForTraining(customerId, trainingId);
 
-            return Ok(new MultipleVehicleTrainingLinkResponse { DrogeLinkVehicleTrainingLinks = result });
+            return new MultipleVehicleTrainingLinkResponse { DrogeLinkVehicleTrainingLinks = result };
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in GetForTraining");
+            return BadRequest();
+        }
+    }
+
+    [HttpPut]
+    [Route("")]
+    public async Task<ActionResult<Guid?>> PutVehicle(DrogeVehicle vehicle, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            Guid? result = await _vehicleService.PutVehicle(vehicle, customerId, userId, clt);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in PutVehicle");
             return BadRequest();
         }
     }
@@ -70,7 +89,7 @@ public class VehicleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _vehicleService.UpdateLinkVehicleTraining(customerId, link);
 
-            return Ok(new DrogeLinkVehicleTrainingResponse { DrogeLinkVehicleTraining = result });
+            return  result;
         }
         catch (Exception ex)
         {

@@ -148,19 +148,19 @@ public abstract class BlazorTestBase : TestContext
         new DrogeVehicle
         {
             Id = Vehicle1Id,
-            Default = true,
+            IsDefault = true,
             Name = "Vehicle 1 default",
         },
         new DrogeVehicle
         {
             Id = Vehicle2Id,
-            Default = false,
+            IsDefault = false,
             Name = "Vehicle 2 not default",
         },
         new DrogeVehicle
         {
             Id = Guid.NewGuid(),
-            Default = false,
+            IsDefault = false,
             Name = "Vehicle 3 not selected",
         }
     };

@@ -7,6 +7,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +29,7 @@ public class BaseTest : IAsyncLifetime
     protected const string TRAINING_TYPE_DEFAULT = "xUnit default training type";
     protected const string TRAINING_CALENDAR_MONTH = "xUnit month item";
     protected const string TRAINING_CALENDAR_DAY = "xUnit day item";
+    protected const string VEHICLE_DEFAULT = "xUnit default vehicle";
     protected Guid DefaultUserId { get; private set; }
     protected Guid DefaultFunction { get; private set; }
     protected Guid DefaultHoliday { get; private set; }
@@ -36,6 +38,7 @@ public class BaseTest : IAsyncLifetime
     protected Guid DefaultTrainingType { get; private set; }
     protected Guid DefaultCalendarMonthItem { get; private set; }
     protected Guid DefaultCalendarDayItem { get; private set; }
+    protected Guid DefaultVehicle { get; private set; }
     protected readonly ScheduleController ScheduleController;
     protected readonly UserController UserController;
     protected readonly FunctionController FunctionController;
@@ -43,6 +46,7 @@ public class BaseTest : IAsyncLifetime
     protected readonly TrainingTypesController TrainingTypesController;
     protected readonly CalendarItemController CalendarItemController;
     protected readonly PreComController PreComController;
+    protected readonly VehicleController VehicleController;
     public BaseTest(
         ScheduleController scheduleController,
         UserController userController,
@@ -50,7 +54,8 @@ public class BaseTest : IAsyncLifetime
         HolidayController holidayController,
         TrainingTypesController trainingTypesController,
         CalendarItemController calendarItemController,
-        PreComController preComController)
+        PreComController preComController,
+        VehicleController vehicleController)
     {
         ScheduleController = scheduleController;
         UserController = userController;
@@ -59,6 +64,7 @@ public class BaseTest : IAsyncLifetime
         TrainingTypesController = trainingTypesController;
         CalendarItemController = calendarItemController;
         PreComController = preComController;
+        VehicleController = vehicleController;
 
         MockAuthenticatedUser(scheduleController, DefaultSettingsHelper.IdTaco);
         MockAuthenticatedUser(userController, DefaultSettingsHelper.IdTaco);
@@ -67,6 +73,7 @@ public class BaseTest : IAsyncLifetime
         MockAuthenticatedUser(trainingTypesController, DefaultSettingsHelper.IdTaco);
         MockAuthenticatedUser(calendarItemController, DefaultSettingsHelper.IdTaco);
         MockAuthenticatedUser(preComController, DefaultSettingsHelper.IdTaco);
+        MockAuthenticatedUser(vehicleController, DefaultSettingsHelper.IdTaco);
     }
 
     public async Task InitializeAsync()
@@ -79,6 +86,7 @@ public class BaseTest : IAsyncLifetime
         DefaultTrainingType = await AddTrainingType(TRAINING_TYPE_DEFAULT, 20);
         DefaultCalendarMonthItem = await AddCalendarMonthItem(TRAINING_CALENDAR_MONTH);
         DefaultCalendarDayItem = await AddCalendarDayItem(TRAINING_CALENDAR_DAY);
+        DefaultVehicle = await AddVehicle(VEHICLE_DEFAULT);
     }
 
     protected async Task<Guid> AddUser(string name)
@@ -203,6 +211,19 @@ public class BaseTest : IAsyncLifetime
         var result = await CalendarItemController.PutDayItem(body);
         Assert.NotNull(result?.Value?.NewId);
         return result.Value.NewId;
+    }
+    protected async Task<Guid> AddVehicle(string name, string code = "xUnit", bool isDefault = false, bool isActive = true)
+    {
+        var vehicle = new DrogeVehicle
+        {
+            Name = name,
+            Code = code,
+            IsDefault = isDefault,
+            IsActive = isActive,
+        };
+        var result = await VehicleController.PutVehicle(vehicle);
+        Assert.NotNull(result?.Value);
+        return result!.Value!.Value;
     }
 
     public Task DisposeAsync()

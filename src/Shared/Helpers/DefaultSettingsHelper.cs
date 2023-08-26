@@ -9,5 +9,5 @@ public static class DefaultSettingsHelper
     public static Guid DefaultRoosterTuesday { get; } = new Guid("7b4693a8-ae9c-430f-9119-49a6ecbfeb54");
     public static Guid DefaultRoosterSaturdayMorning { get; } = new Guid("2bdaccc0-e9f7-40c1-ae76-d9ed66e4a978");
 
-    public const int MAX_LENGTH_TRAINING_TITLE = 30;
+    public const int MAX_LENGTH_TRAINING_TITLE = 50;
 }

@@ -60,6 +60,7 @@ public class Setup : Xunit.Di.Setup
             services.AddScoped<ScheduleController>();
             services.AddScoped<TrainingTypesController>();
             services.AddScoped<UserController>();
+            services.AddScoped<VehicleController>();
 
             services.AddScoped<PreComHub>();
 

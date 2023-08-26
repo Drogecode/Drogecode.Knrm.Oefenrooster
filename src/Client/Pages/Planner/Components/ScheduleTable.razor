@@ -45,7 +45,7 @@
                         }
                         @if (training?.Assigned == true)
                         {
-                            @(Vehicles?.FirstOrDefault(x => x.Id == training.VehicleId)?.Code ?? Vehicles?.FirstOrDefault(x => x.Default)?.Code ?? L["Assigned"])
+                            @(Vehicles?.FirstOrDefault(x => x.Id == training.VehicleId)?.Code ?? Vehicles?.FirstOrDefault(x => x.IsDefault)?.Code ?? L["Assigned"])
                         }
                     </MudTd>
                 }

@@ -152,7 +152,6 @@ public sealed partial class EditTrainingDialog : IDisposable
         {
             link = new DrogeLinkVehicleTraining
             {
-                Id = null,
                 IsSelected = toggled,
                 VehicleId = vehicle.Id,
                 RoosterTrainingId = Planner?.TrainingId ?? Guid.Empty

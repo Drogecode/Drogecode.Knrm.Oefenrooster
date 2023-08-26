@@ -13,17 +13,17 @@
         @if (Functions is not null)
         {
             <MudList>
-                @foreach (var vehicle in Vehicles.Where(x => Planner.PlanUsers?.Any(y => y.VehicleId == x.Id) == true || (x.Default && Planner.PlanUsers?.Any(y => y.VehicleId == null) == true)))
+                @foreach (var vehicle in Vehicles.Where(x => Planner.PlanUsers?.Any(y => y.VehicleId == x.Id) == true || (x.IsDefault && Planner.PlanUsers?.Any(y => y.VehicleId == null) == true)))
                 {
-                    @if (Functions.Any(f => f.Active) && (Planner.PlanUsers?.Any(x => x.Assigned && (x.VehicleId == vehicle.Id || (vehicle.Default && x.VehicleId == null))) == true))
+                    @if (Functions.Any(f => f.Active) && (Planner.PlanUsers?.Any(x => x.Assigned && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))) == true))
                     {
                         <MudText Typo="Typo.subtitle2">@vehicle.Name</MudText>
                     }
                     @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
                     {
-                        @if (Planner.PlanUsers?.Any(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.Default && x.VehicleId == null))) == true)
+                        @if (Planner.PlanUsers?.Any(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))) == true)
                         {
-                            @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.Default && x.VehicleId == null))))
+                            @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))))
                             {
                                 <MudListItem>@assignedUser.Name@(assignedUser.PlannedFunctionId != assignedUser.UserFunctionId ? $" - {LApp["as"]} {function.Name}" : "")</MudListItem>
                             }

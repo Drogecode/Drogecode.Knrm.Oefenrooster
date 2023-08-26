@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,8 +25,9 @@ public class ScheduleControllerTests : BaseTest
         HolidayController holidayController,
         TrainingTypesController trainingTypesController,
         CalendarItemController calendarItemController,
-        PreComController preComController) :
-        base(scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController)
+        PreComController preComController,
+        VehicleController vehicleController) :
+        base(scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
     {
     }
 
@@ -280,8 +282,6 @@ public class ScheduleControllerTests : BaseTest
         trainings.Value.Planners.Should().NotContain(x => x.TrainingId == trainingId);
     }
 
-
-
     [Fact]
     public async Task PinnedWhenOtherUserSelectTest()
     {
@@ -305,5 +305,68 @@ public class ScheduleControllerTests : BaseTest
         trainings = await ScheduleController.GetPinnedTrainingsForUser();
         Assert.NotNull(trainings?.Value?.Trainings);
         trainings.Value.Trainings.Should().Contain(x => x.TrainingId == trainingId);
+    }
+
+    [Fact]
+    public async Task TrainingsForAllNoVehicleLinkedTest()
+    {
+        MockAuthenticatedUser(ScheduleController, DefaultUserId);
+        var startDate = DateTime.Today.AddMonths(12).AddHours(21);
+        var endDate = DateTime.Today.AddMonths(12).AddHours(15);
+        var trainingId = await AddTraining("TrainingsForAll", false, startDate, endDate);
+        var training = (await ScheduleController.GetTrainingById(trainingId)).Value?.Training;
+        Assert.NotNull(training);
+        var body = new OtherScheduleUserRequest
+        {
+            TrainingId = trainingId,
+            UserId = DefaultUserId,
+            Assigned = true,
+            Training = training,
+        };
+        var PutAssigned = await ScheduleController.PutAssignedUser(body);
+        PutAssigned?.Value?.Success.Should().BeTrue();
+        var trainings = await ScheduleController.ForAll(startDate.Month, startDate.Year, startDate.Month, startDate.Day, endDate.Year, endDate.Month, endDate.Day);
+        Assert.NotNull(trainings?.Value?.Planners);
+        trainings.Value.Planners.Should().Contain(x => x.TrainingId == trainingId);
+        var trainingFromAll = trainings.Value.Planners.FirstOrDefault(x => x.TrainingId == trainingId);
+        Assert.NotNull(trainingFromAll);
+        var planUser = trainingFromAll.PlanUsers.FirstOrDefault(x => x.UserId == DefaultUserId);
+        Assert.NotNull(planUser);
+        Assert.Null(planUser?.VehicleId);
+    }
+
+    [Fact]
+    public async Task TrainingsForAllVehicleLinkedTest()
+    {
+        MockAuthenticatedUser(ScheduleController, DefaultUserId);
+        var startDate = DateTime.Today.AddMonths(12).AddHours(21);
+        var endDate = DateTime.Today.AddMonths(12).AddHours(15);
+        var trainingId = await AddTraining("TrainingsForAll", false, startDate, endDate);
+        var training = (await ScheduleController.GetTrainingById(trainingId)).Value?.Training;
+        Assert.NotNull(training);
+        var body = new OtherScheduleUserRequest
+        {
+            TrainingId = trainingId,
+            UserId = DefaultUserId,
+            Assigned = true,
+            Training = training,
+        };
+        var PutAssigned = await ScheduleController.PutAssignedUser(body);
+        PutAssigned?.Value?.Success.Should().BeTrue();
+        var updateLinkResponse = await VehicleController.UpdateLinkVehicleTraining(new DrogeLinkVehicleTraining
+        {
+            RoosterTrainingId = trainingId,
+            VehicleId = DefaultVehicle,
+            IsSelected = true,
+        });
+        Assert.True(updateLinkResponse?.Value?.Success);
+        var trainings = await ScheduleController.ForAll(startDate.Month, startDate.Year, startDate.Month, startDate.Day, endDate.Year, endDate.Month, endDate.Day);
+        Assert.NotNull(trainings?.Value?.Planners);
+        trainings.Value.Planners.Should().Contain(x => x.TrainingId == trainingId);
+        var trainingFromAll = trainings.Value.Planners.FirstOrDefault(x => x.TrainingId == trainingId);
+        Assert.NotNull(trainingFromAll);
+        var planUser = trainingFromAll.PlanUsers.FirstOrDefault(x => x.UserId == DefaultUserId);
+        Assert.NotNull(planUser);
+        Assert.NotNull(planUser?.VehicleId);
     }
 }

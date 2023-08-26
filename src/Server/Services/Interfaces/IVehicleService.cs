@@ -6,5 +6,6 @@ public interface IVehicleService
 {
     Task<List<DrogeVehicle>> GetAllVehicles(Guid customerId);
     Task<List<DrogeLinkVehicleTraining>> GetForTraining(Guid customerId, Guid trainingId);
-    Task<DrogeLinkVehicleTraining> UpdateLinkVehicleTraining(Guid customerId, DrogeLinkVehicleTraining link);
+    Task<Guid?> PutVehicle(DrogeVehicle vehicle, Guid customerId, Guid userId, CancellationToken clt);
+    Task<DrogeLinkVehicleTrainingResponse> UpdateLinkVehicleTraining(Guid customerId, DrogeLinkVehicleTraining link);
 }

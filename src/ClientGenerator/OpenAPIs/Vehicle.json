@@ -33,6 +33,56 @@
             }
           }
         }
+      },
+      "put": {
+        "tags": [
+          "Vehicle"
+        ],
+        "operationId": "PutVehicle",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeVehicle"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeVehicle"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeVehicle"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/Vehicle/training/{trainingId}": {
@@ -188,10 +238,10 @@
             "type": "integer",
             "format": "int32"
           },
-          "default": {
+          "isDefault": {
             "type": "boolean"
           },
-          "active": {
+          "isActive": {
             "type": "boolean"
           }
         },

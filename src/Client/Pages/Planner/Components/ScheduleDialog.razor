@@ -11,7 +11,7 @@
                 @foreach (var vehicle in Vehicles)
                 {
                     var vehicleLink = _linkVehicleTraining?.FirstOrDefault(x => x.VehicleId == vehicle.Id);
-                    @if (vehicleLink?.IsSelected == true || (vehicle.Default && vehicleLink == null))
+                    @if (vehicleLink?.IsSelected == true || (vehicle.IsDefault && vehicleLink == null))
                     {
                         hasVehicle = true;
                         <MudItem>
@@ -69,9 +69,9 @@
                             <MudItem xs="@_colmn4">
                                 @if (_vehicleCount > 1)
                                 {
-                                    @if (user.VehicleId == null && _vehicleInfoForThisTraining.Any(x=>x.Default))
+                                    @if (user.VehicleId == null && _vehicleInfoForThisTraining.Any(x=>x.IsDefault))
                                     {
-                                        user.VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.Default)!.Id;
+                                        user.VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.IsDefault)!.Id;
                                     }
                                     <MudSelect T="Guid?" Label="@L["vehicle"]" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Value="@user.VehicleId" ValueChanged="(e)=>VehicleSelectionChanged(user, e)">
                                         @foreach (var vehicle in _vehicleInfoForThisTraining)

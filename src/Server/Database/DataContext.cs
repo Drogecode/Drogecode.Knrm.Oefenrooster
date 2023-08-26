@@ -389,6 +389,72 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Severity = Severity.Info,
                 Order = 1
             }));
+            modelBuilder.Entity<DbRoosterItemMonth>(e => e.HasData(new DbRoosterItemMonth
+            {
+                Id = new Guid("48045049-e9cb-4d86-8f34-85578f015f76"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Text = "KNRM Kompas onderwerp; ntb",
+                Month = 8,
+                Year = null,
+                Type = CalendarItemType.Custom,
+                Severity = Severity.Normal,
+                Order = 0
+            }));
+            modelBuilder.Entity<DbRoosterItemMonth>(e => e.HasData(new DbRoosterItemMonth
+            {
+                Id = new Guid("4100bf4d-368e-47d1-b652-8fec191b4934"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Text = "Geen ingeroosterde oefeningen in verband met het hoogseizoen",
+                Month = 8,
+                Year = null,
+                Type = CalendarItemType.Custom,
+                Severity = Severity.Info,
+                Order = 1
+            }));
+            modelBuilder.Entity<DbRoosterItemMonth>(e => e.HasData(new DbRoosterItemMonth
+            {
+                Id = new Guid("532b68c3-328f-45a2-8a7e-fdf7f9eee111"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Text = "KNRM Kompas onderwerp; ntb",
+                Month = 9,
+                Year = null,
+                Type = CalendarItemType.Custom,
+                Severity = Severity.Normal,
+                Order = 0
+            }));
+            modelBuilder.Entity<DbRoosterItemMonth>(e => e.HasData(new DbRoosterItemMonth
+            {
+                Id = new Guid("40cbe7bc-4ed4-4897-8cb9-357785cb58c9"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Text = "KNRM Kompas onderwerp; ntb",
+                Month = 10,
+                Year = null,
+                Type = CalendarItemType.Custom,
+                Severity = Severity.Normal,
+                Order = 0
+            }));
+            modelBuilder.Entity<DbRoosterItemMonth>(e => e.HasData(new DbRoosterItemMonth
+            {
+                Id = new Guid("ca0fe95d-3b84-4136-bcee-ce080228c324"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Text = "KNRM Kompas onderwerp; ntb",
+                Month = 11,
+                Year = null,
+                Type = CalendarItemType.Custom,
+                Severity = Severity.Normal,
+                Order = 0
+            }));
+            modelBuilder.Entity<DbRoosterItemMonth>(e => e.HasData(new DbRoosterItemMonth
+            {
+                Id = new Guid("b858e7fc-02ea-4a2a-a49d-f55c3a912c9c"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Text = "KNRM Kompas onderwerp; ntb",
+                Month = 12,
+                Year = null,
+                Type = CalendarItemType.Custom,
+                Severity = Severity.Normal,
+                Order = 0
+            }));
         }
 
         private void SetUserFunctions(ModelBuilder modelBuilder)
