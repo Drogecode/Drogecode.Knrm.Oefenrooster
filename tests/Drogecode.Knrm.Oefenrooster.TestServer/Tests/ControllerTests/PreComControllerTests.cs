@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using NSubstitute;
@@ -14,6 +15,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 public class PreComControllerTests : BaseTest
 {
     public PreComControllerTests(
+        IDateTimeService dateTimeServiceMock,
         ScheduleController scheduleController,
         FunctionController functionController,
         UserController userController,
@@ -22,7 +24,7 @@ public class PreComControllerTests : BaseTest
         CalendarItemController calendarItemController,
         PreComController preComController,
         VehicleController vehicleController) :
-        base(scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
+        base(dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
     {
     }
 

@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ public class UserControllerTests : BaseTest
 {
 
     public UserControllerTests(
+        IDateTimeService dateTimeServiceMock,
         ScheduleController scheduleController, 
         UserController userController,
         FunctionController functionController,
@@ -21,7 +23,7 @@ public class UserControllerTests : BaseTest
         CalendarItemController calendarItemController,
         PreComController preComController,
         VehicleController vehicleController) :
-        base(scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
+        base(dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
     {
     }
 

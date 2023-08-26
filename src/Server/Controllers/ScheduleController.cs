@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -22,6 +23,7 @@ public class ScheduleController : ControllerBase
     private readonly IGraphService _graphService;
     private readonly ITrainingTypesService _trainingTypesService;
     private readonly IUserSettingService _userSettingService;
+    private readonly IDateTimeService _dateTimeService;
 
     public ScheduleController(
         ILogger<ScheduleController> logger,
@@ -29,7 +31,8 @@ public class ScheduleController : ControllerBase
         IAuditService auditService,
         IGraphService graphService,
         ITrainingTypesService trainingTypesService,
-        IUserSettingService userSettingService)
+        IUserSettingService userSettingService,
+        IDateTimeService dateTimeService)
     {
         _logger = logger;
         _scheduleService = scheduleService;
@@ -37,6 +40,7 @@ public class ScheduleController : ControllerBase
         _graphService = graphService;
         _trainingTypesService = trainingTypesService;
         _userSettingService = userSettingService;
+        _dateTimeService = dateTimeService;
     }
 
     [HttpGet]
@@ -208,7 +212,7 @@ public class ScheduleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var fromDate = DateTime.Today.AddDays(-7).ToUniversalTime();
+            var fromDate = _dateTimeService.Today().AddDays(-1).ToUniversalTime();
             var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, clt);
             return result;
         }

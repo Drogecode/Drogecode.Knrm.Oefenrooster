@@ -8,6 +8,8 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +24,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests;
 
 public class BaseTest : IAsyncLifetime
 {
+    protected readonly IDateTimeServiceMock DateTimeServiceMock;
     protected const string USER_NAME = "xUnit user";
     protected const string FUNCTION_DEFAULT = "xUnit default function";
     protected const string HOLIDAY_DEFAULT = "xUnit default holiday";
@@ -48,6 +51,7 @@ public class BaseTest : IAsyncLifetime
     protected readonly PreComController PreComController;
     protected readonly VehicleController VehicleController;
     public BaseTest(
+        IDateTimeService dateTimeService,
         ScheduleController scheduleController,
         UserController userController,
         FunctionController functionController,
@@ -57,6 +61,8 @@ public class BaseTest : IAsyncLifetime
         PreComController preComController,
         VehicleController vehicleController)
     {
+        DateTimeServiceMock = (IDateTimeServiceMock)dateTimeService;
+
         ScheduleController = scheduleController;
         UserController = userController;
         FunctionController = functionController;

@@ -7,7 +7,6 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
 public class HolidayControllerTests : BaseTest
 {
-    private readonly IDateTimeServiceMock _dateTimeServiceMock;
     public HolidayControllerTests(
         ScheduleController scheduleController,
         IDateTimeService dateTimeServiceMock,
@@ -18,9 +17,8 @@ public class HolidayControllerTests : BaseTest
         CalendarItemController calendarItemController,
         PreComController preComController,
         VehicleController vehicleController) :
-        base(scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
+        base(dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
     {
-        _dateTimeServiceMock = (IDateTimeServiceMock)dateTimeServiceMock;
     }
 
     [Fact]
@@ -109,7 +107,7 @@ public class HolidayControllerTests : BaseTest
     [Fact]
     public async Task DeleteFullPastTest()
     {
-        _dateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-5));
+        DateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-5));
         var holiday = new Holiday
         {
             Description = "DeleteFullPastTest",
@@ -119,7 +117,7 @@ public class HolidayControllerTests : BaseTest
         var resultPut = await HolidayController.PutHolidayForUser(holiday);
         Assert.NotNull(resultPut?.Value?.Put);
         Assert.True(resultPut.Value.Success);
-        _dateTimeServiceMock.SetMockDateTime(null);
+        DateTimeServiceMock.SetMockDateTime(null);
         var result = await HolidayController.Delete(resultPut.Value.Put.Id);
         Assert.NotNull(result?.Value?.Success);
         Assert.False(result.Value.Success);
@@ -133,7 +131,7 @@ public class HolidayControllerTests : BaseTest
     [Fact]
     public async Task DeleteStartPastTest()
     {
-        _dateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-5));
+        DateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-5));
         var holiday = new Holiday
         {
             Description = "DeleteStartPastTest",
@@ -143,7 +141,7 @@ public class HolidayControllerTests : BaseTest
         var resultPut = await HolidayController.PutHolidayForUser(holiday);
         Assert.NotNull(resultPut?.Value?.Put);
         Assert.True(resultPut.Value.Success);
-        _dateTimeServiceMock.SetMockDateTime(null);
+        DateTimeServiceMock.SetMockDateTime(null);
         var result = await HolidayController.Delete(resultPut.Value.Put.Id);
         Assert.NotNull(result?.Value?.Success);
         Assert.True(result.Value.Success);

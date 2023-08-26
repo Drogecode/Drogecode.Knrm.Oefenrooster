@@ -447,6 +447,13 @@ public class ScheduleService : IScheduleService
         if (dbTraining is not null && dbTraining.DeletedOn is null)
         {
             var training = dbTraining?.ToPlannedTraining();
+            if (training is null) return null;
+            var defaultVehicle = await GetDefaultVehicleForTraining(dbTraining.CustomerId, trainingId);
+            foreach (var user in training.PlanUsers)
+            {
+                user.VehicleId ??= defaultVehicle;
+            }
+
             return training;
         }
         return null;
@@ -591,6 +598,7 @@ public class ScheduleService : IScheduleService
                 _logger.LogWarning("No training found for schedule '{ScheduleId}'", schedul.Id);
                 continue;
             }
+            schedul.VehicleId ??= await GetDefaultVehicleForTraining(customerId, schedul.TrainingId);
             result.Trainings.Add(new PlannedTraining
             {
                 TrainingId = schedul.TrainingId,

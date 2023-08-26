@@ -4,6 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 public class ScheduleControllerTests : BaseTest
 {
     public ScheduleControllerTests(
+        IDateTimeService dateTimeServiceMock,
         ScheduleController scheduleController,
         FunctionController functionController,
         UserController userController,
@@ -27,7 +29,7 @@ public class ScheduleControllerTests : BaseTest
         CalendarItemController calendarItemController,
         PreComController preComController,
         VehicleController vehicleController) :
-        base(scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
+        base(dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
     {
     }
 
@@ -162,6 +164,31 @@ public class ScheduleControllerTests : BaseTest
         Getresult.Value.Trainings.Should().NotBeEmpty();
         Getresult.Value.Trainings.Should().Contain(x => x.TrainingId == putResult.Value.NewId);
         Getresult.Value.Trainings.Should().NotContain(x => x.TrainingId == DefaultTraining);
+    }
+
+    [Fact]
+    public async Task GetScheduledTrainingsForUserTest()
+    {
+        DateTimeServiceMock.SetMockDateTime(DateTime.Today.AddMonths(12));
+        var dateStart = DateTime.Today.AddMonths(12).AddHours(21);
+        var dateEnd = DateTime.Today.AddMonths(12).AddHours(15);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd);
+        var trainings = await ScheduleController.GetScheduledTrainingsForUser();
+        Assert.NotNull(trainings?.Value?.Trainings);
+        trainings.Value.Trainings.Should().Contain(x=>x.TrainingId == trainingId);
+        DateTimeServiceMock.SetMockDateTime(null);
+    }
+    [Fact]
+    public async Task GetScheduledTrainingsForUserButNotInPastTest()
+    {
+        DateTimeServiceMock.SetMockDateTime(DateTime.Today.AddMonths(12).AddDays(2));
+        var dateStart = DateTime.Today.AddMonths(12).AddHours(21);
+        var dateEnd = DateTime.Today.AddMonths(12).AddHours(15);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd);
+        var trainings = await ScheduleController.GetScheduledTrainingsForUser();
+        Assert.NotNull(trainings?.Value?.Trainings);
+        trainings.Value.Trainings.Should().NotContain(x=>x.TrainingId == trainingId);
+        DateTimeServiceMock.SetMockDateTime(null);
     }
 
     [Fact]
@@ -338,10 +365,36 @@ public class ScheduleControllerTests : BaseTest
     [Fact]
     public async Task TrainingsForAllVehicleLinkedTest()
     {
+        var dateStart = DateTime.Today.AddMonths(12).AddHours(21);
+        var dateEnd = DateTime.Today.AddMonths(12).AddHours(15);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd);
+        var trainings = await ScheduleController.ForAll(dateStart.Month, dateStart.Year, dateStart.Month, dateStart.Day, dateEnd.Year, dateEnd.Month, dateEnd.Day);
+        Assert.NotNull(trainings?.Value?.Planners);
+        trainings.Value.Planners.Should().Contain(x => x.TrainingId == trainingId);
+        var trainingFromAll = trainings.Value.Planners.FirstOrDefault(x => x.TrainingId == trainingId);
+        Assert.NotNull(trainingFromAll);
+        var planUser = trainingFromAll.PlanUsers.FirstOrDefault(x => x.UserId == DefaultUserId);
+        Assert.NotNull(planUser);
+        Assert.NotNull(planUser?.VehicleId);
+    }
+
+    [Fact]
+    public async Task CorrectVehicleOnDahboardTest()
+    {
+        var dateStart = DateTime.Today.AddMonths(12).AddHours(21);
+        var dateEnd = DateTime.Today.AddMonths(12).AddHours(15);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd);
+        var trainingsOnDashboard = await ScheduleController.GetScheduledTrainingsForUser();
+        trainingsOnDashboard.Value?.Trainings.Should().Contain(x => x.TrainingId == trainingId);
+        var thisTraining = trainingsOnDashboard.Value!.Trainings.FirstOrDefault(x => x.TrainingId == trainingId);
+        thisTraining!.VehicleId.Should().Be(DefaultVehicle);
+    }
+
+    private async Task<Guid> PrepareAssignedTraining(DateTime dateStart, DateTime dateEnd)
+    {
         MockAuthenticatedUser(ScheduleController, DefaultUserId);
-        var startDate = DateTime.Today.AddMonths(12).AddHours(21);
-        var endDate = DateTime.Today.AddMonths(12).AddHours(15);
-        var trainingId = await AddTraining("TrainingsForAll", false, startDate, endDate);
+        MockAuthenticatedUser(VehicleController, DefaultUserId);
+        var trainingId = await AddTraining("TrainingsForAll", false, dateStart, dateEnd);
         var training = (await ScheduleController.GetTrainingById(trainingId)).Value?.Training;
         Assert.NotNull(training);
         var body = new OtherScheduleUserRequest
@@ -360,13 +413,6 @@ public class ScheduleControllerTests : BaseTest
             IsSelected = true,
         });
         Assert.True(updateLinkResponse?.Value?.Success);
-        var trainings = await ScheduleController.ForAll(startDate.Month, startDate.Year, startDate.Month, startDate.Day, endDate.Year, endDate.Month, endDate.Day);
-        Assert.NotNull(trainings?.Value?.Planners);
-        trainings.Value.Planners.Should().Contain(x => x.TrainingId == trainingId);
-        var trainingFromAll = trainings.Value.Planners.FirstOrDefault(x => x.TrainingId == trainingId);
-        Assert.NotNull(trainingFromAll);
-        var planUser = trainingFromAll.PlanUsers.FirstOrDefault(x => x.UserId == DefaultUserId);
-        Assert.NotNull(planUser);
-        Assert.NotNull(planUser?.VehicleId);
+        return trainingId;
     }
 }
