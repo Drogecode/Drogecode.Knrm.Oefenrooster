@@ -30,9 +30,6 @@
             }
         </CellTemplate>
     </MudCalendar>
-    <AuthorizeView Roles="@AccessesNames.AUTH_users_counter" Context="inner">
-        <ScheduleCounter Users="Users" Functions="Functions" UserTrainingCounter="_userTrainingCounter" />
-    </AuthorizeView>
 </div>
 <div class="d-md-none">
     <MonthSelector Month="_month" MonthChanged="SetMonth" />
@@ -71,3 +68,6 @@
         }
     </MudPaper>
 </div>
+<AuthorizeView Roles="@AccessesNames.AUTH_users_counter" Context="inner">
+    <ScheduleCounter Users="Users" Functions="Functions" UserTrainingCounter="_userTrainingCounter" />
+</AuthorizeView>
