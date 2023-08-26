@@ -1,5 +1,6 @@
 ﻿@page "/planner/calendar"
 @attribute [Authorize]
+@using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
@@ -53,7 +54,7 @@
         }
         else
         {
-            @foreach (var ev in _events.Where(x => x.Start.Month == _month.Value.Month && x.Start.Year == _month.Value.Year).OrderBy(x => x.Start))
+            @foreach (var ev in _events.Where(x => x.Start.Month == _month.Value.Month && x.Start.Year == _month.Value.Year && x.Start.Date >= DateTime.Today.AddDays(-1)).OrderBy(x => x.Start))
             {
                 @if (ev is DrogeCodeCalendarItem)
                 {

@@ -1,13 +1,10 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Helpers;
-using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Heron.MudCalendar;
 using Microsoft.Extensions.Localization;
-using MudBlazor;
 using System.Diagnostics;
-using System.Drawing;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 public sealed partial class Calendar : IDisposable
@@ -111,13 +108,5 @@ public sealed partial class Calendar : IDisposable
     {
         Global.NewTrainingAddedAsync -= HandleNewTraining;
         _cls.Cancel();
-    }
-    private class DrogeCodeCalendarItem : CalendarItem
-    {
-        public Training? Training { get; set; }
-    }
-    private class RoosterItemDayCalendarItem : CalendarItem
-    {
-        public RoosterItemDay? ItemDay { get; set; }
     }
 }

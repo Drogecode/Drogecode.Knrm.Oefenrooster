@@ -4,7 +4,7 @@
     <MonthSelector Month="_month" MonthChanged="SetMonth" />
     @if (Users != null)
     {
-        <MudTable Hover="true" Breakpoint="Breakpoint.Sm"
+        <MudTable Hover="true" Breakpoint="Breakpoint.None"
                   Items="@Users.OrderBy(x => Functions?.FirstOrDefault(y => y.Id == x.UserFunctionId)?.Order).ThenBy(x=>x.Name)"
                   GroupBy="@_groupBy"
                   GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"

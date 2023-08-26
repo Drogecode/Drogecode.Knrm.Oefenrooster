@@ -1,14 +1,73 @@
-﻿<MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
-    <CellTemplate>
-        @{
-            var training = ((CustomItem)context).Training;
-        }
-        @if (training != null)
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
+@if (_monthItems != null)
+{
+    @foreach (var item in _monthItems.OrderBy(x => x.Order))
+    {
+        <MudAlert Severity="@item.Severity" Variant="Variant.Filled">@item.Text</MudAlert>
+    }
+}
+<div class="d-none d-md-flex">
+    <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
+        <CellTemplate>
+            @if (context is ScheduleCalendarItem)
+            {
+                var training = ((ScheduleCalendarItem)context).Training;
+                @if (training != null)
+                {
+                    <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" />
+                }
+            }
+            else if (context is RoosterItemDayCalendarItem)
+            {
+                var dayItem = ((RoosterItemDayCalendarItem)context).ItemDay;
+                @if (dayItem != null)
+                {
+                    <div class="d-flex gap-1">
+                        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Secondary" Size="Size.Small" />
+                        <div>@dayItem.Text</div>
+                    </div>
+                }
+            }
+        </CellTemplate>
+    </MudCalendar>
+    <AuthorizeView Roles="@AccessesNames.AUTH_users_counter" Context="inner">
+        <ScheduleCounter Users="Users" Functions="Functions" UserTrainingCounter="_userTrainingCounter" />
+    </AuthorizeView>
+</div>
+<div class="d-md-none">
+    <MonthSelector Month="_month" MonthChanged="SetMonth" />
+    <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+        @if (_events == null || _month == null)
         {
-            <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" />
+            <MudSkeleton />
+            <MudSkeleton />
+            <MudSkeleton />
+            <MudSkeleton />
         }
-    </CellTemplate>
-</MudCalendar>
-<AuthorizeView Roles="@AccessesNames.AUTH_users_counter" Context="inner">
-    <ScheduleCounter Users="Users" Functions="Functions" UserTrainingCounter="_userTrainingCounter" />
-</AuthorizeView>
+        else
+        {
+            @foreach (var ev in _events.Where(x => x.Start.Month == _month.Value.Month && x.Start.Year == _month.Value.Year && x.Start.Date >= DateTime.Today.AddDays(-1)).OrderBy(x => x.Start))
+            {
+                @if (ev is ScheduleCalendarItem)
+                {
+                    var training = ((ScheduleCalendarItem)ev).Training;
+                    @if (training != null)
+                    {
+                        <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" />
+                    }
+                }
+                else if (ev is RoosterItemDayCalendarItem)
+                {
+                    var dayItem = ((RoosterItemDayCalendarItem)ev).ItemDay;
+                    @if (dayItem != null)
+                    {
+                        <div class="d-flex gap-1">
+                            <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Secondary" Size="Size.Small" />
+                            <div>@dayItem.Text - @dayItem.DateStart.ToString("dddd dd MMM")</div>
+                        </div>
+                    }
+                }
+            }
+        }
+    </MudPaper>
+</div>
