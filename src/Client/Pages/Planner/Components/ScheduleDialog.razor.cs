@@ -27,6 +27,8 @@ public sealed partial class ScheduleDialog : IDisposable
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
     private List<DrogeVehicle>? _vehicleInfoForThisTraining;
+    private bool _plannerIsUpdated;
+    private bool _showWoeps;
     private int _vehicleCount;
     private int _colmn1 = 1;
     private int _colmn2 = 3;
@@ -39,6 +41,7 @@ public sealed partial class ScheduleDialog : IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
+        var latestVersionTask = _scheduleRepository.GetPlannedTrainingById(Planner.TrainingId, _cls.Token);
         if (Planner.TrainingId != null)
             _linkVehicleTraining = await _vehicleRepository.GetForTrainingAsync(Planner.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
         if (Vehicles != null && _linkVehicleTraining != null)
@@ -56,6 +59,14 @@ public sealed partial class ScheduleDialog : IDisposable
             }
             _vehicleCount = count;
         }
+        var latestVersion = (await latestVersionTask)?.Training;
+        if (latestVersion is not null)
+        {
+            Planner = latestVersion;
+            _plannerIsUpdated = true;
+        }
+        else
+            _showWoeps = true;
     }
 
     private async Task CheckChanged(bool toggled, PlanUser user, Guid functionId)

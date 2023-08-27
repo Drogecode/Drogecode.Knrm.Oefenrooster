@@ -45,13 +45,13 @@ public class ScheduleController : ControllerBase
 
     [HttpGet]
     [Route("me/period/{yearStart:int}/{monthStart:int}/{dayStart:int}/{yearEnd:int}/{monthEnd:int}/{dayEnd:int}")]
-    public async Task<ActionResult<MultipleTrainingsResponse>> ForUser(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token = default)
+    public async Task<ActionResult<MultipleTrainingsResponse>> ForUser(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken clt = default)
     {
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            MultipleTrainingsResponse result = await _scheduleService.ScheduleForUserAsync(userId, customerId, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, token);
+            MultipleTrainingsResponse result = await _scheduleService.ScheduleForUserAsync(userId, customerId, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, clt);
             return result;
         }
         catch (Exception ex)
@@ -63,31 +63,14 @@ public class ScheduleController : ControllerBase
 
     [HttpGet]
     [Route("all/period/{forMonth:int}/{yearStart:int}/{monthStart:int}/{dayStart:int}/{yearEnd:int}/{monthEnd:int}/{dayEnd:int}")]
-    public async Task<ActionResult<ScheduleForAllResponse>> ForAll(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken token = default)
+    public async Task<ActionResult<ScheduleForAllResponse>> ForAll(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, CancellationToken clt = default)
     {
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var countPerUser = User.IsInRole(AccessesNames.AUTH_users_counter);
-            ScheduleForAllResponse result = await _scheduleService.ScheduleForAllAsync(userId, customerId, forMonth, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, countPerUser, token);
-            return result;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error in ForAll");
-            return BadRequest();
-        }
-    }
-    [HttpGet]
-    [Route("{id:guid}")]
-    public async Task<ActionResult<GetTrainingByIdResponse>> GetTrainingById(Guid id)
-    {
-        try
-        {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            GetTrainingByIdResponse result = await _scheduleService.GetTrainingById(userId, customerId, id);
+            ScheduleForAllResponse result = await _scheduleService.ScheduleForAllAsync(userId, customerId, forMonth, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, countPerUser, clt);
             return result;
         }
         catch (Exception ex)
@@ -97,15 +80,70 @@ public class ScheduleController : ControllerBase
         }
     }
 
-    [HttpPatch]
-    [Route("training")]
-    public async Task<ActionResult<PatchTrainingResponse>> PatchTraining([FromBody] PlannedTraining patchedTraining, CancellationToken token = default)
+    [HttpGet]
+    [Route("{id:guid}")]
+    public async Task<ActionResult<GetTrainingByIdResponse>> GetTrainingById(Guid id, CancellationToken clt = default)
     {
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            PatchTrainingResponse result = await _scheduleService.PatchTraining(customerId, patchedTraining, token);
+            GetTrainingByIdResponse result = await _scheduleService.GetTrainingById(userId, customerId, id, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetTrainingById");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("planned/{id:guid}")]
+    public async Task<ActionResult<GetPlannedTrainingResponse>> GetPlannedTrainingById(Guid id, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            GetPlannedTrainingResponse result = await _scheduleService.GetPlannedTrainingById(id, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetPlannedTrainingById");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("default/{date}")]
+    public async Task<ActionResult<GetPlannedTrainingResponse>> GetPlannedTrainingForDefaultDate(DateTime date, Guid defaultId, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            GetPlannedTrainingResponse result = await _scheduleService.GetPlannedTrainingForDefaultDate(customerId, date, defaultId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetPlannedTrainingForDefaultDate");
+            return BadRequest();
+        }
+    }
+
+
+    [HttpPatch]
+    [Route("training")]
+    public async Task<ActionResult<PatchTrainingResponse>> PatchTraining([FromBody] PlannedTraining patchedTraining, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            PatchTrainingResponse result = await _scheduleService.PatchTraining(customerId, patchedTraining, clt);
             if (result.Success)
                 await _auditService.Log(userId, AuditType.PatchTraining, customerId, objectKey: patchedTraining.TrainingId, objectName: patchedTraining.Name);
             else
@@ -122,14 +160,14 @@ public class ScheduleController : ControllerBase
 
     [HttpPost]
     [Route("training")]
-    public async Task<ActionResult<AddTrainingResponse>> AddTraining([FromBody] PlannedTraining newTraining, CancellationToken token = default)
+    public async Task<ActionResult<AddTrainingResponse>> AddTraining([FromBody] PlannedTraining newTraining, CancellationToken clt = default)
     {
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var trainingId = Guid.NewGuid();
-            var result = await _scheduleService.AddTrainingAsync(customerId, newTraining, trainingId, token);
+            var result = await _scheduleService.AddTrainingAsync(customerId, newTraining, trainingId, clt);
             if (result.Success)
                 await _auditService.Log(userId, AuditType.AddTraining, customerId, objectKey: trainingId, objectName: newTraining.Name);
             else
@@ -269,15 +307,19 @@ public class ScheduleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var training = await _scheduleService.GetPlannedTrainingById(id);
-            foreach (var user in training.PlanUsers)
+            var training = await _scheduleService.GetPlannedTrainingById(id, clt);
+            if (training.Training is null)
+                return false;
+            clt.ThrowIfCancellationRequested();
+            clt = CancellationToken.None;
+            foreach (var user in training.Training.PlanUsers)
             {
                 user.Assigned = false;
                 var body = new PatchAssignedUserRequest
                 {
                     TrainingId = id,
                     User = user,
-                    Training = training
+                    Training = training.Training
                 };
                 await PatchAssignedUser(body, clt);
             }

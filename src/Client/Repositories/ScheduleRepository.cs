@@ -1,10 +1,12 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using MudBlazor.Extensions;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 
@@ -55,6 +57,23 @@ public class ScheduleRepository
             Training = training
         };
         await _scheduleClient.PatchAssignedUserAsync(body, clt);
+    }
+
+    public async Task<GetPlannedTrainingResponse?> GetPlannedTrainingById(Guid? trainingId, CancellationToken clt)
+    {
+        if (trainingId is null) return null;
+        var schedule = await _offlineService.CachedRequestAsync(string.Format("plTr_{0}", trainingId),
+            async () => { return await _scheduleClient.GetPlannedTrainingByIdAsync(trainingId.Value, clt); },
+            clt: clt);
+        return schedule;
+    }
+
+    public async Task<GetPlannedTrainingResponse?> GetPlannedTrainingdById(DateTime date, Guid? defaultId, CancellationToken clt)
+    {
+        var schedule = await _offlineService.CachedRequestAsync(string.Format("plDef_{0}_{1}", defaultId, date.ToIsoDateString()),
+            async () => { return await _scheduleClient.GetPlannedTrainingForDefaultDateAsync(date, defaultId, clt); },
+            clt: clt);
+        return schedule;
     }
 
     public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(Guid? userId, CancellationToken clt)

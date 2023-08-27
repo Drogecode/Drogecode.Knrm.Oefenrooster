@@ -390,6 +390,23 @@ public class ScheduleControllerTests : BaseTest
         thisTraining!.VehicleId.Should().Be(DefaultVehicle);
     }
 
+    [Fact]
+    public async Task GetPlannedTrainingByIdTest()
+    {
+        var dateStart = DateTime.Today.AddMonths(12).AddHours(21);
+        var dateEnd = DateTime.Today.AddMonths(12).AddHours(15);
+        var user1 = await AddUser("user1_fortest");
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd);
+        var plannedTraining = await ScheduleController.GetPlannedTrainingById(trainingId);
+        Assert.NotNull(plannedTraining?.Value?.Training?.PlanUsers);
+        plannedTraining.Value.Training.PlanUsers.Should().Contain(x=>x.UserId == DefaultUserId);
+        plannedTraining.Value.Training.PlanUsers.Should().NotContain(x=>x.UserId == user1);
+        var userFromTraining = plannedTraining.Value.Training.PlanUsers.FirstOrDefault(x => x.UserId == DefaultUserId);
+        Assert.NotNull(userFromTraining);
+        userFromTraining.Name.Should().Be(USER_NAME);
+        userFromTraining.UserFunctionId.Should().Be(DefaultFunction);
+    }
+
     private async Task<Guid> PrepareAssignedTraining(DateTime dateStart, DateTime dateEnd)
     {
         MockAuthenticatedUser(ScheduleController, DefaultUserId);

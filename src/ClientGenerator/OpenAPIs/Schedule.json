@@ -266,6 +266,96 @@
         }
       }
     },
+    "/api/Schedule/planned/{id}": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "GetPlannedTrainingById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlannedTrainingResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlannedTrainingResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlannedTrainingResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Schedule/default/{date}": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "GetPlannedTrainingForDefaultDate",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "defaultId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlannedTrainingResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlannedTrainingResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlannedTrainingResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Schedule/training": {
       "patch": {
         "tags": [
@@ -670,6 +760,25 @@
               "$ref": "#/components/schemas/Training"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetPlannedTrainingResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "training": {
+            "$ref": "#/components/schemas/PlannedTraining"
           }
         },
         "additionalProperties": false

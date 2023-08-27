@@ -135,6 +135,9 @@
   <data name="Availibility" xml:space="preserve">
     <value>Beschikbaarheid</value>
   </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Verwijder</value>
+  </data>
   <data name="function" xml:space="preserve">
     <value>Functie</value>
   </data>

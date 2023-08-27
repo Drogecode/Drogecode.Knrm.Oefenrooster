@@ -52,7 +52,7 @@
         {
             if (_showDelete)
             {
-                <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">@L["Are you sure? This can not be reverted!"]<MudButton Color="Color.Warning" OnClick="Delete">@LApp["Delete"]</MudButton></MudAlert>
+                <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">@L["Are you sure This can not be reverted"]<MudButton Color="Color.Warning" OnClick="Delete">@LApp["Delete"]</MudButton></MudAlert>
             }
             <MudButton Color="Color.Warning" OnClick="()=> _showDelete = !_showDelete">@LApp["Delete"]</MudButton>
         }

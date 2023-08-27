@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Are you sure This can not be reverted" xml:space="preserve">
+    <value>Weet je het zeker? Dit kan niet ongedaan worden gemaat!</value>
+  </data>
   <data name="Count to training target" xml:space="preserve">
     <value>Telt mee voor oefen doel</value>
   </data>

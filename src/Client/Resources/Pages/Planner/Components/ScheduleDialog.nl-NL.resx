@@ -130,9 +130,12 @@
     <value>Andere gebruikers</value>
   </data>
   <data name="Selected vehicles" xml:space="preserve">
-    <value>Ingeplende boten</value>
+    <value>Ingeplande boten</value>
   </data>
   <data name="vehicle" xml:space="preserve">
     <value>boot</value>
+  </data>
+  <data name="Woeps the training was not found" xml:space="preserve">
+    <value>Woeps de training is niet gevonden :(</value>
   </data>
 </root>

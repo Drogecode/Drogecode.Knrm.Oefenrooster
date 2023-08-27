@@ -135,6 +135,9 @@
   <data name="Availibility" xml:space="preserve">
     <value>Availibility</value>
   </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
   <data name="function" xml:space="preserve">
     <value>function</value>
   </data>

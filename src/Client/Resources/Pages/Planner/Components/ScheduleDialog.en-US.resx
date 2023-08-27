@@ -135,4 +135,7 @@
   <data name="vehicle" xml:space="preserve">
     <value>vehicle</value>
   </data>
+  <data name="Woeps the training was not found" xml:space="preserve">
+    <value>Woeps the training was not found</value>
+  </data>
 </root>
