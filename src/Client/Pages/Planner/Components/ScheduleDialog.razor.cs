@@ -2,13 +2,9 @@
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.Extensions.Localization;
-using MudBlazor;
-using static MudBlazor.Colors;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
@@ -41,7 +37,11 @@ public sealed partial class ScheduleDialog : IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        var latestVersionTask = _scheduleRepository.GetPlannedTrainingById(Planner.TrainingId, _cls.Token);
+        Task<GetPlannedTrainingResponse?>? latestVersionTask = null;
+        if (Planner.TrainingId is not null && !Planner.TrainingId.Equals(Guid.Empty))
+            latestVersionTask = _scheduleRepository.GetPlannedTrainingById(Planner.TrainingId, _cls.Token);
+        else if (Planner.DefaultId is not null && !Planner.DefaultId.Equals(Guid.Empty))
+            latestVersionTask = _scheduleRepository.GetPlannedTrainingForDefaultDate(Planner.DateStart, Planner.DefaultId, _cls.Token);
         if (Planner.TrainingId != null)
             _linkVehicleTraining = await _vehicleRepository.GetForTrainingAsync(Planner.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
         if (Vehicles != null && _linkVehicleTraining != null)
@@ -62,7 +62,7 @@ public sealed partial class ScheduleDialog : IDisposable
         var latestVersion = (await latestVersionTask)?.Training;
         if (latestVersion is not null)
         {
-            Planner = latestVersion;
+            Planner.PlanUsers = latestVersion.PlanUsers;
             _plannerIsUpdated = true;
         }
         else

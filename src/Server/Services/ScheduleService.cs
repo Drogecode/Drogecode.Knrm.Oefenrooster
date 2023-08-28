@@ -1,13 +1,12 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
+using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
+using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
-using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using System.Data;
 using System.Diagnostics;
-using ZXing.Aztec.Internal;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -285,7 +284,7 @@ public class ScheduleService : IScheduleService
         var result = new ScheduleForAllResponse();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
-        var users = await _database.Users.Include(x => x.UserDefaultAvailables).Where(x => x.CustomerId == customerId && x.DeletedOn == null).ToListAsync(cancellationToken: clt);
+        var users = await _database.Users.Include(x => x.UserDefaultAvailables).Include(x => x.UserFunction).Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.UserFunction!.IsActive).ToListAsync(cancellationToken: clt);
         var defaults = await _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: clt);
         var defaultAveUser = await _database.UserDefaultAvailables.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: clt);
         var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: clt);
@@ -411,11 +410,11 @@ public class ScheduleService : IScheduleService
 
     private async Task<Guid?> GetDefaultVehicleForTraining(Guid? customerId, Guid? trainingId, CancellationToken clt)
     {
-        var link = await _database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.RoosterTrainingId == trainingId && x.IsSelected).ToListAsync();
+        var link = await _database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.RoosterTrainingId == trainingId && x.IsSelected).Select(x => x.Id).ToListAsync();
+        var vehicles = await _database.Vehicles.Where(x => (link.Contains(x.Id) || x.IsDefault) && x.CustomerId == customerId).ToListAsync();
         DbVehicles? vehiclePrev = null;
-        foreach (var item in link)
+        foreach (var vehicle in vehicles)
         {
-            var vehicle = await _database.Vehicles.Where(x => x.Id == item.VehicleId && x.CustomerId == customerId).FirstOrDefaultAsync();
             if (vehicle is null) continue;
             if (vehicle.IsDefault)
             {
@@ -442,7 +441,7 @@ public class ScheduleService : IScheduleService
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
-    public async Task<GetPlannedTrainingResponse> GetPlannedTrainingById(Guid trainingId, CancellationToken clt)
+    public async Task<GetPlannedTrainingResponse> GetPlannedTrainingById(Guid customerId, Guid trainingId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new GetPlannedTrainingResponse();
@@ -450,7 +449,41 @@ public class ScheduleService : IScheduleService
             .Include(x => x.RoosterAvailables)
             .ThenInclude(x => x.User)
             .FirstOrDefaultAsync(x => x.Id == trainingId && x.DeletedOn == null);
-        result = await dDbTrainingToGetPlannedTrainingResponse(result, dbTraining, clt);
+        if (dbTraining is not null)
+        {
+            result = await dDbTrainingToGetPlannedTrainingResponse(result, dbTraining, clt);
+
+            var ava = await _database.UserDefaultAvailables.Where(x => x.CustomerId == customerId && x.RoosterDefaultId == dbTraining!.RoosterDefaultId).ToListAsync(cancellationToken: clt);
+            var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= dbTraining.DateEnd.AddDays(1) && x.ValidUntil >= dbTraining.DateStart.AddDays(-1)).ToListAsync(cancellationToken: clt);
+            var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.TrainingId == trainingId);
+            var users = await _database.Users.Include(x => x.UserFunction).Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.UserFunction!.IsActive).ToListAsync(cancellationToken: clt);
+
+            foreach (var user in users)
+            {
+                var avaUser = availables.FirstOrDefault(x => x.UserId == user.Id);
+                Availabilty? availabilty = avaUser?.Available;
+                AvailabilitySetBy? setBy = avaUser?.SetBy;
+                GetAvailability(ava, userHolidays, dbTraining.DateStart, dbTraining.DateEnd, dbTraining.RoosterDefaultId, user.Id, ref availabilty, ref setBy);
+                if (result.Training!.PlanUsers.Any(x => x.UserId == user.Id))
+                {
+                    var d = result.Training.PlanUsers.FirstOrDefault(x => x.UserId == user.Id);
+                    d!.Availabilty = availabilty;
+                    d.SetBy = setBy ?? AvailabilitySetBy.None;
+                }
+                else if (availabilty is not null || setBy is not null)
+                {
+                    result.Training!.PlanUsers.Add(new PlanUser
+                    {
+                        Availabilty = availabilty,
+                        SetBy = setBy ?? AvailabilitySetBy.None,
+                        Name = user.Name,
+                        UserId = user.Id,
+                        UserFunctionId = user.UserFunctionId,
+                        PlannedFunctionId = avaUser?.UserFunctionId ?? user.UserFunctionId,
+                    });
+                }
+            }
+        }
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
@@ -459,6 +492,7 @@ public class ScheduleService : IScheduleService
     public async Task<GetPlannedTrainingResponse> GetPlannedTrainingForDefaultDate(Guid customerId, DateTime date, Guid defaultId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
+        date = DateTime.SpecifyKind(date, DateTimeKind.Utc);
         var result = new GetPlannedTrainingResponse();
         var dbTraining = await _database.RoosterTrainings
             .Include(x => x.RoosterAvailables)
@@ -468,13 +502,13 @@ public class ScheduleService : IScheduleService
         else
         {
             TimeOnly startTime = TimeOnly.FromDateTime(date);
-            var def = await _database.RoosterDefaults.FirstOrDefaultAsync(x => x.WeekDay == date.DayOfWeek && x.TimeStart == startTime);
+            var def = await _database.RoosterDefaults.FirstOrDefaultAsync(x => x.Id == defaultId && x.WeekDay == date.DayOfWeek);
             if (def is not null)
             {
                 var trainingStart = date.Date.AddHours(def.TimeStart.Hour).AddMinutes(def.TimeStart.Minute).AddSeconds(def.TimeStart.Second);
                 var trainingEnd = date.Date.AddHours(def.TimeEnd.Hour).AddMinutes(def.TimeEnd.Minute).AddSeconds(def.TimeEnd.Second);
 
-                var users = await _database.Users.Include(x => x.UserDefaultAvailables).Where(x => x.CustomerId == customerId && x.DeletedOn == null).ToListAsync(cancellationToken: clt);
+                var users = await _database.Users.Include(x => x.UserDefaultAvailables).Include(x => x.UserFunction).Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.UserFunction!.IsActive).ToListAsync(cancellationToken: clt);
                 var defaultAveUser = await _database.UserDefaultAvailables.Where(x => x.CustomerId == customerId && x.ValidFrom <= trainingStart && x.ValidUntil >= trainingEnd).ToListAsync(cancellationToken: clt);
                 var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= trainingStart && x.ValidUntil >= trainingEnd).ToListAsync(cancellationToken: clt);
 
@@ -504,6 +538,8 @@ public class ScheduleService : IScheduleService
                         UserFunctionId = user.UserFunctionId,
                     });
                 }
+                result.Training = newPlanner;
+                result.Success = true;
             }
 
         }

@@ -106,7 +106,7 @@ public class ScheduleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            GetPlannedTrainingResponse result = await _scheduleService.GetPlannedTrainingById(id, clt);
+            GetPlannedTrainingResponse result = await _scheduleService.GetPlannedTrainingById(customerId, id, clt);
             return result;
         }
         catch (Exception ex)
@@ -307,7 +307,7 @@ public class ScheduleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var training = await _scheduleService.GetPlannedTrainingById(id, clt);
+            var training = await _scheduleService.GetPlannedTrainingById(customerId, id, clt);
             if (training.Training is null)
                 return false;
             clt.ThrowIfCancellationRequested();
