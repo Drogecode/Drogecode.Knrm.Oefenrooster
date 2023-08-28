@@ -410,7 +410,7 @@ public class ScheduleService : IScheduleService
 
     private async Task<Guid?> GetDefaultVehicleForTraining(Guid? customerId, Guid? trainingId, CancellationToken clt)
     {
-        var link = await _database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.RoosterTrainingId == trainingId && x.IsSelected).Select(x => x.Id).ToListAsync();
+        var link = await _database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.RoosterTrainingId == trainingId && x.IsSelected).Select(x => x.VehicleId).ToListAsync();
         var vehicles = await _database.Vehicles.Where(x => (link.Contains(x.Id) || x.IsDefault) && x.CustomerId == customerId).ToListAsync();
         DbVehicles? vehiclePrev = null;
         foreach (var vehicle in vehicles)
@@ -470,7 +470,7 @@ public class ScheduleService : IScheduleService
                     d!.Availabilty = availabilty;
                     d.SetBy = setBy ?? AvailabilitySetBy.None;
                 }
-                else if (availabilty is not null || setBy is not null)
+                else if (!(availabilty is null || setBy is null || setBy == AvailabilitySetBy.None ))
                 {
                     result.Training!.PlanUsers.Add(new PlanUser
                     {
