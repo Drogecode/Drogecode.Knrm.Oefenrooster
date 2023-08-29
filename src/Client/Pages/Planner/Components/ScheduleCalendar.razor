@@ -50,7 +50,7 @@
                     var training = ((ScheduleCalendarItem)ev).Training;
                     @if (training != null)
                     {
-                        <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowDate="true" />
+                        <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowDate="true" ShowDayOfWeek="true" />
                     }
                 }
                 else if (ev is RoosterItemDayCalendarItem)

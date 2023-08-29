@@ -22,4 +22,5 @@ public class DefaultSchedule
     public DateTime? ValidUntilUser { get; set; }
     public bool CountToTrainingTarget { get; set; } = true;
     public bool Assigned { get; set; }
+    public int Order { get; set; }
 }

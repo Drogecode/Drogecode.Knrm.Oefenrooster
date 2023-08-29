@@ -35,7 +35,8 @@ public class DefaultScheduleService : IDefaultScheduleService
                 ValidFromUser = userDefault?.ValidFrom,
                 ValidUntilUser = userDefault?.ValidUntil,
                 CountToTrainingTarget = dbDefault.CountToTrainingTarget,
-                Assigned = userDefault?.Assigned ?? false
+                Assigned = userDefault?.Assigned ?? false,
+                Order = dbDefault.Order,
             });
         }
         return list;

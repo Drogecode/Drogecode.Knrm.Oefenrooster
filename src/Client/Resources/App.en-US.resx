@@ -138,11 +138,17 @@
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="Friday" xml:space="preserve">
+    <value>Friday</value>
+  </data>
   <data name="function" xml:space="preserve">
     <value>function</value>
   </data>
   <data name="Maybe" xml:space="preserve">
     <value>Maybe</value>
+  </data>
+  <data name="Monday" xml:space="preserve">
+    <value>Monday</value>
   </data>
   <data name="None" xml:space="preserve">
     <value>Unknown</value>
@@ -150,7 +156,22 @@
   <data name="NotAvailable" xml:space="preserve">
     <value>Not available</value>
   </data>
+  <data name="Saturday" xml:space="preserve">
+    <value>Saturday</value>
+  </data>
+  <data name="Sunday" xml:space="preserve">
+    <value>Sunday</value>
+  </data>
+  <data name="Thursday" xml:space="preserve">
+    <value>Thursday</value>
+  </data>
   <data name="till" xml:space="preserve">
     <value>till</value>
+  </data>
+  <data name="Tuesday" xml:space="preserve">
+    <value>Tuesday</value>
+  </data>
+  <data name="Wednesday" xml:space="preserve">
+    <value>Wednesday</value>
   </data>
 </root>

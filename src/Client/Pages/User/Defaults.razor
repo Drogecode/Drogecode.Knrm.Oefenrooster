@@ -6,14 +6,22 @@
 
 @if (_defaultSchedules is not null)
 {
-    <MudDataGrid Items="@_defaultSchedules.OrderBy(x=> x.WeekDay).ThenBy(x=>x.TimeStart)"
+    <MudDataGrid Items="@_defaultSchedules.OrderBy(x=> x.Order).ThenBy(x=>x.TimeStart)"
                  ReadOnly="true" EditMode="@DataGridEditMode.Cell">
         <Columns>
             <HierarchyColumn T="DefaultSchedule" />
-            <PropertyColumn Property="x => x.WeekDay" Title="@L["Weekday"]" />
+            <PropertyColumn Property="x => x.WeekDay" Title="@L["Weekday"]">
+                <CellTemplate>
+                    @LApp[context.Item.WeekDay.ToString() ?? "None"]
+                </CellTemplate>
+            </PropertyColumn>
             <PropertyColumn Property="x => x.TimeStart" Title="@L["TimeStart"]" />
             <PropertyColumn Property="x => x.TimeEnd" Title="@L["TimeEnd"]" />
-            <PropertyColumn Property="x => x.Available" Title="@L["Current setting"]" />
+            <PropertyColumn Property="x => x.Available" Title="@L["Current setting"]">
+                <CellTemplate>
+                    @LApp[context.Item.Available.ToString() ?? "None"]
+                </CellTemplate>
+            </PropertyColumn>
         </Columns>
         <ChildRowContent>
             <MudCard>

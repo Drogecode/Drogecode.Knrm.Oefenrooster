@@ -138,11 +138,17 @@
   <data name="Delete" xml:space="preserve">
     <value>Verwijder</value>
   </data>
+  <data name="Friday" xml:space="preserve">
+    <value>Vrijdag</value>
+  </data>
   <data name="function" xml:space="preserve">
     <value>Functie</value>
   </data>
   <data name="Maybe" xml:space="preserve">
     <value>Mischien</value>
+  </data>
+  <data name="Monday" xml:space="preserve">
+    <value>Maandag</value>
   </data>
   <data name="None" xml:space="preserve">
     <value>Onbekend</value>
@@ -150,7 +156,22 @@
   <data name="NotAvailable" xml:space="preserve">
     <value>Niet beschikbaar</value>
   </data>
+  <data name="Saturday" xml:space="preserve">
+    <value>Zaterdag</value>
+  </data>
+  <data name="Sunday" xml:space="preserve">
+    <value>Zondag</value>
+  </data>
+  <data name="Thursday" xml:space="preserve">
+    <value>Donderdag</value>
+  </data>
   <data name="till" xml:space="preserve">
     <value>t/m</value>
+  </data>
+  <data name="Tuesday" xml:space="preserve">
+    <value>Dinsdag</value>
+  </data>
+  <data name="Wednesday" xml:space="preserve">
+    <value>Woensdag</value>
   </data>
 </root>
