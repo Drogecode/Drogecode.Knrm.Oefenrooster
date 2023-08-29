@@ -48,7 +48,7 @@ public class ScheduleControllerTests : BaseTest
         var tody = DateTime.Today;
         var yesterday = DateTime.Today.AddDays(-1);
         var tomorrow = DateTime.Today.AddDays(1);
-        var getResult = await ScheduleController.ForAll(tody.Month, yesterday.Year, yesterday.Month, yesterday.Day, tomorrow.Year, tomorrow.Month, tomorrow.Day);
+        var getResult = await ScheduleController.ForAll(tody.Month, yesterday.Year, yesterday.Month, yesterday.Day, tomorrow.Year, tomorrow.Month, tomorrow.Day, false);
         Assert.NotNull(getResult?.Value?.Success);
         Assert.True(getResult.Value.Success);
     }
@@ -299,12 +299,12 @@ public class ScheduleControllerTests : BaseTest
     {
         var trainingId = await AddTraining("DeleteTraining_NotInForAll", false, new DateTime(2020, 9, 4, 12, 0, 0), new DateTime(2020, 9, 4, 14, 0, 0));
         var training = await ScheduleController.GetTrainingById(trainingId);
-        var trainings = await ScheduleController.ForAll(9, 2020, 8, 28, 2020, 10, 2);
+        var trainings = await ScheduleController.ForAll(9, 2020, 8, 28, 2020, 10, 2, false);
         Assert.NotNull(trainings?.Value?.Planners);
         trainings.Value.Planners.Should().Contain(x => x.TrainingId == trainingId);
         var deleteResult = await ScheduleController.DeleteTraining(trainingId);
         Assert.True(deleteResult?.Value);
-        trainings = await ScheduleController.ForAll(9, 2020, 8, 28, 2020, 10, 2);
+        trainings = await ScheduleController.ForAll(9, 2020, 8, 28, 2020, 10, 2, false);
         Assert.NotNull(trainings?.Value?.Planners);
         trainings.Value.Planners.Should().NotContain(x => x.TrainingId == trainingId);
     }
@@ -352,7 +352,7 @@ public class ScheduleControllerTests : BaseTest
         };
         var PutAssigned = await ScheduleController.PutAssignedUser(body);
         PutAssigned?.Value?.Success.Should().BeTrue();
-        var trainings = await ScheduleController.ForAll(startDate.Month, startDate.Year, startDate.Month, startDate.Day, endDate.Year, endDate.Month, endDate.Day);
+        var trainings = await ScheduleController.ForAll(startDate.Month, startDate.Year, startDate.Month, startDate.Day, endDate.Year, endDate.Month, endDate.Day, false);
         Assert.NotNull(trainings?.Value?.Planners);
         trainings.Value.Planners.Should().Contain(x => x.TrainingId == trainingId);
         var trainingFromAll = trainings.Value.Planners.FirstOrDefault(x => x.TrainingId == trainingId);
@@ -368,7 +368,7 @@ public class ScheduleControllerTests : BaseTest
         var dateStart = DateTime.Today.AddMonths(12).AddHours(21);
         var dateEnd = DateTime.Today.AddMonths(12).AddHours(15);
         var trainingId = await PrepareAssignedTraining(dateStart, dateEnd);
-        var trainings = await ScheduleController.ForAll(dateStart.Month, dateStart.Year, dateStart.Month, dateStart.Day, dateEnd.Year, dateEnd.Month, dateEnd.Day);
+        var trainings = await ScheduleController.ForAll(dateStart.Month, dateStart.Year, dateStart.Month, dateStart.Day, dateEnd.Year, dateEnd.Month, dateEnd.Day, false);
         Assert.NotNull(trainings?.Value?.Planners);
         trainings.Value.Planners.Should().Contain(x => x.TrainingId == trainingId);
         var trainingFromAll = trainings.Value.Planners.FirstOrDefault(x => x.TrainingId == trainingId);

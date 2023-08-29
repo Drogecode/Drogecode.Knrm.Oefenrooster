@@ -35,12 +35,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd);
+        System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, bool includeUnAssigned);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, bool includeUnAssigned, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -279,15 +279,15 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd)
+        public virtual System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, bool includeUnAssigned)
         {
-            return ForAllAsync(forMonth, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, System.Threading.CancellationToken.None);
+            return ForAllAsync(forMonth, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, includeUnAssigned, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ScheduleForAllResponse> ForAllAsync(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, bool includeUnAssigned, System.Threading.CancellationToken cancellationToken)
         {
             if (forMonth == null)
                 throw new System.ArgumentNullException("forMonth");
@@ -310,8 +310,11 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             if (dayEnd == null)
                 throw new System.ArgumentNullException("dayEnd");
 
+            if (includeUnAssigned == null)
+                throw new System.ArgumentNullException("includeUnAssigned");
+
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Schedule/all/period/{forMonth}/{yearStart}/{monthStart}/{dayStart}/{yearEnd}/{monthEnd}/{dayEnd}");
+            urlBuilder_.Append("api/Schedule/all/period/{forMonth}/{yearStart}/{monthStart}/{dayStart}/{yearEnd}/{monthEnd}/{dayEnd}/{includeUnAssigned}");
             urlBuilder_.Replace("{forMonth}", System.Uri.EscapeDataString(ConvertToString(forMonth, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{yearStart}", System.Uri.EscapeDataString(ConvertToString(yearStart, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{monthStart}", System.Uri.EscapeDataString(ConvertToString(monthStart, System.Globalization.CultureInfo.InvariantCulture)));
@@ -319,6 +322,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             urlBuilder_.Replace("{yearEnd}", System.Uri.EscapeDataString(ConvertToString(yearEnd, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{monthEnd}", System.Uri.EscapeDataString(ConvertToString(monthEnd, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{dayEnd}", System.Uri.EscapeDataString(ConvertToString(dayEnd, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{includeUnAssigned}", System.Uri.EscapeDataString(ConvertToString(includeUnAssigned, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
             var disposeClient_ = false;

@@ -21,10 +21,10 @@ public class ScheduleRepository
         var schedule = await _scheduleClient.ForUserAsync(dateRange.Start!.Value.Year, dateRange.Start!.Value.Month, dateRange.Start!.Value.Day, dateRange.End!.Value.Year, dateRange.End!.Value.Month, dateRange.End!.Value.Day, clt);
         return schedule;
     }
-    public async Task<ScheduleForAllResponse?> ScheduleForAll(DateRange dateRange, CancellationToken clt)
+    public async Task<ScheduleForAllResponse?> ScheduleForAll(DateRange dateRange, bool includeUnAssigned, CancellationToken clt)
     {
         DateTime? forMonth = PlannerHelper.ForMonth(dateRange);
-        var schedule = await _scheduleClient.ForAllAsync(forMonth?.Month ?? 0, dateRange.Start!.Value.Year, dateRange.Start!.Value.Month, dateRange.Start!.Value.Day, dateRange.End!.Value.Year, dateRange.End!.Value.Month, dateRange.End!.Value.Day, clt);
+        var schedule = await _scheduleClient.ForAllAsync(forMonth?.Month ?? 0, dateRange.Start!.Value.Year, dateRange.Start!.Value.Month, dateRange.Start!.Value.Day, dateRange.End!.Value.Year, dateRange.End!.Value.Month, dateRange.End!.Value.Day, includeUnAssigned, clt);
         return schedule;
     }
 

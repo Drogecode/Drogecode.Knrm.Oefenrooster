@@ -47,7 +47,7 @@ public sealed partial class ScheduleTable : IDisposable
         _updating = true;
         _events = new();
         TrainingWeek scheduleForUser = new();
-        var scheduleForAll = await _scheduleRepository.ScheduleForAll(dateRange, _cls.Token);
+        var scheduleForAll = await _scheduleRepository.ScheduleForAll(dateRange, true, _cls.Token);
         if (scheduleForAll == null) return;
         _userTrainingCounter = scheduleForAll.UserTrainingCounters;
         var trainingsInRange = scheduleForAll.Planners;

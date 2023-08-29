@@ -91,7 +91,7 @@
         }
       }
     },
-    "/api/Schedule/all/period/{forMonth}/{yearStart}/{monthStart}/{dayStart}/{yearEnd}/{monthEnd}/{dayEnd}": {
+    "/api/Schedule/all/period/{forMonth}/{yearStart}/{monthStart}/{dayStart}/{yearEnd}/{monthEnd}/{dayEnd}/{includeUnAssigned}": {
       "get": {
         "tags": [
           "Schedule"
@@ -159,6 +159,14 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "includeUnAssigned",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean"
             }
           }
         ],

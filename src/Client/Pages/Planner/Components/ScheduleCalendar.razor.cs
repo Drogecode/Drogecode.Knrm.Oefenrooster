@@ -49,7 +49,7 @@ public sealed partial class ScheduleCalendar : IDisposable
         _events = new();
         _userTrainingCounter = null;
         TrainingWeek scheduleForUser = new();
-        var scheduleForAll = await _scheduleRepository.ScheduleForAll(dateRange, _cls.Token);
+        var scheduleForAll = await _scheduleRepository.ScheduleForAll(dateRange, false, _cls.Token);
         if (scheduleForAll == null) return;
         _userTrainingCounter = scheduleForAll.UserTrainingCounters;
         var trainingsInRange = scheduleForAll.Planners;
