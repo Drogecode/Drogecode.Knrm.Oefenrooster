@@ -72,6 +72,7 @@ builder.Services.AddScoped<ICustomerSettingService, CustomerSettingService>();
 // Only run in debug because it fails on the azure app service! (and is not necessary)
 var groupNames = new List<string>
 {
+    "Audit",
     "Authentication",
     "CalendarItem",
     "Configuration",

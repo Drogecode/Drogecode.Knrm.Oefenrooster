@@ -64,7 +64,6 @@ public class ScheduleService : IScheduleService
                             SetBy = setBy ?? AvailabilitySetBy.None,
                             Assigned = ava?.Assigned ?? false,
                             RoosterTrainingTypeId = training.RoosterTrainingTypeId,
-                            VehicleId = ava?.VehicleId,
                             CountToTrainingTarget = training.CountToTrainingTarget,
                             IsPinned = training.IsPinned,
                         });
@@ -414,17 +413,26 @@ public class ScheduleService : IScheduleService
 
     private async Task<Guid?> GetDefaultVehicleForTraining(Guid? customerId, Guid? trainingId, CancellationToken clt)
     {
-        var link = await _database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.RoosterTrainingId == trainingId && x.IsSelected).Select(x => x.VehicleId).ToListAsync();
-        var vehicles = await _database.Vehicles.Where(x => (link.Contains(x.Id) || x.IsDefault) && x.CustomerId == customerId).ToListAsync();
+        var link = await _database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.RoosterTrainingId == trainingId).Select(x => new { x.VehicleId, x.IsSelected }).ToListAsync();
+        var vehicles = await _database.Vehicles.Where(x => x.CustomerId == customerId).ToListAsync();
         DbVehicles? vehiclePrev = null;
         foreach (var vehicle in vehicles)
         {
             if (vehicle is null) continue;
-            if (vehicle.IsDefault)
+            if (link.Any(x => x.VehicleId == vehicle.Id))
+            {
+                var veh = link.FirstOrDefault(x => x.VehicleId == vehicle.Id);
+                if (veh!.IsSelected) {
+                    if (vehicle.IsDefault)
+                        return vehicle.Id;
+                    vehiclePrev = vehicle;
+                    continue;
+                }
+            }
+            else if (vehicle.IsDefault)
             {
                 return vehicle.Id;
             }
-            vehiclePrev = vehicle;
         }
         return vehiclePrev?.Id;
     }
@@ -710,7 +718,7 @@ public class ScheduleService : IScheduleService
                 _logger.LogWarning("No training found for schedule '{ScheduleId}'", schedul.Id);
                 continue;
             }
-            schedul.VehicleId ??= await GetDefaultVehicleForTraining(customerId, schedul.TrainingId, clt);
+            var defaultVehicle = await GetDefaultVehicleForTraining(customerId, schedul.TrainingId, clt);
             result.Trainings.Add(new PlannedTraining
             {
                 TrainingId = schedul.TrainingId,
@@ -719,7 +727,6 @@ public class ScheduleService : IScheduleService
                 DateStart = schedul.Training.DateStart,
                 DateEnd = schedul.Training.DateEnd,
                 RoosterTrainingTypeId = schedul.Training.RoosterTrainingTypeId,
-                VehicleId = schedul.VehicleId,
                 PlannedFunctionId = schedul.UserFunctionId ?? users?.FirstOrDefault(x => x.Id == userId)?.UserFunctionId,
                 IsPinned = schedul.Training.IsPinned,
                 IsCreated = true,
@@ -731,7 +738,7 @@ public class ScheduleService : IScheduleService
                     Name = users?.FirstOrDefault(x => x.Id == a.UserId)?.Name ?? "Name not found",
                     PlannedFunctionId = a.UserFunctionId ?? users?.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId,
                     UserFunctionId = users?.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId,
-                    VehicleId = a.VehicleId,
+                    VehicleId = a.VehicleId ?? defaultVehicle,
                 }).ToList()
             });
             var userMonthInfo = result.UserMonthInfos.FirstOrDefault(x => x.Year == schedul.Training.DateStart.Year && x.Month == schedul.Training.DateStart.Month);
@@ -788,7 +795,6 @@ public class ScheduleService : IScheduleService
                 SetBy = setBy ?? AvailabilitySetBy.None,
                 Assigned = ava?.Assigned ?? false,
                 RoosterTrainingTypeId = training.RoosterTrainingTypeId,
-                VehicleId = ava?.VehicleId,
                 CountToTrainingTarget = training.CountToTrainingTarget,
                 IsPinned = training.IsPinned,
             });

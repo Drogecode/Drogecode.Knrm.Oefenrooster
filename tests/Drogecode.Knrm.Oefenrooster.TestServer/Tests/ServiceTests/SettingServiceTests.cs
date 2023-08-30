@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
+using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
@@ -14,7 +15,9 @@ public class SettingServiceTests : BaseTest
 {
     private IUserSettingService _userSettingService;
     private ICustomerSettingService _customerSettingService;
-    public SettingServiceTests(IUserSettingService userSettingService,
+    public SettingServiceTests(
+        DataContext dataContext, 
+        IUserSettingService userSettingService,
         ICustomerSettingService customerSettingService,
         IDateTimeService dateTimeServiceMock,
         ScheduleController scheduleController,
@@ -25,7 +28,7 @@ public class SettingServiceTests : BaseTest
         CalendarItemController calendarItemController,
         PreComController preComController,
         VehicleController vehicleController) :
-        base(dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
+        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
     {
         _userSettingService = userSettingService;
         _customerSettingService = customerSettingService;

@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
+using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 public class FunctionControllerTests : BaseTest
 {
     public FunctionControllerTests(
+        DataContext dataContext,
         IDateTimeService dateTimeServiceMock,
         ScheduleController scheduleController, 
         UserController userController,
@@ -20,7 +22,7 @@ public class FunctionControllerTests : BaseTest
         CalendarItemController calendarItemController,
         PreComController preComController,
         VehicleController vehicleController) :
-        base(dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
+        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
     {
     }
 

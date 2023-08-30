@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
+using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using System;
@@ -12,6 +13,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 public class VehicleControllerTests : BaseTest
 {
     public VehicleControllerTests(
+        DataContext dataContext,
         IDateTimeService dateTimeServiceMock,
         ScheduleController scheduleController,
         UserController userController,
@@ -21,7 +23,7 @@ public class VehicleControllerTests : BaseTest
         CalendarItemController calendarItemController,
         PreComController preComController,
         VehicleController vehicleController) :
-        base(dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
+        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
     {
     }
 
@@ -37,5 +39,18 @@ public class VehicleControllerTests : BaseTest
         };
         var result = await VehicleController.PutVehicle(vehicle);
         Assert.NotNull(result?.Value);
+    }
+
+    [Fact]
+    public async Task LinkVehicle()
+    {
+        var body = new DrogeLinkVehicleTraining()
+        {
+            RoosterTrainingId = DefaultTraining,
+            VehicleId = DefaultVehicle,
+        };
+        var result = await VehicleController.UpdateLinkVehicleTraining(body);
+        Assert.NotNull(result?.Value?.DrogeLinkVehicleTraining);
+        Assert.True(result.Value.Success);
     }
 }

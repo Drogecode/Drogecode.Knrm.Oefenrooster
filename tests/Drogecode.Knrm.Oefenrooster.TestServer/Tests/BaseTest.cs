@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
+using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
@@ -42,6 +43,9 @@ public class BaseTest : IAsyncLifetime
     protected Guid DefaultCalendarMonthItem { get; private set; }
     protected Guid DefaultCalendarDayItem { get; private set; }
     protected Guid DefaultVehicle { get; private set; }
+
+    protected readonly DataContext DataContext;
+
     protected readonly ScheduleController ScheduleController;
     protected readonly UserController UserController;
     protected readonly FunctionController FunctionController;
@@ -51,6 +55,7 @@ public class BaseTest : IAsyncLifetime
     protected readonly PreComController PreComController;
     protected readonly VehicleController VehicleController;
     public BaseTest(
+        DataContext dataContext,
         IDateTimeService dateTimeService,
         ScheduleController scheduleController,
         UserController userController,
@@ -61,6 +66,7 @@ public class BaseTest : IAsyncLifetime
         PreComController preComController,
         VehicleController vehicleController)
     {
+        DataContext = dataContext;
         DateTimeServiceMock = (IDateTimeServiceMock)dateTimeService;
 
         ScheduleController = scheduleController;

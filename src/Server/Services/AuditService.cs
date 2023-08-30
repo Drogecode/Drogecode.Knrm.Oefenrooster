@@ -1,4 +1,6 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Server.Services;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
+
+namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class AuditService : IAuditService
 {
@@ -26,6 +28,11 @@ public class AuditService : IAuditService
              }
         );
         await _database.SaveChangesAsync();
+    }
+
+    public Task<GetTrainingAuditResponse> GetTrainingAudit(Guid customerId, Guid userId, Guid id)
+    {
+        throw new NotImplementedException();
     }
 
 }

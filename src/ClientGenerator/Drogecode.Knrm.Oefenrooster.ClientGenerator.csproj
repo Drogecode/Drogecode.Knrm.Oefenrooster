@@ -11,6 +11,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<OpenApiReference Include="OpenAPIs\Audit.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="AuditClient">
+			<OutputPath>../Clients/AuditClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Audit</Options>
+		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Authentication.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="AuthenticationClient">
 			<OutputPath>../Clients/AuthenticationClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.User</Options>
