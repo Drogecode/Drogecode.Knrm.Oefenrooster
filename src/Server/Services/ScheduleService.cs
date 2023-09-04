@@ -219,7 +219,7 @@ public class ScheduleService : IScheduleService
         var training = new Training
         {
             TrainingId = trainingId,
-            DefaultId = null,
+            DefaultId = newTraining.DefaultId,
             RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId,
             Name = newTraining.Name,
             DateStart = newTraining.DateStart,

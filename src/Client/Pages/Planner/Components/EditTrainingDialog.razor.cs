@@ -31,7 +31,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     [AllowNull] private MudForm _form;
     protected override async Task OnParametersSetAsync()
     {
-        if (Planner?.TrainingId != null)
+        if (Planner?.TrainingId is not null)
         {
             _linkVehicleTraining = await _vehicleRepository.GetForTrainingAsync(Planner.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
             var dateStartLocal = Planner.DateStart.ToLocalTime();
@@ -48,6 +48,25 @@ public sealed partial class EditTrainingDialog : IDisposable
                 CountToTrainingTarget = Planner.CountToTrainingTarget,
                 Pin = Planner.IsPinned
             };
+        }
+        else if (Planner?.DefaultId is not null)
+        {
+            var dateStartLocal = Planner.DateStart.ToLocalTime();
+            var dateEndLocal = Planner.DateEnd.ToLocalTime();
+            _training = new()
+            {
+                IsNewFromDefault = true,
+                IsNew = false,
+                DefaultId = Planner.DefaultId,
+                Date = dateStartLocal.Date,
+                TimeStart = dateStartLocal.TimeOfDay,
+                TimeEnd = dateEndLocal.TimeOfDay,
+                Name = Planner.Name,
+                RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
+                CountToTrainingTarget = Planner.CountToTrainingTarget,
+                Pin = Planner.IsPinned
+            };
+            _linkVehicleTraining = new();
         }
         else
         {
@@ -99,22 +118,11 @@ public sealed partial class EditTrainingDialog : IDisposable
         if (!_form?.IsValid == true || _training == null) return;
         if (_training.TimeStart >= _training.TimeEnd) return;
 
-        var dateStart = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeStart ?? throw new ArgumentNullException("TimeStart is null")), DateTimeKind.Local).ToUniversalTime();
-        var dateEnd = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null")), DateTimeKind.Local).ToUniversalTime();
-        if (_training.IsNew)
+        if (_training.IsNew || _training.IsNewFromDefault)
         {
-            Planner = new PlannedTraining
-            {
-                RoosterTrainingTypeId = _training.RoosterTrainingTypeId,
-                Name = _training.Name,
-                DateStart = dateStart,
-                DateEnd = dateEnd,
-                CountToTrainingTarget = _training.CountToTrainingTarget,
-                IsPinned = _training.Pin,
-            };
+            UpdatePlannerObject();
             var newId = await _scheduleRepository.AddTraining(Planner, _cls.Token);
-            _training.Id = newId;
-            if (_linkVehicleTraining != null)
+            if (_linkVehicleTraining is not null)
             {
                 foreach (var link in _linkVehicleTraining)
                 {
@@ -122,27 +130,57 @@ public sealed partial class EditTrainingDialog : IDisposable
                     await _vehicleRepository.UpdateLinkVehicleTrainingAsync(link);
                 }
             }
+            _training.Id = newId;
+            _training.IsNew = false;
+            _training.IsNewFromDefault = false;
+            Planner.TrainingId = newId;
+            if (Refresh is not null)
+                await Refresh.CallRequestRefreshAsync();
             await Global.CallNewTrainingAddedAsync(_training);
         }
-        else if (Planner != null)
+        else if (Planner is not null)
         {
+            UpdatePlannerObject();
+            await _scheduleRepository.PatchTraining(Planner, _cls.Token);
+            if (Refresh is not null)
+                await Refresh.CallRequestRefreshAsync();
+        }
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void UpdatePlannerObject()
+    {
+        var dateStart = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeStart ?? throw new ArgumentNullException("TimeStart is null")), DateTimeKind.Local).ToUniversalTime();
+        var dateEnd = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null")), DateTimeKind.Local).ToUniversalTime();
+        if (Planner is null)
+        {
+            Planner = new PlannedTraining
+            {
+                DefaultId = _training.DefaultId,
+                RoosterTrainingTypeId = _training.RoosterTrainingTypeId,
+                Name = _training.Name,
+                DateStart = dateStart,
+                DateEnd = dateEnd,
+                CountToTrainingTarget = _training.CountToTrainingTarget,
+                IsPinned = _training.Pin,
+            };
+        }
+        else
+        {
+            Planner.DefaultId = _training.DefaultId;
             Planner.RoosterTrainingTypeId = _training.RoosterTrainingTypeId;
             Planner.Name = _training.Name;
             Planner.DateStart = dateStart;
             Planner.DateEnd = dateEnd;
             Planner.CountToTrainingTarget = _training.CountToTrainingTarget;
             Planner.IsPinned = _training.Pin;
-            await _scheduleRepository.PatchTraining(Planner, _cls.Token);
-            if (Refresh != null)
-                await Refresh.CallRequestRefreshAsync();
         }
-        MudDialog.Close(DialogResult.Ok(true));
     }
 
     private async Task CheckChanged(bool toggled, DrogeVehicle vehicle)
     {
         var link = _linkVehicleTraining?.FirstOrDefault(x => x.VehicleId == vehicle.Id);
-        if (link != null)
+        if (link is not null)
         {
             link.IsSelected = toggled;
             if (!_training!.IsNew)
@@ -156,10 +194,10 @@ public sealed partial class EditTrainingDialog : IDisposable
                 VehicleId = vehicle.Id,
                 RoosterTrainingId = Planner?.TrainingId ?? Guid.Empty
             };
-            if (!_training!.IsNew)
+            if (!_training!.IsNew && !_training!.IsNewFromDefault)
             {
                 var newLink = await _vehicleRepository.UpdateLinkVehicleTrainingAsync(link);
-                if (newLink != null)
+                if (newLink is not null)
                     _linkVehicleTraining?.Add(newLink);
             }
             else
@@ -178,7 +216,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                     user.VehicleId = null;
                 }
             }
-            if (Refresh != null)
+            if (Refresh is not null)
                 await Refresh.CallRequestRefreshAsync();
             StateHasChanged();
         }
@@ -186,8 +224,15 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private async Task Delete()
     {
+        if(_training?.IsNewFromDefault == true)
+        {
+            UpdatePlannerObject();
+            var newId = await _scheduleRepository.AddTraining(Planner, _cls.Token);
+            Planner.TrainingId = newId;
+            _training.Id = newId;
+        }
         var result = await _scheduleRepository.DeleteTraining(_training?.Id, _cls.Token);
-        if (result && Refresh != null)
+        if (result && Refresh is not null)
         {
             await Global.CallTrainingDeletedAsync(_training!.Id!.Value);
             await Refresh.CallRequestRefreshAsync();
