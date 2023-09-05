@@ -63,17 +63,21 @@ public sealed partial class Defaults : IDisposable
 
 
 
+    private List<string> _events = new();
     // events
     void StartedEditingItem(DefaultUserSchedule item)
     {
+        _events.Insert(0, $"Event = StartedEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 
     void CanceledEditingItem(DefaultUserSchedule item)
     {
+        _events.Insert(0, $"Event = CanceledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 
     void CommittedItemChanges(DefaultUserSchedule item)
     {
+        _events.Insert(0, $"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 
     public void Dispose()

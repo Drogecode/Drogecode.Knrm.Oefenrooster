@@ -20,4 +20,21 @@ public static class DefaultUserScheduleMapper
             Assigned = defaultUserSchedule.Assigned,
         };
     }
+
+    public static List<DefaultUserSchedule> DeepCloon(this List<DefaultUserSchedule> original)
+    {
+        List<DefaultUserSchedule> clone = new List<DefaultUserSchedule>();
+        foreach(var item in original)
+        {
+            clone.Add(new DefaultUserSchedule
+            {
+                UserDefaultAvailableId = item.UserDefaultAvailableId,
+                Available = item.Available,
+                ValidFromUser = item.ValidFromUser,
+                ValidUntilUser = item.ValidUntilUser,
+                Assigned = item.Assigned,
+            });
+        }
+        return clone;
+    }
 }
