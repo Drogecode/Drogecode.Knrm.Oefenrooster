@@ -54,6 +54,7 @@ public class BaseTest : IAsyncLifetime
     protected readonly CalendarItemController CalendarItemController;
     protected readonly PreComController PreComController;
     protected readonly VehicleController VehicleController;
+    protected readonly DefaultScheduleController DefaultScheduleController;
     public BaseTest(
         DataContext dataContext,
         IDateTimeService dateTimeService,
@@ -64,7 +65,8 @@ public class BaseTest : IAsyncLifetime
         TrainingTypesController trainingTypesController,
         CalendarItemController calendarItemController,
         PreComController preComController,
-        VehicleController vehicleController)
+        VehicleController vehicleController,
+        DefaultScheduleController defaultScheduleController)
     {
         DataContext = dataContext;
         DateTimeServiceMock = (IDateTimeServiceMock)dateTimeService;
@@ -77,6 +79,7 @@ public class BaseTest : IAsyncLifetime
         CalendarItemController = calendarItemController;
         PreComController = preComController;
         VehicleController = vehicleController;
+        DefaultScheduleController = defaultScheduleController;
 
         MockAuthenticatedUser(scheduleController, DefaultSettingsHelper.IdTaco);
         MockAuthenticatedUser(userController, DefaultSettingsHelper.IdTaco);
@@ -86,6 +89,7 @@ public class BaseTest : IAsyncLifetime
         MockAuthenticatedUser(calendarItemController, DefaultSettingsHelper.IdTaco);
         MockAuthenticatedUser(preComController, DefaultSettingsHelper.IdTaco);
         MockAuthenticatedUser(vehicleController, DefaultSettingsHelper.IdTaco);
+        MockAuthenticatedUser(defaultScheduleController, DefaultSettingsHelper.IdTaco);
     }
 
     public async Task InitializeAsync()

@@ -4,6 +4,8 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
+using static MudBlazor.CategoryTypes;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User;
 
@@ -23,36 +25,55 @@ public sealed partial class Defaults : IDisposable
     {
         _defaultSchedules = await _defaultScheduleRepository.GetAll(_cls.Token);
     }
-    private async Task OnChange(DefaultSchedule schedule)
+    private async Task OnChange(DefaultUserSchedule old, Guid defaultId)
     {
         if (_updating) return;
         _updating = true;
-        if (schedule is not null)
+        if (old is not null)
         {
-            var patched = await _defaultScheduleRepository.PatchDefaultScheduleForUser(schedule, _cls.Token);
-            if (patched is not null)
+            var body = old.ToPatchDefaultUserSchedule();
+            body.DefaultId = defaultId;
+            var patched = await _defaultScheduleRepository.PatchDefaultScheduleForUser(body, _cls.Token);
+            /*if (patched is not null)
             {
                 schedule.UserDefaultAvailableId = patched.UserDefaultAvailableId;
-            }
+            }*/
         }
         _updating = false;
     }
-    private async Task OnSubmit(Guid id)
+    private async Task OnSubmit(DefaultUserSchedule old, Guid defaultId)
     {
         _updating = true;
-        var schedule = _defaultSchedules?.FirstOrDefault(s => s.Id == id);
+        var schedule = _defaultSchedules?.FirstOrDefault(s => s.Id == defaultId);
         _form?.Validate();
         if (!_form?.IsValid == true || schedule is null)
         {
             _updating = false;
             return;
         }
-        var patched = await _defaultScheduleRepository.PatchDefaultScheduleForUser(schedule, _cls.Token);
-        if (patched is not null)
+        var body = old.ToPatchDefaultUserSchedule();
+        body.DefaultId = defaultId;
+        var patched = await _defaultScheduleRepository.PatchDefaultScheduleForUser(body, _cls.Token);
+        /*if (patched is not null)
         {
             schedule.UserDefaultAvailableId = patched.UserDefaultAvailableId;
-        }
+        }*/
         _updating = false;
+    }
+
+
+
+    // events
+    void StartedEditingItem(DefaultUserSchedule item)
+    {
+    }
+
+    void CanceledEditingItem(DefaultUserSchedule item)
+    {
+    }
+
+    void CommittedItemChanges(DefaultUserSchedule item)
+    {
     }
 
     public void Dispose()

@@ -35,12 +35,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUserAsync(DefaultSchedule body);
+        System.Threading.Tasks.Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUserAsync(PatchDefaultUserSchedule body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUserAsync(DefaultSchedule body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUserAsync(PatchDefaultUserSchedule body, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -147,7 +147,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUserAsync(DefaultSchedule body)
+        public virtual System.Threading.Tasks.Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUserAsync(PatchDefaultUserSchedule body)
         {
             return PatchDefaultScheduleForUserAsync(body, System.Threading.CancellationToken.None);
         }
@@ -155,7 +155,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUserAsync(DefaultSchedule body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUserAsync(PatchDefaultUserSchedule body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/DefaultSchedule");

@@ -53,7 +53,7 @@ public class DefaultScheduleController : ControllerBase
 
     [HttpPatch]
     [Route("")]
-    public async Task<ActionResult<PatchDefaultScheduleForUserResponse>> PatchDefaultScheduleForUser([FromBody] DefaultSchedule body)
+    public async Task<ActionResult<PatchDefaultScheduleForUserResponse>> PatchDefaultScheduleForUser([FromBody] PatchDefaultUserSchedule body)
     {
         try
         {

@@ -23,7 +23,7 @@ public class DefaultScheduleRepository
         return result.DefaultSchedules;
     }
 
-    public async Task<DefaultSchedule?> PatchDefaultScheduleForUser(DefaultSchedule body, CancellationToken clt)
+    public async Task<PatchDefaultUserSchedule?> PatchDefaultScheduleForUser(PatchDefaultUserSchedule body, CancellationToken clt)
     {
         var result = await _defaultScheduleClient.PatchDefaultScheduleForUserAsync(body, clt);
         return result.Patched;
