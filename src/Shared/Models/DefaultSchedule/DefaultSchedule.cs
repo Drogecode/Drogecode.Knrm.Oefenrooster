@@ -21,13 +21,18 @@ public class DefaultSchedule
     public List<DefaultUserSchedule>? UserSchedules { get; set; }
 }
 
-public class DefaultUserSchedule
+public class DefaultUserSchedule : ICloneable
 {
     public Guid? UserDefaultAvailableId { get; set; }
     public Availabilty? Available { get; set; }
     public DateTime? ValidFromUser { get; set; }
     public DateTime? ValidUntilUser { get; set; }
     public bool Assigned { get; set; }
+
+    public object Clone()
+    {
+        return this.MemberwiseClone();
+    }
 }
 
 public class PatchDefaultUserSchedule : DefaultUserSchedule

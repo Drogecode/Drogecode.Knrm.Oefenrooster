@@ -1,0 +1,21 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+<MudDialog>
+    <DialogContent>
+        @if (DefaultUserSchedule is not null)
+        {
+            <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
+                <MudSelect T="Availabilty?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="DefaultUserSchedule.Available" AdornmentColor="@PlannerHelper.ColorAvailabilty(DefaultUserSchedule.Available)">
+                    <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
+                    <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
+                    <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
+                </MudSelect>
+                <MudDatePicker Label="@L["ValidFrom"]" @bind-Date="DefaultUserSchedule.ValidFromUser" Placeholder="Select Date" />
+                <MudDatePicker Label="@L["ValidUntil"]" @bind-Date="DefaultUserSchedule.ValidUntilUser" Placeholder="Select Date" />
+            </MudForm>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">@LApp["Submit"]</MudButton>
+    </DialogActions>
+</MudDialog>

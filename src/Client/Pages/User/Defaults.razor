@@ -7,25 +7,23 @@
 @if (_defaultSchedules is not null)
 {
     <MudExpansionPanels>
-        @foreach (var schedule in _defaultSchedules.OrderBy(x => x.Order).ThenBy(x => x.TimeStart))
+        @foreach (var schedule in _defaultSchedules)
         {
-            <MudExpansionPanel Text='@($"{LApp[schedule.WeekDay.ToString() ?? "None"]} - {schedule.TimeStart} {LApp["till"]} {schedule.TimeEnd}")' MaxHeight="150">
+            <MudExpansionPanel Text='@($"{LApp[schedule.WeekDay.ToString() ?? "None"]} - {schedule.TimeStart} {LApp["till"]} {schedule.TimeEnd}")'>
                 @if (schedule.UserSchedules is not null && schedule.UserSchedules.Count > 0)
                 {
-                    <MudDataGrid T="DefaultUserSchedule" Items="@schedule.UserSchedules" EditMode="DataGridEditMode.Form" EditTrigger="@DataGridEditTrigger.Manual"
-                                 StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges"
-                                 ReadOnly="false" Bordered="true" Dense="true">
+                    <MudDataGrid T="DefaultUserSchedule" Items="@schedule.UserSchedules" ReadOnly="true" Bordered="true" Dense="true">
                         <Columns>
                             <PropertyColumn Property="x => x.ValidFromUser" Title="@L["ValidFrom"]" />
                             <PropertyColumn Property="x => x.ValidUntilUser" Title="@L["ValidUntil"]" />
-                            <PropertyColumn Property="x => x.Available" Title="@L["Availability"]">
+                            <PropertyColumn Property="x => x.Available" Title="@LApp["Availibility"]">
                                 <CellTemplate>
                                     @LApp[context.Item.Available.ToString() ?? "None"]
                                 </CellTemplate>
                             </PropertyColumn>
                             <TemplateColumn CellClass="d-flex justify-end">
                                 <CellTemplate>
-                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(()=>OpenEditDefaultUserScheduleDialog(context.Item, false))" />
                                 </CellTemplate>
                             </TemplateColumn>
                         </Columns>
@@ -33,9 +31,9 @@
                 }
                 else
                 {
-
-                    <MudText>No default configuration</MudText>
+                    <MudText>@L["No default configuration"]</MudText>
                 }
+                <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="@(()=>OpenEditDefaultUserScheduleDialog(null, true))">@L["Add new default configuration"]</MudButton>
             </MudExpansionPanel>
         }
     </MudExpansionPanels>

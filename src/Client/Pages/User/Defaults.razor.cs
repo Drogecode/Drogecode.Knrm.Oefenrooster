@@ -1,6 +1,9 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components;
+using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
 using System.Diagnostics.CodeAnalysis;
@@ -13,7 +16,9 @@ public sealed partial class Defaults : IDisposable
 {
     [Inject] private IStringLocalizer<Defaults> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
+    [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private DefaultScheduleRepository _defaultScheduleRepository { get; set; } = default!;
+    private RefreshModel _refreshModel = new();
     private CancellationTokenSource _cls = new();
     private List<DefaultSchedule>? _defaultSchedules { get; set; }
     private bool _updating;
@@ -23,7 +28,8 @@ public sealed partial class Defaults : IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        _defaultSchedules = await _defaultScheduleRepository.GetAll(_cls.Token);
+        _defaultSchedules = (await _defaultScheduleRepository.GetAll(_cls.Token))?.OrderBy(x => x.Order).ThenBy(x => x.TimeStart).ToList();
+        _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
     }
     private async Task OnChange(DefaultUserSchedule old, Guid defaultId)
     {
@@ -61,23 +67,20 @@ public sealed partial class Defaults : IDisposable
         _updating = false;
     }
 
-
-
-    private List<string> _events = new();
-    // events
-    void StartedEditingItem(DefaultUserSchedule item)
+    private void OpenEditDefaultUserScheduleDialog(DefaultUserSchedule? defaultUserSchedule, bool isNew)
     {
-        _events.Insert(0, $"Event = StartedEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+        var parameters = new DialogParameters<DefaultDialog> {
+            { x=> x.DefaultUserSchedule, defaultUserSchedule },
+            { x=> x.IsNew, isNew},
+            { x=> x.Refresh, _refreshModel },
+        };
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        _dialogProvider.Show<DefaultDialog>(L["Edit default"], parameters, options);
     }
-
-    void CanceledEditingItem(DefaultUserSchedule item)
+    private async Task RefreshMeAsync()
     {
-        _events.Insert(0, $"Event = CanceledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
-    }
-
-    void CommittedItemChanges(DefaultUserSchedule item)
-    {
-        _events.Insert(0, $"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+        _defaultSchedules = (await _defaultScheduleRepository.GetAll(_cls.Token))?.OrderBy(x => x.Order).ThenBy(x => x.TimeStart).ToList();
+        StateHasChanged();
     }
 
     public void Dispose()
