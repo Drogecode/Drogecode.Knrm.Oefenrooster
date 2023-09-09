@@ -38,4 +38,18 @@ public static class DefaultScheduleMapper
             Order = defaultSchedule.Order,
         };
     }
+
+    public static PatchDefaultUserSchedule ToPatchDefaultUserSchedule(this DbRoosterDefault defaultSchedule, Guid userId, Guid UserDefaultAvailableId)
+    {
+        var userDefault = defaultSchedule.UserDefaultAvailables?.FirstOrDefault(x => x.UserId == userId && x.Id == UserDefaultAvailableId);
+        return new PatchDefaultUserSchedule
+        {
+            DefaultId = defaultSchedule.Id,
+            UserDefaultAvailableId = userDefault?.Id,
+            Available = userDefault?.Available,
+            ValidFromUser = userDefault?.ValidFrom,
+            ValidUntilUser = userDefault?.ValidUntil,
+            Assigned = userDefault?.Assigned ?? false,
+        };
+    }
 }

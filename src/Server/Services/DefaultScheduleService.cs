@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
+using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.Graph.Models.ODataErrors;
@@ -88,15 +89,22 @@ public class DefaultScheduleService : IDefaultScheduleService
 
     public async Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUser(PatchDefaultUserSchedule body, Guid customerId, Guid userId)
     {
-        var dbDefault = _database.RoosterDefaults.Include(x => x.UserDefaultAvailables!.Where(y => y.UserId == userId && y.Id == body.UserDefaultAvailableId)).FirstOrDefault(z => z.Id == body.DefaultId);
+        DbRoosterDefault? dbDefault = DbQuery(body, userId);
         if (dbDefault is null) return new PatchDefaultScheduleForUserResponse { Success = false };
         var userDefault = dbDefault.UserDefaultAvailables?.FirstOrDefault(y => y.UserId == userId && y.Id == body.UserDefaultAvailableId);
-        if (userDefault?.ValidFrom?.Date.Equals(_dateTimeService.UtcNow().Date) == true)
+        var validFrom = body.ValidFromUser ?? _dateTimeService.UtcNow();
+        var validUntil = body.ValidUntilUser ?? DateTime.MaxValue;
+        if (validFrom.Kind == DateTimeKind.Unspecified)
+            validFrom = validFrom.DateTimeWithZone(dbDefault.Customer.TimeZone).ToUniversalTime();
+        if (validUntil.Kind == DateTimeKind.Unspecified)
+            validUntil = validUntil.DateTimeWithZone(dbDefault.Customer.TimeZone).ToUniversalTime();
+
+        if (userDefault?.ValidFrom?.Date.CompareTo(_dateTimeService.UtcNow().Date) >= 1)
         {
             userDefault!.Available = body.Available;
             userDefault.Assigned = body.Assigned;
-            userDefault.ValidFrom = _dateTimeService.UtcNow();
-            userDefault.ValidUntil = DateTime.MaxValue;
+            userDefault.ValidFrom = validFrom;
+            userDefault.ValidUntil = validUntil;
             _database.UserDefaultAvailables.Update(userDefault);
         }
         else
@@ -105,6 +113,7 @@ public class DefaultScheduleService : IDefaultScheduleService
             {
                 userDefault.ValidUntil = _dateTimeService.UtcNow().AddDays(-1);
                 _database.UserDefaultAvailables.Update(userDefault);
+                validFrom = _dateTimeService.UtcNow();
             }
             userDefault = new DbUserDefaultAvailable
             {
@@ -114,17 +123,27 @@ public class DefaultScheduleService : IDefaultScheduleService
                 RoosterDefaultId = body.DefaultId,
                 Available = body.Available,
                 Assigned = body.Assigned,
-                ValidFrom = _dateTimeService.UtcNow(),
-                ValidUntil = DateTime.MaxValue
+                ValidFrom = validFrom,
+                ValidUntil = validUntil
             };
             _database.UserDefaultAvailables.Add(userDefault);
         }
         _database.SaveChanges();
         body.UserDefaultAvailableId = userDefault.Id;
+        var dbPatched = DbQuery(body, userId);
+        var patched = dbPatched?.ToPatchDefaultUserSchedule(userId, userDefault.Id);
         return new PatchDefaultScheduleForUserResponse
         {
             Success = true,
-            Patched = body
+            Patched = patched
         };
+
+        DbRoosterDefault? DbQuery(PatchDefaultUserSchedule body, Guid userId)
+        {
+            return _database.RoosterDefaults
+                .Include(x => x.UserDefaultAvailables!.Where(y => y.UserId == userId && y.Id == body.UserDefaultAvailableId))
+                .Include(c => c.Customer)
+                .FirstOrDefault(z => z.Id == body.DefaultId);
+        }
     }
 }

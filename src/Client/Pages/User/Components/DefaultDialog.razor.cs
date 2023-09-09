@@ -31,6 +31,10 @@ public sealed partial class DefaultDialog : IDisposable
         {
             DefaultUserSchedule = new DefaultUserSchedule();
         }
+        if (DefaultUserSchedule.ValidFromUser == DateTime.MaxValue)
+            DefaultUserSchedule.ValidFromUser = null;
+        if (DefaultUserSchedule.ValidUntilUser == DateTime.MaxValue)
+            DefaultUserSchedule.ValidUntilUser = null;
         _originalDefaultUserSchedule = (DefaultUserSchedule?)DefaultUserSchedule?.Clone();
     }
     private async Task Submit()
@@ -44,10 +48,15 @@ public sealed partial class DefaultDialog : IDisposable
         var body = new PatchDefaultUserSchedule
         {
             DefaultId = DefaultId.Value,
-
+            UserDefaultAvailableId = DefaultUserSchedule.UserDefaultAvailableId,
+            ValidFromUser = DefaultUserSchedule.ValidFromUser,
+            ValidUntilUser = DefaultUserSchedule.ValidUntilUser,
+            Assigned = DefaultUserSchedule.Assigned,
+            Available = DefaultUserSchedule.Available,
         };
         var result = await _defaultScheduleRepository.PatchDefaultScheduleForUser(body, _cls.Token);
-
+        if (Refresh is not null)
+            await Refresh.CallRequestRefreshAsync();
         MudDialog.Close(DialogResult.Ok(true));
     }
 
