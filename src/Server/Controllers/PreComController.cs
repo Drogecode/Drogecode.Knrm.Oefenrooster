@@ -32,13 +32,12 @@ public class PreComController : ControllerBase
 
     [HttpPost]
     [AllowAnonymous]
-    [Route("web-hook/{id}")]
-    public async Task<IActionResult> WebHook(Guid id, [FromBody] object body, bool sendToHub = true)
+    [Route("web-hook/{customerId}/{id}")]
+    public async Task<IActionResult> WebHook(Guid customerId, Guid id, [FromBody] object body, bool sendToHub = true)
     {
         try
         {
             _logger.LogInformation("Resived PreCom message");
-            var customerId = DefaultSettingsHelper.KnrmHuizenId;
             try
             {
                 var jsonSerializerOptions = new JsonSerializerOptions()

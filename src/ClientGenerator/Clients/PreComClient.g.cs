@@ -26,12 +26,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     {
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task WebHookAsync(System.Guid id, bool? sendToHub, object body);
+        System.Threading.Tasks.Task WebHookAsync(System.Guid customerId, System.Guid id, bool? sendToHub, object body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task WebHookAsync(System.Guid id, bool? sendToHub, object body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task WebHookAsync(System.Guid customerId, System.Guid id, bool? sendToHub, object body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -73,21 +73,25 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task WebHookAsync(System.Guid id, bool? sendToHub, object body)
+        public virtual System.Threading.Tasks.Task WebHookAsync(System.Guid customerId, System.Guid id, bool? sendToHub, object body)
         {
-            return WebHookAsync(id, sendToHub, body, System.Threading.CancellationToken.None);
+            return WebHookAsync(customerId, id, sendToHub, body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task WebHookAsync(System.Guid id, bool? sendToHub, object body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task WebHookAsync(System.Guid customerId, System.Guid id, bool? sendToHub, object body, System.Threading.CancellationToken cancellationToken)
         {
+            if (customerId == null)
+                throw new System.ArgumentNullException("customerId");
+
             if (id == null)
                 throw new System.ArgumentNullException("id");
 
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/PreCom/web-hook/{id}?");
+            urlBuilder_.Append("api/PreCom/web-hook/{customerId}/{id}?");
+            urlBuilder_.Replace("{customerId}", System.Uri.EscapeDataString(ConvertToString(customerId, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             if (sendToHub != null)
             {

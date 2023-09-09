@@ -13,10 +13,12 @@ public sealed partial class DefaultDialog : IDisposable
 {
     [Inject] private IStringLocalizer<DefaultDialog> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
+    [Inject] private DefaultScheduleRepository _defaultScheduleRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public DefaultUserSchedule DefaultUserSchedule { get; set; } = default!;
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool? IsNew { get; set; }
+    [Parameter] public Guid? DefaultId { get; set; }
     [AllowNull] private MudForm _form;
     private CancellationTokenSource _cls = new();
     private DefaultUserSchedule? _originalDefaultUserSchedule = null;
@@ -34,6 +36,18 @@ public sealed partial class DefaultDialog : IDisposable
     private async Task Submit()
     {
         await _form.Validate();
+        if (DefaultId is null)
+        {
+            Console.WriteLine("DefaultId is null");
+            return;
+        }
+        var body = new PatchDefaultUserSchedule
+        {
+            DefaultId = DefaultId.Value,
+
+        };
+        var result = await _defaultScheduleRepository.PatchDefaultScheduleForUser(body, _cls.Token);
+
         MudDialog.Close(DialogResult.Ok(true));
     }
 

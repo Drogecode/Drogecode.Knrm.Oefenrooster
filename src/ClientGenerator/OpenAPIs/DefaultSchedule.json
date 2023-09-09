@@ -34,6 +34,55 @@
           }
         }
       },
+      "put": {
+        "tags": [
+          "DefaultSchedule"
+        ],
+        "operationId": "PutDefaultSchedule",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefaultSchedule"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefaultSchedule"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefaultSchedule"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutDefaultScheduleResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutDefaultScheduleResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutDefaultScheduleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DefaultSchedule/user": {
       "patch": {
         "tags": [
           "DefaultSchedule"
@@ -252,6 +301,36 @@
           "defaultId": {
             "type": "string",
             "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PutDefaultScheduleError": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "PutDefaultScheduleResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "defaultSchedule": {
+            "$ref": "#/components/schemas/DefaultSchedule"
+          },
+          "error": {
+            "$ref": "#/components/schemas/PutDefaultScheduleError"
           }
         },
         "additionalProperties": false

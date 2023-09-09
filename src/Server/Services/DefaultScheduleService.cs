@@ -1,6 +1,9 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Microsoft.Graph.Models.ODataErrors;
+using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -21,7 +24,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         foreach (var dbDefault in dbDefaults)
         {
             if (dbDefault is null) continue;
-            var userDefaults = dbDefault?.UserDefaultAvailables?.Where(x => x.UserId == userId /*&& x.ValidFrom > DateTime.UtcNow*/).OrderBy(x=>x.ValidFrom);
+            var userDefaults = dbDefault?.UserDefaultAvailables?.Where(x => x.UserId == userId /*&& x.ValidFrom > DateTime.UtcNow*/).OrderBy(x => x.ValidFrom);
             var innerList = new List<DefaultUserSchedule>();
             if (userDefaults is not null)
             {
@@ -55,9 +58,34 @@ public class DefaultScheduleService : IDefaultScheduleService
         return list;
     }
 
+    public async Task<PutDefaultScheduleResponse> PutDefaultSchedule(DefaultSchedule body, Guid customerId, Guid userId)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new PutDefaultScheduleResponse();
+
+        var dbDefault = await _database.RoosterDefaults.FirstOrDefaultAsync(x => x.Id == body.Id);
+        if (dbDefault is not null)
+        {
+            sw.Stop();
+            result.Success = false;
+            result.Error = PutDefaultScheduleError.IdAlreadyExists;
+            result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+            return result;
+        }
+        var dbCustomer = await _database.Customers.FindAsync(customerId) ?? throw new DrogeCodeNullException($"Customer {customerId} not found");
+        dbDefault = body.ToDbRoosterDefault(customerId, dbCustomer.TimeZone);
+        dbDefault.Id = Guid.NewGuid();
+        await _database.RoosterDefaults.AddAsync(dbDefault);
+        result.Success = (await _database.SaveChangesAsync()) >= 1;
+        result.DefaultSchedule = dbDefault.ToDefaultSchedule();
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
     public async Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUser(PatchDefaultUserSchedule body, Guid customerId, Guid userId)
     {
-        var dbDefault = _database.RoosterDefaults.Include(x => x.UserDefaultAvailables!.Where(y => y.UserId == userId && x.Id == body.UserDefaultAvailableId))?.FirstOrDefault(x => x.Id == body.DefaultId);
+        var dbDefault = _database.RoosterDefaults.Include(x => x.UserDefaultAvailables!.Where(y => y.UserId == userId && y.Id == body.UserDefaultAvailableId)).FirstOrDefault(z => z.Id == body.DefaultId);
         if (dbDefault is null) return new PatchDefaultScheduleForUserResponse { Success = false };
         var userDefault = dbDefault.UserDefaultAvailables?.FirstOrDefault(y => y.UserId == userId && y.Id == body.UserDefaultAvailableId);
         if (userDefault?.ValidFrom?.Date.Equals(DateTime.UtcNow.Date) == true)

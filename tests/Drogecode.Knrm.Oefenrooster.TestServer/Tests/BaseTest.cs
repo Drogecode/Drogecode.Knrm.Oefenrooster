@@ -1,7 +1,9 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
+using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
@@ -34,6 +36,7 @@ public class BaseTest : IAsyncLifetime
     protected const string TRAINING_CALENDAR_MONTH = "xUnit month item";
     protected const string TRAINING_CALENDAR_DAY = "xUnit day item";
     protected const string VEHICLE_DEFAULT = "xUnit default vehicle";
+    protected Guid DefaultCustomerId { get; private set; }
     protected Guid DefaultUserId { get; private set; }
     protected Guid DefaultFunction { get; private set; }
     protected Guid DefaultHoliday { get; private set; }
@@ -43,6 +46,7 @@ public class BaseTest : IAsyncLifetime
     protected Guid DefaultCalendarMonthItem { get; private set; }
     protected Guid DefaultCalendarDayItem { get; private set; }
     protected Guid DefaultVehicle { get; private set; }
+    protected Guid DefaultDefaultSchedule { get; private set; }
 
     protected readonly DataContext DataContext;
 
@@ -81,15 +85,25 @@ public class BaseTest : IAsyncLifetime
         VehicleController = vehicleController;
         DefaultScheduleController = defaultScheduleController;
 
-        MockAuthenticatedUser(scheduleController, DefaultSettingsHelper.IdTaco);
-        MockAuthenticatedUser(userController, DefaultSettingsHelper.IdTaco);
-        MockAuthenticatedUser(functionController, DefaultSettingsHelper.IdTaco);
-        MockAuthenticatedUser(holidayController, DefaultSettingsHelper.IdTaco);
-        MockAuthenticatedUser(trainingTypesController, DefaultSettingsHelper.IdTaco);
-        MockAuthenticatedUser(calendarItemController, DefaultSettingsHelper.IdTaco);
-        MockAuthenticatedUser(preComController, DefaultSettingsHelper.IdTaco);
-        MockAuthenticatedUser(vehicleController, DefaultSettingsHelper.IdTaco);
-        MockAuthenticatedUser(defaultScheduleController, DefaultSettingsHelper.IdTaco);
+        DefaultCustomerId = Guid.NewGuid();
+        dataContext.Customers.Add(new DbCustomers
+        {
+            Id = DefaultCustomerId,
+            Name = "xUnit customer",
+            TimeZone = "Europe/Amsterdam",
+            Created = DateTime.UtcNow
+        });
+        dataContext.SaveChanges();
+
+        MockAuthenticatedUser(scheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+        MockAuthenticatedUser(userController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+        MockAuthenticatedUser(functionController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+        MockAuthenticatedUser(holidayController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+        MockAuthenticatedUser(trainingTypesController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+        MockAuthenticatedUser(calendarItemController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+        MockAuthenticatedUser(preComController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+        MockAuthenticatedUser(vehicleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+        MockAuthenticatedUser(defaultScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
     }
 
     public async Task InitializeAsync()
@@ -103,6 +117,7 @@ public class BaseTest : IAsyncLifetime
         DefaultCalendarMonthItem = await AddCalendarMonthItem(TRAINING_CALENDAR_MONTH);
         DefaultCalendarDayItem = await AddCalendarDayItem(TRAINING_CALENDAR_DAY);
         DefaultVehicle = await AddVehicle(VEHICLE_DEFAULT);
+        DefaultDefaultSchedule = await AddDefaultSchedule();
     }
 
     protected async Task<Guid> AddUser(string name)
@@ -242,19 +257,37 @@ public class BaseTest : IAsyncLifetime
         return result!.Value!.Value;
     }
 
+    protected async Task<Guid> AddDefaultSchedule()
+    {
+        var body = new DefaultSchedule
+        {
+            RoosterTrainingTypeId = DefaultTrainingType,
+            WeekDay = DayOfWeek.Monday,
+            TimeStart = new TimeOnly(11, 0),
+            TimeEnd = new TimeOnly(14, 0),
+            ValidFromDefault = DateTime.Today,
+            ValidUntilDefault = DateTime.Today.AddDays(7),
+            CountToTrainingTarget = false,
+            Order = 10
+        };
+        var result = await DefaultScheduleController.PutDefaultSchedule(body);
+        Assert.NotNull(result?.Value?.DefaultSchedule?.Id);
+        return result!.Value!.DefaultSchedule!.Id;
+    }
+
     public Task DisposeAsync()
     {
         return Task.CompletedTask;
     }
 
-    protected void MockAuthenticatedUser(ControllerBase controller, Guid userId)
+    protected void MockAuthenticatedUser(ControllerBase controller, Guid userId, Guid customerId)
     {
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, "xUnit@drogecode.nl"),
             new Claim("FullName", USER_NAME),
             new Claim("http://schemas.microsoft.com/identity/claims/objectidentifier", userId.ToString()),
-            new Claim("http://schemas.microsoft.com/identity/claims/tenantid", DefaultSettingsHelper.KnrmHuizenId.ToString()),
+            new Claim("http://schemas.microsoft.com/identity/claims/tenantid", customerId.ToString()),
         };
         var claimsIdentity = new ClaimsIdentity(
             claims, CookieAuthenticationDefaults.AuthenticationScheme);

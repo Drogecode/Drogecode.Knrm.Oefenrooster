@@ -164,6 +164,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 {
                     Id = DefaultSettingsHelper.KnrmHuizenId,
                     Name = "KNRM Huizen",
+                    TimeZone = "Europe/Amsterdam",
                     Created = new DateTime(2022, 10, 12, 18, 12, 5, DateTimeKind.Utc)
                 });
             });

@@ -23,7 +23,7 @@
                             </PropertyColumn>
                             <TemplateColumn CellClass="d-flex justify-end">
                                 <CellTemplate>
-                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(()=>OpenEditDefaultUserScheduleDialog(context.Item, false))" />
+                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(()=>OpenEditDefaultUserScheduleDialog(context.Item, schedule.Id, false))" />
                                 </CellTemplate>
                             </TemplateColumn>
                         </Columns>
@@ -33,7 +33,7 @@
                 {
                     <MudText>@L["No default configuration"]</MudText>
                 }
-                <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="@(()=>OpenEditDefaultUserScheduleDialog(null, true))">@L["Add new default configuration"]</MudButton>
+                <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="@(()=>OpenEditDefaultUserScheduleDialog(null, schedule.Id, true))">@L["Add new default configuration"]</MudButton>
             </MudExpansionPanel>
         }
     </MudExpansionPanels>

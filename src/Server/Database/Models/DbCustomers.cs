@@ -8,7 +8,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 public class DbCustomers
 {
     [Key] public Guid Id { get; set; }
-    public string Name { get; set; }
+    public string Name { get; set; } = "New customer";
+    public string TimeZone { get; set; } = "Europe/Amsterdam";
     public DateTime Created { get; set; }
 
     public ICollection<DbCustomerSettings>? CustomerSettings { get; set; }

@@ -51,8 +51,30 @@ public class DefaultScheduleController : ControllerBase
         }
     }
 
-    [HttpPatch]
+    [HttpPut]
     [Route("")]
+    public async Task<ActionResult<PutDefaultScheduleResponse>> PutDefaultSchedule([FromBody] DefaultSchedule body)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var result = await _defaultScheduleService.PutDefaultSchedule(body, customerId, userId);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in PutDefaultSchedule");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
+    [Route("user")]
     public async Task<ActionResult<PatchDefaultScheduleForUserResponse>> PatchDefaultScheduleForUser([FromBody] PatchDefaultUserSchedule body)
     {
         try
@@ -61,7 +83,7 @@ public class DefaultScheduleController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             PatchDefaultScheduleForUserResponse result = await _defaultScheduleService.PatchDefaultScheduleForUser(body, customerId, userId);
 
-            return Ok(result);
+            return result;
         }
         catch (Exception ex)
         {

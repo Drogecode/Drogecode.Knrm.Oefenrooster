@@ -67,12 +67,13 @@ public sealed partial class Defaults : IDisposable
         _updating = false;
     }
 
-    private void OpenEditDefaultUserScheduleDialog(DefaultUserSchedule? defaultUserSchedule, bool isNew)
+    private void OpenEditDefaultUserScheduleDialog(DefaultUserSchedule? defaultUserSchedule, Guid defaultId, bool isNew)
     {
         var parameters = new DialogParameters<DefaultDialog> {
             { x=> x.DefaultUserSchedule, defaultUserSchedule },
             { x=> x.IsNew, isNew},
             { x=> x.Refresh, _refreshModel },
+            { x=> x.DefaultId, defaultId},
         };
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
         _dialogProvider.Show<DefaultDialog>(L["Edit default"], parameters, options);
