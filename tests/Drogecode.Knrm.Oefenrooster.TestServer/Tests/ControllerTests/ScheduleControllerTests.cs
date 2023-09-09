@@ -398,10 +398,6 @@ public class ScheduleControllerTests : BaseTest
         Assert.NotNull(planUser?.VehicleId);
         planUser!.VehicleId.Should().Be(DefaultVehicle);
 
-        var dbVehicle = DataContext.Vehicles.Find(defVeh);
-        DataContext.Vehicles.Remove(dbVehicle);
-        DataContext.SaveChanges();
-
         MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
         MockAuthenticatedUser(VehicleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
     }
@@ -426,10 +422,6 @@ public class ScheduleControllerTests : BaseTest
         var planUser = thisTraining!.PlanUsers.FirstOrDefault(x=>x.UserId == DefaultUserId);
         planUser.Should().NotBeNull();
         planUser!.VehicleId.Should().Be(DefaultVehicle);
-
-        var dbVehicle = DataContext.Vehicles.Find(defVeh);
-        DataContext.Vehicles.Remove(dbVehicle);
-        DataContext.SaveChanges();
 
         MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
         MockAuthenticatedUser(VehicleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);

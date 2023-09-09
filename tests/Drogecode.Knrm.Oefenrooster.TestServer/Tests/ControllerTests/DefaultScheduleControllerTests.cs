@@ -60,5 +60,63 @@ public class DefaultScheduleControllerTests : BaseTest
         };
         var result = await DefaultScheduleController.PatchDefaultScheduleForUser(body);
         Assert.NotNull(result?.Value?.Patched?.UserDefaultAvailableId);
+        result!.Value!.Patched!.Available.Should().Be(Availabilty.Available);
+        result!.Value!.Patched!.ValidFromUser.Should().Be(DateTime.Today);
+        result!.Value!.Patched!.ValidUntilUser.Should().Be(DateTime.Today.AddDays(7));
+    }
+
+    [Fact]
+    public async Task PatchExistingStartedInPastTest()
+    {
+        DateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-5));
+        var body = new PatchDefaultUserSchedule
+        {
+            DefaultId = DefaultDefaultSchedule,
+            Available = Availabilty.Available,
+            ValidFromUser = DateTimeServiceMock.Today(),
+            ValidUntilUser = DateTimeServiceMock.Today().AddDays(7),
+        };
+        var resultOrignal = await DefaultScheduleController.PatchDefaultScheduleForUser(body);
+        Assert.NotNull(resultOrignal?.Value?.Patched?.UserDefaultAvailableId);
+        DateTimeServiceMock.SetMockDateTime(null);
+        body = new PatchDefaultUserSchedule
+        {
+            UserDefaultAvailableId = resultOrignal!.Value!.Patched!.UserDefaultAvailableId,
+            DefaultId = DefaultDefaultSchedule,
+            Available = Availabilty.Available,
+            ValidFromUser = DateTimeServiceMock.Today(),
+            ValidUntilUser = DateTimeServiceMock.Today().AddDays(7),
+        };
+        var resultPatched = await DefaultScheduleController.PatchDefaultScheduleForUser(body);
+        Assert.NotNull(resultPatched?.Value?.Patched?.UserDefaultAvailableId);
+        resultPatched!.Value!.Patched!.UserDefaultAvailableId.Should().NotBe(resultOrignal!.Value!.Patched!.UserDefaultAvailableId!.Value);
+    }
+
+    [Fact]
+    public async Task PatchExistingStartedInFutureTest()
+    {
+        var body = new PatchDefaultUserSchedule
+        {
+            DefaultId = DefaultDefaultSchedule,
+            Available = Availabilty.Available,
+            ValidFromUser = DateTimeServiceMock.Today().AddDays(7),
+            ValidUntilUser = DateTimeServiceMock.Today().AddDays(14),
+        };
+        var resultOrignal = await DefaultScheduleController.PatchDefaultScheduleForUser(body);
+        Assert.NotNull(resultOrignal?.Value?.Patched?.UserDefaultAvailableId);
+        body = new PatchDefaultUserSchedule
+        {
+            UserDefaultAvailableId = resultOrignal!.Value!.Patched!.UserDefaultAvailableId,
+            DefaultId = DefaultDefaultSchedule,
+            Available = Availabilty.Maybe,
+            ValidFromUser = DateTimeServiceMock.Today().AddDays(7),
+            ValidUntilUser = DateTimeServiceMock.Today().AddDays(19),
+        };
+        var resultPatched = await DefaultScheduleController.PatchDefaultScheduleForUser(body);
+        Assert.NotNull(resultPatched?.Value?.Patched?.UserDefaultAvailableId);
+        resultPatched!.Value!.Patched!.UserDefaultAvailableId.Should().Be(resultOrignal!.Value!.Patched!.UserDefaultAvailableId);
+        resultPatched!.Value!.Patched!.Available.Should().Be(Availabilty.Maybe);
+        resultPatched!.Value!.Patched!.ValidFromUser.Should().Be(DateTime.Today.AddDays(7));
+        resultPatched!.Value!.Patched!.ValidUntilUser.Should().Be(DateTime.Today.AddDays(19));
     }
 }

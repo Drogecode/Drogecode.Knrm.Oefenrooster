@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.Graph.Models.ODataErrors;
 using System.Diagnostics;
 
@@ -10,10 +11,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class DefaultScheduleService : IDefaultScheduleService
 {
     private readonly ILogger<DefaultScheduleService> _logger;
+    private readonly IDateTimeService _dateTimeService;
     private readonly Database.DataContext _database;
-    public DefaultScheduleService(ILogger<DefaultScheduleService> logger, Database.DataContext database)
+    public DefaultScheduleService(ILogger<DefaultScheduleService> logger, IDateTimeService dateTimeService, Database.DataContext database)
     {
         _logger = logger;
+        _dateTimeService = dateTimeService;
         _database = database;
     }
 
@@ -24,7 +27,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         foreach (var dbDefault in dbDefaults)
         {
             if (dbDefault is null) continue;
-            var userDefaults = dbDefault?.UserDefaultAvailables?.Where(x => x.UserId == userId /*&& x.ValidFrom > DateTime.UtcNow*/).OrderBy(x => x.ValidFrom);
+            var userDefaults = dbDefault?.UserDefaultAvailables?.Where(x => x.UserId == userId /*&& x.ValidFrom > _dateTimeService.UtcNow()*/).OrderBy(x => x.ValidFrom);
             var innerList = new List<DefaultUserSchedule>();
             if (userDefaults is not null)
             {
@@ -88,11 +91,11 @@ public class DefaultScheduleService : IDefaultScheduleService
         var dbDefault = _database.RoosterDefaults.Include(x => x.UserDefaultAvailables!.Where(y => y.UserId == userId && y.Id == body.UserDefaultAvailableId)).FirstOrDefault(z => z.Id == body.DefaultId);
         if (dbDefault is null) return new PatchDefaultScheduleForUserResponse { Success = false };
         var userDefault = dbDefault.UserDefaultAvailables?.FirstOrDefault(y => y.UserId == userId && y.Id == body.UserDefaultAvailableId);
-        if (userDefault?.ValidFrom?.Date.Equals(DateTime.UtcNow.Date) == true)
+        if (userDefault?.ValidFrom?.Date.Equals(_dateTimeService.UtcNow().Date) == true)
         {
             userDefault!.Available = body.Available;
             userDefault.Assigned = body.Assigned;
-            userDefault.ValidFrom = DateTime.UtcNow;
+            userDefault.ValidFrom = _dateTimeService.UtcNow();
             userDefault.ValidUntil = DateTime.MaxValue;
             _database.UserDefaultAvailables.Update(userDefault);
         }
@@ -100,7 +103,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         {
             if (userDefault is not null)
             {
-                userDefault.ValidUntil = DateTime.UtcNow.AddDays(-1);
+                userDefault.ValidUntil = _dateTimeService.UtcNow().AddDays(-1);
                 _database.UserDefaultAvailables.Update(userDefault);
             }
             userDefault = new DbUserDefaultAvailable
@@ -111,7 +114,7 @@ public class DefaultScheduleService : IDefaultScheduleService
                 RoosterDefaultId = body.DefaultId,
                 Available = body.Available,
                 Assigned = body.Assigned,
-                ValidFrom = DateTime.UtcNow,
+                ValidFrom = _dateTimeService.UtcNow(),
                 ValidUntil = DateTime.MaxValue
             };
             _database.UserDefaultAvailables.Add(userDefault);
