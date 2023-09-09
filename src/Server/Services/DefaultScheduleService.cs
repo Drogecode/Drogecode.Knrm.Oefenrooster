@@ -99,7 +99,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         if (validUntil.Kind == DateTimeKind.Unspecified)
             validUntil = validUntil.DateTimeWithZone(dbDefault.Customer.TimeZone).ToUniversalTime();
 
-        if (userDefault?.ValidFrom?.Date.CompareTo(_dateTimeService.UtcNow().Date) >= 1)
+        if (userDefault?.ValidFrom?.Date.CompareTo(_dateTimeService.UtcNow().Date) >= 0)
         {
             userDefault!.Available = body.Available;
             userDefault.Assigned = body.Assigned;
