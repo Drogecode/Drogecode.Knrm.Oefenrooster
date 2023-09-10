@@ -20,6 +20,7 @@ public class DbUsers
     public DbCustomers Customer { get; set; }
     public DbUserFunctions? UserFunction{ get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
+    public ICollection<DbUserDefaultGroup>? UserDefaultGroups { get; set; }
     public ICollection<DbUserDefaultAvailable>? UserDefaultAvailables { get; set; }
     public ICollection<DbUserHolidays>? UserHolidays { get; set; }
     public ICollection<DbUserSettings>? UserSettings { get; set; }

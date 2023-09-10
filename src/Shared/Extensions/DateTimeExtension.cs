@@ -9,4 +9,14 @@ public static class DateTimeExtension
         var utcDateTime = TimeZoneInfo.ConvertTimeToUtc(dateTimeUnspec, timeZone);
         return utcDateTime;
     }
+
+    public static bool InPast(this DateTime dateTime)
+    {
+        if (dateTime.Kind == DateTimeKind.Utc)
+        {
+            return dateTime.CompareTo(DateTime.UtcNow.Date) <= 0;
+        }
+        else
+            return dateTime.CompareTo(DateTime.Now.Date) <= 0;
+    }
 }

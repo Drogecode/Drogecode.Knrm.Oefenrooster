@@ -13,6 +13,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbUsers> Users { get; set; }
         public DbSet<DbUserFunctions> UserFunctions { get; set; }
         public DbSet<DbUserRoles> UserRoles { get; set; }
+        public DbSet<DbUserDefaultGroup> UserDefaultGroups{ get; set; }
         public DbSet<DbUserDefaultAvailable> UserDefaultAvailables { get; set; }
         public DbSet<DbUserHolidays> UserHolidays { get; set; }
         public DbSet<DbUserSettings> UserSettings { get; set; }
@@ -72,11 +73,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserRoles>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbUserRoles>().HasOne(p => p.Customer).WithMany(g => g.UserRoles).HasForeignKey(s => s.CustomerId).IsRequired();
 
+            //UserDefaultGroup
+            modelBuilder.Entity<DbUserDefaultGroup>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserDefaultGroup>().HasOne(p => p.Customer).WithMany(g => g.UserDefaultGroups).HasForeignKey(s => s.CustomerId).IsRequired();
+            modelBuilder.Entity<DbUserDefaultGroup>().HasOne(p => p.User).WithMany(g => g.UserDefaultGroups).HasForeignKey(s => s.UserId).IsRequired();
+
             //UserDefaultAvailables
             modelBuilder.Entity<DbUserDefaultAvailable>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbUserDefaultAvailable>().HasOne(p => p.Customer).WithMany(g => g.UserDefaultAvailables).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserDefaultAvailable>().HasOne(p => p.User).WithMany(g => g.UserDefaultAvailables).HasForeignKey(s => s.UserId).IsRequired();
             modelBuilder.Entity<DbUserDefaultAvailable>().HasOne(p => p.RoosterDefault).WithMany(g => g.UserDefaultAvailables).HasForeignKey(s => s.RoosterDefaultId).IsRequired();
+            modelBuilder.Entity<DbUserDefaultAvailable>().HasOne(p => p.DefaultGroup).WithMany(g => g.UserDefaultAvailables).HasForeignKey(s => s.DefaultGroupId);
 
             //UserHolidays
             modelBuilder.Entity<DbUserHolidays>(e => { e.Property(e => e.Id).IsRequired(); });
@@ -131,11 +138,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             //// Reports
             // ReportActions
             modelBuilder.Entity<DbReportAction>(e => { e.Property(e => e.Id).IsRequired(); });
-            modelBuilder.Entity<DbReportAction>().HasMany<DbReportUser>(p => p.Users);
+            modelBuilder.Entity<DbReportAction>().HasMany(p => p.Users);
 
             // ReportTrainings
             modelBuilder.Entity<DbReportTraining>(e => { e.Property(e => e.Id).IsRequired(); });
-            modelBuilder.Entity<DbReportTraining>().HasMany<DbReportUser>(p => p.Users);
+            modelBuilder.Entity<DbReportTraining>().HasMany(p => p.Users);
 
             // ReportUsers
             modelBuilder.Entity<DbReportUser>(e => { e.Property(e => e.Id).IsRequired(); });
@@ -165,7 +172,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     Id = DefaultSettingsHelper.KnrmHuizenId,
                     Name = "KNRM Huizen",
                     TimeZone = "Europe/Amsterdam",
-                    Created = new DateTime(2022, 10, 12, 18, 12, 5, DateTimeKind.Utc)
+                    Created = new DateTime(2022, 10, 12, 18, 12, 5, DateTimeKind.Utc),
+                    Instance = "https://login.microsoftonline.com/",
+                    Domain = "hui.nu",
+                    TenantId = "d9754755-b054-4a9c-a77f-da42a4009365", // Same as Id for KNRM Huizen, but could be different for future customers.
+                    ClientIdServer = "220e1008-1131-4e82-a388-611cd773ddf8",
+                    ClientSecretServer = "", //set in db
+                    ClientIdLogin = "a9c68159-901c-449a-83e0-85243364e3cc",
+                    ClientSecretLogin = "", //set in db
                 });
             });
         }

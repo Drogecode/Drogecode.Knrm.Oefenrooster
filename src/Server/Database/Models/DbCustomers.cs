@@ -11,11 +11,20 @@ public class DbCustomers
     public string Name { get; set; } = "New customer";
     public string TimeZone { get; set; } = "Europe/Amsterdam";
     public DateTime Created { get; set; }
+    public string? Instance {  get; set; }
+    public string? Domain {  get; set; }
+    public string? TenantId {  get; set; }
+    public string? ClientIdServer {  get; set; }
+    public string? ClientIdLogin {  get; set; }
+    public string? ClientSecretServer {  get; set; }
+    public string? ClientSecretLogin {  get; set; }
+
 
     public ICollection<DbCustomerSettings>? CustomerSettings { get; set; }
     public ICollection<DbUsers>? Users { get; set; }
     public ICollection<DbUserFunctions>? UserFunctions { get; set; }
     public ICollection<DbUserRoles>? UserRoles { get; set; }
+    public ICollection<DbUserDefaultGroup>? UserDefaultGroups { get; set; }
     public ICollection<DbUserDefaultAvailable>? UserDefaultAvailables { get; set; }
     public ICollection<DbUserHolidays>? UserHolidays { get; set; }
     public ICollection<DbUserSettings>? UserSettings { get; set; }

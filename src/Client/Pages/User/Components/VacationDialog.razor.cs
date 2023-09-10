@@ -49,12 +49,6 @@ public sealed partial class VacationDialog : IDisposable
         return null;
     }
 
-    public bool DateInPast(DateTime? dateTime)
-    {
-        if (dateTime is null) return false;
-        return dateTime.Value.CompareTo(DateTime.UtcNow.Date) <= 0;
-    }
-
     private async Task Submit()
     {
         await _form.Validate();
