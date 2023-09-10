@@ -147,8 +147,8 @@ public class ScheduleControllerTests : BaseTest
         var body = new PlannedTraining
         {
             Name = "GetPinnedTrainings",
-            DateStart = DateTime.Today.AddHours(12).AddMinutes(50),
-            DateEnd = DateTime.Today.AddHours(13).AddMinutes(40),
+            DateStart = DateTime.Today.AddDays(1).AddHours(12).AddMinutes(50),
+            DateEnd = DateTime.Today.AddDays(1).AddHours(13).AddMinutes(40),
             CountToTrainingTarget = true,
             IsPinned = true,
         };
@@ -234,7 +234,7 @@ public class ScheduleControllerTests : BaseTest
     [Fact]
     public async Task DeleteTraining_NotInPinnedTest()
     {
-        var trainingId = await AddTraining("DeleteTraining_NotInPinned", false, isPinned: true);
+        var trainingId = await AddTraining("DeleteTraining_NotInPinned", false, DateTime.Today.AddDays(1).AddHours(10), DateTime.Today.AddDays(1).AddHours(12), true);
         var trainings = await ScheduleController.GetPinnedTrainingsForUser(); ;
         Assert.NotNull(trainings?.Value?.Trainings);
         trainings.Value.Trainings.Should().Contain(x => x.TrainingId == trainingId);
