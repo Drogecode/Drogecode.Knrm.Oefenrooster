@@ -14,6 +14,7 @@ public static class DefaultUserScheduleMapper
         return new PatchDefaultUserSchedule
         {
             UserDefaultAvailableId = defaultUserSchedule.UserDefaultAvailableId,
+            GroupId = defaultUserSchedule.GroupId,
             Available = defaultUserSchedule.Available,
             ValidFromUser = defaultUserSchedule.ValidFromUser,
             ValidUntilUser = defaultUserSchedule.ValidUntilUser,

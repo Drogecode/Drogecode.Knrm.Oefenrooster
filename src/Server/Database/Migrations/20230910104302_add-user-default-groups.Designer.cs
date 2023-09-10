@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230910094234_add-user-default-groups")]
+    [Migration("20230910104302_add-user-default-groups")]
     partial class adduserdefaultgroups
     {
         /// <inheritdoc />
@@ -31,7 +31,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CustomerId")
@@ -1071,6 +1071,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()

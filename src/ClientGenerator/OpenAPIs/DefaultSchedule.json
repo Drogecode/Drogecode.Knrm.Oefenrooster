@@ -5,12 +5,53 @@
     "version": "v1"
   },
   "paths": {
-    "/api/DefaultSchedule": {
+    "/api/DefaultSchedule/groups": {
       "get": {
         "tags": [
           "DefaultSchedule"
         ],
-        "operationId": "GetAll",
+        "operationId": "GetAllGroups",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllDefaultGroupsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllDefaultGroupsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllDefaultGroupsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DefaultSchedule/group/{id}": {
+      "get": {
+        "tags": [
+          "DefaultSchedule"
+        ],
+        "operationId": "GetAllByGroupId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -33,7 +74,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/DefaultSchedule": {
       "put": {
         "tags": [
           "DefaultSchedule"
@@ -157,6 +200,33 @@
         "type": "integer",
         "format": "int32"
       },
+      "DefaultGroup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDefault": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "DefaultSchedule": {
         "type": "object",
         "properties": {
@@ -213,6 +283,11 @@
             "format": "uuid",
             "nullable": true
           },
+          "groupId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "available": {
             "$ref": "#/components/schemas/Availabilty"
           },
@@ -232,6 +307,33 @@
         },
         "additionalProperties": false
       },
+      "GetAllDefaultGroupsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefaultGroup"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "MultipleDefaultSchedulesResponse": {
         "type": "object",
         "properties": {
@@ -244,6 +346,10 @@
           "elapsedMilliseconds": {
             "type": "integer",
             "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
           },
           "defaultSchedules": {
             "type": "array",
@@ -278,6 +384,11 @@
         "type": "object",
         "properties": {
           "userDefaultAvailableId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "groupId": {
             "type": "string",
             "format": "uuid",
             "nullable": true

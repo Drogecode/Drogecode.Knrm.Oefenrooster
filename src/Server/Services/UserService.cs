@@ -25,7 +25,7 @@ public class UserService : IUserService
             {
                 Id = dbUser.Id,
                 Name = dbUser.Name,
-                Created = dbUser.Created,
+                Created = dbUser.CreatedOn,
                 LastLogin = includeLastLogin ? dbUser.LastLogin : DateTime.MinValue,
                 UserFunctionId = dbUser.UserFunctionId,
             });
@@ -52,7 +52,7 @@ public class UserService : IUserService
                 Id = userId,
                 Name = userName,
                 Email = userEmail,
-                Created = DateTime.UtcNow,
+                CreatedOn = DateTime.UtcNow,
                 CustomerId = customerId
             });
             _database.SaveChanges();
@@ -89,7 +89,7 @@ public class UserService : IUserService
         {
             Id = dbUsers.Id,
             Name = dbUsers.Name,
-            Created = dbUsers.Created,
+            Created = dbUsers.CreatedOn,
             LastLogin = dbUsers.LastLogin,
             UserFunctionId = dbUsers.UserFunctionId,
         };
@@ -116,7 +116,7 @@ public class UserService : IUserService
             Id = user.Id,
             Name = user.Name,
             Email = "",
-            Created = DateTime.UtcNow,
+            CreatedOn = DateTime.UtcNow,
             CustomerId = customerId,
             UserFunctionId = user.UserFunctionId,
         });

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 
-public class MultipleDefaultSchedulesResponse : BaseMultipleResponse
+public class GetAllDefaultGroupsResponse : BaseMultipleResponse
 {
-    public List<DefaultSchedule>? DefaultSchedules { get; set; }
+    public List<DefaultGroup>? Groups { get; set; }
 }

@@ -1,42 +1,32 @@
 ﻿@page "/user/defaults"
 @attribute [Authorize]
+@using Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 <PageTitle>@L["Default schedule"]</PageTitle>
 
-@if (_defaultSchedules is not null)
+@if (_defaultGroups is not null)
 {
-    <MudExpansionPanels>
-        @foreach (var schedule in _defaultSchedules)
-        {
-            <MudExpansionPanel Text='@($"{LApp[schedule.WeekDay.ToString() ?? "None"]} - {schedule.TimeStart} {LApp["till"]} {schedule.TimeEnd}")'>
-                @if (schedule.UserSchedules is not null && schedule.UserSchedules.Count > 0)
-                {
-                    <MudDataGrid T="DefaultUserSchedule" Items="@schedule.UserSchedules" ReadOnly="true" Bordered="true" Dense="true">
-                        <Columns>
-                            <PropertyColumn Property="x => x.ValidFromUser" Title="@L["ValidFrom"]" />
-                            <PropertyColumn Property="x => x.ValidUntilUser" Title="@L["ValidUntil"]" />
-                            <PropertyColumn Property="x => x.Available" Title="@LApp["Availibility"]">
-                                <CellTemplate>
-                                    @LApp[context.Item.Available.ToString() ?? "None"]
-                                </CellTemplate>
-                            </PropertyColumn>
-                            <TemplateColumn CellClass="d-flex justify-end">
-                                <CellTemplate>
-                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(()=>OpenEditDefaultUserScheduleDialog(context.Item, schedule.Id, false))" />
-                                </CellTemplate>
-                            </TemplateColumn>
-                        </Columns>
-                    </MudDataGrid>
-                }
-                else
-                {
-                    <MudText>@L["No default configuration"]</MudText>
-                }
-                <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="@(()=>OpenEditDefaultUserScheduleDialog(null, schedule.Id, true))">@L["Add new default configuration"]</MudButton>
-            </MudExpansionPanel>
-        }
-    </MudExpansionPanels>
+    if (_defaultGroups.Count > 1)
+    {
+        <MudExpansionPanels>
+            @foreach (var group in _defaultGroups)
+            {
+                string groupName = GetGroupName(group);
+                <MudExpansionPanel Text='@($"{groupName} {group.ValidFrom} {LApp["till"]} {group.ValidUntil}")'>
+                    <DefaultPanel Group="@group" />
+                </MudExpansionPanel>
+            }
+        </MudExpansionPanels>
+    }
+    else if (_defaultGroups.Count == 1)
+    {
+        <DefaultPanel Group="@_defaultGroups.FirstOrDefault()" />
+    }
+    else
+    {
+        @L["No groups found :("]
+    }
 }
 else
 {

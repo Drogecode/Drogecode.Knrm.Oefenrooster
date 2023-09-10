@@ -32,7 +32,7 @@ public class PreComController : ControllerBase
 
     [HttpPost]
     [AllowAnonymous]
-    [Route("web-hook/{customerId}/{id}")]
+    [Route("web-hook/{customerId:guid}/{id:guid}")]
     public async Task<IActionResult> WebHook(Guid customerId, Guid id, [FromBody] object body, bool sendToHub = true)
     {
         try

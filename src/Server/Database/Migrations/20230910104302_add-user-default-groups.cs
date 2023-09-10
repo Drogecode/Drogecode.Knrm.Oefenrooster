@@ -11,6 +11,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.RenameColumn(
+                name: "Created",
+                table: "Users",
+                newName: "CreatedOn");
+
             migrationBuilder.AddColumn<Guid>(
                 name: "DefaultGroupId",
                 table: "UserDefaultAvailable",
@@ -68,7 +73,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     ValidFrom = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ValidUntil = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    ValidUntil = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDefault = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -162,6 +168,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
             migrationBuilder.DropColumn(
                 name: "TenantId",
                 table: "Customers");
+
+            migrationBuilder.RenameColumn(
+                name: "CreatedOn",
+                table: "Users",
+                newName: "Created");
         }
     }
 }

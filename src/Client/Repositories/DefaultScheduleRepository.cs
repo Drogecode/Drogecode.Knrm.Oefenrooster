@@ -15,10 +15,18 @@ public class DefaultScheduleRepository
         _offlineService = offlineService;
     }
 
-    public async Task<List<DefaultSchedule>?> GetAll(CancellationToken clt)
+    public async Task<List<DefaultGroup>?> GetAllGroups(CancellationToken clt)
     {
-        var result = await _offlineService.CachedRequestAsync("List_def_sche",
-            async () => await _defaultScheduleClient.GetAllAsync(clt),
+        var result = await _offlineService.CachedRequestAsync("List_def_group",
+            async () => await _defaultScheduleClient.GetAllGroupsAsync(clt),
+            clt: clt);
+        return result.Groups;
+    }
+
+    public async Task<List<DefaultSchedule>?> GetAllByGroupId(Guid groupId, CancellationToken clt)
+    {
+        var result = await _offlineService.CachedRequestAsync(string.Format("List_def_sche_{0}", groupId),
+            async () => await _defaultScheduleClient.GetAllByGroupIdAsync(groupId, clt),
             clt: clt);
         return result.DefaultSchedules;
     }

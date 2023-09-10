@@ -4,7 +4,6 @@ using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
-using Microsoft.Graph.Models.ODataErrors;
 using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -20,27 +19,68 @@ public class DefaultScheduleService : IDefaultScheduleService
         _dateTimeService = dateTimeService;
         _database = database;
     }
-
-    public async Task<List<DefaultSchedule>> GetAlldefaultsForUser(Guid customerId, Guid userId)
+    public async Task<GetAllDefaultGroupsResponse> GetAlldefaultGroupsForUser(Guid customerId, Guid userId)
     {
+
+        var sw = Stopwatch.StartNew();
+        var response = new GetAllDefaultGroupsResponse();
+        var list = new List<DefaultGroup>();
+
+        var dbGroups = await _database.UserDefaultGroups.Where(x => x.CustomerId == customerId && x.UserId == userId).ToListAsync();
+        foreach (var dbGroup in dbGroups)
+        {
+            list.Add(dbGroup.ToDefaultGroups());
+        }
+        if (!list.Any(x => x.IsDefault))
+        {
+            var newDefaultGroup = new DbUserDefaultGroup
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = customerId,
+                UserId = userId,
+                IsDefault = true,
+                ValidFrom = _dateTimeService.UtcNow(),
+                ValidUntil = DateTime.MaxValue,
+            };
+            _database.UserDefaultGroups.Add(newDefaultGroup);
+            await _database.SaveChangesAsync();
+            list.Add(newDefaultGroup.ToDefaultGroups());
+        }
+
+        response.Groups = list;
+        response.TotalCount = list.Count;
+        response.Success = list.Count > 0;
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
+
+    public async Task<MultipleDefaultSchedulesResponse> GetAlldefaultsForUser(Guid customerId, Guid userId, Guid groupId)
+    {
+        var sw = Stopwatch.StartNew();
+        var response = new MultipleDefaultSchedulesResponse();
         var list = new List<DefaultSchedule>();
-        var dbDefaults = _database.RoosterDefaults.Include(x => x.UserDefaultAvailables.Where(y => y.UserId == userId));
+        var group = await _database.UserDefaultGroups.FindAsync(groupId);
+        var groupIsDefault = group?.IsDefault ?? false;
+        var dbDefaults = _database.RoosterDefaults.Include(x => x.UserDefaultAvailables.Where(y => y.CustomerId == customerId && y.UserId == userId && (y.DefaultGroupId == groupId || (groupIsDefault && y.DefaultGroupId == null))));
         foreach (var dbDefault in dbDefaults)
         {
             if (dbDefault is null) continue;
-            var userDefaults = dbDefault?.UserDefaultAvailables?.Where(x => x.UserId == userId /*&& x.ValidFrom > _dateTimeService.UtcNow()*/).OrderBy(x => x.ValidFrom);
+            var userDefaults = dbDefault?.UserDefaultAvailables?.Where(x => x.UserId == userId && x.ValidUntil >= _dateTimeService.UtcNow()).OrderBy(x => x.ValidUntil);
             var innerList = new List<DefaultUserSchedule>();
             if (userDefaults is not null)
             {
                 foreach (var userDefault in userDefaults)
                 {
+                    if (userDefault is null) continue;
                     innerList.Add(new DefaultUserSchedule
                     {
-                        UserDefaultAvailableId = userDefault?.Id,
-                        Available = userDefault?.Available,
-                        ValidFromUser = userDefault?.ValidFrom,
-                        ValidUntilUser = userDefault?.ValidUntil,
-                        Assigned = userDefault?.Assigned ?? false,
+                        UserDefaultAvailableId = userDefault.Id,
+                        GroupId = userDefault.DefaultGroupId,
+                        Available = userDefault.Available,
+                        ValidFromUser = userDefault.ValidFrom,
+                        ValidUntilUser = userDefault.ValidUntil,
+                        Assigned = userDefault.Assigned,
                     });
                 }
             }
@@ -59,7 +99,12 @@ public class DefaultScheduleService : IDefaultScheduleService
             };
             list.Add(defaultSchedule);
         }
-        return list;
+        response.DefaultSchedules = list;
+        response.TotalCount = list.Count;
+        response.Success = list.Count > 0;
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
     }
 
     public async Task<PutDefaultScheduleResponse> PutDefaultSchedule(DefaultSchedule body, Guid customerId, Guid userId)
@@ -101,6 +146,7 @@ public class DefaultScheduleService : IDefaultScheduleService
 
         if (userDefault?.ValidFrom?.Date.CompareTo(_dateTimeService.UtcNow().Date) >= 0)
         {
+            userDefault.DefaultGroupId = body.GroupId;
             userDefault!.Available = body.Available;
             userDefault.Assigned = body.Assigned;
             userDefault.ValidFrom = validFrom;
@@ -112,6 +158,7 @@ public class DefaultScheduleService : IDefaultScheduleService
             if (userDefault is not null)
             {
                 userDefault.ValidUntil = _dateTimeService.UtcNow().AddDays(-1);
+                userDefault.DefaultGroupId = body.GroupId;
                 _database.UserDefaultAvailables.Update(userDefault);
                 validFrom = _dateTimeService.UtcNow();
             }
@@ -120,6 +167,7 @@ public class DefaultScheduleService : IDefaultScheduleService
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 CustomerId = customerId,
+                DefaultGroupId = body.GroupId,
                 RoosterDefaultId = body.DefaultId,
                 Available = body.Available,
                 Assigned = body.Assigned,
