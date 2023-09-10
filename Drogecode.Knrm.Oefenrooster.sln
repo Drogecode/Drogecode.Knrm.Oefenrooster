@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.TestClient", "tests\Drogecode.Knrm.Oefenrooster.TestClient\Drogecode.Knrm.Oefenrooster.TestClient.csproj", "{6C88A283-DE9A-4DBE-858F-7B0DA45587B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drogecode.Knrm.Oefenrooster.TestPreCom", "tests\Drogecode.Knrm.Oefenrooster.TestPreCom\Drogecode.Knrm.Oefenrooster.TestPreCom.csproj", "{3A28D93C-2B82-4F03-8C22-E90A69393760}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.TestPreCom", "tests\Drogecode.Knrm.Oefenrooster.TestPreCom\Drogecode.Knrm.Oefenrooster.TestPreCom.csproj", "{3A28D93C-2B82-4F03-8C22-E90A69393760}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6DE471B8-1129-4FE3-BC60-FCCF71A80409}"
 EndProject

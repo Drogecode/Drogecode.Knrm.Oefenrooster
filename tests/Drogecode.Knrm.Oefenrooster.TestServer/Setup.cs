@@ -47,6 +47,7 @@ public class Setup : Xunit.Di.Setup
             services.AddScoped<IVehicleService, VehicleService>();
             services.AddScoped<IUserSettingService, UserSettingService>();
             services.AddScoped<ICustomerSettingService, CustomerSettingService>();
+            services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 
             services.AddScoped<CalendarItemController>();
             services.AddScoped<ConfigurationController>();
@@ -57,6 +58,7 @@ public class Setup : Xunit.Di.Setup
             services.AddScoped<TrainingTypesController>();
             services.AddScoped<UserController>();
             services.AddScoped<VehicleController>();
+            services.AddScoped<DefaultScheduleController>();
 
             services.AddScoped<PreComHub>();
 

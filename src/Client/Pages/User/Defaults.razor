@@ -1,46 +1,32 @@
 ﻿@page "/user/defaults"
 @attribute [Authorize]
+@using Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 <PageTitle>@L["Default schedule"]</PageTitle>
 
-@if (_defaultSchedules is not null)
+@if (_defaultGroups is not null)
 {
-    <MudDataGrid Items="@_defaultSchedules.OrderBy(x=> x.Order).ThenBy(x=>x.TimeStart)"
-                 ReadOnly="true" EditMode="@DataGridEditMode.Cell">
-        <Columns>
-            <HierarchyColumn T="DefaultSchedule" />
-            <PropertyColumn Property="x => x.WeekDay" Title="@L["Weekday"]">
-                <CellTemplate>
-                    @LApp[context.Item.WeekDay.ToString() ?? "None"]
-                </CellTemplate>
-            </PropertyColumn>
-            <PropertyColumn Property="x => x.TimeStart" Title="@L["TimeStart"]" />
-            <PropertyColumn Property="x => x.TimeEnd" Title="@L["TimeEnd"]" />
-            <PropertyColumn Property="x => x.Available" Title="@L["Current setting"]">
-                <CellTemplate>
-                    @LApp[context.Item.Available.ToString() ?? "None"]
-                </CellTemplate>
-            </PropertyColumn>
-        </Columns>
-        <ChildRowContent>
-            <MudCard>
-                <MudCardHeader>
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h6">@L["Configure your default availabilty here"]</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent>
-                    <MudSelect T="Availabilty?" Variant="Variant.Text" @bind-Value="context.Item.Available" SelectedValuesChanged="()=>OnChange(context.Item)" AdornmentColor="@PlannerHelper.ColorAvailabilty(context.Item.Available)">
-                        <MudSelectItem T="Availabilty?" Value="Availabilty.None">@LApp["None"]</MudSelectItem>
-                        <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
-                        <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
-                        <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
-                    </MudSelect>
-                </MudCardContent>
-            </MudCard>
-        </ChildRowContent>
-    </MudDataGrid>
+    if (_defaultGroups.Count > 1)
+    {
+        <MudExpansionPanels>
+            @foreach (var group in _defaultGroups)
+            {
+                string groupName = GetGroupName(group);
+                <MudExpansionPanel Text='@($"{groupName} {group.ValidFrom} {LApp["till"]} {group.ValidUntil}")'>
+                    <DefaultPanel Group="@group" />
+                </MudExpansionPanel>
+            }
+        </MudExpansionPanels>
+    }
+    else if (_defaultGroups.Count == 1)
+    {
+        <DefaultPanel Group="@_defaultGroups.FirstOrDefault()" />
+    }
+    else
+    {
+        @L["No groups found :("]
+    }
 }
 else
 {

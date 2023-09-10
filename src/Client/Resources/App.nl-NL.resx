@@ -159,6 +159,9 @@
   <data name="Saturday" xml:space="preserve">
     <value>Zaterdag</value>
   </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Opslaan</value>
+  </data>
   <data name="Sunday" xml:space="preserve">
     <value>Zondag</value>
   </data>

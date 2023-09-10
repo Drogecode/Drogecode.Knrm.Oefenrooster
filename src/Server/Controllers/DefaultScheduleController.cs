@@ -30,38 +30,82 @@ public class DefaultScheduleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("")]
-    public async Task<ActionResult<MultipleDefaultSchedulesResponse>> GetAll(CancellationToken token = default)
+    [Route("groups")]
+    public async Task<ActionResult<GetAllDefaultGroupsResponse>> GetAllGroups(CancellationToken token = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            List<DefaultSchedule> result = await _defaultScheduleService.GetAlldefaultsForUser(customerId, userId);
+            var result = await _defaultScheduleService.GetAlldefaultGroupsForUser(customerId, userId);
 
-            return Ok(new MultipleDefaultSchedulesResponse { DefaultSchedules = result });
+            return result;
         }
         catch (Exception ex)
         {
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in GetAll default schedules");
+            _logger.LogError(ex, "Exception in GetAllGroups default schedules");
             return BadRequest();
         }
     }
 
-    [HttpPatch]
-    [Route("")]
-    public async Task<ActionResult<PatchDefaultScheduleForUserResponse>> PatchDefaultScheduleForUser([FromBody] DefaultSchedule body)
+    [HttpGet]
+    [Route("group/{id:guid}")]
+    public async Task<ActionResult<MultipleDefaultSchedulesResponse>> GetAllByGroupId(Guid id, CancellationToken token = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            PatchDefaultScheduleForUserResponse result = await _defaultScheduleService.PatchDefaultScheduleForUser(body, customerId, userId);
+            var result = await _defaultScheduleService.GetAlldefaultsForUser(customerId, userId, id);
 
-            return Ok(result);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in GetAllByGroupId default schedules");
+            return BadRequest();
+        }
+    }
+
+    [HttpPut]
+    [Route("")]
+    public async Task<ActionResult<PutDefaultScheduleResponse>> PutDefaultSchedule([FromBody] DefaultSchedule body)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var result = await _defaultScheduleService.PutDefaultSchedule(body, customerId, userId);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in PutDefaultSchedule");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
+    [Route("user")]
+    public async Task<ActionResult<PatchDefaultScheduleForUserResponse>> PatchDefaultScheduleForUser([FromBody] PatchDefaultUserSchedule body)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var result = await _defaultScheduleService.PatchDefaultScheduleForUser(body, customerId, userId);
+
+            return result;
         }
         catch (Exception ex)
         {

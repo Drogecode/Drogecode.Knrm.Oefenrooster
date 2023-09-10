@@ -5,13 +5,22 @@
     "version": "v1"
   },
   "paths": {
-    "/api/PreCom/web-hook/{id}": {
+    "/api/PreCom/web-hook/{customerId}/{id}": {
       "post": {
         "tags": [
           "PreCom"
         ],
         "operationId": "WebHook",
         "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
           {
             "name": "id",
             "in": "path",

@@ -3,6 +3,7 @@ using System;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230909114939_customer-timezone")]
+    partial class customertimezone
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,7 +31,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CustomerId")
@@ -128,32 +131,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("ClientIdLogin")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClientIdServer")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClientSecretLogin")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClientSecretServer")
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Domain")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Instance")
-                        .HasColumnType("text");
-
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("TenantId")
                         .HasColumnType("text");
 
                     b.Property<string>("TimeZone")
@@ -168,15 +150,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            ClientIdLogin = "a9c68159-901c-449a-83e0-85243364e3cc",
-                            ClientIdServer = "220e1008-1131-4e82-a388-611cd773ddf8",
-                            ClientSecretLogin = "",
-                            ClientSecretServer = "",
                             Created = new DateTime(2022, 10, 12, 18, 12, 5, 0, DateTimeKind.Utc),
-                            Domain = "hui.nu",
-                            Instance = "https://login.microsoftonline.com/",
                             Name = "KNRM Huizen",
-                            TenantId = "d9754755-b054-4a9c-a77f-da42a4009365",
                             TimeZone = "Europe/Amsterdam"
                         });
                 });
@@ -1032,9 +1007,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("DefaultGroupId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("RoosterDefaultId")
                         .HasColumnType("uuid");
 
@@ -1051,47 +1023,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("DefaultGroupId");
-
                     b.HasIndex("RoosterDefaultId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("UserDefaultAvailable");
-                });
-
-            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserDefaultGroup", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ValidFrom")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("ValidUntil")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserDefaultGroup");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserFunctions", b =>
@@ -1633,10 +1569,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserDefaultGroup", "DefaultGroup")
-                        .WithMany("UserDefaultAvailables")
-                        .HasForeignKey("DefaultGroupId");
-
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterDefault", "RoosterDefault")
                         .WithMany("UserDefaultAvailables")
                         .HasForeignKey("RoosterDefaultId")
@@ -1651,28 +1583,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Navigation("Customer");
 
-                    b.Navigation("DefaultGroup");
-
                     b.Navigation("RoosterDefault");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserDefaultGroup", b =>
-                {
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
-                        .WithMany("UserDefaultGroups")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "User")
-                        .WithMany("UserDefaultGroups")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
 
                     b.Navigation("User");
                 });
@@ -1756,8 +1667,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Navigation("UserDefaultAvailables");
 
-                    b.Navigation("UserDefaultGroups");
-
                     b.Navigation("UserHolidays");
 
                     b.Navigation("UserSettings");
@@ -1786,8 +1695,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("RoosterTrainings");
 
                     b.Navigation("UserDefaultAvailables");
-
-                    b.Navigation("UserDefaultGroups");
 
                     b.Navigation("UserFunctions");
 
@@ -1829,11 +1736,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("RoosterDefaults");
 
                     b.Navigation("RoosterTrainings");
-                });
-
-            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserDefaultGroup", b =>
-                {
-                    b.Navigation("UserDefaultAvailables");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserFunctions", b =>

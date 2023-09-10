@@ -1,7 +1,7 @@
 ﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 
 [Serializable]
-public class DrogeCodeToLongException : Exception
+public class DrogeCodeToLongException : DrogeCodeException
 {
     public DrogeCodeToLongException()
     {

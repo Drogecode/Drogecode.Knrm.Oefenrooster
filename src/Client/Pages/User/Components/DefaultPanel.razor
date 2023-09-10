@@ -1,0 +1,58 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
+@if (_defaultSchedules is not null)
+{
+    <MudDataGrid Items="@_defaultSchedules">
+        <Columns>
+            <HierarchyColumn T="DefaultSchedule" />
+            <PropertyColumn Property="x => x.WeekDay" Title="@L["Weekday"]">
+                <CellTemplate>
+                    @LApp[context.Item.WeekDay.ToString() ?? "None"]
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.TimeStart" Title="@L["TimeStart"]" />
+            <PropertyColumn Property="x => x.TimeEnd" Title="@L["TimeEnd"]" />
+            <TemplateColumn Title="@L["Current setting"]">
+                <CellTemplate>
+                    @{
+                        DefaultUserSchedule userSchedule = context.Item.UserSchedules?.FirstOrDefault() ?? new DefaultUserSchedule();
+                    }
+                    @LApp[userSchedule?.Available.ToString() ?? "None"]
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <ChildRowContent>
+            @{
+                bool isNew = false;
+                DefaultUserSchedule? userSchedule = context.Item.UserSchedules?.FirstOrDefault();
+                if (userSchedule is null)
+                {
+                    userSchedule = new DefaultUserSchedule();
+                    isNew = true;
+                }
+            }
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">@L["Configure your default availabilty here"]</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudSelect T="Availabilty?" Variant="Variant.Text" Value="userSchedule.Available" ValueChanged="async(e)=>await OnChange(e, userSchedule, context.Item.Id, isNew)" AdornmentColor="@PlannerHelper.ColorAvailabilty(userSchedule?.Available)">
+                        <MudSelectItem T="Availabilty?" Value="Availabilty.None">@LApp["None"]</MudSelectItem>
+                        <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
+                        <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
+                        <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
+                    </MudSelect>
+                </MudCardContent>
+            </MudCard>
+        </ChildRowContent>
+    </MudDataGrid>
+}
+else
+{
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+}

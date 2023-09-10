@@ -1,17 +1,16 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
-<MudDialog>
+﻿<MudDialog>
     <DialogContent>
         @if (Holiday is not null)
         {
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
                 <MudTextField Label="@L["Description"]" @bind-Value="Holiday.Description" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" />
-                <MudDatePicker Label="@L["Valid from"]" @bind-Date="Holiday.ValidFrom" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))" Disabled="@DateInPast(_originalHoliday?.ValidFrom)" Required />
-                <MudDatePicker Label="@L["Valid till"]" @bind-Date="Holiday.ValidUntil" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" Disabled="@DateInPast(_originalHoliday?.ValidUntil)" Required />
+                <MudDatePicker Label="@L["Valid from"]" @bind-Date="Holiday.ValidFrom" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))" Disabled="@(_originalHoliday?.ValidFrom?.InPast() ?? false)" Required />
+                <MudDatePicker Label="@L["Valid till"]" @bind-Date="Holiday.ValidUntil" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" Disabled="@(_originalHoliday?.ValidUntil?.InPast() ?? false)" Required />
             </MudForm>
         }
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">@LApp["Ok"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">@LApp["Submit"]</MudButton>
     </DialogActions>
 </MudDialog>

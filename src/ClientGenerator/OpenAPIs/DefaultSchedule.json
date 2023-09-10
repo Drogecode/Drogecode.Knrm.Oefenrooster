@@ -5,12 +5,53 @@
     "version": "v1"
   },
   "paths": {
-    "/api/DefaultSchedule": {
+    "/api/DefaultSchedule/groups": {
       "get": {
         "tags": [
           "DefaultSchedule"
         ],
-        "operationId": "GetAll",
+        "operationId": "GetAllGroups",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllDefaultGroupsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllDefaultGroupsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllDefaultGroupsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DefaultSchedule/group/{id}": {
+      "get": {
+        "tags": [
+          "DefaultSchedule"
+        ],
+        "operationId": "GetAllByGroupId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -33,12 +74,14 @@
             }
           }
         }
-      },
-      "patch": {
+      }
+    },
+    "/api/DefaultSchedule": {
+      "put": {
         "tags": [
           "DefaultSchedule"
         ],
-        "operationId": "PatchDefaultScheduleForUser",
+        "operationId": "PutDefaultSchedule",
         "requestBody": {
           "content": {
             "application/json": {
@@ -54,6 +97,55 @@
             "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/DefaultSchedule"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutDefaultScheduleResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutDefaultScheduleResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutDefaultScheduleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DefaultSchedule/user": {
+      "patch": {
+        "tags": [
+          "DefaultSchedule"
+        ],
+        "operationId": "PatchDefaultScheduleForUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchDefaultUserSchedule"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchDefaultUserSchedule"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchDefaultUserSchedule"
               }
             }
           }
@@ -108,6 +200,33 @@
         "type": "integer",
         "format": "int32"
       },
+      "DefaultGroup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDefault": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "DefaultSchedule": {
         "type": "object",
         "properties": {
@@ -120,16 +239,8 @@
             "format": "uuid",
             "nullable": true
           },
-          "userDefaultAvailableId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
           "weekDay": {
             "$ref": "#/components/schemas/DayOfWeek"
-          },
-          "available": {
-            "$ref": "#/components/schemas/Availabilty"
           },
           "timeStart": {
             "type": "string",
@@ -147,6 +258,39 @@
             "type": "string",
             "format": "date-time"
           },
+          "countToTrainingTarget": {
+            "type": "boolean"
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userSchedules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefaultUserSchedule"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DefaultUserSchedule": {
+        "type": "object",
+        "properties": {
+          "userDefaultAvailableId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "groupId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "available": {
+            "$ref": "#/components/schemas/Availabilty"
+          },
           "validFromUser": {
             "type": "string",
             "format": "date-time",
@@ -157,15 +301,35 @@
             "format": "date-time",
             "nullable": true
           },
-          "countToTrainingTarget": {
-            "type": "boolean"
-          },
           "assigned": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetAllDefaultGroupsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "order": {
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefaultGroup"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -182,6 +346,10 @@
           "elapsedMilliseconds": {
             "type": "integer",
             "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
           },
           "defaultSchedules": {
             "type": "array",
@@ -207,7 +375,73 @@
             "format": "int64"
           },
           "patched": {
+            "$ref": "#/components/schemas/PatchDefaultUserSchedule"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PatchDefaultUserSchedule": {
+        "type": "object",
+        "properties": {
+          "userDefaultAvailableId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "groupId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "available": {
+            "$ref": "#/components/schemas/Availabilty"
+          },
+          "validFromUser": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "validUntilUser": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "assigned": {
+            "type": "boolean"
+          },
+          "defaultId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PutDefaultScheduleError": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "PutDefaultScheduleResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "defaultSchedule": {
             "$ref": "#/components/schemas/DefaultSchedule"
+          },
+          "error": {
+            "$ref": "#/components/schemas/PutDefaultScheduleError"
           }
         },
         "additionalProperties": false

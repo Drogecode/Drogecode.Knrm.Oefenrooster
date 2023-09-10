@@ -12,7 +12,7 @@ public class DbUsers
     public Guid? UserFunctionId { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
-    public DateTime Created { get; set; }
+    public DateTime CreatedOn { get; set; }
     public DateTime LastLogin { get; set; }
     public DateTime? DeletedOn { get; set; }
     public Guid? DeletedBy { get; set; }
@@ -20,6 +20,7 @@ public class DbUsers
     public DbCustomers Customer { get; set; }
     public DbUserFunctions? UserFunction{ get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
+    public ICollection<DbUserDefaultGroup>? UserDefaultGroups { get; set; }
     public ICollection<DbUserDefaultAvailable>? UserDefaultAvailables { get; set; }
     public ICollection<DbUserHolidays>? UserHolidays { get; set; }
     public ICollection<DbUserSettings>? UserSettings { get; set; }

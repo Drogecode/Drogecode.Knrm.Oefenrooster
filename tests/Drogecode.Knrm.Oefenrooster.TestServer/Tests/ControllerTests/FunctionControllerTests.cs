@@ -21,8 +21,10 @@ public class FunctionControllerTests : BaseTest
         TrainingTypesController trainingTypesController,
         CalendarItemController calendarItemController,
         PreComController preComController,
-        VehicleController vehicleController) :
-        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController, vehicleController)
+        VehicleController vehicleController,
+        DefaultScheduleController defaultScheduleController) :
+        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController,
+            vehicleController, defaultScheduleController)
     {
     }
 
