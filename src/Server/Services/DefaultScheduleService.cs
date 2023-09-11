@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Errors;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using System.Diagnostics;
 
@@ -107,6 +108,32 @@ public class DefaultScheduleService : IDefaultScheduleService
         return response;
     }
 
+    public async Task<PutGroupResponse> PutGroup(DefaultGroup body, Guid customerId, Guid userId)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new PutGroupResponse();
+
+        var dbDefault = await _database.UserDefaultGroups.FirstOrDefaultAsync(x => x.Id == body.Id);
+        if (dbDefault is not null)
+        {
+            sw.Stop();
+            result.Success = false;
+            result.Error = PutError.IdAlreadyExists;
+            result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+            return result;
+        }
+        dbDefault = body.ToDbUserDefaultGroup(customerId, userId);
+        dbDefault.Id = Guid.NewGuid();
+        await _database.UserDefaultGroups.AddAsync(dbDefault);
+        result.Success = (await _database.SaveChangesAsync()) >= 1;
+        result.Group = dbDefault.ToDefaultGroups();
+
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
     public async Task<PutDefaultScheduleResponse> PutDefaultSchedule(DefaultSchedule body, Guid customerId, Guid userId)
     {
         var sw = Stopwatch.StartNew();
@@ -117,7 +144,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         {
             sw.Stop();
             result.Success = false;
-            result.Error = PutDefaultScheduleError.IdAlreadyExists;
+            result.Error = PutError.IdAlreadyExists;
             result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
             return result;
         }

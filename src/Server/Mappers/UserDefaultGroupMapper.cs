@@ -16,11 +16,13 @@ public static class UserDefaultGroupMapper
             IsDefault = defaultGroup.IsDefault,
         };
     }
-    public static DbUserDefaultGroup ToDbUserDefaultGroup(this DefaultGroup defaultGroup)
+    public static DbUserDefaultGroup ToDbUserDefaultGroup(this DefaultGroup defaultGroup, Guid customerId, Guid userId)
     {
         return new DbUserDefaultGroup
         {
             Id = defaultGroup.Id,
+            CustomerId = customerId,
+            UserId = userId,
             Name = defaultGroup.Name,
             ValidFrom = defaultGroup.ValidFrom,
             ValidUntil = defaultGroup.ValidUntil,

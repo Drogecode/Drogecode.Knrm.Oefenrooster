@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 
-public class PutDefaultScheduleResponse : BaseResponse
+public class PutGroupResponse : BaseResponse
 {
-    public DefaultSchedule? DefaultSchedule { get; set; }
+    public DefaultGroup? Group { get; set; }
     public PutError Error { get; set; }
-
 }
