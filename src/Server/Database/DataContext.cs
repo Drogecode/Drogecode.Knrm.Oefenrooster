@@ -438,7 +438,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             {
                 Id = new Guid("532b68c3-328f-45a2-8a7e-fdf7f9eee111"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                Text = "KNRM Kompas onderwerp; ntb",
+                Text = "KNRM Kompas onderwerp; Algemene kennis",
                 Month = 9,
                 Year = null,
                 Type = CalendarItemType.Custom,
@@ -449,7 +449,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             {
                 Id = new Guid("40cbe7bc-4ed4-4897-8cb9-357785cb58c9"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                Text = "KNRM Kompas onderwerp; ntb",
+                Text = "KNRM Kompas onderwerp; Communicatie",
                 Month = 10,
                 Year = null,
                 Type = CalendarItemType.Custom,
@@ -460,7 +460,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             {
                 Id = new Guid("ca0fe95d-3b84-4136-bcee-ce080228c324"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                Text = "KNRM Kompas onderwerp; ntb",
+                Text = "KNRM Kompas onderwerp; SAR en Hulpverlening",
                 Month = 11,
                 Year = null,
                 Type = CalendarItemType.Custom,
@@ -471,7 +471,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             {
                 Id = new Guid("b858e7fc-02ea-4a2a-a49d-f55c3a912c9c"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                Text = "KNRM Kompas onderwerp; ntb",
+                Text = "KNRM Kompas onderwerp; Navigatie",
                 Month = 12,
                 Year = null,
                 Type = CalendarItemType.Custom,
