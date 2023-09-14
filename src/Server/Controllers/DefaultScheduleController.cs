@@ -74,7 +74,30 @@ public class DefaultScheduleController : ControllerBase
     }
 
     [HttpPut]
-    [Route("")]
+    [Route("group")]
+    public async Task<ActionResult<PutGroupResponse>> PutGroup([FromBody] DefaultGroup body)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            PutGroupResponse result = await _defaultScheduleService.PutGroup(body, customerId, userId);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in PutGroup");
+            return BadRequest();
+        }
+    }
+
+
+    [HttpPut]
+    [Route("schedule")]
     public async Task<ActionResult<PutDefaultScheduleResponse>> PutDefaultSchedule([FromBody] DefaultSchedule body)
     {
         try

@@ -119,4 +119,63 @@ public class DefaultScheduleControllerTests : BaseTest
         resultPatched!.Value!.Patched!.ValidFromUser.Should().Be(DateTime.Today.AddDays(7));
         resultPatched!.Value!.Patched!.ValidUntilUser.Should().Be(DateTime.Today.AddDays(19));
     }
+
+    [Fact]
+    public async Task GetAllGroupsTest()
+    {
+        var result = await DefaultScheduleController.GetAllGroups();
+        Assert.NotNull(result.Value?.Groups);
+        result.Value.Groups.Count.Should().Be(1);
+        result.Value.Groups.FirstOrDefault()!.IsDefault.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task PutGroupTest()
+    {
+        var body = new DefaultGroup
+        {
+            Name = "PutGroupTest",
+            ValidFrom = DateTime.Today.AddDays(4),
+            ValidUntil = DateTime.Today.AddDays(9),
+            IsDefault = false,
+        };
+        var result = await DefaultScheduleController.PutGroup(body);
+        Assert.NotNull(result.Value?.Group?.Id);
+        var resultAllGroups = await DefaultScheduleController.GetAllGroups();
+        resultAllGroups.Value!.Groups!.Should().Contain(x => x.Id == result.Value!.Group!.Id);
+    }
+
+    [Fact]
+    public async Task GetAllForDefaultGroupTest()
+    {
+        var idDefaultGroup = (await DefaultScheduleController.GetAllGroups()).Value!.Groups!.FirstOrDefault(x => x.IsDefault)!.Id;
+        var allForGroup = await DefaultScheduleController.GetAllByGroupId(idDefaultGroup);
+        Assert.NotEmpty(allForGroup.Value!.DefaultSchedules!);
+    }
+
+    [Fact]
+    public async Task PutScheduleToNewGroupTest()
+    {
+        var body = new DefaultGroup
+        {
+            Name = "PutGroupTest",
+            ValidFrom = DateTime.Today.AddDays(4),
+            ValidUntil = DateTime.Today.AddDays(9),
+            IsDefault = false,
+        };
+        var newGroup = (await DefaultScheduleController.PutGroup(body)).Value!.Group;
+
+        var defaultSchedule = new PatchDefaultUserSchedule
+        {
+            GroupId = newGroup!.Id,
+            UserDefaultAvailableId = null,
+            DefaultId = DefaultDefaultSchedule,
+            Assigned = false,
+            Available = Availabilty.Available,
+            ValidFromUser = newGroup!.ValidFrom,
+            ValidUntilUser = newGroup!.ValidUntil,
+        };
+        var patchResult = await DefaultScheduleController.PatchDefaultScheduleForUser(defaultSchedule);
+        Assert.NotNull(patchResult.Value?.Patched?.UserDefaultAvailableId);
+    }
 }
