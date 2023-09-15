@@ -177,5 +177,18 @@ public class DefaultScheduleControllerTests : BaseTest
         };
         var patchResult = await DefaultScheduleController.PatchDefaultScheduleForUser(defaultSchedule);
         Assert.NotNull(patchResult.Value?.Patched?.UserDefaultAvailableId);
+
+        var allForGroup = await DefaultScheduleController.GetAllByGroupId(newGroup.Id);
+        allForGroup.Value!.DefaultSchedules!.FirstOrDefault(x=>x.Id == DefaultDefaultSchedule)!.UserSchedules.Should().Contain(x => x.UserDefaultAvailableId == patchResult.Value!.Patched!.UserDefaultAvailableId);
+
+        var idDefaultGroup = (await DefaultScheduleController.GetAllGroups()).Value!.Groups!.FirstOrDefault(x => x.IsDefault)!.Id;
+        var allForDefaultGroup = await DefaultScheduleController.GetAllByGroupId(idDefaultGroup);
+        allForDefaultGroup.Value!.DefaultSchedules!.FirstOrDefault(x => x.Id == DefaultDefaultSchedule)!.UserSchedules.Should().NotContain(x => x.UserDefaultAvailableId == patchResult.Value!.Patched!.UserDefaultAvailableId);
+    }
+
+    [Fact]
+    public async Task ConflictingDefaultsTest()
+    {
+
     }
 }
