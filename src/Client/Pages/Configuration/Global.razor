@@ -41,6 +41,21 @@ else if (_specialDatesUpdated == false)
 
 @if (_users != null && _functions != null)
 {
+
+    <MudPaper>
+        <MudList Clickable="false">
+            <MudText>vijf meest recente logins maximaal 7 dagen geleden</MudText>
+            @foreach (var user in _users.Where(x => x.LastLogin >= DateTime.Today.AddDays(-7)).OrderByDescending(x => x.LastLogin).Take(5))
+            {
+                <MudListItem>
+                    <div class="flex space-x-4">
+                        <div>@user.Name</div>
+                        <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin" />
+                    </div>
+                </MudListItem>
+            }
+        </MudList>
+    </MudPaper>
     <MudPaper>
         <MudList Clickable="false">
             @foreach (var function in _functions.OrderBy(x => x.Order))
