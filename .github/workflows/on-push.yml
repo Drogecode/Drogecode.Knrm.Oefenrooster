@@ -1,6 +1,12 @@
 name: On push
 
-on: [push, pull_request]
+on: 
+    push:
+        branches:
+        - '**'
+        tags-ignore:
+        - '**'
+    pull_request:
 
 jobs:
   build:
