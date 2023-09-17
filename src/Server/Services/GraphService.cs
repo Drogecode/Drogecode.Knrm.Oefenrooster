@@ -105,7 +105,7 @@ public class GraphService : IGraphService
         await GraphHelper.GetLists();
     }
 
-    public async Task<MultipleSharePointActionsResponse> GetListActionsUser(string userName, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
+    public async Task<MultipleSharePointActionsResponse> GetListActionsUser(List<string> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var keyExp = string.Format(SP_ACTIONS_EXP, customerId);
@@ -131,13 +131,13 @@ public class GraphService : IGraphService
         _memoryCache.TryGetValue<List<SharePointAction>>(keyActions, out var sharePointActions);
         if (sharePointActions == null)
         {
-            var users = await GetAllSharePointUsers(customerId, clt);
-            sharePointActions = await GraphHelper.GetListActions(customerId, users);
+            var spUsers = await GetAllSharePointUsers(customerId, clt);
+            sharePointActions = await GraphHelper.GetListActions(customerId, spUsers);
             cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(30));
             cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
             _ = _memoryCache.Set(keyActions, sharePointActions, cacheOptions);
         }
-        var listWhere = sharePointActions?.Where(x => x.Users.Any(y => string.Compare(y.Name, userName) == 0));
+        var listWhere = sharePointActions?.Where(x => x.Users.Any(y => users.All(x=> string.Compare(y.Name, x) == 0)) );
         var sharePointActionsUser = new MultipleSharePointActionsResponse
         {
             SharePointActions = listWhere?.Skip(skip).Take(count).ToList(),
@@ -148,7 +148,7 @@ public class GraphService : IGraphService
         return sharePointActionsUser;
     }
 
-    public async Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(string userName, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
+    public async Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(List<string> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var keyExp = string.Format(SP_TRAININGS_EXP, customerId);
@@ -174,13 +174,13 @@ public class GraphService : IGraphService
         _memoryCache.TryGetValue<List<SharePointTraining>>(keyTrainings, out var sharePointTrainings);
         if (sharePointTrainings is null)
         {
-            var users = await GetAllSharePointUsers(customerId, clt);
-            sharePointTrainings = await GraphHelper.GetListTraining(customerId, users);
+            var spUsers = await GetAllSharePointUsers(customerId, clt);
+            sharePointTrainings = await GraphHelper.GetListTraining(customerId, spUsers);
             cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(30));
             cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
             _ = _memoryCache.Set(keyTrainings, sharePointTrainings, cacheOptions);
         }
-        var listWhere = sharePointTrainings?.Where(x => x.Users.Any(y => string.Compare(y.Name, userName) == 0));
+        var listWhere = sharePointTrainings?.Where(x => x.Users.Any(y => users.All(x => string.Compare(y.Name, x) == 0)));
         var sharePointTrainingsUser = new MultipleSharePointTrainingsResponse
         {
             SharePointTrainings = listWhere?.Skip(skip).Take(count).ToList(),

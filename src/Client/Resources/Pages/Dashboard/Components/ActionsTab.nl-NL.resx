@@ -117,40 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Actions" xml:space="preserve">
-    <value>Actions</value>
-  </data>
   <data name="Description" xml:space="preserve">
-    <value>Description</value>
+    <value>Omschrijving</value>
   </data>
   <data name="From who" xml:space="preserve">
-    <value>From who</value>
-  </data>
-  <data name="Future trainings" xml:space="preserve">
-    <value>Future trainings</value>
+    <value>Van wie</value>
   </data>
   <data name="Most recent actions from SharePoint" xml:space="preserve">
-    <value>Most recent actions from SharePoint</value>
-  </data>
-  <data name="Most recent trainings from SharePoint" xml:space="preserve">
-    <value>Most recent trainings from SharePoint</value>
-  </data>
-  <data name="No future trainings" xml:space="preserve">
-    <value>No future trainings</value>
-  </data>
-  <data name="Pinned trainings" xml:space="preserve">
-    <value>Pinned trainings</value>
-  </data>
-  <data name="Planner" xml:space="preserve">
-    <value>Planner</value>
+    <value>Meest recente acties van SharePoint</value>
   </data>
   <data name="Prio" xml:space="preserve">
     <value>Prio</value>
   </data>
   <data name="Start" xml:space="preserve">
-    <value>Start</value>
-  </data>
-  <data name="Trainings" xml:space="preserve">
-    <value>Trainings</value>
+    <value>Vanaf</value>
   </data>
 </root>

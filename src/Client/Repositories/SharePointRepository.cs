@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 
@@ -24,6 +25,18 @@ public class SharePointRepository
     public async Task<List<SharePointAction>?> GetLastActionsForCurrentUser(int count, int skip, CancellationToken clt)
     {
         var result = await _sharePointClient.GetLastActionsForCurrentUserAsync(count, skip, clt);
+        return result.SharePointActions?.ToList();
+    }
+
+    public async Task<List<SharePointAction>?> GetLastActionsFoSelectedUser(IEnumerable<DrogeUser> users, int count, int skip, CancellationToken clt)
+    {
+        var workingList = new List<string>();
+        foreach(var user in users)
+        {
+            workingList.Add(user.Name);
+        }
+        var usersAsstring = System.Text.Json.JsonSerializer.Serialize(workingList);
+        var result = await _sharePointClient.GetLastActionsAsync(usersAsstring, count, skip, clt);
         return result.SharePointActions?.ToList();
     }
 }

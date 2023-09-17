@@ -55,6 +55,64 @@
         }
       }
     },
+    "/api/SharePoint/training/{users}/{count}/{skip}": {
+      "get": {
+        "tags": [
+          "SharePoint"
+        ],
+        "operationId": "GetLastTrainings",
+        "parameters": [
+          {
+            "name": "users",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "count",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleSharePointTrainingsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleSharePointTrainingsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleSharePointTrainingsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/SharePoint/action/user/{count}/{skip}": {
       "get": {
         "tags": [
@@ -62,6 +120,64 @@
         ],
         "operationId": "GetLastActionsForCurrentUser",
         "parameters": [
+          {
+            "name": "count",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleSharePointActionsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleSharePointActionsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleSharePointActionsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SharePoint/action/{users}/{count}/{skip}": {
+      "get": {
+        "tags": [
+          "SharePoint"
+        ],
+        "operationId": "GetLastActions",
+        "parameters": [
+          {
+            "name": "users",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "count",
             "in": "path",

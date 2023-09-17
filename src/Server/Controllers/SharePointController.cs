@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -42,8 +43,35 @@ public class SharePointController : ControllerBase
             var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var users = new List<string>() { userName };
+
             _graphService.InitializeGraph();
-            var result = await _graphService.GetListTrainingUser(userName, userId, count, skip, customerId, clt);
+            var result = await _graphService.GetListTrainingUser(users, userId, count, skip, customerId, clt);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetLastTrainingsForCurrentUser");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("training/{users}/{count:int}/{skip:int}")]
+    public async Task<ActionResult<MultipleSharePointTrainingsResponse>> GetLastTrainings(string users, int count, int skip, CancellationToken clt = default)
+    {
+        try
+        {
+            if (count > 30) return Forbid();
+            var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var usersAsList = System.Text.Json.JsonSerializer.Deserialize<List<string>>(users);
+            if (usersAsList is null)
+                return BadRequest("users is null");
+
+            _graphService.InitializeGraph();
+            var result = await _graphService.GetListTrainingUser(usersAsList, userId, count, skip, customerId, clt);
             return Ok(result);
         }
         catch (Exception ex)
@@ -63,9 +91,34 @@ public class SharePointController : ControllerBase
             var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var users = new List<string>() { userName };
 
             _graphService.InitializeGraph();
-            var result = await _graphService.GetListActionsUser(userName, userId, count, skip, customerId, clt);
+            var result = await _graphService.GetListActionsUser(users, userId, count, skip, customerId, clt);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetLastActionsForCurrentUser");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("action/{users}/{count:int}/{skip:int}")]
+    public async Task<ActionResult<MultipleSharePointActionsResponse>> GetLastActions(string users, int count, int skip, CancellationToken clt = default)
+    {
+        try
+        {
+            if (count > 30) return Forbid();
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var usersAsList = System.Text.Json.JsonSerializer.Deserialize<List<string>>(users);
+            if (usersAsList is null)
+                return BadRequest("users is null");
+
+            _graphService.InitializeGraph();
+            var result = await _graphService.GetListActionsUser(usersAsList, userId, count, skip, customerId, clt);
             return Ok(result);
         }
         catch (Exception ex)

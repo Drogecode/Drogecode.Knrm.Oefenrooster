@@ -1,0 +1,67 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+@using System.Text.RegularExpressions;
+@using System.Web;
+@if (_sharePointActions != null)
+{
+    @if (_sharePointActions.Count() > 0)
+    {
+        <MudText Typo="Typo.h3">@L["Most recent actions from SharePoint"]</MudText>
+        <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+            @if (Users is not null && Functions is not null)
+            {
+                <MudSelectExtended T="DrogeUser" MultiSelectionTextFunc="@(new Func<List<DrogeUser>, string>(GetMultiSelectionText))" Label="@L["From who"]" MultiSelection="true" SelectedValues="_selectedUsersAction" SelectedValuesChanged="OnSelectionChanged">
+                    
+                    @foreach(var function in Functions)
+                    {
+                        if (Users.Any(x=>x.UserFunctionId == function.Id))
+                        {
+                            <MudSelectItemGroupExtended T="DrogeUser" Text="@function.Name" Sticky="true" Nested="false" InitiallyExpanded="false">               
+                                @foreach (var user in Users.Where(x=>x.UserFunctionId == function.Id))
+                                {
+                                    <MudSelectItemExtended T="DrogeUser" Value="@user">@user.Name</MudSelectItemExtended>
+                                }
+                            </MudSelectItemGroupExtended>
+                        }
+                    }
+                </MudSelectExtended>
+            }
+        </AuthorizeView>
+        <MudDataGrid Items="@_sharePointActions"
+                     ReadOnly="true" EditMode="@DataGridEditMode.Cell">
+            <Columns>
+                <HierarchyColumn T="SharePointAction" />
+                <PropertyColumn Property="x => x.Number" Title="Nr" />
+                <PropertyColumn Property="x => x.Start.ToLocalTime()" Title="@L["Start"]" />
+                <PropertyColumn Property="x => x.ShortDescription" Title="@L["Description"]" />
+                <PropertyColumn Property="x => x.Prio" Title="@L["Prio"]" />
+            </Columns>
+            <ChildRowContent>
+                <MudCard>
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">@context.Item.Title</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudText>@((MarkupString)Regex.Replace(HttpUtility.HtmlEncode(@context.Item.Description ?? string.Empty), "\r?\n|\r", "<br />"))</MudText>
+                            <MudList>
+                                @foreach (var user in context.Item.Users)
+                            {
+                                <MudListItem>@user.Name - @user.Role</MudListItem>
+                            }
+                        </MudList>
+                    </MudCardContent>
+                </MudCard>
+            </ChildRowContent>
+        </MudDataGrid>
+    }
+}
+else
+{
+    <MudText>Ik weet dat dit lang duurt, los ik nog wel een keertje op.</MudText>
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+}
