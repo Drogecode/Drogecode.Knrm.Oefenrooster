@@ -16,6 +16,7 @@ public sealed partial class Defaults : IDisposable
 {
     [Inject] private IStringLocalizer<Defaults> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
+    [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private DefaultScheduleRepository _defaultScheduleRepository { get; set; } = default!;
     private RefreshModel _refreshModel = new();
     private CancellationTokenSource _cls = new();
@@ -27,14 +28,29 @@ public sealed partial class Defaults : IDisposable
         _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
     }
 
-    private string GetGroupName(DefaultGroup group)
+    private string GetGroupTitle(DefaultGroup group)
     {
+        var groupName = group.Name;
         if (group.IsDefault && string.IsNullOrEmpty(group.Name))
         {
-            return L["Default group name"];
+            groupName = L["Default group name"];
         }
-        return group.Name;
+        if (group.IsDefault)
+            return groupName;
+        return $"{groupName} {group.ValidFrom!.Value.ToLocalTime().ToShortDateString()} {LApp["till"]} {group.ValidUntil!.Value.ToLocalTime().ToShortDateString()}";
     }
+
+    private void OpenGroupDialog(DefaultGroup? group, bool isNew)
+    {
+        var parameters = new DialogParameters<GroupDialog> {
+            { x=>x.DefaultGroup, group},
+            { x=> x.IsNew, isNew},
+            { x=> x.Refresh, _refreshModel },
+        };
+        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        _dialogProvider.Show<GroupDialog>(L["Add group"], parameters, options);
+    }
+
     private async Task RefreshMeAsync()
     {
         _defaultGroups = (await _defaultScheduleRepository.GetAllGroups(_cls.Token))?.OrderBy(x => x.ValidFrom).ToList();

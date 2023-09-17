@@ -63,11 +63,11 @@ public class DefaultScheduleService : IDefaultScheduleService
         var list = new List<DefaultSchedule>();
         var group = await _database.UserDefaultGroups.FindAsync(groupId);
         var groupIsDefault = group?.IsDefault ?? false;
-        var dbDefaults = _database.RoosterDefaults.Include(x => x.UserDefaultAvailables.Where(y => y.CustomerId == customerId && y.UserId == userId && (y.DefaultGroupId == groupId || (groupIsDefault && y.DefaultGroupId == null))));
+        var dbDefaults = _database.RoosterDefaults.Include(x => x.UserDefaultAvailables!.Where(y => y.CustomerId == customerId && y.UserId == userId && y.DefaultGroupId == groupId));
         foreach (var dbDefault in dbDefaults)
         {
             if (dbDefault is null) continue;
-            var userDefaults = dbDefault?.UserDefaultAvailables?.Where(x => x.UserId == userId && x.ValidUntil >= _dateTimeService.UtcNow()).OrderBy(x => x.ValidUntil);
+            var userDefaults = dbDefault?.UserDefaultAvailables?.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidUntil >= _dateTimeService.UtcNow() && x.DefaultGroupId == groupId).OrderBy(x => x.ValidUntil);
             var innerList = new List<DefaultUserSchedule>();
             if (userDefaults is not null)
             {
@@ -161,11 +161,20 @@ public class DefaultScheduleService : IDefaultScheduleService
 
     public async Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUser(PatchDefaultUserSchedule body, Guid customerId, Guid userId)
     {
+        var sw = Stopwatch.StartNew();
+        var result = new PatchDefaultScheduleForUserResponse();
         DbRoosterDefault? dbDefault = DbQuery(body, userId);
-        if (dbDefault is null) return new PatchDefaultScheduleForUserResponse { Success = false };
-        var userDefault = dbDefault.UserDefaultAvailables?.FirstOrDefault(y => y.UserId == userId && y.Id == body.UserDefaultAvailableId);
-        var validFrom = body.ValidFromUser ?? _dateTimeService.UtcNow();
-        var validUntil = body.ValidUntilUser ?? DateTime.MaxValue;
+        DbUserDefaultGroup? dbGroup = await _database.UserDefaultGroups.FirstOrDefaultAsync(x=>x.CustomerId == customerId && x.UserId == userId && x.Id == body.GroupId && !x.IsDefault);
+        if (dbDefault is null)
+        {
+            sw.Stop();
+            result.Success = false;
+            result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+            return result;
+        }
+        var userDefault = dbDefault.UserDefaultAvailables?.FirstOrDefault(y => y.UserId == userId && y.Id == body.UserDefaultAvailableId && y.DefaultGroupId == body.GroupId);
+        var validFrom = dbGroup?.ValidFrom ?? body.ValidFromUser ?? _dateTimeService.UtcNow();
+        var validUntil = dbGroup?.ValidUntil ?? body.ValidUntilUser ?? DateTime.MaxValue;
         if (validFrom.Kind == DateTimeKind.Unspecified)
             validFrom = validFrom.DateTimeWithZone(dbDefault.Customer.TimeZone).ToUniversalTime();
         if (validUntil.Kind == DateTimeKind.Unspecified)
@@ -174,7 +183,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         if (userDefault?.ValidFrom?.Date.CompareTo(_dateTimeService.UtcNow().Date) >= 0)
         {
             userDefault.DefaultGroupId = body.GroupId;
-            userDefault!.Available = body.Available;
+            userDefault.Available = body.Available;
             userDefault.Assigned = body.Assigned;
             userDefault.ValidFrom = validFrom;
             userDefault.ValidUntil = validUntil;
@@ -203,15 +212,15 @@ public class DefaultScheduleService : IDefaultScheduleService
             };
             _database.UserDefaultAvailables.Add(userDefault);
         }
-        _database.SaveChanges();
+        await _database.SaveChangesAsync();
         body.UserDefaultAvailableId = userDefault.Id;
         var dbPatched = DbQuery(body, userId);
         var patched = dbPatched?.ToPatchDefaultUserSchedule(userId, userDefault.Id);
-        return new PatchDefaultScheduleForUserResponse
-        {
-            Success = true,
-            Patched = patched
-        };
+        sw.Stop();
+        result.Success = true;
+        result.Patched = patched;
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
 
         DbRoosterDefault? DbQuery(PatchDefaultUserSchedule body, Guid userId)
         {

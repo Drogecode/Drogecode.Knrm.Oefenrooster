@@ -36,4 +36,10 @@ public class DefaultScheduleRepository
         var result = await _defaultScheduleClient.PatchDefaultScheduleForUserAsync(body, clt);
         return result.Patched;
     }
+
+    public async Task<PutGroupResponse> PutGroup(DefaultGroup body, CancellationToken clt)
+    {
+        var result = await _defaultScheduleClient.PutGroupAsync(body, clt);
+        return result;
+    }
 }

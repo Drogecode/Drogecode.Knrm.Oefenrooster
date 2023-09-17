@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using System;
@@ -158,7 +159,7 @@ public class DefaultScheduleControllerTests : BaseTest
     {
         var body = new DefaultGroup
         {
-            Name = "PutGroupTest",
+            Name = "PutScheduleToNewGroupTest",
             ValidFrom = DateTime.Today.AddDays(4),
             ValidUntil = DateTime.Today.AddDays(9),
             IsDefault = false,
@@ -177,5 +178,59 @@ public class DefaultScheduleControllerTests : BaseTest
         };
         var patchResult = await DefaultScheduleController.PatchDefaultScheduleForUser(defaultSchedule);
         Assert.NotNull(patchResult.Value?.Patched?.UserDefaultAvailableId);
+
+        var allForGroup = await DefaultScheduleController.GetAllByGroupId(newGroup.Id);
+        allForGroup.Value!.DefaultSchedules!.FirstOrDefault(x => x.Id == DefaultDefaultSchedule)!.UserSchedules.Should().Contain(x => x.UserDefaultAvailableId == patchResult.Value!.Patched!.UserDefaultAvailableId);
+
+        var idDefaultGroup = (await DefaultScheduleController.GetAllGroups()).Value!.Groups!.FirstOrDefault(x => x.IsDefault)!.Id;
+        var allForDefaultGroup = await DefaultScheduleController.GetAllByGroupId(idDefaultGroup);
+        allForDefaultGroup.Value!.DefaultSchedules!.FirstOrDefault(x => x.Id == DefaultDefaultSchedule)!.UserSchedules.Should().NotContain(x => x.UserDefaultAvailableId == patchResult.Value!.Patched!.UserDefaultAvailableId);
+    }
+
+    [Fact]
+    public async Task ConflictingDefaultsTest()
+    {
+        MockAuthenticatedUser(DefaultScheduleController, DefaultUserId, DefaultCustomerId);
+        MockAuthenticatedUser(ScheduleController, DefaultUserId, DefaultCustomerId);
+        var idDefaultGroup = (await DefaultScheduleController.GetAllGroups()).Value!.Groups!.FirstOrDefault(x => x.IsDefault)!.Id;
+        var body = new DefaultGroup
+        {
+            Name = "ConflictingDefaultsTest",
+            ValidFrom = new DateTime(2020, 6, 12),
+            ValidUntil = new DateTime(2020, 12, 13),
+            IsDefault = false,
+        };
+        var newGroup = (await DefaultScheduleController.PutGroup(body)).Value!.Group;
+        var defaultSchedule = new PatchDefaultUserSchedule
+        {
+            GroupId = idDefaultGroup,
+            UserDefaultAvailableId = null,
+            DefaultId = DefaultDefaultSchedule,
+            Assigned = false,
+            Available = Availabilty.NotAvailable,
+            ValidFromUser = new DateTime(2020, 1, 12)
+        };
+        var patchResult = await DefaultScheduleController.PatchDefaultScheduleForUser(defaultSchedule);
+        defaultSchedule.GroupId = newGroup!.Id;
+        defaultSchedule.Available = Availabilty.Available;
+        patchResult = await DefaultScheduleController.PatchDefaultScheduleForUser(defaultSchedule);
+
+        // default default
+        var scheduledTraining = await ScheduleController.GetPlannedTrainingForDefaultDate(new DateTime(2020, 2, 10), DefaultDefaultSchedule);
+        scheduledTraining.Value?.Training.Should().NotBeNull();
+        scheduledTraining.Value!.Training!.PlanUsers.Should().NotBeNull();
+        var user = scheduledTraining.Value.Training.PlanUsers.FirstOrDefault(x => x.UserId == DefaultUserId);
+        user.Should().NotBeNull();
+        user!.Availabilty.Should().Be(Availabilty.NotAvailable);
+
+        // group default
+        scheduledTraining = await ScheduleController.GetPlannedTrainingForDefaultDate(new DateTime(2020, 8, 10), DefaultDefaultSchedule);
+        scheduledTraining.Value?.Training.Should().NotBeNull();
+        scheduledTraining.Value!.Training!.PlanUsers.Should().NotBeNull();
+        user = scheduledTraining.Value.Training.PlanUsers.FirstOrDefault(x => x.UserId == DefaultUserId);
+        user.Should().NotBeNull();
+        user!.Availabilty.Should().Be(Availabilty.Available);
+        MockAuthenticatedUser(DefaultScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+        MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
     }
 }
