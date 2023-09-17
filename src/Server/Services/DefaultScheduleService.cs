@@ -44,6 +44,12 @@ public class DefaultScheduleService : IDefaultScheduleService
                 ValidUntil = DateTime.MaxValue,
             };
             _database.UserDefaultGroups.Add(newDefaultGroup);
+            var currentDefaults = await _database.UserDefaultAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.DefaultGroupId == null).ToListAsync();
+            foreach (var current in currentDefaults)
+            {
+                current.DefaultGroupId = newDefaultGroup.Id;
+                _database.UserDefaultAvailables.Update(current);
+            }
             await _database.SaveChangesAsync();
             list.Add(newDefaultGroup.ToDefaultGroups());
         }
@@ -164,7 +170,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         var sw = Stopwatch.StartNew();
         var result = new PatchDefaultScheduleForUserResponse();
         DbRoosterDefault? dbDefault = DbQuery(body, userId);
-        DbUserDefaultGroup? dbGroup = await _database.UserDefaultGroups.FirstOrDefaultAsync(x=>x.CustomerId == customerId && x.UserId == userId && x.Id == body.GroupId && !x.IsDefault);
+        DbUserDefaultGroup? dbGroup = await _database.UserDefaultGroups.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Id == body.GroupId && !x.IsDefault);
         if (dbDefault is null)
         {
             sw.Stop();
