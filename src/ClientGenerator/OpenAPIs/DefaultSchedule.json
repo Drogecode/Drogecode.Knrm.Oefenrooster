@@ -76,7 +76,56 @@
         }
       }
     },
-    "/api/DefaultSchedule": {
+    "/api/DefaultSchedule/group": {
+      "put": {
+        "tags": [
+          "DefaultSchedule"
+        ],
+        "operationId": "PutGroup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefaultGroup"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefaultGroup"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefaultGroup"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutGroupResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutGroupResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutGroupResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DefaultSchedule/schedule": {
       "put": {
         "tags": [
           "DefaultSchedule"
@@ -416,14 +465,6 @@
         },
         "additionalProperties": false
       },
-      "PutDefaultScheduleError": {
-        "enum": [
-          0,
-          1
-        ],
-        "type": "integer",
-        "format": "int32"
-      },
       "PutDefaultScheduleResponse": {
         "type": "object",
         "properties": {
@@ -441,7 +482,37 @@
             "$ref": "#/components/schemas/DefaultSchedule"
           },
           "error": {
-            "$ref": "#/components/schemas/PutDefaultScheduleError"
+            "$ref": "#/components/schemas/PutError"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PutError": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "PutGroupResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "group": {
+            "$ref": "#/components/schemas/DefaultGroup"
+          },
+          "error": {
+            "$ref": "#/components/schemas/PutError"
           }
         },
         "additionalProperties": false

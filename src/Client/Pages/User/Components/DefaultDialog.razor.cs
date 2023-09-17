@@ -11,7 +11,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components;
 
 public sealed partial class DefaultDialog : IDisposable
 {
-    [Inject] private IStringLocalizer<DefaultDialog> L { get; set; } = default!;
+    //[Inject] private IStringLocalizer<DefaultDialog> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private DefaultScheduleRepository _defaultScheduleRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
@@ -24,7 +24,7 @@ public sealed partial class DefaultDialog : IDisposable
     private DefaultUserSchedule? _originalDefaultUserSchedule = null;
     private bool _success;
     private string[] _errors = Array.Empty<string>();
-    void Cancel() => MudDialog.Cancel();
+   private void Cancel() => MudDialog.Cancel();
     protected override async Task OnParametersSetAsync()
     {
         if (IsNew == true)

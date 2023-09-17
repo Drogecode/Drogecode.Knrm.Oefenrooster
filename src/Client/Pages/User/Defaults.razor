@@ -7,13 +7,14 @@
 
 @if (_defaultGroups is not null)
 {
+    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{OpenGroupDialog(null, true);}">@L["Add new group"]</MudButton>
     if (_defaultGroups.Count > 1)
     {
         <MudExpansionPanels>
-            @foreach (var group in _defaultGroups)
+            @foreach (var group in _defaultGroups.OrderByDescending(x => x.IsDefault).ThenBy(x => x.ValidFrom))
             {
-                string groupName = GetGroupName(group);
-                <MudExpansionPanel Text='@($"{groupName} {group.ValidFrom} {LApp["till"]} {group.ValidUntil}")'>
+                string groupTitle = GetGroupTitle(group);
+                <MudExpansionPanel Text="@groupTitle" IsInitiallyExpanded="@group.IsDefault">
                     <DefaultPanel Group="@group" />
                 </MudExpansionPanel>
             }
@@ -25,7 +26,7 @@
     }
     else
     {
-        @L["No groups found :("]
+        @L["No groups found"]
     }
 }
 else

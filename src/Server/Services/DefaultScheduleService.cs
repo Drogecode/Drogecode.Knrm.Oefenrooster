@@ -164,6 +164,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         var sw = Stopwatch.StartNew();
         var result = new PatchDefaultScheduleForUserResponse();
         DbRoosterDefault? dbDefault = DbQuery(body, userId);
+        DbUserDefaultGroup? dbGroup = await _database.UserDefaultGroups.FirstOrDefaultAsync(x=>x.CustomerId == customerId && x.UserId == userId && x.Id == body.GroupId && !x.IsDefault);
         if (dbDefault is null)
         {
             sw.Stop();
@@ -171,9 +172,9 @@ public class DefaultScheduleService : IDefaultScheduleService
             result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
             return result;
         }
-        var userDefault = dbDefault.UserDefaultAvailables?.FirstOrDefault(y => y.UserId == userId && y.Id == body.UserDefaultAvailableId);
-        var validFrom = body.ValidFromUser ?? _dateTimeService.UtcNow();
-        var validUntil = body.ValidUntilUser ?? DateTime.MaxValue;
+        var userDefault = dbDefault.UserDefaultAvailables?.FirstOrDefault(y => y.UserId == userId && y.Id == body.UserDefaultAvailableId && y.DefaultGroupId == body.GroupId);
+        var validFrom = dbGroup?.ValidFrom ?? body.ValidFromUser ?? _dateTimeService.UtcNow();
+        var validUntil = dbGroup?.ValidUntil ?? body.ValidUntilUser ?? DateTime.MaxValue;
         if (validFrom.Kind == DateTimeKind.Unspecified)
             validFrom = validFrom.DateTimeWithZone(dbDefault.Customer.TimeZone).ToUniversalTime();
         if (validUntil.Kind == DateTimeKind.Unspecified)
@@ -182,7 +183,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         if (userDefault?.ValidFrom?.Date.CompareTo(_dateTimeService.UtcNow().Date) >= 0)
         {
             userDefault.DefaultGroupId = body.GroupId;
-            userDefault!.Available = body.Available;
+            userDefault.Available = body.Available;
             userDefault.Assigned = body.Assigned;
             userDefault.ValidFrom = validFrom;
             userDefault.ValidUntil = validUntil;
