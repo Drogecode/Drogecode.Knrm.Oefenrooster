@@ -49,7 +49,7 @@ public class HolidayControllerTests : BaseTest
         });
         Assert.NotNull(result?.Value?.Put);
         Assert.NotNull(result.Value.Put.ValidFrom);
-        result.Value.Put.ValidFrom.Value.Date.Should().Be(DateTime.Today);
+        result.Value.Put.ValidFrom!.Value.Date.Should().Be(DateTime.Today);
         result.Value.Put.ValidUntil.Should().Be(DateTime.Today.AddDays(2));
     }
     [Fact]

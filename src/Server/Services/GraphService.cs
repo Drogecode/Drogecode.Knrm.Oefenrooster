@@ -137,7 +137,7 @@ public class GraphService : IGraphService
             cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
             _ = _memoryCache.Set(keyActions, sharePointActions, cacheOptions);
         }
-        var listWhere = sharePointActions?.Where(x => x.Users.Any(y => users.All(x=> string.Compare(y.Name, x) == 0)) );
+        var listWhere = sharePointActions?.Where(x => x.Users.Count(y => users.Contains(y.Name)) == users.Count());
         var sharePointActionsUser = new MultipleSharePointActionsResponse
         {
             SharePointActions = listWhere?.Skip(skip).Take(count).ToList(),
@@ -180,7 +180,7 @@ public class GraphService : IGraphService
             cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
             _ = _memoryCache.Set(keyTrainings, sharePointTrainings, cacheOptions);
         }
-        var listWhere = sharePointTrainings?.Where(x => x.Users.Any(y => users.All(x => string.Compare(y.Name, x) == 0)));
+        var listWhere = sharePointTrainings?.Where(x => x.Users.Count(y => users.Contains(y.Name)) == users.Count());
         var sharePointTrainingsUser = new MultipleSharePointTrainingsResponse
         {
             SharePointTrainings = listWhere?.Skip(skip).Take(count).ToList(),

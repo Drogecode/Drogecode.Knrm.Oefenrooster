@@ -154,7 +154,7 @@ public class BaseTest : IAsyncLifetime
             ValidUntil = DateTime.Today.AddDays(2),
         });
         Assert.NotNull(result?.Value?.Put?.Id);
-        return result.Value.Put.Id;
+        return result!.Value!.Put!.Id;
     }
 
     protected async Task<Guid> AddTraining(string name, bool countToTrainingTarget, DateTime? dateStart = null, DateTime? dateEnd = null, bool isPinned = false)

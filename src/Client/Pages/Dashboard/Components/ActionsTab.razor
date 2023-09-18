@@ -4,29 +4,29 @@
 @using System.Web;
 @if (_sharePointActions != null)
 {
+    <MudText Typo="Typo.h3">@L["Most recent actions from SharePoint"]</MudText>
+    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+        @if (Users is not null && Functions is not null)
+        {
+            <MudSelectExtended T="DrogeUser" MultiSelectionTextFunc="@(new Func<List<DrogeUser>, string>(GetMultiSelectionText))" Label="@L["From who"]" MultiSelection="true" SelectedValues="_selectedUsersAction" SelectedValuesChanged="OnSelectionChanged">
+
+                @foreach (var function in Functions)
+                {
+                    if (Users.Any(x => x.UserFunctionId == function.Id))
+                    {
+                        <MudSelectItemGroupExtended T="DrogeUser" Text="@function.Name" Sticky="true" Nested="false" InitiallyExpanded="false">
+                            @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
+                            {
+                                <MudSelectItemExtended T="DrogeUser" Value="@user">@user.Name</MudSelectItemExtended>
+                            }
+                        </MudSelectItemGroupExtended>
+                    }
+                }
+            </MudSelectExtended>
+        }
+    </AuthorizeView>
     @if (_sharePointActions.Count() > 0)
     {
-        <MudText Typo="Typo.h3">@L["Most recent actions from SharePoint"]</MudText>
-        <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
-            @if (Users is not null && Functions is not null)
-            {
-                <MudSelectExtended T="DrogeUser" MultiSelectionTextFunc="@(new Func<List<DrogeUser>, string>(GetMultiSelectionText))" Label="@L["From who"]" MultiSelection="true" SelectedValues="_selectedUsersAction" SelectedValuesChanged="OnSelectionChanged">
-                    
-                    @foreach(var function in Functions)
-                    {
-                        if (Users.Any(x=>x.UserFunctionId == function.Id))
-                        {
-                            <MudSelectItemGroupExtended T="DrogeUser" Text="@function.Name" Sticky="true" Nested="false" InitiallyExpanded="false">               
-                                @foreach (var user in Users.Where(x=>x.UserFunctionId == function.Id))
-                                {
-                                    <MudSelectItemExtended T="DrogeUser" Value="@user">@user.Name</MudSelectItemExtended>
-                                }
-                            </MudSelectItemGroupExtended>
-                        }
-                    }
-                </MudSelectExtended>
-            }
-        </AuthorizeView>
         <MudDataGrid Items="@_sharePointActions"
                      ReadOnly="true" EditMode="@DataGridEditMode.Cell">
             <Columns>
