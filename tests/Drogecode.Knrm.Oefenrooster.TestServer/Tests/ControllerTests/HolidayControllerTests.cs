@@ -124,7 +124,7 @@ public class HolidayControllerTests : BaseTest
         DateTimeServiceMock.SetMockDateTime(null);
         var result = await HolidayController.Delete(resultPut.Value.Put.Id);
         Assert.NotNull(result?.Value?.Success);
-        Assert.False(result.Value.Success);
+        Assert.False(result!.Value!.Success);
         var resultGet = await HolidayController.Get(resultPut.Value.Put.Id);
         Assert.NotNull(resultGet?.Value?.Holiday);
         Assert.True(resultGet.Value.Success);

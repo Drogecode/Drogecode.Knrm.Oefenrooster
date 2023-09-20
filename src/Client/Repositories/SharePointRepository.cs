@@ -28,7 +28,7 @@ public class SharePointRepository
         return result.SharePointActions?.ToList();
     }
 
-    public async Task<List<SharePointAction>?> GetLastActionsFoSelectedUser(IEnumerable<DrogeUser> users, int count, int skip, CancellationToken clt)
+    public async Task<List<SharePointAction>?> GetLastActions(IEnumerable<DrogeUser> users, int count, int skip, CancellationToken clt)
     {
         var workingList = new List<string>();
         foreach(var user in users)
@@ -38,5 +38,17 @@ public class SharePointRepository
         var usersAsstring = System.Text.Json.JsonSerializer.Serialize(workingList);
         var result = await _sharePointClient.GetLastActionsAsync(usersAsstring, count, skip, clt);
         return result.SharePointActions?.ToList();
+    }
+
+    public async Task<List<SharePointTraining>?> GetLastTrainings(IEnumerable<DrogeUser> users, int count, int skip, CancellationToken clt)
+    {
+        var workingList = new List<string>();
+        foreach(var user in users)
+        {
+            workingList.Add(user.Name);
+        }
+        var usersAsstring = System.Text.Json.JsonSerializer.Serialize(workingList);
+        var result = await _sharePointClient.GetLastTrainingsAsync(usersAsstring, count, skip, clt);
+        return result.SharePointTrainings?.ToList();
     }
 }

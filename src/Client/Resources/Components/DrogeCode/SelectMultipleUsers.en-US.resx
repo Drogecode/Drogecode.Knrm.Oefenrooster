@@ -117,16 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Description" xml:space="preserve">
-    <value>Omschrijving</value>
-  </data>
-  <data name="Most recent actions from SharePoint" xml:space="preserve">
-    <value>Meest recente acties van SharePoint</value>
-  </data>
-  <data name="Prio" xml:space="preserve">
-    <value>Prio</value>
-  </data>
-  <data name="Start" xml:space="preserve">
-    <value>Vanaf</value>
+  <data name="From who" xml:space="preserve">
+    <value>From who</value>
   </data>
 </root>

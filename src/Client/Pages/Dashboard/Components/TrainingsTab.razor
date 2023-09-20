@@ -3,9 +3,12 @@
 @using System.Web;
 @if (_sharePointTrainings != null)
 {
+    <MudText Typo="Typo.h3">@L["Most recent trainings from SharePoint"]</MudText>
+    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+        <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersTraining" SelectionChanged="OnSelectionChanged" />
+    </AuthorizeView>
     @if (_sharePointTrainings.Count() > 0)
     {
-        <MudText Typo="Typo.h3">@L["Most recent trainings from SharePoint"]</MudText>
 
         <MudDataGrid Items="@_sharePointTrainings"
                      ReadOnly="true" EditMode="@DataGridEditMode.Cell">

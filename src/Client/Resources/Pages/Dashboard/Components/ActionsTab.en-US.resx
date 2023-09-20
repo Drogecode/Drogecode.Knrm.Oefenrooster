@@ -120,9 +120,6 @@
   <data name="Description" xml:space="preserve">
     <value>Description</value>
   </data>
-  <data name="From who" xml:space="preserve">
-    <value>From who</value>
-  </data>
   <data name="Most recent actions from SharePoint" xml:space="preserve">
     <value>Most recent actions from SharePoint</value>
   </data>

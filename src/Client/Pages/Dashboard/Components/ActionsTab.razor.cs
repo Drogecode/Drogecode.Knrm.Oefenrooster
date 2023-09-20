@@ -34,16 +34,11 @@ public sealed partial class ActionsTab : IDisposable
             StateHasChanged();
         }
     }
-    private string GetMultiSelectionText(List<DrogeUser> selectedValues)
-    {
-        var result = string.Join(", ", selectedValues.Select(x => x.Name));
-        return result;
-    }
 
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
     {
         _selectedUsersAction = selection;
-        _sharePointActions = await _sharePointRepository.GetLastActionsFoSelectedUser(selection, 10, 0, _cls.Token);
+        _sharePointActions = await _sharePointRepository.GetLastActions(selection, 10, 0, _cls.Token);
         StateHasChanged();
     }
 

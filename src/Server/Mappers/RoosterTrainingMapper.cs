@@ -56,6 +56,7 @@ public static class RoosterTrainingMapper
                     Availabilty = ava.Available,
                     SetBy = ava.SetBy,
                     Name = ava.User?.Name ?? "Some dude",
+                    VehicleId = ava.VehicleId,
                 });
             }
         }
