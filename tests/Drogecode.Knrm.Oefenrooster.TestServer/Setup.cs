@@ -31,7 +31,7 @@ public class Setup : Xunit.Di.Setup
             services.AddMemoryCache();
             services.AddDbContext<DataContext>(c => c.UseInMemoryDatabase("MyXunitDb"));
 
-            services.AddSingleton<IDateTimeService, DateTimeServiceMock>();
+            services.AddScoped<IDateTimeService, DateTimeServiceMock>();
 
             services.AddScoped<ICalendarItemService, CalendarItemService>();
             services.AddScoped<IAuditService, AuditService>();
