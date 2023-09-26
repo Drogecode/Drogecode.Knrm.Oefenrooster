@@ -279,27 +279,9 @@ public static class GraphHelper
         listBase.Users.Add(user);
     }
 
-    public static async Task<Event> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd)
+    public static async Task<Event> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
     {
-        var body = new Event()
-        {
-            Subject = description,
-            Body = new ItemBody
-            {
-                ContentType = BodyType.Html,
-                Content = description,
-            },
-            Start = new DateTimeTimeZone
-            {
-                DateTime = dateStart.ToString("o"),
-                TimeZone = "UTC",
-            },
-            End = new DateTimeTimeZone
-            {
-                DateTime = dateEnd.ToString("o"),
-                TimeZone = "UTC",
-            },
-        };
+        Event body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay);
         var result = await _appClient.Users[userId.ToString()].Events.PostAsync(body, (requestConfiguration) =>
         {
             requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Pacific Standard Time\"");
@@ -307,6 +289,65 @@ public static class GraphHelper
 
         var fromGet = await _appClient.Users[userId.ToString()].Events[result.Id].GetAsync();
         return result;
+    }
+
+    public static async Task<Event> PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
+    {
+
+        var fromGet = await _appClient.Users[userId.ToString()].Events[eventId].GetAsync();
+        if (fromGet is not null)
+        {
+            Event body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay);
+            fromGet.Subject = body.Subject;
+            fromGet.Body = body.Body;
+            fromGet.Start = body.Start;
+            fromGet.End = body.End;
+            fromGet.IsAllDay = isAllDay;
+            var patch = await _appClient.Users[userId.ToString()].Events[eventId].PatchAsync(fromGet);
+        }
+        return fromGet;
+    }
+
+    private static Event GenerateCalendarBody(string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
+    {
+        var even = new Event()
+        {
+            Subject = description,
+            Body = new ItemBody
+            {
+                ContentType = BodyType.Html,
+                Content = description,
+            },
+        };
+        if (isAllDay)
+        {
+            even.IsAllDay = true;
+            even.Start = new DateTimeTimeZone
+            {
+                DateTime = dateStart.ToString("yyyy-MM-ddT00:00:00"),
+                TimeZone = TimeZoneInfo.Local.Id
+            };
+            even.End = new DateTimeTimeZone
+            {
+                DateTime = dateStart.AddDays(1).ToString("yyyy-MM-ddT00:00:00"),
+                TimeZone = TimeZoneInfo.Local.Id
+            };
+        }
+        else
+        {
+            even.Start = new DateTimeTimeZone
+            {
+                DateTime = dateStart.ToString("o"),
+                TimeZone = "UTC",
+            };
+            even.End = new DateTimeTimeZone
+            {
+                DateTime = dateEnd.ToString("o"),
+                TimeZone = "UTC",
+            };
+
+        }
+        return even;
     }
 
     internal static async Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt)
@@ -319,7 +360,7 @@ public static class GraphHelper
                 await _appClient.Users[userId.ToString()].Events[calendarEventId].DeleteAsync();
             }
         }
-        catch(Microsoft.Graph.Models.ODataErrors.ODataError ex)
+        catch (Microsoft.Graph.Models.ODataErrors.ODataError ex)
         {
             if (ex.ResponseStatusCode != 404)
                 throw;

@@ -147,7 +147,12 @@ public class ScheduleController : ControllerBase
             if (result.Success)
                 await _auditService.Log(userId, AuditType.PatchTraining, customerId, objectKey: patchedTraining.TrainingId, objectName: patchedTraining.Name);
             else
+            {
                 await _auditService.Log(userId, AuditType.PatchTraining, customerId, "Failed", patchedTraining.TrainingId, patchedTraining.Name);
+                return BadRequest();
+            }
+
+            await PatchTrainingCalenderUsers(patchedTraining.TrainingId!.Value, customerId, clt);
 
             return Ok(result);
         }
@@ -156,6 +161,38 @@ public class ScheduleController : ControllerBase
             _logger.LogError(ex, "Error in AddTraining");
             return BadRequest();
         }
+    }
+
+    private async Task PatchTrainingCalenderUsers(Guid trainingId, Guid customerId, CancellationToken clt)
+    {
+        var training = await _scheduleService.GetPlannedTrainingById(customerId, trainingId, clt);
+        clt.ThrowIfCancellationRequested();
+        clt = CancellationToken.None;
+
+        _graphService.InitializeGraph();
+        string text = GetTrainingCalenderText(training.Training?.TrainingTypeName, training.Training?.Name);
+        if (training.Training?.PlanUsers.Count > 0)
+        {
+            foreach (var user in training.Training.PlanUsers)
+            {
+                if (!string.IsNullOrEmpty(user.CalendarEventId))
+                {
+                    await _graphService.PatchCalender(user.UserId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime);
+                }
+            }
+        }
+    }
+
+    private static string GetTrainingCalenderText(string? trainingTypeName, string? trainingName)
+    {
+        var text = string.Empty;
+        if (!string.IsNullOrEmpty(trainingTypeName))
+            text += trainingTypeName;
+        if (!string.IsNullOrEmpty(trainingTypeName) && !string.IsNullOrEmpty(trainingName))
+            text += " - ";
+        if (!string.IsNullOrEmpty(trainingName))
+            text += trainingName;
+        return text;
     }
 
     [HttpPost]
@@ -338,18 +375,19 @@ public class ScheduleController : ControllerBase
         if (assigned && await _userSettingService.TrainingToCalendar(customerId, planUserId))
         {
             var type = await _trainingTypesService.GetById(training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
+            var text = GetTrainingCalenderText(type?.TrainingType?.Name, training?.Name);
+            _graphService.InitializeGraph();
             if (string.IsNullOrEmpty(calendarEventId))
             {
                 if (!string.IsNullOrEmpty(type?.TrainingType?.Name))
                 {
-                    var text = $"{type.TrainingType.Name} - {training?.Name}";
-                    _graphService.InitializeGraph();
-                    var eventResult = await _graphService.AddToCalendar(planUserId, text, training!.DateStart, training.DateEnd);
+                    var eventResult = await _graphService.AddToCalendar(planUserId, text, training!.DateStart, training.DateEnd, !training.ShowTime);
                     await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, eventResult.Id, clt);
                 }
             }
             else
             {
+                var eventResult = await _graphService.PatchCalender(planUserId, calendarEventId, text, training!.DateStart, training.DateEnd, !training.ShowTime);
                 await _auditService.Log(currentUserId, AuditType.PatchTraining, customerId, $"Preventing duplicate event '{type?.TrainingType?.Name}' on '{training?.DateStart.ToString("o")}' : '{training?.DateEnd.ToString("o")}'");
             }
         }

@@ -1071,6 +1071,9 @@
           "isPinned": {
             "type": "boolean"
           },
+          "noTime": {
+            "type": "boolean"
+          },
           "planUsers": {
             "type": "array",
             "items": {
@@ -1193,6 +1196,9 @@
           "isPinned": {
             "type": "boolean"
           },
+          "noTime": {
+            "type": "boolean"
+          },
           "availabilty": {
             "$ref": "#/components/schemas/Availabilty"
           },
@@ -1252,6 +1258,9 @@
             "type": "boolean"
           },
           "isPinned": {
+            "type": "boolean"
+          },
+          "noTime": {
             "type": "boolean"
           }
         },

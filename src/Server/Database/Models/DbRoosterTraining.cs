@@ -18,6 +18,7 @@ public class DbRoosterTraining
     public bool CountToTrainingTarget { get; set; }
     public bool IsPinned { get; set; }
     public bool IsLocked { get; set; }
+    public bool? ShowTime { get; set; } = true;
 
     public DbCustomers Customer { get; set; }
     public DbRoosterDefault? RoosterDefault { get; set; }

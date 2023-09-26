@@ -41,7 +41,9 @@ public static class RoosterTrainingMapper
             DateStart = roosterTraining.DateStart,
             DateEnd = roosterTraining.DateEnd,
             CountToTrainingTarget = roosterTraining.CountToTrainingTarget,
-            IsPinned = roosterTraining.IsPinned
+            IsPinned = roosterTraining.IsPinned,
+            ShowTime = roosterTraining.ShowTime ?? true,
+            TrainingTypeName = roosterTraining.RoosterTrainingType?.Name
         };
         if (roosterTraining?.RoosterAvailables is not null)
         {
@@ -57,6 +59,7 @@ public static class RoosterTrainingMapper
                     SetBy = ava.SetBy,
                     Name = ava.User?.Name ?? "Some dude",
                     VehicleId = ava.VehicleId,
+                    CalendarEventId = ava.CalendarEventId,
                 });
             }
         }

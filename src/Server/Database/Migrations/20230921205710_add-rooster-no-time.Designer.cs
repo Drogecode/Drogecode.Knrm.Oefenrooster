@@ -3,6 +3,7 @@ using System;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230921205710_add-rooster-no-time")]
+    partial class addroosternotime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -389,16 +392,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<bool>("NoTime")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("RoosterTrainingTypeId")
                         .HasColumnType("uuid");
-
-                    b.Property<bool?>("ShowTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
 
                     b.Property<TimeOnly>("TimeEnd")
                         .HasColumnType("time without time zone");
@@ -433,9 +434,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Id = new Guid("4142048e-82dc-4015-aab7-1b519da01238"),
                             CountToTrainingTarget = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            NoTime = false,
                             Order = 10,
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
-                            ShowTime = true,
                             TimeEnd = new TimeOnly(21, 30, 0),
                             TimeStart = new TimeOnly(19, 30, 0),
                             TimeZone = "Europe/Amsterdam",
@@ -448,9 +449,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Id = new Guid("7b4693a8-ae9c-430f-9119-49a6ecbfeb54"),
                             CountToTrainingTarget = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            NoTime = false,
                             Order = 20,
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
-                            ShowTime = true,
                             TimeEnd = new TimeOnly(21, 30, 0),
                             TimeStart = new TimeOnly(19, 30, 0),
                             TimeZone = "Europe/Amsterdam",
@@ -463,9 +464,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Id = new Guid("c1967b6b-1f3b-41d2-bfa4-361a71cd064c"),
                             CountToTrainingTarget = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            NoTime = false,
                             Order = 30,
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
-                            ShowTime = true,
                             TimeEnd = new TimeOnly(21, 30, 0),
                             TimeStart = new TimeOnly(19, 30, 0),
                             TimeZone = "Europe/Amsterdam",
@@ -478,9 +479,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Id = new Guid("b73bd006-0d29-4d4e-b71b-2c382d5f703f"),
                             CountToTrainingTarget = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            NoTime = false,
                             Order = 40,
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
-                            ShowTime = true,
                             TimeEnd = new TimeOnly(21, 30, 0),
                             TimeStart = new TimeOnly(19, 30, 0),
                             TimeZone = "Europe/Amsterdam",
@@ -493,10 +494,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Id = new Guid("860ec129-6b99-4286-b90a-a2d536377f7c"),
                             CountToTrainingTarget = false,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Name = "In overleg",
+                            Name = "1:1",
+                            NoTime = true,
                             Order = 50,
                             RoosterTrainingTypeId = new Guid("52260d46-c748-4ffc-b94c-2baecacbfaf4"),
-                            ShowTime = false,
                             TimeEnd = new TimeOnly(17, 30, 0),
                             TimeStart = new TimeOnly(15, 0, 0),
                             TimeZone = "Europe/Amsterdam",
@@ -509,9 +510,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Id = new Guid("2bdaccc0-e9f7-40c1-ae76-d9ed66e4a978"),
                             CountToTrainingTarget = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            NoTime = false,
                             Order = 60,
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
-                            ShowTime = true,
                             TimeEnd = new TimeOnly(13, 0, 0),
                             TimeStart = new TimeOnly(10, 0, 0),
                             TimeZone = "Europe/Amsterdam",
@@ -524,9 +525,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Id = new Guid("348c82b5-ba0d-4d31-b242-2edc1dc669c7"),
                             CountToTrainingTarget = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            NoTime = false,
                             Order = 70,
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
-                            ShowTime = true,
                             TimeEnd = new TimeOnly(16, 0, 0),
                             TimeStart = new TimeOnly(13, 0, 0),
                             TimeZone = "Europe/Amsterdam",
@@ -539,9 +540,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Id = new Guid("015b9e42-e233-457e-bf26-de26c3a718ba"),
                             CountToTrainingTarget = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            NoTime = false,
                             Order = 80,
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
-                            ShowTime = true,
                             TimeEnd = new TimeOnly(13, 0, 0),
                             TimeStart = new TimeOnly(10, 0, 0),
                             TimeZone = "Europe/Amsterdam",
@@ -554,9 +555,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Id = new Guid("80d8ac0c-a2f7-4dc9-af57-a0ed74b7f8df"),
                             CountToTrainingTarget = true,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            NoTime = false,
                             Order = 90,
                             RoosterTrainingTypeId = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0"),
-                            ShowTime = true,
                             TimeEnd = new TimeOnly(16, 0, 0),
                             TimeStart = new TimeOnly(13, 0, 0),
                             TimeZone = "Europe/Amsterdam",
@@ -860,16 +861,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<bool>("NoTime")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid?>("RoosterDefaultId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("RoosterTrainingTypeId")
                         .HasColumnType("uuid");
-
-                    b.Property<bool?>("ShowTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
 
                     b.HasKey("Id");
 

@@ -13,7 +13,11 @@ public class CalendarBaseCardTests : BlazorTestBase
     {
         Localize(L);
 
-        var training = new TrainingAdvance { Name = "xUnit meets bUnit" };
+        var training = new TrainingAdvance
+        {
+            Name = "xUnit meets bUnit",
+            ShowTime = true,
+        };
         var cut = RenderComponent<CalendarBaseCard>(parameter => parameter.Add(p => p.Training, training));
         cut.Markup.Should().Contain("xUnit meets bUnit");
         cut.Markup.Should().Contain("till with some more text to ensure it is replaced");

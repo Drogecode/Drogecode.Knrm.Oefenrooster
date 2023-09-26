@@ -3,6 +3,7 @@ using System;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230926163224_rename-notime-to-showtime")]
+    partial class renamenotimetoshowtime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -493,7 +496,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Id = new Guid("860ec129-6b99-4286-b90a-a2d536377f7c"),
                             CountToTrainingTarget = false,
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Name = "In overleg",
+                            Name = "1:1",
                             Order = 50,
                             RoosterTrainingTypeId = new Guid("52260d46-c748-4ffc-b94c-2baecacbfaf4"),
                             ShowTime = false,

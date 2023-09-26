@@ -18,4 +18,5 @@ public class PlanUser
     public bool Assigned { get; set; }
     public bool ClickedFunction { get; set; }
     public string Name { get; set; } = "Some dude!";
+    public string? CalendarEventId { get; set; }
 }
