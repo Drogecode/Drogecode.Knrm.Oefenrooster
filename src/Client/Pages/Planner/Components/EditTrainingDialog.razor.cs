@@ -35,7 +35,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             _linkVehicleTraining = await _vehicleRepository.GetForTrainingAsync(Planner.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
             var dateStartLocal = Planner.DateStart.ToLocalTime();
             var dateEndLocal = Planner.DateEnd.ToLocalTime();
-            _startedWithShowNoTime = Planner.ShowTime == false;
+            _startedWithShowNoTime = !Planner.ShowTime;
             _training = new()
             {
                 Id = Planner.TrainingId,
@@ -54,7 +54,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         {
             var dateStartLocal = Planner.DateStart.ToLocalTime();
             var dateEndLocal = Planner.DateEnd.ToLocalTime();
-            _startedWithShowNoTime = Planner.ShowTime == false;
+            _startedWithShowNoTime = !Planner.ShowTime;
             _training = new()
             {
                 IsNewFromDefault = true,

@@ -50,7 +50,7 @@
             {
                 <MudText Typo="Typo.subtitle2">@Training.DateStart.ToString(DateTime.Today.Year == Training.DateStart.Year ? "MMM dd" : "yyyy MMM dd")</MudText>
             }
-            @if (Training.ShowTime != false)
+            @if (Training.ShowTime)
             {
                 <MudText Typo="Typo.body2">@Training.DateStart.ToLocalTime().ToString("HH:mm") @LApp["till"] @Training.DateEnd.ToLocalTime().ToString("HH:mm")</MudText>
             }

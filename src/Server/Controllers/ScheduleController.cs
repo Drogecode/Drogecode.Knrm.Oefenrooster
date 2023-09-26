@@ -344,7 +344,7 @@ public class ScheduleController : ControllerBase
                 {
                     var text = $"{type.TrainingType.Name} - {training?.Name}";
                     _graphService.InitializeGraph();
-                    var eventResult = await _graphService.AddToCalendar(planUserId, text, training!.DateStart, training.DateEnd);
+                    var eventResult = await _graphService.AddToCalendar(planUserId, text, training!.DateStart, training.DateEnd, !training.ShowTime);
                     await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, eventResult.Id, clt);
                 }
             }

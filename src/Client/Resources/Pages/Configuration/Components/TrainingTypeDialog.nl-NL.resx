@@ -144,6 +144,9 @@
   <data name="Light text" xml:space="preserve">
     <value>Text licht</value>
   </data>
+  <data name="Order" xml:space="preserve">
+    <value>Volgorde</value>
+  </data>
   <data name="Select Color" xml:space="preserve">
     <value>Selecteer kleur</value>
   </data>

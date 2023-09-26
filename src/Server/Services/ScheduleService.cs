@@ -66,7 +66,7 @@ public class ScheduleService : IScheduleService
                             RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                             CountToTrainingTarget = training.CountToTrainingTarget,
                             IsPinned = training.IsPinned,
-                            ShowTime = training.ShowTime,
+                            ShowTime = training.ShowTime ?? true,
                         });
                     }
                     if (training.RoosterDefaultId != null)
@@ -93,7 +93,7 @@ public class ScheduleService : IScheduleService
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget,
                         IsPinned = false,
-                        ShowTime = def.ShowTime,
+                        ShowTime = def.ShowTime ?? true,
                     });
                 }
             }
@@ -323,7 +323,7 @@ public class ScheduleService : IScheduleService
                             RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                             CountToTrainingTarget = training.CountToTrainingTarget,
                             IsPinned = training.IsPinned,
-                            ShowTime = training.ShowTime,
+                            ShowTime = training.ShowTime ?? true,
                         };
                         foreach (var user in users)
                         {
@@ -386,7 +386,7 @@ public class ScheduleService : IScheduleService
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget,
                         IsPinned = false,
-                        ShowTime = def.ShowTime,
+                        ShowTime = def.ShowTime ?? true,
                     };
                     if (includeUnAssigned)
                     {
@@ -544,7 +544,7 @@ public class ScheduleService : IScheduleService
                     RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                     CountToTrainingTarget = def.CountToTrainingTarget,
                     IsPinned = false,
-                    ShowTime = def.ShowTime,
+                    ShowTime = def.ShowTime ?? true,
                 };
                 foreach (var user in users)
                 {
@@ -744,7 +744,7 @@ public class ScheduleService : IScheduleService
                 PlannedFunctionId = schedul.UserFunctionId ?? users?.FirstOrDefault(x => x.Id == userId)?.UserFunctionId,
                 IsPinned = schedul.Training.IsPinned,
                 IsCreated = true,
-                ShowTime = schedul.Training.ShowTime,
+                ShowTime = schedul.Training.ShowTime ?? true,
                 PlanUsers = schedul.Training.RoosterAvailables!.Select(a =>
                 new PlanUser
                 {
@@ -822,7 +822,7 @@ public class ScheduleService : IScheduleService
                 RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                 CountToTrainingTarget = training.CountToTrainingTarget,
                 IsPinned = training.IsPinned,
-                ShowTime = training.ShowTime,
+                ShowTime = training.ShowTime ?? true,
             });
         }
         return result;

@@ -279,9 +279,37 @@ public static class GraphHelper
         listBase.Users.Add(user);
     }
 
-    public static async Task<Event> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd)
+    public static async Task<Event> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
     {
-        var body = new Event()
+        Event body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay);
+        var result = await _appClient.Users[userId.ToString()].Events.PostAsync(body, (requestConfiguration) =>
+        {
+            requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Pacific Standard Time\"");
+        });
+
+        var fromGet = await _appClient.Users[userId.ToString()].Events[result.Id].GetAsync();
+        return result;
+    }
+
+    public static async Task<Event> PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
+    {
+
+        var fromGet = await _appClient.Users[userId.ToString()].Events[eventId].GetAsync();
+        if (fromGet is not null)
+        {
+            Event body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay);
+            fromGet.Subject = body.Subject;
+            fromGet.Body = body.Body;
+            fromGet.Start = body.Start;
+            fromGet.End = body.End;
+            var patch = await _appClient.Users[userId.ToString()].Events[eventId].PatchAsync(fromGet);
+        }
+        return fromGet;
+    }
+
+    private static Event GenerateCalendarBody(string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
+    {
+        return new Event()
         {
             Subject = description,
             Body = new ItemBody
@@ -299,14 +327,8 @@ public static class GraphHelper
                 DateTime = dateEnd.ToString("o"),
                 TimeZone = "UTC",
             },
+            IsAllDay = isAllDay,
         };
-        var result = await _appClient.Users[userId.ToString()].Events.PostAsync(body, (requestConfiguration) =>
-        {
-            requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Pacific Standard Time\"");
-        });
-
-        var fromGet = await _appClient.Users[userId.ToString()].Events[result.Id].GetAsync();
-        return result;
     }
 
     internal static async Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt)

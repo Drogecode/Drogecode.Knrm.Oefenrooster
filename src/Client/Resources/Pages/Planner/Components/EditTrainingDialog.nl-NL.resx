@@ -150,6 +150,9 @@
   <data name="Pin to dashboard" xml:space="preserve">
     <value>Zet vast op dashboard</value>
   </data>
+  <data name="Set time" xml:space="preserve">
+    <value>Zet tijd</value>
+  </data>
   <data name="Start time past end time" xml:space="preserve">
     <value>Start tijd is na eind tijd</value>
   </data>

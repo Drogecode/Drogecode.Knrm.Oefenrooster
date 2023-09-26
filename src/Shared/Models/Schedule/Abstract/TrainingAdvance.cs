@@ -18,5 +18,5 @@ public class TrainingAdvance : TrainingBase
     public bool CountToTrainingTarget { get; set; }
     public bool Updated { get; set; }
     public bool IsPinned { get; set; }
-    public bool? ShowTime { get; set; } = false;
+    public bool ShowTime { get; set; } = false;
 }
