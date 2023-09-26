@@ -14,9 +14,17 @@
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
                 <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" />
                 <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Required Disabled="!_training.IsNew" />
-                 <MudTimePicker Label="@L["From"]" @bind-Time="_training.TimeStart" Validation="@(new Func<TimeSpan?, string?>(StartBeforeEndValidation))" Required />
-                 <MudTimePicker Label="@LApp["till"]" @bind-Time="_training.TimeEnd" Validation="@(new Func<TimeSpan?, string?>(EndAfterStartValidation))" Required />
-                 @if (_currentTrainingType?.IsActive == false)
+
+                 @if (_training.ShowTime == false || _startedWithShowNoTime)
+                {
+                    <MudSwitch Label="@L["Set time"]" @bind-Checked="_training.ShowTime" />
+                }
+                @if (_training.ShowTime != false)
+                {
+                    <MudTimePicker Label="@L["From"]" @bind-Time="_training.TimeStart" Validation="@(new Func<TimeSpan?, string?>(StartBeforeEndValidation))" Required />
+                    <MudTimePicker Label="@LApp["till"]" @bind-Time="_training.TimeEnd" Validation="@(new Func<TimeSpan?, string?>(EndAfterStartValidation))" Required />
+                }
+                @if (_currentTrainingType?.IsActive == false)
                 {
                     <MudTextField Label="@L["Training type"]" Disabled="true" Value="_currentTrainingType.Name" />
                 }

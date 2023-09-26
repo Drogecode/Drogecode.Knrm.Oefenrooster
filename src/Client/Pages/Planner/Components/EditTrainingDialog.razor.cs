@@ -3,9 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.Extensions.Localization;
-using MudBlazor;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
@@ -27,6 +25,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private PlannerTrainingType? _currentTrainingType;
     private bool _success;
     private bool _showDelete;
+    private bool _startedWithShowNoTime;
     private string[] _errors = Array.Empty<string>();
     [AllowNull] private MudForm _form;
     protected override async Task OnParametersSetAsync()
@@ -36,6 +35,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             _linkVehicleTraining = await _vehicleRepository.GetForTrainingAsync(Planner.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
             var dateStartLocal = Planner.DateStart.ToLocalTime();
             var dateEndLocal = Planner.DateEnd.ToLocalTime();
+            _startedWithShowNoTime = Planner.ShowTime == false;
             _training = new()
             {
                 Id = Planner.TrainingId,
@@ -46,13 +46,15 @@ public sealed partial class EditTrainingDialog : IDisposable
                 Name = Planner.Name,
                 RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
                 CountToTrainingTarget = Planner.CountToTrainingTarget,
-                Pin = Planner.IsPinned
+                Pin = Planner.IsPinned,
+                ShowTime = Planner.ShowTime,
             };
         }
         else if (Planner?.DefaultId is not null)
         {
             var dateStartLocal = Planner.DateStart.ToLocalTime();
             var dateEndLocal = Planner.DateEnd.ToLocalTime();
+            _startedWithShowNoTime = Planner.ShowTime == false;
             _training = new()
             {
                 IsNewFromDefault = true,
@@ -64,7 +66,8 @@ public sealed partial class EditTrainingDialog : IDisposable
                 Name = Planner.Name,
                 RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
                 CountToTrainingTarget = Planner.CountToTrainingTarget,
-                Pin = Planner.IsPinned
+                Pin = Planner.IsPinned,
+                ShowTime = Planner.ShowTime,
             };
             _linkVehicleTraining = new();
         }
@@ -163,6 +166,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 DateEnd = dateEnd,
                 CountToTrainingTarget = _training.CountToTrainingTarget,
                 IsPinned = _training.Pin,
+                ShowTime = _training.ShowTime,
             };
         }
         else
@@ -174,6 +178,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             Planner.DateEnd = dateEnd;
             Planner.CountToTrainingTarget = _training.CountToTrainingTarget;
             Planner.IsPinned = _training.Pin;
+            Planner.ShowTime = _training.ShowTime;
         }
     }
 
@@ -224,7 +229,7 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private async Task Delete()
     {
-        if(_training?.IsNewFromDefault == true)
+        if (_training?.IsNewFromDefault == true)
         {
             UpdatePlannerObject();
             var newId = await _scheduleRepository.AddTraining(Planner, _cls.Token);

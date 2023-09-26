@@ -13,7 +13,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbUsers> Users { get; set; }
         public DbSet<DbUserFunctions> UserFunctions { get; set; }
         public DbSet<DbUserRoles> UserRoles { get; set; }
-        public DbSet<DbUserDefaultGroup> UserDefaultGroups{ get; set; }
+        public DbSet<DbUserDefaultGroup> UserDefaultGroups { get; set; }
         public DbSet<DbUserDefaultAvailable> UserDefaultAvailables { get; set; }
         public DbSet<DbUserHolidays> UserHolidays { get; set; }
         public DbSet<DbUserSettings> UserSettings { get; set; }
@@ -107,6 +107,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.ValidFrom).IsRequired(); });
             modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.ValidUntil).IsRequired(); });
+            modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.ShowTime).HasDefaultValue(true); });
             modelBuilder.Entity<DbRoosterDefault>().HasOne(p => p.RoosterTrainingType).WithMany(g => g.RoosterDefaults).HasForeignKey(s => s.RoosterTrainingTypeId);
             modelBuilder.Entity<DbRoosterDefault>().HasOne(p => p.Customer).WithMany(g => g.RoosterDefaults).HasForeignKey(s => s.CustomerId).IsRequired();
 
@@ -120,6 +121,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
 
             // Rooster training
             modelBuilder.Entity<DbRoosterTraining>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbRoosterTraining>(e => { e.Property(e => e.ShowTime).HasDefaultValue(true); });
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.Customer).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.RoosterDefault).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.RoosterDefaultId);
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.RoosterTrainingType).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.RoosterTrainingTypeId);
@@ -264,7 +266,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     ValidUntil = new DateTime(2024, 6, 30, 23, 59, 59, DateTimeKind.Utc),
                     RoosterTrainingTypeId = DefaultSettingsHelper.Oefening1op1Id,
                     TimeZone = "Europe/Amsterdam",
-                    NoTime = true,
+                    ShowTime = false,
                     CountToTrainingTarget = false,
                     Order = 50,
                 }); ;

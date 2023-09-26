@@ -66,7 +66,7 @@ public class ScheduleService : IScheduleService
                             RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                             CountToTrainingTarget = training.CountToTrainingTarget,
                             IsPinned = training.IsPinned,
-                            NoTime = training.NoTime,
+                            ShowTime = training.ShowTime,
                         });
                     }
                     if (training.RoosterDefaultId != null)
@@ -93,7 +93,7 @@ public class ScheduleService : IScheduleService
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget,
                         IsPinned = false,
-                        NoTime = def.NoTime,
+                        ShowTime = def.ShowTime,
                     });
                 }
             }
@@ -207,7 +207,7 @@ public class ScheduleService : IScheduleService
         oldTraining.DateEnd = patchedTraining.DateEnd;
         oldTraining.CountToTrainingTarget = patchedTraining.CountToTrainingTarget;
         oldTraining.IsPinned = patchedTraining.IsPinned;
-        oldTraining.NoTime = patchedTraining.NoTime;
+        oldTraining.ShowTime = patchedTraining.ShowTime;
         _database.RoosterTrainings.Update(oldTraining);
         result.Success = (await _database.SaveChangesAsync()) > 0;
         sw.Stop();
@@ -230,7 +230,7 @@ public class ScheduleService : IScheduleService
             DateEnd = newTraining.DateEnd,
             CountToTrainingTarget = newTraining.CountToTrainingTarget,
             IsPinned = newTraining.IsPinned,
-            NoTime = newTraining.NoTime,
+            ShowTime = newTraining.ShowTime,
         };
         result.Success = await AddTrainingInternalAsync(customerId, training, token);
         sw.Stop();
@@ -255,7 +255,7 @@ public class ScheduleService : IScheduleService
             DateEnd = training.DateEnd,
             CountToTrainingTarget = training.CountToTrainingTarget,
             IsPinned = training.IsPinned,
-            NoTime = training.NoTime,
+            ShowTime = training.ShowTime,
         });
         return (await _database.SaveChangesAsync()) > 0;
     }
@@ -323,7 +323,7 @@ public class ScheduleService : IScheduleService
                             RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                             CountToTrainingTarget = training.CountToTrainingTarget,
                             IsPinned = training.IsPinned,
-                            NoTime = training.NoTime,
+                            ShowTime = training.ShowTime,
                         };
                         foreach (var user in users)
                         {
@@ -386,7 +386,7 @@ public class ScheduleService : IScheduleService
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget,
                         IsPinned = false,
-                        NoTime = def.NoTime,
+                        ShowTime = def.ShowTime,
                     };
                     if (includeUnAssigned)
                     {
@@ -544,7 +544,7 @@ public class ScheduleService : IScheduleService
                     RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                     CountToTrainingTarget = def.CountToTrainingTarget,
                     IsPinned = false,
-                    NoTime = def.NoTime,
+                    ShowTime = def.ShowTime,
                 };
                 foreach (var user in users)
                 {
@@ -744,7 +744,7 @@ public class ScheduleService : IScheduleService
                 PlannedFunctionId = schedul.UserFunctionId ?? users?.FirstOrDefault(x => x.Id == userId)?.UserFunctionId,
                 IsPinned = schedul.Training.IsPinned,
                 IsCreated = true,
-                NoTime = schedul.Training.NoTime,
+                ShowTime = schedul.Training.ShowTime,
                 PlanUsers = schedul.Training.RoosterAvailables!.Select(a =>
                 new PlanUser
                 {
@@ -822,7 +822,7 @@ public class ScheduleService : IScheduleService
                 RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                 CountToTrainingTarget = training.CountToTrainingTarget,
                 IsPinned = training.IsPinned,
-                NoTime = training.NoTime,
+                ShowTime = training.ShowTime,
             });
         }
         return result;
