@@ -470,6 +470,7 @@ public class ScheduleService : IScheduleService
         var dbTraining = await _database.RoosterTrainings
             .Include(x => x.RoosterAvailables)
             .ThenInclude(x => x.User)
+            .Include(x => x.RoosterTrainingType)
             .FirstOrDefaultAsync(x => x.Id == trainingId && x.DeletedOn == null);
         if (dbTraining is not null)
         {

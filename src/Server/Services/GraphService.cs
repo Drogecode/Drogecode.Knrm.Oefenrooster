@@ -209,6 +209,12 @@ public class GraphService : IGraphService
         return result;
     }
 
+    public async Task<Event> PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
+    {
+        var result = await GraphHelper.PatchCalender(userId, eventId, description, dateStart, dateEnd, isAllDay);
+        return result;
+    }
+
     public async Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt)
     {
         await GraphHelper.DeleteCalendarEvent(userId, calendarEventId, clt);

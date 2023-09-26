@@ -17,7 +17,8 @@ public class CalendarCardTests : BlazorTestBase
         {
             Name = "xUnit meets bUnit",
             Availabilty = Shared.Enums.Availabilty.Available,
-            DateStart = DateTime.UtcNow
+            DateStart = DateTime.UtcNow,
+            ShowTime = true,
         };
         var cut = RenderComponent<CalendarCard>(parameter => parameter.Add(p => p.Training, training));
         cut.Markup.Should().Contain("xUnit meets bUnit");

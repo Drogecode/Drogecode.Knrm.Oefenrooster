@@ -302,6 +302,7 @@ public static class GraphHelper
             fromGet.Body = body.Body;
             fromGet.Start = body.Start;
             fromGet.End = body.End;
+            fromGet.IsAllDay = isAllDay;
             var patch = await _appClient.Users[userId.ToString()].Events[eventId].PatchAsync(fromGet);
         }
         return fromGet;
@@ -309,7 +310,7 @@ public static class GraphHelper
 
     private static Event GenerateCalendarBody(string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
     {
-        return new Event()
+        var even = new Event()
         {
             Subject = description,
             Body = new ItemBody
@@ -317,18 +318,36 @@ public static class GraphHelper
                 ContentType = BodyType.Html,
                 Content = description,
             },
-            Start = new DateTimeTimeZone
+        };
+        if (isAllDay)
+        {
+            even.IsAllDay = true;
+            even.Start = new DateTimeTimeZone
+            {
+                DateTime = dateStart.ToString("yyyy-MM-ddT00:00:00"),
+                TimeZone = TimeZoneInfo.Local.Id
+            };
+            even.End = new DateTimeTimeZone
+            {
+                DateTime = dateStart.AddDays(1).ToString("yyyy-MM-ddT00:00:00"),
+                TimeZone = TimeZoneInfo.Local.Id
+            };
+        }
+        else
+        {
+            even.Start = new DateTimeTimeZone
             {
                 DateTime = dateStart.ToString("o"),
                 TimeZone = "UTC",
-            },
-            End = new DateTimeTimeZone
+            };
+            even.End = new DateTimeTimeZone
             {
                 DateTime = dateEnd.ToString("o"),
                 TimeZone = "UTC",
-            },
-            IsAllDay = isAllDay,
-        };
+            };
+
+        }
+        return even;
     }
 
     internal static async Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt)
@@ -341,7 +360,7 @@ public static class GraphHelper
                 await _appClient.Users[userId.ToString()].Events[calendarEventId].DeleteAsync();
             }
         }
-        catch(Microsoft.Graph.Models.ODataErrors.ODataError ex)
+        catch (Microsoft.Graph.Models.ODataErrors.ODataError ex)
         {
             if (ex.ResponseStatusCode != 404)
                 throw;

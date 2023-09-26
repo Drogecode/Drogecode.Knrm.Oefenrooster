@@ -14,7 +14,11 @@ public class ScheduleCardTests : BlazorTestBase
     {
         Localize(L1, L2);
 
-        var training = new PlannedTraining { Name = "xUnit meets bUnit" };
+        var training = new PlannedTraining
+        {
+            Name = "xUnit meets bUnit",
+            ShowTime = true,
+        };
         var cut = RenderComponent<ScheduleCard>(parameter => parameter
         .Add(p => p.Planner, training)
         .Add(p => p.Global, new DrogeCodeGlobal()));

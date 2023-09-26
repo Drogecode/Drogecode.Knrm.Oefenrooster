@@ -257,7 +257,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 e.HasData(new DbRoosterDefault
                 {
                     Id = new Guid("860ec129-6b99-4286-b90a-a2d536377f7c"),
-                    Name = "1:1",
+                    Name = "In overleg",
                     CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                     WeekDay = DayOfWeek.Friday,
                     TimeStart = new TimeOnly(15, 00),
