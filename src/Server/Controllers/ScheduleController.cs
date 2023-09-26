@@ -152,6 +152,7 @@ public class ScheduleController : ControllerBase
                 return BadRequest();
             }
 
+            clt = CancellationToken.None;
             await PatchTrainingCalenderUsers(patchedTraining.TrainingId!.Value, customerId, clt);
 
             return Ok(result);
@@ -248,7 +249,10 @@ public class ScheduleController : ControllerBase
             PatchAssignedUserResponse result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { TrainingId = body.TrainingId, Assigned = body?.User?.Assigned }), body?.User?.UserId);
             if (result.Success && body?.User?.UserId is not null)
+            {
+                clt = CancellationToken.None;
                 await ToOutlookCalendar(body.User.UserId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
+            }
             return result;
         }
         catch (Exception ex)
@@ -269,7 +273,10 @@ public class ScheduleController : ControllerBase
             var result = await _scheduleService.PutAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { TrainingId = body.TrainingId, Assigned = body?.Assigned }), body?.UserId);
             if (result.Success && body?.UserId is not null)
+            {
+                clt = CancellationToken.None;
                 await ToOutlookCalendar(body.UserId.Value, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
+            }
             return result;
         }
         catch (Exception ex)
