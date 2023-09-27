@@ -394,7 +394,7 @@ public class ScheduleController : ControllerBase
             }
             else
             {
-                var eventResult = await _graphService.PatchCalender(planUserId, calendarEventId, text, training!.DateStart, training.DateEnd, !training.ShowTime);
+                await _graphService.PatchCalender(planUserId, calendarEventId, text, training!.DateStart, training.DateEnd, !training.ShowTime);
                 await _auditService.Log(currentUserId, AuditType.PatchTraining, customerId, $"Preventing duplicate event '{type?.TrainingType?.Name}' on '{training?.DateStart.ToString("o")}' : '{training?.DateEnd.ToString("o")}'");
             }
         }

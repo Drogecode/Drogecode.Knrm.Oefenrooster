@@ -102,6 +102,7 @@ public class DefaultScheduleService : IDefaultScheduleService
                 ValidUntilDefault = dbDefault.ValidUntil,
                 CountToTrainingTarget = dbDefault.CountToTrainingTarget,
                 Order = dbDefault.Order,
+                ShowTime = dbDefault.ShowTime ?? true,
                 UserSchedules = innerList,
             };
             list.Add(defaultSchedule);

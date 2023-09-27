@@ -10,8 +10,22 @@
                     @LApp[context.Item.WeekDay.ToString() ?? "None"]
                 </CellTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="x => x.TimeStart" Title="@L["TimeStart"]" />
-            <PropertyColumn Property="x => x.TimeEnd" Title="@L["TimeEnd"]" />
+            <TemplateColumn Title="@L["TimeStart"]">
+                <CellTemplate>
+                    @if (context.Item.ShowTime)
+                    {
+                        <p>@context.Item.TimeStart</p>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="@L["TimeEnd"]">
+                <CellTemplate>
+                    @if (context.Item.ShowTime)
+                    {
+                        <p>@context.Item.TimeEnd</p>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
             <TemplateColumn Title="@L["Current setting"]">
                 <CellTemplate>
                     @{

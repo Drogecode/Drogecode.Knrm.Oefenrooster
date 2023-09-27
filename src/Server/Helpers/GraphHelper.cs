@@ -3,14 +3,10 @@ using Azure.Identity;
 using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Graph.Sites.Item.Lists.Item.Items;
 using Microsoft.Graph.Users;
-using System;
-using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Helpers;
 
@@ -291,21 +287,28 @@ public static class GraphHelper
         return result;
     }
 
-    public static async Task<Event> PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
+    public static async Task PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
     {
-
-        var fromGet = await _appClient.Users[userId.ToString()].Events[eventId].GetAsync();
-        if (fromGet is not null)
+        try
         {
-            Event body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay);
-            fromGet.Subject = body.Subject;
-            fromGet.Body = body.Body;
-            fromGet.Start = body.Start;
-            fromGet.End = body.End;
-            fromGet.IsAllDay = isAllDay;
-            var patch = await _appClient.Users[userId.ToString()].Events[eventId].PatchAsync(fromGet);
+            var fromGet = await _appClient.Users[userId.ToString()].Events[eventId].GetAsync();
+            if (fromGet is not null)
+            {
+                Event body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay);
+                fromGet.Subject = body.Subject;
+                fromGet.Body = body.Body;
+                fromGet.Start = body.Start;
+                fromGet.End = body.End;
+                fromGet.IsAllDay = isAllDay;
+                var patch = await _appClient.Users[userId.ToString()].Events[eventId].PatchAsync(fromGet);
+            }
+            return;
         }
-        return fromGet;
+        catch (Microsoft.Graph.Models.ODataErrors.ODataError ex)
+        {
+            if (ex.ResponseStatusCode != 404)
+                throw;
+        }
     }
 
     private static Event GenerateCalendarBody(string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)

@@ -18,6 +18,7 @@ public class DefaultSchedule
     public DateTime ValidUntilDefault { get; set; }
     public bool CountToTrainingTarget { get; set; } = true;
     public int Order { get; set; }
+    public bool ShowTime { get; set; } = true;
     public List<DefaultUserSchedule>? UserSchedules { get; set; }
 }
 

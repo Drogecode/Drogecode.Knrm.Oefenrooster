@@ -20,7 +20,8 @@ public static class DefaultScheduleMapper
             CountToTrainingTarget = defaultSchedule.CountToTrainingTarget,
             Order = defaultSchedule.Order,
             CustomerId = customerId,
-            TimeZone = timeZone
+            TimeZone = timeZone,
+            ShowTime = defaultSchedule.ShowTime,
         };
     }
     public static DefaultSchedule ToDefaultSchedule(this DbRoosterDefault defaultSchedule)
@@ -36,6 +37,7 @@ public static class DefaultScheduleMapper
             ValidUntilDefault = defaultSchedule.ValidUntil,
             CountToTrainingTarget = defaultSchedule.CountToTrainingTarget,
             Order = defaultSchedule.Order,
+            ShowTime = defaultSchedule.ShowTime ?? true,
         };
     }
 

@@ -44,7 +44,7 @@ builder.Services.AddResponseCompression(opts =>
 builder.Services.AddDbContextPool<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("postgresDB")));
 builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
 {
-    ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+    ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"],
 });
 
 builder.Services.AddHttpClient();

@@ -19,7 +19,7 @@
                 {
                     <MudTh Class="@($"trainingType-{item.RoosterTrainingTypeId}")">
                         @item.DateStart.ToString("dddd")
-                        <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="item.DateStart" /> @item.Name
+                        <DateToString ShowDate="true" ShowTime="@item.ShowTime" DateTimeUtc="item.DateStart" /> @item.Name
                     </MudTh>
                 }
             </HeaderContent>

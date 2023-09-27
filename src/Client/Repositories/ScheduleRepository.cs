@@ -44,7 +44,7 @@ public class ScheduleRepository
         return result.NewId;
     }
 
-    public async Task PatchAssignedUser(Guid? trainingId, TrainingAdvance? training, PlanUser user, CancellationToken clt)
+    public async Task PatchAssignedUser(Guid? trainingId, TrainingAdvance? training, PlanUser user)
     {
         var body = new PatchAssignedUserRequest
         {
@@ -52,7 +52,7 @@ public class ScheduleRepository
             User = user,
             Training = training
         };
-        await _scheduleClient.PatchAssignedUserAsync(body, clt);
+        await _scheduleClient.PatchAssignedUserAsync(body);
     }
 
     public async Task<GetPlannedTrainingResponse?> GetPlannedTrainingById(Guid? trainingId, CancellationToken clt)
@@ -103,7 +103,7 @@ public class ScheduleRepository
         return schedule;
     }
 
-    internal async Task PutAssignedUser(bool assigned, Guid? trainingId, Guid functionId, DrogeUser user, TrainingAdvance? training, CancellationToken clt)
+    internal async Task PutAssignedUser(bool assigned, Guid? trainingId, Guid functionId, DrogeUser user, TrainingAdvance? training)
     {
         var body = new OtherScheduleUserRequest
         {
@@ -113,6 +113,6 @@ public class ScheduleRepository
             Assigned = assigned,
             Training = training
         };
-        await _scheduleClient.PutAssignedUserAsync(body, clt);
+        await _scheduleClient.PutAssignedUserAsync(body);
     }
 }
