@@ -619,7 +619,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = new Guid("d72ed2e9-911e-4ee5-b07e-cbd5917d432b"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Users",
-                Accesses = $"{AccessesNames.AUTH_users_counter},{AccessesNames.AUTH_users_details}"
+                Accesses = $"{AccessesNames.AUTH_users_counter},{AccessesNames.AUTH_users_details},{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}"
             }));
         }
 

@@ -4,13 +4,13 @@
 @if (_sharePointTrainings != null)
 {
     <MudText Typo="Typo.h3">@L["Most recent trainings from SharePoint"]</MudText>
-    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+    <AuthorizeView Roles="@AccessesNames.AUTH_training_history_full">
         <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersTraining" SelectionChanged="OnSelectionChanged" />
     </AuthorizeView>
-    @if (_sharePointTrainings.Count() > 0)
+    @if (_sharePointTrainings?.SharePointTrainings?.Count() > 0)
     {
 
-        <MudDataGrid Items="@_sharePointTrainings"
+        <MudDataGrid Items="@_sharePointTrainings.SharePointTrainings"
                      ReadOnly="true" EditMode="@DataGridEditMode.Cell">
             <Columns>
                 <HierarchyColumn T="SharePointTraining" />
@@ -36,6 +36,12 @@
                 </MudCard>
             </ChildRowContent>
         </MudDataGrid>
+        <AuthorizeView Roles="@AccessesNames.AUTH_training_history_full">
+            @if (_sharePointTrainings.TotalCount > _count)
+            {
+                <MudPagination Disabled="_bussy" ShowFirstButton="true" ShowLastButton="true" Count="@(Convert.ToInt32(Math.Ceiling((double)_sharePointTrainings.TotalCount/(double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4" />
+            }
+        </AuthorizeView>
     }
 }
 else

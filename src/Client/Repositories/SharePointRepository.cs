@@ -16,19 +16,19 @@ public class SharePointRepository
         _offlineService = offlineService;
     }
 
-    public async Task<List<SharePointTraining>?> GetLastTrainingsForCurrentUser(int count, int skip, CancellationToken clt)
+    public async Task<MultipleSharePointTrainingsResponse?> GetLastTrainingsForCurrentUser(int count, int skip, CancellationToken clt)
     {
         var result = await _sharePointClient.GetLastTrainingsForCurrentUserAsync(count, skip, clt);
-        return result.SharePointTrainings?.ToList();
+        return result;
     }
 
-    public async Task<List<SharePointAction>?> GetLastActionsForCurrentUser(int count, int skip, CancellationToken clt)
+    public async Task<MultipleSharePointActionsResponse?> GetLastActionsForCurrentUser(int count, int skip, CancellationToken clt)
     {
         var result = await _sharePointClient.GetLastActionsForCurrentUserAsync(count, skip, clt);
-        return result.SharePointActions?.ToList();
+        return result;
     }
 
-    public async Task<List<SharePointAction>?> GetLastActions(IEnumerable<DrogeUser> users, int count, int skip, CancellationToken clt)
+    public async Task<MultipleSharePointActionsResponse> GetLastActions(IEnumerable<DrogeUser> users, int count, int skip, CancellationToken clt)
     {
         var workingList = new List<string>();
         foreach(var user in users)
@@ -37,10 +37,10 @@ public class SharePointRepository
         }
         var usersAsstring = System.Text.Json.JsonSerializer.Serialize(workingList);
         var result = await _sharePointClient.GetLastActionsAsync(usersAsstring, count, skip, clt);
-        return result.SharePointActions?.ToList();
+        return result;
     }
 
-    public async Task<List<SharePointTraining>?> GetLastTrainings(IEnumerable<DrogeUser> users, int count, int skip, CancellationToken clt)
+    public async Task<MultipleSharePointTrainingsResponse?> GetLastTrainings(IEnumerable<DrogeUser> users, int count, int skip, CancellationToken clt)
     {
         var workingList = new List<string>();
         foreach(var user in users)
@@ -49,6 +49,6 @@ public class SharePointRepository
         }
         var usersAsstring = System.Text.Json.JsonSerializer.Serialize(workingList);
         var result = await _sharePointClient.GetLastTrainingsAsync(usersAsstring, count, skip, clt);
-        return result.SharePointTrainings?.ToList();
+        return result;
     }
 }

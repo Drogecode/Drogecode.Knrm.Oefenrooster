@@ -14,9 +14,12 @@ public sealed partial class ActionsTab : IDisposable
     [Parameter][EditorRequired] public DrogeUser User { get; set; } = default!;
     [Parameter][EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
     [Parameter][EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
-    private List<SharePointAction>? _sharePointActions;
+    private MultipleSharePointActionsResponse? _sharePointActions;
     private CancellationTokenSource _cls = new();
     private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
+    private int _currentPage = 1;
+    private int _count = 10;
+    private bool _bussy;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -37,8 +40,25 @@ public sealed partial class ActionsTab : IDisposable
 
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
     {
+        _bussy = true;
+        StateHasChanged();
         _selectedUsersAction = selection;
         _sharePointActions = await _sharePointRepository.GetLastActions(selection, 10, 0, _cls.Token);
+        _currentPage = 1;
+        _bussy = false;
+        StateHasChanged();
+    }
+
+    private async Task Next(int nextPage)
+    {
+        if (_bussy) return;
+        _bussy = true;
+        StateHasChanged();
+        _currentPage = nextPage;
+        if (nextPage <= 0) return;
+        var skip = (nextPage - 1) * _count;
+        _sharePointActions = await _sharePointRepository.GetLastActions(_selectedUsersAction, _count, skip, _cls.Token);
+        _bussy = false;
         StateHasChanged();
     }
 
