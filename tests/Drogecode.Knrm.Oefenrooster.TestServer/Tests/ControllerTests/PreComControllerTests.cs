@@ -45,6 +45,7 @@ public class PreComControllerTests : BaseTest
         result.Value.PreComAlerts.Should().NotBeNull();
         result.Value.PreComAlerts.Should().NotBeEmpty();
         result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("Nee!!! "));
+        result.Value.PreComAlerts.Should().Contain(x => x.SendTime.Equals(new DateTime(2023, 06, 15, 11, 50, 07, 203)));
     }
 
     [Fact]
@@ -60,6 +61,7 @@ public class PreComControllerTests : BaseTest
         result.Value.PreComAlerts.Should().NotBeNull();
         result.Value.PreComAlerts.Should().NotBeEmpty();
         result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("Uitruk voorstel:\r\nKNRM schipper: 1\r\nHUI Mark van den Brink\r\nKNRM opstapper: 1\r\nHUI Ferry Mol\r\nKNRM algemeen: 2\r\nHUI Laurens Klijn,\r\nHUI Ruben de Ronde\r\n\r\nNiet ingedeeld:\r\nHUI Laurens van Slooten\r\n\r\nHUI PRIO 2 MARITIEME HULPVERLENING"));
+        result.Value.PreComAlerts.Should().Contain(x => x.SendTime.Equals(new DateTime(2023, 08, 11, 15, 17, 43, 373)));
     }
 
     [Fact]
@@ -76,5 +78,6 @@ public class PreComControllerTests : BaseTest
         result.Value.PreComAlerts.Should().NotBeNull();
         result.Value.PreComAlerts.Should().NotBeEmpty();
         result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("PreCom test bericht voor Webhook"));
+        result.Value.PreComAlerts.Should().Contain(x => x.SendTime.Equals(new DateTime(2023, 09, 12, 14, 12, 31, 377)));
     }
 }

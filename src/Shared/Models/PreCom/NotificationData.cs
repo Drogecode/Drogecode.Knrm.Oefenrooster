@@ -9,7 +9,6 @@ public class NotificationDataBase
     public string _alert { get; set; }
     public string _category { get; set; }
     public int _contentAvailable { get; set; }
-    public string message { get; set; }
 }
 
 public class NotificationDataSoundString : NotificationDataBase
@@ -19,6 +18,26 @@ public class NotificationDataSoundString : NotificationDataBase
 public class NotificationDataSoundObject : NotificationDataBase
 {
     public Sound _sound { get; set; }
+}
+public class NotificationDataTestWebhookObject : NotificationDataBase
+{
+    public string android_channel_id { get; set; }
+    public string message { get; set; }
+    public MessageData messageData { get; set; }
+}
+
+public class MessageData
+{
+    public string MsgOutID { get; set; }
+    public string ControlID { get; set; }
+    public string Timestamp { get; set; }
+    public string notId { get; set; }
+    public string soundname { get; set; }
+    public string vibrationPattern { get; set; }
+    public string from { get; set; }
+    public string messageId { get; set; }
+    public long sentTime { get; set; }
+    public int ttl { get; set; }
 }
 
 public class Data

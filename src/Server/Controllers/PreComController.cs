@@ -46,9 +46,20 @@ public class PreComController : ControllerBase
                 };
                 var ser = JsonSerializer.Serialize(body);
                 var data = JsonSerializer.Deserialize<NotificationDataBase>(ser, jsonSerializerOptions);
-                _logger.LogInformation($"alert is '{data?._alert}' message is '{data?.message}'");
-                var alert = data?._alert ?? data?.message ?? "No alert found by hui.nu webhook";
+                _logger.LogInformation($"alert is '{data?._alert}'");
+                var alert = data?._alert;
                 var timestamp = DateTime.SpecifyKind(data?._data?.actionData?.Timestamp ?? DateTime.MinValue, DateTimeKind.Utc);
+                if (data is NotificationDataTestWebhookObject)
+                {
+                    NotificationDataTestWebhookObject? testWebhookData = (NotificationDataTestWebhookObject)data;
+                    alert ??= testWebhookData?.message;
+                    if (timestamp == DateTime.MinValue && testWebhookData?.messageData?.sentTime is not null)
+                    {
+                        timestamp = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+                        timestamp = timestamp.AddMilliseconds(testWebhookData.messageData.sentTime);
+                    }
+                }
+                alert ??= "No alert found by hui.nu webhook";
                 var prioParsed = int.TryParse(data?._data?.priority, out int priority);
                 await _preComService.WriteAlertToDb(id, customerId, data?._notificationId, timestamp, alert, prioParsed ? priority : null, JsonSerializer.Serialize(body));
                 if (sendToHub)

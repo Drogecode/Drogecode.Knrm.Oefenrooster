@@ -16,9 +16,13 @@ public class PreComConverter : JsonConverter<NotificationDataBase>
         using (var jsonDocument = JsonDocument.ParseValue(ref reader))
         {
             var jsonObject = jsonDocument.RootElement.GetRawText();
-            if (jsonDocument.RootElement.TryGetProperty(nameof(NotificationDataSoundObject._sound), out var typeProperty) && typeProperty.ValueKind.Equals("object"))
+            if (jsonDocument.RootElement.TryGetProperty(nameof(NotificationDataSoundObject._sound), out var typeSound) && typeSound.ValueKind.Equals("object"))
             {
                 return JsonSerializer.Deserialize<NotificationDataSoundObject>(jsonObject, options);
+            }
+            if (jsonDocument.RootElement.TryGetProperty(nameof(NotificationDataTestWebhookObject.messageData), out var typeTestWebhook))
+            {
+                return JsonSerializer.Deserialize<NotificationDataTestWebhookObject>(jsonObject, options);
             }
             else
             {
