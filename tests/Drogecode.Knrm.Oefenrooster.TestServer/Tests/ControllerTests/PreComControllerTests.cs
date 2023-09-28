@@ -61,4 +61,20 @@ public class PreComControllerTests : BaseTest
         result.Value.PreComAlerts.Should().NotBeEmpty();
         result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("Uitruk voorstel:\r\nKNRM schipper: 1\r\nHUI Mark van den Brink\r\nKNRM opstapper: 1\r\nHUI Ferry Mol\r\nKNRM algemeen: 2\r\nHUI Laurens Klijn,\r\nHUI Ruben de Ronde\r\n\r\nNiet ingedeeld:\r\nHUI Laurens van Slooten\r\n\r\nHUI PRIO 2 MARITIEME HULPVERLENING"));
     }
+
+    [Fact]
+    // The webhook test message from when you press WEBHOOKTEST in the app
+    public async Task WebHookBodyIsWebhookTestTest()
+    {
+        string body = "{\"android_channel_id\":\"chirp\",\"content- available\":\"1\",\"message\":\"PreCom test bericht voor Webhook\",\"messageData\":{\"MsgOutID\":\"135615552\",\"ControlID\":\"f\",\"Timestamp\":\"1695417214488\",\"notId\":\"135615552\",\"soundname\":\"chirp\",\"vibrationPattern\":\"[150,545]\",\"from\":\"788942585741\",\"messageId\":\"0:1694527951397184%af1e7638f9fd7ecd\",\"sentTime\":1694527951377,\"ttl\":2419200}}";
+        var asObject = JsonSerializer.Deserialize<object>(body);
+        await PreComController.WebHook(DefaultCustomerId, Guid.NewGuid(), asObject, false);
+
+        var result = await PreComController.AllAlerts(CancellationToken.None);
+        Assert.NotNull(result?.Value?.PreComAlerts);
+        Assert.True(result.Value.Success);
+        result.Value.PreComAlerts.Should().NotBeNull();
+        result.Value.PreComAlerts.Should().NotBeEmpty();
+        result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("PreCom test bericht voor Webhook"));
+    }
 }

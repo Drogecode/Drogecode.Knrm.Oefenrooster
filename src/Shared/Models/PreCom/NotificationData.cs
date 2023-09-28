@@ -9,6 +9,7 @@ public class NotificationDataBase
     public string _alert { get; set; }
     public string _category { get; set; }
     public int _contentAvailable { get; set; }
+    public string message { get; set; }
 }
 
 public class NotificationDataSoundString : NotificationDataBase
