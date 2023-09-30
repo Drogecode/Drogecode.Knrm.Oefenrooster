@@ -8,6 +8,7 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 
 public class SharePointListBase
 {
+    public Guid Id { get; set; }
     public string? Title { get; set; }
     public string? Description { get; set; }
     public DateTime Start { get; set; }

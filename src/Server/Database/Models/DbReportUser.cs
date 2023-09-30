@@ -9,4 +9,5 @@ public class DbReportUser
     public Guid DrogeCodeId { get; set; }
     public string? Name { get; set; }
     public SharePointRole Role { get; set; }
+    public bool IsDeleted { get; set; }
 }
