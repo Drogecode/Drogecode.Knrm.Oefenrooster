@@ -1,5 +1,7 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Graph;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Database;
+using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
+using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph.Models;
@@ -9,6 +11,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class GraphService : IGraphService
 {
+    private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<GraphService> _logger;
     private readonly IMemoryCache _memoryCache;
     private readonly IConfiguration _configuration;
@@ -19,10 +22,12 @@ public class GraphService : IGraphService
     private const string SP_TRAININGS = "usrSPTrai_{0}";
     private const string SP_TRAININGS_EXP = "usrSPTraiEx_{0}";
     public GraphService(
+        IServiceScopeFactory scopeFactory,
         ILogger<GraphService> logger,
         IMemoryCache memoryCache,
         IConfiguration configuration)
     {
+        _scopeFactory = scopeFactory;
         _logger = logger;
         _memoryCache = memoryCache;
         _configuration = configuration;
@@ -105,11 +110,107 @@ public class GraphService : IGraphService
         await GraphHelper.GetLists();
     }
 
+    public async Task<bool> SyncSharePointActions(Guid customerId, CancellationToken clt)
+    {
+        var keyActions = string.Format(SP_ACTIONS, customerId);
+        var update = await UpdateCacheSharePointActions(customerId, keyActions);
+        if (!update)
+            return false;
+        _memoryCache.TryGetValue<List<SharePointAction>>(keyActions, out var sharePointActions);
+        sharePointActions ??= await GetSharePointActions(customerId, keyActions, clt);
+        if (sharePointActions == null)
+            return false;
+        using var scope = _scopeFactory.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+        var dbActions = await db.ReportActions
+            .Where(x=>x.CustomerId == customerId)
+            .Include(x => x.Users).ToListAsync();
+
+        foreach (var action in sharePointActions)
+        {
+            var dbAction = dbActions.FirstOrDefault(x=>x.Id == action.Id);
+            if (dbAction is null)
+            {
+                dbAction = action.ToDefaultSchedule(customerId);
+                await db.ReportActions.AddAsync(dbAction, clt);
+            }
+            else if (dbAction.LastUpdated != action.LastUpdated)
+            {
+                dbAction.Number = action.Number;
+                dbAction.CustomerId = customerId;
+                dbAction.ShortDescription = action.ShortDescription;
+                dbAction.Prio = action.Prio;
+                dbAction.Title = action.Title;
+                dbAction.Description = action.Description;
+                dbAction.Start = dbAction.Start;
+                if (dbAction.Users is not null)
+                {
+                    foreach (var dbUser in dbAction.Users)
+                    {
+                        if (action.Users.Any(x => x.DrogeCodeId == dbUser.DrogeCodeId))
+                        {
+                            dbUser.IsDeleted = false;
+                            continue;
+                        }
+                        else
+                        {
+                            dbUser.IsDeleted = true;
+                        }
+
+                    }
+                    foreach (var user in action.Users)
+                    {
+                        if (dbAction.Users.Any(x => x.DrogeCodeId == user.DrogeCodeId))
+                            continue;
+                        dbAction.Users.Add(new()
+                        {
+                            Id = Guid.NewGuid(),
+                            SharePointID = user.SharePointID,
+                            Name = user.Name,
+                            DrogeCodeId = user.DrogeCodeId,
+                            Role = user.Role,
+                        });
+                    }
+                }
+            }
+        }
+        var changeCount = await db.SaveChangesAsync(clt);
+        _logger.LogInformation("SharePoint actions synced (count {changeCount})",changeCount);
+        return changeCount > 0;
+    }
+
     public async Task<MultipleSharePointActionsResponse> GetListActionsUser(List<string> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var keyExp = string.Format(SP_ACTIONS_EXP, customerId);
         var keyActions = string.Format(SP_ACTIONS, customerId);
+        await UpdateCacheSharePointActions(customerId, keyActions);
+        _memoryCache.TryGetValue<List<SharePointAction>>(keyActions, out var sharePointActions);
+        sharePointActions ??= await GetSharePointActions(customerId, keyActions, clt);
+        var listWhere = sharePointActions?.Where(x => x.Users.Count(y => users.Contains(y.Name)) == users.Count());
+        var sharePointActionsUser = new MultipleSharePointActionsResponse
+        {
+            SharePointActions = listWhere?.Skip(skip).Take(count).ToList(),
+            TotalCount = listWhere?.Count() ?? -1
+        };
+        sw.Stop();
+        sharePointActionsUser.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return sharePointActionsUser;
+    }
+
+    private async Task<List<SharePointAction>?> GetSharePointActions(Guid customerId, string keyActions, CancellationToken clt)
+    {
+        var cacheOptions = new MemoryCacheEntryOptions();
+        var spUsers = await GetAllSharePointUsers(customerId, clt);
+        var sharePointActions = await GraphHelper.GetListActions(customerId, spUsers);
+        cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(30));
+        cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
+        _ = _memoryCache.Set(keyActions, sharePointActions, cacheOptions);
+        return sharePointActions;
+    }
+
+    private async Task<bool> UpdateCacheSharePointActions(Guid customerId, string keyActions)
+    {
+        var keyExp = string.Format(SP_ACTIONS_EXP, customerId);
         var cacheOptions = new MemoryCacheEntryOptions();
         _memoryCache.TryGetValue<UpdatedCheck>(keyExp, out var lastupdated);
         if (lastupdated is null)
@@ -127,25 +228,10 @@ public class GraphService : IGraphService
             cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(120));
             cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(240));
             _ = _memoryCache.Set(keyExp, lastupdated, cacheOptions);
+            return true;
         }
-        _memoryCache.TryGetValue<List<SharePointAction>>(keyActions, out var sharePointActions);
-        if (sharePointActions == null)
-        {
-            var spUsers = await GetAllSharePointUsers(customerId, clt);
-            sharePointActions = await GraphHelper.GetListActions(customerId, spUsers);
-            cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(30));
-            cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
-            _ = _memoryCache.Set(keyActions, sharePointActions, cacheOptions);
-        }
-        var listWhere = sharePointActions?.Where(x => x.Users.Count(y => users.Contains(y.Name)) == users.Count());
-        var sharePointActionsUser = new MultipleSharePointActionsResponse
-        {
-            SharePointActions = listWhere?.Skip(skip).Take(count).ToList(),
-            TotalCount = listWhere?.Count() ?? -1
-        };
-        sw.Stop();
-        sharePointActionsUser.ElapsedMilliseconds = sw.ElapsedMilliseconds;
-        return sharePointActionsUser;
+        else
+            return false;
     }
 
     public async Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(List<string> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
@@ -198,6 +284,18 @@ public class GraphService : IGraphService
         if (sharePointUsers == null)
         {
             sharePointUsers = await GraphHelper.FindSharePointUsers();
+            using var scope = _scopeFactory.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+            var dbUsers = await db.Users.Where(x=> x.CustomerId == customerId).Select(x => new { x.Id, x.SharePointID, x.Name }).ToListAsync();
+            foreach (var sharePointUser in sharePointUsers)
+            {
+                var dbUser = dbUsers.FirstOrDefault(x => x.SharePointID == sharePointUser.SharePointID);
+                if (dbUser is null)
+                    dbUser = dbUsers.FirstOrDefault(x => x.Name == sharePointUser.Name);
+                if (dbUser is not null)
+                    sharePointUser.DrogeCodeId = dbUser.Id;
+
+            }
             _ = _memoryCache.Set(string.Format(SP_USERS, customerId), sharePointUsers, DateTimeOffset.UtcNow.AddMinutes(30));
         }
         return sharePointUsers;

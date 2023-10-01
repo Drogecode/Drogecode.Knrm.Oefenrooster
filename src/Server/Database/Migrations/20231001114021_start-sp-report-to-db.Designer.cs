@@ -3,6 +3,7 @@ using System;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20231001114021_start-sp-report-to-db")]
+    partial class startspreporttodb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -250,9 +253,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -276,8 +276,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
                     b.ToTable("ReportActions");
                 });
 
@@ -285,9 +283,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Description")
@@ -300,8 +295,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
 
                     b.ToTable("ReportTrainings");
                 });
@@ -1558,28 +1551,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportAction", b =>
-                {
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
-                        .WithMany("ReportActions")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportTraining", b =>
-                {
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
-                        .WithMany("ReportTrainings")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-                });
-
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportUser", b =>
                 {
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportAction", null)
@@ -1850,10 +1821,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("LinkVehicleTrainings");
 
                     b.Navigation("PreComAlerts");
-
-                    b.Navigation("ReportActions");
-
-                    b.Navigation("ReportTrainings");
 
                     b.Navigation("RoosterAvailables");
 

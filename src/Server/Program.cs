@@ -1,3 +1,4 @@
+using Drogecode.Knrm.Oefenrooster.Server.Background;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -50,13 +51,13 @@ builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceO
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<PreComHub>();
 builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
+builder.Services.AddSingleton<IGraphService, GraphService>();
 
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<ICalendarItemService, CalendarItemService>();
 builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 builder.Services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
-builder.Services.AddScoped<IGraphService, GraphService>();
 builder.Services.AddScoped<IHolidayService, HolidayService>();
 builder.Services.AddScoped<IPreComService, PreComService>();
 builder.Services.AddScoped<IReportService, ReportService>();
@@ -67,6 +68,8 @@ builder.Services.AddScoped<ITrainingTypesService, TrainingTypesService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<IUserSettingService, UserSettingService>();
 builder.Services.AddScoped<ICustomerSettingService, CustomerSettingService>();
+
+builder.Services.AddHostedService<Worker>();
 
 #if DEBUG
 // Only run in debug because it fails on the azure app service! (and is not necessary)

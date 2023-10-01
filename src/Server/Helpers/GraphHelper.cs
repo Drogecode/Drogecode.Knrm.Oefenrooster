@@ -203,7 +203,7 @@ public static class GraphHelper
 
     internal async static Task<List<SharePointAction>> GetListActions(Guid customerId, List<SharePointUser> users)
     {
-        if (_appClient == null || customerId != DefaultSettingsHelper.KnrmHuizenId) return new List<SharePointAction>();
+        if (_appClient is null || customerId != DefaultSettingsHelper.KnrmHuizenId) return new List<SharePointAction>();
 
         var overigeRaporten = await _appClient.Sites[STARTPAGINA].Lists[ID_ACTION_REPORTS_KNRM_HUIZEN].GetAsync();
 
@@ -217,8 +217,11 @@ public static class GraphHelper
         {
             foreach (var det in overigeItems.Value)
             {
-                if (det?.Fields?.AdditionalData == null) continue;
+                if (det?.Fields?.AdditionalData is null || det.ETag is null) continue;
                 var action = new SharePointAction();
+                action.Id = new Guid(det.ETag!.Split('\"', ',')[1]);
+                if (det.LastModifiedDateTime is not null)
+                    action.LastUpdated = DateTime.SpecifyKind(det.LastModifiedDateTime.Value.DateTime, DateTimeKind.Utc);
                 GetUser(users, det, "SchipperLookupId", SharePointRole.Schipper, action);
                 GetUser(users, det, "Opstapper_x0020_1LookupId", SharePointRole.Opstapper, action);
                 GetUser(users, det, "Opstapper_x0020_2LookupId", SharePointRole.Opstapper, action);

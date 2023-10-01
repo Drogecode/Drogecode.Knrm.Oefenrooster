@@ -6,6 +6,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 public class DbReportAction
 {
     [Key] public Guid Id { get; set; }
+    public Guid CustomerId { get; set; }
+    public DateTime LastUpdated { get; set; }
     public double Number { get; set; }
     public string? ShortDescription { get; set; }
     public string? Prio { get; set; }
@@ -13,5 +15,6 @@ public class DbReportAction
     public string? Description { get; set; }
     public DateTime Start { get; set; }
 
+    public DbCustomers Customer { get; set; }
     public ICollection<DbReportUser>? Users { get; set; }
 }
