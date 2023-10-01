@@ -12,6 +12,7 @@ public static class ReportActionMapper
         var dbReports = new DbReportAction
         {
             Id = spAction.Id,
+            LastUpdated = spAction.LastUpdated,
             Number = spAction.Number,
             ShortDescription = spAction.ShortDescription,
             Prio = spAction.Prio,

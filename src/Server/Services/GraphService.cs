@@ -135,7 +135,7 @@ public class GraphService : IGraphService
                 dbAction = action.ToDefaultSchedule();
                 await db.ReportActions.AddAsync(dbAction, clt);
             }
-            else
+            else if (dbAction.LastUpdated != action.LastUpdated)
             {
                 dbAction.Number = action.Number;
                 dbAction.ShortDescription = action.ShortDescription;
@@ -174,7 +174,9 @@ public class GraphService : IGraphService
                 }
             }
         }
-        return (await db.SaveChangesAsync(clt)) > 0;
+        var changeCount = await db.SaveChangesAsync(clt);
+        _logger.LogInformation("SharePoint actions synced (count {changeCount})",changeCount);
+        return changeCount > 0;
     }
 
     public async Task<MultipleSharePointActionsResponse> GetListActionsUser(List<string> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
@@ -282,6 +284,18 @@ public class GraphService : IGraphService
         if (sharePointUsers == null)
         {
             sharePointUsers = await GraphHelper.FindSharePointUsers();
+            using var scope = _scopeFactory.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+            var dbUsers = await db.Users.Where(x=> x.CustomerId == customerId).Select(x => new { x.Id, x.SharePointID, x.Name }).ToListAsync();
+            foreach (var sharePointUser in sharePointUsers)
+            {
+                var dbUser = dbUsers.FirstOrDefault(x => x.SharePointID == sharePointUser.SharePointID);
+                if (dbUser is null)
+                    dbUser = dbUsers.FirstOrDefault(x => x.Name == sharePointUser.Name);
+                if (dbUser is not null)
+                    sharePointUser.DrogeCodeId = dbUser.Id;
+
+            }
             _ = _memoryCache.Set(string.Format(SP_USERS, customerId), sharePointUsers, DateTimeOffset.UtcNow.AddMinutes(30));
         }
         return sharePointUsers;

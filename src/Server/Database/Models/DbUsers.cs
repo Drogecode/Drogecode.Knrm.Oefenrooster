@@ -16,6 +16,7 @@ public class DbUsers
     public DateTime LastLogin { get; set; }
     public DateTime? DeletedOn { get; set; }
     public Guid? DeletedBy { get; set; }
+    public string? SharePointID { get; set; }
 
     public DbCustomers Customer { get; set; }
     public DbUserFunctions? UserFunction{ get; set; }
