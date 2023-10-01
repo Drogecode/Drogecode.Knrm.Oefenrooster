@@ -7,11 +7,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
 public static class ReportActionMapper
 {
     //DbReportAction
-    public static DbReportAction ToDefaultSchedule(this SharePointAction spAction)
+    public static DbReportAction ToDefaultSchedule(this SharePointAction spAction, Guid customerId)
     {
         var dbReports = new DbReportAction
         {
             Id = spAction.Id,
+            CustomerId = customerId,
             LastUpdated = spAction.LastUpdated,
             Number = spAction.Number,
             ShortDescription = spAction.ShortDescription,

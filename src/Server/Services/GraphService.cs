@@ -123,6 +123,7 @@ public class GraphService : IGraphService
         using var scope = _scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<DataContext>();
         var dbActions = await db.ReportActions
+            .Where(x=>x.CustomerId == customerId)
             .Include(x => x.Users).ToListAsync();
 
         foreach (var action in sharePointActions)
@@ -130,12 +131,13 @@ public class GraphService : IGraphService
             var dbAction = dbActions.FirstOrDefault(x=>x.Id == action.Id);
             if (dbAction is null)
             {
-                dbAction = action.ToDefaultSchedule();
+                dbAction = action.ToDefaultSchedule(customerId);
                 await db.ReportActions.AddAsync(dbAction, clt);
             }
             else if (dbAction.LastUpdated != action.LastUpdated)
             {
                 dbAction.Number = action.Number;
+                dbAction.CustomerId = customerId;
                 dbAction.ShortDescription = action.ShortDescription;
                 dbAction.Prio = action.Prio;
                 dbAction.Title = action.Title;

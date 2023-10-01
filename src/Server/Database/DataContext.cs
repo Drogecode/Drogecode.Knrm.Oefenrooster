@@ -141,10 +141,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             // ReportActions
             modelBuilder.Entity<DbReportAction>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbReportAction>().HasMany(p => p.Users);
+            modelBuilder.Entity<DbReportAction>().HasOne(p => p.Customer).WithMany(g => g.ReportActions).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // ReportTrainings
             modelBuilder.Entity<DbReportTraining>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbReportTraining>().HasMany(p => p.Users);
+            modelBuilder.Entity<DbReportTraining>().HasOne(p => p.Customer).WithMany(g => g.ReportTrainings).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // ReportUsers
             modelBuilder.Entity<DbReportUser>(e => { e.Property(e => e.Id).IsRequired(); });
