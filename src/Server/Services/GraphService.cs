@@ -1,12 +1,10 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database;
-using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph.Models;
-using MudBlazor.Services;
 using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -124,12 +122,12 @@ public class GraphService : IGraphService
             return false;
         using var scope = _scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+        var dbActions = await db.ReportActions
+            .Include(x => x.Users).ToListAsync();
+
         foreach (var action in sharePointActions)
         {
-            var dbAction = await db.ReportActions
-                .Where(x => x.Id == action.Id)
-                .Include(x => x.Users)
-                .FirstOrDefaultAsync();
+            var dbAction = dbActions.FirstOrDefault(x=>x.Id == action.Id);
             if (dbAction is null)
             {
                 dbAction = action.ToDefaultSchedule();
