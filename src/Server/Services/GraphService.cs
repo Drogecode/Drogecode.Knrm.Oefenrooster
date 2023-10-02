@@ -11,10 +11,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class GraphService : IGraphService
 {
-    private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<GraphService> _logger;
     private readonly IMemoryCache _memoryCache;
     private readonly IConfiguration _configuration;
+    private readonly DataContext _database;
 
     private const string SP_USERS = "SPUsrs_{0}";
     private const string SP_ACTIONS = "usrSPAct_{0}";
@@ -22,15 +22,15 @@ public class GraphService : IGraphService
     private const string SP_TRAININGS = "usrSPTrai_{0}";
     private const string SP_TRAININGS_EXP = "usrSPTraiEx_{0}";
     public GraphService(
-        IServiceScopeFactory scopeFactory,
         ILogger<GraphService> logger,
         IMemoryCache memoryCache,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        DataContext dataContext)
     {
-        _scopeFactory = scopeFactory;
         _logger = logger;
         _memoryCache = memoryCache;
         _configuration = configuration;
+        _database = dataContext;
     }
     public void InitializeGraph(Settings? settings = null)
     {
@@ -118,21 +118,21 @@ public class GraphService : IGraphService
             return false;
         _memoryCache.TryGetValue<List<SharePointAction>>(keyActions, out var sharePointActions);
         sharePointActions ??= await GetSharePointActions(customerId, keyActions, clt);
-        if (sharePointActions == null)
+        if (sharePointActions == null || clt.IsCancellationRequested)
             return false;
-        using var scope = _scopeFactory.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-        var dbActions = await db.ReportActions
+        var dbActions = await _database.ReportActions
             .Where(x=>x.CustomerId == customerId)
             .Include(x => x.Users).ToListAsync();
 
         foreach (var action in sharePointActions)
         {
+            if (clt.IsCancellationRequested) 
+                return false;
             var dbAction = dbActions.FirstOrDefault(x=>x.Id == action.Id);
             if (dbAction is null)
             {
                 dbAction = action.ToDefaultSchedule(customerId);
-                await db.ReportActions.AddAsync(dbAction, clt);
+                await _database.ReportActions.AddAsync(dbAction, clt);
             }
             else if (dbAction.LastUpdated != action.LastUpdated)
             {
@@ -174,7 +174,7 @@ public class GraphService : IGraphService
                 }
             }
         }
-        var changeCount = await db.SaveChangesAsync(clt);
+        var changeCount = await _database.SaveChangesAsync(clt);
         _logger.LogInformation("SharePoint actions synced (count {changeCount})",changeCount);
         return changeCount > 0;
     }
@@ -284,9 +284,7 @@ public class GraphService : IGraphService
         if (sharePointUsers == null)
         {
             sharePointUsers = await GraphHelper.FindSharePointUsers();
-            using var scope = _scopeFactory.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-            var dbUsers = await db.Users.Where(x=> x.CustomerId == customerId).Select(x => new { x.Id, x.SharePointID, x.Name }).ToListAsync();
+            var dbUsers = await _database.Users.Where(x=> x.CustomerId == customerId).Select(x => new { x.Id, x.SharePointID, x.Name }).ToListAsync();
             foreach (var sharePointUser in sharePointUsers)
             {
                 var dbUser = dbUsers.FirstOrDefault(x => x.SharePointID == sharePointUser.SharePointID);

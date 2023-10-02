@@ -117,11 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="All your trainings from SharePoint" xml:space="preserve">
+    <value>All your trainings from SharePoint</value>
+  </data>
   <data name="Description" xml:space="preserve">
     <value>Description</value>
-  </data>
-  <data name="Most recent trainings from SharePoint" xml:space="preserve">
-    <value>Most recent trainings from SharePoint</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Start</value>

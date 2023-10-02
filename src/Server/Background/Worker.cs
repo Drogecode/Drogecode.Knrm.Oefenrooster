@@ -1,3 +1,5 @@
+using Drogecode.Knrm.Oefenrooster.Server.Database;
+using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Background;
@@ -5,13 +7,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Background;
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
-    private readonly IGraphService _graphService;
+    private readonly IServiceScopeFactory _scopeFactory;
     private CancellationToken _clt;
 
-    public Worker(ILogger<Worker> logger, IGraphService graphService)
+    public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory)
     {
         _logger = logger;
-        _graphService = graphService;
+        _scopeFactory = scopeFactory;
     }
 
     protected override async Task ExecuteAsync(CancellationToken clt)
@@ -43,7 +45,9 @@ public class Worker : BackgroundService
 
     private async Task SyncSharePointActions()
     {
-        _graphService.InitializeGraph();
-        await _graphService.SyncSharePointActions(DefaultSettingsHelper.KnrmHuizenId, _clt);
+        using var scope = _scopeFactory.CreateScope();
+        var graphService = scope.ServiceProvider.GetRequiredService<IGraphService>();
+        graphService.InitializeGraph();
+        await graphService.SyncSharePointActions(DefaultSettingsHelper.KnrmHuizenId, _clt);
     }
 }

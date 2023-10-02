@@ -51,7 +51,7 @@ builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceO
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<PreComHub>();
 builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
-builder.Services.AddSingleton<IGraphService, GraphService>();
+builder.Services.AddScoped<IGraphService, GraphService>();
 
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<ICalendarItemService, CalendarItemService>();

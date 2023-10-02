@@ -5,6 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
+using Microsoft.Graph.Models.TermStore;
 using Microsoft.Graph.Sites.Item.Lists.Item.Items;
 using Microsoft.Graph.Users;
 
@@ -231,14 +232,20 @@ public static class GraphHelper
                 double number = -1;
                 if (det.Fields.AdditionalData.ContainsKey("Actie_x0020_nummer"))
                     _ = double.TryParse(det.Fields.AdditionalData["Actie_x0020_nummer"].ToString(), out number);
-                var start = det.Fields.AdditionalData.ContainsKey("Oproep_x0020__x0028_uren_x0029_") ? (DateTime)det.Fields.AdditionalData["Oproep_x0020__x0028_uren_x0029_"] : DateTime.MinValue;
-                start = DateTime.SpecifyKind(start, DateTimeKind.Utc);
                 action.Number = number;
-                action.Start = start;
-                action.Title = det.Fields.AdditionalData.ContainsKey("LinkTitle") ? det.Fields.AdditionalData["LinkTitle"]!.ToString() : "";
-                action.ShortDescription = det.Fields.AdditionalData.ContainsKey("Korte_x0020_Omschrijving") ? det.Fields.AdditionalData["Korte_x0020_Omschrijving"]!.ToString() : "";
-                action.Description = det.Fields.AdditionalData.ContainsKey("Bijzonderheden_x0020_Oproep") ? det.Fields.AdditionalData["Bijzonderheden_x0020_Oproep"]!.ToString() : "";
-                action.Prio = det.Fields.AdditionalData.ContainsKey("Priotiteit_x0020_Alarmering") ? det.Fields.AdditionalData["Priotiteit_x0020_Alarmering"]!.ToString() : "";
+                action.Date = AdditionalDataToDateTime(det, "Datum"); ;
+                action.Start = AdditionalDataToDateTime(det, "Oproep_x0020__x0028_uren_x0029_"); ;
+                action.Commencement = AdditionalDataToDateTime(det, "Aanvang"); ;
+                action.End = AdditionalDataToDateTime(det, "Einde"); ;
+                action.Title = AdditionalDataToString(det, "LinkTitle");
+                action.ShortDescription = AdditionalDataToString(det, "Korte_x0020_Omschrijving");
+                action.Description = AdditionalDataToString(det, "Bijzonderheden_x0020_Oproep");
+                action.Prio = AdditionalDataToString(det, "Priotiteit_x0020_Alarmering");
+                action.Type = AdditionalDataToString(det, "Soort");
+                action.Request = AdditionalDataToString(det, "Oproep");
+                action.ForTheBenefitOf = AdditionalDataToString(det, "Ten_x0020_behoeve_x0020_van");
+                action.Causes = AdditionalDataToString(det, "Oorzaken");
+                action.Implications = AdditionalDataToString(det, "Gevolgen");
                 actions.Add(action);
             }
             if (overigeItems.OdataNextLink != null)
@@ -246,6 +253,16 @@ public static class GraphHelper
             else break;
         }
         return actions.OrderByDescending(x => x.Start).ToList();
+    }
+
+    private static string? AdditionalDataToString(ListItem det, string key)
+    {
+        return det.Fields!.AdditionalData.ContainsKey(key) ? det.Fields.AdditionalData[key]!.ToString() : "";
+    }
+    private static DateTime AdditionalDataToDateTime(ListItem det, string key)
+    {
+        var dateTime = det.Fields!.AdditionalData.ContainsKey(key) ? (DateTime)det.Fields.AdditionalData[key] : DateTime.MinValue;
+        return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
     }
 
     internal static async Task<DateTime> ListTrainingLastUpdate(Guid customerId)
