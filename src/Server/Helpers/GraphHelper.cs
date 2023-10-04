@@ -5,7 +5,6 @@ using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
-using Microsoft.Graph.Models.TermStore;
 using Microsoft.Graph.Sites.Item.Lists.Item.Items;
 using Microsoft.Graph.Users;
 
@@ -219,6 +218,9 @@ public static class GraphHelper
             foreach (var det in overigeItems.Value)
             {
                 if (det?.Fields?.AdditionalData is null || det.ETag is null) continue;
+                double number = -1;
+                if (det.Fields.AdditionalData.ContainsKey("Actie_x0020_nummer"))
+                    _ = double.TryParse(det.Fields.AdditionalData["Actie_x0020_nummer"].ToString(), out number);
                 var action = new SharePointAction();
                 action.Id = new Guid(det.ETag!.Split('\"', ',')[1]);
                 if (det.LastModifiedDateTime is not null)
@@ -229,9 +231,6 @@ public static class GraphHelper
                 GetUser(users, det, "Opstapper_x0020_3LookupId", SharePointRole.Opstapper, action);
                 GetUser(users, det, "Opstapper_x0020_4LookupId", SharePointRole.Opstapper, action);
                 GetUser(users, det, "Opstapper_x0020_5LookupId", SharePointRole.Opstapper, action);
-                double number = -1;
-                if (det.Fields.AdditionalData.ContainsKey("Actie_x0020_nummer"))
-                    _ = double.TryParse(det.Fields.AdditionalData["Actie_x0020_nummer"].ToString(), out number);
                 action.Number = number;
                 action.Date = AdditionalDataToDateTime(det, "Datum"); ;
                 action.Start = AdditionalDataToDateTime(det, "Oproep_x0020__x0028_uren_x0029_"); ;
@@ -287,10 +286,10 @@ public static class GraphHelper
 
     private static void GetUser(List<SharePointUser> users, ListItem det, string key, SharePointRole role, SharePointListBase listBase)
     {
-        var sharePointID = det.Fields.AdditionalData.ContainsKey(key) ? det.Fields.AdditionalData[key]?.ToString() : "";
-        if (sharePointID == null) return;
-        var user = users.FirstOrDefault(x => x.SharePointID == sharePointID);
-        if (user == null) return;
+        var sharePointID = det.Fields?.AdditionalData.ContainsKey(key) == true ? det.Fields.AdditionalData[key]?.ToString() : "";
+        if (string.IsNullOrEmpty( sharePointID)) return;
+        var user = (SharePointUser?)users.FirstOrDefault(x => x.SharePointID == sharePointID)?.Clone();
+        if (user is null) return;
         user.Role = role;
         listBase.Users.Add(user);
     }

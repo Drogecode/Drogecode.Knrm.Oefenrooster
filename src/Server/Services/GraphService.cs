@@ -149,14 +149,15 @@ public class GraphService : IGraphService
                     {
                         if (action.Users.Any(x => x.DrogeCodeId == dbUser.DrogeCodeId))
                         {
+                            var user = action.Users.FirstOrDefault(x => x.DrogeCodeId == dbUser.DrogeCodeId);
                             dbUser.IsDeleted = false;
-                            continue;
+                            dbUser.Role = user!.Role;
+                            dbUser.Name = user!.Name;
                         }
                         else
                         {
                             dbUser.IsDeleted = true;
                         }
-
                     }
                     foreach (var user in action.Users)
                     {
