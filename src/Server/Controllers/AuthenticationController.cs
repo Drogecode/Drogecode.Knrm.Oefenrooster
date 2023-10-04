@@ -235,7 +235,10 @@ public class AuthenticationController : ControllerBase
             new("http://schemas.microsoft.com/identity/claims/tenantid", customerId.ToString())
         };
         if (string.Compare(userId, DefaultSettingsHelper.IdTaco.ToString(), true) == 0)
+        {
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_Taco));
+            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_scheduler_in_table_view));
+        }
         var accesses = await _userRoleService.GetAccessForUser(customerId, jwtSecurityToken.Claims);
         if (accesses == null) return claims;
         foreach (var access in accesses)

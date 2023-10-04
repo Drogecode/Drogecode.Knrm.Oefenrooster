@@ -32,9 +32,9 @@
                 <MudTd Class="DrogeCode-sticky-column" DataLabel="@L["Name"]">@context.Name</MudTd>
                 @foreach (var item in _events)
                 {
-                    var training = item.PlanUsers?.FirstOrDefault(x => x.UserId == @context.Id);
-                    <MudTd Class="@PlannerHelper.StyleAvailabilty(training?.Availabilty)" DataLabel="@L["Name"]">
-                        @switch (training?.SetBy)
+                    var user = item.PlanUsers?.FirstOrDefault(x => x.UserId == @context.Id);
+                    <MudTd Class="@PlannerHelper.StyleAvailabilty(user?.Availabilty)" DataLabel="@L["Name"]" @onclick="()=>Click(user, item)">
+                        @switch (user?.SetBy)
                         {
                             case AvailabilitySetBy.DefaultAvailable:
                                 <MudIcon Icon="@Icons.Material.Filled.AutoGraph" />
@@ -43,9 +43,9 @@
                                 <MudIcon Icon="@Icons.Material.Filled.WbSunny" />
                                 break;
                         }
-                        @if (training?.Assigned == true)
+                        @if (user?.Assigned == true)
                         {
-                            @(Vehicles?.FirstOrDefault(x => x.Id == training.VehicleId)?.Code ?? Vehicles?.FirstOrDefault(x => x.IsDefault)?.Code ?? L["Assigned"])
+                            @(Vehicles?.FirstOrDefault(x => x.Id == user.VehicleId)?.Code ?? Vehicles?.FirstOrDefault(x => x.IsDefault)?.Code ?? L["Assigned"])
                         }
                     </MudTd>
                 }

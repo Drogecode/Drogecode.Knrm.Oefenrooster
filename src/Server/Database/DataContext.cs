@@ -614,7 +614,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = new Guid("f6b0c571-9050-40d6-bf58-807981e5ed6e"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Scheduler",
-                Accesses = AccessesNames.AUTH_scheduler
+                Accesses = $"{AccessesNames.AUTH_scheduler},{AccessesNames.AUTH_scheduler_in_table_view}"
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {
