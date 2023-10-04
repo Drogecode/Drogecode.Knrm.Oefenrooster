@@ -54,9 +54,13 @@
             {
                 <MudText Typo="Typo.body2">@Training.DateStart.ToLocalTime().ToString("HH:mm") @LApp["till"] @Training.DateEnd.ToLocalTime().ToString("HH:mm")</MudText>
             }
-            @if (ChildContent != null)
+            @if (ChildContent is not null && (ShowPastBody || Training.DateEnd.ToLocalTime().CompareTo(DateTime.Now) >= 0))
             {
                 @ChildContent
+            }
+            else if (ChildContent is not null && !ChildContent.Equals("") && !ShowPastBody)
+            {
+                <MudButton OnClick="()=>ShowPastBody = true">@MoreMessage</MudButton>
             }
         </MudCardContent>
     </MudCard>

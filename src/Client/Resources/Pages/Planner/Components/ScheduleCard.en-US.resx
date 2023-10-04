@@ -144,6 +144,9 @@
   <data name="Schedule people for this training" xml:space="preserve">
     <value>Schedule people for this training</value>
   </data>
+  <data name="Show attendees" xml:space="preserve">
+    <value>Show attendees</value>
+  </data>
   <data name="till" xml:space="preserve">
     <value>till</value>
   </data>

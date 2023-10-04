@@ -27,6 +27,7 @@ public sealed partial class ScheduleCalendar : IDisposable
     private List<UserTrainingCounter>? _userTrainingCounter;
     private List<RoosterItemMonth>? _monthItems;
     private bool _updating;
+    private bool _currentMonth;
     private ScheduleView _view = ScheduleView.Calendar;
     private DateTime? _month;
 
@@ -69,6 +70,7 @@ public sealed partial class ScheduleCalendar : IDisposable
         _month = PlannerHelper.ForMonth(dateRange);
         if (_month != null)
         {
+            _currentMonth = DateTime.Today.Month == _month.Value.Month;
             var monthItems = await _calendarItemRepository.GetMonthItemAsync(_month.Value.Year, _month.Value.Month, _cls.Token);
             _monthItems = monthItems?.MonthItems;
             var dayItems = await _calendarItemRepository.GetDayItemsAsync(dateRange, _cls.Token);

@@ -5,23 +5,23 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @if (!_isDelted)
 {
-    <CalendarBaseCard ReplaceEmtyName="@ReplaceEmtyName" Width="@Width" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" OnClickHistory="OpenHistoryDialog" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek">
-        @if (ChildContent is not null)
-        {
-            @ChildContent
-        }
-        @if (Functions is not null)
-        {
+    @if (Functions is not null && Vehicles is not null && Planner.PlanUsers?.Any(x => x.Assigned) == true)
+    {
+        <CalendarBaseCard ReplaceEmtyName="@ReplaceEmtyName" Width="@Width" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" OnClickHistory="OpenHistoryDialog" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" ShowPastBody="ShowPastBody" MoreMessage="@L["Show attendees"]">
+            @if (ChildContent is not null)
+            {
+                @ChildContent
+            }
             <MudList>
-                @foreach (var vehicle in Vehicles.Where(x => Planner.PlanUsers?.Any(y => y.VehicleId == x.Id) == true || (x.IsDefault && Planner.PlanUsers?.Any(y => y.VehicleId == null) == true)))
+                @foreach (var vehicle in Vehicles.Where(x => Planner.PlanUsers.Any(y => y.VehicleId == x.Id) == true || (x.IsDefault && Planner.PlanUsers.Any(y => y.VehicleId == null) == true)))
                 {
-                    @if (Functions.Any(f => f.Active) && (Planner.PlanUsers?.Any(x => x.Assigned && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))) == true))
+                    @if (Functions.Any(f => f.Active) && (Planner.PlanUsers.Any(x => x.Assigned && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))) == true))
                     {
                         <MudText Typo="Typo.subtitle2">@vehicle.Name</MudText>
                     }
                     @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
                     {
-                        @if (Planner.PlanUsers?.Any(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))) == true)
+                        @if (Planner.PlanUsers.Any(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))) == true)
                         {
                             @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))))
                             {
@@ -31,6 +31,10 @@
                     }
                 }
             </MudList>
-        }
-    </CalendarBaseCard>
+        </CalendarBaseCard>
+    }
+    else
+    {
+        <CalendarBaseCard ReplaceEmtyName="@ReplaceEmtyName" Width="@Width" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" OnClickHistory="OpenHistoryDialog" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" ShowPastBody="ShowPastBody" MoreMessage="@L["Show attendees"]"/>
+    }
 }

@@ -14,7 +14,7 @@
                 var training = ((ScheduleCalendarItem)context).Training;
                 @if (training != null)
                 {
-                    <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" />
+                    <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth" />
                 }
             }
             else if (context is RoosterItemDayCalendarItem)
@@ -50,7 +50,7 @@
                     var training = ((ScheduleCalendarItem)ev).Training;
                     @if (training != null)
                     {
-                        <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowDate="true" ShowDayOfWeek="true" />
+                        <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowDate="true" ShowDayOfWeek="true" ShowPastBody="!_currentMonth" />
                     }
                 }
                 else if (ev is RoosterItemDayCalendarItem)

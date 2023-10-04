@@ -28,6 +28,7 @@ public sealed partial class ScheduleCard : IDisposable
     [Parameter] public bool ReplaceEmtyName { get; set; }
     [Parameter] public bool ShowDate { get; set; }
     [Parameter] public bool ShowDayOfWeek { get; set; }
+    [Parameter] public bool ShowPastBody { get; set; } = true;
     private RefreshModel _refreshModel = new();
     private bool _updating;
     private bool _isDelted;

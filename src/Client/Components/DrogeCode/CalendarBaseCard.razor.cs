@@ -19,6 +19,8 @@ public sealed partial class CalendarBaseCard : IDisposable
     [Parameter] public bool ReplaceEmtyName { get; set; }
     [Parameter] public bool ShowDate { get; set; } = true;
     [Parameter] public bool ShowDayOfWeek { get; set; } = false;
+    [Parameter] public bool ShowPastBody { get; set; } = true;
+    [Parameter] public string MoreMessage { get; set; } = "Show more";
     private CancellationTokenSource _cls = new();
     private int _iconCount;
     private bool _showAllIcons = false;
