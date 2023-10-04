@@ -15,13 +15,13 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 public sealed partial class ScheduleTable : IDisposable
 {
     [Inject] private IStringLocalizer<ScheduleTable> L { get; set; } = default!;
-    [Inject] private ISnackbar Snackbar { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; } = default!;
     [Parameter, EditorRequired] public List<PlannerTrainingType>? TrainingTypes { get; set; } = default!;
+    [Parameter, EditorRequired] public Schedule Parent { get; set; } = default!;
 
     private CancellationTokenSource _cls = new();
     private bool _updating;
@@ -30,13 +30,6 @@ public sealed partial class ScheduleTable : IDisposable
     private List<PlannedTraining> _events = new();
     private List<UserTrainingCounter>? _userTrainingCounter;
     private DateTime? _month;
-
-    private Action<SnackbarOptions> _snackbarConfig = (SnackbarOptions options) =>
-    {
-        options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
-        options.RequireInteraction = false;
-        options.ShowCloseIcon = true;
-    };
 
     private async Task SetMonth(DateTime? dateTime)
     {
@@ -92,9 +85,7 @@ public sealed partial class ScheduleTable : IDisposable
         _working = true;
         user.Assigned = !user.Assigned;
         await _scheduleRepository.PatchAssignedUser(training.TrainingId, training, user);
-        var key = $"table_{user.UserId}_{training.TrainingId}";
-        Snackbar.RemoveByKey(key);
-        Snackbar.Add(L["{0} {1} {2} {3} {4}", user.Assigned ? L["Assigned"] : L["Removed"], user.Name, user.Assigned ? L["to"] : L["from"], training.DateStart.ToShortDateString(), training.Name ?? ""], (user.Availabilty == Availabilty.NotAvailable || user.Availabilty == Availabilty.Maybe) && user.Assigned ? Severity.Warning : Severity.Info, configure: _snackbarConfig, key: key);
+        Parent.ShowSnackbarAssignmentChanged(user, training);
         StateHasChanged();
         _working = false;
     }

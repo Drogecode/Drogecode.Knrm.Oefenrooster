@@ -117,19 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Assigned" xml:space="preserve">
-    <value>Ingedeeld</value>
-  </data>
-  <data name="from" xml:space="preserve">
-    <value>van</value>
-  </data>
-  <data name="Removed" xml:space="preserve">
-    <value>Verwijderd</value>
-  </data>
-  <data name="to" xml:space="preserve">
-    <value>aan</value>
-  </data>
-  <data name="{0} {1} {2} {3} {4}" xml:space="preserve">
-    <value>{0} {1} {2} {3} {4}</value>
-  </data>
 </root>

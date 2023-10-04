@@ -8,19 +8,21 @@ public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IConfiguration _configuration;
     private CancellationToken _clt;
 
-    public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory)
+    public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IConfiguration configuration)
     {
         _logger = logger;
         _scopeFactory = scopeFactory;
+        _configuration = configuration;
     }
 
     protected override async Task ExecuteAsync(CancellationToken clt)
     {
         _clt = clt;
         int errorCount = 0;
-        while (!clt.IsCancellationRequested)
+        while (!clt.IsCancellationRequested && _configuration.GetValue<bool>("Drogecode:RunBackgroundService"))
         {
             try
             {

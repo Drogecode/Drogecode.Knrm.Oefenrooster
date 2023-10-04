@@ -8,13 +8,13 @@
 }
 <div class="d-none d-md-flex">
     <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
-        <CellTemplate>
-            @if (context is ScheduleCalendarItem)
+         <CellTemplate>
+             @if (context is ScheduleCalendarItem)
             {
                 var training = ((ScheduleCalendarItem)context).Training;
                 @if (training != null)
                 {
-                    <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth" />
+                    <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth" Parent="Parent" />
                 }
             }
             else if (context is RoosterItemDayCalendarItem)
@@ -50,7 +50,7 @@
                     var training = ((ScheduleCalendarItem)ev).Training;
                     @if (training != null)
                     {
-                        <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowDate="true" ShowDayOfWeek="true" ShowPastBody="!_currentMonth" />
+                        <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowDate="true" ShowDayOfWeek="true" ShowPastBody="!_currentMonth" Parent="Parent" />
                     }
                 }
                 else if (ev is RoosterItemDayCalendarItem)

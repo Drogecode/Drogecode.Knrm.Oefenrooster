@@ -23,6 +23,7 @@ public sealed partial class ScheduleCard : IDisposable
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
     [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter, EditorRequired] public List<PlannerTrainingType>? TrainingTypes { get; set; }
+    [Parameter, EditorRequired] public Schedule Parent { get; set; } = default!;
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public string Width { get; set; } = "100%";
     [Parameter] public bool ReplaceEmtyName { get; set; }
@@ -47,7 +48,8 @@ public sealed partial class ScheduleCard : IDisposable
             { x => x.Refresh, _refreshModel },
             { x => x.Users, Users },
             { x => x.Functions, Functions },
-            { x => x.Vehicles, Vehicles }
+            { x => x.Vehicles, Vehicles },
+            { x => x.Parent, Parent },
         };
 
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };

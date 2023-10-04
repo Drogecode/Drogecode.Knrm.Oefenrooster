@@ -17,9 +17,9 @@
 @switch (_view)
 {
     case Enums.ScheduleView.Calendar:
-        <ScheduleCalendar Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" />
+        <ScheduleCalendar Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" Parent="this" />
         break;
     case Enums.ScheduleView.Table:
-        <ScheduleTable Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" />
+        <ScheduleTable Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" Parent="this" />
         break;
 }

@@ -20,6 +20,7 @@ public sealed partial class ScheduleDialog : IDisposable
     [Parameter] public List<DrogeFunction>? Functions { get; set; }
     [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter] public RefreshModel Refresh { get; set; } = default!;
+    [Parameter] public Schedule Parent { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
     private List<DrogeVehicle>? _vehicleInfoForThisTraining;
@@ -59,7 +60,9 @@ public sealed partial class ScheduleDialog : IDisposable
             }
             _vehicleCount = count;
         }
-        var latestVersion = (await latestVersionTask)?.Training;
+        PlannedTraining? latestVersion = null;
+        if (latestVersionTask is not null)
+            latestVersion = (await latestVersionTask)?.Training;
         if (latestVersion is not null)
         {
             Planner.PlanUsers = latestVersion.PlanUsers;
@@ -77,6 +80,7 @@ public sealed partial class ScheduleDialog : IDisposable
         else
             user.PlannedFunctionId = user.UserFunctionId;
         await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, Planner, user);
+        Parent.ShowSnackbarAssignmentChanged(user, Planner);
         await Refresh.CallRequestRefreshAsync();
     }
 
@@ -87,7 +91,7 @@ public sealed partial class ScheduleDialog : IDisposable
         var planuser = Planner.PlanUsers.FirstOrDefault(x => x.UserId == user.Id);
         if (planuser == null)
         {
-            Planner.PlanUsers.Add(new PlanUser
+            planuser = new PlanUser
             {
                 UserId = user.Id,
                 UserFunctionId = user.UserFunctionId,
@@ -95,7 +99,8 @@ public sealed partial class ScheduleDialog : IDisposable
                 Availabilty = Availabilty.None,
                 Assigned = toggled,
                 Name = user.Name,
-            });
+            };
+            Planner.PlanUsers.Add(planuser);
         }
         else
         {
@@ -106,6 +111,7 @@ public sealed partial class ScheduleDialog : IDisposable
                 planuser.PlannedFunctionId = planuser.UserFunctionId;
 
         }
+        Parent.ShowSnackbarAssignmentChanged(planuser!, Planner);
         await Refresh.CallRequestRefreshAsync();
     }
 

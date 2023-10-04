@@ -22,6 +22,7 @@ public sealed partial class ScheduleCalendar : IDisposable
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
     [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter, EditorRequired] public List<PlannerTrainingType>? TrainingTypes { get; set; }
+    [Parameter, EditorRequired] public Schedule Parent { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<CalendarItem> _events = new();
     private List<UserTrainingCounter>? _userTrainingCounter;
