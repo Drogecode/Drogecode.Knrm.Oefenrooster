@@ -14,7 +14,7 @@
                 var training = ((ScheduleCalendarItem)context).Training;
                 @if (training != null)
                 {
-                    <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth" Parent="Parent" />
+                    <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth" />
                 }
             }
             else if (context is RoosterItemDayCalendarItem)
@@ -45,25 +45,27 @@
         {
             @foreach (var ev in _events.Where(x => x.Start.Month == _month.Value.Month && x.Start.Year == _month.Value.Year && x.Start.Date >= DateTime.Today.AddDays(-1)).OrderBy(x => x.Start))
             {
-                @if (ev is ScheduleCalendarItem)
-                {
-                    var training = ((ScheduleCalendarItem)ev).Training;
-                    @if (training != null)
+                <div class="flex-1">
+                    @if (ev is ScheduleCalendarItem)
                     {
-                        <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowDate="true" ShowDayOfWeek="true" ShowPastBody="!_currentMonth" Parent="Parent" />
+                        var training = ((ScheduleCalendarItem)ev).Training;
+                        @if (training is not null)
+                        {
+                            <ScheduleCard MinWidth="300px" MaxWidth="600px" Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowDate="true" ShowDayOfWeek="true" ShowPastBody="!_currentMonth" />
+                        }
                     }
-                }
-                else if (ev is RoosterItemDayCalendarItem)
-                {
-                    var dayItem = ((RoosterItemDayCalendarItem)ev).ItemDay;
-                    @if (dayItem != null)
+                    else if (ev is RoosterItemDayCalendarItem)
                     {
-                        <div class="d-flex gap-1">
-                            <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Secondary" Size="Size.Small" />
-                            <div>@dayItem.Text - @dayItem.DateStart.ToString("dddd dd MMM")</div>
-                        </div>
+                        var dayItem = ((RoosterItemDayCalendarItem)ev).ItemDay;
+                        @if (dayItem is not null)
+                        {
+                            <div class="d-flex gap-1">
+                                <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Secondary" Size="Size.Small" />
+                                <div>@dayItem.Text - @dayItem.DateStart.ToString("dddd dd MMM")</div>
+                            </div>
+                        }
                     }
-                }
+                </div>
             }
         }
     </MudPaper>

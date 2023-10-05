@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -34,6 +35,13 @@ public sealed partial class MainLayout : IDisposable
     {
         Palette = new PaletteLight(),
         PaletteDark = new PaletteDark(),
+    };
+    private Action<SnackbarOptions> _snackbarConfig = (SnackbarOptions options) =>
+    {
+        options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
+        options.RequireInteraction = false;
+        options.ShowCloseIcon = true;
+        options.VisibleStateDuration = 20000;
     };
 
     protected override async Task OnInitializedAsync()
@@ -106,6 +114,13 @@ public sealed partial class MainLayout : IDisposable
     private async Task BeginLogout(MouseEventArgs args)
     {
         Navigation.NavigateTo("authentication/logout");
+    }
+
+    public void ShowSnackbarAssignmentChanged(PlanUser user, PlannedTraining training)
+    {
+        var key = $"table_{user.UserId}_{training.TrainingId}";
+        Snackbar.RemoveByKey(key);
+        Snackbar.Add(L["{0} {1} {2} {3} {4}", user.Assigned ? L["Assigned"] : L["Removed"], user.Name, user.Assigned ? L["to"] : L["from"], training.DateStart.ToShortDateString(), training.Name ?? ""], (user.Availabilty == Availabilty.NotAvailable || user.Availabilty == Availabilty.Maybe) && user.Assigned ? Severity.Warning : user.Assigned ? Severity.Normal : Severity.Info, configure: _snackbarConfig, key: key);
     }
 
     void DrawerToggle()

@@ -18,6 +18,8 @@ public sealed partial class IndexCard : IDisposable
     [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter, EditorRequired] public List<PlannerTrainingType>? TrainingTypes { get; set; }
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
+    [Parameter] public string? MinWidth { get; set; }
+    [Parameter] public string? MaxWidth { get; set; }
     private CancellationTokenSource _cls = new();
     private PlanUser? _planUser;
 

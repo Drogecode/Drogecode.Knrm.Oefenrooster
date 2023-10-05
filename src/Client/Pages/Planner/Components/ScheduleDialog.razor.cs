@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -20,7 +21,7 @@ public sealed partial class ScheduleDialog : IDisposable
     [Parameter] public List<DrogeFunction>? Functions { get; set; }
     [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter] public RefreshModel Refresh { get; set; } = default!;
-    [Parameter] public Schedule Parent { get; set; } = default!;
+    [Parameter] public MainLayout MainLayout { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
     private List<DrogeVehicle>? _vehicleInfoForThisTraining;
@@ -80,7 +81,7 @@ public sealed partial class ScheduleDialog : IDisposable
         else
             user.PlannedFunctionId = user.UserFunctionId;
         await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, Planner, user);
-        Parent.ShowSnackbarAssignmentChanged(user, Planner);
+        MainLayout.ShowSnackbarAssignmentChanged(user, Planner);
         await Refresh.CallRequestRefreshAsync();
     }
 
@@ -111,7 +112,7 @@ public sealed partial class ScheduleDialog : IDisposable
                 planuser.PlannedFunctionId = planuser.UserFunctionId;
 
         }
-        Parent.ShowSnackbarAssignmentChanged(planuser!, Planner);
+        MainLayout.ShowSnackbarAssignmentChanged(planuser!, Planner);
         await Refresh.CallRequestRefreshAsync();
     }
 

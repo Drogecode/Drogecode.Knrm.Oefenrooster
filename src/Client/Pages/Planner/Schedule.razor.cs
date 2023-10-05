@@ -18,8 +18,6 @@ public sealed partial class Schedule : IDisposable
 {
     [Inject] private IStringLocalizer<Schedule> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private ISnackbar Snackbar { get; set; } = default!;
-    [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
@@ -34,14 +32,6 @@ public sealed partial class Schedule : IDisposable
     private List<PlannerTrainingType>? _trainingTypes;
     private bool _updating;
     private ScheduleView _view = ScheduleView.Calendar;
-
-    private Action<SnackbarOptions> _snackbarConfig = (SnackbarOptions options) =>
-    {
-        options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
-        options.RequireInteraction = false;
-        options.ShowCloseIcon = true;
-        options.VisibleStateDuration = 20000;
-    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,13 +48,6 @@ public sealed partial class Schedule : IDisposable
         if (_view == newView) return;
         _view = newView;
         Navigation.NavigateTo($"/planner/schedule/{newView}");
-    }
-
-    public void ShowSnackbarAssignmentChanged(PlanUser user, PlannedTraining training)
-    {
-        var key = $"table_{user.UserId}_{training.TrainingId}";
-        Snackbar.RemoveByKey(key);
-        Snackbar.Add(L["{0} {1} {2} {3} {4}", user.Assigned ? L["Assigned"] : L["Removed"], user.Name, user.Assigned ? L["to"] : L["from"], training.DateStart.ToShortDateString(), training.Name ?? ""], (user.Availabilty == Availabilty.NotAvailable || user.Availabilty == Availabilty.Maybe) && user.Assigned ? Severity.Warning : user.Assigned ? Severity.Normal : Severity.Info, configure: _snackbarConfig, key: key);
     }
 
     public void Dispose()

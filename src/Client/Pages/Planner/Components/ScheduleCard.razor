@@ -7,7 +7,7 @@
 {
     @if (Functions is not null && Vehicles is not null && Planner.PlanUsers?.Any(x => x.Assigned) == true)
     {
-        <CalendarBaseCard ReplaceEmtyName="@ReplaceEmtyName" Width="@Width" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" OnClickHistory="OpenHistoryDialog" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" ShowPastBody="ShowPastBody" MoreMessage="@L["Show attendees"]">
+        <CalendarBaseCard ReplaceEmtyName="@ReplaceEmtyName" Width="@Width" MaxWidth="@MaxWidth" MinWidth="@MinWidth" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" OnClickHistory="OpenHistoryDialog" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" ShowPastBody="ShowPastBody" MoreMessage="@L["Show attendees"]">
             @if (ChildContent is not null)
             {
                 @ChildContent
@@ -35,6 +35,6 @@
     }
     else
     {
-        <CalendarBaseCard ReplaceEmtyName="@ReplaceEmtyName" Width="@Width" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" OnClickHistory="OpenHistoryDialog" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" ShowPastBody="ShowPastBody" MoreMessage="@L["Show attendees"]"/>
+        <CalendarBaseCard ReplaceEmtyName="@ReplaceEmtyName" Width="@Width" MaxWidth="@MaxWidth" MinWidth="@MinWidth" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" OnClickHistory="OpenHistoryDialog" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" ShowPastBody="ShowPastBody" MoreMessage="@L["Show attendees"]" />
     }
 }

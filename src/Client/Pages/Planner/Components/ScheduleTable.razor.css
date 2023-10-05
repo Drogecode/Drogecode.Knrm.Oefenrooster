@@ -9,6 +9,6 @@
 
 ::deep .DrogeCode-sticky-column {
     position: sticky;
-    left: 3px;
+    left: 0;
     background-color: var(--mud-palette-background-grey);
 }

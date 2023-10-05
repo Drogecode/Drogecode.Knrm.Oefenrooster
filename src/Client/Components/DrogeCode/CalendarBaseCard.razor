@@ -1,7 +1,7 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-<MudPaper Width="@Width" Elevation="0">
+<MudPaper MinWidth="@MinWidth" MaxWidth="@MaxWidth" Width="@Width" Elevation="0">
     <MudCard @onclick="()=>OnClickCallback.InvokeAsync()">
         <MudCardHeader Class="@($"trainingType-{Training.RoosterTrainingTypeId}")">
             <CardHeaderContent>

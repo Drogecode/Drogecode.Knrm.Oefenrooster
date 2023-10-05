@@ -19,8 +19,8 @@
 }
 <div class="d-none d-md-flex">
     <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false CurrentDay="_month ?? DateTime.Today">
-        <CellTemplate>
-            @if (context is DrogeCodeCalendarItem)
+         <CellTemplate>
+             @if (context is DrogeCodeCalendarItem)
             {
                 var training = ((DrogeCodeCalendarItem)context).Training;
                 @if (training != null)
@@ -56,25 +56,27 @@
         {
             @foreach (var ev in _events.Where(x => x.Start.Month == _month.Value.Month && x.Start.Year == _month.Value.Year && x.Start.Date >= DateTime.Today.AddDays(-1)).OrderBy(x => x.Start))
             {
-                @if (ev is DrogeCodeCalendarItem)
-                {
-                    var training = ((DrogeCodeCalendarItem)ev).Training;
-                    @if (training != null)
+                <div class="flex-1">
+                    @if (ev is DrogeCodeCalendarItem)
                     {
-                        <CalendarCard Width="300px" Training="training" ShowDate="true" ShowDayOfWeek="true" />
+                        var training = ((DrogeCodeCalendarItem)ev).Training;
+                        @if (training != null)
+                        {
+                            <CalendarCard MinWidth="300px" MaxWidth="600px" Training="training" ShowDate="true" ShowDayOfWeek="true" />
+                        }
                     }
-                }
-                else if (ev is RoosterItemDayCalendarItem)
-                {
-                    var dayItem = ((RoosterItemDayCalendarItem)ev).ItemDay;
-                    @if (dayItem != null)
+                    else if (ev is RoosterItemDayCalendarItem)
                     {
-                        <div class="d-flex gap-1">
-                            <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Secondary" Size="Size.Small" />
-                            <div>@dayItem.Text - @dayItem.DateStart.ToString("dddd dd MMM")</div>
-                        </div>
+                        var dayItem = ((RoosterItemDayCalendarItem)ev).ItemDay;
+                        @if (dayItem != null)
+                        {
+                            <div class="d-flex gap-1">
+                                <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Secondary" Size="Size.Small" />
+                                <div>@dayItem.Text - @dayItem.DateStart.ToString("dddd dd MMM")</div>
+                            </div>
+                        }
                     }
-                }
+                </div>
             }
         }
     </MudPaper>

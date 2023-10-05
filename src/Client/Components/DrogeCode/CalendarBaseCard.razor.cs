@@ -16,6 +16,8 @@ public sealed partial class CalendarBaseCard : IDisposable
     [Parameter] public AvailabilitySetBy SetBy { get; set; }
     [Parameter] public string? ContentClass { get; set; }
     [Parameter] public string Width { get; set; } = "200px";
+    [Parameter] public string? MinWidth { get; set; }
+    [Parameter] public string? MaxWidth { get; set; }
     [Parameter] public bool ReplaceEmtyName { get; set; }
     [Parameter] public bool ShowDate { get; set; } = true;
     [Parameter] public bool ShowDayOfWeek { get; set; } = false;

@@ -59,8 +59,10 @@
                     <NavMenu />
                 </MudDrawer>
                 <MudMainContent>
-                    @Body
-                    <UpdateChecker />
+                    <CascadingValue Value="this">
+                        @Body
+                        <UpdateChecker />
+                    </CascadingValue>
                 </MudMainContent>
             </CascadingValue>
 
