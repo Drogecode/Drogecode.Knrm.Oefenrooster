@@ -721,7 +721,8 @@ public class ScheduleService : IScheduleService
         var defaultAveUser = await _database.UserDefaultAvailables.Include(x => x.DefaultGroup).Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= fromDate).ToListAsync(cancellationToken: clt);
         var scheduled = await _database.RoosterAvailables
             .Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Training.DeletedOn == null && (fromDate == null || x.Date >= fromDate))
-            .Include(i => i.Training.RoosterAvailables)
+            .Include(i => i.Training)
+            .ThenInclude(i => i.RoosterAvailables)
             .OrderBy(x => x.Date)
             .ToListAsync(cancellationToken: clt);
         var users = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
@@ -744,6 +745,7 @@ public class ScheduleService : IScheduleService
                 RoosterTrainingTypeId = schedul.Training.RoosterTrainingTypeId,
                 PlannedFunctionId = schedul.UserFunctionId ?? users?.FirstOrDefault(x => x.Id == userId)?.UserFunctionId,
                 IsPinned = schedul.Training.IsPinned,
+                CountToTrainingTarget = schedul.Training.CountToTrainingTarget,
                 IsCreated = true,
                 ShowTime = schedul.Training.ShowTime ?? true,
                 PlanUsers = schedul.Training.RoosterAvailables!.Select(a =>
