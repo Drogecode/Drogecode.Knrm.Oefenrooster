@@ -75,7 +75,8 @@ public sealed partial class EditTrainingDialog : IDisposable
         {
             _training = new()
             {
-                IsNew = true
+                IsNew = true,
+                ShowTime = true,
             };
             _linkVehicleTraining = new();
         }
