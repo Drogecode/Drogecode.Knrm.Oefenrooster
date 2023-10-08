@@ -15,9 +15,11 @@ public static class AuditMapper
         var note = System.Text.Json.JsonSerializer.Deserialize<AuditAssignedUser>(dbAudit.Note ?? string.Empty);
         return new TrainingAudit
         {
-            UserId = dbAudit.UserId,
+            UserId = note?.UserId,
+            ByUser = dbAudit.UserId,
             AuditType = dbAudit.AuditType,
             Assigned = note?.Assigned,
+            Date = dbAudit.Created,
         };
     }
 }

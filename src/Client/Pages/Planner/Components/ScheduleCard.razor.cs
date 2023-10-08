@@ -71,7 +71,8 @@ public sealed partial class ScheduleCard : IDisposable
 
     private void OpenConfigDialog()
     {
-        var parameters = new DialogParameters<EditTrainingDialog> {
+        var parameters = new DialogParameters<EditTrainingDialog>
+        {
             { x=>x.Planner, Planner },
             { x=>x.Refresh, _refreshModel },
             { x=>x.Vehicles, Vehicles },
@@ -84,7 +85,11 @@ public sealed partial class ScheduleCard : IDisposable
 
     private void OpenHistoryDialog()
     {
-        var parameters = new DialogParameters<TrainingHistoryDialog>();
+        var parameters = new DialogParameters<TrainingHistoryDialog>
+        {
+            { x=>x.TrainingId, Planner.TrainingId},
+            { x=>x.Users, Users},
+        };
         var options = new DialogOptions() { MaxWidth = MudBlazor.MaxWidth.Medium, FullWidth = true };
         _dialogProvider.Show<TrainingHistoryDialog>(L["Edit history"], parameters, options);
     }

@@ -1,5 +1,31 @@
 ﻿<MudDialog>
     <DialogContent>
-        <MudText>In een toekomstige update komt hier wie wat heeft gewijzigd.</MudText>
+        @if (_trainingAudits is not null && Users is not null)
+        {
+            <MudDataGrid Items="_trainingAudits.OrderByDescending(x=>x.Date)">
+                <Columns>
+                    <PropertyColumn Property="x => x.Date" Title="@L["Date"]">
+                        <CellTemplate>
+                            <DateToString DateTimeUtc="context.Item.Date" ShowDate="true" ShowTime="true"/>
+                        </CellTemplate>
+                    </PropertyColumn>
+                    <PropertyColumn Property="x => x.UserId" Title="@L["User"]">
+                        <CellTemplate>
+                            @(Users.FirstOrDefault(u => u.Id == context.Item.UserId)?.Name ?? context.Item.UserId.ToString())
+                        </CellTemplate>
+                    </PropertyColumn>
+                    <PropertyColumn Property="x => x.Assigned" Title="@L["Assigned"]">
+                        <CellTemplate>
+                            <MudCheckBox Disabled = "true" Checked="context.Item.Assigned ?? false"/>
+                        </CellTemplate>
+                    </PropertyColumn>
+                    <PropertyColumn Property="x => x.ByUser" Title="@L["By user"]">
+                        <CellTemplate>
+                            @(Users.FirstOrDefault(u => u.Id == context.Item.ByUser)?.Name ?? context.Item.ByUser.ToString())
+                        </CellTemplate>
+                    </PropertyColumn>
+                </Columns>
+            </MudDataGrid>
+        }
     </DialogContent>
 </MudDialog>

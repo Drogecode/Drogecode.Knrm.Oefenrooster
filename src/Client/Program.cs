@@ -30,6 +30,7 @@ builder.Services.AddMudExtensions();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();
 
+builder.Services.TryAddScoped<IAuditClient, AuditClient>();
 builder.Services.TryAddScoped<IAuthenticationClient, AuthenticationClient>();
 builder.Services.TryAddScoped<ICalendarItemClient, CalendarItemClient>();
 builder.Services.TryAddScoped<IConfigurationClient, ConfigurationClient>();

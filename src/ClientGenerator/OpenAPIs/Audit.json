@@ -105,6 +105,11 @@
           },
           "auditType": {
             "$ref": "#/components/schemas/AuditType"
+          },
+          "byUser": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false
