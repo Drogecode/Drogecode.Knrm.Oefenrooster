@@ -14,10 +14,10 @@ public static class AccessesNames
 
     public const string AUTH_scheduler = "scheduler";
     public const string AUTH_scheduler_in_table_view = "scheduler_table";
+    public const string AUTH_scheduler_history = "scheduler_history";
 
     public const string AUTH_users_details = "users_details";
     public const string AUTH_users_counter = "users_counter";
-
 
     public const string AUTH_action_history_full = "full_action_history";
     public const string AUTH_training_history_full = "full_training_history";

@@ -49,6 +49,21 @@
   },
   "components": {
     "schemas": {
+      "AuditType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "GetTrainingAuditResponse": {
         "type": "object",
         "properties": {
@@ -61,6 +76,35 @@
           "elapsedMilliseconds": {
             "type": "integer",
             "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "trainingAudits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrainingAudit"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrainingAudit": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "assigned": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "auditType": {
+            "$ref": "#/components/schemas/AuditType"
           }
         },
         "additionalProperties": false

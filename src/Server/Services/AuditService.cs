@@ -1,4 +1,6 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
+using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -30,9 +32,23 @@ public class AuditService : IAuditService
         await _database.SaveChangesAsync();
     }
 
-    public Task<GetTrainingAuditResponse> GetTrainingAudit(Guid customerId, Guid userId, Guid id)
+    public async Task<GetTrainingAuditResponse> GetTrainingAudit(Guid customerId, Guid userId, Guid trainingId)
     {
-        throw new NotImplementedException();
+        var response = new GetTrainingAuditResponse();
+        var sw = Stopwatch.StartNew();
+        var audits = await _database.Audits.Where(x => x.ObjectKey == trainingId).ToListAsync();
+        if (audits.Any())
+        {
+            response.TrainingAudits = new List<TrainingAudit>();
+            foreach ( var audit in audits )
+            {
+                response.TrainingAudits.Add(audit.ToTrainingAudit());
+            }
+        }
+        response.TotalCount = audits.Count;
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
     }
 
 }

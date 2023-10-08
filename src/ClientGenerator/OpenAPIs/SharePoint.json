@@ -281,6 +281,14 @@
       "SharePointAction": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time"
+          },
           "title": {
             "type": "string",
             "nullable": true
@@ -289,7 +297,15 @@
             "type": "string",
             "nullable": true
           },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
           "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
             "type": "string",
             "format": "date-time"
           },
@@ -311,6 +327,30 @@
           "prio": {
             "type": "string",
             "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "request": {
+            "type": "string",
+            "nullable": true
+          },
+          "forTheBenefitOf": {
+            "type": "string",
+            "nullable": true
+          },
+          "causes": {
+            "type": "string",
+            "nullable": true
+          },
+          "implications": {
+            "type": "string",
+            "nullable": true
+          },
+          "commencement": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -327,6 +367,14 @@
       "SharePointTraining": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time"
+          },
           "title": {
             "type": "string",
             "nullable": true
@@ -335,7 +383,15 @@
             "type": "string",
             "nullable": true
           },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
           "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
             "type": "string",
             "format": "date-time"
           },

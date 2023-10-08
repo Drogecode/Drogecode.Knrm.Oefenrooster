@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -18,6 +19,7 @@ public sealed partial class ScheduleCard : IDisposable
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [CascadingParameter] public DrogeCodeGlobal Global { get; set; } = default!;
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter, EditorRequired] public PlannedTraining Planner { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
@@ -34,11 +36,21 @@ public sealed partial class ScheduleCard : IDisposable
     private RefreshModel _refreshModel = new();
     private bool _updating;
     private bool _isDelted;
+    private bool _showHistory;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         _refreshModel.RefreshRequested += RefreshMe;
         Global.TrainingDeletedAsync += TrainingDeleted;
+        if (AuthenticationState is not null)
+        {
+            var authState = await AuthenticationState;
+            var user = authState?.User;
+            if (user is not null)
+            {
+                _showHistory = user.IsInRole(AccessesNames.AUTH_scheduler_history);
+            }
+        }
     }
 
     private void OpenScheduleDialog()

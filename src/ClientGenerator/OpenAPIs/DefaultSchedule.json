@@ -314,6 +314,9 @@
             "type": "integer",
             "format": "int32"
           },
+          "showTime": {
+            "type": "boolean"
+          },
           "userSchedules": {
             "type": "array",
             "items": {

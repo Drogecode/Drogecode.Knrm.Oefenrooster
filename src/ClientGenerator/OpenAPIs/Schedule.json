@@ -1018,6 +1018,10 @@
           "name": {
             "type": "string",
             "nullable": true
+          },
+          "calendarEventId": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1071,7 +1075,7 @@
           "isPinned": {
             "type": "boolean"
           },
-          "noTime": {
+          "showTime": {
             "type": "boolean"
           },
           "planUsers": {
@@ -1083,6 +1087,10 @@
           },
           "isCreated": {
             "type": "boolean"
+          },
+          "trainingTypeName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1196,7 +1204,7 @@
           "isPinned": {
             "type": "boolean"
           },
-          "noTime": {
+          "showTime": {
             "type": "boolean"
           },
           "availabilty": {
@@ -1260,7 +1268,7 @@
           "isPinned": {
             "type": "boolean"
           },
-          "noTime": {
+          "showTime": {
             "type": "boolean"
           }
         },

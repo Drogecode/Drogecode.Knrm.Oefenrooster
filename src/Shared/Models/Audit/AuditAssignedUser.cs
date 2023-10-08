@@ -8,6 +8,6 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 
 public class AuditAssignedUser
 {
-    public Guid? TrainingId { get; set; }
+    public Guid? UserId { get; set; }
     public bool? Assigned { get; set; }
 }
