@@ -40,9 +40,10 @@ public class AuditService : IAuditService
         if (audits.Any())
         {
             response.TrainingAudits = new List<TrainingAudit>();
-            foreach ( var audit in audits )
+            foreach (var audit in audits)
             {
-                response.TrainingAudits.Add(audit.ToTrainingAudit());
+                if (audit.AuditType == AuditType.PatchAssignedUser)
+                    response.TrainingAudits.Add(audit.ToTrainingAudit());
             }
         }
         response.TotalCount = audits.Count;

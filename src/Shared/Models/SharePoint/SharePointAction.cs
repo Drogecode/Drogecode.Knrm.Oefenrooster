@@ -16,5 +16,20 @@ public class SharePointAction : SharePointListBase
     public string? ForTheBenefitOf { get; set; }
     public string? Causes { get; set; }
     public string? Implications { get; set; }
+    public string? Area { get; set; }
+    public string? WindDirection { get; set; }
+    public int WindPower { get; set; }
+    public double WaterTemperature { get; set; }
+    public double GolfHight { get; set; }
+    public int Sight { get; set; }
+    public string? WeatherCondition { get; set; }
+    public string? CallMadeBy { get; set; }
+    public int CountSailors { get; set; }
+    public int CountSaved { get; set; }
+    public int CountAnimals { get; set; }
+    public string? Boat { get; set; }
+    public string? FunctioningMaterial { get; set; }
+    public string? ProblemsWithWeed { get; set; }
+    public string? Completedby { get; set; }
     public DateTime Commencement { get; set; }
 }

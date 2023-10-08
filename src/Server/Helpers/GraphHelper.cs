@@ -218,9 +218,6 @@ public static class GraphHelper
             foreach (var det in overigeItems.Value)
             {
                 if (det?.Fields?.AdditionalData is null || det.ETag is null) continue;
-                double number = -1;
-                if (det.Fields.AdditionalData.ContainsKey("Actie_x0020_nummer"))
-                    _ = double.TryParse(det.Fields.AdditionalData["Actie_x0020_nummer"].ToString(), out number);
                 var action = new SharePointAction();
                 action.Id = new Guid(det.ETag!.Split('\"', ',')[1]);
                 if (det.LastModifiedDateTime is not null)
@@ -231,7 +228,7 @@ public static class GraphHelper
                 GetUser(users, det, "Opstapper_x0020_3LookupId", SharePointRole.Opstapper, action);
                 GetUser(users, det, "Opstapper_x0020_4LookupId", SharePointRole.Opstapper, action);
                 GetUser(users, det, "Opstapper_x0020_5LookupId", SharePointRole.Opstapper, action);
-                action.Number = number;
+                action.Number = AdditionalDataToDouble(det, "Actie_x0020_nummer");
                 action.Date = AdditionalDataToDateTime(det, "Datum"); ;
                 action.Start = AdditionalDataToDateTime(det, "Oproep_x0020__x0028_uren_x0029_"); ;
                 action.Commencement = AdditionalDataToDateTime(det, "Aanvang"); ;
@@ -245,6 +242,22 @@ public static class GraphHelper
                 action.ForTheBenefitOf = AdditionalDataToString(det, "Ten_x0020_behoeve_x0020_van");
                 action.Causes = AdditionalDataToString(det, "Oorzaken");
                 action.Implications = AdditionalDataToString(det, "Gevolgen");
+                action.Area = AdditionalDataToString(det, "Gebied");
+                action.Area = AdditionalDataToString(det, "Gebied");
+                action.WindDirection = AdditionalDataToString(det, "Windrichting");
+                action.WindPower = AdditionalDataToInt(det, "Windkracht_x0020__x0028_Beaufort");
+                action.WaterTemperature = AdditionalDataToDouble(det, "Temperatuur_x0020_Water");
+                action.GolfHight = AdditionalDataToDouble(det, "Golf_x0020_Hoogte");
+                action.Sight = AdditionalDataToInt(det, "Zicht");
+                action.WeatherCondition = AdditionalDataToString(det, "Weersgesteldheid");
+                action.CallMadeBy = AdditionalDataToString(det, "Oproep_x0020_gedaan_x0020_door");
+                action.CountSailors = AdditionalDataToInt(det, "Aantal_x0020_Opvarenden");
+                action.CountSaved = AdditionalDataToInt(det, "Aantal_x0020_geredden");
+                action.CountAnimals = AdditionalDataToInt(det, "Aantal_x0020_dieren");
+                action.Boat = AdditionalDataToString(det, "Bo_x0028_o_x0029_t_x0028_en_x002");
+                action.FunctioningMaterial = AdditionalDataToString(det, "Functioneren_x0020_materieel");
+                action.ProblemsWithWeed = AdditionalDataToString(det, "Problemen_x0020_met_x0020_fontei");
+                action.Completedby = AdditionalDataToString(det, "afgehandeld");
                 actions.Add(action);
             }
             if (overigeItems.OdataNextLink != null)
@@ -262,6 +275,20 @@ public static class GraphHelper
     {
         var dateTime = det.Fields!.AdditionalData.ContainsKey(key) ? (DateTime)det.Fields.AdditionalData[key] : DateTime.MinValue;
         return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
+    }
+    private static int AdditionalDataToInt(ListItem det, string key)
+    {
+        int result = -1;
+        if (det.Fields!.AdditionalData.ContainsKey(key))
+            int.TryParse(det.Fields!.AdditionalData[key]!.ToString(), out result);
+        return result;
+    }
+    private static double AdditionalDataToDouble(ListItem det, string key)
+    {
+        double result = -1;
+        if (det.Fields!.AdditionalData.ContainsKey(key))
+            double.TryParse(det.Fields!.AdditionalData[key]!.ToString(), out result);
+        return result;
     }
 
     internal static async Task<DateTime> ListTrainingLastUpdate(Guid customerId)
