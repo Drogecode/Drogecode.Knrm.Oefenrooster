@@ -2,14 +2,11 @@
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Localization;
-using static MudBlazor.CategoryTypes;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
@@ -32,18 +29,6 @@ public sealed partial class ScheduleTable : IDisposable
     private List<UserTrainingCounter>? _userTrainingCounter;
     private DateTime? _month;
 
-    private async Task SetMonth(DateTime? dateTime)
-    {
-        if (dateTime == null) return;
-        _month = dateTime;
-        DateRange dateRange = new DateRange
-        {
-            Start = new DateTime(dateTime.Value.Year, dateTime.Value.Month, 1),
-            End = new DateTime(dateTime.Value.Year, dateTime.Value.Month, DateTime.DaysInMonth(dateTime.Value.Year, dateTime.Value.Month))
-        };
-        await SetCalenderForMonth(dateRange);
-    }
-
     protected override async Task OnInitializedAsync()
     {
         await SetMonth(DateTime.Today);
@@ -56,6 +41,18 @@ public sealed partial class ScheduleTable : IDisposable
                 _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_in_table_view);
             }
         }
+    }
+
+    private async Task SetMonth(DateTime? dateTime)
+    {
+        if (dateTime == null) return;
+        _month = dateTime;
+        DateRange dateRange = new DateRange
+        {
+            Start = new DateTime(dateTime.Value.Year, dateTime.Value.Month, 1),
+            End = new DateTime(dateTime.Value.Year, dateTime.Value.Month, DateTime.DaysInMonth(dateTime.Value.Year, dateTime.Value.Month))
+        };
+        await SetCalenderForMonth(dateRange);
     }
 
     private async Task SetCalenderForMonth(DateRange dateRange)

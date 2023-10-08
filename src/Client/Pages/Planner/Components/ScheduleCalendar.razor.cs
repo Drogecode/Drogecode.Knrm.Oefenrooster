@@ -9,7 +9,6 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Heron.MudCalendar;
 using Microsoft.Extensions.Localization;
-
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
 public sealed partial class ScheduleCalendar : IDisposable
@@ -18,6 +17,7 @@ public sealed partial class ScheduleCalendar : IDisposable
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private CalendarItemRepository _calendarItemRepository { get; set; } = default!;
+    [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
     [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; }
@@ -30,6 +30,11 @@ public sealed partial class ScheduleCalendar : IDisposable
     private bool _currentMonth;
     private ScheduleView _view = ScheduleView.Calendar;
     private DateTime? _month;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Global.NewTrainingAddedAsync += HandleNewTraining;
+    }
 
     private async Task SetMonth(DateTime? dateTime)
     {
@@ -92,8 +97,30 @@ public sealed partial class ScheduleCalendar : IDisposable
         StateHasChanged();
     }
 
+    private async Task HandleNewTraining(EditTraining newTraining)
+    {
+        if (newTraining.Date == null) return;
+        var asTraining = new PlannedTraining
+        {
+            TrainingId = newTraining.Id,
+            Name = newTraining.Name,
+            DateStart = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Local),
+            DateEnd = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Local),
+            RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId
+        };
+        var date = DateOnly.FromDateTime(newTraining.Date ?? throw new ArgumentNullException("newTraining.Date is null after null check"));
+        _events.Add(new ScheduleCalendarItem
+        {
+            Start = asTraining.DateStart,
+            End = asTraining.DateEnd,
+            Training = asTraining,
+        });
+        StateHasChanged();
+    }
+
     public void Dispose()
     {
+        Global.NewTrainingAddedAsync -= HandleNewTraining;
         _cls.Cancel();
     }
 }

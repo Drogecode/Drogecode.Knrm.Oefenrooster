@@ -4,7 +4,6 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 using Heron.MudCalendar;
 using Microsoft.Extensions.Localization;
-using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 public sealed partial class Calendar : IDisposable
@@ -93,7 +92,7 @@ public sealed partial class Calendar : IDisposable
             DateEnd = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Local),
             RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId
         };
-        var date = DateOnly.FromDateTime(newTraining.Date ?? throw new UnreachableException("newTraining.Date is null after null check"));
+        var date = DateOnly.FromDateTime(newTraining.Date ?? throw new ArgumentNullException("newTraining.Date is null after null check"));
         _events.Add(new DrogeCodeCalendarItem
         {
             Start = asTraining.DateStart,
