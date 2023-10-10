@@ -9,6 +9,7 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 public static class AccessesNames
 {
     public const string AUTH_Taco = "isSuperGlobalAdmin";
+    public const string AUTH_Hide = "do_not_show";
 
     public const string AUTH_configure_training_types = "configure_training-types";
 
