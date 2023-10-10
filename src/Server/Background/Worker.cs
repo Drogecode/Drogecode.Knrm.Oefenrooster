@@ -32,7 +32,7 @@ public class Worker : BackgroundService
                     await Task.Delay(1000, clt);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 errorCount++;
                 _logger.LogError(ex, "Error {errorCount} in worker", errorCount);
@@ -51,5 +51,7 @@ public class Worker : BackgroundService
         var graphService = scope.ServiceProvider.GetRequiredService<IGraphService>();
         graphService.InitializeGraph();
         await graphService.SyncSharePointActions(DefaultSettingsHelper.KnrmHuizenId, _clt);
+        _clt.ThrowIfCancellationRequested();
+        await graphService.SyncSharePointTrainings(DefaultSettingsHelper.KnrmHuizenId, _clt);
     }
 }

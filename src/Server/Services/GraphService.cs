@@ -5,6 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph.Models;
+using MudBlazor.Services;
 using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -179,6 +180,14 @@ public class GraphService : IGraphService
         _logger.LogInformation("SharePoint actions synced (count {changeCount})",changeCount);
         return changeCount > 0;
     }
+    public async Task<bool> SyncSharePointTrainings(Guid customerId, CancellationToken clt)
+    {
+        var keyTrainings = string.Format(SP_TRAININGS, customerId);
+        await UpdateCacheSharePointTrainings(customerId, keyTrainings);
+        _memoryCache.TryGetValue<List<SharePointTraining>>(keyTrainings, out var sharePointTrainings);
+        sharePointTrainings ??= await GetSharePointTrainings(customerId, keyTrainings, clt);
+        return true;
+    }
 
     public async Task<MultipleSharePointActionsResponse> GetListActionsUser(List<string> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
@@ -196,17 +205,6 @@ public class GraphService : IGraphService
         sw.Stop();
         sharePointActionsUser.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return sharePointActionsUser;
-    }
-
-    private async Task<List<SharePointAction>?> GetSharePointActions(Guid customerId, string keyActions, CancellationToken clt)
-    {
-        var cacheOptions = new MemoryCacheEntryOptions();
-        var spUsers = await GetAllSharePointUsers(customerId, clt);
-        var sharePointActions = await GraphHelper.GetListActions(customerId, spUsers);
-        cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(30));
-        cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
-        _ = _memoryCache.Set(keyActions, sharePointActions, cacheOptions);
-        return sharePointActions;
     }
 
     private async Task<bool> UpdateCacheSharePointActions(Guid customerId, string keyActions)
@@ -235,11 +233,38 @@ public class GraphService : IGraphService
             return false;
     }
 
+    private async Task<List<SharePointAction>?> GetSharePointActions(Guid customerId, string keyActions, CancellationToken clt)
+    {
+        var cacheOptions = new MemoryCacheEntryOptions();
+        var spUsers = await GetAllSharePointUsers(customerId, clt);
+        var sharePointActions = await GraphHelper.GetListActions(customerId, spUsers);
+        cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(30));
+        cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
+        _ = _memoryCache.Set(keyActions, sharePointActions, cacheOptions);
+        return sharePointActions;
+    }
+
     public async Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(List<string> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var keyExp = string.Format(SP_TRAININGS_EXP, customerId);
         var keyTrainings = string.Format(SP_TRAININGS, customerId);
+        await UpdateCacheSharePointTrainings(customerId, keyTrainings);
+        _memoryCache.TryGetValue<List<SharePointTraining>>(keyTrainings, out var sharePointTrainings);
+        sharePointTrainings ??= await GetSharePointTrainings(customerId, keyTrainings, clt);
+        var listWhere = sharePointTrainings?.Where(x => x.Users.Count(y => users.Contains(y.Name)) == users.Count());
+        var sharePointTrainingsUser = new MultipleSharePointTrainingsResponse
+        {
+            SharePointTrainings = listWhere?.Skip(skip).Take(count).ToList(),
+            TotalCount = listWhere?.Count() ?? -1
+        };
+        sw.Stop();
+        sharePointTrainingsUser.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return sharePointTrainingsUser;
+    }
+
+    private async Task<bool> UpdateCacheSharePointTrainings(Guid customerId, string keyTrainings)
+    {
+        var keyExp = string.Format(SP_TRAININGS_EXP, customerId);
         var cacheOptions = new MemoryCacheEntryOptions();
         _memoryCache.TryGetValue<UpdatedCheck>(keyExp, out var lastupdated);
         if (lastupdated is null)
@@ -257,25 +282,21 @@ public class GraphService : IGraphService
             cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(120));
             cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(240));
             _ = _memoryCache.Set(keyExp, lastupdated, cacheOptions);
+            return true;
         }
-        _memoryCache.TryGetValue<List<SharePointTraining>>(keyTrainings, out var sharePointTrainings);
-        if (sharePointTrainings is null)
-        {
-            var spUsers = await GetAllSharePointUsers(customerId, clt);
-            sharePointTrainings = await GraphHelper.GetListTraining(customerId, spUsers);
-            cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(30));
-            cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
-            _ = _memoryCache.Set(keyTrainings, sharePointTrainings, cacheOptions);
-        }
-        var listWhere = sharePointTrainings?.Where(x => x.Users.Count(y => users.Contains(y.Name)) == users.Count());
-        var sharePointTrainingsUser = new MultipleSharePointTrainingsResponse
-        {
-            SharePointTrainings = listWhere?.Skip(skip).Take(count).ToList(),
-            TotalCount = listWhere?.Count() ?? -1
-        };
-        sw.Stop();
-        sharePointTrainingsUser.ElapsedMilliseconds = sw.ElapsedMilliseconds;
-        return sharePointTrainingsUser;
+        else
+            return false;
+    }
+
+    private async Task<List<SharePointTraining>?> GetSharePointTrainings(Guid customerId, string keyTrainings, CancellationToken clt)
+    {
+        var cacheOptions = new MemoryCacheEntryOptions();
+        var spUsers = await GetAllSharePointUsers(customerId, clt);
+        var sharePointTrainings = await GraphHelper.GetListTraining(customerId, spUsers);
+        cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(30));
+        cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(120));
+        _ = _memoryCache.Set(keyTrainings, sharePointTrainings, cacheOptions);
+        return sharePointTrainings;
     }
 
     private async Task<List<SharePointUser>> GetAllSharePointUsers(Guid customerId, CancellationToken clt)
