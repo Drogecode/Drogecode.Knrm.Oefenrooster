@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Assigned" xml:space="preserve">
+    <value>Ingedeeld</value>
+  </data>
+  <data name="from" xml:space="preserve">
+    <value>van</value>
+  </data>
   <data name="Not authorized" xml:space="preserve">
     <value>Niet ingelogt</value>
   </data>
@@ -126,13 +132,22 @@
   <data name="One moment" xml:space="preserve">
     <value>Een moment geduld</value>
   </data>
+  <data name="Removed" xml:space="preserve">
+    <value>Verwijderd</value>
+  </data>
   <data name="Title" xml:space="preserve">
     <value>Oefenrooster</value>
+  </data>
+  <data name="to" xml:space="preserve">
+    <value>aan</value>
   </data>
   <data name="You are offline" xml:space="preserve">
     <value>Je bent offline!</value>
   </data>
   <data name="You are offline data could be outdated" xml:space="preserve">
     <value>Je bent offline, data kan verouderd zijn!</value>
+  </data>
+  <data name="{0} {1} {2} {3} {4}" xml:space="preserve">
+    <value>{0} {1} {2} {3} {4}</value>
   </data>
 </root>

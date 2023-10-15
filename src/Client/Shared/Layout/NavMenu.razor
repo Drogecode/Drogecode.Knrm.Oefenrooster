@@ -33,4 +33,14 @@
             </MudListItem>
         </MudList>
     }
+    <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
+        @if (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriSchedule.Substring(1)) && !Navigation.Uri.EndsWith("Table"))
+        {
+            <MudList>
+                <MudListItem OnClick="AddDayItem" Avatar="@Icons.Material.Filled.Add" Class="cursor-pointer">
+                    @L["Other item"]
+                </MudListItem>
+            </MudList>
+        }
+    </AuthorizeView>
 </MudNavMenu>

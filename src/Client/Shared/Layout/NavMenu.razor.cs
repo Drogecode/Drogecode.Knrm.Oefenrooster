@@ -1,6 +1,8 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout.Components;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Extensions.Localization;
@@ -40,12 +42,13 @@ public sealed partial class NavMenu : IDisposable
     {
         var trainingTypes = await _trainingTypesRepository.GetTrainingTypes(_cls.Token);
         var vehicles = await _vehicleRepository.GetAllVehiclesAsync();
-        var parameters = new DialogParameters {
-            { "Planner", null },
-            { "Refresh", null },
-            { "Vehicles", vehicles },
-            { "Global", Global },
-            { "TrainingTypes", trainingTypes }
+        var parameters = new DialogParameters<EditTrainingDialog>
+        {
+            { x=>x.Planner, null },
+            { x=>x.Refresh, null },
+            { x=>x.Vehicles, vehicles },
+            { x=>x.Global, Global },
+            { x=>x.TrainingTypes, trainingTypes }
         };
         var options = new DialogOptions
         {
@@ -54,6 +57,20 @@ public sealed partial class NavMenu : IDisposable
             DisableBackdropClick = true
         };
         _dialogProvider.Show<EditTrainingDialog>(L["Add training"], parameters, options);
+    }
+
+    public async Task AddDayItem()
+    {
+        var parameters = new DialogParameters<AddDayItemDialog>
+        {
+        };
+        var options = new DialogOptions
+        {
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true,
+            DisableBackdropClick = true
+        };
+        _dialogProvider.Show<AddDayItemDialog>(L["Add other item"], parameters, options);
     }
 
     public void Dispose()

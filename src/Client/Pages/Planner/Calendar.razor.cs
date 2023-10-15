@@ -97,7 +97,6 @@ public sealed partial class Calendar : IDisposable
             ShowTime = newTraining.ShowTime,
             IsPinned = newTraining.IsPinned,
         };
-        var date = DateOnly.FromDateTime(newTraining.Date ?? throw new ArgumentNullException("newTraining.Date is null after null check"));
         _events.Add(new DrogeCodeCalendarItem
         {
             Start = asTraining.DateStart,

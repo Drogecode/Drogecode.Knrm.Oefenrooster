@@ -135,4 +135,19 @@
   <data name="Not authorized" xml:space="preserve">
     <value>Not authorized</value>
   </data>
+  <data name="Assigned" xml:space="preserve">
+    <value>Assigned</value>
+  </data>
+  <data name="from" xml:space="preserve">
+    <value>from</value>
+  </data>
+  <data name="Removed" xml:space="preserve">
+    <value>Removed</value>
+  </data>
+  <data name="to" xml:space="preserve">
+    <value />
+  </data>
+  <data name="{0} {1} {2} {3} {4}" xml:space="preserve">
+    <value>{0} {1} {2} {3} {4}</value>
+  </data>
 </root>
