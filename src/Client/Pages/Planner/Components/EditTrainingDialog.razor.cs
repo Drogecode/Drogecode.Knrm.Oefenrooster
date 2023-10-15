@@ -46,7 +46,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 Name = Planner.Name,
                 RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
                 CountToTrainingTarget = Planner.CountToTrainingTarget,
-                Pin = Planner.IsPinned,
+                IsPinned = Planner.IsPinned,
                 ShowTime = Planner.ShowTime,
             };
         }
@@ -66,7 +66,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 Name = Planner.Name,
                 RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
                 CountToTrainingTarget = Planner.CountToTrainingTarget,
-                Pin = Planner.IsPinned,
+                IsPinned = Planner.IsPinned,
                 ShowTime = Planner.ShowTime,
             };
             _linkVehicleTraining = new();
@@ -166,7 +166,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 DateStart = dateStart,
                 DateEnd = dateEnd,
                 CountToTrainingTarget = _training.CountToTrainingTarget,
-                IsPinned = _training.Pin,
+                IsPinned = _training.IsPinned,
                 ShowTime = _training.ShowTime,
             };
         }
@@ -178,7 +178,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             Planner.DateStart = dateStart;
             Planner.DateEnd = dateEnd;
             Planner.CountToTrainingTarget = _training.CountToTrainingTarget;
-            Planner.IsPinned = _training.Pin;
+            Planner.IsPinned = _training.IsPinned;
             Planner.ShowTime = _training.ShowTime;
         }
     }

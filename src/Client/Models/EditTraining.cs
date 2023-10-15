@@ -18,6 +18,6 @@ public class EditTraining : TrainingBase
     public bool IsNew { get; set; }
     public bool IsNewFromDefault { get; set; }
     public bool CountToTrainingTarget { get; set; }
-    public bool Pin { get; set; }
+    public bool IsPinned { get; set; }
     public bool ShowTime { get; set; } = false;
 }
