@@ -10,6 +10,7 @@ public static class RoosterItemDayMapper
         return new DbRoosterItemDay
         {
             Id = roosterItemDay.Id,
+            UserId = roosterItemDay.UserId,
             DateStart = roosterItemDay.DateStart,
             DateEnd = roosterItemDay.DateEnd,
             IsFullDay = roosterItemDay.IsFullDay,
@@ -22,6 +23,7 @@ public static class RoosterItemDayMapper
         return new RoosterItemDay
         {
             Id = roosterItemDay.Id,
+            UserId = roosterItemDay.UserId,
             DateStart = roosterItemDay.DateStart,
             DateEnd = roosterItemDay.DateEnd,
             IsFullDay = roosterItemDay.IsFullDay,

@@ -115,6 +115,14 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
@@ -341,6 +349,10 @@
         "type": "object",
         "properties": {
           "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
             "type": "string",
             "format": "uuid"
           },

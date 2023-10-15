@@ -35,12 +35,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd);
+        System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Guid? userId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Guid? userId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -173,15 +173,15 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd)
+        public virtual System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Guid? userId)
         {
-            return GetDayItemsAsync(yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, System.Threading.CancellationToken.None);
+            return GetDayItemsAsync(yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, userId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Guid? userId, System.Threading.CancellationToken cancellationToken)
         {
             if (yearStart == null)
                 throw new System.ArgumentNullException("yearStart");
@@ -202,13 +202,18 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                 throw new System.ArgumentNullException("dayEnd");
 
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/CalendarItem/day/{yearStart}/{monthStart}/{dayStart}/{yearEnd}/{monthEnd}/{dayEnd}");
+            urlBuilder_.Append("api/CalendarItem/day/{yearStart}/{monthStart}/{dayStart}/{yearEnd}/{monthEnd}/{dayEnd}?");
             urlBuilder_.Replace("{yearStart}", System.Uri.EscapeDataString(ConvertToString(yearStart, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{monthStart}", System.Uri.EscapeDataString(ConvertToString(monthStart, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{dayStart}", System.Uri.EscapeDataString(ConvertToString(dayStart, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{yearEnd}", System.Uri.EscapeDataString(ConvertToString(yearEnd, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{monthEnd}", System.Uri.EscapeDataString(ConvertToString(monthEnd, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{dayEnd}", System.Uri.EscapeDataString(ConvertToString(dayEnd, System.Globalization.CultureInfo.InvariantCulture)));
+            if (userId != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("userId") + "=").Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
 
             var client_ = _httpClient;
             var disposeClient_ = false;

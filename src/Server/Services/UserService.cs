@@ -58,17 +58,17 @@ public class UserService : IUserService
             _database.SaveChanges();
             userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
         }
-        if (userObj != null)
+        if (userObj is not null)
         {
             if (setLastOnline)
                 userObj.LastLogin = DateTime.UtcNow;
             userObj.Name = userName;
             userObj.Email = userEmail;
             userObj.DeletedOn = null;
-            if (userObj.UserFunctionId == null || userObj.UserFunctionId == Guid.Empty)
+            if (userObj.UserFunctionId is null || userObj.UserFunctionId == Guid.Empty)
             {
                 var defaultFunction = await _database.UserFunctions.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.IsDefault);
-                if (defaultFunction != null)
+                if (defaultFunction is not null)
                 {
                     userObj.UserFunctionId = defaultFunction.Id;
                 }

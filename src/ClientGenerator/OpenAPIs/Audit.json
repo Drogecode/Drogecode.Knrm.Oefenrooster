@@ -110,6 +110,10 @@
             "type": "string",
             "format": "uuid",
             "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false

@@ -78,11 +78,20 @@ public sealed partial class ScheduleCalendar : IDisposable
             _currentMonth = DateTime.Today.Month == _month.Value.Month;
             var monthItems = await _calendarItemRepository.GetMonthItemAsync(_month.Value.Year, _month.Value.Month, _cls.Token);
             _monthItems = monthItems?.MonthItems;
-            var dayItems = await _calendarItemRepository.GetDayItemsAsync(dateRange, _cls.Token);
+            var dayItems = await _calendarItemRepository.GetDayItemsAsync(dateRange, Guid.Empty, _cls.Token);
             if (dayItems?.DayItems != null)
             {
                 foreach (var dayItem in dayItems.DayItems)
                 {
+
+                    if (dayItem.UserId is not null && dayItem.UserId != Guid.Empty)
+                    {
+                        var user = Users?.FirstOrDefault(x => x.Id == dayItem.UserId);
+                        if (user != null)
+                        {
+                            dayItem.Text += ": " + user.Name;
+                        }
+                    }
                     _events.Add(new RoosterItemDayCalendarItem
                     {
                         Start = dayItem.DateStart,

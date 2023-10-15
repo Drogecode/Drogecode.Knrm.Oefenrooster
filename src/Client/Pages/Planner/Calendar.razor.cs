@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Heron.MudCalendar;
 using Microsoft.Extensions.Localization;
 
@@ -12,17 +13,20 @@ public sealed partial class Calendar : IDisposable
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private CalendarItemRepository _calendarItemRepository { get; set; } = default!;
+    [Inject] private UserRepository _userRepository { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
     private List<CalendarItem> _events = new();
     private List<RoosterItemMonth>? _monthItems;
     private CancellationTokenSource _cls = new();
+    private DrogeUser? _user;
     private bool _updating;
     private DateTime? _month;
 
     protected override async Task OnInitializedAsync()
     {
         Global.NewTrainingAddedAsync += HandleNewTraining;
+        _user = await _userRepository.GetCurrentUserAsync();
     }
     private async Task SetMonth(DateTime? dateTime)
     {
@@ -45,7 +49,6 @@ public sealed partial class Calendar : IDisposable
         var trainingsInWeek = (await _scheduleRepository.CalendarForUser(dateRange, _cls.Token))?.Trainings;
         if (trainingsInWeek != null && trainingsInWeek.Count > 0)
         {
-            scheduleForUser.From = DateOnly.FromDateTime(trainingsInWeek[0].DateStart);
             foreach (var training in trainingsInWeek)
             {
                 _events.Add(new DrogeCodeCalendarItem
@@ -62,7 +65,7 @@ public sealed partial class Calendar : IDisposable
         {
             var monthItems = await _calendarItemRepository.GetMonthItemAsync(_month.Value.Year, _month.Value.Month, _cls.Token);
             _monthItems = monthItems?.MonthItems;
-            var dayItems = await _calendarItemRepository.GetDayItemsAsync(dateRange, _cls.Token);
+            var dayItems = await _calendarItemRepository.GetDayItemsAsync(dateRange, _user.Id, _cls.Token);
             if (dayItems?.DayItems != null)
             {
                 foreach (var dayItem in dayItems.DayItems)

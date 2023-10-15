@@ -36,18 +36,14 @@ public class CalendarItemService : ICalendarItemService
         return result;
     }
 
-    public async Task<GetDayItemResponse> GetDayItems(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, Guid customerId, CancellationToken clt)
+    public async Task<GetDayItemResponse> GetDayItems(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, Guid customerId, Guid userId, CancellationToken clt)
     {
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
-        var dayItems = await _database.RoosterItemDays.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).Select(x => new RoosterItemDay
-        {
-            Id = x.Id,
-            Text = x.Text,
-            DateStart = x.DateStart,
-            IsFullDay = x.IsFullDay,
-            Type = x.Type,
-        }).ToListAsync(clt);
+        var dayItems = await _database.RoosterItemDays
+            .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate && (userId == Guid.Empty || x.UserId == Guid.Empty || x.UserId.Equals(userId)))
+            .Select(x => x.ToRoosterItemDay())
+            .ToListAsync(clt);
         var result = new GetDayItemResponse
         {
             DayItems = dayItems

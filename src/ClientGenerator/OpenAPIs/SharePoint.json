@@ -348,6 +348,66 @@
             "type": "string",
             "nullable": true
           },
+          "area": {
+            "type": "string",
+            "nullable": true
+          },
+          "windDirection": {
+            "type": "string",
+            "nullable": true
+          },
+          "windPower": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "waterTemperature": {
+            "type": "number",
+            "format": "double"
+          },
+          "golfHight": {
+            "type": "number",
+            "format": "double"
+          },
+          "sight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "weatherCondition": {
+            "type": "string",
+            "nullable": true
+          },
+          "callMadeBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "countSailors": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "countSaved": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "countAnimals": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "boat": {
+            "type": "string",
+            "nullable": true
+          },
+          "functioningMaterial": {
+            "type": "string",
+            "nullable": true
+          },
+          "problemsWithWeed": {
+            "type": "string",
+            "nullable": true
+          },
+          "completedby": {
+            "type": "string",
+            "nullable": true
+          },
           "commencement": {
             "type": "string",
             "format": "date-time"

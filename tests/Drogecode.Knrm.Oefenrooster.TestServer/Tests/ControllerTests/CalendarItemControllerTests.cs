@@ -82,7 +82,7 @@ public class CalendarItemControllerTests : BaseTest
         var new5 = await AddCalendarDayItem("GetAllDay_5", DateTime.Today.AddDays(-20));
         var from = DateTime.Today.AddDays(-10);
         var till = DateTime.Today.AddDays(20);
-        var result = await CalendarItemController.GetDayItems(from.Year, from.Month, from.Day, till.Year, till.Month, till.Day);
+        var result = await CalendarItemController.GetDayItems(from.Year, from.Month, from.Day, till.Year, till.Month, till.Day, Guid.Empty);
         Assert.NotNull(result?.Value?.DayItems);
         result.Value.DayItems.Should().Contain(x => x.Id == DefaultCalendarDayItem);
         result.Value.DayItems.Should().Contain(x => x.Id == new1);

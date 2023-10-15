@@ -26,10 +26,10 @@ public class CalendarItemRepository
         return response;
     }
 
-    public async Task<GetDayItemResponse?> GetDayItemsAsync(DateRange dateRange, CancellationToken clt)
+    public async Task<GetDayItemResponse?> GetDayItemsAsync(DateRange dateRange, Guid userId, CancellationToken clt)
     {
         var response = await _offlineService.CachedRequestAsync(string.Format(DAYITEMS, dateRange.Start?.ToString("yyMMdd"), dateRange.End?.ToString("yyMMdd")),
-            async () => await _calendarItemClient.GetDayItemsAsync(dateRange.Start!.Value.Year, dateRange.Start!.Value.Month, dateRange.Start!.Value.Day, dateRange.End!.Value.Year, dateRange.End!.Value.Month, dateRange.End!.Value.Day, clt),
+            async () => await _calendarItemClient.GetDayItemsAsync(dateRange.Start!.Value.Year, dateRange.Start!.Value.Month, dateRange.Start!.Value.Day, dateRange.End!.Value.Year, dateRange.End!.Value.Month, dateRange.End!.Value.Day, userId, clt),
             clt: clt);
         return response;
     }

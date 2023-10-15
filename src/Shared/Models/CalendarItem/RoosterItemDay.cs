@@ -11,6 +11,7 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 public class RoosterItemDay
 {
     [Key] public Guid Id { get; set; }
+    public Guid? UserId { get; set; }
     public DateTime DateStart { get; set; }
     public DateTime DateEnd { get; set; }
     public bool IsFullDay { get; set; }

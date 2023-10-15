@@ -26,7 +26,7 @@ public class ConfigurationService : IConfigurationService
         if (holiday.LocalName == null) return false;
         var date = DateTime.SpecifyKind(holiday.Date, DateTimeKind.Utc);
         var d = await _database.RoosterItemDays.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Type == CalendarItemType.SpecialDate && x.IsFullDay == true && x.DateStart == date && x.Text == holiday.LocalName);
-        if (d != null) return false;
+        if (d is not null) return false;
         await _database.RoosterItemDays.AddAsync(new DbRoosterItemDay
         {
             Id = Guid.NewGuid(),
