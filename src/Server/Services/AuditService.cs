@@ -36,14 +36,13 @@ public class AuditService : IAuditService
     {
         var response = new GetTrainingAuditResponse();
         var sw = Stopwatch.StartNew();
-        var audits = await _database.Audits.Where(x => x.ObjectKey == trainingId).ToListAsync();
+        var audits = await _database.Audits.Where(x => x.AuditType == AuditType.PatchAssignedUser && (trainingId.Equals(Guid.Empty) || x.ObjectKey == trainingId)).ToListAsync();
         if (audits.Any())
         {
             response.TrainingAudits = new List<TrainingAudit>();
             foreach (var audit in audits)
             {
-                if (audit.AuditType == AuditType.PatchAssignedUser)
-                    response.TrainingAudits.Add(audit.ToTrainingAudit());
+                response.TrainingAudits.Add(audit.ToTrainingAudit());
             }
         }
         response.TotalCount = audits.Count;

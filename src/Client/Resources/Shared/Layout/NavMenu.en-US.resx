@@ -120,6 +120,9 @@
   <data name="Add training" xml:space="preserve">
     <value>Add training</value>
   </data>
+  <data name="Audit" xml:space="preserve">
+    <value>Audit</value>
+  </data>
   <data name="Calendar" xml:space="preserve">
     <value>Calendar</value>
   </data>

@@ -17,6 +17,7 @@ public static class AuditMapper
         {
             UserId = note?.UserId,
             ByUser = dbAudit.UserId,
+            TrainingId = dbAudit.ObjectKey,
             AuditType = dbAudit.AuditType,
             Assigned = note?.Assigned,
             Date = dbAudit.Created,

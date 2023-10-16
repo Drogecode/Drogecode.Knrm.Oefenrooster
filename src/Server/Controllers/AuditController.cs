@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,7 @@ public class AuditController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = AccessesNames.AUTH_Taco)]
     [Route("training/{id:guid}")]
     public async Task<ActionResult<GetTrainingAuditResponse>> GetTrainingAudit(Guid id)
     {
@@ -38,6 +40,28 @@ public class AuditController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             GetTrainingAuditResponse result = await _auditService.GetTrainingAudit(customerId, userId, id);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in GetTrainingAudit");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    [Route("training")]
+    public async Task<ActionResult<GetTrainingAuditResponse>> GetAllTrainingsAudit()
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            GetTrainingAuditResponse result = await _auditService.GetTrainingAudit(customerId, userId, Guid.Empty);
             return result;
         }
         catch (Exception ex)

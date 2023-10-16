@@ -18,6 +18,7 @@
             <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
                 <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/configuration/global" Match="NavLinkMatch.Prefix">@L["Configuration"]</MudNavLink>
                 <MudNavLink Icon="@Icons.Material.Filled.SecurityUpdateWarning" Href="/precom/alerts" Match="NavLinkMatch.Prefix">@L["PreCom alerts"]</MudNavLink>
+                <MudNavLink Icon="@Icons.Material.Filled.History" Href="/configuration/audit" Match="NavLinkMatch.Prefix">@L["Audit"]</MudNavLink>
             </AuthorizeView>
         </MudNavGroup>
     </AuthorizeView>

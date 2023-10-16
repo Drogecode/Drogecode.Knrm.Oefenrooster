@@ -45,6 +45,36 @@
           }
         }
       }
+    },
+    "/api/Audit/training": {
+      "get": {
+        "tags": [
+          "Audit"
+        ],
+        "operationId": "GetAllTrainingsAudit",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTrainingAuditResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTrainingAuditResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTrainingAuditResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -107,6 +137,11 @@
             "$ref": "#/components/schemas/AuditType"
           },
           "byUser": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "trainingId": {
             "type": "string",
             "format": "uuid",
             "nullable": true

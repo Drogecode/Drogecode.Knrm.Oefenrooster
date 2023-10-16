@@ -16,5 +16,6 @@ public class TrainingAudit : AuditAssignedUser
 {
     public AuditType AuditType { get; set; }
     public Guid? ByUser { get; set; }
+    public Guid? TrainingId { get; set; }
     public DateTime Date {  get; set; }
 }

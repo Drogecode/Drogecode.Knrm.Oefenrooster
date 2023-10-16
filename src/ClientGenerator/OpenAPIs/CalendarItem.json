@@ -354,7 +354,8 @@
           },
           "userId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
           },
           "dateStart": {
             "type": "string",
