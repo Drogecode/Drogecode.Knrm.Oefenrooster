@@ -14,7 +14,7 @@
                             @(Users.FirstOrDefault(u => u.Id == context.Item.UserId)?.Name ?? context.Item.UserId.ToString())
                         </CellTemplate>
                     </PropertyColumn>
-                    <PropertyColumn Property="x => x.Assigned" Title="@L["Assigned"]">
+                    <PropertyColumn Property="x => x.Assigned" Title="@LApp["Assigned"]">
                         <CellTemplate>
                             <MudCheckBox Disabled = "true" Checked="context.Item.Assigned ?? false"/>
                         </CellTemplate>
