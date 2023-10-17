@@ -56,16 +56,18 @@
         }
     </DialogContent>
     <DialogActions>
-        @if (_training?.IsNew != true)
-        {
-            if (_showDelete)
+        <div style="flex-wrap: wrap;">
+            @if (_training?.IsNew is not true)
             {
-                <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">@L["Are you sure This can not be reverted"]<MudButton Color="Color.Warning" OnClick="Delete">@LApp["Delete"]</MudButton></MudAlert>
+                if (_showDelete)
+                {
+                    <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">@L["Are you sure This can not be reverted"]<MudButton Color="Color.Warning" OnClick="Delete">@LApp["Delete"]</MudButton></MudAlert>
+                }
+                <MudButton Color="Color.Warning" OnClick="()=> _showDelete = !_showDelete">@LApp["Delete"]</MudButton>
             }
-            <MudButton Color="Color.Warning" OnClick="()=> _showDelete = !_showDelete">@LApp["Delete"]</MudButton>
-        }
-        <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
-        <MudButton Color="Color.Primary" OnClick="OnSubmit">@LApp["save"]</MudButton>
+            <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
+            <MudButton Color="Color.Primary" OnClick="OnSubmit">@LApp["save"]</MudButton>
+        </div>
     </DialogActions>
 </MudDialog>
 
