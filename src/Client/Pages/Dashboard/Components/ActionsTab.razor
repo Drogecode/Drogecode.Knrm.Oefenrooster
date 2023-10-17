@@ -5,9 +5,7 @@
 @if (_sharePointActions != null)
 {
     <MudText Typo="Typo.h3">@L["All your actions from SharePoint"]</MudText>
-    <AuthorizeView Roles="@AccessesNames.AUTH_action_history_full">
-        <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" />
-    </AuthorizeView>
+    <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection" />
     @if (_sharePointActions?.SharePointActions?.Count() > 0)
     {
         <MudDataGrid Items="@_sharePointActions.SharePointActions"

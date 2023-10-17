@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -10,6 +11,7 @@ public sealed partial class TrainingsTab : IDisposable
 {
     [Inject] private IStringLocalizer<TrainingsTab> L { get; set; } = default!;
     [Inject] private SharePointRepository _sharePointRepository { get; set; } = default!;
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter][EditorRequired] public DrogeUser User { get; set; } = default!;
     [Parameter][EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
     [Parameter][EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
@@ -19,6 +21,19 @@ public sealed partial class TrainingsTab : IDisposable
     private int _currentPage = 1;
     private int _count = 10;
     private bool _bussy;
+    private bool _multiSelection;
+    protected override async Task OnParametersSetAsync()
+    {
+        if (AuthenticationState is not null)
+        {
+            var authState = await AuthenticationState;
+            var user = authState?.User;
+            if (user is not null)
+            {
+                _multiSelection = user.IsInRole(AccessesNames.AUTH_training_history_full);
+            }
+        }
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

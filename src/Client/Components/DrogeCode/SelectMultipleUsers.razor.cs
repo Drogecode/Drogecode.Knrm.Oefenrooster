@@ -13,6 +13,7 @@ public sealed partial class SelectMultipleUsers
     [Parameter][EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
     [Parameter][EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
     [Parameter] public EventCallback<IEnumerable<DrogeUser>> SelectionChanged { get; set; }
+    [Parameter] public bool MultiSelection { get; set; } = true;
 
     private IEnumerable<DrogeUser> _selectedUsers = new List<DrogeUser>();
     [Parameter]
@@ -34,6 +35,11 @@ public sealed partial class SelectMultipleUsers
     {
         var result = string.Join(", ", selectedValues.Select(x => x.Name));
         return result;
+    }
+
+    private string GetSelectedText(DrogeUser selectedValue)
+    {
+        return selectedValue.Name;
     }
 
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)

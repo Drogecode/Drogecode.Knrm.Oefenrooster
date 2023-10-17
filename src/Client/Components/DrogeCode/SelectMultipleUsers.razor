@@ -1,7 +1,7 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 @if (Users is not null && Functions is not null)
 {
-    <MudSelectExtended T="DrogeUser" MultiSelectionTextFunc="@(new Func<List<DrogeUser>, string>(GetMultiSelectionText))" Label="@L["From who"]" MultiSelection="true" SelectedValues="_selectedUsers" SelectedValuesChanged="OnSelectionChanged">
+    <MudSelectExtended T="DrogeUser" MultiSelectionTextFunc="@(new Func<List<DrogeUser>, string>(GetMultiSelectionText))" ToStringFunc="@(new Func<DrogeUser, string>(GetSelectedText))" Label="@L["From who"]" MultiSelection="@MultiSelection" SelectedValues="_selectedUsers" SelectedValuesChanged="OnSelectionChanged">
 
         @foreach (var function in Functions)
         {

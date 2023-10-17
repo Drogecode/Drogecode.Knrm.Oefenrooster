@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -18,17 +19,23 @@ public class CalendarItemController : ControllerBase
     private readonly IConfiguration _configuration;
     private readonly ICalendarItemService _calendarItemService;
     private readonly IAuditService _auditService;
+    private readonly IUserSettingService _userSettingService;
+    private readonly IGraphService _graphService;
 
     public CalendarItemController(
         ILogger<CalendarItemController> logger,
         IConfiguration configuration,
         ICalendarItemService calendarItemService,
-        IAuditService auditService)
+        IAuditService auditService,
+        IUserSettingService userSettingService,
+        IGraphService graphService)
     {
         _logger = logger;
         _configuration = configuration;
         _calendarItemService = calendarItemService;
         _auditService = auditService;
+        _userSettingService = userSettingService;
+        _graphService = graphService;
     }
 
     [HttpGet]
@@ -88,20 +95,48 @@ public class CalendarItemController : ControllerBase
 
     [HttpPut]
     [Route("day")]
-    public async Task<ActionResult<PutDayItemResponse>> PutDayItem([FromBody] RoosterItemDay roosterItemDay, CancellationToken token = default)
+    public async Task<ActionResult<PutDayItemResponse>> PutDayItem([FromBody] RoosterItemDay roosterItemDay, CancellationToken clt = default)
     {
         try
         {
             var result = new PutDayItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            result = await _calendarItemService.PutDayItem(roosterItemDay, customerId, userId, token);
+            result = await _calendarItemService.PutDayItem(roosterItemDay, customerId, userId, clt);
+            if (roosterItemDay.UserId is not null && !roosterItemDay.UserId.Equals(Guid.Empty))
+            {
+                await ToOutlookCalendar(roosterItemDay.UserId.Value, true, roosterItemDay, customerId, null, clt);
+            }
             return result;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in PutDayItem");
             return BadRequest();
+        }
+    }
+
+
+
+    private async Task ToOutlookCalendar(Guid planUserId, bool assigned, RoosterItemDay roosterItemDay, Guid customerId, string? calendarEventId, CancellationToken clt)
+    {
+        if (assigned && await _userSettingService.TrainingToCalendar(customerId, planUserId))
+        {
+            _graphService.InitializeGraph();
+            if (string.IsNullOrEmpty(calendarEventId))
+            {
+                var eventResult = await _graphService.AddToCalendar(planUserId, roosterItemDay.Text, roosterItemDay!.DateStart, roosterItemDay.DateEnd, roosterItemDay.IsFullDay);
+            }
+            else
+            {
+                await _graphService.PatchCalender(planUserId, calendarEventId, roosterItemDay.Text, roosterItemDay!.DateStart, roosterItemDay.DateEnd, roosterItemDay.IsFullDay);
+                //await _auditService.Log(currentUserId, AuditType.PatchTraining, customerId, $"Preventing duplicate event '{type?.TrainingType?.Name}' on '{training?.DateStart.ToString("o")}' : '{training?.DateEnd.ToString("o")}'");
+            }
+        }
+        else if (!string.IsNullOrEmpty(calendarEventId))
+        {
+            _graphService.InitializeGraph();
+            await _graphService.DeleteCalendarEvent(planUserId, calendarEventId, clt);
         }
     }
 }

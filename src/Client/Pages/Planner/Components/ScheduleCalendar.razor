@@ -1,4 +1,5 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @if (_monthItems != null)
 {
     @foreach (var item in _monthItems.OrderBy(x => x.Order))
@@ -20,18 +21,18 @@
             else if (context is RoosterItemDayCalendarItem)
             {
                 var dayItem = ((RoosterItemDayCalendarItem)context).ItemDay;
-                Color color = Color.Secondary;
-                switch (dayItem?.Type)
+                @if (dayItem is not null && (dayItem.Type == CalendarItemType.SpecialDate || _user?.Id.Equals(DefaultSettingsHelper.IdTaco) is true))
                 {
-                    case Oefenrooster.Shared.Enums.CalendarItemType.Custom:
-                        color = Color.Primary;
-                        break;
-                    case Oefenrooster.Shared.Enums.CalendarItemType.SpecialDate:
-                        color = Color.Info;
-                        break;
-                }
-                @if (dayItem != null)
-                {
+                    Color color = Color.Secondary;
+                    switch (dayItem.Type)
+                    {
+                        case CalendarItemType.Custom:
+                            color = Color.Primary;
+                            break;
+                        case CalendarItemType.SpecialDate:
+                            color = Color.Info;
+                            break;
+                    }
                     <div class="d-flex gap-1">
                         <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small" />
                         <span>@dayItem.Text</span>

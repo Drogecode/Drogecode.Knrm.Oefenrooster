@@ -17,6 +17,7 @@ public sealed partial class ScheduleCalendar : IDisposable
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private CalendarItemRepository _calendarItemRepository { get; set; } = default!;
+    [Inject] private UserRepository _userRepository { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
@@ -26,6 +27,7 @@ public sealed partial class ScheduleCalendar : IDisposable
     private List<CalendarItem> _events = new();
     private List<UserTrainingCounter>? _userTrainingCounter;
     private List<RoosterItemMonth>? _monthItems;
+    private DrogeUser? _user;
     private bool _updating;
     private bool _currentMonth;
     private ScheduleView _view = ScheduleView.Calendar;
@@ -34,6 +36,7 @@ public sealed partial class ScheduleCalendar : IDisposable
     protected override async Task OnInitializedAsync()
     {
         Global.NewTrainingAddedAsync += HandleNewTraining;
+        _user = await _userRepository.GetCurrentUserAsync();
     }
 
     private async Task SetMonth(DateTime? dateTime)

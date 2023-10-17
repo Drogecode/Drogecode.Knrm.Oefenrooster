@@ -4,9 +4,7 @@
 @if (_sharePointTrainings != null)
 {
     <MudText Typo="Typo.h3">@L["All your trainings from SharePoint"]</MudText>
-    <AuthorizeView Roles="@AccessesNames.AUTH_training_history_full">
-        <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersTraining" SelectionChanged="OnSelectionChanged" />
-    </AuthorizeView>
+    <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersTraining" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection" />
     @if (_sharePointTrainings?.SharePointTrainings?.Count() > 0)
     {
 
