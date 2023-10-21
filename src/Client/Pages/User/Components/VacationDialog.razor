@@ -4,8 +4,8 @@
         {
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
                 <MudTextField Label="@L["Description"]" @bind-Value="Holiday.Description" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" />
-                <MudDatePicker Editable="true" Label="@L["Valid from"]" @bind-Date="Holiday.ValidFrom" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))" Disabled="@(_originalHoliday?.ValidFrom?.InPast() ?? false)" Required />
-                <MudDatePicker Editable="true" Label="@L["Valid till"]" @bind-Date="Holiday.ValidUntil" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" Disabled="@(_originalHoliday?.ValidUntil?.InPast() ?? false)" Required />
+                <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@L["Valid from"]" @bind-Date="Holiday.ValidFrom" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))" Disabled="@(_originalHoliday?.ValidFrom?.InPast() ?? false)" Required />
+                <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@L["Valid till"]" @bind-Date="Holiday.ValidUntil" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" Disabled="@(_originalHoliday?.ValidUntil?.InPast() ?? false)" Required />
              </MudForm>
         }
     </DialogContent>
