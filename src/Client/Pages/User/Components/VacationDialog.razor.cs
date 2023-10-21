@@ -20,9 +20,6 @@ public sealed partial class VacationDialog : IDisposable
 
     private CancellationTokenSource _cls = new();
     private Holiday? _originalHoliday { get; set; }
-    private bool _success;
-    private string[] _errors = Array.Empty<string>();
-    [AllowNull] private MudForm _form;
     void Cancel() => MudDialog.Cancel();
     protected override async Task OnParametersSetAsync()
     {
@@ -51,8 +48,8 @@ public sealed partial class VacationDialog : IDisposable
 
     private async Task Submit()
     {
-        await _form.Validate();
-        if (!_form.IsValid || Holiday is null || Holiday.ValidUntil is null || Holiday.ValidFrom is null) return;
+        // https://github.com/MudBlazor/MudBlazor/issues/4047
+        if (Holiday is null || Holiday.Description is null || Holiday.ValidUntil is null || Holiday.ValidFrom is null) return;
         Holiday.Available = Availabilty.NotAvailable;
         Holiday.ValidFrom = DateTime.SpecifyKind(Holiday.ValidFrom.Value, DateTimeKind.Local).ToUniversalTime();
         Holiday.ValidUntil = new DateTime(Holiday.ValidUntil.Value.Year, Holiday.ValidUntil.Value.Month, Holiday.ValidUntil.Value.Day, 23, 59, 59, DateTimeKind.Local).ToUniversalTime();

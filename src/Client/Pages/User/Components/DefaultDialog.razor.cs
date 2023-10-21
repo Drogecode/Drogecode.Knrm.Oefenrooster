@@ -19,11 +19,7 @@ public sealed partial class DefaultDialog : IDisposable
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool? IsNew { get; set; }
     [Parameter] public Guid? DefaultId { get; set; }
-    [AllowNull] private MudForm _form;
     private CancellationTokenSource _cls = new();
-    private DefaultUserSchedule? _originalDefaultUserSchedule = null;
-    private bool _success;
-    private string[] _errors = Array.Empty<string>();
    private void Cancel() => MudDialog.Cancel();
     protected override async Task OnParametersSetAsync()
     {
@@ -35,11 +31,10 @@ public sealed partial class DefaultDialog : IDisposable
             DefaultUserSchedule.ValidFromUser = null;
         if (DefaultUserSchedule.ValidUntilUser == DateTime.MaxValue)
             DefaultUserSchedule.ValidUntilUser = null;
-        _originalDefaultUserSchedule = (DefaultUserSchedule?)DefaultUserSchedule?.Clone();
     }
     private async Task Submit()
     {
-        await _form.Validate();
+        if (DefaultUserSchedule.ValidFromUser is null || DefaultUserSchedule.ValidUntilUser is null) return;
         if (DefaultId is null)
         {
             Console.WriteLine("DefaultId is null");

@@ -17,10 +17,7 @@ public sealed partial class GroupDialog : IDisposable
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool? IsNew { get; set; }
 
-    [AllowNull] private MudForm _form;
     private CancellationTokenSource _cls = new();
-    private bool _success;
-    private string[] _errors = Array.Empty<string>();
     void Cancel() => MudDialog.Cancel();
     protected override async Task OnParametersSetAsync()
     {
@@ -35,9 +32,9 @@ public sealed partial class GroupDialog : IDisposable
     }
     private async Task Submit()
     {
-        await _form.Validate();
         if (DefaultGroup is null)
             throw new ArgumentNullException("DefaultGroup");
+        if (DefaultGroup.Name is null || DefaultGroup.ValidFrom is null || DefaultGroup.ValidUntil is null) return; 
         var body = new DefaultGroup
         {
             Name = DefaultGroup.Name,

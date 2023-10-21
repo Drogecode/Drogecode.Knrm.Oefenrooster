@@ -4,11 +4,9 @@
         @if (DefaultGroup is not null)
         {
             <MudAlert Severity="Severity.Warning">@L["Warning changing period is not possible yet"]</MudAlert>
-            <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
-                <MudTextField T="string" Label="@L["Name"]" @bind-Value="DefaultGroup.Name" Placeholder="Give a name"></MudTextField>
-                <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@LApp["ValidFrom"]" @bind-Date="DefaultGroup.ValidFrom" Required Disabled="@(DefaultGroup.ValidFrom?.InPast() ?? false)" />
-                 <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@LApp["ValidUntil"]" @bind-Date="DefaultGroup.ValidUntil" Required Disabled="@(DefaultGroup.ValidUntil?.InPast() ?? false)" />
-            </MudForm>
+            <MudTextField T="string" Label="@L["Name"]" @bind-Value="DefaultGroup.Name" Placeholder="Give a name"></MudTextField>
+            <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@LApp["ValidFrom"]" @bind-Date="DefaultGroup.ValidFrom" Required Disabled="@(DefaultGroup.ValidFrom?.InPast() ?? false)" />
+            <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@LApp["ValidUntil"]" @bind-Date="DefaultGroup.ValidUntil" Required Disabled="@(DefaultGroup.ValidUntil?.InPast() ?? false)" />
         }
     </DialogContent>
     <DialogActions>

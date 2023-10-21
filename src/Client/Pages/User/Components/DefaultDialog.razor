@@ -3,15 +3,13 @@
     <DialogContent>
         @if (DefaultUserSchedule is not null)
         {
-            <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
-                <MudSelect T="Availabilty?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="DefaultUserSchedule.Available" AdornmentColor="@PlannerHelper.ColorAvailabilty(DefaultUserSchedule.Available)">
-                    <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
-                    <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
-                    <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
-                </MudSelect>
-                <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@LApp["ValidFrom"]" @bind-Date="DefaultUserSchedule.ValidFromUser" Disabled="@(DefaultUserSchedule.ValidFromUser?.InPast() ?? false)" />
-                <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@LApp["ValidUntil"]" @bind-Date="DefaultUserSchedule.ValidUntilUser" Disabled="@(DefaultUserSchedule.ValidUntilUser?.InPast() ?? false)" />
-            </MudForm>
+            <MudSelect T="Availabilty?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="DefaultUserSchedule.Available" AdornmentColor="@PlannerHelper.ColorAvailabilty(DefaultUserSchedule.Available)">
+                <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
+                <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
+                <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
+            </MudSelect>
+            <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@LApp["ValidFrom"]" @bind-Date="DefaultUserSchedule.ValidFromUser" Disabled="@(DefaultUserSchedule.ValidFromUser?.InPast() ?? false)" />
+            <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@LApp["ValidUntil"]" @bind-Date="DefaultUserSchedule.ValidUntilUser" Disabled="@(DefaultUserSchedule.ValidUntilUser?.InPast() ?? false)" />
         }
     </DialogContent>
     <DialogActions>
