@@ -6,8 +6,8 @@
             <MudAlert Severity="Severity.Warning">@L["Warning changing period is not possible yet"]</MudAlert>
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
                 <MudTextField T="string" Label="@L["Name"]" @bind-Value="DefaultGroup.Name" Placeholder="Give a name"></MudTextField>
-                <MudDatePicker Label="@LApp["ValidFrom"]" @bind-Date="DefaultGroup.ValidFrom" Placeholder="Select Date" Required Disabled="@(DefaultGroup.ValidFrom?.InPast() ?? false)" />
-                <MudDatePicker Label="@LApp["ValidUntil"]" @bind-Date="DefaultGroup.ValidUntil" Placeholder="Select Date" Required Disabled="@(DefaultGroup.ValidUntil?.InPast() ?? false)" />
+                <MudDatePicker Editable="true" Label="@LApp["ValidFrom"]" @bind-Date="DefaultGroup.ValidFrom" Placeholder="Select Date" Required Disabled="@(DefaultGroup.ValidFrom?.InPast() ?? false)" />
+                <MudDatePicker Editable="true" Label="@LApp["ValidUntil"]" @bind-Date="DefaultGroup.ValidUntil" Placeholder="Select Date" Required Disabled="@(DefaultGroup.ValidUntil?.InPast() ?? false)" />
             </MudForm>
         }
     </DialogContent>

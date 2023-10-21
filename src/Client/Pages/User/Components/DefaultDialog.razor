@@ -9,8 +9,8 @@
                     <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
                     <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
                 </MudSelect>
-                <MudDatePicker Label="@LApp["ValidFrom"]" @bind-Date="DefaultUserSchedule.ValidFromUser" Placeholder="Select Date" Disabled="@(DefaultUserSchedule.ValidFromUser?.InPast() ?? false)" />
-                <MudDatePicker Label="@LApp["ValidUntil"]" @bind-Date="DefaultUserSchedule.ValidUntilUser" Placeholder="Select Date" Disabled="@(DefaultUserSchedule.ValidUntilUser?.InPast() ?? false)" />
+                <MudDatePicker Editable="true" Label="@LApp["ValidFrom"]" @bind-Date="DefaultUserSchedule.ValidFromUser" Placeholder="Select Date" Disabled="@(DefaultUserSchedule.ValidFromUser?.InPast() ?? false)" />
+                <MudDatePicker Editable="true" Label="@LApp["ValidUntil"]" @bind-Date="DefaultUserSchedule.ValidUntilUser" Placeholder="Select Date" Disabled="@(DefaultUserSchedule.ValidUntilUser?.InPast() ?? false)" />
             </MudForm>
         }
     </DialogContent>
