@@ -1,6 +1,6 @@
 ﻿@if (Month != null)
 {
-    <div class="sticky top-14" style="background-color: var(--mud-palette-background-grey);">
+    <div class="sticky top-14" style="background-color: var(--mud-palette-background-grey);z-index:10;">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
             <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIosNew" OnClick="()=>SetMonth(Month.Value.AddMonths(-1))" Disabled="_updating"></MudIconButton>
             <MudButton>@Month.Value.ToString(Month.Value.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy")</MudButton>
