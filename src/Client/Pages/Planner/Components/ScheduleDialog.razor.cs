@@ -100,6 +100,7 @@ public sealed partial class ScheduleDialog : IDisposable
                 Availabilty = Availabilty.None,
                 Assigned = toggled,
                 Name = user.Name,
+                VehicleId = _vehicleInfoForThisTraining?.FirstOrDefault(x=>x.IsDefault)?.Id ?? _vehicleInfoForThisTraining?.FirstOrDefault()?.Id,
             };
             Planner.PlanUsers.Add(planuser);
         }

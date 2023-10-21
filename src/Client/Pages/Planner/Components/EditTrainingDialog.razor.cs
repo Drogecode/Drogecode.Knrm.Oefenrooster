@@ -140,7 +140,8 @@ public sealed partial class EditTrainingDialog : IDisposable
             Planner.TrainingId = newId;
             if (Refresh is not null)
                 await Refresh.CallRequestRefreshAsync();
-            await Global.CallNewTrainingAddedAsync(_training);
+            if (_training.IsNew)
+                await Global.CallNewTrainingAddedAsync(_training);
         }
         else if (Planner is not null)
         {
