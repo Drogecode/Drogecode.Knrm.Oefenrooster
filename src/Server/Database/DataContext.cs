@@ -542,7 +542,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         {
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
-                Id = new Guid("d23de705-d950-4833-8b94-aa531022d450"),
+                Id = DefaultSettingsHelper.KompasLeiderId,
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Kompas leider",
                 Order = 10,

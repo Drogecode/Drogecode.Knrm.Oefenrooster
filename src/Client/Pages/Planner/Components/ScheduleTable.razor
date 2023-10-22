@@ -37,15 +37,19 @@
                         @switch (user?.SetBy)
                         {
                             case AvailabilitySetBy.DefaultAvailable:
-                                <MudIcon Icon="@Icons.Material.Filled.AutoGraph" />
+                                <MudIcon Icon="@Icons.Material.Filled.AutoGraph" Style="font-size:1rem;" />
                                 break;
                             case AvailabilitySetBy.Holiday:
-                                <MudIcon Icon="@Icons.Material.Filled.WbSunny" />
+                                <MudIcon Icon="@Icons.Material.Filled.WbSunny" Style="font-size:1rem;" />
                                 break;
                         }
                         @if (user?.Assigned == true)
                         {
                             @(Vehicles?.FirstOrDefault(x => x.Id == user.VehicleId)?.Code ?? Vehicles?.FirstOrDefault(x => x.IsDefault)?.Code ?? L["Assigned"])
+                            if (user.PlannedFunctionId.Equals( DefaultSettingsHelper.KompasLeiderId))
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.HowToReg" Color="Color.Info" Style="font-size:1rem;" />
+                            }
                         }
                     </MudTd>
                 }

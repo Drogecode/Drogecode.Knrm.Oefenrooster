@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
@@ -28,11 +29,11 @@ public sealed partial class ScheduleDialog : IDisposable
     private bool _plannerIsUpdated;
     private bool _showWoeps;
     private int _vehicleCount;
-    private int _colmn1 = 1;
+    private int _colmn1 = 2;
     private int _colmn2 = 3;
     private int _colmn3 = 3;
     private int _colmn4 = 3;
-    private int _colmn5 = 2;
+    private int _colmn5 = 1;
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
@@ -71,6 +72,14 @@ public sealed partial class ScheduleDialog : IDisposable
         }
         else
             _showWoeps = true;
+    }
+
+    private async Task ClickLeader(PlanUser user)
+    {
+        if (user.PlannedFunctionId.Equals(DefaultSettingsHelper.KompasLeiderId))
+            await FunctionSelectionChanged(user, user.UserFunctionId);
+        else
+            await FunctionSelectionChanged(user, DefaultSettingsHelper.KompasLeiderId);
     }
 
     private async Task CheckChanged(bool toggled, PlanUser user, Guid functionId)

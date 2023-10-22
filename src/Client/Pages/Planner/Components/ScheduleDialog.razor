@@ -45,7 +45,10 @@
                 {
                     <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                         <MudItem xs="@_colmn1">
-                            <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowDown" Variant="Variant.Filled" OnClick="()=>CheckChanged(false, user,function.Id)" Color="GetColor(user.Availabilty)" Tag="user" />
+                            <MudButtonGroup Variant="Variant.Text">
+                                <MudButton StartIcon="@Icons.Material.Filled.KeyboardArrowDown" Variant="Variant.Filled" OnClick="()=>CheckChanged(false, user,function.Id)" IconColor="GetColor(user.Availabilty)" Tag="user" />
+                                <MudButton StartIcon="@Icons.Material.Filled.HowToReg" Variant="Variant.Filled" OnClick="()=>ClickLeader(user)" IconColor="user.PlannedFunctionId.Equals(DefaultSettingsHelper.KompasLeiderId) ? Color.Info : Color.Inherit" Tag="user" />
+                            </MudButtonGroup>
                         </MudItem>
                         <MudItem xs="@_colmn2">
                             <MudText Typo="Typo.body1">@user.Name</MudText>
