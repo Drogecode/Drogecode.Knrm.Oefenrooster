@@ -2,13 +2,17 @@
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database
 {
-    public class DataContext : DbContext
+    public class DataContext : DbContext, IDataProtectionKeyContext
     {
+        // To persist key's
+        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
+
         public DbSet<DbAudit> Audits { get; set; }
         public DbSet<DbUsers> Users { get; set; }
         public DbSet<DbUserFunctions> UserFunctions { get; set; }
