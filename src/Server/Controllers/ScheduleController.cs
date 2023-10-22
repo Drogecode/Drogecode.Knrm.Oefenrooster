@@ -258,7 +258,7 @@ public class ScheduleController : ControllerBase
             if (result.Success && body?.User?.UserId is not null)
             {
                 clt = CancellationToken.None;
-                await ToOutlookCalendar(body.User.UserId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
+                await ToOutlookCalendar(body.User.UserId, body.TrainingId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
             }
             return result;
         }
@@ -283,7 +283,7 @@ public class ScheduleController : ControllerBase
             if (result.Success && body?.UserId is not null)
             {
                 clt = CancellationToken.None;
-                await ToOutlookCalendar(body.UserId.Value, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
+                await ToOutlookCalendar(body.UserId.Value, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
             }
             return result;
         }
@@ -386,24 +386,31 @@ public class ScheduleController : ControllerBase
         }
     }
 
-    private async Task ToOutlookCalendar(Guid planUserId, bool assigned, TrainingAdvance? training, Guid currentUserId, Guid customerId, Guid? availableId, string? calendarEventId, CancellationToken clt)
+    private async Task ToOutlookCalendar(Guid planUserId, Guid? trainingId, bool assigned, TrainingAdvance? training, Guid currentUserId, Guid customerId, Guid? availableId, string? calendarEventId, CancellationToken clt)
     {
         if (assigned && await _userSettingService.TrainingToCalendar(customerId, planUserId))
         {
             var type = await _trainingTypesService.GetById(training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
             var text = GetTrainingCalenderText(type?.TrainingType?.Name, training?.Name);
+            if (training is null && trainingId is not null)
+                training = (await _scheduleService.GetTrainingById(planUserId, customerId, trainingId.Value, clt)).Training;
+            if (training is null)
+            {
+                _logger.LogWarning("Failed to set a training for trainingId {trainingId}", trainingId);
+                return;
+            }
             _graphService.InitializeGraph();
             if (string.IsNullOrEmpty(calendarEventId))
             {
                 if (!string.IsNullOrEmpty(type?.TrainingType?.Name))
                 {
-                    var eventResult = await _graphService.AddToCalendar(planUserId, text, training!.DateStart, training.DateEnd, !training.ShowTime);
+                    var eventResult = await _graphService.AddToCalendar(planUserId, text, training.DateStart, training.DateEnd, training.ShowTime);
                     await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, eventResult.Id, clt);
                 }
             }
             else
             {
-                await _graphService.PatchCalender(planUserId, calendarEventId, text, training!.DateStart, training.DateEnd, !training.ShowTime);
+                await _graphService.PatchCalender(planUserId, calendarEventId, text, training.DateStart, training.DateEnd, training.ShowTime);
                 await _auditService.Log(currentUserId, AuditType.PatchTraining, customerId, $"Preventing duplicate event '{type?.TrainingType?.Name}' on '{training?.DateStart.ToString("o")}' : '{training?.DateEnd.ToString("o")}'");
             }
         }
