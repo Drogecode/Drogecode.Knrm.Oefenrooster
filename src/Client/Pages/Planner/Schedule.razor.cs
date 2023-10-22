@@ -31,10 +31,19 @@ public sealed partial class Schedule : IDisposable
     {
         if (!string.IsNullOrEmpty(View) && View.Equals("Table"))
             _view = ScheduleView.Table;
+        else
+            _view = ScheduleView.Calendar;
         _users = await _userRepository.GetAllUsersAsync(false);
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
         _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(_cls.Token);
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(View) && View.Equals("Table"))
+            _view = ScheduleView.Table;
+        else
+            _view = ScheduleView.Calendar;
     }
 
     public void ChangeView(ScheduleView newView)
