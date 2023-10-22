@@ -7,6 +7,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using HealthChecks.UI.Client;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -24,10 +25,11 @@ builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables();
+builder.Services.AddDataProtection().PersistKeysToDbContext<DataContext>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.Cookie.HttpOnly = false;
+    options.Cookie.HttpOnly = true;
     options.Events.OnRedirectToLogin = context =>
     {
         context.Response.StatusCode = 401;

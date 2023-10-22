@@ -27,6 +27,13 @@
             </MudList>
         </MudPaper>
     }
+    else
+    {
+        <MudSkeleton />
+        <MudSkeleton />
+        <MudSkeleton />
+        <MudSkeleton />
+    }
 }
 else
 {
@@ -36,10 +43,12 @@ else
             <MudText Typo="Typo.h3">@L["Trainings for {0}", _user?.Name ?? "No name"]</MudText>
             <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
                 <MudTabPanel Text="@L["Trainings"]">
-                    <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+                    <MudPaper Elevation="0" Class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
                         @foreach (var training in _trainings.Trainings.OrderByDescending(x => x.DateStart))
                         {
-                            <IndexCard User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" />
+                            <div class="flex-1">
+                                <IndexCard MinWidth="300px" MaxWidth="600px" User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" />
+                            </div>
                         }
                     </MudPaper>
                 </MudTabPanel>

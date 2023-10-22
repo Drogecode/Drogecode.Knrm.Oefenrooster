@@ -2,7 +2,7 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 <MudPaper MinWidth="@MinWidth" MaxWidth="@MaxWidth" Width="@Width" Elevation="0">
-    <MudCard @onclick="()=>OnClickCallback.InvokeAsync()">
+    <MudCard @onclick="()=>OnClickCallback.InvokeAsync()" Style="z-index:5;">
         <MudCardHeader Class="@($"trainingType-{Training.RoosterTrainingTypeId}")">
             <CardHeaderContent>
                 @if (ReplaceEmtyName && string.IsNullOrEmpty(Training.Name))
@@ -28,16 +28,16 @@
                     }
                     @if (OnClickHistory.HasDelegate)
                     {
-                        <MudIconButton Class="DrogeCode-card-header-history" Icon="@Icons.Material.Filled.History" Color="Color.Default" OnClick="()=>OnClickHistory.InvokeAsync()" />
+                        <MudIconButton Class="DrogeCode-card-header-history" Icon="@Icons.Material.Filled.History" Color="Color.Default" OnClick="()=>OnClickHistory.InvokeAsync()" Style="z-index:6;" />
                     }
                     @if (OnClickSettings.HasDelegate)
                     {
-                        <MudIconButton Class="DrogeCode-card-header-settings" Icon="@Icons.Material.Filled.Settings" Color="Color.Default" OnClick="()=>OnClickSettings.InvokeAsync()" />
+                        <MudIconButton Class="DrogeCode-card-header-settings" Icon="@Icons.Material.Filled.Settings" Color="Color.Default" OnClick="()=>OnClickSettings.InvokeAsync()" Style="z-index:6;" />
                     }
                 }
                 else if (_iconCount > 1)
                 {
-                    <MudIconButton Class="DrogeCode-card-header-more-icons" Icon="@Icons.Material.Filled.MoreVert" Color="Color.Default" OnClick="()=>_showAllIcons = true" />
+                    <MudIconButton Class="DrogeCode-card-header-more-icons" Icon="@Icons.Material.Filled.MoreVert" Color="Color.Default" OnClick="()=>_showAllIcons = true" Style="z-index:6;" />
                 }
             </CardHeaderActions>
         </MudCardHeader>
