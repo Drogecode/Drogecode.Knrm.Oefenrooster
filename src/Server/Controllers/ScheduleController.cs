@@ -24,6 +24,7 @@ public class ScheduleController : ControllerBase
     private readonly ITrainingTypesService _trainingTypesService;
     private readonly IUserSettingService _userSettingService;
     private readonly IDateTimeService _dateTimeService;
+    private readonly IUserService _userService;
 
     public ScheduleController(
         ILogger<ScheduleController> logger,
@@ -32,7 +33,8 @@ public class ScheduleController : ControllerBase
         IGraphService graphService,
         ITrainingTypesService trainingTypesService,
         IUserSettingService userSettingService,
-        IDateTimeService dateTimeService)
+        IDateTimeService dateTimeService,
+        IUserService userService)
     {
         _logger = logger;
         _scheduleService = scheduleService;
@@ -41,6 +43,7 @@ public class ScheduleController : ControllerBase
         _trainingTypesService = trainingTypesService;
         _userSettingService = userSettingService;
         _dateTimeService = dateTimeService;
+        _userService = userService;
     }
 
     [HttpGet]
@@ -151,11 +154,12 @@ public class ScheduleController : ControllerBase
                 await _auditService.Log(userId, AuditType.PatchTraining, customerId, "Failed", patchedTraining.TrainingId, patchedTraining.Name);
                 return BadRequest();
             }
-
+            await _userService.PatchLastOnline(userId, clt);
             clt = CancellationToken.None;
             await PatchTrainingCalenderUsers(patchedTraining.TrainingId!.Value, customerId, clt);
+            await _userService.PatchLastOnline(userId, clt);
 
-            return Ok(result);
+            return result;
         }
         catch (Exception ex)
         {
@@ -206,6 +210,7 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var trainingId = Guid.NewGuid();
             var result = await _scheduleService.AddTrainingAsync(customerId, newTraining, trainingId, clt);
+            await _userService.PatchLastOnline(userId, clt);
             if (result.Success)
                 await _auditService.Log(userId, AuditType.AddTraining, customerId, objectKey: trainingId, objectName: newTraining.Name);
             else
@@ -229,6 +234,7 @@ public class ScheduleController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _scheduleService.PatchScheduleForUserAsync(userId, customerId, training, clt);
+            await _userService.PatchLastOnline(userId, clt);
             return result;
         }
         catch (Exception ex)
@@ -248,6 +254,7 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             PatchAssignedUserResponse result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.User?.UserId, Assigned = body?.User?.Assigned }), body?.TrainingId);
+            await _userService.PatchLastOnline(userId, clt);
             if (result.Success && body?.User?.UserId is not null)
             {
                 clt = CancellationToken.None;
@@ -272,6 +279,7 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _scheduleService.PutAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.UserId, Assigned = body?.Assigned }), body?.TrainingId);
+            await _userService.PatchLastOnline(userId, clt);
             if (result.Success && body?.UserId is not null)
             {
                 clt = CancellationToken.None;
@@ -352,6 +360,7 @@ public class ScheduleController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var training = await _scheduleService.GetPlannedTrainingById(customerId, id, clt);
+            await _userService.PatchLastOnline(userId, clt);
             if (training.Training is null)
                 return false;
             clt.ThrowIfCancellationRequested();

@@ -18,7 +18,7 @@ public class UserService : IUserService
     {
         var sw = Stopwatch.StartNew();
         var result = new MultipleDrogeUsersResponse { DrogeUsers = new List<DrogeUser>() };
-        var dbUsers = _database.Users.Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.IsActive)).OrderBy(x=>x.Name);
+        var dbUsers = _database.Users.Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.IsActive)).OrderBy(x => x.Name);
         foreach (var dbUser in dbUsers)
         {
             result.DrogeUsers.Add(new DrogeUser
@@ -104,6 +104,19 @@ public class UserService : IUserService
             _database.Users.Update(oldVersion);
             await _database.SaveChangesAsync();
             return true;
+        }
+        return false;
+    }
+
+    public async Task<bool> PatchLastOnline(Guid userId, CancellationToken clt)
+    {
+
+        var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
+        if (userObj is not null && userObj.LastLogin.AddMinutes(1).CompareTo(DateTime.UtcNow) < 0)
+        {
+            userObj.LastLogin = DateTime.UtcNow;
+            _database.Users.Update(userObj);
+            return (await _database.SaveChangesAsync() > 0);
         }
         return false;
     }

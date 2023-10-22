@@ -8,5 +8,6 @@ public interface IUserService
     Task<DrogeUser> GetOrSetUserFromDb(Guid userId, string userName, string userEmail, Guid customerId, bool setLastOnline);
     Task<AddUserResponse> AddUser(DrogeUser user, Guid customerId);
     Task<bool> UpdateUser(DrogeUser user, Guid userId, string userName, string userEmail, Guid customerId);
+    Task<bool> PatchLastOnline(Guid userId, CancellationToken clt);
     Task<bool> MarkUsersDeleted(List<DrogeUser> existingUsers, Guid userId, Guid customerId);
 }
