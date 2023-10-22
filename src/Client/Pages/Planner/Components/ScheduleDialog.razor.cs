@@ -80,7 +80,9 @@ public sealed partial class ScheduleDialog : IDisposable
             user.PlannedFunctionId = functionId;
         else
             user.PlannedFunctionId = user.UserFunctionId;
-        await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, Planner, user);
+        var result = await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, Planner, user);
+        if (Planner.TrainingId is null || Planner.TrainingId.Equals(Guid.Empty))
+            Planner.TrainingId = result.IdPatched;
         MainLayout.ShowSnackbarAssignmentChanged(user, Planner);
         await Refresh.CallRequestRefreshAsync();
     }
@@ -88,19 +90,22 @@ public sealed partial class ScheduleDialog : IDisposable
     private async Task CheckChanged(bool toggled, DrogeUser user, Guid functionId)
     {
         //Add to schedule with a new status to indicate it was not set by the user.
-        await _scheduleRepository.PutAssignedUser(toggled, Planner.TrainingId, functionId, user, Planner);
+        var result = await _scheduleRepository.PutAssignedUser(toggled, Planner.TrainingId, functionId, user, Planner);
+        if (Planner.TrainingId is null || Planner.TrainingId.Equals(Guid.Empty))
+            Planner.TrainingId = result.IdPut;
         var planuser = Planner.PlanUsers.FirstOrDefault(x => x.UserId == user.Id);
-        if (planuser == null)
+        if (planuser is null)
         {
             planuser = new PlanUser
             {
                 UserId = user.Id,
+                TrainingId = Planner.TrainingId,
                 UserFunctionId = user.UserFunctionId,
                 PlannedFunctionId = functionId,
                 Availabilty = Availabilty.None,
                 Assigned = toggled,
                 Name = user.Name,
-                VehicleId = _vehicleInfoForThisTraining?.FirstOrDefault(x=>x.IsDefault)?.Id ?? _vehicleInfoForThisTraining?.FirstOrDefault()?.Id,
+                VehicleId = _vehicleInfoForThisTraining?.FirstOrDefault(x => x.IsDefault)?.Id ?? _vehicleInfoForThisTraining?.FirstOrDefault()?.Id,
             };
             Planner.PlanUsers.Add(planuser);
         }

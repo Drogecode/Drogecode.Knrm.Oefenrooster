@@ -69,7 +69,7 @@ public class VehicleService : IVehicleService
     {
         var sw = Stopwatch.StartNew();
         var result = new DrogeLinkVehicleTrainingResponse();
-        if (link.Id == null)
+        if (link.Id is null)
         {
             var newId = Guid.NewGuid();
             _database.LinkVehicleTraining.Add(new DbLinkVehicleTraining
@@ -87,7 +87,7 @@ public class VehicleService : IVehicleService
         else
         {
             var foundLink = await _database.LinkVehicleTraining.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == link.Id);
-            if (foundLink == null)
+            if (foundLink is null)
             {
                 _logger.LogWarning("Link {LinkId} was not found", link.Id);
                 result.DrogeLinkVehicleTraining = link;
@@ -96,17 +96,17 @@ public class VehicleService : IVehicleService
             {
                 foundLink.IsSelected = link.IsSelected;
                 _database.LinkVehicleTraining.Update(foundLink);
-                if (!link.IsSelected)
-                {
-                    var trainings = _database.RoosterAvailables.Where(x => x.TrainingId == link.RoosterTrainingId && x.VehicleId == link.VehicleId);
-                    foreach (var training in trainings)
-                    {
-                        training.VehicleId = null;
-                        _database.RoosterAvailables.Update(training);
-                    }
-                }
                 result.Success = (await _database.SaveChangesAsync()) > 0;
                 result.DrogeLinkVehicleTraining = link;
+            }
+        }
+        if (!link.IsSelected)
+        {
+            var trainings = _database.RoosterAvailables.Where(x => x.TrainingId == link.RoosterTrainingId && x.VehicleId == link.VehicleId);
+            foreach (var training in trainings)
+            {
+                training.VehicleId = null;
+                _database.RoosterAvailables.Update(training);
             }
         }
         sw.Stop();

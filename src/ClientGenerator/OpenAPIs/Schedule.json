@@ -988,6 +988,11 @@
             "type": "string",
             "format": "uuid"
           },
+          "trainingId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "userFunctionId": {
             "type": "string",
             "format": "uuid",

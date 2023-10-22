@@ -468,10 +468,10 @@ public class ScheduleService : IScheduleService
         var sw = Stopwatch.StartNew();
         var result = new GetPlannedTrainingResponse();
         var dbTraining = await _database.RoosterTrainings
-            .Include(x => x.RoosterAvailables)
+            .Include(x => x.RoosterAvailables!)
             .ThenInclude(x => x.User)
             .Include(x => x.RoosterTrainingType)
-            .FirstOrDefaultAsync(x => x.Id == trainingId && x.DeletedOn == null);
+            .FirstOrDefaultAsync(x => x.Id == trainingId && x.DeletedOn == null, cancellationToken: clt);
         if (dbTraining is not null)
         {
             result = await dDbTrainingToGetPlannedTrainingResponse(result, dbTraining, clt);
@@ -492,6 +492,10 @@ public class ScheduleService : IScheduleService
                     var d = result.Training.PlanUsers.FirstOrDefault(x => x.UserId == user.Id);
                     d!.Availabilty = availabilty;
                     d.SetBy = setBy ?? AvailabilitySetBy.None;
+                    d.Name = user.Name;
+                    d.UserFunctionId = user.UserFunctionId;
+                    d.PlannedFunctionId = avaUser?.UserFunctionId ?? user.UserFunctionId;
+
                 }
                 else if (!(availabilty is null || setBy is null || setBy == AvailabilitySetBy.None))
                 {
@@ -608,6 +612,7 @@ public class ScheduleService : IScheduleService
             {
                 body.TrainingId = training.Id;
                 body.Training!.TrainingId = training.Id;
+                result.IdPatched = training.Id;
             }
             else
             {
