@@ -19,6 +19,7 @@
                 <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/configuration/global" Match="NavLinkMatch.Prefix">@L["Configuration"]</MudNavLink>
                 <MudNavLink Icon="@Icons.Material.Filled.SecurityUpdateWarning" Href="/precom/alerts" Match="NavLinkMatch.Prefix">@L["PreCom alerts"]</MudNavLink>
                 <MudNavLink Icon="@Icons.Material.Filled.History" Href="/configuration/audit" Match="NavLinkMatch.Prefix">@L["Audit"]</MudNavLink>
+                <MudNavLink Icon="@Icons.Material.Filled.Curtains" Href="/configuration/day-item" Match="NavLinkMatch.Prefix">@L["Day item"]</MudNavLink>
             </AuthorizeView>
         </MudNavGroup>
     </AuthorizeView>
@@ -34,14 +35,4 @@
             </MudListItem>
         </MudList>
     }
-    <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
-        @if (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriSchedule.Substring(1)) && !Navigation.Uri.EndsWith("Table"))
-        {
-            <MudList>
-                <MudListItem OnClick="AddDayItem" Avatar="@Icons.Material.Filled.Add" Class="cursor-pointer">
-                    @L["Other item"]
-                </MudListItem>
-            </MudList>
-        }
-    </AuthorizeView>
 </MudNavMenu>
