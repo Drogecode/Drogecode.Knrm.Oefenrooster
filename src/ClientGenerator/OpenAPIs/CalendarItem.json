@@ -149,6 +149,56 @@
         }
       }
     },
+    "/api/CalendarItem/day/all/{count}/{skip}": {
+      "get": {
+        "tags": [
+          "CalendarItem"
+        ],
+        "operationId": "GetAllFutureDayItems",
+        "parameters": [
+          {
+            "name": "count",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDayItemResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDayItemResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDayItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/CalendarItem/month": {
       "put": {
         "tags": [
@@ -271,6 +321,10 @@
           "elapsedMilliseconds": {
             "type": "integer",
             "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
           },
           "dayItems": {
             "type": "array",

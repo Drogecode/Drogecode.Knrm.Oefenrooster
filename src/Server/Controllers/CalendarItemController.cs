@@ -40,13 +40,13 @@ public class CalendarItemController : ControllerBase
 
     [HttpGet]
     [Route("month/{year:int}/{month:int}")]
-    public async Task<ActionResult<GetMonthItemResponse>> GetMonthItems(int year, int month, CancellationToken token = default)
+    public async Task<ActionResult<GetMonthItemResponse>> GetMonthItems(int year, int month, CancellationToken clt = default)
     {
         try
         {
             var result = new GetMonthItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            result = await _calendarItemService.GetMonthItems(year, month, customerId, token);
+            result = await _calendarItemService.GetMonthItems(year, month, customerId, clt);
             return result;
         }
         catch (Exception ex)
@@ -58,13 +58,31 @@ public class CalendarItemController : ControllerBase
 
     [HttpGet]
     [Route("day/{yearStart:int}/{monthStart:int}/{dayStart:int}/{yearEnd:int}/{monthEnd:int}/{dayEnd:int}")]
-    public async Task<ActionResult<GetDayItemResponse>> GetDayItems(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, Guid userId, CancellationToken token = default)
+    public async Task<ActionResult<GetDayItemResponse>> GetDayItems(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, Guid userId, CancellationToken clt = default)
     {
         try
         {
             var result = new GetDayItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            result = await _calendarItemService.GetDayItems(yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, customerId, userId, token);
+            result = await _calendarItemService.GetDayItems(yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, customerId, userId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetDayItems");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("day/all/{count:int}/{skip:int}")]
+    public async Task<ActionResult<GetDayItemResponse>> GetAllFutureDayItems(int count, int skip, CancellationToken clt = default)
+    {
+        try
+        {
+            var result = new GetDayItemResponse();
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            result = await _calendarItemService.GetAllFutureDayItems(customerId, Guid.Empty, count, skip, clt);
             return result;
         }
         catch (Exception ex)
@@ -76,14 +94,14 @@ public class CalendarItemController : ControllerBase
 
     [HttpPut]
     [Route("month")]
-    public async Task<ActionResult<PutMonthItemResponse>> PutMonthItem([FromBody] RoosterItemMonth roosterItemMonth, CancellationToken token = default)
+    public async Task<ActionResult<PutMonthItemResponse>> PutMonthItem([FromBody] RoosterItemMonth roosterItemMonth, CancellationToken clt = default)
     {
         try
         {
             var result = new PutMonthItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            result = await _calendarItemService.PutMonthItem(roosterItemMonth, customerId, userId, token);
+            result = await _calendarItemService.PutMonthItem(roosterItemMonth, customerId, userId, clt);
             return result;
         }
         catch (Exception ex)
