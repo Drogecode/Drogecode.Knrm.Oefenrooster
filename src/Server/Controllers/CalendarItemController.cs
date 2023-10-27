@@ -80,6 +80,11 @@ public class CalendarItemController : ControllerBase
     {
         try
         {
+            if (count > 50)
+            {
+                _logger.LogWarning("GetAllFutureDayItems count to big {0}", count);
+                return BadRequest("Count to big");
+            }
             var result = new GetDayItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             result = await _calendarItemService.GetAllFutureDayItems(customerId, Guid.Empty, count, skip, clt);
@@ -87,7 +92,7 @@ public class CalendarItemController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in GetDayItems");
+            _logger.LogError(ex, "Exception in GetAllFutureDayItems");
             return BadRequest();
         }
     }

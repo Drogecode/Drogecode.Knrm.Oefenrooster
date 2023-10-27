@@ -78,8 +78,10 @@ public class CalendarItemControllerTests : BaseTest
         var new1 = await AddCalendarDayItem("GetAllDay_1", DateTime.Today);
         var new2 = await AddCalendarDayItem("GetAllDay_2", DateTime.Today.AddDays(20));
         var new3 = await AddCalendarDayItem("GetAllDay_3", DateTime.Today.AddDays(30));
-        var new4 = await AddCalendarDayItem("GetAllDay_4", DateTime.Today.AddDays(-10));
-        var new5 = await AddCalendarDayItem("GetAllDay_5", DateTime.Today.AddDays(-20));
+        var new4 = await AddCalendarDayItem("GetAllDay_3", DateTime.Today.AddMonths(30));
+        var new5 = await AddCalendarDayItem("GetAllDay_4", DateTime.Today.AddDays(-10));
+        var new6 = await AddCalendarDayItem("GetAllDay_5", DateTime.Today.AddDays(-20));
+        var new7 = await AddCalendarDayItem("GetAllDay_5", DateTime.Today.AddMonths(-20));
         var from = DateTime.Today.AddDays(-10);
         var till = DateTime.Today.AddDays(20);
         var result = await CalendarItemController.GetDayItems(from.Year, from.Month, from.Day, till.Year, till.Month, till.Day, Guid.Empty);
@@ -88,7 +90,31 @@ public class CalendarItemControllerTests : BaseTest
         result.Value.DayItems.Should().Contain(x => x.Id == new1);
         result.Value.DayItems.Should().Contain(x => x.Id == new2);
         result.Value.DayItems.Should().NotContain(x => x.Id == new3);
+        result.Value.DayItems.Should().NotContain(x => x.Id == new4);
+        result.Value.DayItems.Should().Contain(x => x.Id == new5);
+        result.Value.DayItems.Should().NotContain(x => x.Id == new6);
+        result.Value.DayItems.Should().NotContain(x => x.Id == new7);
+    }
+
+    [Fact]
+    public async Task GetAllFutureDayItems()
+    {
+        var new1 = await AddCalendarDayItem("GetAllFutureDay_1", DateTime.Today);
+        var new2 = await AddCalendarDayItem("GetAllFutureDay_2", DateTime.Today.AddDays(20));
+        var new3 = await AddCalendarDayItem("GetAllFutureDay_3", DateTime.Today.AddDays(30));
+        var new4 = await AddCalendarDayItem("GetAllFutureDay_3", DateTime.Today.AddMonths(30));
+        var new5 = await AddCalendarDayItem("GetAllFutureDay_4", DateTime.Today.AddDays(-10));
+        var new6 = await AddCalendarDayItem("GetAllFutureDay_5", DateTime.Today.AddDays(-20));
+        var new7 = await AddCalendarDayItem("GetAllFutureDay_5", DateTime.Today.AddMonths(-20));
+        var result = await CalendarItemController.GetAllFutureDayItems(30, 0);
+        Assert.NotNull(result?.Value?.DayItems);
+        result.Value.DayItems.Should().Contain(x => x.Id == DefaultCalendarDayItem);
+        result.Value.DayItems.Should().Contain(x => x.Id == new1);
+        result.Value.DayItems.Should().Contain(x => x.Id == new2);
+        result.Value.DayItems.Should().Contain(x => x.Id == new3);
         result.Value.DayItems.Should().Contain(x => x.Id == new4);
         result.Value.DayItems.Should().NotContain(x => x.Id == new5);
+        result.Value.DayItems.Should().NotContain(x => x.Id == new6);
+        result.Value.DayItems.Should().NotContain(x => x.Id == new7);
     }
 }

@@ -42,8 +42,8 @@ public class CalendarItemService : ICalendarItemService
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
         var dayItems = await _database.RoosterItemDays
             .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate && (userId == Guid.Empty || x.UserId == Guid.Empty || x.UserId.Equals(userId)))
-            .Select(x => x.ToRoosterItemDay())
             .OrderBy(x => x.DateStart)
+            .Select(x => x.ToRoosterItemDay())
             .ToListAsync(clt);
         var result = new GetDayItemResponse
         {
@@ -54,11 +54,11 @@ public class CalendarItemService : ICalendarItemService
 
     public async Task<GetDayItemResponse> GetAllFutureDayItems(Guid customerId, Guid userId, int count, int skip, CancellationToken clt)
     {
-        var startDate = DateTime.UtcNow;
+        var startDate = DateTime.Today;
         var dayItems = await _database.RoosterItemDays
             .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && (userId == Guid.Empty || x.UserId == Guid.Empty || x.UserId.Equals(userId)))
+            .OrderBy(x => x.DateStart)
             .Select(x => x.ToRoosterItemDay())
-            .OrderBy(x=>x.DateStart)
             .Skip(skip)
             .Take(count)
             .ToListAsync(clt);
