@@ -1,4 +1,39 @@
 ﻿@page "/configuration/day-item"
 @attribute [Authorize(Roles = AccessesNames.AUTH_Taco)]
-
-<p>ToDo</p>
+<MudAlert Severity="Severity.Info" Variant="Variant.Filled">ToDo</MudAlert>
+<PageTitle>@L["Day items"]</PageTitle>
+<MudPaper Elevation="0" Class="p-2">
+    <MudText Typo="Typo.h4">@L["Add and change day item"]</MudText>
+    @if (_items is not null)
+    {
+        <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{OpenDayItemDialog(null, true);}">@L["Add new day item"]</MudButton>
+        <MudTable Items="_items.OrderByDescending(x=>x.DateStart)">
+            <HeaderContent>
+                <MudTh>@L["Description"]</MudTh>
+                <MudTh>@L["From"]</MudTh>
+                <MudTh>@L["Till"]</MudTh>
+                <MudTh>@L["Edit"]</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="@L["Description"]">@context.Text</MudTd>
+                <MudTd DataLabel="@L["Type"]">@context.Type</MudTd>
+                <MudTd DataLabel="@L["From"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateStart" /></MudTd>
+                <MudTd DataLabel="@L["Till"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateEnd" /></MudTd>
+                <MudTd DataLabel="@L["Edit"]">
+                    @if (context.DateEnd.CompareTo(DateTime.UtcNow) > 0)
+                    {
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context);}" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenDayItemDialog(context, false);}" />
+                    }
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+    else
+    {
+        <MudSkeleton />
+        <MudSkeleton />
+        <MudSkeleton />
+        <MudSkeleton />
+    }
+</MudPaper>

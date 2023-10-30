@@ -87,7 +87,7 @@ public class CalendarItemController : ControllerBase
             }
             var result = new GetDayItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            result = await _calendarItemService.GetAllFutureDayItems(customerId, Guid.Empty, count, skip, clt);
+            result = await _calendarItemService.GetAllFutureDayItems(customerId,count, skip, clt);
             return result;
         }
         catch (Exception ex)

@@ -52,11 +52,11 @@ public class CalendarItemService : ICalendarItemService
         return result;
     }
 
-    public async Task<GetDayItemResponse> GetAllFutureDayItems(Guid customerId, Guid userId, int count, int skip, CancellationToken clt)
+    public async Task<GetDayItemResponse> GetAllFutureDayItems(Guid customerId, int count, int skip, CancellationToken clt)
     {
-        var startDate = DateTime.Today;
+        var startDate = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
         var dayItems = await _database.RoosterItemDays
-            .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && (userId == Guid.Empty || x.UserId == Guid.Empty || x.UserId.Equals(userId)))
+            .Where(x => x.CustomerId == customerId && x.DateStart >= startDate)
             .OrderBy(x => x.DateStart)
             .Select(x => x.ToRoosterItemDay())
             .Skip(skip)
