@@ -1,9 +1,11 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.Extensions.Localization;
@@ -17,6 +19,7 @@ public sealed partial class ScheduleDialog : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public PlannedTraining Planner { get; set; } = default!;
     [Parameter] public List<DrogeUser>? Users { get; set; }
     [Parameter] public List<DrogeFunction>? Functions { get; set; }
@@ -28,6 +31,7 @@ public sealed partial class ScheduleDialog : IDisposable
     private List<DrogeVehicle>? _vehicleInfoForThisTraining;
     private bool _plannerIsUpdated;
     private bool _showWoeps;
+    private bool _canEdit;
     private int _vehicleCount;
     private int _colmn1 = 2;
     private int _colmn2 = 3;
@@ -72,10 +76,25 @@ public sealed partial class ScheduleDialog : IDisposable
         }
         else
             _showWoeps = true;
+
+        if (Planner.DateEnd >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
+        {
+            _canEdit = true;
+        }
+        else if (AuthenticationState is not null)
+        {
+            var authState = await AuthenticationState;
+            var user = authState?.User;
+            if (user is not null)
+            {
+                _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
+            }
+        }
     }
 
     private async Task ClickLeader(PlanUser user)
     {
+        if (!_canEdit) return;
         if (user.PlannedFunctionId.Equals(DefaultSettingsHelper.KompasLeiderId))
             await FunctionSelectionChanged(user, user.UserFunctionId);
         else
@@ -84,6 +103,7 @@ public sealed partial class ScheduleDialog : IDisposable
 
     private async Task CheckChanged(bool toggled, PlanUser user, Guid functionId)
     {
+        if (!_canEdit) return;
         user.Assigned = toggled;
         if (toggled)
             user.PlannedFunctionId = functionId;
@@ -98,6 +118,7 @@ public sealed partial class ScheduleDialog : IDisposable
 
     private async Task CheckChanged(bool toggled, DrogeUser user, Guid functionId)
     {
+        if (!_canEdit) return;
         //Add to schedule with a new status to indicate it was not set by the user.
         var result = await _scheduleRepository.PutAssignedUser(toggled, Planner.TrainingId, functionId, user, Planner);
         if (Planner.TrainingId is null || Planner.TrainingId.Equals(Guid.Empty))
@@ -147,6 +168,7 @@ public sealed partial class ScheduleDialog : IDisposable
 
     private async Task VehicleSelectionChanged(PlanUser user, Guid? id)
     {
+        if (!_canEdit) return;
         user.VehicleId = id;
         await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, null, user);
         await Refresh.CallRequestRefreshAsync();
@@ -154,6 +176,7 @@ public sealed partial class ScheduleDialog : IDisposable
 
     private async Task FunctionSelectionChanged(PlanUser user, Guid? id)
     {
+        if (!_canEdit) return;
         user.ClickedFunction = false;
         user.PlannedFunctionId = id;
         await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, null, user);

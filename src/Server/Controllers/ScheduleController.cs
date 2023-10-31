@@ -362,9 +362,12 @@ public class ScheduleController : ControllerBase
             var training = await _scheduleService.GetPlannedTrainingById(customerId, id, clt);
             await _userService.PatchLastOnline(userId, clt);
             if (training.Training is null)
-                return false;
+                return BadRequest("Traiing not found");
             clt.ThrowIfCancellationRequested();
             clt = CancellationToken.None;
+            var canEditPast = User.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
+            if (!canEditPast && training.Training.DateEnd < DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
+                return Unauthorized();
             foreach (var user in training.Training.PlanUsers)
             {
                 user.Assigned = false;

@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.Extensions.Localization;
@@ -14,6 +15,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter] public List<PlannerTrainingType>? TrainingTypes { get; set; }
     [Parameter] public PlannedTraining? Planner { get; set; }
@@ -26,6 +28,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private bool _success;
     private bool _showDelete;
     private bool _startedWithShowNoTime;
+    private bool _canEdit;
     private string[] _errors = Array.Empty<string>();
     [AllowNull] private MudForm _form;
     protected override async Task OnParametersSetAsync()
@@ -81,6 +84,21 @@ public sealed partial class EditTrainingDialog : IDisposable
             _linkVehicleTraining = new();
         }
         _currentTrainingType = TrainingTypes?.FirstOrDefault(x => x.Id == _training?.RoosterTrainingTypeId);
+
+        var dateEnd = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null")), DateTimeKind.Local).ToUniversalTime();
+        if (dateEnd >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
+        {
+            _canEdit = true;
+        }
+        else if (AuthenticationState is not null)
+        {
+            var authState = await AuthenticationState;
+            var user = authState?.User;
+            if (user is not null)
+            {
+                _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
+            }
+        }
     }
 
     void Cancel() => MudDialog.Cancel();
@@ -119,7 +137,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private async Task OnSubmit()
     {
         _form?.Validate();
-        if (!_form?.IsValid == true || _training == null) return;
+        if (!_form?.IsValid == true || _training == null || !_canEdit) return;
         if (_training.TimeStart >= _training.TimeEnd) return;
 
         if (_training.IsNew || _training.IsNewFromDefault)
@@ -186,6 +204,7 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private async Task CheckChanged(bool toggled, DrogeVehicle vehicle)
     {
+        if (!_canEdit) return;
         var link = _linkVehicleTraining?.FirstOrDefault(x => x.VehicleId == vehicle.Id);
         if (link is not null)
         {
@@ -231,6 +250,7 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private async Task Delete()
     {
+        if (!_canEdit) return;
         if (_training?.IsNewFromDefault == true)
         {
             UpdatePlannerObject();

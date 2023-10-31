@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
@@ -288,6 +289,7 @@ public class BaseTest : IAsyncLifetime
             new Claim("FullName", USER_NAME),
             new Claim("http://schemas.microsoft.com/identity/claims/objectidentifier", userId.ToString()),
             new Claim("http://schemas.microsoft.com/identity/claims/tenantid", customerId.ToString()),
+            new Claim(ClaimTypes.Role, AccessesNames.AUTH_scheduler_edit_past),// ToDo: Also test without this role
         };
         var claimsIdentity = new ClaimsIdentity(
             claims, CookieAuthenticationDefaults.AuthenticationScheme);

@@ -46,20 +46,20 @@
                     <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                         <MudItem xs="@_colmn1">
                             <MudButtonGroup Variant="Variant.Text">
-                                <MudButton StartIcon="@Icons.Material.Filled.KeyboardArrowDown" Variant="Variant.Filled" OnClick="()=>CheckChanged(false, user,function.Id)" IconColor="GetColor(user.Availabilty)" Tag="user" />
-                                <MudButton StartIcon="@Icons.Material.Filled.HowToReg" Variant="Variant.Filled" OnClick="()=>ClickLeader(user)" IconColor="user.PlannedFunctionId.Equals(DefaultSettingsHelper.KompasLeiderId) ? Color.Info : Color.Inherit" Tag="user" />
+                                <MudButton Disabled="@(!_canEdit)" StartIcon="@Icons.Material.Filled.KeyboardArrowDown" Variant="Variant.Filled" OnClick="()=>CheckChanged(false, user,function.Id)" IconColor="GetColor(user.Availabilty)" Tag="user" />
+                                <MudButton Disabled="@(!_canEdit)" StartIcon="@Icons.Material.Filled.HowToReg" Variant="Variant.Filled" OnClick="()=>ClickLeader(user)" IconColor="user.PlannedFunctionId.Equals(DefaultSettingsHelper.KompasLeiderId) ? Color.Info : Color.Inherit" Tag="user" />
                             </MudButtonGroup>
                         </MudItem>
                         <MudItem xs="@_colmn2">
                             <MudText Typo="Typo.body1">@user.Name</MudText>
                         </MudItem>
                         <MudItem xs="@_colmn3">
-                            <MudText Typo="Typo.body2" @onclick="()=>{user.ClickedFunction = !user.ClickedFunction;}">
+                            <MudText Typo="Typo.body2" @onclick="()=>{if (!_canEdit) return; user.ClickedFunction = !user.ClickedFunction;}">
                                 @LApp[@user.Availabilty.ToString() ?? ""]  @(" - ") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name
                             </MudText>
                             @if (user.ClickedFunction)
                             {
-                                <MudSelect T="Guid?" Label="@LApp["function"]" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Value="@user.PlannedFunctionId" ValueChanged="(e)=>FunctionSelectionChanged(user, e)">
+                                <MudSelect Disabled="@(!_canEdit)" T="Guid?" Label="@LApp["function"]" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Value="@user.PlannedFunctionId" ValueChanged="(e)=>FunctionSelectionChanged(user, e)">
                                     @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
                                     {
                                         <MudSelectItem T="Guid?" Value="@function.Id">@function.Name</MudSelectItem>
@@ -76,7 +76,7 @@
                                     {
                                         user.VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.IsDefault)!.Id;
                                     }
-                                    <MudSelect T="Guid?" Label="@L["vehicle"]" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Value="@user.VehicleId" ValueChanged="(e)=>VehicleSelectionChanged(user, e)">
+                                    <MudSelect Disabled="@(!_canEdit)" T="Guid?" Label="@L["vehicle"]" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Value="@user.VehicleId" ValueChanged="(e)=>VehicleSelectionChanged(user, e)">
                                         @foreach (var vehicle in _vehicleInfoForThisTraining)
                                         {
                                             <MudSelectItem T="Guid?" Value="@vehicle.Id">@vehicle.Name</MudSelectItem>
@@ -102,53 +102,22 @@
                     </MudGrid>
                 }
             }
-            @if (Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available))
+            @if (_canEdit)
             {
-                <MudText Typo="Typo.h5">
-                    @LApp["Available"]
-                </MudText>
-            }
-            @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
-            {
-                @if (Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available && x.PlannedFunctionId == function.Id))
+                @if (Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available))
                 {
-                    <MudText Typo="Typo.h6">
-                        @function.Name
+                    <MudText Typo="Typo.h5">
+                        @LApp["Available"]
                     </MudText>
-                    @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available && x.PlannedFunctionId == function.Id))
-                    {
-                        <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
-                            <MudItem xs="@_colmn1">
-                                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Filled" OnClick="()=>CheckChanged(true, user,function.Id)" Color="GetColor(user.Availabilty)" Tag="user" />
-                            </MudItem>
-                            <MudItem xs="@_colmn2">
-                                <MudText>@user.Name</MudText>
-                            </MudItem>
-                            <MudItem xs="@_colmn3">
-                                <MudText Typo="Typo.subtitle2">
-                                    @LApp[(user.Availabilty ?? Availabilty.None).ToString()]
-                                </MudText>
-                            </MudItem>
-                        </MudGrid>
-                    }
                 }
-            }
-            @if (Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty != Availabilty.Available) || Users.Any(x => !Planner.PlanUsers.Any(y => y.UserId == x.Id)))
-            {
-                <MudText Typo="Typo.h5">
-                    @L["Other users"]
-                </MudText>
-            }
-            @if (_plannerIsUpdated)
-            {
                 @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
                 {
-                    @if (Users.Any(x => x.UserFunctionId == function.Id) || Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty != Availabilty.Available && x.PlannedFunctionId == function.Id))
+                    @if (Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available && x.PlannedFunctionId == function.Id))
                     {
                         <MudText Typo="Typo.h6">
                             @function.Name
                         </MudText>
-                        @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty != Availabilty.Available && x.PlannedFunctionId == function.Id).OrderBy(o => o.Availabilty))
+                        @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available && x.PlannedFunctionId == function.Id))
                         {
                             <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                                 <MudItem xs="@_colmn1">
@@ -164,36 +133,71 @@
                                 </MudItem>
                             </MudGrid>
                         }
-                        @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
-                        {
-                            @if (Planner.PlanUsers.Any(x => x.UserId == user.Id)) continue;
-                            <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
-                                <MudItem xs="@_colmn1">
-                                    <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Filled" OnClick="()=>CheckChanged(true, user,function.Id)" Tag="user" />
-                                </MudItem>
-                                <MudItem xs="@_colmn2">
-                                    <MudText>@user.Name</MudText>
-                                </MudItem>
-                                <MudItem xs="@_colmn3">
-                                    <MudText Typo="Typo.subtitle2">
-                                        @LApp[Availabilty.None.ToString()]
-                                    </MudText>
-                                </MudItem>
-                            </MudGrid>
-                        }
                     }
                 }
-            }
-            else if (_showWoeps)
-            {
-                @L["Woeps the training was not found"]
-            }
-            else
-            {
-                <MudSkeleton />
-                <MudSkeleton />
-                <MudSkeleton />
-                <MudSkeleton />
+                @if (Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty != Availabilty.Available) || Users.Any(x => !Planner.PlanUsers.Any(y => y.UserId == x.Id)))
+                {
+                    <MudText Typo="Typo.h5">
+                        @L["Other users"]
+                    </MudText>
+                }
+                @if (_plannerIsUpdated)
+                {
+                    @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
+                    {
+                        @if (Users.Any(x => x.UserFunctionId == function.Id) || Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty != Availabilty.Available && x.PlannedFunctionId == function.Id))
+                        {
+                            <MudText Typo="Typo.h6">
+                                @function.Name
+                            </MudText>
+                            @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty != Availabilty.Available && x.PlannedFunctionId == function.Id).OrderBy(o => o.Availabilty))
+                            {
+                                <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
+                                    <MudItem xs="@_colmn1">
+                                        <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Filled" OnClick="()=>CheckChanged(true, user,function.Id)" Color="GetColor(user.Availabilty)" Tag="user" />
+                                    </MudItem>
+                                    <MudItem xs="@_colmn2">
+                                        <MudText>@user.Name</MudText>
+                                    </MudItem>
+                                    <MudItem xs="@_colmn3">
+                                        <MudText Typo="Typo.subtitle2">
+                                            @LApp[(user.Availabilty ?? Availabilty.None).ToString()]
+                                        </MudText>
+                                    </MudItem>
+                                </MudGrid>
+                            }
+                            @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
+                            {
+                                @if (Planner.PlanUsers.Any(x => x.UserId == user.Id)) continue;
+                                <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
+                                    <MudItem xs="@_colmn1">
+                                        <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Filled" OnClick="()=>CheckChanged(true, user,function.Id)" Tag="user" />
+                                    </MudItem>
+                                    <MudItem xs="@_colmn2">
+                                        <MudText>@user.Name</MudText>
+                                    </MudItem>
+                                    <MudItem xs="@_colmn3">
+                                        <MudText Typo="Typo.subtitle2">
+                                            @LApp[Availabilty.None.ToString()]
+                                        </MudText>
+                                    </MudItem>
+                                </MudGrid>
+                            }
+                        }
+                    }
+
+                }
+                else if (_showWoeps)
+                {
+                    @L["Woeps the training was not found"]
+                }
+                else
+                {
+                    <MudSkeleton />
+                    <MudSkeleton />
+                    <MudSkeleton />
+                    <MudSkeleton />
+                }
             }
         }
     </DialogContent>
