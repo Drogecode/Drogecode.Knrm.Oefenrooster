@@ -281,7 +281,7 @@ public class BaseTest : IAsyncLifetime
         return Task.CompletedTask;
     }
 
-    protected void MockAuthenticatedUser(ControllerBase controller, Guid userId, Guid customerId)
+    protected void MockAuthenticatedUser(ControllerBase controller, Guid userId, Guid customerId, List<string>? roles = null)
     {
         var claims = new List<Claim>
         {
@@ -289,8 +289,14 @@ public class BaseTest : IAsyncLifetime
             new Claim("FullName", USER_NAME),
             new Claim("http://schemas.microsoft.com/identity/claims/objectidentifier", userId.ToString()),
             new Claim("http://schemas.microsoft.com/identity/claims/tenantid", customerId.ToString()),
-            new Claim(ClaimTypes.Role, AccessesNames.AUTH_scheduler_edit_past),// ToDo: Also test without this role
         };
+        if (roles is not null)
+        {
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+        }
         var claimsIdentity = new ClaimsIdentity(
             claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var fakeUser = new ClaimsPrincipal(claimsIdentity);

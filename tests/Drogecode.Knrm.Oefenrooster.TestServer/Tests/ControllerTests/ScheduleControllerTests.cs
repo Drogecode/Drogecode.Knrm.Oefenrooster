@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
@@ -270,6 +271,7 @@ public class ScheduleControllerTests : BaseTest
     [Fact]
     public async Task DeleteTraining_NotInForUserTest()
     {
+        MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, new List<string> { AccessesNames.AUTH_scheduler_edit_past });
         var trainingId = await AddTraining("DeleteTraining_NotInForUser", false, new DateTime(2020, 9, 4, 12, 0, 0), new DateTime(2020, 9, 4, 14, 0, 0));
         var training = await ScheduleController.GetTrainingById(trainingId);
         await ScheduleController.PutAssignedUser(new OtherScheduleUserRequest
@@ -287,11 +289,13 @@ public class ScheduleControllerTests : BaseTest
         trainings = await ScheduleController.ForUser(2020, 9, 1, 2020, 9, 30);
         Assert.NotNull(trainings?.Value?.Trainings);
         trainings.Value.Trainings.Should().NotContain(x => x.TrainingId == trainingId);
+        MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
     }
 
     [Fact]
     public async Task DeleteTraining_NotInForAllTest()
     {
+        MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, new List<string> { AccessesNames.AUTH_scheduler_edit_past });
         var trainingId = await AddTraining("DeleteTraining_NotInForAll", false, new DateTime(2020, 9, 4, 12, 0, 0), new DateTime(2020, 9, 4, 14, 0, 0));
         var training = await ScheduleController.GetTrainingById(trainingId);
         var trainings = await ScheduleController.ForAll(9, 2020, 8, 28, 2020, 10, 2, false);
@@ -302,6 +306,20 @@ public class ScheduleControllerTests : BaseTest
         trainings = await ScheduleController.ForAll(9, 2020, 8, 28, 2020, 10, 2, false);
         Assert.NotNull(trainings?.Value?.Planners);
         trainings.Value.Planners.Should().NotContain(x => x.TrainingId == trainingId);
+        MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+    }
+
+    [Fact]
+    public async Task DeleteTraining_NotAllowedTest()
+    {
+        var trainingId = await AddTraining("DeleteTraining_NotAllowed", false, new DateTime(2020, 9, 4, 12, 0, 0), new DateTime(2020, 9, 4, 14, 0, 0));
+        var training = await ScheduleController.GetTrainingById(trainingId);
+        var trainings = await ScheduleController.ForAll(9, 2020, 8, 28, 2020, 10, 2, false);
+        Assert.NotNull(trainings?.Value?.Planners);
+        trainings.Value.Planners.Should().Contain(x => x.TrainingId == trainingId);
+        var deleteResult = await ScheduleController.DeleteTraining(trainingId);
+        Assert.False(deleteResult?.Value);
+        deleteResult!.Result.Should().BeOfType<Microsoft.AspNetCore.Mvc.UnauthorizedResult>();
     }
 
     [Fact]
@@ -419,7 +437,7 @@ public class ScheduleControllerTests : BaseTest
         var trainingsOnDashboard = await ScheduleController.GetScheduledTrainingsForUser();
         trainingsOnDashboard.Value?.Trainings.Should().Contain(x => x.TrainingId == trainingId);
         var thisTraining = trainingsOnDashboard.Value!.Trainings.FirstOrDefault(x => x.TrainingId == trainingId);
-        var planUser = thisTraining!.PlanUsers.FirstOrDefault(x=>x.UserId == DefaultUserId);
+        var planUser = thisTraining!.PlanUsers.FirstOrDefault(x => x.UserId == DefaultUserId);
         planUser.Should().NotBeNull();
         planUser!.VehicleId.Should().Be(DefaultVehicle);
 
