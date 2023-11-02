@@ -65,7 +65,12 @@ public sealed partial class ScheduleCard : IDisposable
             { x => x.MainLayout, MainLayout },
         };
 
-        DialogOptions options = new DialogOptions() { MaxWidth = MudBlazor.MaxWidth.Medium, FullWidth = true };
+        DialogOptions options = new DialogOptions()
+        {
+            MaxWidth = MudBlazor.MaxWidth.Medium,
+            CloseButton = true,
+            FullWidth = true
+        };
         _dialogProvider.Show<ScheduleDialog>(L["Schedule people for this training"], parameters, options);
     }
 
@@ -79,7 +84,12 @@ public sealed partial class ScheduleCard : IDisposable
             { x=>x.Global, Global },
             { x=>x.TrainingTypes, TrainingTypes }
         };
-        var options = new DialogOptions() { MaxWidth = MudBlazor.MaxWidth.Medium, FullWidth = true };
+        var options = new DialogOptions()
+        {
+            MaxWidth = MudBlazor.MaxWidth.Medium,
+            CloseButton = true,
+            FullWidth = true
+        };
         _dialogProvider.Show<EditTrainingDialog>(L["Configure training"], parameters, options);
     }
 
@@ -90,7 +100,12 @@ public sealed partial class ScheduleCard : IDisposable
             { x=>x.TrainingId, Planner.TrainingId},
             { x=>x.Users, Users},
         };
-        var options = new DialogOptions() { MaxWidth = MudBlazor.MaxWidth.Medium, FullWidth = true };
+        var options = new DialogOptions()
+        {
+            MaxWidth = MudBlazor.MaxWidth.Medium,
+            CloseButton = true,
+            FullWidth = true
+        };
         _dialogProvider.Show<TrainingHistoryDialog>(L["Edit history"], parameters, options);
     }
 

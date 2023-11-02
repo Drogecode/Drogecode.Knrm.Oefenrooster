@@ -83,14 +83,24 @@ public sealed partial class Global : IDisposable
     private void AddUser()
     {
 
-        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var options = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.Medium,
+            CloseButton = true,
+            FullWidth = true
+        };
         var parameters = new DialogParameters { { "Functions", _functions }, { "Refresh", _refreshModel } };
         _dialogProvider.Show<AddUserDialog>(L["Add user"], parameters, options);
     }
 
     private void ChangeUser(DrogeUser user)
     {
-        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var options = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.Medium,
+            CloseButton = true,
+            FullWidth = true
+        };
         var parameters = new DialogParameters { { "User", user }, { "Functions", _functions }, { "Refresh", _refreshModel } };
         _dialogProvider.Show<EditUserDialog>(L["Edit user"], parameters, options);
     }

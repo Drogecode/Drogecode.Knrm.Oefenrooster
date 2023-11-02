@@ -37,7 +37,12 @@ public sealed partial class Vacations : IDisposable
             { x=> x.IsNew, isNew},
             { x=> x.Refresh, _refreshModel },
         };
-        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        DialogOptions options = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.Medium,
+            CloseButton = true,
+            FullWidth = true
+        };
         _dialogProvider.Show<VacationDialog>(L["Edit holiday"], parameters, options);
     }
 

@@ -50,6 +50,7 @@ public sealed partial class NavMenu : IDisposable
         var options = new DialogOptions
         {
             MaxWidth = MaxWidth.Medium,
+            CloseButton = true,
             FullWidth = true,
             DisableBackdropClick = true
         };
