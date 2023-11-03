@@ -468,7 +468,7 @@ public class ScheduleService : IScheduleService
         var sw = Stopwatch.StartNew();
         var result = new GetPlannedTrainingResponse();
         var dbTraining = await _database.RoosterTrainings
-            .Include(x => x.RoosterAvailables!)
+            .Include(x => x.RoosterAvailables!.Where(y => y.User!.DeletedOn == null))
             .ThenInclude(x => x.User)
             .Include(x => x.RoosterTrainingType)
             .FirstOrDefaultAsync(x => x.Id == trainingId && x.DeletedOn == null, cancellationToken: clt);
@@ -727,7 +727,7 @@ public class ScheduleService : IScheduleService
         var scheduled = await _database.RoosterAvailables
             .Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Training.DeletedOn == null && (fromDate == null || x.Date >= fromDate))
             .Include(i => i.Training)
-            .ThenInclude(i => i.RoosterAvailables)
+            .ThenInclude(i => i.RoosterAvailables!.Where(y =>y.User!.DeletedOn == null))
             .OrderBy(x => x.Date)
             .ToListAsync(cancellationToken: clt);
         var users = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);

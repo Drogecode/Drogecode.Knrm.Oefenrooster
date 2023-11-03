@@ -39,19 +39,21 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });
 
+var dbConnectionString = builder.Configuration.GetConnectionString("postgresDB");
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 builder.Services.AddHealthChecks()
     //.AddCheck<DatabaseHealthCheck>("postgresDB")
-    .AddNpgSql(builder.Configuration.GetConnectionString("postgresDB") ?? "nevermind");
+    .AddNpgSql(dbConnectionString ?? "nevermind");
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
        new[] { "application/octet-stream" });
 });
 
-builder.Services.AddDbContextPool<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("postgresDB")));
+builder.Services.AddDbContextPool<DataContext>(options => options.UseNpgsql(dbConnectionString));
 builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
 {
     ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"],
