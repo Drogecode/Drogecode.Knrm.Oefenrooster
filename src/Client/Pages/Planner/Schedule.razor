@@ -10,8 +10,12 @@
 <PageTitle>Planner</PageTitle>
 
 <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
-    <MudIconButton Icon="@Icons.Material.Filled.CalendarMonth" aria-label="calendar" OnClick="()=>{ChangeView(ScheduleView.Calendar);}" Disabled="@(_view == Enums.ScheduleView.Calendar)" />
-    <MudIconButton Icon="@Icons.Material.Filled.TableRows" aria-label="calendar" OnClick="()=>{ChangeView(ScheduleView.Table);}" Disabled="@(_view == Enums.ScheduleView.Table)" />
+    <MudIconButton Icon="@Icons.Material.Filled.CalendarMonth" aria-label="calendar" OnClick="()=>{ChangeView(ScheduleView.Calendar);}" Color="GetColor(_view == Enums.ScheduleView.Calendar)" />
+    <MudIconButton Icon="@Icons.Material.Filled.TableRows" aria-label="calendar" OnClick="()=>{ChangeView(ScheduleView.Table);}" Color="GetColor(_view == Enums.ScheduleView.Table)" />
+    @if (_canEdit && _view == Enums.ScheduleView.Table)
+    {
+        <MudIconButton Icon="@Icons.Material.Filled.EditCalendar" aria-label="calendar" OnClick="()=>{_editOnClick = !_editOnClick;}" Color="GetColor(_editOnClick)" />
+    }
 </MudButtonGroup>
 
 @switch (_view)
@@ -20,6 +24,6 @@
         <ScheduleCalendar Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" />
         break;
     case Enums.ScheduleView.Table:
-        <ScheduleTable Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes"/>
+        <ScheduleTable Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" CanEdit="_editOnClick" />
         break;
 }

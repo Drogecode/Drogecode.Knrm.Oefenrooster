@@ -20,10 +20,10 @@ public sealed partial class ScheduleTable : IDisposable
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; } = default!;
     [Parameter, EditorRequired] public List<PlannerTrainingType>? TrainingTypes { get; set; } = default!;
+    [Parameter, EditorRequired] public bool CanEdit { get; set; }
 
     private CancellationTokenSource _cls = new();
     private bool _updating;
-    private bool _canEdit;
     private bool _working;
     private List<PlannedTraining> _events = new();
     private List<UserTrainingCounter>? _userTrainingCounter;
@@ -32,15 +32,6 @@ public sealed partial class ScheduleTable : IDisposable
     protected override async Task OnInitializedAsync()
     {
         await SetMonth(DateTime.Today);
-        if (AuthenticationState is not null)
-        {
-            var authState = await AuthenticationState;
-            var user = authState?.User;
-            if (user is not null)
-            {
-                _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_in_table_view);
-            }
-        }
     }
 
     private async Task SetMonth(DateTime? dateTime)
@@ -79,7 +70,7 @@ public sealed partial class ScheduleTable : IDisposable
 
     private async Task Click(PlanUser? user, PlannedTraining? training)
     {
-        if (!_canEdit || _working || user is null || training is null) return;
+        if (!CanEdit || _working || user is null || training is null) return;
         _working = true;
         user.Assigned = !user.Assigned;
         await _scheduleRepository.PatchAssignedUser(training.TrainingId, training, user);
