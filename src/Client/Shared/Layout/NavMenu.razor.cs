@@ -9,6 +9,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 public sealed partial class NavMenu : IDisposable
 {
     [Inject] private IStringLocalizer<NavMenu> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
