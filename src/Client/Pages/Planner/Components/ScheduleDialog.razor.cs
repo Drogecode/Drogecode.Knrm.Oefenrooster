@@ -88,6 +88,7 @@ public sealed partial class ScheduleDialog : IDisposable
             var user = authState?.User;
             if (user is not null)
             {
+                _showPadlock = true;
                 _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
             }
         }

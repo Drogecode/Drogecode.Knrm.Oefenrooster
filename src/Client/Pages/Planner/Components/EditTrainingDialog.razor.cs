@@ -103,6 +103,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 var user = authState?.User;
                 if (user is not null)
                 {
+                    _showPadlock = true;
                     _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
                 }
             }
