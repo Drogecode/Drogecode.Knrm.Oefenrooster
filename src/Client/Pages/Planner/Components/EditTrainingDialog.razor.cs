@@ -29,6 +29,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private bool _showDelete;
     private bool _startedWithShowNoTime;
     private bool _canEdit;
+    private bool _showPadlock;
     private string[] _errors = Array.Empty<string>();
     [AllowNull] private MudForm _form;
     protected override async Task OnParametersSetAsync()
@@ -85,20 +86,32 @@ public sealed partial class EditTrainingDialog : IDisposable
         }
         _currentTrainingType = TrainingTypes?.FirstOrDefault(x => x.Id == _training?.RoosterTrainingTypeId);
 
-        var dateEnd = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null")), DateTimeKind.Local).ToUniversalTime();
-        if (dateEnd >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
+        if (_training.IsNew)
         {
             _canEdit = true;
         }
-        else if (AuthenticationState is not null)
+        else
         {
-            var authState = await AuthenticationState;
-            var user = authState?.User;
-            if (user is not null)
+            var dateEnd = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null")), DateTimeKind.Local).ToUniversalTime();
+            if (dateEnd >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
             {
-                _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
+                _canEdit = true;
+            }
+            else if (AuthenticationState is not null)
+            {
+                var authState = await AuthenticationState;
+                var user = authState?.User;
+                if (user is not null)
+                {
+                    _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
+                }
             }
         }
+        if (!_canEdit)
+        {
+            _showPadlock = true;
+        }
+        MudDialog.StateHasChanged();
     }
 
     void Cancel() => MudDialog.Cancel();

@@ -32,6 +32,7 @@ public sealed partial class ScheduleDialog : IDisposable
     private bool _plannerIsUpdated;
     private bool _showWoeps;
     private bool _canEdit;
+    private bool _showPadlock;
     private int _vehicleCount;
     private int _colmn1 = 2;
     private int _colmn2 = 3;
@@ -90,6 +91,11 @@ public sealed partial class ScheduleDialog : IDisposable
                 _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
             }
         }
+        if(!_canEdit)
+        {
+            _showPadlock = true;
+        }
+        MudDialog.StateHasChanged();
     }
 
     private async Task ClickLeader(PlanUser user)

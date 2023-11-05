@@ -2,6 +2,19 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 <MudDialog>
+    <TitleContent>
+        @if (_showPadlock)
+        {
+            if (_canEdit)
+            {
+                <MudIcon Icon="@Icons.Material.Outlined.LockOpen" Class="mr-3 mb-n1" />
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Outlined.Lock" Class="mr-3 mb-n1" />
+            }
+        }
+    </TitleContent>
     <DialogContent>
         @if (Vehicles?.Count > 0)
         {
