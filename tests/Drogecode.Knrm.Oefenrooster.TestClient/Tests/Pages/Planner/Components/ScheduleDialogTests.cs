@@ -1,52 +1,37 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
+using Drogecode.Knrm.Oefenrooster.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
+using FluentAssertions.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
-using Microsoft.AspNetCore.Components;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
-namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Pages.Configuration.Components;
+namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Pages.Planner.Components;
 
-public class TrainingTypeDialogTests : BlazorTestBase
+public class ScheduleDialogTests : BlazorTestBase
 {
     [Theory]
     [AutoFakeItEasyData]
-    public async Task TrainingTypeDialogRenderTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<TrainingTypeDialog> L2)
+    public async Task ScheduleDialogRenderTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<ScheduleDialog> L2)
     {
         Localize(L1, L2);
-        IRenderedComponent<MudDialogProvider> comp = await RenderTestDialogComponent("Test TrainingTypeDialogRenderTest");
-        comp.Markup.Should().Contain("Test TrainingTypeDialogRenderTest");
-        comp.Markup.Should().Contain("Select Color");
-        comp.Markup.Should().Contain("Count To Training Target");
-        comp.Markup.Should().NotContain("Description is required");
-    }
-    [Theory]
-    [AutoFakeItEasyData]
-    public async Task ClickButtonTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<TrainingTypeDialog> L2)
-    {
-        Localize(L1, L2);
-        IRenderedComponent<MudDialogProvider> comp = await RenderTestDialogComponent("Test ClickButtonTest");
-        comp.Markup.Should().Contain("Test ClickButtonTest");
-        comp.Markup.Should().Contain(Icons.Material.Filled.CheckBoxOutlineBlank);
-        comp.Markup.Should().NotContain(Icons.Material.Filled.CheckBox);
-        var button = comp.Find("#CountToTrainingTarget");
-        button.Change(new ChangeEventArgs().Value = true);
-        button = comp.Find("#IsDefault");
-        button.Change(new ChangeEventArgs().Value = true);
-        button = comp.Find("#IsActive");
-        button.Change(new ChangeEventArgs().Value = true);
-        comp.Markup.Should().NotContain(Icons.Material.Filled.CheckBoxOutlineBlank);
-        comp.Markup.Should().Contain(Icons.Material.Filled.CheckBox);
+        IRenderedComponent<MudDialogProvider> comp = await RenderTestDialogComponent("Test ScheduleDialogRenderTest");
     }
 
     private async Task<IRenderedComponent<MudDialogProvider>> RenderTestDialogComponent(string name)
     {
         var today = DateTime.Today;
-        var planner = new PlannerTrainingType
+        var planner = new PlannedTraining
         {
             Name = name,
         };
-        var param = new DialogParameters<TrainingTypeDialog>() {
-            { x => x.TrainingType, planner },
+        var param = new DialogParameters<ScheduleDialog>() {
+            { x => x.Planner, planner },
         };
         var comp = RenderComponent<MudDialogProvider>();
         comp.Markup.Trim().Should().BeEmpty();
@@ -54,13 +39,13 @@ public class TrainingTypeDialogTests : BlazorTestBase
         service.Should().NotBe(null);
 
         IDialogReference? dialogReference = null;
-        await comp.InvokeAsync(() => dialogReference = service!.Show<TrainingTypeDialog>(string.Empty, param));
+        await comp.InvokeAsync(() => dialogReference = service!.Show<ScheduleDialog>(string.Empty, param));
         dialogReference.Should().NotBe(null);
         comp.Find("div.mud-dialog-container").Should().NotBe(null);
         return comp;
     }
 
-    private void Localize(IStringLocalizer<App> L1, IStringLocalizer<TrainingTypeDialog> L2)
+    private void Localize(IStringLocalizer<App> L1, IStringLocalizer<ScheduleDialog> L2)
     {
         Services.AddSingleton(L1);
         Services.AddSingleton(L2);
