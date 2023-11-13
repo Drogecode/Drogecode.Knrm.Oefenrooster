@@ -7,20 +7,20 @@
     @if (_items is not null)
     {
         <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{OpenDayItemDialog(null, true);}">@L["Add new day item"]</MudButton>
-        <MudTable Items="_items.OrderByDescending(x=>x.DateStart)">
+        <MudTable Items="_items.OrderBy(x=>x.DateStart)">
             <HeaderContent>
-                <MudTh>@L["Description"]</MudTh>
-                <MudTh>@L["From"]</MudTh>
-                <MudTh>@L["Till"]</MudTh>
-                <MudTh>@L["Edit"]</MudTh>
+                <MudTh>@LApp["Description"]</MudTh>
+                <MudTh>@LApp["From"]</MudTh>
+                <MudTh>@LApp["Till"]</MudTh>
+                <MudTh>@LApp["Edit"]</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="@L["Description"]">@context.Text</MudTd>
-                <MudTd DataLabel="@L["Type"]">@context.Type</MudTd>
-                <MudTd DataLabel="@L["From"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateStart" /></MudTd>
-                <MudTd DataLabel="@L["Till"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateEnd" /></MudTd>
-                <MudTd DataLabel="@L["Edit"]">
-                    @if (context.DateEnd.CompareTo(DateTime.UtcNow) > 0)
+                <MudTd DataLabel="@LApp["Description"]">@context.Text</MudTd>
+                <MudTd DataLabel="@LApp["Type"]">@context.Type</MudTd>
+                <MudTd DataLabel="@LApp["From"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateStart" /></MudTd>
+                <MudTd DataLabel="@LApp["Till"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateEnd" /></MudTd>
+                <MudTd DataLabel="@LApp["Edit"]">
+                    @if (context.DateStart?.CompareTo(DateTime.UtcNow) > 0)
                     {
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context);}" />
                         <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenDayItemDialog(context, false);}" />

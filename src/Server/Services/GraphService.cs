@@ -143,7 +143,7 @@ public class GraphService : IGraphService
                 dbAction.Prio = action.Prio;
                 dbAction.Title = action.Title;
                 dbAction.Description = action.Description;
-                dbAction.Start = dbAction.Start;
+                dbAction.Start = action.Start;
                 if (dbAction.Users is not null)
                 {
                     foreach (var dbUser in dbAction.Users)

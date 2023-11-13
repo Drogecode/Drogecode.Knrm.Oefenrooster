@@ -692,6 +692,15 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             }));
             modelBuilder.Entity<DbVehicles>(e => e.HasData(new DbVehicles
             {
+                Id = new Guid("d2b920a5-e8ec-4d47-a280-8f88eae914c1"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "Pieter Houbolt",
+                Code = "Piet",
+                IsActive = true,
+                Order = 40,
+            }));
+            modelBuilder.Entity<DbVehicles>(e => e.HasData(new DbVehicles
+            {
                 Id = new Guid("f30d1856-2d26-441e-ae6d-935bb26c4852"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Wal",

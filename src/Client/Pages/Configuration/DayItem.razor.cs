@@ -1,9 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components;
-using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
@@ -24,16 +22,16 @@ public sealed partial class DayItem : IDisposable
         _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
     }
 
-    private void OpenDayItemDialog(RoosterItemDay? holiday, bool isNew)
+    private void OpenDayItemDialog(RoosterItemDay? dayItem, bool isNew)
     {
         //DayItemDialog
-        /*var parameters = new DialogParameters<VacationDialog> {
-            { x=> x.Holiday, holiday },
+        var parameters = new DialogParameters<DayItemDialog> {
+            { x=> x.DayItem, dayItem},
             { x=> x.IsNew, isNew},
             { x=> x.Refresh, _refreshModel },
         };
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-        _dialogProvider.Show<VacationDialog>(L["Edit holiday"], parameters, options);*/
+        _dialogProvider.Show<DayItemDialog>(L["Edit day item"], parameters, options);
     }
 
     private async Task Delete(RoosterItemDay? dayItem)

@@ -8,13 +8,18 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 
-public class RoosterItemDay
+public class RoosterItemDay : ICloneable
 {
     [Key] public Guid Id { get; set; }
     public Guid? UserId { get; set; }
-    public DateTime DateStart { get; set; }
-    public DateTime DateEnd { get; set; }
+    public DateTime? DateStart { get; set; }
+    public DateTime? DateEnd { get; set; }
     public bool IsFullDay { get; set; }
     public CalendarItemType Type { get; set; }
     public string Text { get; set; } = string.Empty;
+
+    public object Clone()
+    {
+        return this.MemberwiseClone();
+    }
 }

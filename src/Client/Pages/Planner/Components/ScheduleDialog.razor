@@ -92,7 +92,14 @@
                                     <MudSelect Disabled="@(!_canEdit)" T="Guid?" Label="@L["vehicle"]" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Value="@user.VehicleId" ValueChanged="(e)=>VehicleSelectionChanged(user, e)">
                                         @foreach (var vehicle in _vehicleInfoForThisTraining)
                                         {
-                                            <MudSelectItem T="Guid?" Value="@vehicle.Id">@vehicle.Name</MudSelectItem>
+                                            if (vehicle.IsActive)
+                                            {
+                                                <MudSelectItem T="Guid?" Value="@vehicle.Id">@vehicle.Name</MudSelectItem>
+                                            }
+                                            else if (vehicle.Id.Equals(user.VehicleId))
+                                            {
+                                                <MudSelectItem T="Guid?" Value="@vehicle.Id" Disabled>@vehicle.Name</MudSelectItem>
+                                            }
                                         }
                                     </MudSelect>
                                 }

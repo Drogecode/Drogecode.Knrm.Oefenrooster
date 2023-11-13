@@ -117,76 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Add multiple week" xml:space="preserve">
-    <value>Voeg meerdere weken toe</value>
+  <data name="Add and change day item" xml:space="preserve">
+    <value>Add and change day item</value>
   </data>
-  <data name="Add week" xml:space="preserve">
-    <value>Nog een week</value>
+  <data name="Add new day item" xml:space="preserve">
+    <value>Add new day item</value>
   </data>
-  <data name="as" xml:space="preserve">
-    <value>als</value>
+  <data name="Day items" xml:space="preserve">
+    <value>Day items</value>
   </data>
-  <data name="Assigned" xml:space="preserve">
-    <value>Ingedeeld</value>
-  </data>
-  <data name="Available" xml:space="preserve">
-    <value>Beschikbaar</value>
-  </data>
-  <data name="Availibility" xml:space="preserve">
-    <value>Beschikbaarheid</value>
-  </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Verwijder</value>
-  </data>
-  <data name="Description" xml:space="preserve">
-    <value>Omschrijving</value>
-  </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Bewerk</value>
-  </data>
-  <data name="Friday" xml:space="preserve">
-    <value>Vrijdag</value>
-  </data>
-  <data name="function" xml:space="preserve">
-    <value>Functie</value>
-  </data>
-  <data name="Maybe" xml:space="preserve">
-    <value>Mischien</value>
-  </data>
-  <data name="Monday" xml:space="preserve">
-    <value>Maandag</value>
-  </data>
-  <data name="None" xml:space="preserve">
-    <value>Onbekend</value>
-  </data>
-  <data name="NotAvailable" xml:space="preserve">
-    <value>Niet beschikbaar</value>
-  </data>
-  <data name="Saturday" xml:space="preserve">
-    <value>Zaterdag</value>
-  </data>
-  <data name="Submit" xml:space="preserve">
-    <value>Opslaan</value>
-  </data>
-  <data name="Sunday" xml:space="preserve">
-    <value>Zondag</value>
-  </data>
-  <data name="Thursday" xml:space="preserve">
-    <value>Donderdag</value>
-  </data>
-  <data name="till" xml:space="preserve">
-    <value>t/m</value>
-  </data>
-  <data name="Tuesday" xml:space="preserve">
-    <value>Dinsdag</value>
-  </data>
-  <data name="ValidFrom" xml:space="preserve">
-    <value>Geldig vanaf</value>
-  </data>
-  <data name="ValidUntil" xml:space="preserve">
-    <value>Geldig tot en met</value>
-  </data>
-  <data name="Wednesday" xml:space="preserve">
-    <value>Woensdag</value>
+  <data name="Edit day item" xml:space="preserve">
+    <value>Edit day item</value>
   </data>
 </root>

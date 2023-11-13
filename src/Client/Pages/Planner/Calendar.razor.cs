@@ -68,11 +68,11 @@ public sealed partial class Calendar : IDisposable
             var dayItems = await _calendarItemRepository.GetDayItemsAsync(dateRange, _user.Id, _cls.Token);
             if (dayItems?.DayItems != null)
             {
-                foreach (var dayItem in dayItems.DayItems)
+                foreach (var dayItem in dayItems.DayItems.Where(x => x.DateStart is not null))
                 {
                     _events.Add(new RoosterItemDayCalendarItem
                     {
-                        Start = dayItem.DateStart,
+                        Start = dayItem.DateStart!.Value,
                         End = dayItem.DateEnd,
                         AllDay = dayItem.IsFullDay,
                         ItemDay = dayItem,

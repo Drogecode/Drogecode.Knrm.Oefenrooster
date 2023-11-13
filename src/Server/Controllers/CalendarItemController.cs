@@ -143,16 +143,18 @@ public class CalendarItemController : ControllerBase
 
     private async Task ToOutlookCalendar(Guid planUserId, bool assigned, RoosterItemDay roosterItemDay, Guid customerId, string? calendarEventId, CancellationToken clt)
     {
+        if (roosterItemDay?.DateStart is null || roosterItemDay?.DateEnd is null)
+            return;
         if (assigned && await _userSettingService.TrainingToCalendar(customerId, planUserId))
         {
             _graphService.InitializeGraph();
             if (string.IsNullOrEmpty(calendarEventId))
             {
-                var eventResult = await _graphService.AddToCalendar(planUserId, roosterItemDay.Text, roosterItemDay!.DateStart, roosterItemDay.DateEnd, roosterItemDay.IsFullDay);
+                var eventResult = await _graphService.AddToCalendar(planUserId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, roosterItemDay.IsFullDay);
             }
             else
             {
-                await _graphService.PatchCalender(planUserId, calendarEventId, roosterItemDay.Text, roosterItemDay!.DateStart, roosterItemDay.DateEnd, roosterItemDay.IsFullDay);
+                await _graphService.PatchCalender(planUserId, calendarEventId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, roosterItemDay.IsFullDay);
                 //await _auditService.Log(currentUserId, AuditType.PatchTraining, customerId, $"Preventing duplicate event '{type?.TrainingType?.Name}' on '{training?.DateStart.ToString("o")}' : '{training?.DateEnd.ToString("o")}'");
             }
         }
