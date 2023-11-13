@@ -189,14 +189,14 @@ public class GraphService : IGraphService
         return true;
     }
 
-    public async Task<MultipleSharePointActionsResponse> GetListActionsUser(List<string> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
+    public async Task<MultipleSharePointActionsResponse> GetListActionsUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var keyActions = string.Format(SP_ACTIONS, customerId);
         await UpdateCacheSharePointActions(customerId, keyActions);
         _memoryCache.TryGetValue<List<SharePointAction>>(keyActions, out var sharePointActions);
         sharePointActions ??= await GetSharePointActions(customerId, keyActions, clt);
-        var listWhere = sharePointActions?.Where(x => x.Users.Count(y => users.Contains(y.Name)) == users.Count());
+        var listWhere = sharePointActions?.Where(x => x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count());
         var sharePointActionsUser = new MultipleSharePointActionsResponse
         {
             SharePointActions = listWhere?.Skip(skip).Take(count).ToList(),
@@ -244,14 +244,14 @@ public class GraphService : IGraphService
         return sharePointActions;
     }
 
-    public async Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(List<string> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
+    public async Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var keyTrainings = string.Format(SP_TRAININGS, customerId);
         await UpdateCacheSharePointTrainings(customerId, keyTrainings);
         _memoryCache.TryGetValue<List<SharePointTraining>>(keyTrainings, out var sharePointTrainings);
         sharePointTrainings ??= await GetSharePointTrainings(customerId, keyTrainings, clt);
-        var listWhere = sharePointTrainings?.Where(x => x.Users.Count(y => users.Contains(y.Name)) == users.Count());
+        var listWhere = sharePointTrainings?.Where(x => x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count());
         var sharePointTrainingsUser = new MultipleSharePointTrainingsResponse
         {
             SharePointTrainings = listWhere?.Skip(skip).Take(count).ToList(),
