@@ -1,5 +1,6 @@
 ﻿@page "/planner/schedule"
 @page "/planner/schedule/{View}"
+@page "/planner/schedule/{View}/{Year:int}/{Month:int}"
 @attribute [Authorize]
 @using Drogecode.Knrm.Oefenrooster.Client.Enums;
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
@@ -18,6 +19,7 @@
     }
 </MudButtonGroup>
 
+<CascadingValue Value="_currentMonth">
 @switch (_view)
 {
     case Enums.ScheduleView.Calendar:
@@ -27,3 +29,4 @@
         <ScheduleTable Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" CanEdit="_editOnClick" />
         break;
 }
+</CascadingValue>

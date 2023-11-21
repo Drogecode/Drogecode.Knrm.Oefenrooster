@@ -8,7 +8,7 @@
     }
 }
 <div class="d-none d-md-flex">
-    <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
+    <MudCalendar Items="_events" MonthCellMinHeight="100" CurrentDay="@(Month ?? DateTime.Today)" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
          <CellTemplate>
              @if (context is ScheduleCalendarItem)
             {
@@ -43,9 +43,9 @@
     </MudCalendar>
 </div>
 <div class="d-md-none">
-    <MonthSelector Month="_month" MonthChanged="SetMonth" />
+    <MonthSelector Month="Month" MonthChanged="SetMonth" />
     <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-        @if (_events == null || _month == null)
+        @if (_events == null || Month == null)
         {
             <MudSkeleton />
             <MudSkeleton />
@@ -54,7 +54,7 @@
         }
         else
         {
-            @foreach (var ev in _events.Where(x => x.Start.Month == _month.Value.Month && x.Start.Year == _month.Value.Year && x.End >= DateTime.Now).OrderBy(x => x.Start))
+            @foreach (var ev in _events.Where(x => x.Start.Month == Month.Value.Month && x.Start.Year == Month.Value.Year && x.End >= DateTime.Now).OrderBy(x => x.Start))
             {
                 <div class="flex-1">
                     @if (ev is ScheduleCalendarItem)

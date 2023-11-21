@@ -21,12 +21,14 @@ public sealed partial class Schedule : IDisposable
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
     [Parameter] public string? View { get; set; }
+    [Parameter] public int? Year { get; set; }
+    [Parameter] public int? Month { get; set; }
     private CancellationTokenSource _cls = new();
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
     private List<DrogeVehicle>? _vehicles;
     private List<PlannerTrainingType>? _trainingTypes;
-    private bool _updating;
+    private DateTime? _currentMonth;
     private bool _canEdit;
     private bool _editOnClick;
     private ScheduleView _view = ScheduleView.Calendar;
@@ -57,13 +59,20 @@ public sealed partial class Schedule : IDisposable
             _view = ScheduleView.Table;
         else
             _view = ScheduleView.Calendar;
+        if (Year is not null && Month is not null)
+            _currentMonth = new DateTime(Year.Value, Month.Value, 1);
+        else
+            _currentMonth = DateTime.Today;
     }
 
     public void ChangeView(ScheduleView newView)
     {
         if (_view == newView) return;
         _view = newView;
-        Navigation.NavigateTo($"/planner/schedule/{newView}");
+        var navTo = "/planner/schedule/{newView}";
+        if (_currentMonth is not null)
+            navTo += $"/{_currentMonth.Value.Year}/{_currentMonth.Value.Month}";
+        Navigation.NavigateTo(navTo);
     }
 
     public Color GetColor(bool active)

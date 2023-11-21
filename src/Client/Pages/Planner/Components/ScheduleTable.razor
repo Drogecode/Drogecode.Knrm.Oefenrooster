@@ -1,7 +1,7 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 <div>
-    <MonthSelector Month="_month" MonthChanged="SetMonth" />
+    <MonthSelector Month="Month" MonthChanged="SetMonth" />
     @if (Users != null)
     {
         <MudTable Hover="true" Breakpoint="Breakpoint.None"

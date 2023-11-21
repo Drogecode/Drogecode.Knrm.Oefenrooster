@@ -14,8 +14,10 @@ public sealed partial class ScheduleTable : IDisposable
 {
     [Inject] private IStringLocalizer<ScheduleTable> L { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
+    [CascadingParameter] DateTime? Month { get; set; }
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; } = default!;
@@ -27,7 +29,6 @@ public sealed partial class ScheduleTable : IDisposable
     private bool _working;
     private List<PlannedTraining> _events = new();
     private List<UserTrainingCounter>? _userTrainingCounter;
-    private DateTime? _month;
 
     protected override async Task OnInitializedAsync()
     {
@@ -37,7 +38,8 @@ public sealed partial class ScheduleTable : IDisposable
     private async Task SetMonth(DateTime? dateTime)
     {
         if (dateTime == null) return;
-        _month = dateTime;
+        Month = dateTime;
+        Navigation.NavigateTo($"/planner/schedule/Calendar/{Month!.Value.Year}/{Month.Value.Month}");
         DateRange dateRange = new DateRange
         {
             Start = new DateTime(dateTime.Value.Year, dateTime.Value.Month, 1),

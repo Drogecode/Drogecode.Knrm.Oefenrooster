@@ -18,7 +18,9 @@ public sealed partial class ScheduleCalendar : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private CalendarItemRepository _calendarItemRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
+    [CascadingParameter] DateTime? Month { get; set; }
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
     [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; }
@@ -31,7 +33,6 @@ public sealed partial class ScheduleCalendar : IDisposable
     private bool _updating;
     private bool _currentMonth;
     private ScheduleView _view = ScheduleView.Calendar;
-    private DateTime? _month;
 
     protected override async Task OnInitializedAsync()
     {
@@ -42,7 +43,6 @@ public sealed partial class ScheduleCalendar : IDisposable
     private async Task SetMonth(DateTime? dateTime)
     {
         if (dateTime == null) return;
-        _month = dateTime;
         DateRange dateRange = new DateRange
         {
             Start = new DateTime(dateTime.Value.Year, dateTime.Value.Month, 1),
@@ -75,11 +75,12 @@ public sealed partial class ScheduleCalendar : IDisposable
                 });
             }
         }
-        _month = PlannerHelper.ForMonth(dateRange);
-        if (_month != null)
+        Month = PlannerHelper.ForMonth(dateRange);
+        Navigation.NavigateTo($"/planner/schedule/Calendar/{Month!.Value.Year}/{Month.Value.Month}");
+        if (Month is not null)
         {
-            _currentMonth = DateTime.Today.Month == _month.Value.Month;
-            var monthItems = await _calendarItemRepository.GetMonthItemAsync(_month.Value.Year, _month.Value.Month, _cls.Token);
+            _currentMonth = DateTime.Today.Month == Month.Value.Month;
+            var monthItems = await _calendarItemRepository.GetMonthItemAsync(Month.Value.Year, Month.Value.Month, _cls.Token);
             _monthItems = monthItems?.MonthItems;
             var dayItems = await _calendarItemRepository.GetDayItemsAsync(dateRange, Guid.Empty, _cls.Token);
             if (dayItems?.DayItems != null)
