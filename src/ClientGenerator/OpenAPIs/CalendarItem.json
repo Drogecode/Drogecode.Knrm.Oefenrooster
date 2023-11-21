@@ -304,7 +304,8 @@
         "enum": [
           0,
           1,
-          2
+          2,
+          3
         ],
         "type": "integer",
         "format": "int32"
@@ -413,11 +414,13 @@
           },
           "dateStart": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "dateEnd": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "isFullDay": {
             "type": "boolean"

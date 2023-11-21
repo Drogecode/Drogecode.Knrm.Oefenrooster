@@ -213,11 +213,14 @@ public class GraphService : IGraphService
         var cacheOptions = new MemoryCacheEntryOptions();
         _memoryCache.TryGetValue<UpdatedCheck>(keyExp, out var lastupdated);
         if (lastupdated is null)
+        {
+            _logger.LogInformation("Lastupdated is null for action list");
             lastupdated = new UpdatedCheck();
+        }
         if (lastupdated.NextCheck.CompareTo(DateTime.UtcNow) < 0)
         {
             var newLastUpdated = await GraphHelper.ListActionLastUpdate(customerId);
-            if (!newLastUpdated.Equals(DateTime.MinValue) && !newLastUpdated.Equals(lastupdated))
+            if (!newLastUpdated.Equals(DateTime.MinValue) && !newLastUpdated.Equals(lastupdated.LastUpdated))
             {
                 _memoryCache.Remove(keyActions);
                 lastupdated.LastUpdated = newLastUpdated;
@@ -268,11 +271,14 @@ public class GraphService : IGraphService
         var cacheOptions = new MemoryCacheEntryOptions();
         _memoryCache.TryGetValue<UpdatedCheck>(keyExp, out var lastupdated);
         if (lastupdated is null)
+        {
+            _logger.LogInformation("Lastupdated is null for training list");
             lastupdated = new UpdatedCheck();
+        }
         if (lastupdated.NextCheck.CompareTo(DateTime.UtcNow) < 0)
         {
             var newLastUpdated = await GraphHelper.ListTrainingLastUpdate(customerId);
-            if (!newLastUpdated.Equals(DateTime.MinValue) && !newLastUpdated.Equals(lastupdated))
+            if (!newLastUpdated.Equals(DateTime.MinValue) && !newLastUpdated.Equals(lastupdated.LastUpdated))
             {
                 _memoryCache.Remove(keyTrainings);
                 lastupdated.LastUpdated = newLastUpdated;

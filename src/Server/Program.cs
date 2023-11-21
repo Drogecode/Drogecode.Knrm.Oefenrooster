@@ -146,7 +146,6 @@ app.MapHealthChecks("/api/_health", new HealthCheckOptions
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
-
 try
 {
     using (var scope = app.Services.CreateScope())
@@ -160,8 +159,8 @@ catch (Exception ex)
 #if DEBUG
     Debugger.Break();
 #endif
+    app.Logger.LogError(ex, "Database migration failed on startup.");
 }
-
 
 app.UseAuthentication();
 app.UseAuthorization();
