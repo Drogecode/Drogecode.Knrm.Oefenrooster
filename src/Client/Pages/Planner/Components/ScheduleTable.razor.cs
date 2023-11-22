@@ -38,8 +38,11 @@ public sealed partial class ScheduleTable : IDisposable
     private async Task SetMonth(DateTime? dateTime)
     {
         if (dateTime == null) return;
-        Month = dateTime;
-        Navigation.NavigateTo($"/planner/schedule/Calendar/{Month!.Value.Year}/{Month.Value.Month}");
+        if (!dateTime.Value.Equals(Month))
+        {
+            Month = dateTime;
+            Navigation.NavigateTo($"/planner/schedule/Calendar/{Month!.Value.Year}/{Month.Value.Month}");
+        }
         DateRange dateRange = new DateRange
         {
             Start = new DateTime(dateTime.Value.Year, dateTime.Value.Month, 1),

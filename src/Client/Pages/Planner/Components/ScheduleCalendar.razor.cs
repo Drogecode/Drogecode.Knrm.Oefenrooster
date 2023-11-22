@@ -75,8 +75,12 @@ public sealed partial class ScheduleCalendar : IDisposable
                 });
             }
         }
-        Month = PlannerHelper.ForMonth(dateRange);
-        Navigation.NavigateTo($"/planner/schedule/Calendar/{Month!.Value.Year}/{Month.Value.Month}");
+        var newMonth = PlannerHelper.ForMonth(dateRange);
+        if (newMonth is not null && !newMonth.Value.Equals(Month))
+        {
+            Month = newMonth;
+            Navigation.NavigateTo($"/planner/schedule/Calendar/{Month!.Value.Year}/{Month.Value.Month}");
+        }
         if (Month is not null)
         {
             _currentMonth = DateTime.Today.Month == Month.Value.Month;
