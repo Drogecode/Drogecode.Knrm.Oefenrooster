@@ -41,7 +41,7 @@ public class CalendarItemService : ICalendarItemService
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
         var dayItems = await _database.RoosterItemDays
-            .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate && (userId == Guid.Empty || x.UserId == Guid.Empty || x.UserId.Equals(userId)))
+            .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate && (userId == Guid.Empty || x.UserId == null || x.UserId == Guid.Empty || x.UserId.Equals(userId)))
             .OrderBy(x => x.DateStart)
             .Select(x => x.ToRoosterItemDay())
             .ToListAsync(clt);
