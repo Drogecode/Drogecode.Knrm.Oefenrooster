@@ -2,6 +2,8 @@
     <DialogContent>
         @if (DayItem is not null)
         {
+
+            <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="false" />
             <MudTextField Label="@L["Description"]" @bind-Value="DayItem.Text" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" />
             <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@L["Valid from"]" @bind-Date="DayItem.DateStart" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))" Disabled="@(_originalDayItem?.DateStart?.InPast() ?? false)" Required />
             <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@L["Valid till"]" @bind-Date="DayItem.DateEnd" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" Disabled="@(_originalDayItem?.DateEnd?.InPast() ?? false)" Required />

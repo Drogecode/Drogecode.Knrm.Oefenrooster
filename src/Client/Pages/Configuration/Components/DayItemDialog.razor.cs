@@ -2,7 +2,9 @@
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
@@ -13,10 +15,13 @@ public sealed partial class DayItemDialog : IDisposable
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ICalendarItemClient CalendarItemClient { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
-    [Parameter] public RoosterItemDay? DayItem{ get; set; }
+    [Parameter] public RoosterItemDay? DayItem { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }
+    [Parameter] public List<DrogeUser>? Users { get; set; }
+    [Parameter] public List<DrogeFunction>? Functions { get; set; }
     [Parameter] public bool? IsNew { get; set; }
 
+    private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
     private CancellationTokenSource _cls = new();
     private RoosterItemDay? _originalDayItem { get; set; }
     void Cancel() => MudDialog.Cancel();
@@ -27,6 +32,9 @@ public sealed partial class DayItemDialog : IDisposable
             DayItem = new RoosterItemDay();
         }
         _originalDayItem = (RoosterItemDay?)DayItem?.Clone();
+        var user = Users.FirstOrDefault(x => x.Id == DayItem.UserId);
+        if (user is not null)
+            ((List<DrogeUser>)_selectedUsersAction).Add(user);
     }
 
     public string? ValidateStartDate(DateTime? newValue)
@@ -43,6 +51,10 @@ public sealed partial class DayItemDialog : IDisposable
         if (newValue.Value.CompareTo(DateTime.UtcNow.Date) < 0) return L["Should not be in the past"];
         if (newValue.Value.CompareTo(DayItem.DateEnd) < 0) return L["Should not be before start date"];
         return null;
+    }
+    private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
+    {
+        Console.WriteLine(selection.Count());
     }
 
     private async Task Submit()
