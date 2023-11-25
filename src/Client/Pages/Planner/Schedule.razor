@@ -20,13 +20,19 @@
 </MudButtonGroup>
 
 <CascadingValue Value="_currentMonth">
-@switch (_view)
-{
-    case Enums.ScheduleView.Calendar:
-        <ScheduleCalendar Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" />
-        break;
-    case Enums.ScheduleView.Table:
-        <ScheduleTable Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" CanEdit="_editOnClick" />
-        break;
-}
+    @switch (_view)
+    {
+        case Enums.ScheduleView.Loading:
+            <MudSkeleton />
+            <MudSkeleton />
+            <MudSkeleton />
+            <MudSkeleton />
+            break;
+        case Enums.ScheduleView.Calendar:
+            <ScheduleCalendar Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" />
+            break;
+        case Enums.ScheduleView.Table:
+            <ScheduleTable Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" CanEdit="_editOnClick" />
+            break;
+    }
 </CascadingValue>

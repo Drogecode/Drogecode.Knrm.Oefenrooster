@@ -2,6 +2,7 @@
 
 public enum ScheduleView
 {
-    Calendar = 0,
-    Table = 1,
+    Loading = 0,
+    Calendar = 1,
+    Table = 2,
 }

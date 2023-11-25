@@ -31,7 +31,7 @@ public sealed partial class Schedule : IDisposable
     private DateTime? _currentMonth;
     private bool _canEdit;
     private bool _editOnClick;
-    private ScheduleView _view = ScheduleView.Calendar;
+    private ScheduleView _view = ScheduleView.Loading;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,7 +69,7 @@ public sealed partial class Schedule : IDisposable
     {
         if (_view == newView) return;
         _view = newView;
-        var navTo = "/planner/schedule/{newView}";
+        var navTo = $"/planner/schedule/{newView}";
         if (_currentMonth is not null)
             navTo += $"/{_currentMonth.Value.Year}/{_currentMonth.Value.Month}";
         Navigation.NavigateTo(navTo);
