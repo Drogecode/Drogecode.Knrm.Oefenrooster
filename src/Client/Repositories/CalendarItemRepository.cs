@@ -18,7 +18,7 @@ public class CalendarItemRepository
         _offlineService = offlineService;
     }
 
-    public async Task<GetMonthItemResponse?> GetMonthItemAsync(int year, int month, CancellationToken clt)
+    public async Task<GetMultipleMonthItemResponse?> GetMonthItemAsync(int year, int month, CancellationToken clt)
     {
         var response = await _offlineService.CachedRequestAsync(string.Format(MONTHITEMS, year, month),
             async () => await _calendarItemClient.GetMonthItemsAsync(year, month, clt),
@@ -26,7 +26,7 @@ public class CalendarItemRepository
         return response;
     }
 
-    public async Task<GetDayItemResponse?> GetDayItemsAsync(DateRange dateRange, Guid userId, CancellationToken clt)
+    public async Task<GetMultipleDayItemResponse?> GetDayItemsAsync(DateRange dateRange, Guid userId, CancellationToken clt)
     {
         var response = await _offlineService.CachedRequestAsync(string.Format(DAYITEMS, dateRange.Start?.ToString("yyMMdd"), dateRange.End?.ToString("yyMMdd")),
             async () => await _calendarItemClient.GetDayItemsAsync(dateRange.Start!.Value.Year, dateRange.Start!.Value.Month, dateRange.Start!.Value.Day, dateRange.End!.Value.Year, dateRange.End!.Value.Month, dateRange.End!.Value.Day, userId, clt),

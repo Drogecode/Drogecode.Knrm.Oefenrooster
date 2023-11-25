@@ -59,6 +59,36 @@ public class CalendarItemControllerTests : BaseTest
     }
 
     [Fact]
+    public async Task GetDayItem()
+    {
+        var result = await CalendarItemController.GetDayItemById(DefaultCalendarDayItem);
+        Assert.NotNull(result?.Value);
+        Assert.True(result.Value.Success);
+        Assert.NotNull(result.Value.DayItem?.Id);
+        result.Value.DayItem.Text.Should().Be(TRAINING_CALENDAR_DAY);
+    }
+
+    [Fact]
+    public async Task PatchDayItem()
+    {
+        var patchedText = "PatchDayItem";
+
+        var result = await CalendarItemController.GetDayItemById(DefaultCalendarDayItem);
+        var oldDayItem = result.Value?.DayItem;
+        Assert.NotNull(oldDayItem);
+        oldDayItem.Text.Should().NotBe(patchedText);
+        oldDayItem.Text = patchedText;
+
+        var patched = await CalendarItemController.PatchDayItem(oldDayItem);
+        Assert.NotNull(patched.Value);
+        Assert.True(patched.Value.Success);
+
+        var getAfterPatch = await CalendarItemController.GetDayItemById(DefaultCalendarDayItem);
+        Assert.NotNull(getAfterPatch.Value?.DayItem);
+        getAfterPatch.Value.DayItem.Text.Should().Be(patchedText);
+    }
+
+    [Fact]
     public async Task GetAllMonth()
     {
         var new1 = await AddCalendarMonthItem("GetAllMonth_1");
