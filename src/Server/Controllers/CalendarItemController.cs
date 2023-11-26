@@ -40,11 +40,11 @@ public class CalendarItemController : ControllerBase
 
     [HttpGet]
     [Route("month/{year:int}/{month:int}")]
-    public async Task<ActionResult<GetMonthItemResponse>> GetMonthItems(int year, int month, CancellationToken clt = default)
+    public async Task<ActionResult<GetMultipleMonthItemResponse>> GetMonthItems(int year, int month, CancellationToken clt = default)
     {
         try
         {
-            var result = new GetMonthItemResponse();
+            var result = new GetMultipleMonthItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             result = await _calendarItemService.GetMonthItems(year, month, customerId, clt);
             return result;
@@ -58,11 +58,11 @@ public class CalendarItemController : ControllerBase
 
     [HttpGet]
     [Route("day/{yearStart:int}/{monthStart:int}/{dayStart:int}/{yearEnd:int}/{monthEnd:int}/{dayEnd:int}")]
-    public async Task<ActionResult<GetDayItemResponse>> GetDayItems(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, Guid userId, CancellationToken clt = default)
+    public async Task<ActionResult<GetMultipleDayItemResponse>> GetDayItems(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, Guid userId, CancellationToken clt = default)
     {
         try
         {
-            var result = new GetDayItemResponse();
+            var result = new GetMultipleDayItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             result = await _calendarItemService.GetDayItems(yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, customerId, userId, clt);
             return result;
@@ -76,7 +76,7 @@ public class CalendarItemController : ControllerBase
 
     [HttpGet]
     [Route("day/all/{count:int}/{skip:int}")]
-    public async Task<ActionResult<GetDayItemResponse>> GetAllFutureDayItems(int count, int skip, CancellationToken clt = default)
+    public async Task<ActionResult<GetMultipleDayItemResponse>> GetAllFutureDayItems(int count, int skip, CancellationToken clt = default)
     {
         try
         {
@@ -85,7 +85,7 @@ public class CalendarItemController : ControllerBase
                 _logger.LogWarning("GetAllFutureDayItems count to big {0}", count);
                 return BadRequest("Count to big");
             }
-            var result = new GetDayItemResponse();
+            var result = new GetMultipleDayItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             result = await _calendarItemService.GetAllFutureDayItems(customerId,count, skip, clt);
             return result;
@@ -96,6 +96,25 @@ public class CalendarItemController : ControllerBase
             return BadRequest();
         }
     }
+    [HttpGet]
+    [Route("day/{id:guid}")]
+    public async Task<ActionResult<GetDayItemResponse>> GetDayItemById(Guid id, CancellationToken clt = default)
+    {
+
+        try
+        {
+            var result = new GetDayItemResponse();
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            result = await _calendarItemService.GetDayItemById(customerId, id, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetDayItemById");
+            return BadRequest();
+        }
+    }
+
 
     [HttpPut]
     [Route("month")]
@@ -135,6 +154,29 @@ public class CalendarItemController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in PutDayItem");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
+    [Route("day")]
+    public async Task<ActionResult<PatchDayItemResponse>> PatchDayItem([FromBody] RoosterItemDay roosterItemDay, CancellationToken clt = default)
+    {
+        try
+        {
+            var result = new PatchDayItemResponse();
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            result = await _calendarItemService.PatchDayItem(roosterItemDay, customerId, userId, clt);
+            if (roosterItemDay.UserId is not null && !roosterItemDay.UserId.Equals(Guid.Empty))
+            {
+                await ToOutlookCalendar(roosterItemDay.UserId.Value, true, roosterItemDay, customerId, null, clt);
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in PatchDayItem");
             return BadRequest();
         }
     }

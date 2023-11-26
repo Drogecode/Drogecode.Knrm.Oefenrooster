@@ -17,7 +17,7 @@
 	<ItemGroup>
 		<PackageReference Include="Blazored.LocalStorage" Version="4.4.0" />
 		<PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
-		<PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.6.2" />
+		<PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.6.3" />
 		<PackageReference Include="Heron.MudCalendar" Version="1.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />

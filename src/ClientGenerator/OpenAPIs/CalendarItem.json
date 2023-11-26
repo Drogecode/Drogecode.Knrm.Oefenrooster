@@ -37,17 +37,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetMonthItemResponse"
+                  "$ref": "#/components/schemas/GetMultipleMonthItemResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetMonthItemResponse"
+                  "$ref": "#/components/schemas/GetMultipleMonthItemResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetMonthItemResponse"
+                  "$ref": "#/components/schemas/GetMultipleMonthItemResponse"
                 }
               }
             }
@@ -131,17 +131,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetDayItemResponse"
+                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetDayItemResponse"
+                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetDayItemResponse"
+                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
                 }
               }
             }
@@ -172,6 +172,47 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CalendarItem/day/{id}": {
+      "get": {
+        "tags": [
+          "CalendarItem"
+        ],
+        "operationId": "GetDayItemById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -295,6 +336,53 @@
             }
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "CalendarItem"
+        ],
+        "operationId": "PatchDayItem",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoosterItemDay"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoosterItemDay"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoosterItemDay"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchDayItemResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchDayItemResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchDayItemResponse"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -323,6 +411,25 @@
             "type": "integer",
             "format": "int64"
           },
+          "dayItem": {
+            "$ref": "#/components/schemas/RoosterItemDay"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetMultipleDayItemResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
           "totalCount": {
             "type": "integer",
             "format": "int32"
@@ -337,7 +444,7 @@
         },
         "additionalProperties": false
       },
-      "GetMonthItemResponse": {
+      "GetMultipleMonthItemResponse": {
         "type": "object",
         "properties": {
           "success": {
@@ -350,12 +457,32 @@
             "type": "integer",
             "format": "int64"
           },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
           "monthItems": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/RoosterItemMonth"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PatchDayItemResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           }
         },
         "additionalProperties": false

@@ -26,30 +26,39 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     {
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetMonthItemResponse> GetMonthItemsAsync(int year, int month);
+        System.Threading.Tasks.Task<GetMultipleMonthItemResponse> GetMonthItemsAsync(int year, int month);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetMonthItemResponse> GetMonthItemsAsync(int year, int month, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetMultipleMonthItemResponse> GetMonthItemsAsync(int year, int month, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Guid? userId);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Guid? userId, System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetDayItemResponse> GetAllFutureDayItemsAsync(int count, int skip);
+        System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Guid? userId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetDayItemResponse> GetAllFutureDayItemsAsync(int count, int skip, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Guid? userId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetAllFutureDayItemsAsync(int count, int skip);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetAllFutureDayItemsAsync(int count, int skip, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemByIdAsync(System.Guid id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -68,6 +77,15 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PutDayItemResponse> PutDayItemAsync(RoosterItemDay body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PatchDayItemResponse> PatchDayItemAsync(RoosterItemDay body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<PatchDayItemResponse> PatchDayItemAsync(RoosterItemDay body, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -100,7 +118,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetMonthItemResponse> GetMonthItemsAsync(int year, int month)
+        public virtual System.Threading.Tasks.Task<GetMultipleMonthItemResponse> GetMonthItemsAsync(int year, int month)
         {
             return GetMonthItemsAsync(year, month, System.Threading.CancellationToken.None);
         }
@@ -108,7 +126,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetMonthItemResponse> GetMonthItemsAsync(int year, int month, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetMultipleMonthItemResponse> GetMonthItemsAsync(int year, int month, System.Threading.CancellationToken cancellationToken)
         {
             if (year == null)
                 throw new System.ArgumentNullException("year");
@@ -153,7 +171,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<GetMonthItemResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GetMultipleMonthItemResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -182,7 +200,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Guid? userId)
+        public virtual System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Guid? userId)
         {
             return GetDayItemsAsync(yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, userId, System.Threading.CancellationToken.None);
         }
@@ -190,7 +208,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Guid? userId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetDayItemsAsync(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, System.Guid? userId, System.Threading.CancellationToken cancellationToken)
         {
             if (yearStart == null)
                 throw new System.ArgumentNullException("yearStart");
@@ -256,7 +274,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<GetDayItemResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GetMultipleDayItemResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -285,7 +303,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetDayItemResponse> GetAllFutureDayItemsAsync(int count, int skip)
+        public virtual System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetAllFutureDayItemsAsync(int count, int skip)
         {
             return GetAllFutureDayItemsAsync(count, skip, System.Threading.CancellationToken.None);
         }
@@ -293,7 +311,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetDayItemResponse> GetAllFutureDayItemsAsync(int count, int skip, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetAllFutureDayItemsAsync(int count, int skip, System.Threading.CancellationToken cancellationToken)
         {
             if (count == null)
                 throw new System.ArgumentNullException("count");
@@ -305,6 +323,84 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             urlBuilder_.Append("api/CalendarItem/day/all/{count}/{skip}");
             urlBuilder_.Replace("{count}", System.Uri.EscapeDataString(ConvertToString(count, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{skip}", System.Uri.EscapeDataString(ConvertToString(skip, System.Globalization.CultureInfo.InvariantCulture)));
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<GetMultipleDayItemResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemByIdAsync(System.Guid id)
+        {
+            return GetDayItemByIdAsync(id, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<GetDayItemResponse> GetDayItemByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append("api/CalendarItem/day/{id}");
+            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -495,6 +591,84 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<PutDayItemResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<PatchDayItemResponse> PatchDayItemAsync(RoosterItemDay body)
+        {
+            return PatchDayItemAsync(body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<PatchDayItemResponse> PatchDayItemAsync(RoosterItemDay body, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append("api/CalendarItem/day");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<PatchDayItemResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
