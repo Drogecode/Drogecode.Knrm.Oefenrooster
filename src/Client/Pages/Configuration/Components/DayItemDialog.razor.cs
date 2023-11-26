@@ -32,7 +32,7 @@ public sealed partial class DayItemDialog : IDisposable
             DayItem = new RoosterItemDay();
         }
         _originalDayItem = (RoosterItemDay?)DayItem?.Clone();
-        var user = Users.FirstOrDefault(x => x.Id == DayItem.UserId);
+        var user = Users.FirstOrDefault(x => x.Id == DayItem?.UserIds?.FirstOrDefault());
         if (user is not null)
             ((List<DrogeUser>)_selectedUsersAction).Add(user);
     }

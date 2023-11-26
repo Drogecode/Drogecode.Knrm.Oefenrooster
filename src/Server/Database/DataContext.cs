@@ -37,6 +37,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbReportUser> ReportUsers { get; set; }
 
         public DbSet<DbLinkVehicleTraining> LinkVehicleTraining { get; set; }
+        public DbSet<DbLinkUserDayItem> LinkUserDayItems{ get; set; }
 
 
         public DataContext(DbContextOptions<DataContext> context) : base(context)
@@ -118,7 +119,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             //Rooster item day
             modelBuilder.Entity<DbRoosterItemDay>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbRoosterItemDay>().HasOne(p => p.Customer).WithMany(g => g.RoosterItemDays).HasForeignKey(s => s.CustomerId).IsRequired();
-            modelBuilder.Entity<DbRoosterItemDay>().HasOne(p => p.User).WithMany(g => g.RoosterItemDays).HasForeignKey(s => s.UserId);
+            modelBuilder.Entity<DbRoosterItemDay>().HasMany(p => p.Users).WithMany(g => g.RoosterItemDays)
+                .UsingEntity<DbLinkUserDayItem>(
+                    l => l.HasOne<DbUsers>(e => e.User).WithMany(e => e.LinkUserDayItems).HasForeignKey(e => e.UserForeignKey),
+                    r => r.HasOne<DbRoosterItemDay>(e => e.DayItem).WithMany(e => e.LinkUserDayItems).HasForeignKey(e => e.DayItemForeignKey));
 
             //Rooster item month
             modelBuilder.Entity<DbRoosterItemMonth>(e => { e.Property(e => e.Id).IsRequired(); });
@@ -164,7 +168,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             // Required data
             SetCustomer(modelBuilder);
             SetDefaultRooster(modelBuilder);
-            SetRoosterItemsDay(modelBuilder);
             SetRoosterItemsMonth(modelBuilder);
             SetUserFunctions(modelBuilder);
             SetUserRoles(modelBuilder);
@@ -343,36 +346,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     Order = 90,
                 });
             });
-        }
-
-        private void SetRoosterItemsDay(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<DbRoosterItemDay>(e => e.HasData(new DbRoosterItemDay
-            {
-                Id = new Guid("bf0b7712-d4d4-423c-b56f-f698a643b580"),
-                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                UserId = DefaultSettingsHelper.IdTaco,
-                DateStart = DateTime.SpecifyKind(new DateTime(2023, 10, 9), DateTimeKind.Utc),
-                DateEnd = DateTime.SpecifyKind(new DateTime(2023, 10, 15), DateTimeKind.Utc),
-                IsFullDay = true,
-                Text = "Wachtman",
-                Type = CalendarItemType.Custom,
-                CreatedOn = DateTime.SpecifyKind(new DateTime(2023, 10, 15), DateTimeKind.Utc),
-                CreatedBy = DefaultSettingsHelper.IdTaco,
-            }));
-            modelBuilder.Entity<DbRoosterItemDay>(e => e.HasData(new DbRoosterItemDay
-            {
-                Id = new Guid("51da3135-ba68-43c0-bc66-72eba93ccf3d"),
-                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                UserId = new Guid("8b4d5cfa-3770-4d5d-84dc-1d594dbdcbbf"),
-                DateStart = DateTime.SpecifyKind(new DateTime(2023, 10, 16), DateTimeKind.Utc),
-                DateEnd = DateTime.SpecifyKind(new DateTime(2023, 10, 22), DateTimeKind.Utc),
-                IsFullDay = true,
-                Text = "Wachtman",
-                Type = CalendarItemType.Custom,
-                CreatedOn = DateTime.SpecifyKind(new DateTime(2023, 10, 15), DateTimeKind.Utc),
-                CreatedBy = DefaultSettingsHelper.IdTaco,
-            }));
         }
         private void SetRoosterItemsMonth(ModelBuilder modelBuilder)
         {

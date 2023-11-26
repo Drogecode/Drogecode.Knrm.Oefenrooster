@@ -22,6 +22,7 @@ public class DbUsers
     public DbUserFunctions? UserFunction{ get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
     public ICollection<DbRoosterItemDay>? RoosterItemDays { get; set; }
+    public ICollection<DbLinkUserDayItem>? LinkUserDayItems { get; set; }
     public ICollection<DbUserDefaultGroup>? UserDefaultGroups { get; set; }
     public ICollection<DbUserDefaultAvailable>? UserDefaultAvailables { get; set; }
     public ICollection<DbUserHolidays>? UserHolidays { get; set; }
