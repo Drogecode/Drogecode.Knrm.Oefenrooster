@@ -1,16 +1,22 @@
-﻿<MudDialog>
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums
+<MudDialog>
     <DialogContent>
         @if (DayItem is not null)
         {
-
+            <MudSelect T="CalendarItemType" Label="@L["Type"]" Variant="Variant.Text" @bind-Value="DayItem.Type">
+                <MudSelectItem T="CalendarItemType" Value="CalendarItemType.Default">@L["Default"]</MudSelectItem>
+                <MudSelectItem T="CalendarItemType" Value="CalendarItemType.Custom">@L["Custom"]</MudSelectItem>
+                <MudSelectItem T="CalendarItemType" Value="CalendarItemType.PersonPublic">@L["PersonPublic"]</MudSelectItem>
+                <MudSelectItem T="CalendarItemType" Value="CalendarItemType.SpecialDate" Disabled>@L["SpecialDate"]</MudSelectItem>
+            </MudSelect>
             <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="false" />
             <MudTextField Label="@L["Description"]" @bind-Value="DayItem.Text" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" />
-            <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@L["Valid from"]" @bind-Date="DayItem.DateStart" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))" Disabled="@(_originalDayItem?.DateStart?.InPast() ?? false)" Required />
-            <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@L["Valid till"]" @bind-Date="DayItem.DateEnd" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" Disabled="@(_originalDayItem?.DateEnd?.InPast() ?? false)" Required />
+            <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@LApp["from"]" @bind-Date="DayItem.DateStart" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))" Disabled="@(_originalDayItem?.DateStart?.InPast() ?? false)" Required />
+            <MudDatePicker Editable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="yyyy-MM-dd" Label="@LApp["till"]" @bind-Date="DayItem.DateEnd" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" Disabled="@(_originalDayItem?.DateEnd?.InPast() ?? false)" Required />
         }
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">@LApp["Submit"]</MudButton>
-    </DialogActions>
-</MudDialog>
+            <MudButton Color="Color.Primary" OnClick="Submit">@LApp["Submit"]</MudButton>
+        </DialogActions>
+    </MudDialog>

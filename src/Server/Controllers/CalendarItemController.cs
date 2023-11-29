@@ -87,7 +87,7 @@ public class CalendarItemController : ControllerBase
             }
             var result = new GetMultipleDayItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            result = await _calendarItemService.GetAllFutureDayItems(customerId,count, skip, clt);
+            result = await _calendarItemService.GetAllFutureDayItems(customerId, count, skip, clt);
             return result;
         }
         catch (Exception ex)
@@ -145,10 +145,13 @@ public class CalendarItemController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             result = await _calendarItemService.PutDayItem(roosterItemDay, customerId, userId, clt);
-            if (roosterItemDay.UserId is not null && !roosterItemDay.UserId.Equals(Guid.Empty))
+            /* ToDo
+            if (roosterItemDay.UserIds is not null)
             {
-                await ToOutlookCalendar(roosterItemDay.UserId.Value, true, roosterItemDay, customerId, null, clt);
+                foreach (var user in roosterItemDay.UserIds)
+                    await ToOutlookCalendar(userId, true, roosterItemDay, customerId, null, clt);
             }
+            */
             return result;
         }
         catch (Exception ex)
@@ -168,15 +171,43 @@ public class CalendarItemController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             result = await _calendarItemService.PatchDayItem(roosterItemDay, customerId, userId, clt);
-            if (roosterItemDay.UserId is not null && !roosterItemDay.UserId.Equals(Guid.Empty))
+            /* ToDo
+            if (roosterItemDay.UserIds is not null)
             {
-                await ToOutlookCalendar(roosterItemDay.UserId.Value, true, roosterItemDay, customerId, null, clt);
+                foreach (var user in roosterItemDay.UserIds)
+                    await ToOutlookCalendar(userId, true, roosterItemDay, customerId, null, clt);
             }
+            */
             return result;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in PatchDayItem");
+            return BadRequest();
+        }
+    }
+
+    [HttpDelete]
+    [Route("day")]
+    public async Task<ActionResult<bool>> DeleteDayItem([FromBody] Guid idToDelete, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            bool result = await _calendarItemService.DeleteDayItem(idToDelete, customerId, userId, clt);
+            /* ToDo
+            if (roosterItemDay.UserIds is not null)
+            {
+                foreach (var user in roosterItemDay.UserIds)
+                    await ToOutlookCalendar(userId, true, roosterItemDay, customerId, null, clt);
+            }
+            */
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in DeleteDayItem");
             return BadRequest();
         }
     }

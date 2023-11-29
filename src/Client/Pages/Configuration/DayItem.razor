@@ -20,11 +20,8 @@
                 <MudTd DataLabel="@LApp["From"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateStart" /></MudTd>
                 <MudTd DataLabel="@LApp["Till"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateEnd" /></MudTd>
                 <MudTd DataLabel="@LApp["Edit"]">
-                    @if (context.DateStart?.CompareTo(DateTime.UtcNow) > 0)
-                    {
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context);}" />
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenDayItemDialog(context, false);}" />
-                    }
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context);}" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenDayItemDialog(context, false);}" />
                 </MudTd>
             </RowTemplate>
         </MudTable>

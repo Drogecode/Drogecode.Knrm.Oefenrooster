@@ -32,7 +32,7 @@ public sealed partial class DayItemDialog : IDisposable
             DayItem = new RoosterItemDay();
         }
         _originalDayItem = (RoosterItemDay?)DayItem?.Clone();
-        var user = Users.FirstOrDefault(x => x.Id == DayItem.UserId);
+        var user = Users.FirstOrDefault(x => x.Id == DayItem?.UserIds?.FirstOrDefault());
         if (user is not null)
             ((List<DrogeUser>)_selectedUsersAction).Add(user);
     }
@@ -54,27 +54,39 @@ public sealed partial class DayItemDialog : IDisposable
     }
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
     {
-        Console.WriteLine(selection.Count());
+        _selectedUsersAction = selection;
     }
 
     private async Task Submit()
     {
-        // https://github.com/MudBlazor/MudBlazor/issues/4047
-        /*if (DayItem is null || DayItem.Text is null) return;
-        DayItem.DateStart = DateTime.SpecifyKind(Holiday.ValidFrom.Value, DateTimeKind.Local).ToUniversalTime();
-        Holiday.ValidUntil = new DateTime(Holiday.ValidUntil.Value.Year, Holiday.ValidUntil.Value.Month, Holiday.ValidUntil.Value.Day, 23, 59, 59, DateTimeKind.Local).ToUniversalTime();
-        if (IsNew == true)
+        if (DayItem is null)
+            return;
+        if (DayItem.DateStart is not null)
+            DayItem.DateStart = DateTime.SpecifyKind(DayItem.DateStart.Value, DateTimeKind.Utc);
+        if (DayItem.DateEnd is not null)
+            DayItem.DateEnd = new DateTime(DayItem.DateEnd.Value.Year, DayItem.DateEnd.Value.Month, DayItem.DateEnd.Value.Day, 23, 59, 59, DateTimeKind.Utc);
+
+        DayItem.UserIds = [];
+        Console.WriteLine($"Count is {_selectedUsersAction.Count()}");
+        foreach (var user in _selectedUsersAction)
         {
-            var result = await _holidayRepository.PutHolidayForUser(Holiday, _cls.Token);
-            if (result is null || !result.Success) return;
-            Holiday = result.Put;
+            Console.WriteLine(user.Name);
+            DayItem.UserIds.Add(user.Id);
+        }
+
+        if (IsNew is true)
+        {
+            var isPut = await CalendarItemClient.PutDayItemAsync(DayItem, _cls.Token);
+            if (isPut?.Success is true)
+            {
+                DayItem!.Id = isPut.NewId;
+                IsNew = false;
+            }
         }
         else
         {
-            var result = await _holidayRepository.PatchHolidayForUser(Holiday, _cls.Token);
-            if (result is null || !result.Success) return;
-            Holiday = result.Patched;
-        }*/
+            var isPatched = await CalendarItemClient.PatchDayItemAsync(DayItem, _cls.Token);
+        }
         if (Refresh is not null) await Refresh.CallRequestRefreshAsync();
         MudDialog.Close(DialogResult.Ok(true));
     }
