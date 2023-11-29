@@ -187,6 +187,31 @@ public class CalendarItemController : ControllerBase
         }
     }
 
+    [HttpDelete]
+    [Route("day")]
+    public async Task<ActionResult<bool>> DeleteDayItem([FromBody] Guid idToDelete, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            bool result = await _calendarItemService.DeleteDayItem(idToDelete, customerId, userId, clt);
+            /* ToDo
+            if (roosterItemDay.UserIds is not null)
+            {
+                foreach (var user in roosterItemDay.UserIds)
+                    await ToOutlookCalendar(userId, true, roosterItemDay, customerId, null, clt);
+            }
+            */
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in DeleteDayItem");
+            return BadRequest();
+        }
+    }
+
 
 
     private async Task ToOutlookCalendar(Guid planUserId, bool assigned, RoosterItemDay roosterItemDay, Guid customerId, string? calendarEventId, CancellationToken clt)

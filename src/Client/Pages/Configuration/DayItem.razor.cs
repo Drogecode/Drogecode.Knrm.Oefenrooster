@@ -27,7 +27,7 @@ public sealed partial class DayItem : IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        _items =  (await _calendarItemClient.GetAllFutureDayItemsAsync(30, 0))?.DayItems;
+        _items = (await _calendarItemClient.GetAllFutureDayItemsAsync(30, 0))?.DayItems;
         _users = await _userRepository.GetAllUsersAsync(false);
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
@@ -49,12 +49,13 @@ public sealed partial class DayItem : IDisposable
 
     private async Task Delete(RoosterItemDay? dayItem)
     {
-        throw new NotImplementedException("ToDo");
-        /*var response = await _calendarItemClient.Delete(dayItem!.Id, _cls.Token);
-        if (response != null && response.Success)
+        if (dayItem is null)
+            return;
+        var deleteResult = await _calendarItemClient.DeleteDayItemAsync(dayItem.Id, _cls.Token);
+        if (deleteResult is true)
         {
-            await RefreshMeAsync();
-        }*/
+            _items!.Remove(dayItem);
+        }
     }
 
     private async Task RefreshMeAsync()
