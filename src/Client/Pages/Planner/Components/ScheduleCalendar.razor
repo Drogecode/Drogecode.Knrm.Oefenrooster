@@ -21,7 +21,7 @@
             else if (context is RoosterItemDayCalendarItem)
             {
                 var dayItem = ((RoosterItemDayCalendarItem)context).ItemDay;
-                @if (dayItem is not null && (dayItem.Type == CalendarItemType.SpecialDate || _user?.Id.Equals(DefaultSettingsHelper.IdTaco) is true))
+                @if (dayItem is not null)
                 {
                     Color color = Color.Secondary;
                     switch (dayItem.Type)
