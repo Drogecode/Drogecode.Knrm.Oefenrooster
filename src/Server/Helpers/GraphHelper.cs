@@ -378,7 +378,7 @@ public static class GraphHelper
             };
             even.End = new DateTimeTimeZone
             {
-                DateTime = dateStart.AddDays(1).ToString("yyyy-MM-ddT00:00:00"),
+                DateTime = dateEnd.AddDays(1).ToString("yyyy-MM-ddT00:00:00"),
                 TimeZone = TimeZoneInfo.Local.Id
             };
         }

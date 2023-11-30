@@ -24,57 +24,57 @@ public sealed partial class DayItemDialog : IDisposable
     private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
     private CancellationTokenSource _cls = new();
     private RoosterItemDay? _originalDayItem { get; set; }
+    private DateRange _dateRange = new DateRange();
     void Cancel() => MudDialog.Cancel();
     protected override async Task OnParametersSetAsync()
     {
-        if (IsNew == true)
+        if (IsNew == true || DayItem is null)
         {
             DayItem = new RoosterItemDay();
         }
+        _dateRange.Start = DayItem.DateStart;
+        _dateRange.End = DayItem.DateEnd;
         _originalDayItem = (RoosterItemDay?)DayItem?.Clone();
-        var user = Users.FirstOrDefault(x => x.Id == DayItem.UserId);
+        var user = Users?.FirstOrDefault(x => x.Id == DayItem?.LinkedUsers?.FirstOrDefault()?.UserId);
         if (user is not null)
             ((List<DrogeUser>)_selectedUsersAction).Add(user);
     }
 
-    public string? ValidateStartDate(DateTime? newValue)
-    {
-        if (newValue == _originalDayItem?.DateStart) return null;
-        if (newValue == null) return L["No value for start date"];
-        if (newValue.Value.CompareTo(DateTime.UtcNow.Date) < 0) return L["Should not be in the past"];
-        return null;
-    }
-    public string? ValidateTillDate(DateTime? newValue)
-    {
-        if (newValue == _originalDayItem?.DateEnd) return null;
-        if (newValue == null || DayItem is null) return L["No value for till date"];
-        if (newValue.Value.CompareTo(DateTime.UtcNow.Date) < 0) return L["Should not be in the past"];
-        if (newValue.Value.CompareTo(DayItem.DateEnd) < 0) return L["Should not be before start date"];
-        return null;
-    }
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
     {
-        Console.WriteLine(selection.Count());
+        _selectedUsersAction = selection;
     }
 
     private async Task Submit()
     {
-        // https://github.com/MudBlazor/MudBlazor/issues/4047
-        /*if (DayItem is null || DayItem.Text is null) return;
-        DayItem.DateStart = DateTime.SpecifyKind(Holiday.ValidFrom.Value, DateTimeKind.Local).ToUniversalTime();
-        Holiday.ValidUntil = new DateTime(Holiday.ValidUntil.Value.Year, Holiday.ValidUntil.Value.Month, Holiday.ValidUntil.Value.Day, 23, 59, 59, DateTimeKind.Local).ToUniversalTime();
-        if (IsNew == true)
+        if (DayItem is null || _dateRange.Start is null || DayItem.Text is null)
+            return;
+        DayItem.DateStart = DateTime.SpecifyKind(_dateRange.Start.Value, DateTimeKind.Utc);
+        if (_dateRange.End is not null)
+            DayItem.DateEnd = DateTime.SpecifyKind(_dateRange.End.Value, DateTimeKind.Utc);
+
+        DayItem.LinkedUsers = [];
+        foreach (var user in _selectedUsersAction)
         {
-            var result = await _holidayRepository.PutHolidayForUser(Holiday, _cls.Token);
-            if (result is null || !result.Success) return;
-            Holiday = result.Put;
+            DayItem.LinkedUsers.Add(new RoosterItemDayLinkedUsers
+            {
+                UserId = user.Id
+            });
+        }
+
+        if (IsNew is true)
+        {
+            var isPut = await CalendarItemClient.PutDayItemAsync(DayItem, _cls.Token);
+            if (isPut?.Success is true)
+            {
+                DayItem!.Id = isPut.NewId;
+                IsNew = false;
+            }
         }
         else
         {
-            var result = await _holidayRepository.PatchHolidayForUser(Holiday, _cls.Token);
-            if (result is null || !result.Success) return;
-            Holiday = result.Patched;
-        }*/
+            var isPatched = await CalendarItemClient.PatchDayItemAsync(DayItem, _cls.Token);
+        }
         if (Refresh is not null) await Refresh.CallRequestRefreshAsync();
         MudDialog.Close(DialogResult.Ok(true));
     }

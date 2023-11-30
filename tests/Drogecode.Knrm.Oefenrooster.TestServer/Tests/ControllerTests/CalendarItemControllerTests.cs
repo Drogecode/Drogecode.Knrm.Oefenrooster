@@ -147,4 +147,17 @@ public class CalendarItemControllerTests : BaseTest
         result.Value.DayItems.Should().NotContain(x => x.Id == new6);
         result.Value.DayItems.Should().NotContain(x => x.Id == new7);
     }
+
+    [Fact]
+    public async Task DeleteDayItemTest()
+    {
+        var result = await CalendarItemController.GetDayItemById(DefaultCalendarDayItem);
+        Assert.NotNull(result.Value?.DayItem?.Id);
+        result.Value.DayItem.Text.Should().Be(TRAINING_CALENDAR_DAY);
+        var deleteRes = await CalendarItemController.DeleteDayItem(DefaultCalendarDayItem);
+        Assert.True(deleteRes?.Value);
+        result = await CalendarItemController.GetDayItemById(DefaultCalendarDayItem);
+        Assert.Null(result.Value?.DayItem);
+        Assert.False(result.Value!.Success);
+    }
 }

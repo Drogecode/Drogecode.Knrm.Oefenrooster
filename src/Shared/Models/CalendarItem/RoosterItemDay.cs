@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 
-public class RoosterItemDay : ICloneable
+public sealed class RoosterItemDay : ICloneable
 {
-    [Key] public Guid Id { get; set; }
-    public Guid? UserId { get; set; }
+    public Guid Id { get; set; }
+    public List<RoosterItemDayLinkedUsers>? LinkedUsers { get; set; }
     public DateTime? DateStart { get; set; }
     public DateTime? DateEnd { get; set; }
     public bool IsFullDay { get; set; }

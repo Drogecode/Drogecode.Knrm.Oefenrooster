@@ -117,19 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Add and change day item" xml:space="preserve">
-    <value>Add and change day item</value>
+  <data name="Custom" xml:space="preserve">
+    <value>Aangepast</value>
   </data>
-  <data name="Add new day item" xml:space="preserve">
-    <value>Add new day item</value>
+  <data name="Date range" xml:space="preserve">
+    <value>Datum bereik</value>
   </data>
-  <data name="Day items" xml:space="preserve">
-    <value>Day items</value>
+  <data name="Default" xml:space="preserve">
+    <value>Standaard</value>
   </data>
-  <data name="Edit day item" xml:space="preserve">
-    <value>Edit day item</value>
+  <data name="Description" xml:space="preserve">
+    <value>Omschrijving</value>
   </data>
-  <data name="Who" xml:space="preserve">
-    <value>Who</value>
+  <data name="PersonPublic" xml:space="preserve">
+    <value>Persoon publiek</value>
+  </data>
+  <data name="SpecialDate" xml:space="preserve">
+    <value>Speciale datum</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
   </data>
 </root>

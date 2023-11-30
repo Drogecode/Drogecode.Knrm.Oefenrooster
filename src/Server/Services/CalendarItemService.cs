@@ -41,7 +41,8 @@ public class CalendarItemService : ICalendarItemService
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
         var dayItems = await _database.RoosterItemDays
-            .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate && (userId == Guid.Empty || x.UserId == null || x.UserId == Guid.Empty || x.UserId.Equals(userId)))
+            .Include(x => x.LinkUserDayItems)
+            .Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.DateStart >= startDate && x.DateStart <= tillDate && (userId == Guid.Empty || x.LinkUserDayItems == null || x.LinkUserDayItems.Count == 0 || x.LinkUserDayItems.Any(x => x.UserForeignKey == userId)))
             .OrderBy(x => x.DateStart)
             .Select(x => x.ToRoosterItemDay())
             .ToListAsync(clt);
@@ -56,7 +57,8 @@ public class CalendarItemService : ICalendarItemService
     {
         var startDate = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
         var dayItems = await _database.RoosterItemDays
-            .Where(x => x.CustomerId == customerId && x.DateStart >= startDate)
+            .Include(x => x.LinkUserDayItems)
+            .Where(x => x.CustomerId == customerId && x.DeletedOn == null && (x.DateStart >= startDate || x.DateEnd >= startDate))
             .OrderBy(x => x.DateStart)
             .Select(x => x.ToRoosterItemDay())
             .Skip(skip)
@@ -73,7 +75,7 @@ public class CalendarItemService : ICalendarItemService
     {
         var sw = Stopwatch.StartNew();
         var result = new GetDayItemResponse();
-        var dayItem = await _database.RoosterItemDays.FirstOrDefaultAsync(x => x.Id == id && x.CustomerId == customerId);
+        var dayItem = await _database.RoosterItemDays.Include(x => x.LinkUserDayItems).FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null && x.CustomerId == customerId);
         if (dayItem is null)
         {
             result.Success = false;
@@ -115,6 +117,18 @@ public class CalendarItemService : ICalendarItemService
         dbItem.CreatedBy = userId;
         dbItem.CreatedOn = DateTime.UtcNow;
         _database.RoosterItemDays.Add(dbItem);
+        if (roosterItemDay.LinkedUsers is not null)
+        {
+            foreach (var usr in roosterItemDay.LinkedUsers)
+            {
+                var dbLink = new DbLinkUserDayItem
+                {
+                    UserForeignKey = usr.UserId,
+                    DayItemForeignKey = dbItem.Id
+                };
+                _database.LinkUserDayItems.Add(dbLink);
+            }
+        }
         result.Success = (await _database.SaveChangesAsync(clt)) > 0;
         result.NewId = dbItem.Id;
         sw.Stop();
@@ -126,7 +140,7 @@ public class CalendarItemService : ICalendarItemService
     {
         var sw = Stopwatch.StartNew();
         var result = new PatchDayItemResponse();
-        var dayItem = await _database.RoosterItemDays.FirstOrDefaultAsync(x => x.Id == roosterItemDay.Id && x.CustomerId == customerId);
+        var dayItem = await _database.RoosterItemDays.Include(x => x.LinkUserDayItems).FirstOrDefaultAsync(x => x.Id == roosterItemDay.Id && x.CustomerId == customerId && x.DeletedOn == null);
         if (dayItem is null)
         {
             result.Success = false;
@@ -134,17 +148,62 @@ public class CalendarItemService : ICalendarItemService
         else
         {
             dayItem.Text = roosterItemDay.Text;
-            dayItem.UserId = roosterItemDay.UserId;
             dayItem.DateStart = roosterItemDay.DateStart;
             dayItem.DateEnd = roosterItemDay.DateEnd;
             dayItem.IsFullDay = roosterItemDay.IsFullDay;
             dayItem.Type = roosterItemDay.Type;
             _database.RoosterItemDays.Update(dayItem);
+            if (roosterItemDay.LinkedUsers is not null)
+            {
+                foreach (var usr in roosterItemDay.LinkedUsers)
+                {
+                    if (dayItem.LinkUserDayItems?.Any(x => x.UserForeignKey == usr.UserId) is true)
+                        continue;
+                    var dbLink = new DbLinkUserDayItem
+                    {
+                        UserForeignKey = usr.UserId,
+                        DayItemForeignKey = dayItem.Id
+                    };
+                    _database.LinkUserDayItems.Add(dbLink);
+                }
+                if (dayItem.LinkUserDayItems?.Any() is true)
+                {
+                    foreach (var usr in dayItem.LinkUserDayItems)
+                    {
+                        if (roosterItemDay.LinkedUsers.Any(x => x.UserId == usr.UserForeignKey))
+                            continue;
+                        _database.LinkUserDayItems.Remove(usr);
+                    }
+                }
+            }
+            else if (dayItem.LinkUserDayItems is not null)
+                _database.LinkUserDayItems.RemoveRange(dayItem.LinkUserDayItems);
             result.Success = (await _database.SaveChangesAsync(clt)) > 0;
         }
 
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
+    }
+
+
+    public async Task<bool> DeleteDayItem(Guid idToDelete, Guid customerId, Guid userId, CancellationToken clt)
+    {
+        var item = await _database.RoosterItemDays.FirstOrDefaultAsync(x => x.Id == idToDelete && x.CustomerId == customerId && x.DeletedOn == null);
+        if (item is null)
+            return false;
+        item.DeletedOn = DateTime.UtcNow;
+        item.DeletedBy = userId;
+        _database.RoosterItemDays.Update(item);
+        return (await _database.SaveChangesAsync(clt)) > 0;
+    }
+
+    public async Task<bool> PatchCalendarEventId(Guid dayItemId, Guid userId, Guid customerId, string? calendarEventId, CancellationToken clt)
+    {
+        var link = await _database.LinkUserDayItems.FirstOrDefaultAsync(x => x.DayItemForeignKey == dayItemId && x.UserForeignKey == userId);
+        if (link is null) return false;
+        link.CalendarEventId = calendarEventId;
+        _database.LinkUserDayItems.Update(link);
+        return (await _database.SaveChangesAsync(clt)) > 0;
     }
 }

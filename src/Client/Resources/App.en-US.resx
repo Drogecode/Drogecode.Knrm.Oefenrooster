@@ -147,6 +147,9 @@
   <data name="Friday" xml:space="preserve">
     <value>Friday</value>
   </data>
+  <data name="from" xml:space="preserve">
+    <value>from</value>
+  </data>
   <data name="function" xml:space="preserve">
     <value>function</value>
   </data>

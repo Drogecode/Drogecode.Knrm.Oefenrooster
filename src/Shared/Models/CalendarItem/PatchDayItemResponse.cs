@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 
-public class PatchDayItemResponse : BaseResponse
+public sealed class PatchDayItemResponse : BaseResponse
 {
 }
