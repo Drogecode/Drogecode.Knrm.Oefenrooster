@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 
-public class PutDayItemResponse : BaseResponse
+public sealed class PutDayItemResponse : BaseResponse
 {
     public Guid NewId { get; set; }
 }

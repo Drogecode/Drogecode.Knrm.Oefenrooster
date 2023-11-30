@@ -75,7 +75,7 @@ public class CalendarItemService : ICalendarItemService
     {
         var sw = Stopwatch.StartNew();
         var result = new GetDayItemResponse();
-        var dayItem = await _database.RoosterItemDays.FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null && x.CustomerId == customerId);
+        var dayItem = await _database.RoosterItemDays.Include(x=>x.LinkUserDayItems).FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null && x.CustomerId == customerId);
         if (dayItem is null)
         {
             result.Success = false;
@@ -117,13 +117,13 @@ public class CalendarItemService : ICalendarItemService
         dbItem.CreatedBy = userId;
         dbItem.CreatedOn = DateTime.UtcNow;
         _database.RoosterItemDays.Add(dbItem);
-        if (roosterItemDay.UserIds is not null)
+        if (roosterItemDay.LinkedUsers is not null)
         {
-            foreach (var usr in roosterItemDay.UserIds)
+            foreach (var usr in roosterItemDay.LinkedUsers)
             {
                 var dbLink = new DbLinkUserDayItem
                 {
-                    UserForeignKey = usr,
+                    UserForeignKey = usr.UserId,
                     DayItemForeignKey = dbItem.Id
                 };
                 _database.LinkUserDayItems.Add(dbLink);
@@ -153,22 +153,27 @@ public class CalendarItemService : ICalendarItemService
             dayItem.IsFullDay = roosterItemDay.IsFullDay;
             dayItem.Type = roosterItemDay.Type;
             _database.RoosterItemDays.Update(dayItem);
-            if (roosterItemDay.UserIds is not null)
+            if (roosterItemDay.LinkedUsers is not null)
             {
-                foreach (var usr in roosterItemDay.UserIds)
+                foreach (var usr in roosterItemDay.LinkedUsers)
                 {
-                    if (dayItem.LinkUserDayItems?.Any(x => x.UserForeignKey == usr) is true)
+                    if (dayItem.LinkUserDayItems?.Any(x => x.UserForeignKey == usr.UserId) is true)
                         continue;
                     var dbLink = new DbLinkUserDayItem
                     {
-                        UserForeignKey = usr,
+                        UserForeignKey = usr.UserId,
                         DayItemForeignKey = dayItem.Id
                     };
                     _database.LinkUserDayItems.Add(dbLink);
                 }
                 if (dayItem.LinkUserDayItems?.Any() is true)
                 {
-                    _database.LinkUserDayItems.RemoveRange(dayItem.LinkUserDayItems.Where(x => !roosterItemDay.UserIds.Contains(x.UserForeignKey)));
+                    foreach( var usr in dayItem.LinkUserDayItems)
+                    {
+                        if (roosterItemDay.LinkedUsers.Any(x=>x.UserId == usr.UserForeignKey))
+                            continue;
+                        _database.LinkUserDayItems.Remove(usr);
+                    }
                 }
             }
             else if (dayItem.LinkUserDayItems is not null)

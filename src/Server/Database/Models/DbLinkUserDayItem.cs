@@ -8,6 +8,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models
     {
         public Guid UserForeignKey { get; set; }
         public Guid DayItemForeignKey { get; set; }
+        public string? CalendarEventId { get; set; }
         public DbUsers User { get; set; } = null!;
         public DbRoosterItemDay DayItem { get; set; } = null!;
     }

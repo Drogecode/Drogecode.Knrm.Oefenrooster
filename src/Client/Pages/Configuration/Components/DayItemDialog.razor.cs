@@ -32,7 +32,7 @@ public sealed partial class DayItemDialog : IDisposable
             DayItem = new RoosterItemDay();
         }
         _originalDayItem = (RoosterItemDay?)DayItem?.Clone();
-        var user = Users.FirstOrDefault(x => x.Id == DayItem?.UserIds?.FirstOrDefault());
+        var user = Users?.FirstOrDefault(x => x.Id == DayItem?.LinkedUsers?.FirstOrDefault()?.UserId);
         if (user is not null)
             ((List<DrogeUser>)_selectedUsersAction).Add(user);
     }
@@ -66,12 +66,15 @@ public sealed partial class DayItemDialog : IDisposable
         if (DayItem.DateEnd is not null)
             DayItem.DateEnd = new DateTime(DayItem.DateEnd.Value.Year, DayItem.DateEnd.Value.Month, DayItem.DateEnd.Value.Day, 23, 59, 59, DateTimeKind.Utc);
 
-        DayItem.UserIds = [];
+        DayItem.LinkedUsers = [];
         Console.WriteLine($"Count is {_selectedUsersAction.Count()}");
         foreach (var user in _selectedUsersAction)
         {
             Console.WriteLine(user.Name);
-            DayItem.UserIds.Add(user.Id);
+            DayItem.LinkedUsers.Add(new RoosterItemDayLinkedUsers
+            {
+                UserId = user.Id
+            });
         }
 
         if (IsNew is true)
