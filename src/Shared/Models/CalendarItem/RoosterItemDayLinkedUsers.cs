@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 
-public sealed class GetMultipleMonthItemResponse : BaseMultipleResponse
+public sealed class RoosterItemDayLinkedUsers
 {
-    public List<RoosterItemMonth>? MonthItems { get; set; }
+    public Guid UserId { get; set; }
+    public string? CalendarEventId { get; set; }
 }

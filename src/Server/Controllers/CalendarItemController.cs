@@ -1,6 +1,8 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
+using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -145,13 +147,14 @@ public class CalendarItemController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             result = await _calendarItemService.PutDayItem(roosterItemDay, customerId, userId, clt);
-            /* ToDo
-            if (roosterItemDay.UserIds is not null)
+
+            if (roosterItemDay.LinkedUsers is not null)
             {
-                foreach (var user in roosterItemDay.UserIds)
-                    await ToOutlookCalendar(userId, true, roosterItemDay, customerId, null, clt);
+                var newd = await _calendarItemService.GetDayItemById(customerId, roosterItemDay.Id, clt);
+                if (newd.DayItem?.LinkedUsers is not null)
+                    foreach (var user in newd.DayItem.LinkedUsers)
+                        await ToOutlookCalendar(user, true, roosterItemDay, customerId, clt);
             }
-            */
             return result;
         }
         catch (Exception ex)
@@ -167,17 +170,32 @@ public class CalendarItemController : ControllerBase
     {
         try
         {
+            if (roosterItemDay is null)
+                throw new NullReferenceException("roosterItemDay is null");
             var result = new PatchDayItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var old = await _calendarItemService.GetDayItemById(customerId, roosterItemDay.Id, clt);
+            if (old.DayItem?.Type == CalendarItemType.SpecialDate)
+                return Unauthorized();
             result = await _calendarItemService.PatchDayItem(roosterItemDay, customerId, userId, clt);
-            /* ToDo
-            if (roosterItemDay.UserIds is not null)
+            if (old.DayItem?.LinkedUsers?.Count > 0 is true)
             {
-                foreach (var user in roosterItemDay.UserIds)
-                    await ToOutlookCalendar(userId, true, roosterItemDay, customerId, null, clt);
+                foreach (var user in old.DayItem.LinkedUsers)
+                {
+                    if (roosterItemDay.LinkedUsers?.Any(x => x.UserId == user.UserId) is true)
+                        continue;
+                    await ToOutlookCalendar(user, false, roosterItemDay, customerId, clt);
+
+                }
             }
-            */
+            if (roosterItemDay.LinkedUsers is not null)
+            {
+                var newd = await _calendarItemService.GetDayItemById(customerId, roosterItemDay.Id, clt);
+                if (newd.DayItem?.LinkedUsers is not null)
+                    foreach (var user in newd.DayItem.LinkedUsers)
+                        await ToOutlookCalendar(user, true, roosterItemDay, customerId, clt);
+            }
             return result;
         }
         catch (Exception ex)
@@ -195,14 +213,15 @@ public class CalendarItemController : ControllerBase
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var old = await _calendarItemService.GetDayItemById(customerId, idToDelete, clt);
+            if (old.DayItem?.Type == CalendarItemType.SpecialDate)
+                return Unauthorized();
             bool result = await _calendarItemService.DeleteDayItem(idToDelete, customerId, userId, clt);
-            /* ToDo
-            if (roosterItemDay.UserIds is not null)
+            if (old.DayItem?.LinkedUsers is not null)
             {
-                foreach (var user in roosterItemDay.UserIds)
-                    await ToOutlookCalendar(userId, true, roosterItemDay, customerId, null, clt);
+                foreach (var user in old.DayItem.LinkedUsers)
+                    await ToOutlookCalendar(user, false, old.DayItem, customerId, clt);
             }
-            */
             return result;
         }
         catch (Exception ex)
@@ -212,29 +231,30 @@ public class CalendarItemController : ControllerBase
         }
     }
 
-
-
-    private async Task ToOutlookCalendar(Guid planUserId, bool assigned, RoosterItemDay roosterItemDay, Guid customerId, string? calendarEventId, CancellationToken clt)
+    private async Task ToOutlookCalendar(RoosterItemDayLinkedUsers user, bool assigned, RoosterItemDay roosterItemDay, Guid customerId, CancellationToken clt)
     {
-        if (roosterItemDay?.DateStart is null || roosterItemDay?.DateEnd is null)
+        if (roosterItemDay.DateStart is null)
             return;
-        if (assigned && await _userSettingService.TrainingToCalendar(customerId, planUserId))
+        if (roosterItemDay.DateEnd is null)
+            roosterItemDay.DateEnd = roosterItemDay.DateStart;
+        if (assigned && await _userSettingService.TrainingToCalendar(customerId, user.UserId))
         {
             _graphService.InitializeGraph();
-            if (string.IsNullOrEmpty(calendarEventId))
+            if (string.IsNullOrEmpty(user.CalendarEventId))
             {
-                var eventResult = await _graphService.AddToCalendar(planUserId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, roosterItemDay.IsFullDay);
+                var eventResult = await _graphService.AddToCalendar(user.UserId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true);
+                await _calendarItemService.PatchCalendarEventId(roosterItemDay.Id, user.UserId, customerId, eventResult.Id, clt);
             }
             else
             {
-                await _graphService.PatchCalender(planUserId, calendarEventId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, roosterItemDay.IsFullDay);
-                //await _auditService.Log(currentUserId, AuditType.PatchTraining, customerId, $"Preventing duplicate event '{type?.TrainingType?.Name}' on '{training?.DateStart.ToString("o")}' : '{training?.DateEnd.ToString("o")}'");
+                await _graphService.PatchCalender(user.UserId, user.CalendarEventId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true);
             }
         }
-        else if (!string.IsNullOrEmpty(calendarEventId))
+        else if (!string.IsNullOrEmpty(user.CalendarEventId))
         {
             _graphService.InitializeGraph();
-            await _graphService.DeleteCalendarEvent(planUserId, calendarEventId, clt);
+            await _graphService.DeleteCalendarEvent(user.UserId, user.CalendarEventId, clt);
+            await _calendarItemService.PatchCalendarEventId(roosterItemDay.Id, user.UserId, customerId, null, clt);
         }
     }
 }

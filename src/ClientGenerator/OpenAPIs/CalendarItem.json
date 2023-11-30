@@ -584,11 +584,10 @@
             "type": "string",
             "format": "uuid"
           },
-          "userIds": {
+          "linkedUsers": {
             "type": "array",
             "items": {
-              "type": "string",
-              "format": "uuid"
+              "$ref": "#/components/schemas/RoosterItemDayLinkedUsers"
             },
             "nullable": true
           },
@@ -609,6 +608,20 @@
             "$ref": "#/components/schemas/CalendarItemType"
           },
           "text": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RoosterItemDayLinkedUsers": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calendarEventId": {
             "type": "string",
             "nullable": true
           }

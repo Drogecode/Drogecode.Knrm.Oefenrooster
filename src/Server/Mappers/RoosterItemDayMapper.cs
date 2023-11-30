@@ -19,15 +19,27 @@ public static class RoosterItemDayMapper
     }
     public static RoosterItemDay ToRoosterItemDay(this DbRoosterItemDay roosterItemDay)
     {
-        return new RoosterItemDay
+        var result = new RoosterItemDay
         {
             Id = roosterItemDay.Id,
-            UserIds = roosterItemDay.LinkUserDayItems?.Select(x=>x.UserForeignKey).ToList(),
             DateStart = roosterItemDay.DateStart,
             DateEnd = roosterItemDay.DateEnd,
             IsFullDay = roosterItemDay.IsFullDay,
             Type = roosterItemDay.Type,
             Text = roosterItemDay.Text,
         };
+        if (roosterItemDay.LinkUserDayItems is not null)
+        {
+            result.LinkedUsers = [];
+            foreach (var user in roosterItemDay.LinkUserDayItems)
+            {
+                result.LinkedUsers.Add(new RoosterItemDayLinkedUsers
+                {
+                    UserId = user.UserForeignKey,
+                    CalendarEventId = user.CalendarEventId,
+                });
+            }
+        }
+        return result;
     }
 }

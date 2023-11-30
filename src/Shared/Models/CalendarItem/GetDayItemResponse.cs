@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem
+namespace Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
+
+public sealed class GetDayItemResponse : BaseResponse
 {
-    public class GetDayItemResponse : BaseResponse
-    {
-        public RoosterItemDay? DayItem { get; set; }
-    }
+    public RoosterItemDay? DayItem { get; set; }
 }

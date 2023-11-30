@@ -1,4 +1,5 @@
 ﻿@page "/configuration/day-item"
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums
 @attribute [Authorize(Roles = AccessesNames.AUTH_Taco)]
 <MudAlert Severity="Severity.Info" Variant="Variant.Filled">ToDo</MudAlert>
 <PageTitle>@L["Day items"]</PageTitle>
@@ -10,6 +11,8 @@
         <MudTable Items="_items.OrderBy(x=>x.DateStart)">
             <HeaderContent>
                 <MudTh>@LApp["Description"]</MudTh>
+                <MudTh>@LApp["Type"]</MudTh>
+                <MudTh>@LApp["Who"]</MudTh>
                 <MudTh>@LApp["From"]</MudTh>
                 <MudTh>@LApp["Till"]</MudTh>
                 <MudTh>@LApp["Edit"]</MudTh>
@@ -17,11 +20,15 @@
             <RowTemplate>
                 <MudTd DataLabel="@LApp["Description"]">@context.Text</MudTd>
                 <MudTd DataLabel="@LApp["Type"]">@context.Type</MudTd>
+                <MudTd DataLabel="@LApp["Who"]">@_users?.FirstOrDefault(x=>x.Id == context?.LinkedUsers?.FirstOrDefault()?.UserId)?.Name</MudTd>
                 <MudTd DataLabel="@LApp["From"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateStart" /></MudTd>
                 <MudTd DataLabel="@LApp["Till"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateEnd" /></MudTd>
                 <MudTd DataLabel="@LApp["Edit"]">
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context);}" />
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenDayItemDialog(context, false);}" />
+                    @if(context.Type != CalendarItemType.SpecialDate)
+                    {
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context);}" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenDayItemDialog(context, false);}" />
+                    }
                 </MudTd>
             </RowTemplate>
         </MudTable>
