@@ -120,6 +120,9 @@
   <data name="Custom" xml:space="preserve">
     <value>Aangepast</value>
   </data>
+  <data name="Date range" xml:space="preserve">
+    <value>Datum bereik</value>
+  </data>
   <data name="Default" xml:space="preserve">
     <value>Standaard</value>
   </data>

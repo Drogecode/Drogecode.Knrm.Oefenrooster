@@ -24,34 +24,22 @@ public sealed partial class DayItemDialog : IDisposable
     private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
     private CancellationTokenSource _cls = new();
     private RoosterItemDay? _originalDayItem { get; set; }
+    private DateRange _dateRange = new DateRange();
     void Cancel() => MudDialog.Cancel();
     protected override async Task OnParametersSetAsync()
     {
-        if (IsNew == true)
+        if (IsNew == true || DayItem is null)
         {
             DayItem = new RoosterItemDay();
         }
+        _dateRange.Start = DayItem.DateStart;
+        _dateRange.End = DayItem.DateEnd;
         _originalDayItem = (RoosterItemDay?)DayItem?.Clone();
         var user = Users?.FirstOrDefault(x => x.Id == DayItem?.LinkedUsers?.FirstOrDefault()?.UserId);
         if (user is not null)
             ((List<DrogeUser>)_selectedUsersAction).Add(user);
     }
 
-    public string? ValidateStartDate(DateTime? newValue)
-    {
-        if (newValue == _originalDayItem?.DateStart) return null;
-        if (newValue == null) return L["No value for start date"];
-        if (newValue.Value.CompareTo(DateTime.UtcNow.Date) < 0) return L["Should not be in the past"];
-        return null;
-    }
-    public string? ValidateTillDate(DateTime? newValue)
-    {
-        if (newValue == _originalDayItem?.DateEnd) return null;
-        if (newValue == null || DayItem is null) return L["No value for till date"];
-        if (newValue.Value.CompareTo(DateTime.UtcNow.Date) < 0) return L["Should not be in the past"];
-        if (newValue.Value.CompareTo(DayItem.DateEnd) < 0) return L["Should not be before start date"];
-        return null;
-    }
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
     {
         _selectedUsersAction = selection;
@@ -59,18 +47,15 @@ public sealed partial class DayItemDialog : IDisposable
 
     private async Task Submit()
     {
-        if (DayItem is null)
+        if (DayItem is null || _dateRange.Start is null || DayItem.Text is null)
             return;
-        if (DayItem.DateStart is not null)
-            DayItem.DateStart = DateTime.SpecifyKind(DayItem.DateStart.Value, DateTimeKind.Utc);
-        if (DayItem.DateEnd is not null)
-            DayItem.DateEnd = new DateTime(DayItem.DateEnd.Value.Year, DayItem.DateEnd.Value.Month, DayItem.DateEnd.Value.Day, 23, 59, 59, DateTimeKind.Utc);
+        DayItem.DateStart = DateTime.SpecifyKind(_dateRange.Start.Value, DateTimeKind.Utc);
+        if (_dateRange.End is not null)
+            DayItem.DateEnd = DateTime.SpecifyKind(_dateRange.End.Value, DateTimeKind.Utc);
 
         DayItem.LinkedUsers = [];
-        Console.WriteLine($"Count is {_selectedUsersAction.Count()}");
         foreach (var user in _selectedUsersAction)
         {
-            Console.WriteLine(user.Name);
             DayItem.LinkedUsers.Add(new RoosterItemDayLinkedUsers
             {
                 UserId = user.Id

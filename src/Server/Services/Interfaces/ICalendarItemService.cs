@@ -12,5 +12,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces
         Task<PutDayItemResponse> PutDayItem(RoosterItemDay roosterItemDay, Guid customerId, Guid userId, CancellationToken clt);
         Task<PatchDayItemResponse> PatchDayItem(RoosterItemDay roosterItemDay, Guid customerId, Guid userId, CancellationToken clt);
         Task<bool> DeleteDayItem(Guid idToDelete, Guid customerId, Guid userId, CancellationToken clt);
+        Task<bool> PatchCalendarEventId(Guid id1, Guid userId, Guid customerId, string? id2, CancellationToken clt);
     }
 }
