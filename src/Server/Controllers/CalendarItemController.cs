@@ -150,10 +150,10 @@ public class CalendarItemController : ControllerBase
 
             if (roosterItemDay.LinkedUsers is not null)
             {
-                var newd = await _calendarItemService.GetDayItemById(customerId, roosterItemDay.Id, clt);
+                var newd = await _calendarItemService.GetDayItemById(customerId, result.NewId, clt);
                 if (newd.DayItem?.LinkedUsers is not null)
                     foreach (var user in newd.DayItem.LinkedUsers)
-                        await ToOutlookCalendar(user, true, roosterItemDay, customerId, clt);
+                        await ToOutlookCalendar(user, true, newd.DayItem, customerId, clt);
             }
             return result;
         }
@@ -185,7 +185,7 @@ public class CalendarItemController : ControllerBase
                 {
                     if (roosterItemDay.LinkedUsers?.Any(x => x.UserId == user.UserId) is true)
                         continue;
-                    await ToOutlookCalendar(user, false, roosterItemDay, customerId, clt);
+                    await ToOutlookCalendar(user, false, old.DayItem, customerId, clt);
 
                 }
             }
@@ -194,7 +194,7 @@ public class CalendarItemController : ControllerBase
                 var newd = await _calendarItemService.GetDayItemById(customerId, roosterItemDay.Id, clt);
                 if (newd.DayItem?.LinkedUsers is not null)
                     foreach (var user in newd.DayItem.LinkedUsers)
-                        await ToOutlookCalendar(user, true, roosterItemDay, customerId, clt);
+                        await ToOutlookCalendar(user, true, newd.DayItem, customerId, clt);
             }
             return result;
         }
