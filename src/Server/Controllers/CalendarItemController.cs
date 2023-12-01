@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
@@ -138,6 +139,7 @@ public class CalendarItemController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = AccessesNames.AUTH_scheduler_dayitem)]
     [Route("day")]
     public async Task<ActionResult<PutDayItemResponse>> PutDayItem([FromBody] RoosterItemDay roosterItemDay, CancellationToken clt = default)
     {
@@ -165,6 +167,7 @@ public class CalendarItemController : ControllerBase
     }
 
     [HttpPatch]
+    [Authorize(Roles = AccessesNames.AUTH_scheduler_dayitem)]
     [Route("day")]
     public async Task<ActionResult<PatchDayItemResponse>> PatchDayItem([FromBody] RoosterItemDay roosterItemDay, CancellationToken clt = default)
     {
@@ -206,6 +209,7 @@ public class CalendarItemController : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize(Roles = AccessesNames.AUTH_scheduler_dayitem)]
     [Route("day")]
     public async Task<ActionResult<bool>> DeleteDayItem([FromBody] Guid idToDelete, CancellationToken clt = default)
     {
