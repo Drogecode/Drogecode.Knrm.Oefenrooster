@@ -37,7 +37,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbReportUser> ReportUsers { get; set; }
 
         public DbSet<DbLinkVehicleTraining> LinkVehicleTraining { get; set; }
-        public DbSet<DbLinkUserDayItem> LinkUserDayItems{ get; set; }
+        public DbSet<DbLinkUserDayItem> LinkUserDayItems { get; set; }
 
 
         public DataContext(DbContextOptions<DataContext> context) : base(context)
