@@ -407,13 +407,13 @@ public class ScheduleController : ControllerBase
             {
                 if (!string.IsNullOrEmpty(type?.TrainingType?.Name))
                 {
-                    var eventResult = await _graphService.AddToCalendar(planUserId, text, training.DateStart, training.DateEnd, training.ShowTime);
+                    var eventResult = await _graphService.AddToCalendar(planUserId, text, training.DateStart, training.DateEnd, !training.ShowTime);
                     await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, eventResult.Id, clt);
                 }
             }
             else
             {
-                await _graphService.PatchCalender(planUserId, calendarEventId, text, training.DateStart, training.DateEnd, training.ShowTime);
+                await _graphService.PatchCalender(planUserId, calendarEventId, text, training.DateStart, training.DateEnd, !training.ShowTime);
                 await _auditService.Log(currentUserId, AuditType.PatchTraining, customerId, $"Preventing duplicate event '{type?.TrainingType?.Name}' on '{training?.DateStart.ToString("o")}' : '{training?.DateEnd.ToString("o")}'");
             }
         }
