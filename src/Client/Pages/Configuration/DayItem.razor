@@ -19,7 +19,7 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="@LApp["Description"]">@context.Text</MudTd>
-                <MudTd DataLabel="@LApp["Type"]">@context.Type</MudTd>
+                <MudTd DataLabel="@LApp["Type"]">@L[@context.Type.ToString()]</MudTd>
                 <MudTd DataLabel="@LApp["Who"]">@_users?.FirstOrDefault(x=>x.Id == context?.LinkedUsers?.FirstOrDefault()?.UserId)?.Name</MudTd>
                 <MudTd DataLabel="@LApp["From"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateStart" /></MudTd>
                 <MudTd DataLabel="@LApp["Till"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateEnd" /></MudTd>

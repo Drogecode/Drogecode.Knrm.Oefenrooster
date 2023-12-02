@@ -346,7 +346,8 @@ public class ScheduleService : IScheduleService
                             var avaUser = ava.FirstOrDefault(x => x.UserId == user.Id && (includeUnAssigned || x.Assigned));
                             if (avaUser is null && !includeUnAssigned) continue;
                             avaUser ??= new DbRoosterAvailable();
-                            if (avaUser.VehicleId is null || (avaUser.VehicleId != defVehicle && !await IsVehicleSelectedForTraining(customerId, training.Id, avaUser.VehicleId, clt)))
+                            defVehicle ??= await GetDefaultVehicleForTraining(customerId, training.Id, clt);
+                            if (avaUser.VehicleId is null || (avaUser.VehicleId != defVehicle && !(await IsVehicleSelectedForTraining(customerId, training.Id, avaUser.VehicleId, clt))))
                             {
                                 if (avaUser.Assigned && avaUser.VehicleId is not null && avaUser.UserId != Guid.Empty && avaUser.VehicleId != defVehicle && !await IsVehicleSelectedForTraining(customerId, training.Id, avaUser.VehicleId, clt))
                                 {
@@ -354,7 +355,6 @@ public class ScheduleService : IScheduleService
                                     avaUser.VehicleId = null;
                                     _database.RoosterAvailables.Update(avaUser);
                                 }
-                                defVehicle ??= await GetDefaultVehicleForTraining(customerId, training.Id, clt);
                                 avaUser.VehicleId = defVehicle;
                             }
                             Availabilty? availabilty = avaUser.Available;
@@ -488,7 +488,7 @@ public class ScheduleService : IScheduleService
         if (result is not null)
             return result.Value;
         var links = await _database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.RoosterTrainingId == trainingId).Select(x => new { x.VehicleId, x.IsSelected }).ToListAsync(clt);
-        var isSelected = links.Any(x => x.VehicleId == vehicleId);
+        var isSelected = links.Any(x => x.VehicleId == vehicleId && x.IsSelected);
         var cacheOptions = new MemoryCacheEntryOptions();
         cacheOptions.SetSlidingExpiration(TimeSpan.FromSeconds(5));
         cacheOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(15));
@@ -811,6 +811,7 @@ public class ScheduleService : IScheduleService
                     Name = users?.FirstOrDefault(x => x.Id == a.UserId)?.Name ?? "Name not found",
                     PlannedFunctionId = a.UserFunctionId ?? users?.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId,
                     UserFunctionId = users?.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId,
+                    VehicleId = a.VehicleId,
                 }).ToList()
             };
             foreach (var user in plan.PlanUsers.Where(x => x.Assigned))
@@ -820,7 +821,7 @@ public class ScheduleService : IScheduleService
                 GetAvailability(defaultAveUser, userHolidays, plan.DateStart, plan.DateEnd, plan.DefaultId, null, ref availabilty, ref setBy);
                 user.Availabilty = availabilty;
                 user.SetBy = setBy ?? user.SetBy;
-                if (user.VehicleId is null || (user.VehicleId != defaultVehicle && !await IsVehicleSelectedForTraining(customerId, schedul.TrainingId, user.VehicleId, clt)))
+                if (user.VehicleId is null || (user.VehicleId != defaultVehicle && !(await IsVehicleSelectedForTraining(customerId, schedul.TrainingId, user.VehicleId, clt))))
                     user.VehicleId = defaultVehicle;
             }
             result.Trainings.Add(plan);

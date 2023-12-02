@@ -123,11 +123,23 @@
   <data name="Add new day item" xml:space="preserve">
     <value>Maak nieuw dag item aan</value>
   </data>
+  <data name="Custom" xml:space="preserve">
+    <value>Aangepast</value>
+  </data>
   <data name="Day items" xml:space="preserve">
     <value>Dag items</value>
   </data>
+  <data name="Default" xml:space="preserve">
+    <value>Standaard</value>
+  </data>
   <data name="Edit day item" xml:space="preserve">
     <value>Bewerk dag item</value>
+  </data>
+  <data name="PersonPublic" xml:space="preserve">
+    <value>Persoon publiek</value>
+  </data>
+  <data name="SpecialDate" xml:space="preserve">
+    <value>Feestdagen</value>
   </data>
   <data name="Who" xml:space="preserve">
     <value>Wie</value>
