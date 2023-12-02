@@ -18,6 +18,7 @@ public class CalendarItemService : ICalendarItemService
 
     public async Task<GetMultipleMonthItemResponse> GetMonthItems(int year, int month, Guid customerId, CancellationToken clt)
     {
+        var sw = Stopwatch.StartNew();
         var monthItems = await _database.RoosterItemMonths.Where(x => x.CustomerId == customerId && x.Month == month && (x.Year == null || x.Year == 0 || x.Year == year)).Select(
             x => new RoosterItemMonth
             {
@@ -33,11 +34,15 @@ public class CalendarItemService : ICalendarItemService
         {
             MonthItems = monthItems,
         };
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        result.Success = true;
         return result;
     }
 
     public async Task<GetMultipleDayItemResponse> GetDayItems(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, Guid customerId, Guid userId, CancellationToken clt)
     {
+        var sw = Stopwatch.StartNew();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
         var dayItems = await _database.RoosterItemDays
@@ -52,11 +57,15 @@ public class CalendarItemService : ICalendarItemService
         {
             DayItems = dayItems
         };
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        result.Success = true;
         return result;
     }
 
     public async Task<GetMultipleDayItemResponse> GetAllFutureDayItems(Guid customerId, int count, int skip, CancellationToken clt)
     {
+        var sw = Stopwatch.StartNew();
         var startDate = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
         var dayItems = await _database.RoosterItemDays
             .Include(x => x.LinkUserDayItems)
@@ -70,6 +79,9 @@ public class CalendarItemService : ICalendarItemService
         {
             DayItems = dayItems
         };
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        result.Success = true;
         return result;
     }
 
