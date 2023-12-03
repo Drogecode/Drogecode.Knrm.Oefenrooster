@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 
@@ -15,10 +16,14 @@ public class TrainingTypesRepository
         _offlineService = offlineService;
     }
 
-    internal async Task<List<PlannerTrainingType>?> GetTrainingTypes(CancellationToken clt = default)
+    internal async Task<List<PlannerTrainingType>?> GetTrainingTypes(bool forceCache, CancellationToken clt = default)
     {
-        var schedule = await _trainingTypesClient.GetTrainingTypesAsync(clt);
-        return schedule.PlannerTrainingTypes?.ToList();
+
+        var response = await _offlineService.CachedRequestAsync(string.Format("tra_tp_all"),
+            async () => await _trainingTypesClient.GetTrainingTypesAsync(clt),
+            new ApiCachedRequest { OneCallPerSession = true, ForceCache = forceCache },
+            clt: clt);
+        return response.PlannerTrainingTypes?.ToList();
     }
     internal async Task<PutTrainingTypeResponse> Post(PlannerTrainingType trainingType, CancellationToken clt = default)
     {

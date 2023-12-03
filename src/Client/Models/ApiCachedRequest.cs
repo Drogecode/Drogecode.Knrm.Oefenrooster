@@ -2,7 +2,8 @@
 
 public class ApiCachedRequest
 {
-    public DateTime Expire { get; set; } = DateTime.UtcNow.AddDays(7);
+    public DateTime ExpireLocalStorage { get; set; } = DateTime.UtcNow.AddDays(7);
+    public DateTime ExpireSession { get; set; } = DateTime.UtcNow.AddMinutes(5);
     public bool OneCallPerSession { get; set; } = false;
     public bool ForceCache { get; set; } = false;
 }

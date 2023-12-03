@@ -67,20 +67,19 @@ public class LocalStorageExpireService : ILocalStorageExpireService
         }
     }
 
-    public async ValueTask<T> GetItemAsync<T>(string key, CancellationToken cancellationToken = default)
+    public async ValueTask<T?> GetItemAsync<T>(string key, CancellationToken cancellationToken = default)
     {
-        var value = await _localStorageService.GetItemAsync<ExpiryStorageModel<T>>(key, cancellationToken);
+        var value = await _localStorageService.GetItemAsync<ExpiryStorageModel<T?>>(key, cancellationToken);
         var result = value.Data;
         return result;
     }
 
-    public async ValueTask SetItemAsync<T>(string key, T data, DateTime expire, bool postRequest = false, CancellationToken cancellationToken = default)
+    public async ValueTask SetItemAsync<T>(string key, T data, DateTime expire, CancellationToken cancellationToken = default)
     {
         var value = new ExpiryStorageModel<T>
         {
             Data = data,
             Ttl = expire.Ticks,
-            PostRequest = postRequest
         };
         await _localStorageService.SetItemAsync(key, value, cancellationToken);
     }

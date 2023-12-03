@@ -10,7 +10,7 @@ public class OfflineService : IOfflineService
 
     private readonly ILocalStorageService _localStorageService;
     private readonly ILocalStorageExpireService _localStorageExpireService;
-    private readonly ISessionStorageService _sessionStorageService;
+    private readonly ISessionExpireService _sessionStorageExpireService;
     private static bool _offline;
     private static bool _mockOffline;
     public event Action? OfflineStatusChanged;
@@ -18,11 +18,11 @@ public class OfflineService : IOfflineService
     public OfflineService(
         ILocalStorageService localStorageService,
         ILocalStorageExpireService localStorageExpireService,
-        ISessionStorageService sessionStorageService)
+        ISessionExpireService sessionStorageExpireService)
     {
         _localStorageService = localStorageService;
         _localStorageExpireService = localStorageExpireService;
-        _sessionStorageService = sessionStorageService;
+        _sessionStorageExpireService = sessionStorageExpireService;
     }
 
     private void CallOfflineStatusChanged()
@@ -61,17 +61,17 @@ public class OfflineService : IOfflineService
             request ??= new ApiCachedRequest();
             if (request.OneCallPerSession && !request.ForceCache)
             {
-                var sessionResult = await _sessionStorageService.GetItemAsync<TRes>(cacheKey, clt);
-                if (sessionResult != null)
+                var sessionResult = await _sessionStorageExpireService.GetItemAsync<TRes>(cacheKey, clt);
+                if (sessionResult is not null)
                     return sessionResult;
             }
 
             if (!Offline)
             {
                 var result = await function();
-                await _localStorageExpireService.SetItemAsync(cacheKey, result, request.Expire, false, clt);
+                await _localStorageExpireService.SetItemAsync(cacheKey, result, request.ExpireLocalStorage, clt);
                 if (request.OneCallPerSession)
-                    await _sessionStorageService.SetItemAsync(cacheKey, result, clt);
+                    await _sessionStorageExpireService.SetItemAsync(cacheKey, result, request.ExpireSession, clt);
                 return result;
             }
         }

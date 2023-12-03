@@ -24,6 +24,7 @@ public sealed partial class Global : IDisposable
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
     private RefreshModel _refreshModel = new();
+    private CancellationTokenSource _cls = new();
     private bool _isAuthenticated;
     private string _name = string.Empty;
 
@@ -48,7 +49,7 @@ public sealed partial class Global : IDisposable
             var dbUser = await _userRepository.GetCurrentUserAsync();
             _name = authState!.User!.Identity!.Name ?? string.Empty;
         }
-        _users = await _userRepository.GetAllUsersAsync(true);
+        _users = await _userRepository.GetAllUsersAsync(true, true, _cls.Token);
         _functions = await _functionRepository.GetAllFunctionsAsync();
     }
 
@@ -70,7 +71,7 @@ public sealed partial class Global : IDisposable
         _usersSynced = await _userRepository.SyncAllUsersAsync();
         if (_usersSynced == true)
         {
-            _users = await _userRepository.GetAllUsersAsync(true);
+            _users = await _userRepository.GetAllUsersAsync(true, true, _cls.Token);
             await RefreshMeAsync();
         }
     }
@@ -106,12 +107,13 @@ public sealed partial class Global : IDisposable
     }
     private async Task RefreshMeAsync()
     {
-        _users = await _userRepository.GetAllUsersAsync(true);
+        _users = await _userRepository.GetAllUsersAsync(true, true, _cls.Token);
         StateHasChanged();
     }
 
     public void Dispose()
     {
         _refreshModel.RefreshRequestedAsync -= RefreshMeAsync;
+        _cls.Cancel();
     }
 }

@@ -1,4 +1,6 @@
-﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
@@ -6,16 +8,23 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 public class UserRepository
 {
     private readonly IUserClient _userClient;
+    private readonly IOfflineService _offlineService;
 
-    public UserRepository(IUserClient userClient)
+    private const string MONTHITEMS = "usr_all_{0}";
+
+    public UserRepository(IUserClient userClient, IOfflineService offlineService)
     {
         _userClient = userClient;
+        _offlineService = offlineService;
     }
 
-    public async Task<List<DrogeUser>?> GetAllUsersAsync(bool includeHidden)
+    public async Task<List<DrogeUser>?> GetAllUsersAsync(bool includeHidden, bool forceCache, CancellationToken clt)
     {
-        var dbUser = await _userClient.GetAllAsync(includeHidden);
-        return dbUser.DrogeUsers?.ToList();
+        var response = await _offlineService.CachedRequestAsync(string.Format(MONTHITEMS, includeHidden),
+            async () => await _userClient.GetAllAsync(includeHidden), 
+            new ApiCachedRequest { OneCallPerSession = true, ForceCache = forceCache},
+            clt: clt);
+        return response.DrogeUsers?.ToList();
     }
     public async Task<DrogeUser?> GetCurrentUserAsync()
     {

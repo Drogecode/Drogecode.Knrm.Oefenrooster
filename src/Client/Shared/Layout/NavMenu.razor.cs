@@ -38,7 +38,7 @@ public sealed partial class NavMenu : IDisposable
 
     private async Task AddTraining()
     {
-        var trainingTypes = await _trainingTypesRepository.GetTrainingTypes(_cls.Token);
+        var trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false,_cls.Token);
         var vehicles = await _vehicleRepository.GetAllVehiclesAsync();
         var parameters = new DialogParameters<EditTrainingDialog>
         {

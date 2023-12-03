@@ -25,9 +25,9 @@ public sealed partial class Index : IDisposable
     private List<PlannerTrainingType>? _trainingTypes;
     protected override async Task OnParametersSetAsync()
     {
-        _users = await _userRepository.GetAllUsersAsync(false);
+        _users = await _userRepository.GetAllUsersAsync(false, false, _cls.Token);
         _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
-        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(_cls.Token);
+        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, _cls.Token);
 
         _user = await _userRepository.GetCurrentUserAsync();
         _functions = await _functionRepository.GetAllFunctionsAsync();

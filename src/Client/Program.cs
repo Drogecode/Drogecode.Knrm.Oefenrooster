@@ -59,6 +59,7 @@ builder.Services.TryAddScoped<UserRepository>();
 builder.Services.TryAddScoped<VehicleRepository>();
 
 builder.Services.TryAddScoped<ILocalStorageExpireService, LocalStorageExpireService>();
+builder.Services.TryAddScoped<ISessionExpireService, SessionExpireService>();
 builder.Services.TryAddScoped<IOfflineService, OfflineService>();
 
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
