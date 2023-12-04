@@ -27,7 +27,7 @@ public sealed partial class DayItem : IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        _items = (await _calendarItemClient.GetAllFutureDayItemsAsync(30, 0))?.DayItems;
+        _items = (await _calendarItemClient.GetAllFutureDayItemsAsync(30, 0, true))?.DayItems;
         _users = await _userRepository.GetAllUsersAsync(false, false, _cls.Token);
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
@@ -60,7 +60,7 @@ public sealed partial class DayItem : IDisposable
 
     private async Task RefreshMeAsync()
     {
-        _items = (await _calendarItemClient.GetAllFutureDayItemsAsync(30, 0))?.DayItems;
+        _items = (await _calendarItemClient.GetAllFutureDayItemsAsync(30, 0, true))?.DayItems;
         StateHasChanged();
     }
 

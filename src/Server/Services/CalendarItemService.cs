@@ -63,13 +63,15 @@ public class CalendarItemService : ICalendarItemService
         return result;
     }
 
-    public async Task<GetMultipleDayItemResponse> GetAllFutureDayItems(Guid customerId, int count, int skip, CancellationToken clt)
+    public async Task<GetMultipleDayItemResponse> GetAllFutureDayItems(Guid customerId, int count, int skip, bool forAllUsers, Guid userId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var startDate = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
         var dayItems = await _database.RoosterItemDays
             .Include(x => x.LinkUserDayItems)
-            .Where(x => x.CustomerId == customerId && x.DeletedOn == null && (x.DateStart >= startDate || x.DateEnd >= startDate))
+            .Where(x => x.CustomerId == customerId && x.DeletedOn == null 
+                && (forAllUsers || x.LinkUserDayItems!.Any(y => y.UserForeignKey == userId))
+                && (x.DateStart >= startDate || x.DateEnd >= startDate))
             .OrderBy(x => x.DateStart)
             .Select(x => x.ToRoosterItemDay())
             .Skip(skip)

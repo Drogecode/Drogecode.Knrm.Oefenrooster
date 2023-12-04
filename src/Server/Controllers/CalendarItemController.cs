@@ -79,7 +79,7 @@ public class CalendarItemController : ControllerBase
 
     [HttpGet]
     [Route("day/all/{count:int}/{skip:int}")]
-    public async Task<ActionResult<GetMultipleDayItemResponse>> GetAllFutureDayItems(int count, int skip, CancellationToken clt = default)
+    public async Task<ActionResult<GetMultipleDayItemResponse>> GetAllFutureDayItems(int count, int skip, bool forAllUsers, CancellationToken clt = default)
     {
         try
         {
@@ -90,7 +90,8 @@ public class CalendarItemController : ControllerBase
             }
             var result = new GetMultipleDayItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            result = await _calendarItemService.GetAllFutureDayItems(customerId, count, skip, clt);
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            result = await _calendarItemService.GetAllFutureDayItems(customerId, count, skip, forAllUsers, userId, clt);
             return result;
         }
         catch (Exception ex)

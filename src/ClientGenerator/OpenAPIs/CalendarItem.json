@@ -173,6 +173,13 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "forAllUsers",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
