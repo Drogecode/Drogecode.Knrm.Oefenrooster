@@ -105,7 +105,7 @@ public class UserController : ControllerBase
 
     [HttpPatch]
     [Route("")]
-    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    [Authorize(Roles = AccessesNames.AUTH_users_details)]
     public async Task<ActionResult<UpdateUserResponse>> UpdateUser([FromBody] DrogeUser user, CancellationToken token = default)
     {
         try
@@ -127,7 +127,7 @@ public class UserController : ControllerBase
 
     [HttpPatch]
     [Route("sync")]
-    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    [Authorize(Roles = AccessesNames.AUTH_users_details)]
     public async Task<ActionResult<SyncAllUsersResponse>> SyncAllUsers(CancellationToken token = default)
     {
         try
@@ -150,11 +150,11 @@ public class UserController : ControllerBase
                             var index = existingUsers.FindIndex(x => x.Id == id);
                             if (index != -1)
                                 existingUsers.RemoveAt(index);
-                            var groups = await _graphService.GetGroupForUser(user.Id);
+                            /*var groups = await _graphService.GetGroupForUser(user.Id);
                             if (groups?.Value != null)
                             {
                                 //ToDo
-                            }
+                            }*/
                             var newUserResponse = await _userService.GetOrSetUserFromDb(id, user.DisplayName, user.Mail, customerId, false);
                         }
                     }
@@ -162,7 +162,7 @@ public class UserController : ControllerBase
                         users = await _graphService.NextUsersPage(users);
                     else break;
                 }
-                if (existingUsers.Count > 0)
+                if (existingUsers?.Count > 0)
                 {
                     await _userService.MarkUsersDeleted(existingUsers, userId, customerId);
                 }

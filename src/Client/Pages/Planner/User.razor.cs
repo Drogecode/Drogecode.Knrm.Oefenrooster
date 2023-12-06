@@ -52,6 +52,14 @@ public sealed partial class User : IDisposable
         Navigation.NavigateTo($"/planner/user/{user.Id}");
     }
 
+    private async Task UserFunctionChanged(Guid? newFunction)
+    {
+        if (_user is null || newFunction is null)
+            return;
+        _user.UserFunctionId = newFunction;
+        await _userRepository.UpdateUserAsync(_user);
+    }
+
     public void Dispose()
     {
         _cls.Cancel();

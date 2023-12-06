@@ -120,6 +120,12 @@
   <data name="For target" xml:space="preserve">
     <value>Voor doel</value>
   </data>
+  <data name="Function" xml:space="preserve">
+    <value>Functie</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Instellingen</value>
+  </data>
   <data name="Target: {0}" xml:space="preserve">
     <value>Doel: {0}</value>
   </data>

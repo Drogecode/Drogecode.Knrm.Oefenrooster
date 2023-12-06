@@ -120,6 +120,12 @@
   <data name="For target" xml:space="preserve">
     <value>For target</value>
   </data>
+  <data name="Function" xml:space="preserve">
+    <value>Function</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="Target: {0}" xml:space="preserve">
     <value>Target: {0}</value>
   </data>
