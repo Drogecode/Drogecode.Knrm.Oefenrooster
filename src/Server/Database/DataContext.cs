@@ -37,7 +37,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbReportUser> ReportUsers { get; set; }
 
         public DbSet<DbLinkVehicleTraining> LinkVehicleTraining { get; set; }
-        public DbSet<DbLinkUserDayItem> LinkUserDayItems{ get; set; }
+        public DbSet<DbLinkUserDayItem> LinkUserDayItems { get; set; }
+        public DbSet<DbLinkUserUser> LinkUserUsers { get; set; }
 
 
         public DataContext(DbContextOptions<DataContext> context) : base(context)
@@ -66,6 +67,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUsers>(e => { e.Property(e => e.Email).IsRequired(); });
             modelBuilder.Entity<DbUsers>().HasOne(p => p.Customer).WithMany(g => g.Users).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUsers>().HasOne(p => p.UserFunction).WithMany(g => g.Users).HasForeignKey(s => s.UserFunctionId);
+            modelBuilder.Entity<DbUsers>().HasMany(p => p.LinkedUserA).WithMany(g => g.LinkedUserB)
+                .UsingEntity<DbLinkUserUser>(
+                    l => l.HasOne<DbUsers>(e => e.UserA).WithMany(e => e.LinkedUserAsB).HasForeignKey(e => e.UserBId),
+                    r => r.HasOne<DbUsers>(e => e.UserB).WithMany(e => e.LinkedUserAsA).HasForeignKey(e => e.UserAId));
 
             //UserFunctions
             modelBuilder.Entity<DbUserFunctions>(e => { e.Property(e => e.Id).IsRequired(); });
@@ -121,8 +126,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbRoosterItemDay>().HasOne(p => p.Customer).WithMany(g => g.RoosterItemDays).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbRoosterItemDay>().HasMany(p => p.Users).WithMany(g => g.RoosterItemDays)
                 .UsingEntity<DbLinkUserDayItem>(
-                    l => l.HasOne<DbUsers>(e => e.User).WithMany(e => e.LinkUserDayItems).HasForeignKey(e => e.UserForeignKey),
-                    r => r.HasOne<DbRoosterItemDay>(e => e.DayItem).WithMany(e => e.LinkUserDayItems).HasForeignKey(e => e.DayItemForeignKey));
+                    l => l.HasOne<DbUsers>(e => e.User).WithMany(e => e.LinkUserDayItems).HasForeignKey(e => e.UserId),
+                    r => r.HasOne<DbRoosterItemDay>(e => e.DayItem).WithMany(e => e.LinkUserDayItems).HasForeignKey(e => e.DayItemId));
 
             //Rooster item month
             modelBuilder.Entity<DbRoosterItemMonth>(e => { e.Property(e => e.Id).IsRequired(); });
@@ -615,7 +620,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = new Guid("287359b1-2035-435b-97b0-eb260dc497d6"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Admin",
-                Accesses = AccessesNames.AUTH_configure_training_types
+                Accesses = $"{AccessesNames.AUTH_configure_training_types},{AccessesNames.AUTH_users_settigns}"
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {

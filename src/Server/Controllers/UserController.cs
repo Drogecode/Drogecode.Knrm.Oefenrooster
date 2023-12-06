@@ -28,7 +28,7 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Route("all/{includeHidden:bool}")]
-    public async Task<ActionResult<MultipleDrogeUsersResponse>> GetAll(bool includeHidden, CancellationToken token = default)
+    public async Task<ActionResult<MultipleDrogeUsersResponse>> GetAll(bool includeHidden, CancellationToken clt = default)
     {
         try
         {
@@ -47,7 +47,7 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Route("me")]
-    public async Task<ActionResult<GetDrogeUserResponse>> GetCurrentUser(CancellationToken token = default)
+    public async Task<ActionResult<GetDrogeUserResponse>> GetCurrentUser(CancellationToken clt = default)
     {
         try
         {
@@ -85,7 +85,7 @@ public class UserController : ControllerBase
     [HttpPost]
     [Route("")]
     [Authorize(Roles = AccessesNames.AUTH_Taco)]
-    public async Task<ActionResult<AddUserResponse>> AddUser([FromBody] DrogeUser user, CancellationToken token = default)
+    public async Task<ActionResult<AddUserResponse>> AddUser([FromBody] DrogeUser user, CancellationToken clt = default)
     {
         try
         {
@@ -103,20 +103,18 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPatch]
+    [HttpPut]
     [Route("")]
     [Authorize(Roles = AccessesNames.AUTH_users_details)]
-    public async Task<ActionResult<UpdateUserResponse>> UpdateUser([FromBody] DrogeUser user, CancellationToken token = default)
+    public async Task<ActionResult<UpdateUserResponse>> UpdateUser([FromBody] DrogeUser user, CancellationToken clt = default)
     {
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
-            var userEmail = User?.FindFirstValue(ClaimTypes.Name) ?? throw new Exception("No userEmail found");
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var result = await _userService.UpdateUser(user, userId, userName, userEmail, customerId);
+            var result = await _userService.UpdateUser(user, userId, customerId);
 
-            return Ok(new UpdateUserResponse { Success = result });
+            return new UpdateUserResponse { Success = result };
         }
         catch (Exception ex)
         {
@@ -126,9 +124,30 @@ public class UserController : ControllerBase
     }
 
     [HttpPatch]
+    [Route("link-user-user")]
+    [Authorize(Roles = AccessesNames.AUTH_users_settigns)]
+    public async Task<ActionResult<UpdateLinkUserUserForUserResponse>> UpdateLinkUserUserForUser([FromBody] UpdateLinkUserUserForUserRequest body, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            UpdateLinkUserUserForUserResponse result = await _userService.UpdateLinkUserUserForUser(body, userId, customerId);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in UpdateLinkUserUserForUser");
+            return BadRequest();
+        }
+    }
+
+
+    [HttpPatch]
     [Route("sync")]
     [Authorize(Roles = AccessesNames.AUTH_users_details)]
-    public async Task<ActionResult<SyncAllUsersResponse>> SyncAllUsers(CancellationToken token = default)
+    public async Task<ActionResult<SyncAllUsersResponse>> SyncAllUsers(CancellationToken clt = default)
     {
         try
         {

@@ -70,16 +70,19 @@ else
                         </MudPaper>
                     }
                 </MudTabPanel>
-                <MudTabPanel Text="@L["Settings"]">
-                    <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" Value="_user.UserFunctionId" ValueChanged="UserFunctionChanged">
-                        @foreach (var function in _functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
-                        {
-                            <MudSelectItem T="Guid?" Value="@function.Id">@function.Name</MudSelectItem>
-                        }
-                    </MudSelect>
-                    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
-                    </AuthorizeView>
-                </MudTabPanel>
+                <AuthorizeView Roles="@AccessesNames.AUTH_users_settigns">
+                    <MudTabPanel Text="@L["Settings"]">
+                        <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" Value="_user.UserFunctionId" ValueChanged="UserFunctionChanged">
+                            @foreach (var function in _functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
+                            {
+                                <MudSelectItem T="Guid?" Value="@function.Id">@function.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
+                            <SelectMultipleUsers Users="@_users" Functions="@_functions" Label="@L["Buddy"]" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="false" />
+                        </AuthorizeView>
+                    </MudTabPanel>
+                </AuthorizeView>
             </MudTabs>
         </MudPaper>
     }

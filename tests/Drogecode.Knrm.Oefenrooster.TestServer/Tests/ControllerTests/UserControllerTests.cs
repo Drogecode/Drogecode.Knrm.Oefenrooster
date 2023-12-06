@@ -54,6 +54,37 @@ public class UserControllerTests : BaseTest
     }
 
     [Fact]
+    public async Task GetUserByIdTest()
+    {
+        var user = await UserController.GetById(DefaultUserId);
+        Assert.True(user.Value?.Success);
+        Assert.NotNull(user.Value!.User);
+        user.Value.User.Id.Should().Be(DefaultUserId);
+        user.Value.User.Name.Should().Be(USER_NAME);
+        user.Value.User.LinkedAsA.Should().BeNull();
+        user.Value.User.LinkedAsB.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task LinkUserUserTest()
+    {
+        var userAId = await AddUser("User A");
+        var userBId = await AddUser("User B");
+        var body = new UpdateLinkUserUserForUserRequest
+        {
+            UserAId = userAId,
+            UserBId = userBId,
+            LinkType = Shared.Enums.UserUserLinkType.Buddy,
+        };
+        var linkUser = await UserController.UpdateLinkUserUserForUser(body);
+        Assert.True(linkUser.Value?.Success);
+        var userA = (await UserController.GetById(userAId))!.Value!.User;
+        var userB = (await UserController.GetById(userBId))!.Value!.User;
+        userA!.LinkedAsA.Should().Contain(x=>x.LinkedUserId == userBId);
+        userB!.LinkedAsB.Should().Contain(x => x.LinkedUserId == userAId);
+    }
+
+    [Fact]
     public async Task GetTest()
     {
         var user = await UserController.GetCurrentUser();

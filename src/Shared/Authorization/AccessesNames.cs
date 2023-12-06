@@ -21,6 +21,7 @@ public static class AccessesNames
 
     public const string AUTH_users_details = "users_details";
     public const string AUTH_users_counter = "users_counter";
+    public const string AUTH_users_settigns = "users_settings";
 
     public const string AUTH_action_history_full = "full_action_history";
     public const string AUTH_training_history_full = "full_training_history";

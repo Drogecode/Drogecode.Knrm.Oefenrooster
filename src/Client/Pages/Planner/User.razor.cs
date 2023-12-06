@@ -29,6 +29,7 @@ public sealed partial class User : IDisposable
     private GetScheduledTrainingsForUserResponse? _trainings;
     private List<DrogeVehicle>? _vehicles;
     private List<PlannerTrainingType>? _trainingTypes;
+    private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
     protected override void OnInitialized()
     {
         _trainings = null;
@@ -58,6 +59,10 @@ public sealed partial class User : IDisposable
             return;
         _user.UserFunctionId = newFunction;
         await _userRepository.UpdateUserAsync(_user);
+    }
+    private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
+    {
+        _selectedUsersAction = selection;
     }
 
     public void Dispose()

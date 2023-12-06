@@ -14,6 +14,7 @@ public sealed partial class SelectMultipleUsers
     [Parameter][EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
     [Parameter] public EventCallback<IEnumerable<DrogeUser>> SelectionChanged { get; set; }
     [Parameter] public bool MultiSelection { get; set; } = true;
+    [Parameter] public string Label { get; set; } = string.Empty;
 
     private IEnumerable<DrogeUser> _selectedUsers = new List<DrogeUser>();
     [Parameter]
@@ -29,6 +30,11 @@ public sealed partial class SelectMultipleUsers
             _selectedUsers = value;
             SelectionChanged.InvokeAsync(value);
         }
+    }
+    protected override void OnParametersSet()
+    {
+        if (string.IsNullOrEmpty(Label))
+            Label = L["From who"];
     }
 
     private string GetMultiSelectionText(List<DrogeUser> selectedValues)

@@ -35,7 +35,7 @@ public static class RoosterItemDayMapper
             {
                 result.LinkedUsers.Add(new RoosterItemDayLinkedUsers
                 {
-                    UserId = user.UserForeignKey,
+                    UserId = user.UserId,
                     CalendarEventId = user.CalendarEventId,
                 });
             }
