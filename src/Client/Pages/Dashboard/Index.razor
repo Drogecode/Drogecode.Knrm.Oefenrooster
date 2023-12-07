@@ -11,8 +11,8 @@
 <PageTitle>Dashboard</PageTitle>
 
 <MudPaper Elevation="0" Class="p-2">
-    <MudTabs Rounded="true">
-        <MudTabPanel Text="@L["Planner"]">
+    <DrogeCodeMudTabs Rounded="true">
+        <DrogeCodeMudTabPanel Text="@L["Planner"]">
             @if (_pinnedTrainings != null)
             {
                 @if (_pinnedTrainings.Count() > 0)
@@ -62,12 +62,12 @@
                 <MudSkeleton />
                 <MudSkeleton />
             }
-        </MudTabPanel>
-        <MudTabPanel Text="@L["Actions"]">
+        </DrogeCodeMudTabPanel>
+        <DrogeCodeMudTabPanel Text="@L["Actions"]">
             <ActionsTab User="@_user" Users="@_users" Functions="@_functions" />
-        </MudTabPanel>
-        <MudTabPanel Text="@L["Trainings"]">
+        </DrogeCodeMudTabPanel>
+        <DrogeCodeMudTabPanel Text="@L["Trainings"]">
             <TrainingsTab User="@_user" Users="@_users" Functions="@_functions" />
-        </MudTabPanel>
-    </MudTabs>
+        </DrogeCodeMudTabPanel>
+    </DrogeCodeMudTabs>
 </MudPaper>

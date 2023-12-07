@@ -41,8 +41,8 @@ else
     {
         <MudPaper Elevation="0" Class="p-2">
             <MudText Typo="Typo.h3">@L["Trainings for {0}", _user?.Name ?? "No name"]</MudText>
-                <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
-                    <MudTabPanel Text="@L["Trainings"]">
+                <DrogeCodeMudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+                    <DrogeCodeMudTabPanel Text="@L["Trainings"]">
                         <MudPaper Elevation="0" Class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
                             @foreach (var training in _trainings.Trainings.OrderByDescending(x => x.DateStart))
                         {
@@ -51,8 +51,8 @@ else
                             </div>
                         }
                     </MudPaper>
-                </MudTabPanel>
-                <MudTabPanel Text="@L["For target"]">
+                </DrogeCodeMudTabPanel>
+                <DrogeCodeMudTabPanel Text="@L["For target"]">
                     @if (_userFunction is not null)
                     {
                         <MudText Typo="Typo.body1">@L["Target: {0}", _userFunction.TrainingTarget]</MudText>
@@ -69,9 +69,9 @@ else
                             </MudGrid>
                         </MudPaper>
                     }
-                </MudTabPanel>
+                </DrogeCodeMudTabPanel>
                 <AuthorizeView Roles="@AccessesNames.AUTH_users_settigns">
-                    <MudTabPanel Text="@L["Settings"]">
+                    <DrogeCodeMudTabPanel Text="@L["Settings"]">
                         <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" Value="_user.UserFunctionId" ValueChanged="UserFunctionChanged">
                             @foreach (var function in _functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
                             {
@@ -81,9 +81,9 @@ else
                         <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
                             <SelectMultipleUsers Users="@_users" Functions="@_functions" Label="@L["Buddy"]" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="false" />
                         </AuthorizeView>
-                    </MudTabPanel>
+                    </DrogeCodeMudTabPanel>
                 </AuthorizeView>
-            </MudTabs>
+            </DrogeCodeMudTabs>
         </MudPaper>
     }
     else
