@@ -67,20 +67,18 @@ public class CalendarItemService : ICalendarItemService
     {
         var sw = Stopwatch.StartNew();
         var startDate = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
-        var dayItems = await _database.RoosterItemDays
+        var dayItems = _database.RoosterItemDays
             .Include(x => x.LinkUserDayItems)
-            .Where(x => x.CustomerId == customerId && x.DeletedOn == null 
+            .Where(x => x.CustomerId == customerId && x.DeletedOn == null
                 && (forAllUsers || x.LinkUserDayItems!.Any(y => y.UserId == userId))
                 && (x.DateStart >= startDate || x.DateEnd >= startDate))
             .OrderBy(x => x.DateStart)
-            .Select(x => x.ToRoosterItemDay())
-            .Skip(skip)
-            .Take(count)
-            .ToListAsync(clt);
+            .Select(x => x.ToRoosterItemDay());
         var result = new GetMultipleDayItemResponse
         {
-            DayItems = dayItems
-        };
+            DayItems = await dayItems.Skip(skip).Take(count).ToListAsync(clt),
+            TotalCount = await dayItems.CountAsync(),
+    };
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         result.Success = true;

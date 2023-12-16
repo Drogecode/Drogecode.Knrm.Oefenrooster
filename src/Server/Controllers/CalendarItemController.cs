@@ -60,7 +60,7 @@ public class CalendarItemController : ControllerBase
     }
 
     [HttpGet]
-    [Route("day/{yearStart:int}/{monthStart:int}/{dayStart:int}/{yearEnd:int}/{monthEnd:int}/{dayEnd:int}")]
+    [Route("day/{yearStart:int}/{monthStart:int}/{dayStart:int}/{yearEnd:int}/{monthEnd:int}/{dayEnd:int}/{userId:guid}")]
     public async Task<ActionResult<GetMultipleDayItemResponse>> GetDayItems(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, Guid userId, CancellationToken clt = default)
     {
         try
@@ -78,7 +78,7 @@ public class CalendarItemController : ControllerBase
     }
 
     [HttpGet]
-    [Route("day/all/{count:int}/{skip:int}")]
+    [Route("day/all/{count:int}/{skip:int}/{forAllUsers:bool}")]
     public async Task<ActionResult<GetMultipleDayItemResponse>> GetAllFutureDayItems(int count, int skip, bool forAllUsers, CancellationToken clt = default)
     {
         try

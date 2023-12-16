@@ -55,7 +55,7 @@
         }
       }
     },
-    "/api/CalendarItem/day/{yearStart}/{monthStart}/{dayStart}/{yearEnd}/{monthEnd}/{dayEnd}": {
+    "/api/CalendarItem/day/{yearStart}/{monthStart}/{dayStart}/{yearEnd}/{monthEnd}/{dayEnd}/{userId}": {
       "get": {
         "tags": [
           "CalendarItem"
@@ -118,7 +118,8 @@
           },
           {
             "name": "userId",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -149,7 +150,7 @@
         }
       }
     },
-    "/api/CalendarItem/day/all/{count}/{skip}": {
+    "/api/CalendarItem/day/all/{count}/{skip}/{forAllUsers}": {
       "get": {
         "tags": [
           "CalendarItem"
@@ -176,7 +177,8 @@
           },
           {
             "name": "forAllUsers",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "boolean"
             }
