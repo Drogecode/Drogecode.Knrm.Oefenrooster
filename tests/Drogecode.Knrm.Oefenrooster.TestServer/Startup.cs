@@ -1,22 +1,13 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
-using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
+using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit.Abstractions;
-using Xunit.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Xunit.DependencyInjection.Logging;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer;
 
@@ -58,6 +49,6 @@ public class Startup
 
         services.AddScoped<PreComHub>();
 
-        services.AddScoped(typeof(ILogger<>), typeof(NullLogger<>));
+        services.AddLogging(lb => lb.AddXunitOutput());
     }
 }
