@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using System.Diagnostics;
 using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
@@ -54,6 +55,9 @@ public class CalendarItemController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in GetMonthItem");
             return BadRequest();
         }
@@ -72,6 +76,9 @@ public class CalendarItemController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in GetDayItems");
             return BadRequest();
         }
@@ -96,10 +103,14 @@ public class CalendarItemController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in GetAllFutureDayItems");
             return BadRequest();
         }
     }
+
     [HttpGet]
     [Route("day/{id:guid}")]
     public async Task<ActionResult<GetDayItemResponse>> GetDayItemById(Guid id, CancellationToken clt = default)
@@ -114,11 +125,36 @@ public class CalendarItemController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in GetDayItemById");
             return BadRequest();
         }
     }
 
+    [HttpGet]
+    [Route("day/dashboard")]
+    public async Task<ActionResult<GetMultipleDayItemResponse>> GetDayItemDashboard(CancellationToken clt = default)
+    {
+
+        try
+        {
+            var result = new GetMultipleDayItemResponse();
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            result = await _calendarItemService.GetDayItemDashboard(userId, customerId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in GetDayItemById");
+            return BadRequest();
+        }
+    }
 
     [HttpPut]
     [Route("month")]
@@ -134,6 +170,9 @@ public class CalendarItemController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in PutMonthtem");
             return BadRequest();
         }
@@ -162,6 +201,9 @@ public class CalendarItemController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in PutDayItem");
             return BadRequest();
         }
@@ -204,6 +246,9 @@ public class CalendarItemController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in PatchDayItem");
             return BadRequest();
         }
@@ -231,6 +276,9 @@ public class CalendarItemController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in DeleteDayItem");
             return BadRequest();
         }

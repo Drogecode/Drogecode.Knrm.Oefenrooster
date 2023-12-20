@@ -13,6 +13,22 @@
 <MudPaper Elevation="0" Class="p-2">
     <DrogeCodeMudTabs Rounded="true">
         <DrogeCodeMudTabPanel Text="@L["Planner"]">
+            @if (_dayItems != null && _dayItems.Count() > 0)
+            {
+                <MudText Typo="Typo.h5">@L["Special days"]</MudText>
+                <MudPaper Elevation="0" Class="p-2">
+                    <MudGrid Spacing="2" Justify="Justify.FlexStart">
+                        @foreach (var item in _dayItems)
+                        {
+                            <MudItem xs="12" sm="6" md="4" lg="3">
+                                <MudText>
+                                    @item.Text <DateToString DateTimeLocal="item.DateStart" />
+                                </MudText>
+                            </MudItem>
+                        }
+                    </MudGrid>
+                </MudPaper>
+            }
             @if (_pinnedTrainings != null)
             {
                 @if (_pinnedTrainings.Count() > 0)
@@ -36,7 +52,6 @@
                 <MudSkeleton />
             }
             <MudText Typo="Typo.h3">@L["Future trainings"]</MudText>
-
             @if (_futureTrainings != null)
             {
                 @if (_futureTrainings.Count() > 0)

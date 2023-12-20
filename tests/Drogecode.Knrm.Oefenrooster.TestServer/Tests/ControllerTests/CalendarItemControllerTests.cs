@@ -174,6 +174,26 @@ public class CalendarItemControllerTests : BaseTest
     }
 
     [Fact]
+    public async Task GetDayItemDashboard()
+    {
+        var new1 = await AddCalendarDayItem("GetDayItemDashboard_1", DateTime.Today.AddHours(1));
+        var new2 = await AddCalendarDayItem("GetDayItemDashboard_2", DateTime.Today.AddHours(-1));
+        var new3 = await AddCalendarDayItem("GetDayItemDashboard_3", DateTime.Today.AddDays(8));
+        var new4 = await AddCalendarDayItem("GetDayItemDashboard_4", DateTime.Today.AddDays(20), DefaultSettingsHelper.IdTaco);
+        var new5 = await AddCalendarDayItem("GetDayItemDashboard_5", DateTime.Today.AddDays(-10), DefaultSettingsHelper.IdTaco);
+        var new6 = await AddCalendarDayItem("GetDayItemDashboard_6", DateTime.Today.AddDays(-10), DefaultUserId);
+        var result = await CalendarItemController.GetDayItemDashboard();
+        Assert.NotNull(result?.Value?.DayItems);
+        Assert.NotEmpty(result.Value.DayItems);
+        result.Value.DayItems.Should().Contain(x => x.Id == new1);
+        result.Value.DayItems.Should().NotContain(x => x.Id == new2);
+        result.Value.DayItems.Should().NotContain(x => x.Id == new3);
+        result.Value.DayItems.Should().Contain(x => x.Id == new4);
+        result.Value.DayItems.Should().NotContain(x => x.Id == new5);
+        result.Value.DayItems.Should().NotContain(x => x.Id == new6);
+    }
+
+    [Fact]
     public async Task DeleteDayItemTest()
     {
         var result = await CalendarItemController.GetDayItemById(DefaultCalendarDayItem);

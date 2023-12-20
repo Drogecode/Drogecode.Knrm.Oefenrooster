@@ -85,6 +85,38 @@ public class CalendarItemService : ICalendarItemService
         return result;
     }
 
+    public async Task<GetMultipleDayItemResponse> GetDayItemDashboard(Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new GetMultipleDayItemResponse();
+
+        var todayUtc = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
+
+        var dayItem = await _database.RoosterItemDays.Include(x => x.LinkUserDayItems)
+            .Where(x => x.DeletedOn == null && x.CustomerId == customerId
+            && x.DateStart > todayUtc
+            && ((x.LinkUserDayItems!.Any() && x.LinkUserDayItems!.Any(y => y.UserId == userId)) || (!x.LinkUserDayItems!.Any() && x.DateStart < todayUtc.AddDays(7))))
+            .OrderBy(x=>x.DateStart)
+            .ToListAsync();
+        if (dayItem is null)
+        {
+            result.Success = false;
+        }
+        else
+        {
+            result.DayItems = [];
+            foreach (var item in dayItem)
+            {
+                result.DayItems.Add(item.ToRoosterItemDay());
+            }
+            result.Success = true;
+        }
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
     public async Task<GetDayItemResponse> GetDayItemById(Guid customerId, Guid id, CancellationToken clt = default)
     {
         var sw = Stopwatch.StartNew();

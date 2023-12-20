@@ -34,12 +34,14 @@
                 Color color = Color.Secondary;
                 switch (dayItem?.Type)
                 {
-                    case Oefenrooster.Shared.Enums.CalendarItemType.Custom:
-                        color = Color.Primary;
-                        break;
-                    case Oefenrooster.Shared.Enums.CalendarItemType.SpecialDate:
-                        color = Color.Info;
-                        break;
+                        case CalendarItemType.Custom:
+                        case CalendarItemType.PersonPublic:
+                        case CalendarItemType.Default:
+                            color = Color.Primary;
+                            break;
+                        case CalendarItemType.SpecialDate:
+                            color = Color.Info;
+                            break;
                 }
                 @if (dayItem != null)
                 {

@@ -249,6 +249,36 @@
         }
       }
     },
+    "/api/CalendarItem/day/dashboard": {
+      "get": {
+        "tags": [
+          "CalendarItem"
+        ],
+        "operationId": "GetDayItemDashboard",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/CalendarItem/month": {
       "put": {
         "tags": [

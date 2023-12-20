@@ -1,13 +1,12 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 @if (Users is not null && Functions is not null)
 {
-    <MudSelectExtended T="DrogeUser" MultiSelectionTextFunc="@(new Func<List<DrogeUser>, string>(GetMultiSelectionText))" ToStringFunc="@(new Func<DrogeUser, string>(GetSelectedText))" Label="@Label" MultiSelection="@MultiSelection" SelectedValues="_selectedUsers" SelectedValuesChanged="OnSelectionChanged">
-
+    <MudSelectExtended SearchBox="true" Clearable="true" T="DrogeUser" MultiSelectionTextFunc="@(new Func<List<DrogeUser>, string>(GetMultiSelectionText))" ToStringFunc="@(new Func<DrogeUser, string>(GetSelectedText))" Label="@Label" MultiSelection="@MultiSelection" SelectedValues="_selectedUsers" SelectedValuesChanged="OnSelectionChanged">
         @foreach (var function in Functions)
         {
             if (Users.Any(x => x.UserFunctionId == function.Id))
             {
-                <MudSelectItemGroupExtended T="DrogeUser" Text="@function.Name" Sticky="true" Nested="false" InitiallyExpanded="false">
+                <MudSelectItemGroupExtended T="DrogeUser" Text="@function.Name" Sticky="true" Nested="true" @* InitiallyExpanded="Users.Any(y => y.UserFunctionId == function.Id && _selectedUsers.Any(x=>x.Id == y.Id) )" *@>
                     @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
                     {
                         <MudSelectItemExtended T="DrogeUser" Value="@user">@user.Name</MudSelectItemExtended>
