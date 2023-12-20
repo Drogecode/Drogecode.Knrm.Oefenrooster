@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
@@ -199,7 +200,7 @@ public class ScheduleService : IScheduleService
         return dbTraining;
     }
 
-    public async Task<PatchTrainingResponse> PatchTraining(Guid customerId, PlannedTraining patchedTraining, CancellationToken token)
+    public async Task<PatchTrainingResponse> PatchTraining(Guid customerId, PlannedTraining patchedTraining, bool inRoleEditPast, CancellationToken token)
     {
         var sw = Stopwatch.StartNew();
         var result = new PatchTrainingResponse();
@@ -207,6 +208,10 @@ public class ScheduleService : IScheduleService
         if (oldTraining == null) return result;
         if (patchedTraining.Name?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)
             throw new DrogeCodeToLongException();
+        if (!inRoleEditPast && oldTraining.DateEnd < DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days - 1))
+        {
+            throw new UnauthorizedAccessException();
+        }
         oldTraining.RoosterTrainingTypeId = patchedTraining.RoosterTrainingTypeId;
         oldTraining.Name = patchedTraining.Name;
         oldTraining.DateStart = patchedTraining.DateStart;

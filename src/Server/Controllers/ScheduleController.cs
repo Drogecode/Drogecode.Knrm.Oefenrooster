@@ -146,7 +146,8 @@ public class ScheduleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            PatchTrainingResponse result = await _scheduleService.PatchTraining(customerId, patchedTraining, clt);
+            var inRoleEditPast = User.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
+            PatchTrainingResponse result = await _scheduleService.PatchTraining(customerId, patchedTraining, inRoleEditPast, clt);
             if (result.Success)
                 await _auditService.Log(userId, AuditType.PatchTraining, customerId, objectKey: patchedTraining.TrainingId, objectName: patchedTraining.Name);
             else
@@ -160,6 +161,10 @@ public class ScheduleController : ControllerBase
             await _userService.PatchLastOnline(userId, clt);
 
             return result;
+        }
+        catch(UnauthorizedAccessException)
+        {
+            return Unauthorized();
         }
         catch (Exception ex)
         {

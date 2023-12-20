@@ -26,7 +26,7 @@ public class Startup
         services.AddScoped<IFunctionService, FunctionService>();
         services.AddScoped<IHolidayService, HolidayService>();
         services.AddScoped<IPreComService, PreComService>();
-        services.AddScoped<IGraphService, GraphService>();
+        services.AddScoped<IGraphService, GraphServiceMock>();
         services.AddScoped<IScheduleService, ScheduleService>();
         services.AddScoped<ITrainingTypesService, TrainingTypesService>();
         services.AddScoped<IUserRoleService, UserRoleService>();

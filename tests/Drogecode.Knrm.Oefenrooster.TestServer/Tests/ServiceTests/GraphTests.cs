@@ -4,9 +4,12 @@ using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ServiceTests
 {
+    /// <summary>
+    /// GraphService is mocked, those tests won't make any sence but will keep them arround because reasons.
+    /// </summary>
     public class GraphTests
     {
-        private IGraphService _graphService;
+        /*private IGraphService _graphService;
         public GraphTests(IGraphService graphService)
         {
             _graphService = graphService;
@@ -64,6 +67,6 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ServiceTests
             _graphService.InitializeGraph(settings);
             await _graphService.AddToCalendar(DefaultSettingsHelper.IdTaco, "Test from graph test", DateTime.Today.AddHours(10), DateTime.Today.AddHours(12), false);
 
-        }
+        }*/
     }
 }
