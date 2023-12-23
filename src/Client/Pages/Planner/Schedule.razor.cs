@@ -37,10 +37,10 @@ public sealed partial class Schedule : IDisposable
             _view = ScheduleView.Table;
         else
             _view = ScheduleView.Calendar;
-        _users = await _userRepository.GetAllUsersAsync(false);
+        _users = await _userRepository.GetAllUsersAsync(false, false, _cls.Token);
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
-        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(_cls.Token);
+        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, _cls.Token);
         if (AuthenticationState is not null)
         {
             var authState = await AuthenticationState;

@@ -105,7 +105,7 @@ public sealed partial class MainLayout : IDisposable
         if (_isAuthenticated)
         {
             if (_trainingTypes == null)
-                _trainingTypes = await _trainingTypesRepository.GetTrainingTypes();
+                _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false);
             RefreshMe();
         }
 

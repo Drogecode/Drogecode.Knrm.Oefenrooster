@@ -18,6 +18,7 @@ public class CalendarItemService : ICalendarItemService
 
     public async Task<GetMultipleMonthItemResponse> GetMonthItems(int year, int month, Guid customerId, CancellationToken clt)
     {
+        var sw = Stopwatch.StartNew();
         var monthItems = await _database.RoosterItemMonths.Where(x => x.CustomerId == customerId && x.Month == month && (x.Year == null || x.Year == 0 || x.Year == year)).Select(
             x => new RoosterItemMonth
             {
@@ -33,16 +34,22 @@ public class CalendarItemService : ICalendarItemService
         {
             MonthItems = monthItems,
         };
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        result.Success = true;
         return result;
     }
 
     public async Task<GetMultipleDayItemResponse> GetDayItems(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, Guid customerId, Guid userId, CancellationToken clt)
     {
+        var sw = Stopwatch.StartNew();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
         var dayItems = await _database.RoosterItemDays
             .Include(x => x.LinkUserDayItems)
-            .Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.DateStart >= startDate && x.DateStart <= tillDate && (userId == Guid.Empty || x.LinkUserDayItems == null || x.LinkUserDayItems.Count == 0 || x.LinkUserDayItems.Any(x => x.UserForeignKey == userId)))
+            .Where(x => x.CustomerId == customerId && x.DeletedOn == null
+                && ((x.DateStart >= startDate && x.DateStart <= tillDate) || (x.DateEnd >= startDate && x.DateEnd <= tillDate))
+                && (userId == Guid.Empty || x.LinkUserDayItems == null || x.LinkUserDayItems.Count == 0 || x.LinkUserDayItems.Any(x => x.UserId == userId)))
             .OrderBy(x => x.DateStart)
             .Select(x => x.ToRoosterItemDay())
             .ToListAsync(clt);
@@ -50,24 +57,63 @@ public class CalendarItemService : ICalendarItemService
         {
             DayItems = dayItems
         };
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        result.Success = true;
         return result;
     }
 
-    public async Task<GetMultipleDayItemResponse> GetAllFutureDayItems(Guid customerId, int count, int skip, CancellationToken clt)
+    public async Task<GetMultipleDayItemResponse> GetAllFutureDayItems(Guid customerId, int count, int skip, bool forAllUsers, Guid userId, CancellationToken clt)
     {
+        var sw = Stopwatch.StartNew();
         var startDate = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
-        var dayItems = await _database.RoosterItemDays
+        var dayItems = _database.RoosterItemDays
             .Include(x => x.LinkUserDayItems)
-            .Where(x => x.CustomerId == customerId && x.DeletedOn == null && (x.DateStart >= startDate || x.DateEnd >= startDate))
+            .Where(x => x.CustomerId == customerId && x.DeletedOn == null
+                && (forAllUsers || x.LinkUserDayItems!.Any(y => y.UserId == userId))
+                && (x.DateStart >= startDate || x.DateEnd >= startDate))
             .OrderBy(x => x.DateStart)
-            .Select(x => x.ToRoosterItemDay())
-            .Skip(skip)
-            .Take(count)
-            .ToListAsync(clt);
+            .Select(x => x.ToRoosterItemDay());
         var result = new GetMultipleDayItemResponse
         {
-            DayItems = dayItems
-        };
+            DayItems = await dayItems.Skip(skip).Take(count).ToListAsync(clt),
+            TotalCount = await dayItems.CountAsync(),
+    };
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        result.Success = true;
+        return result;
+    }
+
+    public async Task<GetMultipleDayItemResponse> GetDayItemDashboard(Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new GetMultipleDayItemResponse();
+
+        var todayUtc = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
+
+        var dayItem = await _database.RoosterItemDays.Include(x => x.LinkUserDayItems)
+            .Where(x => x.DeletedOn == null && x.CustomerId == customerId
+            && x.DateStart > todayUtc
+            && ((x.LinkUserDayItems!.Any() && x.LinkUserDayItems!.Any(y => y.UserId == userId)) || (!x.LinkUserDayItems!.Any() && x.DateStart < todayUtc.AddDays(7))))
+            .OrderBy(x=>x.DateStart)
+            .ToListAsync();
+        if (dayItem is null)
+        {
+            result.Success = false;
+        }
+        else
+        {
+            result.DayItems = [];
+            foreach (var item in dayItem)
+            {
+                result.DayItems.Add(item.ToRoosterItemDay());
+            }
+            result.Success = true;
+        }
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
 
@@ -123,8 +169,8 @@ public class CalendarItemService : ICalendarItemService
             {
                 var dbLink = new DbLinkUserDayItem
                 {
-                    UserForeignKey = usr.UserId,
-                    DayItemForeignKey = dbItem.Id
+                    UserId = usr.UserId,
+                    DayItemId = dbItem.Id
                 };
                 _database.LinkUserDayItems.Add(dbLink);
             }
@@ -157,12 +203,12 @@ public class CalendarItemService : ICalendarItemService
             {
                 foreach (var usr in roosterItemDay.LinkedUsers)
                 {
-                    if (dayItem.LinkUserDayItems?.Any(x => x.UserForeignKey == usr.UserId) is true)
+                    if (dayItem.LinkUserDayItems?.Any(x => x.UserId == usr.UserId) is true)
                         continue;
                     var dbLink = new DbLinkUserDayItem
                     {
-                        UserForeignKey = usr.UserId,
-                        DayItemForeignKey = dayItem.Id
+                        UserId = usr.UserId,
+                        DayItemId = dayItem.Id
                     };
                     _database.LinkUserDayItems.Add(dbLink);
                 }
@@ -170,7 +216,7 @@ public class CalendarItemService : ICalendarItemService
                 {
                     foreach (var usr in dayItem.LinkUserDayItems)
                     {
-                        if (roosterItemDay.LinkedUsers.Any(x => x.UserId == usr.UserForeignKey))
+                        if (roosterItemDay.LinkedUsers.Any(x => x.UserId == usr.UserId))
                             continue;
                         _database.LinkUserDayItems.Remove(usr);
                     }
@@ -200,7 +246,7 @@ public class CalendarItemService : ICalendarItemService
 
     public async Task<bool> PatchCalendarEventId(Guid dayItemId, Guid userId, Guid customerId, string? calendarEventId, CancellationToken clt)
     {
-        var link = await _database.LinkUserDayItems.FirstOrDefaultAsync(x => x.DayItemForeignKey == dayItemId && x.UserForeignKey == userId);
+        var link = await _database.LinkUserDayItems.FirstOrDefaultAsync(x => x.DayItemId == dayItemId && x.UserId == userId);
         if (link is null) return false;
         link.CalendarEventId = calendarEventId;
         _database.LinkUserDayItems.Update(link);

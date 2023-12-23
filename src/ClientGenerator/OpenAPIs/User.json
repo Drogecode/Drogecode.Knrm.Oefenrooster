@@ -164,7 +164,7 @@
           }
         }
       },
-      "patch": {
+      "put": {
         "tags": [
           "User"
         ],
@@ -205,6 +205,55 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UpdateUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/User/link-user-user": {
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "UpdateLinkUserUserForUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLinkUserUserForUserRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLinkUserUserForUserRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLinkUserUserForUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateLinkUserUserForUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateLinkUserUserForUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateLinkUserUserForUserResponse"
                 }
               }
             }
@@ -289,6 +338,20 @@
             "type": "string",
             "format": "uuid",
             "nullable": true
+          },
+          "linkedAsA": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkedDrogeUser"
+            },
+            "nullable": true
+          },
+          "linkedAsB": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkedDrogeUser"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -327,6 +390,19 @@
           },
           "drogeUser": {
             "$ref": "#/components/schemas/DrogeUser"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LinkedDrogeUser": {
+        "type": "object",
+        "properties": {
+          "linkedUserId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "linkType": {
+            "$ref": "#/components/schemas/UserUserLinkType"
           }
         },
         "additionalProperties": false
@@ -370,6 +446,39 @@
         },
         "additionalProperties": false
       },
+      "UpdateLinkUserUserForUserRequest": {
+        "type": "object",
+        "properties": {
+          "userAId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userBId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "linkType": {
+            "$ref": "#/components/schemas/UserUserLinkType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateLinkUserUserForUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
       "UpdateUserResponse": {
         "type": "object",
         "properties": {
@@ -385,6 +494,14 @@
           }
         },
         "additionalProperties": false
+      },
+      "UserUserLinkType": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
       }
     }
   }

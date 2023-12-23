@@ -123,11 +123,23 @@
   <data name="Add new day item" xml:space="preserve">
     <value>Add new day item</value>
   </data>
+  <data name="Custom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
   <data name="Day items" xml:space="preserve">
     <value>Day items</value>
   </data>
+  <data name="Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
   <data name="Edit day item" xml:space="preserve">
     <value>Edit day item</value>
+  </data>
+  <data name="PersonPublic" xml:space="preserve">
+    <value>Person public</value>
+  </data>
+  <data name="SpecialDate" xml:space="preserve">
+    <value>Holidays</value>
   </data>
   <data name="Who" xml:space="preserve">
     <value>Who</value>

@@ -22,7 +22,7 @@ public sealed partial class Audit : IDisposable
     protected override async Task OnParametersSetAsync()
     {
         _trainingAudits = (await AuditClient.GetAllTrainingsAuditAsync()).TrainingAudits;
-        _users = await _userRepository.GetAllUsersAsync(true);
+        _users = await _userRepository.GetAllUsersAsync(true, false, _cls.Token);
     }
 
     public void Dispose()

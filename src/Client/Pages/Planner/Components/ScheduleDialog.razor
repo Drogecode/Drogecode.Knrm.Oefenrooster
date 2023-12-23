@@ -68,7 +68,7 @@
                         </MudItem>
                         <MudItem xs="12" sm="@(_colmn3 * 2)" md="@_colmn3">
                             <MudText Typo="Typo.body2" @onclick="()=>{if (!_canEdit) return; user.ClickedFunction = !user.ClickedFunction;}">
-                                @LApp[@user.Availabilty.ToString() ?? ""]  @(" - ") @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name
+                                @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name
                             </MudText>
                             @if (user.ClickedFunction)
                             {

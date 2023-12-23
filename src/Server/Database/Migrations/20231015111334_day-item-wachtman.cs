@@ -19,7 +19,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                 type: "uuid",
                 nullable: true);
 
-            /*migrationBuilder.InsertData(
+            /* Does not work if database does not exists. (users not synced with azure)
+             * 
+             * migrationBuilder.InsertData(
                 table: "RoosterItemDay",
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "CustomerId", "DateEnd", "DateStart", "IsFullDay", "Text", "Type", "UserId" },
                 values: new object[,]
@@ -59,7 +61,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                 name: "IX_RoosterItemDay_UserId",
                 table: "RoosterItemDay");
 
-            migrationBuilder.DeleteData(
+            /*migrationBuilder.DeleteData(
                 table: "RoosterItemDay",
                 keyColumn: "Id",
                 keyValue: new Guid("51da3135-ba68-43c0-bc66-72eba93ccf3d"));
@@ -67,7 +69,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
             migrationBuilder.DeleteData(
                 table: "RoosterItemDay",
                 keyColumn: "Id",
-                keyValue: new Guid("bf0b7712-d4d4-423c-b56f-f698a643b580"));
+                keyValue: new Guid("bf0b7712-d4d4-423c-b56f-f698a643b580"));*/
 
             migrationBuilder.DropColumn(
                 name: "UserId",

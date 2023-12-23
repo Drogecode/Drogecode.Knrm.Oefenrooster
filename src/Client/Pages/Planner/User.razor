@@ -1,7 +1,7 @@
 ﻿@page "/planner/user"
 @page "/planner/user/{Id:guid}"
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components
-@attribute [Authorize]
+@attribute [Authorize(Roles = AccessesNames.AUTH_users_details)]
 
 @if (Id is null)
 {
@@ -37,22 +37,22 @@
 }
 else
 {
-    @if (_trainings is not null)
+    @if (_trainings is not null && _user is not null && _functions is not null)
     {
         <MudPaper Elevation="0" Class="p-2">
             <MudText Typo="Typo.h3">@L["Trainings for {0}", _user?.Name ?? "No name"]</MudText>
-            <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
-                <MudTabPanel Text="@L["Trainings"]">
-                    <MudPaper Elevation="0" Class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-                        @foreach (var training in _trainings.Trainings.OrderByDescending(x => x.DateStart))
+                <DrogeCodeMudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+                    <DrogeCodeMudTabPanel Text="@L["Trainings"]">
+                        <MudPaper Elevation="0" Class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+                            @foreach (var training in _trainings.Trainings.OrderByDescending(x => x.DateStart))
                         {
                             <div class="flex-1">
                                 <IndexCard MinWidth="300px" MaxWidth="600px" User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" />
                             </div>
                         }
                     </MudPaper>
-                </MudTabPanel>
-                <MudTabPanel Text="@L["For target"]">
+                </DrogeCodeMudTabPanel>
+                <DrogeCodeMudTabPanel Text="@L["For target"]">
                     @if (_userFunction is not null)
                     {
                         <MudText Typo="Typo.body1">@L["Target: {0}", _userFunction.TrainingTarget]</MudText>
@@ -69,8 +69,21 @@ else
                             </MudGrid>
                         </MudPaper>
                     }
-                </MudTabPanel>
-            </MudTabs>
+                </DrogeCodeMudTabPanel>
+                <AuthorizeView Roles="@AccessesNames.AUTH_users_settigns">
+                    <DrogeCodeMudTabPanel Text="@L["Settings"]">
+                        <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" Value="_user.UserFunctionId" ValueChanged="UserFunctionChanged">
+                            @foreach (var function in _functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
+                            {
+                                <MudSelectItem T="Guid?" Value="@function.Id">@function.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
+                            <SelectMultipleUsers Users="@_users" Functions="@_functions" Label="@L["Buddy"]" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="false" />
+                        </AuthorizeView>
+                    </DrogeCodeMudTabPanel>
+                </AuthorizeView>
+            </DrogeCodeMudTabs>
         </MudPaper>
     }
     else

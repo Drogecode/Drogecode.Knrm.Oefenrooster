@@ -27,6 +27,8 @@
                     switch (dayItem.Type)
                     {
                         case CalendarItemType.Custom:
+                        case CalendarItemType.PersonPublic:
+                        case CalendarItemType.Default:
                             color = Color.Primary;
                             break;
                         case CalendarItemType.SpecialDate:
@@ -54,7 +56,10 @@
         }
         else
         {
-            @foreach (var ev in _events.Where(x => x.Start.Month == _month.Value.Month && x.Start.Year == _month.Value.Year && x.End >= DateTime.Now).OrderBy(x => x.Start))
+            @foreach (var ev in _events.Where(x =>
+           (x.Start.Month == _month.Value.Month && x.Start.Year == _month.Value.Year && x.End >= DateTime.Now) ||
+           (x.End is not null && x.End.Value.Month == _month.Value.Month && x.End.Value.Year == _month.Value.Year && x.End >= DateTime.Today))
+           .OrderBy(x => x.Start))
             {
                 <div class="flex-1">
                     @if (ev is ScheduleCalendarItem)

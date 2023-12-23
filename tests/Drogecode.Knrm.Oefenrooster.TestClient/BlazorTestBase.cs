@@ -62,6 +62,7 @@ public abstract class BlazorTestBase : TestContext
         Services.AddScoped<VehicleRepository>();
 
         Services.AddSingleton<ILocalStorageExpireService, LocalStorageExpireService>();
+        Services.AddSingleton<ISessionExpireService, SessionExpireService>();
         Services.AddSingleton<IOfflineService, OfflineService>();
     }
 

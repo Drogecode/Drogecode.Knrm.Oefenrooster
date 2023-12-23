@@ -29,6 +29,7 @@ public sealed partial class User : IDisposable
     private GetScheduledTrainingsForUserResponse? _trainings;
     private List<DrogeVehicle>? _vehicles;
     private List<PlannerTrainingType>? _trainingTypes;
+    private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
     protected override void OnInitialized()
     {
         _trainings = null;
@@ -36,10 +37,10 @@ public sealed partial class User : IDisposable
     }
     protected override async Task OnParametersSetAsync()
     {
-        _users = await _userRepository.GetAllUsersAsync(false);
+        _users = await _userRepository.GetAllUsersAsync(false, false, _cls.Token);
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
-        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(_cls.Token);
+        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, _cls.Token);
         if (Id is not null)
         {
             _user = (await _userRepository.GetById(Id.Value));
@@ -50,6 +51,18 @@ public sealed partial class User : IDisposable
     private void ClickUser(DrogeUser user)
     {
         Navigation.NavigateTo($"/planner/user/{user.Id}");
+    }
+
+    private async Task UserFunctionChanged(Guid? newFunction)
+    {
+        if (_user is null || newFunction is null)
+            return;
+        _user.UserFunctionId = newFunction;
+        await _userRepository.UpdateUserAsync(_user);
+    }
+    private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
+    {
+        _selectedUsersAction = selection;
     }
 
     public void Dispose()

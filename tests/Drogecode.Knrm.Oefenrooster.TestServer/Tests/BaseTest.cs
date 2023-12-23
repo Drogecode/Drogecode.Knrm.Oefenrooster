@@ -230,7 +230,7 @@ public class BaseTest : IAsyncLifetime
         return result.Value.NewId;
     }
 
-    protected async Task<Guid> AddCalendarDayItem(string name, DateTime? dateStart = null)
+    protected async Task<Guid> AddCalendarDayItem(string name, DateTime? dateStart = null, Guid? userId = null)
     {
         dateStart ??= DateTime.Today.AddDays(7);
         var body = new RoosterItemDay
@@ -240,6 +240,10 @@ public class BaseTest : IAsyncLifetime
             IsFullDay = true,
             DateStart = dateStart.Value,
         };
+        if (userId != null)
+        {
+            body.LinkedUsers = [new RoosterItemDayLinkedUsers { UserId = userId.Value }];
+        }
         var result = await CalendarItemController.PutDayItem(body);
         Assert.NotNull(result?.Value?.NewId);
         return result.Value.NewId;

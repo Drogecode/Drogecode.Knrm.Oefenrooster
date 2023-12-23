@@ -7,9 +7,9 @@ namespace Drogecode.Knrm.Oefenrooster.TestPreCom.Tests;
 public class SleeperTests
 {
     private readonly ILogger _logger;
-    public SleeperTests(ILogger logger)
+    public SleeperTests(ILoggerProvider loggerProvider)
     {
-        _logger = logger;
+        _logger = loggerProvider.CreateLogger("SleeperTests");
     }
 
     [Fact]

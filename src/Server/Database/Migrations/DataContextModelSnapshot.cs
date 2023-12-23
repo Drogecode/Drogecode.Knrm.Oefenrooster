@@ -186,20 +186,44 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkUserDayItem", b =>
                 {
-                    b.Property<Guid>("DayItemForeignKey")
+                    b.Property<Guid>("DayItemId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("UserForeignKey")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("CalendarEventId")
                         .HasColumnType("text");
 
-                    b.HasKey("DayItemForeignKey", "UserForeignKey");
+                    b.HasKey("DayItemId", "UserId");
 
-                    b.HasIndex("UserForeignKey");
+                    b.HasIndex("UserId");
 
                     b.ToTable("LinkUserDayItems");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkUserUser", b =>
+                {
+                    b.Property<Guid>("UserAId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserBId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LinkType")
+                        .HasColumnType("integer");
+
+                    b.HasKey("UserAId", "UserBId");
+
+                    b.HasIndex("UserBId");
+
+                    b.ToTable("LinkUserUsers");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkVehicleTraining", b =>
@@ -1379,14 +1403,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("287359b1-2035-435b-97b0-eb260dc497d6"),
-                            Accesses = "configure_training-types",
+                            Accesses = "configure_training-types,users_settings",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Name = "Admin"
                         },
                         new
                         {
                             Id = new Guid("f6b0c571-9050-40d6-bf58-807981e5ed6e"),
-                            Accesses = "scheduler,scheduler_table",
+                            Accesses = "scheduler,scheduler_table,scheduler_past,scheduler_dayitem",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Name = "Scheduler"
                         },
@@ -1593,19 +1617,38 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                 {
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterItemDay", "DayItem")
                         .WithMany("LinkUserDayItems")
-                        .HasForeignKey("DayItemForeignKey")
+                        .HasForeignKey("DayItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "User")
                         .WithMany("LinkUserDayItems")
-                        .HasForeignKey("UserForeignKey")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("DayItem");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkUserUser", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "UserB")
+                        .WithMany("LinkedUserAsA")
+                        .HasForeignKey("UserAId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "UserA")
+                        .WithMany("LinkedUserAsB")
+                        .HasForeignKey("UserBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserA");
+
+                    b.Navigation("UserB");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkVehicleTraining", b =>
@@ -1903,6 +1946,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("Audits");
 
                     b.Navigation("LinkUserDayItems");
+
+                    b.Navigation("LinkedUserAsA");
+
+                    b.Navigation("LinkedUserAsB");
 
                     b.Navigation("RoosterAvailables");
 
