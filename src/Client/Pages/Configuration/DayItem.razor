@@ -2,12 +2,12 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums
 @attribute [Authorize(Roles = AccessesNames.AUTH_scheduler_dayitem)]
 <MudAlert Severity="Severity.Info" Variant="Variant.Filled">Werkt (nog) niet op mobiel</MudAlert>
-<PageTitle>@L["Day items"]</PageTitle>
+<PageTitle>@L["Special day"]</PageTitle>
     <MudPaper Elevation="0" Class="p-2">
-    <MudText Typo="Typo.h4">@L["Add and change day item"]</MudText>
+        <MudText Typo="Typo.h4">@L["Add or change special day"]</MudText>
     @if (_items?.DayItems is not null)
     {
-        <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{OpenDayItemDialog(null, true);}">@L["Add new day item"]</MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{OpenDayItemDialog(null, true);}">@L["Add new special day"]</MudButton>
         <MudTable Items="_items.DayItems.OrderBy(x=>x.DateStart)">
             <HeaderContent>
                 <MudTh>@LApp["Description"]</MudTh>

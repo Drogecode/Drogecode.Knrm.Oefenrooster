@@ -117,17 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Add and change day item" xml:space="preserve">
-    <value>Add and change day item</value>
+  <data name="Add new special day" xml:space="preserve">
+    <value>Add new special day</value>
   </data>
-  <data name="Add new day item" xml:space="preserve">
-    <value>Add new day item</value>
+  <data name="Add or change special day" xml:space="preserve">
+    <value>Add or change special day</value>
   </data>
   <data name="Custom" xml:space="preserve">
     <value>Custom</value>
-  </data>
-  <data name="Day items" xml:space="preserve">
-    <value>Day items</value>
   </data>
   <data name="Default" xml:space="preserve">
     <value>Default</value>
@@ -137,6 +134,9 @@
   </data>
   <data name="PersonPublic" xml:space="preserve">
     <value>Person public</value>
+  </data>
+  <data name="Special day" xml:space="preserve">
+    <value>Special day</value>
   </data>
   <data name="SpecialDate" xml:space="preserve">
     <value>Holidays</value>

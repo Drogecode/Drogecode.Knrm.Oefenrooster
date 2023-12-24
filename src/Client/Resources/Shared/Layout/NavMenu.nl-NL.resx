@@ -141,6 +141,9 @@
   <data name="Schedule" xml:space="preserve">
     <value>Indeling</value>
   </data>
+  <data name="Special days" xml:space="preserve">
+    <value>Speciale dagen</value>
+  </data>
   <data name="Training" xml:space="preserve">
     <value>Oefening</value>
   </data>
