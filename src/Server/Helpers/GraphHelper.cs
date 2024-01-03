@@ -251,9 +251,9 @@ public static class GraphHelper
                 action.Sight = AdditionalDataToInt(det, "Zicht");
                 action.WeatherCondition = AdditionalDataToString(det, "Weersgesteldheid");
                 action.CallMadeBy = AdditionalDataToString(det, "Oproep_x0020_gedaan_x0020_door");
-                action.CountSailors = AdditionalDataToInt(det, "Aantal_x0020_Opvarenden");
-                action.CountSaved = AdditionalDataToInt(det, "Aantal_x0020_geredden");
-                action.CountAnimals = AdditionalDataToInt(det, "Aantal_x0020_dieren");
+                action.CountSailors = AdditionalDataToDouble(det, "Aantal_x0020_Opvarenden");
+                action.CountSaved = AdditionalDataToDouble(det, "Aantal_x0020_geredden");
+                action.CountAnimals = AdditionalDataToDouble(det, "Aantal_x0020_dieren");
                 action.Boat = AdditionalDataToString(det, "Bo_x0028_o_x0029_t_x0028_en_x002");
                 action.FunctioningMaterial = AdditionalDataToString(det, "Functioneren_x0020_materieel");
                 action.ProblemsWithWeed = AdditionalDataToString(det, "Problemen_x0020_met_x0020_fontei");
@@ -276,18 +276,24 @@ public static class GraphHelper
         var dateTime = det.Fields!.AdditionalData.ContainsKey(key) ? (DateTime)det.Fields.AdditionalData[key] : DateTime.MinValue;
         return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
     }
-    private static int AdditionalDataToInt(ListItem det, string key)
+    private static int? AdditionalDataToInt(ListItem det, string key)
     {
-        int result = -1;
+        int? result = null;
         if (det.Fields!.AdditionalData.ContainsKey(key))
-            int.TryParse(det.Fields!.AdditionalData[key]!.ToString(), out result);
+        {
+            if (int.TryParse(det.Fields!.AdditionalData[key]!.ToString(), out var parsed))
+                result = parsed;
+        }
         return result;
     }
-    private static double AdditionalDataToDouble(ListItem det, string key)
+    private static double? AdditionalDataToDouble(ListItem det, string key)
     {
-        double result = -1;
+        double? result = null;
         if (det.Fields!.AdditionalData.ContainsKey(key))
-            double.TryParse(det.Fields!.AdditionalData[key]!.ToString(), out result);
+        {
+            if (double.TryParse(det.Fields!.AdditionalData[key]!.ToString(), out var parsed))
+                result = parsed;
+        }
         return result;
     }
 
@@ -314,7 +320,7 @@ public static class GraphHelper
     private static void GetUser(List<SharePointUser> users, ListItem det, string key, SharePointRole role, SharePointListBase listBase)
     {
         var sharePointID = det.Fields?.AdditionalData.ContainsKey(key) == true ? det.Fields.AdditionalData[key]?.ToString() : "";
-        if (string.IsNullOrEmpty( sharePointID)) return;
+        if (string.IsNullOrEmpty(sharePointID)) return;
         var user = (SharePointUser?)users.FirstOrDefault(x => x.SharePointID == sharePointID)?.Clone();
         if (user is null) return;
         user.Role = role;
