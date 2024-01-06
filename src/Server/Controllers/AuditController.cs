@@ -32,14 +32,19 @@ public class AuditController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = AccessesNames.AUTH_Taco)]
-    [Route("training/{id:guid}")]
-    public async Task<ActionResult<GetTrainingAuditResponse>> GetTrainingAudit(Guid id)
+    [Route("training/{id:guid}/{count:int}/{skip:int}")]
+    public async Task<ActionResult<GetTrainingAuditResponse>> GetTrainingAudit(Guid id, int count, int skip, CancellationToken clt = default)
     {
         try
         {
+            if (count > 50)
+            {
+                _logger.LogWarning("GetAllFutureDayItems count to big {0}", count);
+                return BadRequest("Count to big");
+            }
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            GetTrainingAuditResponse result = await _auditService.GetTrainingAudit(customerId, userId, id);
+            GetTrainingAuditResponse result = await _auditService.GetTrainingAudit(customerId, userId, count, skip, id, clt);
             return result;
         }
         catch (Exception ex)
@@ -54,14 +59,19 @@ public class AuditController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = AccessesNames.AUTH_Taco)]
-    [Route("training")]
-    public async Task<ActionResult<GetTrainingAuditResponse>> GetAllTrainingsAudit()
+    [Route("training/{count:int}/{skip:int}")]
+    public async Task<ActionResult<GetTrainingAuditResponse>> GetAllTrainingsAudit(int count, int skip, CancellationToken clt = default)
     {
         try
         {
+            if (count > 50)
+            {
+                _logger.LogWarning("GetAllFutureDayItems count to big {0}", count);
+                return BadRequest("Count to big");
+            }
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            GetTrainingAuditResponse result = await _auditService.GetTrainingAudit(customerId, userId, Guid.Empty);
+            GetTrainingAuditResponse result = await _auditService.GetTrainingAudit(customerId, userId, count, skip, Guid.Empty, clt);
             return result;
         }
         catch (Exception ex)

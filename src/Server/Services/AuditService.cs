@@ -32,20 +32,20 @@ public class AuditService : IAuditService
         await _database.SaveChangesAsync();
     }
 
-    public async Task<GetTrainingAuditResponse> GetTrainingAudit(Guid customerId, Guid userId, Guid trainingId)
+    public async Task<GetTrainingAuditResponse> GetTrainingAudit(Guid customerId, Guid userId, int count, int skip, Guid trainingId, CancellationToken clt)
     {
         var response = new GetTrainingAuditResponse();
         var sw = Stopwatch.StartNew();
-        var audits = await _database.Audits.Where(x => x.AuditType == AuditType.PatchAssignedUser && (trainingId.Equals(Guid.Empty) || x.ObjectKey == trainingId)).ToListAsync();
+        var audits = _database.Audits.Where(x => x.AuditType == AuditType.PatchAssignedUser && (trainingId.Equals(Guid.Empty) || x.ObjectKey == trainingId)).OrderByDescending(x=>x.Created);
         if (audits.Any())
         {
             response.TrainingAudits = new List<TrainingAudit>();
-            foreach (var audit in audits)
+            foreach (var audit in audits.Skip(skip).Take(count))
             {
                 response.TrainingAudits.Add(audit.ToTrainingAudit());
             }
         }
-        response.TotalCount = audits.Count;
+        response.TotalCount = await audits.CountAsync();
         sw.Stop();
         response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return response;

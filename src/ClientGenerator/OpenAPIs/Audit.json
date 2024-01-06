@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/api/Audit/training/{id}": {
+    "/api/Audit/training/{id}/{count}/{skip}": {
       "get": {
         "tags": [
           "Audit"
@@ -19,6 +19,24 @@
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          },
+          {
+            "name": "count",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         ],
@@ -46,12 +64,32 @@
         }
       }
     },
-    "/api/Audit/training": {
+    "/api/Audit/training/{count}/{skip}": {
       "get": {
         "tags": [
           "Audit"
         ],
         "operationId": "GetAllTrainingsAudit",
+        "parameters": [
+          {
+            "name": "count",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",

@@ -22,6 +22,6 @@ public sealed partial class TrainingHistoryDialog
     protected override async Task OnParametersSetAsync()
     {
         if (TrainingId is not null)
-            _trainingAudits = (await AuditClient.GetTrainingAuditAsync(TrainingId.Value)).TrainingAudits;
+            _trainingAudits = (await AuditClient.GetTrainingAuditAsync(TrainingId.Value, 0, 50)).TrainingAudits;
     }
 }

@@ -1,10 +1,8 @@
 ﻿@page "/configuration/audit"
 
-
-<MudText>Most likely not the most efficient code XD</MudText>
-@if (_trainingAudits is not null && _users is not null)
+@if (_trainingAudits?.TrainingAudits is not null && _users is not null)
 {
-    <MudDataGrid Items="_trainingAudits.OrderByDescending(x=>x.Date)">
+    <MudDataGrid Items="_trainingAudits.TrainingAudits">
         <Columns>
             <PropertyColumn Property="x => x.Date" Title="@L["Date"]">
                 <CellTemplate>
@@ -29,4 +27,8 @@
             <PropertyColumn Property="x => x.TrainingId" Title="@L["Training"]"/>
         </Columns>
     </MudDataGrid>
+    @if (_skip > 0 || _trainingAudits.TotalCount > (_count + _skip))
+    {
+        <MudPagination Disabled="_bussy" ShowFirstButton="true" ShowLastButton="true" Count="@(Convert.ToInt32(Math.Ceiling((double)_trainingAudits.TotalCount/(double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4" />
+    }
 }

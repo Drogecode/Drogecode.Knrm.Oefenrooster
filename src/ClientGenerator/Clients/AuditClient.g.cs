@@ -26,21 +26,21 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     {
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetTrainingAuditResponse> GetTrainingAuditAsync(System.Guid id);
+        System.Threading.Tasks.Task<GetTrainingAuditResponse> GetTrainingAuditAsync(System.Guid id, int count, int skip);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetTrainingAuditResponse> GetTrainingAuditAsync(System.Guid id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetTrainingAuditResponse> GetTrainingAuditAsync(System.Guid id, int count, int skip, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetTrainingAuditResponse> GetAllTrainingsAuditAsync();
+        System.Threading.Tasks.Task<GetTrainingAuditResponse> GetAllTrainingsAuditAsync(int count, int skip);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetTrainingAuditResponse> GetAllTrainingsAuditAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetTrainingAuditResponse> GetAllTrainingsAuditAsync(int count, int skip, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -72,18 +72,24 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetTrainingAuditResponse> GetTrainingAuditAsync(System.Guid id)
+        public virtual System.Threading.Tasks.Task<GetTrainingAuditResponse> GetTrainingAuditAsync(System.Guid id, int count, int skip)
         {
-            return GetTrainingAuditAsync(id, System.Threading.CancellationToken.None);
+            return GetTrainingAuditAsync(id, count, skip, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetTrainingAuditResponse> GetTrainingAuditAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetTrainingAuditResponse> GetTrainingAuditAsync(System.Guid id, int count, int skip, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
+
+            if (count == null)
+                throw new System.ArgumentNullException("count");
+
+            if (skip == null)
+                throw new System.ArgumentNullException("skip");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -96,9 +102,13 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/Audit/training/{id}"
+                    // Operation Path: "api/Audit/training/{id}/{count}/{skip}"
                     urlBuilder_.Append("api/Audit/training/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(count, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(skip, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -154,16 +164,22 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetTrainingAuditResponse> GetAllTrainingsAuditAsync()
+        public virtual System.Threading.Tasks.Task<GetTrainingAuditResponse> GetAllTrainingsAuditAsync(int count, int skip)
         {
-            return GetAllTrainingsAuditAsync(System.Threading.CancellationToken.None);
+            return GetAllTrainingsAuditAsync(count, skip, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetTrainingAuditResponse> GetAllTrainingsAuditAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetTrainingAuditResponse> GetAllTrainingsAuditAsync(int count, int skip, System.Threading.CancellationToken cancellationToken)
         {
+            if (count == null)
+                throw new System.ArgumentNullException("count");
+
+            if (skip == null)
+                throw new System.ArgumentNullException("skip");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -175,8 +191,11 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/Audit/training"
-                    urlBuilder_.Append("api/Audit/training");
+                    // Operation Path: "api/Audit/training/{count}/{skip}"
+                    urlBuilder_.Append("api/Audit/training/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(count, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(skip, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
