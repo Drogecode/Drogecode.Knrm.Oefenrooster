@@ -156,6 +156,9 @@
   <data name="Start time past end time" xml:space="preserve">
     <value>Start tijd is na eind tijd</value>
   </data>
+  <data name="To far in the past" xml:space="preserve">
+    <value>Te ver in het verleden</value>
+  </data>
   <data name="Training type" xml:space="preserve">
     <value>Type oefening</value>
   </data>
