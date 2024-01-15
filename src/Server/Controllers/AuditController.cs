@@ -37,7 +37,7 @@ public class AuditController : ControllerBase
     {
         try
         {
-            if (count >= 50)
+            if (count > 50)
             {
                 _logger.LogWarning("GetAllFutureDayItems count to big {0}", count);
                 return BadRequest("Count to big");
