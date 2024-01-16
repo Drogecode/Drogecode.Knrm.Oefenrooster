@@ -12,4 +12,5 @@ public class UpdateLinkUserUserForUserRequest
     public Guid UserAId { get; set; }
     public Guid UserBId { get; set; }
     public UserUserLinkType LinkType { get; set; }
+    public bool Add {  get; set; } = true;
 }

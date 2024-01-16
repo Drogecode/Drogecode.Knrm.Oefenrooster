@@ -40,9 +40,9 @@ public class UserService : IUserService
     public async Task<DrogeUser?> GetUserFromDb(Guid userId)
     {
         var userObj = await _database.Users
-            .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedBy == null))
-            .Include(x => x.LinkedUserAsB!.Where(y => y.DeletedBy == null))
-            .FirstOrDefaultAsync(u => u.Id == userId);
+            .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
+            .Include(x => x.LinkedUserAsB!.Where(y => y.DeletedOn == null))
+            .Where(u => u.Id == userId).FirstOrDefaultAsync();
         return DbUserToSharedUser(userObj);
     }
 
@@ -141,20 +141,31 @@ public class UserService : IUserService
         var result = new UpdateLinkUserUserForUserResponse();
         var sw = Stopwatch.StartNew();
 
-        var userA = await _database.Users.Include(x=>x.LinkedUserAsA!.Where(y=> y.DeletedBy == null)).Include(x=>x.LinkedUserAsB!.Where(y => y.DeletedBy == null)).FirstOrDefaultAsync(x=>x.Id == body.UserAId && x.CustomerId == customerId && x.DeletedBy == null);
-        if (userA?.LinkedUserAsA?.Any(x=>x.UserBId == body.UserBId ) != true)
+        var userA = await _database.Users.Include(x => x.LinkedUserAsA!.Where(y => y.DeletedBy == null)).Include(x => x.LinkedUserAsB!.Where(y => y.DeletedBy == null)).FirstOrDefaultAsync(x => x.Id == body.UserAId && x.CustomerId == customerId && x.DeletedBy == null);
+        if (userA?.LinkedUserAsA?.Any(x => x.UserBId == body.UserBId) != true)
         {
             var userB = await _database.Users.Include(x => x.LinkedUserAsA!.Where(y => y.DeletedBy == null)).Include(x => x.LinkedUserAsB!.Where(y => y.DeletedBy == null)).FirstOrDefaultAsync(x => x.Id == body.UserBId && x.CustomerId == customerId && x.DeletedBy == null);
             if (userB is not null)
             {
-                var link = new DbLinkUserUser
+                var linkExistTest = await _database.LinkUserUsers.Where(x => x.UserAId == body.UserAId && x.UserBId == body.UserBId).FirstOrDefaultAsync();
+                if (linkExistTest is null)
                 {
-                    UserAId = body.UserAId,
-                    UserBId = body.UserBId,
-                    LinkType = body.LinkType,
-                };
-                _database.LinkUserUsers.Add(link);
-                result.Success = (await _database.SaveChangesAsync()) > 0;
+                    var newLink = new DbLinkUserUser
+                    {
+                        UserAId = body.UserAId,
+                        UserBId = body.UserBId,
+                        LinkType = body.LinkType,
+                    };
+                    _database.LinkUserUsers.Add(newLink);
+                    result.Success = (await _database.SaveChangesAsync()) > 0;
+                }
+                else if (linkExistTest.DeletedOn is  not null)
+                {
+                    linkExistTest.DeletedOn = null;
+                    linkExistTest.DeletedBy = null;
+                    _database.LinkUserUsers.Update(linkExistTest);
+                    result.Success = (await _database.SaveChangesAsync()) > 0;
+                }
             }
         }
 
@@ -162,6 +173,23 @@ public class UserService : IUserService
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
+    public async Task<UpdateLinkUserUserForUserResponse> RemoveLinkUserUserForUser(UpdateLinkUserUserForUserRequest body, Guid userId, Guid customerId)
+    {
+        var result = new UpdateLinkUserUserForUserResponse();
+        var sw = Stopwatch.StartNew();
+        var link = await _database.LinkUserUsers.Where(x => x.UserAId == body.UserAId && x.UserBId == body.UserBId && x.DeletedOn == null).FirstOrDefaultAsync();
+        if (link is not null)
+        {
+            link.DeletedOn = DateTime.UtcNow;
+            link.DeletedBy = userId;
+            _database.LinkUserUsers.Update(link);
+            result.Success = (await _database.SaveChangesAsync()) > 0;
+        }
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
 
     public async Task<bool> PatchLastOnline(Guid userId, CancellationToken clt)
     {

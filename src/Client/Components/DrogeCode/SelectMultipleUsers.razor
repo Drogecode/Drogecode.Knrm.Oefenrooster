@@ -1,7 +1,7 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 @if (Users is not null && Functions is not null)
 {
-    <MudSelectExtended Clearable="@Clearable" T="DrogeUser" MultiSelectionTextFunc="@(new Func<List<DrogeUser>, string>(GetMultiSelectionText))" ToStringFunc="@(new Func<DrogeUser, string>(GetSelectedText))" Label="@Label" MultiSelection="@MultiSelection" SelectedValues="_selectedUsers" SelectedValuesChanged="OnSelectionChanged">
+    <MudSelectExtended Clearable="@Clearable" T="DrogeUser" MultiSelectionTextFunc="@(new Func<List<DrogeUser>, string>(GetMultiSelectionText))" ToStringFunc="@(new Func<DrogeUser, string>(GetSelectedText))" Label="Label" MultiSelection="MultiSelection" SelectedValues="Selection" SelectedValuesChanged="OnSelectionChanged" ReadOnly="ReadOnly">
         @foreach (var function in Functions)
         {
             if (Users.Any(x => x.UserFunctionId == function.Id))

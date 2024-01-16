@@ -53,4 +53,10 @@ public class UserRepository
         var request = await _userClient.SyncAllUsersAsync();
         return request.Success;
     }
+    public async Task<UpdateLinkUserUserForUserResponse> UpdateLinkUserUserForUserAsync(UpdateLinkUserUserForUserRequest body, CancellationToken clt)
+    {
+        var request = await _userClient.UpdateLinkUserUserForUserAsync(body, clt);
+        return request;
+    }
+
 }

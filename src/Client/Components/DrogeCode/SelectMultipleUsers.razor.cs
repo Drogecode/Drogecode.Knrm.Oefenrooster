@@ -12,6 +12,7 @@ public sealed partial class SelectMultipleUsers
     [Parameter] public EventCallback<IEnumerable<DrogeUser>> SelectionChanged { get; set; }
     [Parameter] public bool MultiSelection { get; set; } = true;
     [Parameter] public bool Clearable { get; set; } = true;
+    [Parameter] public bool ReadOnly { get; set; } = false;
     [Parameter] public string Label { get; set; } = string.Empty;
 
     private IEnumerable<DrogeUser> _selectedUsers = new List<DrogeUser>();
