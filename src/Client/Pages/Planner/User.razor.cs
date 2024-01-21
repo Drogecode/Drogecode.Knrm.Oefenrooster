@@ -34,6 +34,7 @@ public sealed partial class User : IDisposable
     private List<PlannerTrainingType>? _trainingTypes;
     private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
     private bool _updatingSelection = false;
+    private bool _loadingUserInfo = true;
     protected override void OnInitialized()
     {
         _trainings = null;
@@ -48,6 +49,8 @@ public sealed partial class User : IDisposable
         _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, _cls.Token);
         if (Id is not null)
         {
+            _loadingUserInfo = true;
+            StateHasChanged();
             if (_user?.LinkedAsA is not null)
             {
                 var newList = new List<DrogeUser>();
@@ -63,6 +66,7 @@ public sealed partial class User : IDisposable
             _user = await _userRepository.GetById(Id.Value);
             _trainings = (await _scheduleRepository.AllTrainingsForUser(Id.Value, _cls.Token));
             _userFunction = _functions?.FirstOrDefault(x => x.Id == _user?.UserFunctionId);
+            _loadingUserInfo = false;
         }
         StateHasChanged();
     }
