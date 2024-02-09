@@ -24,7 +24,13 @@
                     @(_users.FirstOrDefault(u => u.Id == context.Item.ByUser)?.Name ?? context.Item.ByUser.ToString())
                 </CellTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="x => x.TrainingId" Title="@L["Training"]"/>
+            <PropertyColumn Property="x => x.TrainingId" Title="@L["Training"]">
+                <CellTemplate>
+                    <div class="@(context.Item.IsDeleted ? "text-gray-500" : "")">
+                        @context.Item.Training?.Name - <DateToString DateTimeUtc="@context.Item.Training?.DateStart" />
+                    </div>
+                </CellTemplate>
+            </PropertyColumn>
         </Columns>
     </MudDataGrid>
     @if (_skip > 0 || _trainingAudits.TotalCount > (_count + _skip))

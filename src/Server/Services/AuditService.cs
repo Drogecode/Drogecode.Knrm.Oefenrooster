@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
+using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using System.Diagnostics;
 
@@ -36,16 +37,26 @@ public class AuditService : IAuditService
     {
         var response = new GetTrainingAuditResponse();
         var sw = Stopwatch.StartNew();
-        var audits = _database.Audits.Where(x => x.AuditType == AuditType.PatchAssignedUser && (trainingId.Equals(Guid.Empty) || x.ObjectKey == trainingId)).OrderByDescending(x=>x.Created);
+        var audits = _database.Audits.Where(x => x.AuditType == AuditType.PatchAssignedUser && (trainingId.Equals(Guid.Empty) || x.ObjectKey == trainingId)).OrderByDescending(x => x.Created);
         if (audits.Any())
         {
             response.TrainingAudits = new List<TrainingAudit>();
-            foreach (var audit in audits.Skip(skip).Take(count))
+            foreach (var auditDb in await audits.Skip(skip).Take(count).ToListAsync(clt))
             {
-                response.TrainingAudits.Add(audit.ToTrainingAudit());
+                var audit = auditDb.ToTrainingAudit();
+                if (trainingId.Equals(Guid.Empty))
+                {
+                    var dbTraining = await _database.RoosterTrainings
+                            .Include(x => x.RoosterAvailables)
+                            .FirstOrDefaultAsync(x => x.Id == audit.TrainingId, clt);
+                    var training = dbTraining?.ToTraining();
+                    audit.Training = training;
+                    audit.IsDeleted = dbTraining?.DeletedOn is not null;
+                }
+                response.TrainingAudits.Add(audit);
             }
         }
-        response.TotalCount = await audits.CountAsync();
+        response.TotalCount = await audits.CountAsync(clt);
         sw.Stop();
         response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return response;
