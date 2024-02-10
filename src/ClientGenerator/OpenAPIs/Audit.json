@@ -132,6 +132,26 @@
         "type": "integer",
         "format": "int32"
       },
+      "AvailabilitySetBy": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Availabilty": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "GetTrainingAuditResponse": {
         "type": "object",
         "properties": {
@@ -155,6 +175,70 @@
               "$ref": "#/components/schemas/TrainingAudit"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Training": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "roosterTrainingTypeId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "trainingId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "defaultId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "vehicleId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "plannedFunctionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "dateStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dateEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "countToTrainingTarget": {
+            "type": "boolean"
+          },
+          "updated": {
+            "type": "boolean"
+          },
+          "isPinned": {
+            "type": "boolean"
+          },
+          "showTime": {
+            "type": "boolean"
+          },
+          "availabilty": {
+            "$ref": "#/components/schemas/Availabilty"
+          },
+          "setBy": {
+            "$ref": "#/components/schemas/AvailabilitySetBy"
+          },
+          "assigned": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -187,6 +271,12 @@
           "date": {
             "type": "string",
             "format": "date-time"
+          },
+          "training": {
+            "$ref": "#/components/schemas/Training"
+          },
+          "isDeleted": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

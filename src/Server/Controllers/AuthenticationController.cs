@@ -126,7 +126,7 @@ public class AuthenticationController : ControllerBase
             if (string.Compare(found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value, false) != 0)
             {
                 _logger.LogWarning("Nonce is wrong `{cache}` != `{jwt}`", found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value ?? "null");
-                return false; 
+                return false;
             }
 
             await SetUser(jwtSecurityToken, false, clt);
@@ -231,6 +231,8 @@ public class AuthenticationController : ControllerBase
         {
             new(ClaimTypes.Name, email),
             new("FullName", fullName),
+            new("ValidFrom", jwtSecurityToken.ValidFrom.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+            new("ValidTo", jwtSecurityToken.ValidTo.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             new("http://schemas.microsoft.com/identity/claims/objectidentifier", userId),
             new("http://schemas.microsoft.com/identity/claims/tenantid", customerId.ToString())
         };
