@@ -2,11 +2,9 @@
 using Drogecode.Knrm.Oefenrooster.PreCom.Enums;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using WhatsappBusiness.CloudApi;
 using WhatsappBusiness.CloudApi.Configurations;
-using WhatsappBusiness.CloudApi.Interfaces;
 using WhatsappBusiness.CloudApi.Messages.Requests;
 
 using var loggerFactory = LoggerFactory.Create(builder =>
