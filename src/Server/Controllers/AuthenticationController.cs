@@ -27,6 +27,8 @@ public class AuthenticationController : ControllerBase
     private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
 
+    private const string REFRESHTOKEN = "RefreshToken";
+
     public AuthenticationController(
         ILogger<AuthenticationController> logger,
         IMemoryCache memoryCache,
@@ -94,11 +96,12 @@ public class AuthenticationController : ControllerBase
                 return false;
             }
             _memoryCache.Remove(state);
-            var tenant = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new Exception("no tenant id found for azure login");
+            var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new Exception("no tenant id found for azure login");
             var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new Exception("no secret found for azure login");
+            var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new Exception("no secret found for azure login");
             var formContent = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("client_id", "a9c68159-901c-449a-83e0-85243364e3cc"),
+                new KeyValuePair<string, string>("client_id", clientId),
                 new KeyValuePair<string, string>("scope", "openid profile email offline_access"),
                 new KeyValuePair<string, string>("code", code),
                 new KeyValuePair<string, string>("redirect_uri", redirectUrl),
@@ -106,7 +109,7 @@ public class AuthenticationController : ControllerBase
                 new KeyValuePair<string, string>("code_verifier", found.CodeVerifier),
                 new KeyValuePair<string, string>("client_secret", secret),
             });
-            using (var response = await _httpClient.PostAsync($"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token", formContent))
+            using (var response = await _httpClient.PostAsync($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token", formContent))
             {
                 string responseString = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -180,41 +183,49 @@ public class AuthenticationController : ControllerBase
 
     [Authorize]
     [HttpPost]
+    [Route("logout")]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync();
         return Ok();
     }
 
-    //[Authorize]
-    //[HttpPost]
-    public async Task<ActionResult<bool>> Refresh()
+    [Authorize]
+    [HttpPost]
+    [Route("refresh")]
+    public async Task<ActionResult<bool>> Refresh(CancellationToken clt = default)
     {
+        // https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow#refresh-the-access-token
         try
         {
-            string id_token = "";
             if (User?.Identity?.IsAuthenticated != true)
                 return false;
-            User.Claims.FirstOrDefault();
-            /*var tenant = "d9754755-b054-4a9c-a77f-da42a4009365";
+
+            var oldRefreshToken = User?.FindFirstValue(REFRESHTOKEN);
+            if (oldRefreshToken == null)
+                return false;
+
+            string id_token = "";
+            string refresh_token = "";
+            var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new Exception("no tenant id found for azure login");
             var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new Exception("no secret found for azure login");
+            var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new Exception("no secret found for azure login");
             var formContent = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("client_id", "a9c68159-901c-449a-83e0-85243364e3cc"),
-                new KeyValuePair<string, string>("scope", "openid profile email"),
-                new KeyValuePair<string, string>("code", code),
-                new KeyValuePair<string, string>("redirect_uri", redirectUrl),
-                new KeyValuePair<string, string>("grant_type", "authorization_code"),
-                new KeyValuePair<string, string>("code_verifier", found.CodeVerifier),
+                new KeyValuePair<string, string>("client_id", clientId),
+                new KeyValuePair<string, string>("scope", "openid profile email offline_access"),
+                new KeyValuePair<string, string>("refresh_token", oldRefreshToken),
+                new KeyValuePair<string, string>("grant_type", "refresh_token"),
                 new KeyValuePair<string, string>("client_secret", secret),
             });
-            using (var response = await _httpClient.PostAsync($"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token", formContent))
+            using (var response = await _httpClient.PostAsync($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token", formContent))
             {
                 string responseString = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     var resObj = JsonConvert.DeserializeObject<AzureLoginResponse>(responseString);
                     id_token = resObj?.id_token ?? "";
+                    refresh_token = resObj?.refresh_token ?? "";
                 }
                 else
                 {
@@ -225,13 +236,7 @@ public class AuthenticationController : ControllerBase
 
             var handler = new JwtSecurityTokenHandler();
             var jwtSecurityToken = handler.ReadJwtToken(id_token);
-            if (string.Compare(found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value, false) != 0)
-            {
-                _logger.LogWarning("Nonce is wrong `{cache}` != `{jwt}`", found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value ?? "null");
-                return false;
-            }
-
-            await SetUser(jwtSecurityToken, false, clt);*/
+            await SetUser(jwtSecurityToken, refresh_token, false, clt);
             return true;
         }
         catch (Exception e)
@@ -287,7 +292,7 @@ public class AuthenticationController : ControllerBase
         {
             new(ClaimTypes.Name, email),
             new("FullName", fullName),
-            new("RefreshToken", refresh_token),
+            new(REFRESHTOKEN, refresh_token),
             new("ValidFrom", jwtSecurityToken.ValidFrom.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             new("ValidTo", jwtSecurityToken.ValidTo.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             new("http://schemas.microsoft.com/identity/claims/objectidentifier", userId),

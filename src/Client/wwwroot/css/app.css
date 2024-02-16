@@ -23,6 +23,10 @@
     color: white;
 }
 
-    .blazor-error-boundary::after {
-        content: "An error has occurred."
-    }
+.blazor-error-boundary::after {
+    content: "An error has occurred."
+}
+
+.mud-cal-month-dropzone {
+    overflow-y: unset !important;
+}
