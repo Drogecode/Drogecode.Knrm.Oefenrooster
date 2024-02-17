@@ -133,9 +133,9 @@ public class UserController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             if (body.Add)
-                return await _userService.UpdateLinkUserUserForUser(body, userId, customerId);
+                return await _userService.UpdateLinkUserUserForUser(body, userId, customerId, clt);
             else
-                return await _userService.RemoveLinkUserUserForUser(body, userId, customerId);
+                return await _userService.RemoveLinkUserUserForUser(body, userId, customerId, clt);
         }
         catch (Exception ex)
         {

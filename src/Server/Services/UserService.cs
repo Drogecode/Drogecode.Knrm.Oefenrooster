@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using System.Diagnostics;
 
@@ -43,13 +44,13 @@ public class UserService : IUserService
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
             .Include(x => x.LinkedUserAsB!.Where(y => y.DeletedOn == null))
             .Where(u => u.Id == userId).FirstOrDefaultAsync();
-        return DbUserToSharedUser(userObj);
+        return userObj?.ToSharedUser();
     }
 
-    public async Task<DrogeUser> GetOrSetUserFromDb(Guid userId, string userName, string userEmail, Guid customerId, bool setLastOnline)
+    public async Task<DrogeUser?> GetOrSetUserFromDb(Guid userId, string userName, string userEmail, Guid customerId, bool setLastOnline)
     {
         var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
-        if (userObj == null)
+        if (userObj is null)
         {
             var result = _database.Users.Add(new DbUsers
             {
@@ -84,50 +85,13 @@ public class UserService : IUserService
             _database.Users.Update(userObj);
             await _database.SaveChangesAsync();
         }
-        return DbUserToSharedUser(userObj!);
-    }
-
-    private DrogeUser DbUserToSharedUser(DbUsers dbUsers)
-    {
-        var user = new DrogeUser
-        {
-            Id = dbUsers.Id,
-            Name = dbUsers.Name,
-            Created = dbUsers.CreatedOn,
-            LastLogin = dbUsers.LastLogin,
-            UserFunctionId = dbUsers.UserFunctionId,
-        };
-        if (dbUsers.LinkedUserAsA?.Count > 0)
-        {
-            user.LinkedAsA = [];
-            foreach (var link in dbUsers.LinkedUserAsA)
-            {
-                user.LinkedAsA.Add(new LinkedDrogeUser
-                {
-                    LinkedUserId = link.UserBId,
-                    LinkType = link.LinkType,
-                });
-            }
-        }
-        if (dbUsers.LinkedUserAsB?.Count > 0)
-        {
-            user.LinkedAsB = [];
-            foreach (var link in dbUsers.LinkedUserAsB)
-            {
-                user.LinkedAsB.Add(new LinkedDrogeUser
-                {
-                    LinkedUserId = link.UserAId,
-                    LinkType = link.LinkType,
-                });
-            }
-        }
-        return user;
+        return userObj?.ToSharedUser();
     }
 
     public async Task<bool> UpdateUser(DrogeUser user, Guid userId, Guid customerId)
     {
         var oldVersion = await _database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null);
-        if (oldVersion != null)
+        if (oldVersion is not null)
         {
             oldVersion.UserFunctionId = user.UserFunctionId;
             _database.Users.Update(oldVersion);
@@ -136,7 +100,7 @@ public class UserService : IUserService
         }
         return false;
     }
-    public async Task<UpdateLinkUserUserForUserResponse> UpdateLinkUserUserForUser(UpdateLinkUserUserForUserRequest body, Guid userId, Guid customerId)
+    public async Task<UpdateLinkUserUserForUserResponse> UpdateLinkUserUserForUser(UpdateLinkUserUserForUserRequest body, Guid userId, Guid customerId, CancellationToken clt)
     {
         var result = new UpdateLinkUserUserForUserResponse();
         var sw = Stopwatch.StartNew();
@@ -173,11 +137,11 @@ public class UserService : IUserService
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
-    public async Task<UpdateLinkUserUserForUserResponse> RemoveLinkUserUserForUser(UpdateLinkUserUserForUserRequest body, Guid userId, Guid customerId)
+    public async Task<UpdateLinkUserUserForUserResponse> RemoveLinkUserUserForUser(UpdateLinkUserUserForUserRequest body, Guid userId, Guid customerId, CancellationToken clt)
     {
         var result = new UpdateLinkUserUserForUserResponse();
         var sw = Stopwatch.StartNew();
-        var link = await _database.LinkUserUsers.Where(x => x.UserAId == body.UserAId && x.UserBId == body.UserBId && x.DeletedOn == null).FirstOrDefaultAsync();
+        var link = await _database.LinkUserUsers.Where(x => x.UserAId == body.UserAId && x.UserBId == body.UserBId && x.DeletedOn == null).FirstOrDefaultAsync(clt);
         if (link is not null)
         {
             link.DeletedOn = DateTime.UtcNow;
@@ -194,12 +158,12 @@ public class UserService : IUserService
     public async Task<bool> PatchLastOnline(Guid userId, CancellationToken clt)
     {
 
-        var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
+        var userObj = await _database.Users.Where(u => u.Id == userId).FirstOrDefaultAsync(clt);
         if (userObj is not null && userObj.LastLogin.AddMinutes(1).CompareTo(DateTime.UtcNow) < 0)
         {
             userObj.LastLogin = DateTime.UtcNow;
             _database.Users.Update(userObj);
-            return (await _database.SaveChangesAsync() > 0);
+            return (await _database.SaveChangesAsync(clt) > 0);
         }
         return false;
     }
@@ -226,7 +190,7 @@ public class UserService : IUserService
         foreach (var user in existingUsers)
         {
             var dbUser = await _database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null);
-            if (dbUser != null)
+            if (dbUser is not null)
             {
                 dbUser.DeletedOn = DateTime.UtcNow;
                 dbUser.DeletedBy = userId;

@@ -11,6 +11,7 @@ public class UserRepository
     private readonly IOfflineService _offlineService;
 
     private const string MONTHITEMS = "usr_all_{0}";
+    private const string USERID = "usr_{0}";
 
     public UserRepository(IUserClient userClient, IOfflineService offlineService)
     {
@@ -32,10 +33,13 @@ public class UserRepository
         return dbUser.DrogeUser;
     }
 
-    public async Task<DrogeUser?> GetById(Guid id)
+    public async Task<DrogeUser?> GetById(Guid id, CancellationToken clt = default)
     {
-        var result = await _userClient.GetByIdAsync(id);
-        return result.User;
+        var response = await _offlineService.CachedRequestAsync(string.Format(USERID, id),
+            async () => await _userClient.GetByIdAsync(id, clt),
+            new ApiCachedRequest { OneCallPerSession = true, ExpireSession = DateTime.UtcNow.AddMinutes(30) },
+            clt: clt);
+        return response.User;
     }
 
     public async Task<bool> UpdateUserAsync(DrogeUser user)
