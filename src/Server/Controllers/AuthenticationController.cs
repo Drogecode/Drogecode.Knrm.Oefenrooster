@@ -98,11 +98,12 @@ public class AuthenticationController : ControllerBase
             _memoryCache.Remove(state);
             var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new Exception("no tenant id found for azure login");
             var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new Exception("no secret found for azure login");
-            var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new Exception("no secret found for azure login");
+            var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new Exception("no client id found for azure login");
+            var scope = _configuration.GetValue<string>("AzureAd:LoginScope") ?? throw new Exception("no scope found for azure login");
             var formContent = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>("client_id", clientId),
-                new KeyValuePair<string, string>("scope", "openid profile email offline_access"),
+                new KeyValuePair<string, string>("scope", scope),
                 new KeyValuePair<string, string>("code", code),
                 new KeyValuePair<string, string>("redirect_uri", redirectUrl),
                 new KeyValuePair<string, string>("grant_type", "authorization_code"),
@@ -209,11 +210,12 @@ public class AuthenticationController : ControllerBase
             string refresh_token = "";
             var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new Exception("no tenant id found for azure login");
             var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new Exception("no secret found for azure login");
-            var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new Exception("no secret found for azure login");
+            var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new Exception("no client id found for azure login");
+            var scope = _configuration.GetValue<string>("AzureAd:LoginScope") ?? throw new Exception("no scope found for azure login");
             var formContent = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>("client_id", clientId),
-                new KeyValuePair<string, string>("scope", "openid profile email offline_access"),
+                new KeyValuePair<string, string>("scope", scope),
                 new KeyValuePair<string, string>("refresh_token", oldRefreshToken),
                 new KeyValuePair<string, string>("grant_type", "refresh_token"),
                 new KeyValuePair<string, string>("client_secret", secret),
@@ -229,7 +231,7 @@ public class AuthenticationController : ControllerBase
                 }
                 else
                 {
-                    _logger.LogWarning("Failed login: {jsonstring}", responseString);
+                    _logger.LogWarning("Failed refresh: {jsonstring}", responseString);
                     return false;
                 }
             }

@@ -31,7 +31,7 @@ public class CustomStateProvider : AuthenticationStateProvider
             }
             var now = DateTime.Now;
 #if DEBUG
-            now = now.AddMinutes(59).AddSeconds(30);
+            //now = now.AddMinutes(59).AddSeconds(30);
 #endif
             if (now.CompareTo(validFrom.AddMinutes(-15)) < 0 || now.CompareTo(validTo) > 0)
             {

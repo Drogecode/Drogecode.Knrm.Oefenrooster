@@ -115,6 +115,11 @@ public sealed partial class MainLayout : IDisposable
         Navigation.NavigateTo("/authentication/logout");
     }
 
+    private async Task Login(MouseEventArgs args)
+    {
+        Navigation.NavigateTo("/landing_page");
+    }
+
     public void ShowSnackbarAssignmentChanged(PlanUser user, PlannedTraining training)
     {
         var key = $"table_{user.UserId}_{training.TrainingId}";
