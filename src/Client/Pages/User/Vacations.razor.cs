@@ -16,6 +16,7 @@ public sealed partial class Vacations : IDisposable
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private HolidayRepository _holidayRepository { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<Holiday>? _holidays { get; set; }
     private RefreshModel _refreshModel = new();
@@ -44,6 +45,11 @@ public sealed partial class Vacations : IDisposable
             FullWidth = true
         };
         _dialogProvider.Show<VacationDialog>(L["Edit holiday"], parameters, options);
+    }
+
+    private void GoToVacationAdd()
+    {
+        Navigation.NavigateTo("/user/vacations/add");
     }
 
     private async Task Delete(Holiday? holiday)

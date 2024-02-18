@@ -1,7 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
-using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
 
@@ -14,6 +11,9 @@ public sealed partial class SelectMultipleUsers
     [Parameter][EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
     [Parameter] public EventCallback<IEnumerable<DrogeUser>> SelectionChanged { get; set; }
     [Parameter] public bool MultiSelection { get; set; } = true;
+    [Parameter] public bool Clearable { get; set; } = true;
+    [Parameter] public bool ReadOnly { get; set; } = false;
+    [Parameter] public string Label { get; set; } = string.Empty;
 
     private IEnumerable<DrogeUser> _selectedUsers = new List<DrogeUser>();
     [Parameter]
@@ -29,6 +29,11 @@ public sealed partial class SelectMultipleUsers
             _selectedUsers = value;
             SelectionChanged.InvokeAsync(value);
         }
+    }
+    protected override void OnParametersSet()
+    {
+        if (string.IsNullOrEmpty(Label))
+            Label = L["From who"];
     }
 
     private string GetMultiSelectionText(List<DrogeUser> selectedValues)

@@ -7,6 +7,9 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph.Models;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
@@ -465,6 +468,45 @@ public class ScheduleControllerTests : BaseTest
     }
 
     [Fact]
+    public async Task PatchTrainingTest()
+    {
+        var newTrainingId = await AddTraining("PatchTrainingTest", false);
+        var newTraining = (await ScheduleController.GetPlannedTrainingById(newTrainingId)).Value!.Training!;
+        newTraining.Name = "isPatched";
+        var patchResult = await ScheduleController.PatchTraining(newTraining);
+        Assert.True(patchResult.Value?.Success);
+        var patchTraining = (await ScheduleController.GetPlannedTrainingById(newTrainingId)).Value!.Training!;
+        patchTraining.Name.Should().Be("isPatched");
+    }
+
+    [Fact]
+    public async Task PatchTrainingPastTest()
+    {
+        var newTrainingId = await AddTraining("PatchTrainingPastTest", false, DateTime.Today.AddDays(-10).AddHours(5), DateTime.Today.AddDays(-10).AddHours(7));
+        var newTraining = (await ScheduleController.GetPlannedTrainingById(newTrainingId)).Value!.Training!;
+        newTraining.Name = "isPatched";
+        var patchResult = await ScheduleController.PatchTraining(newTraining);
+        patchResult.Result.Should().BeOfType<UnauthorizedResult>();
+        var patchTraining = (await ScheduleController.GetPlannedTrainingById(newTrainingId)).Value!.Training!;
+        patchTraining.Name.Should().Be("PatchTrainingPastTest");
+    }
+
+    [Fact]
+    public async Task PatchTrainingPastWithAccessTest()
+    {
+        var user1 = await AddUser("user1_fortest");
+        MockAuthenticatedUser(ScheduleController, user1, DefaultCustomerId, [AccessesNames.AUTH_scheduler_edit_past]);
+        var newTrainingId = await AddTraining("PatchTrainingPastWithAccessTest", false, DateTime.Today.AddDays(-10).AddHours(5), DateTime.Today.AddDays(-10).AddHours(7));
+        var newTraining = (await ScheduleController.GetPlannedTrainingById(newTrainingId)).Value!.Training!;
+        newTraining.Name = "isPatched";
+        var patchResult = await ScheduleController.PatchTraining(newTraining);
+        Assert.True(patchResult.Value?.Success);
+        var patchTraining = (await ScheduleController.GetPlannedTrainingById(newTrainingId)).Value!.Training!;
+        patchTraining.Name.Should().Be("isPatched");
+        MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+    }
+
+    [Fact]
     public async Task GetTrainingsForAllIncludeUnAssigned()
     {
         var dateStart = DateTime.Today.AddDays(1).AddHours(21);
@@ -506,6 +548,8 @@ public class ScheduleControllerTests : BaseTest
         Assert.NotEmpty(training.PlanUsers);
         training.PlanUsers.Should().Contain(x => x.UserId == DefaultUserId);
         training.PlanUsers.Should().NotContain(x => x.UserId == user1);
+        var user = training.PlanUsers.FirstOrDefault(x => x.UserId == DefaultUserId);
+        user!.VehicleId.Should().Be(DefaultVehicle);
         MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
         MockAuthenticatedUser(VehicleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
     }

@@ -12,7 +12,6 @@ public sealed partial class MainLayout : IDisposable
 {
     [Inject] private IStringLocalizer<MainLayout> L { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
-    [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private IOfflineService _offlineService { get; set; } = default!;
@@ -105,7 +104,7 @@ public sealed partial class MainLayout : IDisposable
         if (_isAuthenticated)
         {
             if (_trainingTypes == null)
-                _trainingTypes = await _trainingTypesRepository.GetTrainingTypes();
+                _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false);
             RefreshMe();
         }
 
@@ -113,7 +112,12 @@ public sealed partial class MainLayout : IDisposable
 
     private async Task BeginLogout(MouseEventArgs args)
     {
-        Navigation.NavigateTo("authentication/logout");
+        Navigation.NavigateTo("/authentication/logout");
+    }
+
+    private async Task Login(MouseEventArgs args)
+    {
+        Navigation.NavigateTo("/landing_page");
     }
 
     public void ShowSnackbarAssignmentChanged(PlanUser user, PlannedTraining training)

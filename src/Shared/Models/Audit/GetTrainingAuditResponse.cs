@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,4 +19,6 @@ public class TrainingAudit : AuditAssignedUser
     public Guid? ByUser { get; set; }
     public Guid? TrainingId { get; set; }
     public DateTime Date {  get; set; }
+    public Training? Training { get; set; }
+    public bool IsDeleted { get; set; }
 }

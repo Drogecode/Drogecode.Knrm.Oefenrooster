@@ -23,6 +23,10 @@ public class DbUsers
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
     public ICollection<DbRoosterItemDay>? RoosterItemDays { get; set; }
     public ICollection<DbLinkUserDayItem>? LinkUserDayItems { get; set; }
+    public ICollection<DbUsers>? LinkedUserA { get; set; }
+    public ICollection<DbUsers>? LinkedUserB { get; set; }
+    public ICollection<DbLinkUserUser>? LinkedUserAsA { get; set; }
+    public ICollection<DbLinkUserUser>? LinkedUserAsB { get; set; }
     public ICollection<DbUserDefaultGroup>? UserDefaultGroups { get; set; }
     public ICollection<DbUserDefaultAvailable>? UserDefaultAvailables { get; set; }
     public ICollection<DbUserHolidays>? UserHolidays { get; set; }

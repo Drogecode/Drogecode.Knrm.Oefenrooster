@@ -19,14 +19,16 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                 type: "uuid",
                 nullable: true);
 
-            migrationBuilder.InsertData(
+            /* Does not work if database does not exists. (users not synced with azure)
+             * 
+             * migrationBuilder.InsertData(
                 table: "RoosterItemDay",
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "CustomerId", "DateEnd", "DateStart", "IsFullDay", "Text", "Type", "UserId" },
                 values: new object[,]
                 {
                     { new Guid("51da3135-ba68-43c0-bc66-72eba93ccf3d"), new Guid("04093c7a-11e5-4887-af51-319ecc59efe0"), new DateTime(2023, 10, 15, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new DateTime(2023, 10, 22, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 10, 16, 0, 0, 0, 0, DateTimeKind.Utc), true, "Wachtman", 1, new Guid("8b4d5cfa-3770-4d5d-84dc-1d594dbdcbbf") },
                     { new Guid("bf0b7712-d4d4-423c-b56f-f698a643b580"), new Guid("04093c7a-11e5-4887-af51-319ecc59efe0"), new DateTime(2023, 10, 15, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("d9754755-b054-4a9c-a77f-da42a4009365"), new DateTime(2023, 10, 15, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2023, 10, 9, 0, 0, 0, 0, DateTimeKind.Utc), true, "Wachtman", 1, new Guid("04093c7a-11e5-4887-af51-319ecc59efe0") }
-                });
+                });*/
 
             migrationBuilder.UpdateData(
                 table: "UserRoles",
@@ -59,7 +61,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                 name: "IX_RoosterItemDay_UserId",
                 table: "RoosterItemDay");
 
-            migrationBuilder.DeleteData(
+            /*migrationBuilder.DeleteData(
                 table: "RoosterItemDay",
                 keyColumn: "Id",
                 keyValue: new Guid("51da3135-ba68-43c0-bc66-72eba93ccf3d"));
@@ -67,7 +69,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
             migrationBuilder.DeleteData(
                 table: "RoosterItemDay",
                 keyColumn: "Id",
-                keyValue: new Guid("bf0b7712-d4d4-423c-b56f-f698a643b580"));
+                keyValue: new Guid("bf0b7712-d4d4-423c-b56f-f698a643b580"));*/
 
             migrationBuilder.DropColumn(
                 name: "UserId",

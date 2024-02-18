@@ -4,8 +4,11 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		
+		<!-- https://github.com/RicoSuter/NSwag/issues/4633 -->
+		<NSwagGenerateExceptionClasses>true</NSwagGenerateExceptionClasses>
 	</PropertyGroup>
-
+	
 	<ItemGroup>
 		<None Remove="OpenAPIs\CalendarItem.json" />
 	</ItemGroup>
@@ -49,7 +52,7 @@
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Report.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ReportClient">
 			<OutputPath>../Clients/ReportClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Report</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Schedule.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ScheduleClient">
 			<OutputPath>../Clients/ScheduleClient.g.cs</OutputPath>
@@ -78,12 +81,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="8.0.0">
+		<PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="8.0.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="NSwag.ApiDescription.Client" Version="13.20.0">
+		<PackageReference Include="NSwag.ApiDescription.Client" Version="14.0.3">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

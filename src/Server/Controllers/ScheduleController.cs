@@ -146,7 +146,8 @@ public class ScheduleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            PatchTrainingResponse result = await _scheduleService.PatchTraining(customerId, patchedTraining, clt);
+            var inRoleEditPast = User.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
+            PatchTrainingResponse result = await _scheduleService.PatchTraining(customerId, patchedTraining, inRoleEditPast, clt);
             if (result.Success)
                 await _auditService.Log(userId, AuditType.PatchTraining, customerId, objectKey: patchedTraining.TrainingId, objectName: patchedTraining.Name);
             else
@@ -160,6 +161,10 @@ public class ScheduleController : ControllerBase
             await _userService.PatchLastOnline(userId, clt);
 
             return result;
+        }
+        catch(UnauthorizedAccessException)
+        {
+            return Unauthorized();
         }
         catch (Exception ex)
         {
@@ -407,13 +412,13 @@ public class ScheduleController : ControllerBase
             {
                 if (!string.IsNullOrEmpty(type?.TrainingType?.Name))
                 {
-                    var eventResult = await _graphService.AddToCalendar(planUserId, text, training.DateStart, training.DateEnd, training.ShowTime);
+                    var eventResult = await _graphService.AddToCalendar(planUserId, text, training.DateStart, training.DateEnd, !training.ShowTime);
                     await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, eventResult.Id, clt);
                 }
             }
             else
             {
-                await _graphService.PatchCalender(planUserId, calendarEventId, text, training.DateStart, training.DateEnd, training.ShowTime);
+                await _graphService.PatchCalender(planUserId, calendarEventId, text, training.DateStart, training.DateEnd, !training.ShowTime);
                 await _auditService.Log(currentUserId, AuditType.PatchTraining, customerId, $"Preventing duplicate event '{type?.TrainingType?.Name}' on '{training?.DateStart.ToString("o")}' : '{training?.DateEnd.ToString("o")}'");
             }
         }

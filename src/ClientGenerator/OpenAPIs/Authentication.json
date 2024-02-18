@@ -125,7 +125,7 @@
         }
       }
     },
-    "/api/Authentication": {
+    "/api/Authentication/logout": {
       "post": {
         "tags": [
           "Authentication"
@@ -134,6 +134,36 @@
         "responses": {
           "200": {
             "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Authentication/refresh": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "Refresh",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
           }
         }
       }

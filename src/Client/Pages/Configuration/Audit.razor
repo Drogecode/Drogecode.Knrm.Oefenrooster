@@ -1,10 +1,7 @@
 ﻿@page "/configuration/audit"
-
-
-<MudText>Most likely not the most efficient code XD</MudText>
-@if (_trainingAudits is not null && _users is not null)
+@if (_trainingAudits?.TrainingAudits is not null && _users is not null)
 {
-    <MudDataGrid Items="_trainingAudits.OrderByDescending(x=>x.Date)">
+    <MudDataGrid Items="_trainingAudits.TrainingAudits">
         <Columns>
             <PropertyColumn Property="x => x.Date" Title="@L["Date"]">
                 <CellTemplate>
@@ -26,7 +23,17 @@
                     @(_users.FirstOrDefault(u => u.Id == context.Item.ByUser)?.Name ?? context.Item.ByUser.ToString())
                 </CellTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="x => x.TrainingId" Title="@L["Training"]"/>
+            <PropertyColumn Property="x => x.TrainingId" Title="@L["Training"]">
+                <CellTemplate>
+                    <div class="@(context.Item.IsDeleted ? "text-gray-500" : "")">
+                        @context.Item.Training?.Name - <DateToString DateTimeUtc="@context.Item.Training?.DateStart" ShowTime="true" />
+                    </div>
+                </CellTemplate>
+            </PropertyColumn>
         </Columns>
     </MudDataGrid>
+    @if (_skip > 0 || _trainingAudits.TotalCount > (_count + _skip))
+    {
+        <MudPagination Disabled="_bussy" ShowFirstButton="true" ShowLastButton="true" Count="@(Convert.ToInt32(Math.Ceiling((double)_trainingAudits.TotalCount/(double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4" />
+    }
 }

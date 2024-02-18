@@ -1,4 +1,6 @@
-﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
@@ -6,16 +8,24 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 public class UserRepository
 {
     private readonly IUserClient _userClient;
+    private readonly IOfflineService _offlineService;
 
-    public UserRepository(IUserClient userClient)
+    private const string MONTHITEMS = "usr_all_{0}";
+    private const string USERID = "usr_{0}";
+
+    public UserRepository(IUserClient userClient, IOfflineService offlineService)
     {
         _userClient = userClient;
+        _offlineService = offlineService;
     }
 
-    public async Task<List<DrogeUser>?> GetAllUsersAsync(bool includeHidden)
+    public async Task<List<DrogeUser>?> GetAllUsersAsync(bool includeHidden, bool forceCache, CancellationToken clt)
     {
-        var dbUser = await _userClient.GetAllAsync(includeHidden);
-        return dbUser.DrogeUsers?.ToList();
+        var response = await _offlineService.CachedRequestAsync(string.Format(MONTHITEMS, includeHidden),
+            async () => await _userClient.GetAllAsync(includeHidden), 
+            new ApiCachedRequest { OneCallPerSession = true, ForceCache = forceCache},
+            clt: clt);
+        return response.DrogeUsers?.ToList();
     }
     public async Task<DrogeUser?> GetCurrentUserAsync()
     {
@@ -23,10 +33,13 @@ public class UserRepository
         return dbUser.DrogeUser;
     }
 
-    public async Task<DrogeUser?> GetById(Guid id)
+    public async Task<DrogeUser?> GetById(Guid id, CancellationToken clt = default)
     {
-        var result = await _userClient.GetByIdAsync(id);
-        return result.User;
+        var response = await _offlineService.CachedRequestAsync(string.Format(USERID, id),
+            async () => await _userClient.GetByIdAsync(id, clt),
+            new ApiCachedRequest { OneCallPerSession = true, ExpireSession = DateTime.UtcNow.AddMinutes(30) },
+            clt: clt);
+        return response.User;
     }
 
     public async Task<bool> UpdateUserAsync(DrogeUser user)
@@ -44,4 +57,10 @@ public class UserRepository
         var request = await _userClient.SyncAllUsersAsync();
         return request.Success;
     }
+    public async Task<UpdateLinkUserUserForUserResponse> UpdateLinkUserUserForUserAsync(UpdateLinkUserUserForUserRequest body, CancellationToken clt)
+    {
+        var request = await _userClient.UpdateLinkUserUserForUserAsync(body, clt);
+        return request;
+    }
+
 }

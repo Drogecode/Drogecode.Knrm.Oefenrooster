@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using System.Diagnostics;
 using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
@@ -53,13 +55,16 @@ public class CalendarItemController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in GetMonthItem");
             return BadRequest();
         }
     }
 
     [HttpGet]
-    [Route("day/{yearStart:int}/{monthStart:int}/{dayStart:int}/{yearEnd:int}/{monthEnd:int}/{dayEnd:int}")]
+    [Route("day/{yearStart:int}/{monthStart:int}/{dayStart:int}/{yearEnd:int}/{monthEnd:int}/{dayEnd:int}/{userId:guid}")]
     public async Task<ActionResult<GetMultipleDayItemResponse>> GetDayItems(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, Guid userId, CancellationToken clt = default)
     {
         try
@@ -71,14 +76,17 @@ public class CalendarItemController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in GetDayItems");
             return BadRequest();
         }
     }
 
     [HttpGet]
-    [Route("day/all/{count:int}/{skip:int}")]
-    public async Task<ActionResult<GetMultipleDayItemResponse>> GetAllFutureDayItems(int count, int skip, CancellationToken clt = default)
+    [Route("day/all/{count:int}/{skip:int}/{forAllUsers:bool}")]
+    public async Task<ActionResult<GetMultipleDayItemResponse>> GetAllFutureDayItems(int count, int skip, bool forAllUsers, CancellationToken clt = default)
     {
         try
         {
@@ -89,15 +97,20 @@ public class CalendarItemController : ControllerBase
             }
             var result = new GetMultipleDayItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            result = await _calendarItemService.GetAllFutureDayItems(customerId, count, skip, clt);
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            result = await _calendarItemService.GetAllFutureDayItems(customerId, count, skip, forAllUsers, userId, clt);
             return result;
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in GetAllFutureDayItems");
             return BadRequest();
         }
     }
+
     [HttpGet]
     [Route("day/{id:guid}")]
     public async Task<ActionResult<GetDayItemResponse>> GetDayItemById(Guid id, CancellationToken clt = default)
@@ -112,11 +125,36 @@ public class CalendarItemController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in GetDayItemById");
             return BadRequest();
         }
     }
 
+    [HttpGet]
+    [Route("day/dashboard")]
+    public async Task<ActionResult<GetMultipleDayItemResponse>> GetDayItemDashboard(CancellationToken clt = default)
+    {
+
+        try
+        {
+            var result = new GetMultipleDayItemResponse();
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            result = await _calendarItemService.GetDayItemDashboard(userId, customerId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in GetDayItemById");
+            return BadRequest();
+        }
+    }
 
     [HttpPut]
     [Route("month")]
@@ -132,12 +170,16 @@ public class CalendarItemController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in PutMonthtem");
             return BadRequest();
         }
     }
 
     [HttpPut]
+    [Authorize(Roles = AccessesNames.AUTH_scheduler_dayitem)]
     [Route("day")]
     public async Task<ActionResult<PutDayItemResponse>> PutDayItem([FromBody] RoosterItemDay roosterItemDay, CancellationToken clt = default)
     {
@@ -150,21 +192,25 @@ public class CalendarItemController : ControllerBase
 
             if (roosterItemDay.LinkedUsers is not null)
             {
-                var newd = await _calendarItemService.GetDayItemById(customerId, roosterItemDay.Id, clt);
+                var newd = await _calendarItemService.GetDayItemById(customerId, result.NewId, clt);
                 if (newd.DayItem?.LinkedUsers is not null)
                     foreach (var user in newd.DayItem.LinkedUsers)
-                        await ToOutlookCalendar(user, true, roosterItemDay, customerId, clt);
+                        await ToOutlookCalendar(user, true, newd.DayItem, customerId, clt);
             }
             return result;
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in PutDayItem");
             return BadRequest();
         }
     }
 
     [HttpPatch]
+    [Authorize(Roles = AccessesNames.AUTH_scheduler_dayitem)]
     [Route("day")]
     public async Task<ActionResult<PatchDayItemResponse>> PatchDayItem([FromBody] RoosterItemDay roosterItemDay, CancellationToken clt = default)
     {
@@ -185,7 +231,7 @@ public class CalendarItemController : ControllerBase
                 {
                     if (roosterItemDay.LinkedUsers?.Any(x => x.UserId == user.UserId) is true)
                         continue;
-                    await ToOutlookCalendar(user, false, roosterItemDay, customerId, clt);
+                    await ToOutlookCalendar(user, false, old.DayItem, customerId, clt);
 
                 }
             }
@@ -194,18 +240,22 @@ public class CalendarItemController : ControllerBase
                 var newd = await _calendarItemService.GetDayItemById(customerId, roosterItemDay.Id, clt);
                 if (newd.DayItem?.LinkedUsers is not null)
                     foreach (var user in newd.DayItem.LinkedUsers)
-                        await ToOutlookCalendar(user, true, roosterItemDay, customerId, clt);
+                        await ToOutlookCalendar(user, true, newd.DayItem, customerId, clt);
             }
             return result;
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in PatchDayItem");
             return BadRequest();
         }
     }
 
     [HttpDelete]
+    [Authorize(Roles = AccessesNames.AUTH_scheduler_dayitem)]
     [Route("day")]
     public async Task<ActionResult<bool>> DeleteDayItem([FromBody] Guid idToDelete, CancellationToken clt = default)
     {
@@ -226,6 +276,9 @@ public class CalendarItemController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in DeleteDayItem");
             return BadRequest();
         }

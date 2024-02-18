@@ -114,7 +114,7 @@ public class GraphService : IGraphService
     public async Task<bool> SyncSharePointActions(Guid customerId, CancellationToken clt)
     {
         var keyActions = string.Format(SP_ACTIONS, customerId);
-        var update = await UpdateCacheSharePointActions(customerId, keyActions);
+        var update = await ShouldUpdateCacheSharePointActions(customerId, keyActions);
         if (!update)
             return false;
         _memoryCache.TryGetValue<List<SharePointAction>>(keyActions, out var sharePointActions);
@@ -132,48 +132,12 @@ public class GraphService : IGraphService
             var dbAction = dbActions.FirstOrDefault(x=>x.Id == action.Id);
             if (dbAction is null)
             {
-                dbAction = action.ToDefaultSchedule(customerId);
+                dbAction = action.ToDbDefaultSchedule(customerId);
                 await _database.ReportActions.AddAsync(dbAction, clt);
             }
             else if (dbAction.LastUpdated != action.LastUpdated)
             {
-                dbAction.Number = action.Number;
-                dbAction.CustomerId = customerId;
-                dbAction.ShortDescription = action.ShortDescription;
-                dbAction.Prio = action.Prio;
-                dbAction.Title = action.Title;
-                dbAction.Description = action.Description;
-                dbAction.Start = action.Start;
-                if (dbAction.Users is not null)
-                {
-                    foreach (var dbUser in dbAction.Users)
-                    {
-                        if (action.Users.Any(x => x.DrogeCodeId == dbUser.DrogeCodeId))
-                        {
-                            var user = action.Users.FirstOrDefault(x => x.DrogeCodeId == dbUser.DrogeCodeId);
-                            dbUser.IsDeleted = false;
-                            dbUser.Role = user!.Role;
-                            dbUser.Name = user!.Name;
-                        }
-                        else
-                        {
-                            dbUser.IsDeleted = true;
-                        }
-                    }
-                    foreach (var user in action.Users)
-                    {
-                        if (dbAction.Users.Any(x => x.DrogeCodeId == user.DrogeCodeId))
-                            continue;
-                        dbAction.Users.Add(new()
-                        {
-                            Id = Guid.NewGuid(),
-                            SharePointID = user.SharePointID,
-                            Name = user.Name,
-                            DrogeCodeId = user.DrogeCodeId,
-                            Role = user.Role,
-                        });
-                    }
-                }
+                dbAction.UpdateDbDefaultSchedule(action, customerId);
             }
         }
         var changeCount = await _database.SaveChangesAsync(clt);
@@ -183,7 +147,7 @@ public class GraphService : IGraphService
     public async Task<bool> SyncSharePointTrainings(Guid customerId, CancellationToken clt)
     {
         var keyTrainings = string.Format(SP_TRAININGS, customerId);
-        await UpdateCacheSharePointTrainings(customerId, keyTrainings);
+        await ShouldUpdateCacheSharePointTrainings(customerId, keyTrainings);
         _memoryCache.TryGetValue<List<SharePointTraining>>(keyTrainings, out var sharePointTrainings);
         sharePointTrainings ??= await GetSharePointTrainings(customerId, keyTrainings, clt);
         return true;
@@ -193,7 +157,7 @@ public class GraphService : IGraphService
     {
         var sw = Stopwatch.StartNew();
         var keyActions = string.Format(SP_ACTIONS, customerId);
-        await UpdateCacheSharePointActions(customerId, keyActions);
+        await ShouldUpdateCacheSharePointActions(customerId, keyActions);
         _memoryCache.TryGetValue<List<SharePointAction>>(keyActions, out var sharePointActions);
         sharePointActions ??= await GetSharePointActions(customerId, keyActions, clt);
         var listWhere = sharePointActions?.Where(x => x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count());
@@ -207,7 +171,7 @@ public class GraphService : IGraphService
         return sharePointActionsUser;
     }
 
-    private async Task<bool> UpdateCacheSharePointActions(Guid customerId, string keyActions)
+    private async Task<bool> ShouldUpdateCacheSharePointActions(Guid customerId, string keyActions)
     {
         var keyExp = string.Format(SP_ACTIONS_EXP, customerId);
         var cacheOptions = new MemoryCacheEntryOptions();
@@ -251,7 +215,7 @@ public class GraphService : IGraphService
     {
         var sw = Stopwatch.StartNew();
         var keyTrainings = string.Format(SP_TRAININGS, customerId);
-        await UpdateCacheSharePointTrainings(customerId, keyTrainings);
+        await ShouldUpdateCacheSharePointTrainings(customerId, keyTrainings);
         _memoryCache.TryGetValue<List<SharePointTraining>>(keyTrainings, out var sharePointTrainings);
         sharePointTrainings ??= await GetSharePointTrainings(customerId, keyTrainings, clt);
         var listWhere = sharePointTrainings?.Where(x => x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count());
@@ -265,7 +229,7 @@ public class GraphService : IGraphService
         return sharePointTrainingsUser;
     }
 
-    private async Task<bool> UpdateCacheSharePointTrainings(Guid customerId, string keyTrainings)
+    private async Task<bool> ShouldUpdateCacheSharePointTrainings(Guid customerId, string keyTrainings)
     {
         var keyExp = string.Format(SP_TRAININGS_EXP, customerId);
         var cacheOptions = new MemoryCacheEntryOptions();
