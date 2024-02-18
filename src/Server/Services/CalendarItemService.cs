@@ -94,8 +94,8 @@ public class CalendarItemService : ICalendarItemService
 
         var dayItem = await _database.RoosterItemDays.Include(x => x.LinkUserDayItems)
             .Where(x => x.DeletedOn == null && x.CustomerId == customerId
-            && x.DateStart > todayUtc
-            && ((x.LinkUserDayItems!.Any() && x.LinkUserDayItems!.Any(y => y.UserId == userId)) || (!x.LinkUserDayItems!.Any() && x.DateStart < todayUtc.AddDays(7))))
+            && (x.DateStart >= todayUtc || (x.DateEnd != null && x.DateEnd >= todayUtc))
+            && ((x.LinkUserDayItems!.Any() && x.LinkUserDayItems!.Any(y => y.UserId == userId)) || (!x.LinkUserDayItems!.Any() && x.DateStart <= todayUtc.AddDays(7))))
             .OrderBy(x=>x.DateStart)
             .ToListAsync();
         if (dayItem is null)
