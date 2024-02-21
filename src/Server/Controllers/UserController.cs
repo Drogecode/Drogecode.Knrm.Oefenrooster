@@ -164,7 +164,7 @@ public class UserController : ControllerBase
                 {
                     foreach (var user in users!.Value!)
                     {
-                        if (user.Id != null && user.DisplayName != null && user.Mail != null)
+                        if (!string.IsNullOrEmpty(user.Id) && !string.IsNullOrEmpty(user.DisplayName))
                         {
                             var id = new Guid(user.Id);
                             var index = existingUsers.FindIndex(x => x.Id == id);
@@ -175,7 +175,7 @@ public class UserController : ControllerBase
                             {
                                 //ToDo
                             }*/
-                            var newUserResponse = await _userService.GetOrSetUserFromDb(id, user.DisplayName, user.Mail, customerId, false);
+                            var newUserResponse = await _userService.GetOrSetUserFromDb(id, user.DisplayName, user.Mail ?? "not set", customerId, false);
                         }
                     }
                     if (users.OdataNextLink != null)
