@@ -29,7 +29,7 @@
                 </MudCardHeader>
                 <MudCardContent>
                     <pre>
-                        @(JsonSerializer.Serialize(context.Item.RawJson, new JsonSerializerOptions() { WriteIndented = true }))
+                        @(JsonPrettify(context.Item.RawJson))
                     </pre>
                 </MudCardContent>
             </MudCard>
