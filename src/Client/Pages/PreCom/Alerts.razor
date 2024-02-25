@@ -1,19 +1,38 @@
 ﻿@page "/precom/alerts"
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom
+@using System.Web
+@using System.Text.RegularExpressions
+@using System.Text.Json
 @attribute [Authorize]
 <MudText Typo="Typo.h1">Precom alerts</MudText>
 
 @if (_alerts is not null)
 {
-    <MudTable Items="@_alerts.OrderByDescending(x=>x.SendTime)" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
-        <HeaderContent>
-            <MudTh>Prio</MudTh>
-            <MudTh>Send time</MudTh>
-            <MudTh>Alert</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Prio">@context.Priority</MudTd>
-            <MudTd DataLabel="Send time">@context.SendTime</MudTd>
-            <MudTd DataLabel="Alert">@context.Alert</MudTd>
-        </RowTemplate>
-    </MudTable>
+    <MudDataGrid Items="@_alerts.OrderByDescending(x=>x.SendTime)"
+                 ReadOnly="true" EditMode="@DataGridEditMode.Cell">
+        <Columns>
+            <HierarchyColumn T="PreComAlert" />
+            <PropertyColumn Property="x => x.Priority" Title="Nr" />
+            <PropertyColumn Property="x => x.SendTime" Title="@L["SendTime"]">
+                <CellTemplate>
+                    <DateToString DateTimeUtc="context.Item.SendTime" ShowDate="true" ShowTime="true" />
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Alert" Title="@L["Alert"]" />
+        </Columns>
+        <ChildRowContent>
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">@context.Item.Alert</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <pre>
+                        @(JsonSerializer.Serialize(context.Item.RawJson, new JsonSerializerOptions() { WriteIndented = true }))
+                    </pre>
+                </MudCardContent>
+            </MudCard>
+        </ChildRowContent>
+    </MudDataGrid>
 }
