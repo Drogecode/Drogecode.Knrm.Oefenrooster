@@ -18,7 +18,7 @@ public interface IGraphService
     Task<bool> SyncSharePointActions(Guid customerId, CancellationToken clt);
     Task<bool> SyncSharePointTrainings(Guid customerId, CancellationToken clt);
     Task<MultipleSharePointActionsResponse> GetListActionsUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt);
-    Task<Event> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay);
+    Task<Event?> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay);
     Task PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay);
     Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt);
 }
