@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 using Microsoft.Extensions.Localization;
+using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.PreCom;
 
@@ -20,5 +21,14 @@ public sealed partial class Alerts : IDisposable
     public void Dispose()
     {
         _cls.Cancel();
+    }
+    public static string JsonPrettify(string? json)
+    {
+        if ( string.IsNullOrEmpty(json))
+        {
+            return string.Empty;
+        }
+        using var jDoc = JsonDocument.Parse(json);
+        return JsonSerializer.Serialize(jDoc, new JsonSerializerOptions { WriteIndented = true });
     }
 }
