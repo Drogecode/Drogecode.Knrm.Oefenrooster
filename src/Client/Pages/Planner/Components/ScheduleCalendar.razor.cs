@@ -87,9 +87,10 @@ public sealed partial class ScheduleCalendar : IDisposable
                 foreach (var dayItem in dayItems.DayItems.Where(x=>x.DateStart is not null))
                 {
 
-                    if (dayItem.LinkedUsers is not null)
+                    if (dayItem.LinkedUsers?.FirstOrDefault()?.UserId is not null)
                     {
-                        var user = Users?.FirstOrDefault(x => x.Id == dayItem.LinkedUsers.FirstOrDefault()?.UserId);
+                        var user = Users?.FirstOrDefault(x => x.Id == dayItem.LinkedUsers.FirstOrDefault()!.UserId);
+                        user ??= await _userRepository.GetById(dayItem.LinkedUsers.FirstOrDefault()!.UserId);
                         if (user != null)
                         {
                             dayItem.Text += ": " + user.Name;

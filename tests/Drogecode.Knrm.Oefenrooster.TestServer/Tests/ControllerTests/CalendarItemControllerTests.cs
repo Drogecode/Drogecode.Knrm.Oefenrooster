@@ -132,12 +132,12 @@ public class CalendarItemControllerTests : BaseTest
     {
         var usr = await AddUser("GetAllFutureDayItems");
         var new1 = await AddCalendarDayItem("GetAllFutureDay_1", DateTime.Today);
-        var new2 = await AddCalendarDayItem("GetAllFutureDay_2", DateTime.Today.AddDays(20), DefaultSettingsHelper.IdTaco);
+        var new2 = await AddCalendarDayItem("GetAllFutureDay_2", DateTime.Today.AddDays(20), null, DefaultSettingsHelper.IdTaco);
         var new3 = await AddCalendarDayItem("GetAllFutureDay_3", DateTime.Today.AddDays(30));
         var new4 = await AddCalendarDayItem("GetAllFutureDay_4", DateTime.Today.AddMonths(30));
-        var new5 = await AddCalendarDayItem("GetAllFutureDay_5", DateTime.Today.AddDays(-10), DefaultSettingsHelper.IdTaco);
-        var new6 = await AddCalendarDayItem("GetAllFutureDay_6", DateTime.Today.AddDays(-20), usr);
-        var new7 = await AddCalendarDayItem("GetAllFutureDay_7", DateTime.Today.AddMonths(-20), DefaultUserId);
+        var new5 = await AddCalendarDayItem("GetAllFutureDay_5", DateTime.Today.AddDays(-10), null, DefaultSettingsHelper.IdTaco);
+        var new6 = await AddCalendarDayItem("GetAllFutureDay_6", DateTime.Today.AddDays(-20), null, usr);
+        var new7 = await AddCalendarDayItem("GetAllFutureDay_7", DateTime.Today.AddMonths(-20), null, DefaultUserId);
         var result = await CalendarItemController.GetAllFutureDayItems(30, 0, true);
         Assert.NotNull(result?.Value?.DayItems);
         result.Value.DayItems.Should().Contain(x => x.Id == DefaultCalendarDayItem);
@@ -155,12 +155,12 @@ public class CalendarItemControllerTests : BaseTest
     {
         var usr = await AddUser("GetAllFutureDayItemsForUser");
         var new1 = await AddCalendarDayItem("GetAllFutureDayForUser_1", DateTime.Today);
-        var new2 = await AddCalendarDayItem("GetAllFutureDayForUser_2", DateTime.Today.AddDays(20), DefaultSettingsHelper.IdTaco);
+        var new2 = await AddCalendarDayItem("GetAllFutureDayForUser_2", DateTime.Today.AddDays(20), null, DefaultSettingsHelper.IdTaco);
         var new3 = await AddCalendarDayItem("GetAllFutureDayForUser_3", DateTime.Today.AddDays(30));
         var new4 = await AddCalendarDayItem("GetAllFutureDayForUser_4", DateTime.Today.AddMonths(30));
-        var new5 = await AddCalendarDayItem("GetAllFutureDayForUser_5", DateTime.Today.AddDays(-10), DefaultSettingsHelper.IdTaco);
-        var new6 = await AddCalendarDayItem("GetAllFutureDayForUser_6", DateTime.Today.AddDays(-20), usr);
-        var new7 = await AddCalendarDayItem("GetAllFutureDayForUser_7", DateTime.Today.AddMonths(-20), DefaultUserId);
+        var new5 = await AddCalendarDayItem("GetAllFutureDayForUser_5", DateTime.Today.AddDays(-10), null, DefaultSettingsHelper.IdTaco);
+        var new6 = await AddCalendarDayItem("GetAllFutureDayForUser_6", DateTime.Today.AddDays(-20), null, usr);
+        var new7 = await AddCalendarDayItem("GetAllFutureDayForUser_7", DateTime.Today.AddMonths(-20), null, DefaultUserId);
         var result = await CalendarItemController.GetAllFutureDayItems(30, 0, false);
         Assert.NotNull(result?.Value?.DayItems);
         result.Value.DayItems.Should().NotContain(x => x.Id == DefaultCalendarDayItem);
@@ -179,9 +179,11 @@ public class CalendarItemControllerTests : BaseTest
         var new1 = await AddCalendarDayItem("GetDayItemDashboard_1", DateTime.Today.AddHours(1));
         var new2 = await AddCalendarDayItem("GetDayItemDashboard_2", DateTime.Today.AddHours(-1));
         var new3 = await AddCalendarDayItem("GetDayItemDashboard_3", DateTime.Today.AddDays(8));
-        var new4 = await AddCalendarDayItem("GetDayItemDashboard_4", DateTime.Today.AddDays(20), DefaultSettingsHelper.IdTaco);
-        var new5 = await AddCalendarDayItem("GetDayItemDashboard_5", DateTime.Today.AddDays(-10), DefaultSettingsHelper.IdTaco);
-        var new6 = await AddCalendarDayItem("GetDayItemDashboard_6", DateTime.Today.AddDays(-10), DefaultUserId);
+        var new4 = await AddCalendarDayItem("GetDayItemDashboard_4", DateTime.Today.AddDays(20), null, DefaultSettingsHelper.IdTaco);
+        var new5 = await AddCalendarDayItem("GetDayItemDashboard_5", DateTime.Today.AddDays(-10), null, DefaultSettingsHelper.IdTaco);
+        var new6 = await AddCalendarDayItem("GetDayItemDashboard_6", DateTime.Today.AddDays(-10), null, DefaultUserId);
+        var new7 = await AddCalendarDayItem("GetDayItemDashboard_7", DateTime.Today.AddDays(-10), DateTime.Today.AddDays(10), DefaultSettingsHelper.IdTaco);
+        var new8 = await AddCalendarDayItem("GetDayItemDashboard_7", DateTime.Today.AddDays(-10), DateTime.Today, DefaultSettingsHelper.IdTaco);
         var result = await CalendarItemController.GetDayItemDashboard();
         Assert.NotNull(result?.Value?.DayItems);
         Assert.NotEmpty(result.Value.DayItems);
@@ -191,6 +193,8 @@ public class CalendarItemControllerTests : BaseTest
         result.Value.DayItems.Should().Contain(x => x.Id == new4);
         result.Value.DayItems.Should().NotContain(x => x.Id == new5);
         result.Value.DayItems.Should().NotContain(x => x.Id == new6);
+        result.Value.DayItems.Should().Contain(x => x.Id == new7);
+        result.Value.DayItems.Should().Contain(x => x.Id == new8);
     }
 
     [Fact]

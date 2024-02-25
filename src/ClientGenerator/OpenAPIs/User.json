@@ -459,6 +459,9 @@
           },
           "linkType": {
             "$ref": "#/components/schemas/UserUserLinkType"
+          },
+          "add": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

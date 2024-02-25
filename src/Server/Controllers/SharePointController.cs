@@ -76,7 +76,7 @@ public class SharePointController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in GetLastTrainingsForCurrentUser");
+            _logger.LogError(ex, "Exception in GetLastTrainings");
             return BadRequest();
         }
     }
@@ -123,7 +123,7 @@ public class SharePointController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in GetLastActionsForCurrentUser");
+            _logger.LogError(ex, "Exception in GetLastActions");
             return BadRequest();
         }
     }

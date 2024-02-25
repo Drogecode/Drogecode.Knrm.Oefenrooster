@@ -4,6 +4,7 @@ using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
+using static MudBlazor.CategoryTypes;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
@@ -17,12 +18,29 @@ public sealed partial class Audit : IDisposable
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public List<DrogeUser>? _users { get; set; }
 
-    private List<TrainingAudit>? _trainingAudits = null;
+    private GetTrainingAuditResponse? _trainingAudits = null;
     private CancellationTokenSource _cls = new();
+    private bool _bussy;
+    private int _currentPage = 1;
+    private int _count = 30;
+    private int _skip = 0;
     protected override async Task OnParametersSetAsync()
     {
-        _trainingAudits = (await AuditClient.GetAllTrainingsAuditAsync()).TrainingAudits;
+        _trainingAudits = await AuditClient.GetAllTrainingsAuditAsync(_count, _skip, _cls.Token);
         _users = await _userRepository.GetAllUsersAsync(true, false, _cls.Token);
+    }
+
+    private async Task Next(int nextPage)
+    {
+        if (_bussy) return;
+        _bussy = true;
+        StateHasChanged();
+        _currentPage = nextPage;
+        if (nextPage <= 0) return;
+        _skip = (nextPage - 1) * _count;
+        _trainingAudits = await AuditClient.GetAllTrainingsAuditAsync(_count, _skip, _cls.Token);
+        _bussy = false;
+        StateHasChanged();
     }
 
     public void Dispose()

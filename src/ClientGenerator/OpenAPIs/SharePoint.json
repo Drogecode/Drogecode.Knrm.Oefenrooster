@@ -318,7 +318,8 @@
           },
           "number": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "shortDescription": {
             "type": "string",
@@ -358,19 +359,23 @@
           },
           "windPower": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "waterTemperature": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "golfHight": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "sight": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "weatherCondition": {
             "type": "string",
@@ -381,16 +386,19 @@
             "nullable": true
           },
           "countSailors": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "double",
+            "nullable": true
           },
           "countSaved": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "double",
+            "nullable": true
           },
           "countAnimals": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "double",
+            "nullable": true
           },
           "boat": {
             "type": "string",

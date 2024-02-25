@@ -26,7 +26,7 @@
         {
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors" Disabled="@(!_canEdit)">
                 <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" />
-                <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Required Disabled="!_training.IsNew" />
+                <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Validation="@(new Func<DateTime?, string?>(DateValidation))" Required Disabled="!_training.IsNew" />
 
                  @if (!_training.ShowTime || _startedWithShowNoTime)
                 {

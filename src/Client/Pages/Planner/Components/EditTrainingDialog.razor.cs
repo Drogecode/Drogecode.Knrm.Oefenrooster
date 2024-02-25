@@ -30,6 +30,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private bool _startedWithShowNoTime;
     private bool _canEdit;
     private bool _showPadlock;
+    private bool _editOld;
     private string[] _errors = Array.Empty<string>();
     [AllowNull] private MudForm _form;
     protected override async Task OnParametersSetAsync()
@@ -86,6 +87,15 @@ public sealed partial class EditTrainingDialog : IDisposable
         }
         _currentTrainingType = TrainingTypes?.FirstOrDefault(x => x.Id == _training?.RoosterTrainingTypeId);
 
+        if (AuthenticationState is not null)
+        {
+            var authState = await AuthenticationState;
+            var user = authState?.User;
+            if (user != null)
+            {
+                _editOld = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
+            }
+        }
         if (_training.IsNew)
         {
             _canEdit = true;
@@ -97,15 +107,10 @@ public sealed partial class EditTrainingDialog : IDisposable
             {
                 _canEdit = true;
             }
-            else if (AuthenticationState is not null)
+            else
             {
-                var authState = await AuthenticationState;
-                var user = authState?.User;
-                if (user is not null)
-                {
-                    _showPadlock = true;
-                    _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
-                }
+                _showPadlock = true;
+                _canEdit = _editOld;
             }
         }
         if (!_canEdit)
@@ -117,6 +122,14 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     void Cancel() => MudDialog.Cancel();
 
+    private string? DateValidation(DateTime? newDate)
+    {
+        if (_editOld)
+            return null;
+        if (newDate >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
+            return null;
+        return L["To far in the past"];
+    }
     private string? StartBeforeEndValidation(TimeSpan? timeStart)
     {
         if (_training?.TimeEnd < timeStart)
@@ -166,14 +179,14 @@ public sealed partial class EditTrainingDialog : IDisposable
                     await _vehicleRepository.UpdateLinkVehicleTrainingAsync(link);
                 }
             }
-            _training.Id = newId;
-            _training.IsNew = false;
-            _training.IsNewFromDefault = false;
-            Planner.TrainingId = newId;
             if (Refresh is not null)
                 await Refresh.CallRequestRefreshAsync();
             if (_training.IsNew)
                 await Global.CallNewTrainingAddedAsync(_training);
+            _training.Id = newId;
+            _training.IsNew = false;
+            _training.IsNewFromDefault = false;
+            Planner.TrainingId = newId;
         }
         else if (Planner is not null)
         {

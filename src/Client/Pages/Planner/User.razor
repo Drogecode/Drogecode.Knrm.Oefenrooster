@@ -79,7 +79,8 @@ else
                             }
                         </MudSelect>
                         <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
-                            <SelectMultipleUsers Users="@_users" Functions="@_functions" Label="@L["Buddy"]" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="false" />
+                            <MudAlert Severity="Severity.Info" Variant="Variant.Filled">Budy is nog niet klaar! Herladen werkt nog niet betrouwbaar</MudAlert>
+                            <SelectMultipleUsers Users="_users" Functions="_functions" Label="@L["Buddy"]" Selection="_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="false" ReadOnly="_updatingSelection" />
                         </AuthorizeView>
                     </DrogeCodeMudTabPanel>
                 </AuthorizeView>

@@ -230,7 +230,7 @@ public class BaseTest : IAsyncLifetime
         return result.Value.NewId;
     }
 
-    protected async Task<Guid> AddCalendarDayItem(string name, DateTime? dateStart = null, Guid? userId = null)
+    protected async Task<Guid> AddCalendarDayItem(string name, DateTime? dateStart = null, DateTime? dateEnd = null, Guid? userId = null)
     {
         dateStart ??= DateTime.Today.AddDays(7);
         var body = new RoosterItemDay
@@ -238,7 +238,8 @@ public class BaseTest : IAsyncLifetime
             Text = name,
             Type = Shared.Enums.CalendarItemType.Custom,
             IsFullDay = true,
-            DateStart = dateStart.Value,
+            DateStart = dateStart,
+            DateEnd = dateEnd,
         };
         if (userId != null)
         {

@@ -8,12 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using ZXing.Aztec.Internal;
+using ZXing.QrCode.Internal;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -27,6 +26,8 @@ public class AuthenticationController : ControllerBase
     private readonly IUserRoleService _userRoleService;
     private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
+
+    private const string REFRESHTOKEN = "RefreshToken";
 
     public AuthenticationController(
         ILogger<AuthenticationController> logger,
@@ -87,6 +88,7 @@ public class AuthenticationController : ControllerBase
         try
         {
             string id_token = "";
+            string refresh_token = "";
             var found = _memoryCache.Get<CacheLoginSecrets>(state);
             if (found?.Success is not true || found?.CodeVerifier is null)
             {
@@ -94,25 +96,28 @@ public class AuthenticationController : ControllerBase
                 return false;
             }
             _memoryCache.Remove(state);
-            var tenant = "d9754755-b054-4a9c-a77f-da42a4009365";
+            var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new Exception("no tenant id found for azure login");
             var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new Exception("no secret found for azure login");
+            var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new Exception("no client id found for azure login");
+            var scope = _configuration.GetValue<string>("AzureAd:LoginScope") ?? throw new Exception("no scope found for azure login");
             var formContent = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("client_id", "a9c68159-901c-449a-83e0-85243364e3cc"),
-                new KeyValuePair<string, string>("scope", "openid profile email"),
+                new KeyValuePair<string, string>("client_id", clientId),
+                new KeyValuePair<string, string>("scope", scope),
                 new KeyValuePair<string, string>("code", code),
                 new KeyValuePair<string, string>("redirect_uri", redirectUrl),
                 new KeyValuePair<string, string>("grant_type", "authorization_code"),
                 new KeyValuePair<string, string>("code_verifier", found.CodeVerifier),
                 new KeyValuePair<string, string>("client_secret", secret),
             });
-            using (var response = await _httpClient.PostAsync($"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token", formContent))
+            using (var response = await _httpClient.PostAsync($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token", formContent))
             {
                 string responseString = await response.Content.ReadAsStringAsync();
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    var resObj = JsonConvert.DeserializeObject<testje>(responseString);
-                    id_token = resObj.id_token;
+                    var resObj = JsonConvert.DeserializeObject<AzureLoginResponse>(responseString);
+                    id_token = resObj?.id_token ?? "";
+                    refresh_token = resObj?.refresh_token ?? "";
                 }
                 else
                 {
@@ -126,10 +131,10 @@ public class AuthenticationController : ControllerBase
             if (string.Compare(found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value, false) != 0)
             {
                 _logger.LogWarning("Nonce is wrong `{cache}` != `{jwt}`", found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value ?? "null");
-                return false; 
+                return false;
             }
 
-            await SetUser(jwtSecurityToken, false, clt);
+            await SetUser(jwtSecurityToken, refresh_token, false, clt);
             return true;
         }
         catch (Exception e)
@@ -139,7 +144,7 @@ public class AuthenticationController : ControllerBase
         }
     }
 
-    private class testje
+    private class AzureLoginResponse
     {
         public string access_token { get; set; }
         public string token_type { get; set; }
@@ -179,15 +184,73 @@ public class AuthenticationController : ControllerBase
 
     [Authorize]
     [HttpPost]
+    [Route("logout")]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync();
         return Ok();
     }
 
-    private async Task SetUser(JwtSecurityToken jwtSecurityToken, bool rememberMe, CancellationToken clt)
+    [Authorize]
+    [HttpPost]
+    [Route("refresh")]
+    public async Task<ActionResult<bool>> Refresh(CancellationToken clt = default)
     {
-        var claims = await GetClaimsList(jwtSecurityToken);
+        // https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow#refresh-the-access-token
+        try
+        {
+            if (User?.Identity?.IsAuthenticated != true)
+                return false;
+
+            var oldRefreshToken = User?.FindFirstValue(REFRESHTOKEN);
+            if (oldRefreshToken == null)
+                return false;
+
+            string id_token = "";
+            string refresh_token = "";
+            var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new Exception("no tenant id found for azure login");
+            var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new Exception("no secret found for azure login");
+            var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new Exception("no client id found for azure login");
+            var scope = _configuration.GetValue<string>("AzureAd:LoginScope") ?? throw new Exception("no scope found for azure login");
+            var formContent = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("client_id", clientId),
+                new KeyValuePair<string, string>("scope", scope),
+                new KeyValuePair<string, string>("refresh_token", oldRefreshToken),
+                new KeyValuePair<string, string>("grant_type", "refresh_token"),
+                new KeyValuePair<string, string>("client_secret", secret),
+            });
+            using (var response = await _httpClient.PostAsync($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token", formContent))
+            {
+                string responseString = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    var resObj = JsonConvert.DeserializeObject<AzureLoginResponse>(responseString);
+                    id_token = resObj?.id_token ?? "";
+                    refresh_token = resObj?.refresh_token ?? "";
+                }
+                else
+                {
+                    _logger.LogWarning("Failed refresh: {jsonstring}", responseString);
+                    return false;
+                }
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(id_token);
+            await SetUser(jwtSecurityToken, refresh_token, false, clt);
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Refresh");
+            return false;
+        }
+    }
+
+    private async Task SetUser(JwtSecurityToken jwtSecurityToken, string refresh_token, bool rememberMe, CancellationToken clt)
+    {
+        var claims = await GetClaimsList(jwtSecurityToken, refresh_token);
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -221,16 +284,19 @@ public class AuthenticationController : ControllerBase
             authProperties);
     }
 
-    private async Task<IEnumerable<Claim>> GetClaimsList(JwtSecurityToken jwtSecurityToken)
+    private async Task<IEnumerable<Claim>> GetClaimsList(JwtSecurityToken jwtSecurityToken, string refresh_token)
     {
-        var email = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "email")?.Value;
-        var fullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value;
-        var userId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "oid")?.Value;
+        var email = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "email")?.Value ?? "";
+        var fullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? "";
+        var userId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "oid")?.Value ?? "";
         var customerId = new Guid(jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "tid")?.Value ?? throw new Exception("customerId not found"));
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, email),
             new("FullName", fullName),
+            new(REFRESHTOKEN, refresh_token),
+            new("ValidFrom", jwtSecurityToken.ValidFrom.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+            new("ValidTo", jwtSecurityToken.ValidTo.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             new("http://schemas.microsoft.com/identity/claims/objectidentifier", userId),
             new("http://schemas.microsoft.com/identity/claims/tenantid", customerId.ToString())
         };

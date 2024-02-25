@@ -145,9 +145,12 @@
     <value>Removed</value>
   </data>
   <data name="to" xml:space="preserve">
-    <value />
+    <value>To</value>
   </data>
   <data name="{0} {1} {2} {3} {4}" xml:space="preserve">
     <value>{0} {1} {2} {3} {4}</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
   </data>
 </root>
