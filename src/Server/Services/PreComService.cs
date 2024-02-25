@@ -26,6 +26,7 @@ public class PreComService : IPreComService
                 Alert = alert.Alert,
                 SendTime = alert.SendTime,
                 Priority = alert.Priority,
+                RawJson = alert.Raw,
             });
         }
         result.Success = true;

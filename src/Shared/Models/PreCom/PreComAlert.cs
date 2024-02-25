@@ -13,4 +13,5 @@ public class PreComAlert
     public string? Alert { get; set; }
     public DateTime? SendTime { get; set; }
     public int? Priority { get; set; }
+    public string? RawJson { get; set; }
 }
