@@ -327,16 +327,24 @@ public static class GraphHelper
         listBase.Users.Add(user);
     }
 
-    public static async Task<Event> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
+    public static async Task<Event?> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, ILogger logger)
     {
-        Event body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay);
-        var result = await _appClient.Users[userId.ToString()].Events.PostAsync(body, (requestConfiguration) =>
+        try
         {
-            requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Pacific Standard Time\"");
-        });
+            Event body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay);
+            var result = await _appClient.Users[userId.ToString()].Events.PostAsync(body, (requestConfiguration) =>
+            {
+                requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Pacific Standard Time\"");
+            });
 
-        var fromGet = await _appClient.Users[userId.ToString()].Events[result.Id].GetAsync();
-        return result;
+            var fromGet = await _appClient.Users[userId.ToString()].Events[result?.Id].GetAsync();
+            return result;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error in AddToCalendar");
+        }
+        return null;
     }
 
     public static async Task PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
