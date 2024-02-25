@@ -398,10 +398,10 @@ public class ScheduleController : ControllerBase
     {
         if (assigned && await _userSettingService.TrainingToCalendar(customerId, planUserId))
         {
-            var type = await _trainingTypesService.GetById(training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
-            var text = GetTrainingCalenderText(type?.TrainingType?.Name, training?.Name);
             if (training is null && trainingId is not null)
                 training = (await _scheduleService.GetTrainingById(planUserId, customerId, trainingId.Value, clt)).Training;
+            var type = await _trainingTypesService.GetById(training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
+            var text = GetTrainingCalenderText(type?.TrainingType?.Name, training?.Name);
             if (training is null)
             {
                 _logger.LogWarning("Failed to set a training for trainingId {trainingId}", trainingId);
