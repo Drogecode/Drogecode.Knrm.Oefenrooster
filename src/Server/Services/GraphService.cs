@@ -291,9 +291,9 @@ public class GraphService : IGraphService
         return sharePointUsers;
     }
 
-    public async Task<Event> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
+    public async Task<Event?> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
     {
-        var result = await GraphHelper.AddToCalendar(userId, description, dateStart, dateEnd, isAllDay);
+        var result = await GraphHelper.AddToCalendar(userId, description, dateStart, dateEnd, isAllDay, _logger);
         return result;
     }
 
