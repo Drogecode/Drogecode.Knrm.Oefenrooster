@@ -27,9 +27,10 @@ public class UserRepository
             clt: clt);
         return response.DrogeUsers?.ToList();
     }
-    public async Task<DrogeUser?> GetCurrentUserAsync()
+
+    public async Task<DrogeUser?> GetCurrentUserAsync(CancellationToken clt = default)
     {
-        var dbUser = await _userClient.GetCurrentUserAsync();
+        var dbUser = await _userClient.GetCurrentUserAsync(clt);
         return dbUser.DrogeUser;
     }
 

@@ -7,6 +7,7 @@
     <MudNavLink Icon="@Icons.Material.Filled.EditCalendar" Href="@_uriSchedule" Match="NavLinkMatch.Prefix">@L["Schedule"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.AutoGraph" Href="/user/defaults" Match="NavLinkMatch.Prefix">@L["Defaults"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.WbSunny" Href="/user/vacations" Match="NavLinkMatch.Prefix">@L["Vacations"]</MudNavLink>
+    <MudNavLink Icon="@Icons.Material.Filled.SecurityUpdateWarning" Href="/precom/alerts" Match="NavLinkMatch.Prefix">@L["PreCom alerts"]</MudNavLink>
     <AuthorizeView Roles="@AccessesNames.AUTH_users_details" Context="inner">
         <MudNavLink Icon="@Icons.Material.Filled.ManageAccounts" Href="@_uriPlannerUser" Match="NavLinkMatch.Prefix">@L["User details"]</MudNavLink>
     </AuthorizeView>
@@ -17,7 +18,6 @@
             </AuthorizeView>
             <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
                 <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/configuration/global" Match="NavLinkMatch.Prefix">@L["Configuration"]</MudNavLink>
-                <MudNavLink Icon="@Icons.Material.Filled.SecurityUpdateWarning" Href="/precom/alerts" Match="NavLinkMatch.Prefix">@L["PreCom alerts"]</MudNavLink>
                 <MudNavLink Icon="@Icons.Material.Filled.History" Href="/configuration/audit" Match="NavLinkMatch.Prefix">@L["Audit"]</MudNavLink>
             </AuthorizeView>
                 <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_dayitem" Context="inner">

@@ -14,6 +14,7 @@ internal static class UserMapper
             Created = dbUsers.CreatedOn,
             LastLogin = dbUsers.LastLogin,
             UserFunctionId = dbUsers.UserFunctionId,
+            CustomerId = dbUsers.CustomerId,
         };
         if (dbUsers.LinkedUserAsA?.Count > 0)
         {

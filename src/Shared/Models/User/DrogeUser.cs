@@ -10,6 +10,7 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 public class DrogeUser
 {
     public Guid Id { get; set; }
+    public Guid CustomerId { get; set; }
     public string Name { get; set; }
     public DateTime Created { get; set; }
     public DateTime LastLogin { get; set; }

@@ -35,4 +35,17 @@
             </MudCard>
         </ChildRowContent>
     </MudDataGrid>
+
+    if (!_showHowTo)
+    {
+        <MudButton OnClick="()=>_showHowTo = true">@L["Show how to configure"]</MudButton>
+    }
+    if (_showHowTo && _user is not null)
+    {
+        <CopyToClipboard Text="@(Navigation.BaseUri + "api/PreCom/web-hook/" + _user.CustomerId + "/" + _user.Id)" />
+        <hr />
+        <img src="/Images/PreCom/IMG_6685.PNG" asp-append-version="true" width="@(1170/3)px" hight="@(2532/3)px" />
+        <img src="/Images/PreCom/IMG_6686.PNG" asp-append-version="true" width="@(1170/3)px" hight="@(2532/3)px" />
+        <img src="/Images/PreCom/IMG_6687.PNG" asp-append-version="true" width="@(1170/3)px" hight="@(2532/3)px" />
+    }
 }

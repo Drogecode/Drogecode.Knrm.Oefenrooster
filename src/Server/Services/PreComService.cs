@@ -13,10 +13,10 @@ public class PreComService : IPreComService
         _database = database;
     }
 
-    public async Task<MultiplePreComAlertsResponse> GetAllAlerts(Guid customerId)
+    public async Task<MultiplePreComAlertsResponse> GetAllAlerts(Guid userId, Guid customerId)
     {
         var result = new MultiplePreComAlertsResponse { PreComAlerts = new List<PreComAlert>() };
-        var fromDb = _database.PreComAlerts.Where(x => x.CustomerId == customerId);
+        var fromDb = _database.PreComAlerts.Where(x => x.CustomerId == customerId && x.UserId == userId);
         foreach (var alert in fromDb)
         {
             result.PreComAlerts.Add(new PreComAlert

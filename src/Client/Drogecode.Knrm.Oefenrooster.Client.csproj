@@ -59,5 +59,9 @@
 	<ItemGroup>
 	  <_ContentIncludedByDefault Remove="Pages\Planner\Components\CalendarBaseCard.razor" />
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="wwwroot\Images\PreCom\" />
+	</ItemGroup>
 
 </Project>
