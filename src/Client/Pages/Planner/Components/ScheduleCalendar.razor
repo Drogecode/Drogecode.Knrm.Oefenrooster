@@ -8,41 +8,44 @@
     }
 }
 <div class="d-none d-md-flex">
-    <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
-         <CellTemplate>
-             @if (context is ScheduleCalendarItem)
-            {
-                var training = ((ScheduleCalendarItem)context).Training;
-                @if (training != null)
+    @if (_initialized)
+    {
+        <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" CurrentDay="_firstMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
+            <CellTemplate>
+                @if (context is ScheduleCalendarItem)
                 {
-                    <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth" />
-                }
-            }
-            else if (context is RoosterItemDayCalendarItem)
-            {
-                var dayItem = ((RoosterItemDayCalendarItem)context).ItemDay;
-                @if (dayItem is not null)
-                {
-                    Color color = Color.Secondary;
-                    switch (dayItem.Type)
+                    var training = ((ScheduleCalendarItem)context).Training;
+                    @if (training != null)
                     {
-                        case CalendarItemType.Custom:
-                        case CalendarItemType.PersonPublic:
-                        case CalendarItemType.Default:
-                            color = Color.Primary;
-                            break;
-                        case CalendarItemType.SpecialDate:
-                            color = Color.Info;
-                            break;
+                        <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth" />
                     }
-                    <div class="d-flex gap-1">
-                        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small" />
-                        <span>@dayItem.Text</span>
-                    </div>
                 }
-            }
-        </CellTemplate>
-    </MudCalendar>
+                else if (context is RoosterItemDayCalendarItem)
+                {
+                    var dayItem = ((RoosterItemDayCalendarItem)context).ItemDay;
+                    @if (dayItem is not null)
+                    {
+                        Color color = Color.Secondary;
+                        switch (dayItem.Type)
+                        {
+                            case CalendarItemType.Custom:
+                            case CalendarItemType.PersonPublic:
+                            case CalendarItemType.Default:
+                                color = Color.Primary;
+                                break;
+                            case CalendarItemType.SpecialDate:
+                                color = Color.Info;
+                                break;
+                        }
+                        <div class="d-flex gap-1">
+                            <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small" />
+                            <span>@dayItem.Text</span>
+                        </div>
+                    }
+                }
+            </CellTemplate>
+        </MudCalendar>
+    }
 </div>
 <div class="d-md-none">
     <MonthSelector Month="_month" MonthChanged="SetMonth" />

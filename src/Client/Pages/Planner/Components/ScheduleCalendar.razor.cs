@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
@@ -15,6 +16,7 @@ public sealed partial class ScheduleCalendar : IDisposable
 {
     [Inject] private IStringLocalizer<ScheduleCalendar> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
+    [Inject] private ISessionExpireService SessionExpireService { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private CalendarItemRepository _calendarItemRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
@@ -30,13 +32,18 @@ public sealed partial class ScheduleCalendar : IDisposable
     private DrogeUser? _user;
     private bool _updating;
     private bool _currentMonth;
+    private bool _initialized;
     private ScheduleView _view = ScheduleView.Calendar;
     private DateTime? _month;
+    private DateTime _firstMonth = DateTime.Today;
 
     protected override async Task OnInitializedAsync()
     {
+        _firstMonth = await SessionExpireService.GetSelectedMonth(_cls.Token);
         Global.NewTrainingAddedAsync += HandleNewTraining;
         _user = await _userRepository.GetCurrentUserAsync();
+        await SetMonth(_firstMonth);
+        _initialized = true;
     }
 
     private async Task SetMonth(DateTime? dateTime)
@@ -78,6 +85,7 @@ public sealed partial class ScheduleCalendar : IDisposable
         _month = PlannerHelper.ForMonth(dateRange);
         if (_month != null)
         {
+            _firstMonth = _month.Value;
             _currentMonth = DateTime.Today.Month == _month.Value.Month;
             var monthItems = await _calendarItemRepository.GetMonthItemAsync(_month.Value.Year, _month.Value.Month, _cls.Token);
             _monthItems = monthItems?.MonthItems;
@@ -106,6 +114,7 @@ public sealed partial class ScheduleCalendar : IDisposable
                 }
             }
         }
+        await SessionExpireService.SetSelectedMonth(_month, _cls.Token);
         _updating = false;
         StateHasChanged();
     }
