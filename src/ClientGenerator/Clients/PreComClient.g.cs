@@ -36,12 +36,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MultiplePreComAlertsResponse> AllAlertsAsync();
+        System.Threading.Tasks.Task<MultiplePreComAlertsResponse> AllAlertsAsync(int take, int skip);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MultiplePreComAlertsResponse> AllAlertsAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<MultiplePreComAlertsResponse> AllAlertsAsync(int take, int skip, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -168,16 +168,22 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<MultiplePreComAlertsResponse> AllAlertsAsync()
+        public virtual System.Threading.Tasks.Task<MultiplePreComAlertsResponse> AllAlertsAsync(int take, int skip)
         {
-            return AllAlertsAsync(System.Threading.CancellationToken.None);
+            return AllAlertsAsync(take, skip, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<MultiplePreComAlertsResponse> AllAlertsAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<MultiplePreComAlertsResponse> AllAlertsAsync(int take, int skip, System.Threading.CancellationToken cancellationToken)
         {
+            if (take == null)
+                throw new System.ArgumentNullException("take");
+
+            if (skip == null)
+                throw new System.ArgumentNullException("skip");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -189,8 +195,11 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/PreCom"
-                    urlBuilder_.Append("api/PreCom");
+                    // Operation Path: "api/PreCom/{take}/{skip}"
+                    urlBuilder_.Append("api/PreCom/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(take, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(skip, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 

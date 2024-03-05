@@ -59,12 +59,32 @@
         }
       }
     },
-    "/api/PreCom": {
+    "/api/PreCom/{take}/{skip}": {
       "get": {
         "tags": [
           "PreCom"
         ],
         "operationId": "AllAlerts",
+        "parameters": [
+          {
+            "name": "take",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -105,6 +125,10 @@
             "type": "integer",
             "format": "int64"
           },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
           "preComAlerts": {
             "type": "array",
             "items": {
@@ -139,6 +163,10 @@
           "priority": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "rawJson": {
+            "type": "string",
             "nullable": true
           }
         },

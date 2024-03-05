@@ -32,7 +32,7 @@ public class PreComControllerTests : BaseTest
         var asObject = JsonSerializer.Deserialize<object>(body);
         await PreComController.WebHook(DefaultCustomerId, DefaultSettingsHelper.IdTaco, asObject, false);
 
-        var result = await PreComController.AllAlerts(CancellationToken.None);
+        var result = await PreComController.AllAlerts(50, 0, CancellationToken.None);
         Assert.NotNull(result?.Value?.PreComAlerts);
         Assert.True(result.Value.Success);
         result.Value.PreComAlerts.Should().NotBeNull();
@@ -48,7 +48,7 @@ public class PreComControllerTests : BaseTest
         var asObject = JsonSerializer.Deserialize<object>(body);
         await PreComController.WebHook(DefaultCustomerId, DefaultSettingsHelper.IdTaco, asObject, false);
 
-        var result = await PreComController.AllAlerts(CancellationToken.None);
+        var result = await PreComController.AllAlerts(50, 0, CancellationToken.None);
         Assert.NotNull(result?.Value?.PreComAlerts);
         Assert.True(result.Value.Success);
         result.Value.PreComAlerts.Should().NotBeNull();
@@ -65,7 +65,7 @@ public class PreComControllerTests : BaseTest
         var asObject = JsonSerializer.Deserialize<object>(body);
         await PreComController.WebHook(DefaultCustomerId, DefaultSettingsHelper.IdTaco, asObject, false);
 
-        var result = await PreComController.AllAlerts(CancellationToken.None);
+        var result = await PreComController.AllAlerts(50, 0, CancellationToken.None);
         Assert.NotNull(result?.Value?.PreComAlerts);
         Assert.True(result.Value.Success);
         result.Value.PreComAlerts.Should().NotBeNull();
@@ -82,7 +82,7 @@ public class PreComControllerTests : BaseTest
         var asObject = JsonSerializer.Deserialize<object>(body);
         await PreComController.WebHook(DefaultCustomerId, DefaultSettingsHelper.IdTaco, asObject, false);
 
-        var result = await PreComController.AllAlerts(CancellationToken.None);
+        var result = await PreComController.AllAlerts(50, 0, CancellationToken.None);
         Assert.NotNull(result?.Value?.PreComAlerts);
         Assert.True(result.Value.Success);
         result.Value.PreComAlerts.Should().NotBeNull();

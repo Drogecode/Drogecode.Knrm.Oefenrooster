@@ -12,9 +12,9 @@ public class PreComRepository
         _preComClient = preComClient;
     }
 
-    public async Task<List<PreComAlert>?> GetAll(CancellationToken clt)
+    public async Task<MultiplePreComAlertsResponse?> GetAll(int take, int skip, CancellationToken clt)
     {
-        var result = (await _preComClient.AllAlertsAsync(clt)).PreComAlerts;
+        var result = (await _preComClient.AllAlertsAsync(take, skip, clt));
         return result;
     }
 }

@@ -6,9 +6,9 @@
 @attribute [Authorize]
 <MudText Typo="Typo.h1">Precom alerts</MudText>
 
-@if (_alerts is not null)
+@if (_alerts?.PreComAlerts is not null)
 {
-    <MudDataGrid Items="@_alerts.OrderByDescending(x=>x.SendTime)"
+    <MudDataGrid Items="@_alerts.PreComAlerts.OrderByDescending(x=>x.SendTime)"
                  ReadOnly="true" EditMode="@DataGridEditMode.Cell">
         <Columns>
             <HierarchyColumn T="PreComAlert" />
@@ -35,13 +35,18 @@
             </MudCard>
         </ChildRowContent>
     </MudDataGrid>
-
+    @if (_alerts.TotalCount > _count)
+    {
+        <MudPagination Disabled="_bussy" ShowFirstButton="true" ShowLastButton="true" Count="@(Convert.ToInt32(Math.Ceiling((double)_alerts.TotalCount/(double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4" />
+    }
     if (!_showHowTo)
     {
+        <hr />
         <MudButton OnClick="()=>_showHowTo = true">@L["Show how to configure"]</MudButton>
     }
     if (_showHowTo && _user is not null)
     {
+        <hr />
         <CopyToClipboard Text="@(Navigation.BaseUri + "api/PreCom/web-hook/" + _user.CustomerId + "/" + _user.Id)" />
         <hr />
         <img src="/Images/PreCom/IMG_6685.PNG" asp-append-version="true" width="@(1170/3)px" hight="@(2532/3)px" />

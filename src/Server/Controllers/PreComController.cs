@@ -81,14 +81,14 @@ public class PreComController : ControllerBase
     }
 
     [HttpGet]
-    [Route("")]
-    public async Task<ActionResult<MultiplePreComAlertsResponse>> AllAlerts(CancellationToken clt)
+    [Route("{take:int}/{skip:int}")]
+    public async Task<ActionResult<MultiplePreComAlertsResponse>> AllAlerts(int take, int skip, CancellationToken clt)
     {
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            MultiplePreComAlertsResponse result = await _preComService.GetAllAlerts(userId, customerId);
+            MultiplePreComAlertsResponse result = await _preComService.GetAllAlerts(userId, customerId, take, skip, clt);
             return result;
         }
         catch (Exception ex)
