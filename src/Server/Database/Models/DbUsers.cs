@@ -17,6 +17,8 @@ public class DbUsers
     public DateTime? DeletedOn { get; set; }
     public Guid? DeletedBy { get; set; }
     public string? SharePointID { get; set; }
+    public bool SyncedFromSharePoint { get; set; }
+    public bool RoleFromSharePoint { get; set; }
 
     public DbCustomers Customer { get; set; }
     public DbUserFunctions? UserFunction{ get; set; }

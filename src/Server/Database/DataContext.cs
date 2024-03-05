@@ -531,6 +531,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("48db5dd5-cb72-4365-9bf5-959691dc54f2"),
+                RoleId = new Guid("f5b0bab6-6fdf-457d-855d-bbea6ea57bd5"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Schipper",
                 Order = 20,
@@ -540,6 +541,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("cf6e6afa-8aa5-4b3d-8198-fb5e86faf53c"),
+                RoleId = new Guid("54aace50-0e1f-4c35-a1b3-87c9ff6bd743"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Schipper I.O.",
                 Order = 30,
@@ -549,6 +551,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("35ad11b8-d3f2-4960-b1e8-d41aaccd188a"),
+                RoleId = new Guid("afb45395-89ee-413d-9385-21962772dbda"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Opstapper",
                 Order = 60,
@@ -558,6 +561,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("feb3641f-9941-4db7-a202-14263d706516"),
+                RoleId = new Guid("2197a054-e81f-4720-9f08-321377398cb6"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Aankomend opstapper",
                 Order = 70,
@@ -567,6 +571,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("322858f8-fd2c-4e62-b699-92c605adbbf2"),
+                RoleId = new Guid("2956c6f9-6b83-46eb-8890-dbb640fd5023"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Opstapper op proef",
                 Order = 80,
@@ -577,6 +582,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
                 Id = new Guid("5c49fc5c-25eb-48c2-a746-74ac3a030d48"),
+                RoleId = new Guid("f06a00e3-62c9-4ba5-baea-84a5ba10f53a"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "HRB Aankomend opstapper",
                 Order = 100,
@@ -635,6 +641,50 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Users",
                 Accesses = $"{AccessesNames.AUTH_users_counter},{AccessesNames.AUTH_users_details},{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}"
+            }));
+
+            //roles
+            modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
+            {
+                Id = new Guid("f5b0bab6-6fdf-457d-855d-bbea6ea57bd5"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "schipper",
+                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}"
+            }));
+            modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
+            {
+                Id = new Guid("54aace50-0e1f-4c35-a1b3-87c9ff6bd743"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "schipper io",
+                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}"
+            }));
+            modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
+            {
+                Id = new Guid("afb45395-89ee-413d-9385-21962772dbda"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "opstapper",
+                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}"
+            }));
+            modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
+            {
+                Id = new Guid("2197a054-e81f-4720-9f08-321377398cb6"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "aankomend opstapper",
+                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}"
+            }));
+            modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
+            {
+                Id = new Guid("f06a00e3-62c9-4ba5-baea-84a5ba10f53a"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "hrb aankomend opstapper",
+                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}"
+            }));
+            modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
+            {
+                Id = new Guid("2956c6f9-6b83-46eb-8890-dbb640fd5023"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "opstapper op proef",
+                Accesses = $""
             }));
         }
 
