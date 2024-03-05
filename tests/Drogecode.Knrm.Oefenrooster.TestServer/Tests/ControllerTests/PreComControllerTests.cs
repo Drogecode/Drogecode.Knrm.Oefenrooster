@@ -58,8 +58,8 @@ public class PreComControllerTests : BaseTest
     }
 
     [Fact]
-    // The webhook test message from when you press WEBHOOKTEST in the app
-    public async Task WebHookBodyIsWebhookTestTest()
+    // The webhook test message from when you press WEBHOOKTEST in the app original
+    public async Task WebHookBodyIsWebhookTest1Test()
     {
         string body = "{\"android_channel_id\":\"chirp\",\"content- available\":\"1\",\"message\":\"PreCom test bericht voor Webhook\",\"messageData\":{\"MsgOutID\":\"135615552\",\"ControlID\":\"f\",\"Timestamp\":\"1695417214488\",\"notId\":\"135615552\",\"soundname\":\"chirp\",\"vibrationPattern\":\"[150,545]\",\"from\":\"788942585741\",\"messageId\":\"0:1694527951397184%af1e7638f9fd7ecd\",\"sentTime\":1694527951377,\"ttl\":2419200}}";
         var asObject = JsonSerializer.Deserialize<object>(body);
@@ -72,5 +72,22 @@ public class PreComControllerTests : BaseTest
         result.Value.PreComAlerts.Should().NotBeEmpty();
         result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("PreCom test bericht voor Webhook"));
         result.Value.PreComAlerts.Should().Contain(x => x.SendTime.Equals(new DateTime(2023, 09, 12, 14, 12, 31, 377)));
+    }
+
+    [Fact]
+    // The webhook test message from when you press WEBHOOKTEST in the app updated march 2024
+    public async Task WebHookBodyIsWebhookTest2Test()
+    {
+        string body = "{\"android_channel_id\":\"chirp\",\"content- available\":\"1\",\"message\":\"PreCom test bericht voor Webhook\",\"messageData\":{\"MsgOutID\":\"135615552\",\"ControlID\":\"f\",\"Timestamp\":\"2024-03-01T20:46:08.2\",\"notId\":\"135615552\",\"soundname\":\"chirp\",\"vibrationPattern\":\"[150,545]\",\"from\":\"788942585741\",\"messageId\":\"0:1694527951397184%af1e7638f9fd7ecd\",\"sentTime\":\"1709322368215\",\"ttl\":2419200}}";
+        var asObject = JsonSerializer.Deserialize<object>(body);
+        await PreComController.WebHook(DefaultCustomerId, DefaultSettingsHelper.IdTaco, asObject, false);
+
+        var result = await PreComController.AllAlerts(CancellationToken.None);
+        Assert.NotNull(result?.Value?.PreComAlerts);
+        Assert.True(result.Value.Success);
+        result.Value.PreComAlerts.Should().NotBeNull();
+        result.Value.PreComAlerts.Should().NotBeEmpty();
+        result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("PreCom test bericht voor Webhook"));
+        result.Value.PreComAlerts.Should().Contain(x => x.SendTime.Equals(new DateTime(2024, 03, 01, 19, 46, 08, 215)));
     }
 }
