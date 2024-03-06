@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using System.Diagnostics;
 using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
@@ -17,13 +18,15 @@ public class UserController : ControllerBase
     private readonly IUserService _userService;
     private readonly IAuditService _auditService;
     private readonly IGraphService _graphService;
+    private readonly IFunctionService _functionService;
 
-    public UserController(ILogger<UserController> logger, IUserService userService, IAuditService auditService, IGraphService graphService)
+    public UserController(ILogger<UserController> logger, IUserService userService, IAuditService auditService, IGraphService graphService, IFunctionService functionService)
     {
         _logger = logger;
         _userService = userService;
         _auditService = auditService;
         _graphService = graphService;
+        _functionService = functionService;
     }
 
     [HttpGet]
@@ -156,6 +159,7 @@ public class UserController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             _graphService.InitializeGraph();
             var existingUsers = (await _userService.GetAllUsers(customerId, true, false)).DrogeUsers;
+            var functions = (await _functionService.GetAllFunctions(customerId, clt)).Functions;
             var users = await _graphService.ListUsersAsync();
             if (users?.Value != null)
             {
@@ -170,12 +174,25 @@ public class UserController : ControllerBase
                             var index = existingUsers.FindIndex(x => x.Id == id);
                             if (index != -1)
                                 existingUsers.RemoveAt(index);
-                            /*var groups = await _graphService.GetGroupForUser(user.Id);
-                            if (groups?.Value != null)
-                            {
-                                //ToDo
-                            }*/
                             var newUserResponse = await _userService.GetOrSetUserFromDb(id, user.DisplayName, user.Mail ?? "not set", customerId, false);
+                            if (newUserResponse is null)
+                                continue;
+                            newUserResponse.SyncedFromSharePoint = true;
+                            var groups = await _graphService.GetGroupForUser(user.Id);
+                            if (groups?.Value != null && functions.Any(x => groups.Value.Any(y => y.Id == x.RoleId.ToString())))
+                            {
+                                var newFunction = functions.FirstOrDefault(x => groups.Value.Any(y => y.Id == x.RoleId.ToString()));
+                                if (newFunction is not null && newUserResponse.UserFunctionId != newFunction.Id)
+                                {
+                                    newUserResponse.UserFunctionId = newFunction.Id;
+                                    newUserResponse.RoleFromSharePoint = true;
+                                }
+                            }
+                            else
+                            {
+                                newUserResponse.RoleFromSharePoint = false;
+                            }
+                            var a = await _userService.UpdateUser(newUserResponse, userId, customerId);
                         }
                     }
                     if (users.OdataNextLink != null)

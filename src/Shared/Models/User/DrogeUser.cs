@@ -17,6 +17,8 @@ public class DrogeUser
     public Guid? UserFunctionId { get; set; }
     public List<LinkedDrogeUser>? LinkedAsA { get; set; }
     public List<LinkedDrogeUser>? LinkedAsB { get; set; }
+    public bool SyncedFromSharePoint { get; set; }
+    public bool RoleFromSharePoint { get; set; }
 }
 
 public class LinkedDrogeUser

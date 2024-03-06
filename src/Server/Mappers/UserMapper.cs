@@ -15,6 +15,8 @@ internal static class UserMapper
             LastLogin = dbUsers.LastLogin,
             UserFunctionId = dbUsers.UserFunctionId,
             CustomerId = dbUsers.CustomerId,
+            SyncedFromSharePoint = dbUsers.SyncedFromSharePoint,
+            RoleFromSharePoint = dbUsers.RoleFromSharePoint,
         };
         if (dbUsers.LinkedUserAsA?.Count > 0)
         {
