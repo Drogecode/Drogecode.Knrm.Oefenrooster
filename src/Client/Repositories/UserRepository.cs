@@ -34,11 +34,11 @@ public class UserRepository
         return dbUser.DrogeUser;
     }
 
-    public async Task<DrogeUser?> GetById(Guid id, CancellationToken clt = default)
+    public async Task<DrogeUser?> GetById(Guid id, bool oneCallPerSession, CancellationToken clt = default)
     {
         var response = await _offlineService.CachedRequestAsync(string.Format(USERID, id),
             async () => await _userClient.GetByIdAsync(id, clt),
-            new ApiCachedRequest { OneCallPerSession = true, ExpireSession = DateTime.UtcNow.AddMinutes(30) },
+            new ApiCachedRequest { OneCallPerSession = oneCallPerSession, ExpireSession = DateTime.UtcNow.AddMinutes(30) },
             clt: clt);
         return response.User;
     }

@@ -356,6 +356,12 @@
               "$ref": "#/components/schemas/LinkedDrogeUser"
             },
             "nullable": true
+          },
+          "syncedFromSharePoint": {
+            "type": "boolean"
+          },
+          "roleFromSharePoint": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

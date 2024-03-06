@@ -1,97 +1,33 @@
 ﻿@page "/planner/user"
-@page "/planner/user/{Id:guid}"
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components
 @attribute [Authorize(Roles = AccessesNames.AUTH_users_details)]
 
-@if (Id is null)
+@if (_users != null && _functions != null)
 {
-    @if (_users != null && _functions != null)
-    {
-        <MudPaper>
-            <MudList Clickable="false">
-                @foreach (var function in _functions.OrderBy(x => x.Order))
+    <MudPaper>
+        <MudList Clickable="false">
+            @foreach (var function in _functions.OrderBy(x => x.Order))
+            {
+                @if (_users.Any(x => x.UserFunctionId == function.Id))
                 {
-                    @if (_users.Any(x => x.UserFunctionId == function.Id))
+                    <MudText>@function.Name</MudText>
+                    @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id).OrderBy(x => x.Name))
                     {
-                        <MudText>@function.Name</MudText>
-                        @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id).OrderBy(x => x.Name))
-                        {
-                            <MudListItem OnClick="()=>ClickUser(user)">
-                                <div class="flex space-x-4">
-                                    <div>@user.Name</div>
-                                </div>
-                            </MudListItem>
-                        }
+                        <MudListItem OnClick="()=>ClickUser(user)">
+                            <div class="flex space-x-4">
+                                <div>@user.Name</div>
+                            </div>
+                        </MudListItem>
                     }
                 }
-            </MudList>
-        </MudPaper>
-    }
-    else
-    {
-        <MudSkeleton />
-        <MudSkeleton />
-        <MudSkeleton />
-        <MudSkeleton />
-    }
+            }
+        </MudList>
+    </MudPaper>
 }
 else
 {
-    @if (_trainings is not null && _user is not null && _functions is not null)
-    {
-        <MudPaper Elevation="0" Class="p-2">
-            <MudText Typo="Typo.h3">@L["Trainings for {0}", _user?.Name ?? "No name"]</MudText>
-                <DrogeCodeMudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
-                    <DrogeCodeMudTabPanel Text="@L["Trainings"]">
-                        <MudPaper Elevation="0" Class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-                            @foreach (var training in _trainings.Trainings.OrderByDescending(x => x.DateStart))
-                        {
-                            <div class="flex-1">
-                                <IndexCard MinWidth="300px" MaxWidth="600px" User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" />
-                            </div>
-                        }
-                    </MudPaper>
-                </DrogeCodeMudTabPanel>
-                <DrogeCodeMudTabPanel Text="@L["For target"]">
-                    @if (_userFunction is not null)
-                    {
-                        <MudText Typo="Typo.body1">@L["Target: {0}", _userFunction.TrainingTarget]</MudText>
-                        <MudPaper>
-                            <MudGrid Spacing="2" Justify="Justify.FlexStart">
-                                @foreach (var userMonthInfo in _trainings.UserMonthInfos.OrderByDescending(x => x.Year).ThenByDescending(x => x.Month))
-                                {
-                                    <MudItem xs="12" sm="6" md="4" lg="3">
-                                        <MudText Style=@(userMonthInfo.Valid < _userFunction.TrainingTarget ? "color: var(--mud-palette-error)" : "")>
-                                            @($"{new DateTime(userMonthInfo.Year, userMonthInfo.Month, 1).ToString(DateTime.Now.Year == userMonthInfo.Year ? "MMMM" : "yyyy MMMM")} - {L["For target"]}: {userMonthInfo.Valid} {L["Total"]}: {userMonthInfo.All}")
-                                        </MudText>
-                                    </MudItem>
-                                }
-                            </MudGrid>
-                        </MudPaper>
-                    }
-                </DrogeCodeMudTabPanel>
-                <AuthorizeView Roles="@AccessesNames.AUTH_users_settigns">
-                    <DrogeCodeMudTabPanel Text="@L["Settings"]">
-                        <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" Value="_user.UserFunctionId" ValueChanged="UserFunctionChanged">
-                            @foreach (var function in _functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
-                            {
-                                <MudSelectItem T="Guid?" Value="@function.Id">@function.Name</MudSelectItem>
-                            }
-                        </MudSelect>
-                        <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
-                            <MudAlert Severity="Severity.Info" Variant="Variant.Filled">Budy is nog niet klaar! Herladen werkt nog niet betrouwbaar</MudAlert>
-                            <SelectMultipleUsers Users="_users" Functions="_functions" Label="@L["Buddy"]" Selection="_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="false" ReadOnly="_updatingSelection" />
-                        </AuthorizeView>
-                    </DrogeCodeMudTabPanel>
-                </AuthorizeView>
-            </DrogeCodeMudTabs>
-        </MudPaper>
-    }
-    else
-    {
-        <MudSkeleton />
-        <MudSkeleton />
-        <MudSkeleton />
-        <MudSkeleton />
-    }
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
 }

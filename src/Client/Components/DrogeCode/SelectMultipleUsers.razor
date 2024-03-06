@@ -5,7 +5,8 @@
                        T="DrogeUser"
                        MultiSelectionTextFunc="@(new Func<List<DrogeUser>, string>(GetMultiSelectionText))"
                        ToStringFunc="@(new Func<DrogeUser, string>(GetSelectedText))"
-                       Label="@Label" MultiSelection="@MultiSelection"
+                       Label="@Label"
+                       MultiSelection="@MultiSelection"
                        SelectedValues="@Selection"
                        SelectedValuesChanged="OnSelectionChanged"
                        ReadOnly="@ReadOnly">

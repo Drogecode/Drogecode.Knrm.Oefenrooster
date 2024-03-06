@@ -98,7 +98,7 @@ public sealed partial class ScheduleCalendar : IDisposable
                     if (dayItem.LinkedUsers?.FirstOrDefault()?.UserId is not null)
                     {
                         var user = Users?.FirstOrDefault(x => x.Id == dayItem.LinkedUsers.FirstOrDefault()!.UserId);
-                        user ??= await _userRepository.GetById(dayItem.LinkedUsers.FirstOrDefault()!.UserId);
+                        user ??= await _userRepository.GetById(dayItem.LinkedUsers.FirstOrDefault()!.UserId, true);
                         if (user != null)
                         {
                             dayItem.Text += ": " + user.Name;
