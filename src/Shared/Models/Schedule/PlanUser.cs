@@ -14,6 +14,7 @@ public class PlanUser
     public Guid? UserFunctionId { get; set; }
     public Guid? PlannedFunctionId { get; set; }
     public Guid? VehicleId { get; set; }
+    public string? Buddy { get; set; }
     public Availabilty? Availabilty { get; set; }
     public AvailabilitySetBy SetBy { get; set; }
     public bool Assigned { get; set; }

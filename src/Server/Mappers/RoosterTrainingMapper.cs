@@ -61,6 +61,7 @@ public static class RoosterTrainingMapper
                     Name = ava.User?.Name ?? "Some dude",
                     VehicleId = ava.VehicleId,
                     CalendarEventId = ava.CalendarEventId,
+                    Buddy = ava.User?.LinkedUserAsA?.FirstOrDefault(x=>x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name
                 });
             }
         }

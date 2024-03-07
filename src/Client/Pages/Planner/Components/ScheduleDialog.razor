@@ -68,7 +68,7 @@
                         </MudItem>
                         <MudItem xs="12" sm="@(_colmn3 * 2)" md="@_colmn3">
                             <MudText Typo="Typo.body2" @onclick="()=>{if (!_canEdit) return; user.ClickedFunction = !user.ClickedFunction;}">
-                                @Functions.FirstOrDefault(x=>x.Id == user.UserFunctionId)?.Name
+                                @Functions.FirstOrDefault(x => x.Id == user.UserFunctionId)?.Name
                             </MudText>
                             @if (user.ClickedFunction)
                             {
@@ -151,6 +151,9 @@
                                         @LApp[(user.Availabilty ?? Availabilty.None).ToString()]
                                     </MudText>
                                 </MudItem>
+                                <MudItem xs="@_colmn4">
+                                    <MudText>@user.Buddy</MudText>
+                                </MudItem>
                             </MudGrid>
                         }
                     }
@@ -184,6 +187,9 @@
                                             @LApp[(user.Availabilty ?? Availabilty.None).ToString()]
                                         </MudText>
                                     </MudItem>
+                                    <MudItem xs="@_colmn4">
+                                        <MudText>@user.Buddy</MudText>
+                                    </MudItem>
                                 </MudGrid>
                             }
                             @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
@@ -200,6 +206,9 @@
                                         <MudText Typo="Typo.subtitle2">
                                             @LApp[Availabilty.None.ToString()]
                                         </MudText>
+                                    </MudItem>
+                                    <MudItem xs="@_colmn4">
+                                        <MudText>@user.Buddy</MudText>
                                     </MudItem>
                                 </MudGrid>
                             }

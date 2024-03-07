@@ -4,6 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using System.Diagnostics;
+using System.Runtime.Intrinsics.X86;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class UserService : IUserService
@@ -20,7 +21,12 @@ public class UserService : IUserService
     {
         var sw = Stopwatch.StartNew();
         var result = new MultipleDrogeUsersResponse { DrogeUsers = new List<DrogeUser>() };
-        var dbUsers = _database.Users.Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.IsActive)).OrderBy(x => x.Name);
+        var dbUsers = _database.Users
+            .Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.IsActive))
+            .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
+            .ThenInclude(x => x.UserB)
+            .OrderBy(x => x.Name)
+            .ToList();
         foreach (var dbUser in dbUsers)
         {
             result.DrogeUsers.Add(new DrogeUser
@@ -30,6 +36,7 @@ public class UserService : IUserService
                 Created = dbUser.CreatedOn,
                 LastLogin = includeLastLogin ? dbUser.LastLogin : DateTime.MinValue,
                 UserFunctionId = dbUser.UserFunctionId,
+                Buddy = dbUser.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name
             });
         }
         sw.Stop();

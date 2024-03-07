@@ -69,8 +69,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUsers>().HasOne(p => p.UserFunction).WithMany(g => g.Users).HasForeignKey(s => s.UserFunctionId);
             modelBuilder.Entity<DbUsers>().HasMany(p => p.LinkedUserA).WithMany(g => g.LinkedUserB)
                 .UsingEntity<DbLinkUserUser>(
-                    l => l.HasOne<DbUsers>(e => e.UserA).WithMany(e => e.LinkedUserAsB).HasForeignKey(e => e.UserBId),
-                    r => r.HasOne<DbUsers>(e => e.UserB).WithMany(e => e.LinkedUserAsA).HasForeignKey(e => e.UserAId));
+                    l => l.HasOne<DbUsers>(e => e.UserA).WithMany(e => e.LinkedUserAsA).HasForeignKey(e => e.UserAId),
+                    r => r.HasOne<DbUsers>(e => e.UserB).WithMany(e => e.LinkedUserAsB).HasForeignKey(e => e.UserBId));
 
             //UserFunctions
             modelBuilder.Entity<DbUserFunctions>(e => { e.Property(e => e.Id).IsRequired(); });
