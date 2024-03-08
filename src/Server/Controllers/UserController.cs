@@ -1,10 +1,12 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
@@ -135,10 +137,13 @@ public class UserController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            UpdateLinkUserUserForUserResponse result;
             if (body.Add)
-                return await _userService.UpdateLinkUserUserForUser(body, userId, customerId, clt);
+                result = await _userService.UpdateLinkUserUserForUser(body, userId, customerId, clt);
             else
-                return await _userService.RemoveLinkUserUserForUser(body, userId, customerId, clt);
+                result = await _userService.RemoveLinkUserUserForUser(body, userId, customerId, clt);
+            await _auditService.Log(userId, AuditType.UpdateLinkUserUserForUser, customerId, JsonSerializer.Serialize(new AuditLinkUserUser { UserA = body.UserAId, UserB = body.UserBId, Add = body.Add, LinkType = body.LinkType, Success = result.Success, ElapsedMilliseconds = result.ElapsedMilliseconds }));
+            return result;
         }
         catch (Exception ex)
         {

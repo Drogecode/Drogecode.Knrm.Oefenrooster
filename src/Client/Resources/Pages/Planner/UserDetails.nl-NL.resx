@@ -117,7 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Click user to view" xml:space="preserve">
-    <value>Click user to view</value>
+  <data name="Buddy" xml:space="preserve">
+    <value>Buddy</value>
+  </data>
+  <data name="For target" xml:space="preserve">
+    <value>Voor doel</value>
+  </data>
+  <data name="Function" xml:space="preserve">
+    <value>Functie</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Instellingen</value>
+  </data>
+  <data name="Target: {0}" xml:space="preserve">
+    <value>Doel: {0}</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Totaal</value>
+  </data>
+  <data name="Trainings" xml:space="preserve">
+    <value>Oefeningen</value>
+  </data>
+  <data name="Trainings for {0}" xml:space="preserve">
+    <value>Oefeningen voor {0}</value>
   </data>
 </root>
