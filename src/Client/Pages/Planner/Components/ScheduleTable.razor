@@ -14,6 +14,7 @@
                   Dense="true"
                   Bordered="true">
             <HeaderContent>
+                <MudTh>@L["Buddy"]</MudTh>
                 <MudTh>@L["Name"]</MudTh>
                 @foreach (var item in _events)
                 {
@@ -24,11 +25,12 @@
                 }
             </HeaderContent>
             <GroupHeaderTemplate>
-                <MudTh Class="mud-table-cell-custom-group" colspan="5">
+                <MudTh Class="mud-table-cell-custom-group DrogeCode-sticky-column" colspan="5">
                     @($"{Functions?.FirstOrDefault(y => y.Id == (Guid)context.Key)?.Name ?? L["Unknown"]}")
                 </MudTh>
             </GroupHeaderTemplate>
             <RowTemplate>
+                <MudTd DataLabel="@L["Name"]">@context.Buddy</MudTd>
                 <MudTd Class="DrogeCode-sticky-column" DataLabel="@L["Name"]">@context.Name</MudTd>
                 @foreach (var item in _events)
                 {
