@@ -5,7 +5,7 @@
 @if (_users != null && _functions != null)
 {
     <MudPaper>
-        <MudText>@L["Click user to view"]</MudText>
+        <MudText Typo="Typo.h3">@L["Click user to view"]</MudText>
         <MudList Clickable="false">
             @foreach (var function in _functions.OrderBy(x => x.Order))
             {

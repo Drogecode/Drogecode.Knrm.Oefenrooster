@@ -11,12 +11,14 @@ internal static class UserMapper
         {
             Id = dbUsers.Id,
             Name = dbUsers.Name,
+            Nr = dbUsers.Nr,
             Created = dbUsers.CreatedOn,
             LastLogin = dbUsers.LastLogin,
             UserFunctionId = dbUsers.UserFunctionId,
             CustomerId = dbUsers.CustomerId,
             SyncedFromSharePoint = dbUsers.SyncedFromSharePoint,
             RoleFromSharePoint = dbUsers.RoleFromSharePoint,
+            Buddy = dbUsers.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name
         };
         if (dbUsers.LinkedUserAsA?.Count > 0)
         {

@@ -29,15 +29,7 @@ public class UserService : IUserService
             .ToList();
         foreach (var dbUser in dbUsers)
         {
-            result.DrogeUsers.Add(new DrogeUser
-            {
-                Id = dbUser.Id,
-                Name = dbUser.Name,
-                Created = dbUser.CreatedOn,
-                LastLogin = includeLastLogin ? dbUser.LastLogin : DateTime.MinValue,
-                UserFunctionId = dbUser.UserFunctionId,
-                Buddy = dbUser.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name
-            });
+            result.DrogeUsers.Add(dbUser.ToSharedUser());
         }
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
@@ -103,6 +95,7 @@ public class UserService : IUserService
             oldVersion.UserFunctionId = user.UserFunctionId;
             oldVersion.SyncedFromSharePoint = user.SyncedFromSharePoint;
             oldVersion.RoleFromSharePoint = user.RoleFromSharePoint;
+            oldVersion.Nr = user.Nr;
             _database.Users.Update(oldVersion);
             await _database.SaveChangesAsync();
             return true;

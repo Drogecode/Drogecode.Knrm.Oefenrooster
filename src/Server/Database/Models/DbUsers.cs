@@ -12,6 +12,7 @@ public class DbUsers
     public Guid? UserFunctionId { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
+    public int? Nr {  get; set; }
     public DateTime CreatedOn { get; set; }
     public DateTime LastLogin { get; set; }
     public DateTime? DeletedOn { get; set; }

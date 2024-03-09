@@ -62,6 +62,7 @@ public sealed partial class UserDetails
         _user.UserFunctionId = newFunction;
         await _userRepository.UpdateUserAsync(_user);
     }
+
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
     {
         try
@@ -95,6 +96,15 @@ public sealed partial class UserDetails
             Debugger.Break();
             _updatingSelection = false;
         }
+    }
+
+    private async Task UserNumberChanged(int? newNumber)
+    {
+        if (_user is null)
+            return;
+        _user.Nr = newNumber;
+        await _userRepository.UpdateUserAsync(_user);
+
     }
 
     public void Dispose()

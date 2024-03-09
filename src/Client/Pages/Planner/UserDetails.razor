@@ -43,6 +43,7 @@
                         }
                     </MudSelect>
                     <SelectMultipleUsers Users="_users" Functions="_functions" Label="@L["Buddy"]" Selection="_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="false" ReadOnly="_updatingSelection" />
+                    <MudNumericField T="int?" Value="_user.Nr" ValueChanged="UserNumberChanged" />
                 </DrogeCodeMudTabPanel>
             </AuthorizeView>
         </DrogeCodeMudTabs>

@@ -13,6 +13,7 @@ public class DrogeUser
     public Guid CustomerId { get; set; }
     public string? Buddy { get; set; }
     public string Name { get; set; }
+    public int? Nr { get; set; }
     public DateTime Created { get; set; }
     public DateTime LastLogin { get; set; }
     public Guid? UserFunctionId { get; set; }
