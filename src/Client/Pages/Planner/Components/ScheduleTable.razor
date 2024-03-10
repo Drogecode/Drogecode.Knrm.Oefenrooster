@@ -15,6 +15,7 @@
                   Bordered="true">
             <HeaderContent>
                 <MudTh>@L["Buddy"]</MudTh>
+                <MudTh>@L["Nr"]</MudTh>
                 <MudTh>@L["Name"]</MudTh>
                 @foreach (var item in _events)
                 {
@@ -30,7 +31,8 @@
                 </MudTh>
             </GroupHeaderTemplate>
             <RowTemplate>
-                <MudTd DataLabel="@L["Name"]">@context.Buddy</MudTd>
+                <MudTd DataLabel="@L["Buddy"]">@context.Buddy</MudTd>
+                <MudTd DataLabel="@L["Nr"]">@context.Nr</MudTd>
                 <MudTd Class="DrogeCode-sticky-column" DataLabel="@L["Name"]">@context.Name</MudTd>
                 @foreach (var item in _events)
                 {
