@@ -9,6 +9,7 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 public class DrogeFunction
 {
     public Guid Id { get; set; }
+    public Guid? RoleId { get; set; }
     public string Name { get; set; }
     public int Order { get; set; }
     public int TrainingTarget { get; set; }

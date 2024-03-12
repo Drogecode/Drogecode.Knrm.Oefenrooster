@@ -1,0 +1,17 @@
+﻿<div class="form-inline">
+    <input class="form-control" readonly type="text" value="@Text" />
+    <button type="button" class="btn btn-primary" @onclick="CopyTextToClipboard">Copy</button>
+</div>
+
+<script>
+    window.clipboardCopy = {
+        copyText: function (text) {
+            navigator.clipboard.writeText(text).then(function () {
+                alert("Copied to clipboard!");
+            })
+                .catch(function (error) {
+                    alert(error);
+                });
+        }
+    };
+</script>

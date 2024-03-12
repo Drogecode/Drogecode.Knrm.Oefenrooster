@@ -54,6 +54,7 @@ public class FunctionService : IFunctionService
             result.Functions.Add(new DrogeFunction
             {
                 Id = function.Id,
+                RoleId = function.RoleId,
                 Name = function.Name,
                 Order = function.Order,
                 TrainingTarget = function.TrainingTarget,

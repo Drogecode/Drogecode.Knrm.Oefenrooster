@@ -12,11 +12,14 @@ public class DbUsers
     public Guid? UserFunctionId { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
+    public int? Nr {  get; set; }
     public DateTime CreatedOn { get; set; }
     public DateTime LastLogin { get; set; }
     public DateTime? DeletedOn { get; set; }
     public Guid? DeletedBy { get; set; }
     public string? SharePointID { get; set; }
+    public bool SyncedFromSharePoint { get; set; }
+    public bool RoleFromSharePoint { get; set; }
 
     public DbCustomers Customer { get; set; }
     public DbUserFunctions? UserFunction{ get; set; }

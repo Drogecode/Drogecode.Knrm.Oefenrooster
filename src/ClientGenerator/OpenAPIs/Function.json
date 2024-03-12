@@ -111,6 +111,11 @@
             "type": "string",
             "format": "uuid"
           },
+          "roleId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "name": {
             "type": "string",
             "nullable": true

@@ -1,7 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -13,7 +13,8 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 public sealed partial class ScheduleTable : IDisposable
 {
     [Inject] private IStringLocalizer<ScheduleTable> L { get; set; } = default!;
-    [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
+    [Inject] private ISessionExpireService SessionExpireService { get; set; } = default!;
+    [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; } = default!;
@@ -31,7 +32,8 @@ public sealed partial class ScheduleTable : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        await SetMonth(DateTime.Today);
+        var month = await SessionExpireService.GetSelectedMonth(_cls.Token);
+        await SetMonth(month);
     }
 
     private async Task SetMonth(DateTime? dateTime)
@@ -44,6 +46,7 @@ public sealed partial class ScheduleTable : IDisposable
             End = new DateTime(dateTime.Value.Year, dateTime.Value.Month, DateTime.DaysInMonth(dateTime.Value.Year, dateTime.Value.Month))
         };
         await SetCalenderForMonth(dateRange);
+        await SessionExpireService.SetSelectedMonth(dateTime, _cls.Token);
     }
 
     private async Task SetCalenderForMonth(DateRange dateRange)
@@ -52,7 +55,7 @@ public sealed partial class ScheduleTable : IDisposable
         _updating = true;
         _events = new();
         TrainingWeek scheduleForUser = new();
-        var scheduleForAll = await _scheduleRepository.ScheduleForAll(dateRange, true, _cls.Token);
+        var scheduleForAll = await ScheduleRepository.ScheduleForAll(dateRange, true, _cls.Token);
         if (scheduleForAll == null) return;
         _userTrainingCounter = scheduleForAll.UserTrainingCounters;
         var trainingsInRange = scheduleForAll.Planners;
@@ -73,7 +76,7 @@ public sealed partial class ScheduleTable : IDisposable
         if (!CanEdit || _working || user is null || training is null) return;
         _working = true;
         user.Assigned = !user.Assigned;
-        await _scheduleRepository.PatchAssignedUser(training.TrainingId, training, user);
+        await ScheduleRepository.PatchAssignedUser(training.TrainingId, training, user);
         MainLayout.ShowSnackbarAssignmentChanged(user, training);
         StateHasChanged();
         _working = false;

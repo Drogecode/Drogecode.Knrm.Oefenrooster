@@ -47,6 +47,7 @@ public class AuditController : ControllerBase
             GetTrainingAuditResponse result = await _auditService.GetTrainingAudit(customerId, userId, count, skip, id, clt);
             return result;
         }
+        catch (OperationCanceledException) { return Ok(); }
         catch (Exception ex)
         {
 #if DEBUG
@@ -74,6 +75,7 @@ public class AuditController : ControllerBase
             GetTrainingAuditResponse result = await _auditService.GetTrainingAudit(customerId, userId, count, skip, Guid.Empty, clt);
             return result;
         }
+        catch (OperationCanceledException) { return Ok(); }
         catch (Exception ex)
         {
 #if DEBUG

@@ -524,6 +524,8 @@ public class ScheduleService : IScheduleService
         var dbTraining = await _database.RoosterTrainings
             .Include(x => x.RoosterAvailables!.Where(y => y.User!.DeletedOn == null))
             .ThenInclude(x => x.User)
+            .ThenInclude(x => x!.LinkedUserAsA!.Where(y => y.DeletedOn == null))
+            .ThenInclude(x => x.UserB)
             .Include(x => x.RoosterTrainingType)
             .FirstOrDefaultAsync(x => x.Id == trainingId && x.DeletedOn == null, clt);
         if (dbTraining is not null)
@@ -549,7 +551,6 @@ public class ScheduleService : IScheduleService
                     d.Name = user.Name;
                     d.UserFunctionId = user.UserFunctionId;
                     d.PlannedFunctionId = avaUser?.UserFunctionId ?? user.UserFunctionId;
-
                 }
                 else if (!(availabilty is null || setBy is null || setBy == AvailabilitySetBy.None))
                 {
@@ -589,7 +590,13 @@ public class ScheduleService : IScheduleService
                 var trainingStart = date.Date.AddHours(def.TimeStart.Hour).AddMinutes(def.TimeStart.Minute).AddSeconds(def.TimeStart.Second);
                 var trainingEnd = date.Date.AddHours(def.TimeEnd.Hour).AddMinutes(def.TimeEnd.Minute).AddSeconds(def.TimeEnd.Second);
 
-                var users = await _database.Users.Include(x => x.UserDefaultAvailables).Include(x => x.UserFunction).Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.UserFunction!.IsActive).ToListAsync(cancellationToken: clt);
+                var users = await _database.Users
+                    .Include(x => x.UserDefaultAvailables)
+                    .Include(x => x.UserFunction)
+                    .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
+                    .ThenInclude(x => x.UserB)
+                    .Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.UserFunction!.IsActive)
+                    .ToListAsync(cancellationToken: clt);
                 var defaultAveUser = await _database.UserDefaultAvailables.Include(x => x.DefaultGroup).Where(x => x.CustomerId == customerId && x.ValidFrom <= trainingStart && x.ValidUntil >= trainingEnd).ToListAsync(cancellationToken: clt);
                 var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= trainingStart && x.ValidUntil >= trainingEnd).ToListAsync(cancellationToken: clt);
 
@@ -605,20 +612,21 @@ public class ScheduleService : IScheduleService
                     IsPinned = false,
                     ShowTime = def.ShowTime ?? true,
                 };
-                foreach (var user in users)
+                foreach (var dbUser in users)
                 {
                     Availabilty? availabilty = null;
                     AvailabilitySetBy? setBy = null;
-                    GetAvailability(defaultAveUser, userHolidays, trainingStart, trainingEnd, def.Id, user.Id, ref availabilty, ref setBy);
+                    GetAvailability(defaultAveUser, userHolidays, trainingStart, trainingEnd, def.Id, dbUser.Id, ref availabilty, ref setBy);
                     newPlanner.PlanUsers.Add(new PlanUser
                     {
-                        UserId = user.Id,
+                        UserId = dbUser.Id,
                         Availabilty = availabilty,
                         SetBy = setBy ?? AvailabilitySetBy.None,
                         Assigned = false,
-                        Name = user.Name ?? "Name not found",
-                        PlannedFunctionId = user.UserFunctionId,
-                        UserFunctionId = user.UserFunctionId,
+                        Name = dbUser.Name ?? "Name not found",
+                        PlannedFunctionId = dbUser.UserFunctionId,
+                        UserFunctionId = dbUser.UserFunctionId,
+                        Buddy = dbUser.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name
                     });
                 }
                 result.Training = newPlanner;

@@ -7,8 +7,8 @@
 
 # Revert
 
-1. dotnet ef database update "20230213201351_v0.0.26"
+1. dotnet ef database update "20240305212946_sync_user_role_sharepoint"
 
 # Update tools:
 
-1. dotnet tool update --global dotnet-ef --version 7.0.3
+1. dotnet tool update --global dotnet-ef --version 8.0.2

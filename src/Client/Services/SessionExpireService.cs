@@ -11,6 +11,8 @@ public class SessionExpireService : ISessionExpireService
 {
     private readonly ISessionStorageService _sessionStorageService;
 
+    private static string SESMONTH = "SesMonth";
+
     public SessionExpireService(ISessionStorageService sessionStorageService)
     {
         _sessionStorageService = sessionStorageService;
@@ -33,5 +35,16 @@ public class SessionExpireService : ISessionExpireService
             Ttl = expire.Ticks
         };
         await _sessionStorageService.SetItemAsync(key, value, clt);
+    }
+
+    public async Task<DateTime> GetSelectedMonth(CancellationToken clt)
+    {
+        var value = await _sessionStorageService.GetItemAsync<DateTime?>(SESMONTH, clt);
+        return value ?? DateTime.Today;
+    }
+
+    public async Task SetSelectedMonth(DateTime? dateTime, CancellationToken clt)
+    {
+        await _sessionStorageService.SetItemAsync(SESMONTH, dateTime, clt);
     }
 }

@@ -322,6 +322,14 @@
             "type": "string",
             "format": "uuid"
           },
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "buddy": {
+            "type": "string",
+            "nullable": true
+          },
           "name": {
             "type": "string",
             "nullable": true
@@ -352,6 +360,12 @@
               "$ref": "#/components/schemas/LinkedDrogeUser"
             },
             "nullable": true
+          },
+          "syncedFromSharePoint": {
+            "type": "boolean"
+          },
+          "roleFromSharePoint": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

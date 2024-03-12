@@ -17,7 +17,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -51,8 +51,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("Nr")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("RoleFromSharePoint")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("SharePointID")
                         .HasColumnType("text");
+
+                    b.Property<bool>("SyncedFromSharePoint")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid?>("UserFunctionId")
                         .HasColumnType("uuid");
@@ -1289,6 +1298,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("RoleId")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("TrainingOnly")
                         .HasColumnType("boolean");
 
@@ -1321,6 +1333,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             IsDefault = false,
                             Name = "Schipper",
                             Order = 20,
+                            RoleId = new Guid("f5b0bab6-6fdf-457d-855d-bbea6ea57bd5"),
                             TrainingOnly = false,
                             TrainingTarget = 2
                         },
@@ -1332,6 +1345,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             IsDefault = false,
                             Name = "Schipper I.O.",
                             Order = 30,
+                            RoleId = new Guid("54aace50-0e1f-4c35-a1b3-87c9ff6bd743"),
                             TrainingOnly = false,
                             TrainingTarget = 2
                         },
@@ -1343,6 +1357,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             IsDefault = false,
                             Name = "Opstapper",
                             Order = 60,
+                            RoleId = new Guid("afb45395-89ee-413d-9385-21962772dbda"),
                             TrainingOnly = false,
                             TrainingTarget = 2
                         },
@@ -1354,6 +1369,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             IsDefault = false,
                             Name = "Aankomend opstapper",
                             Order = 70,
+                            RoleId = new Guid("2197a054-e81f-4720-9f08-321377398cb6"),
                             TrainingOnly = false,
                             TrainingTarget = 2
                         },
@@ -1365,6 +1381,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             IsDefault = true,
                             Name = "Opstapper op proef",
                             Order = 80,
+                            RoleId = new Guid("2956c6f9-6b83-46eb-8890-dbb640fd5023"),
                             TrainingOnly = false,
                             TrainingTarget = 0
                         },
@@ -1376,6 +1393,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             IsDefault = false,
                             Name = "HRB Aankomend opstapper",
                             Order = 100,
+                            RoleId = new Guid("f06a00e3-62c9-4ba5-baea-84a5ba10f53a"),
                             TrainingOnly = false,
                             TrainingTarget = 0
                         },
@@ -1489,6 +1507,48 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Accesses = "users_counter,users_details,full_training_history,full_action_history",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Name = "Users"
+                        },
+                        new
+                        {
+                            Id = new Guid("f5b0bab6-6fdf-457d-855d-bbea6ea57bd5"),
+                            Accesses = "full_training_history,full_action_history",
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "schipper"
+                        },
+                        new
+                        {
+                            Id = new Guid("54aace50-0e1f-4c35-a1b3-87c9ff6bd743"),
+                            Accesses = "full_training_history,full_action_history",
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "schipper io"
+                        },
+                        new
+                        {
+                            Id = new Guid("afb45395-89ee-413d-9385-21962772dbda"),
+                            Accesses = "full_training_history,full_action_history",
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "opstapper"
+                        },
+                        new
+                        {
+                            Id = new Guid("2197a054-e81f-4720-9f08-321377398cb6"),
+                            Accesses = "full_training_history,full_action_history",
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "aankomend opstapper"
+                        },
+                        new
+                        {
+                            Id = new Guid("f06a00e3-62c9-4ba5-baea-84a5ba10f53a"),
+                            Accesses = "full_training_history,full_action_history",
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "hrb aankomend opstapper"
+                        },
+                        new
+                        {
+                            Id = new Guid("2956c6f9-6b83-46eb-8890-dbb640fd5023"),
+                            Accesses = "",
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "opstapper op proef"
                         });
                 });
 
@@ -1703,13 +1763,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkUserUser", b =>
                 {
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "UserB")
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "UserA")
                         .WithMany("LinkedUserAsA")
                         .HasForeignKey("UserAId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "UserA")
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "UserB")
                         .WithMany("LinkedUserAsB")
                         .HasForeignKey("UserBId")
                         .OnDelete(DeleteBehavior.Cascade)

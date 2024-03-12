@@ -1,4 +1,6 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
+﻿using System.Text.Json.Serialization;
+
+namespace Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 
 public class NotificationDataBase
 {
@@ -36,6 +38,7 @@ public class MessageData
     public string vibrationPattern { get; set; }
     public string from { get; set; }
     public string messageId { get; set; }
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     public long sentTime { get; set; }
     public int ttl { get; set; }
 }

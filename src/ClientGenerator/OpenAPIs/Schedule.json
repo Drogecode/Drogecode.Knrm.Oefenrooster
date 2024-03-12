@@ -1008,6 +1008,10 @@
             "format": "uuid",
             "nullable": true
           },
+          "buddy": {
+            "type": "string",
+            "nullable": true
+          },
           "availabilty": {
             "$ref": "#/components/schemas/Availabilty"
           },
