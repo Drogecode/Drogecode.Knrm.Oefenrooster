@@ -31,7 +31,7 @@ public sealed partial class Global : IDisposable
     private bool? _clickedUpdate;
     private bool? _usersSynced;
     private bool? _specialDatesUpdated;
-    private bool _settingTrainingToCalendar;
+    private bool? _settingTrainingToCalendar;
 
 
     protected override void OnInitialized()

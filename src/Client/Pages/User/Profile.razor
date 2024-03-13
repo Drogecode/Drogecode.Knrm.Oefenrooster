@@ -6,5 +6,8 @@
 <CultureSelector />
 
 <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
-    <MudSwitch Label="setting training to calendar" Color="Color.Primary" T="bool" Checked="@_settingTrainingToCalendar" CheckedChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))" />
+    @if (_settingTrainingToCalendar is not null)
+    {
+        <MudSwitch Label="setting training to calendar" Color="Color.Primary" T="bool" Checked="@_settingTrainingToCalendar.Value" CheckedChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))" />
+    }
 </AuthorizeView>
