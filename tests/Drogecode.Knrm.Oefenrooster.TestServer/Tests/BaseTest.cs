@@ -96,15 +96,19 @@ public class BaseTest : IAsyncLifetime
         });
         dataContext.SaveChanges();
 
-        MockAuthenticatedUser(scheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
-        MockAuthenticatedUser(userController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
-        MockAuthenticatedUser(functionController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
-        MockAuthenticatedUser(holidayController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
-        MockAuthenticatedUser(trainingTypesController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
-        MockAuthenticatedUser(calendarItemController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
-        MockAuthenticatedUser(preComController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
-        MockAuthenticatedUser(vehicleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
-        MockAuthenticatedUser(defaultScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+        var defaultRoles = new List<string>
+        {
+            AccessesNames.AUTH_scheduler_other_user,
+        };
+        MockAuthenticatedUser(scheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(userController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(functionController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(holidayController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(trainingTypesController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(calendarItemController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(preComController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(vehicleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(defaultScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
     }
 
     public async Task InitializeAsync()

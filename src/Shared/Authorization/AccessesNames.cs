@@ -18,6 +18,7 @@ public static class AccessesNames
     public const string AUTH_scheduler_history = "scheduler_history";
     public const string AUTH_scheduler_edit_past = "scheduler_past";// more than 3 days ago.
     public const string AUTH_scheduler_dayitem = "scheduler_dayitem";
+    public const string AUTH_scheduler_other_user = "scheduler_other";
 
     public const string AUTH_users_details = "users_details";
     public const string AUTH_users_counter = "users_counter";

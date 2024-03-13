@@ -334,6 +334,11 @@
             "type": "string",
             "nullable": true
           },
+          "nr": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "created": {
             "type": "string",
             "format": "date-time"

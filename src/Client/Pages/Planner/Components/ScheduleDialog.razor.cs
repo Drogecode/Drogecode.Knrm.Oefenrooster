@@ -9,6 +9,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.Extensions.Localization;
+using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
@@ -18,6 +19,7 @@ public sealed partial class ScheduleDialog : IDisposable
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
+    [Inject] private UserRepository _userRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public PlannedTraining Planner { get; set; } = default!;
@@ -29,9 +31,11 @@ public sealed partial class ScheduleDialog : IDisposable
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
     private List<DrogeVehicle>? _vehicleInfoForThisTraining;
+    private Guid? _currentUserId = null;
     private bool _plannerIsUpdated;
     private bool _showWoeps;
     private bool _canEdit;
+    private bool _authEditOtherUser;
     private bool _showPadlock;
     private int _vehicleCount;
     private int _colmn1 = 2;
@@ -68,6 +72,18 @@ public sealed partial class ScheduleDialog : IDisposable
             _vehicleCount = count;
         }
         PlannedTraining? latestVersion = null;
+        ClaimsPrincipal? user = null;
+        if (AuthenticationState is not null)
+        {
+            var authState = await AuthenticationState;
+            user = authState?.User;
+            _authEditOtherUser = user?.IsInRole(AccessesNames.AUTH_scheduler_other_user) ?? false;
+            if (!_authEditOtherUser)
+            {
+                var dbUser = await _userRepository.GetCurrentUserAsync();
+                _currentUserId = dbUser?.Id;
+            }
+        }
         if (latestVersionTask is not null)
             latestVersion = (await latestVersionTask)?.Training;
         if (latestVersion is not null)
@@ -82,17 +98,12 @@ public sealed partial class ScheduleDialog : IDisposable
         {
             _canEdit = true;
         }
-        else if (AuthenticationState is not null)
+        else if (user is not null)
         {
-            var authState = await AuthenticationState;
-            var user = authState?.User;
-            if (user is not null)
-            {
-                _showPadlock = true;
-                _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
-            }
+            _showPadlock = true;
+            _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
         }
-        if(!_canEdit)
+        if (!_canEdit)
         {
             _showPadlock = true;
         }

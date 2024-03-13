@@ -257,6 +257,9 @@ public class ScheduleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var inRoleEditOther = User.IsInRole(AccessesNames.AUTH_scheduler_other_user);
+            if (!inRoleEditOther && !userId.Equals(body.User?.UserId))
+                return Unauthorized();
             PatchAssignedUserResponse result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.User?.UserId, Assigned = body?.User?.Assigned }), body?.TrainingId);
             await _userService.PatchLastOnline(userId, clt);
@@ -282,6 +285,9 @@ public class ScheduleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var inRoleEditOther = User.IsInRole(AccessesNames.AUTH_scheduler_other_user);
+            if (!inRoleEditOther && !userId.Equals(body.UserId))
+                return Unauthorized();
             var result = await _scheduleService.PutAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.UserId, Assigned = body?.Assigned }), body?.TrainingId);
             await _userService.PatchLastOnline(userId, clt);
