@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
 using System.Text.Json;
 
@@ -11,6 +12,7 @@ public sealed partial class Alerts : IDisposable
 {
     [Inject] private IStringLocalizer<Alerts> L { get; set; } = default!;
     [Inject] private PreComRepository _preComRepository { get; set; } = default!;
+    [Inject] private UserRepository _userRepository { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private MultiplePreComAlertsResponse? _alerts;
     private DrogeUser? _user;
@@ -21,8 +23,8 @@ public sealed partial class Alerts : IDisposable
     private bool _multiSelection;
     protected override async Task OnInitializedAsync()
     {
-        _alerts = await PreComRepository.GetAll(_count, 0, _cls.Token);
-        _user = await UserRepository.GetCurrentUserAsync(_cls.Token);
+        _alerts = await _preComRepository.GetAll(_count, 0, _cls.Token);
+        _user = await _userRepository.GetCurrentUserAsync(_cls.Token);
     }
 
     public static string JsonPrettify(string? json)
@@ -43,7 +45,7 @@ public sealed partial class Alerts : IDisposable
         _currentPage = nextPage;
         if (nextPage <= 0) return;
         var skip = (nextPage - 1) * _count;
-        _alerts = await PreComRepository.GetAll(_count, skip, _cls.Token);
+        _alerts = await _preComRepository.GetAll(_count, skip, _cls.Token);
         _bussy = false;
         StateHasChanged();
     }
@@ -51,14 +53,5 @@ public sealed partial class Alerts : IDisposable
     public void Dispose()
     {
         _cls.Cancel();
-    }
-    public static string JsonPrettify(string? json)
-    {
-        if ( string.IsNullOrEmpty(json))
-        {
-            return string.Empty;
-        }
-        using var jDoc = JsonDocument.Parse(json);
-        return JsonSerializer.Serialize(jDoc, new JsonSerializerOptions { WriteIndented = true });
     }
 }

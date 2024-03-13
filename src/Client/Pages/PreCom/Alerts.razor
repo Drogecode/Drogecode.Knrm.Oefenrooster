@@ -6,9 +6,9 @@
 @attribute [Authorize]
 <MudText Typo="Typo.h3">Precom alerts</MudText>
 
-@if (_alerts is not null)
+@if (_alerts?.PreComAlerts is not null)
 {
-    <MudDataGrid Items="@_alerts.OrderByDescending(x=>x.SendTime)"
+    <MudDataGrid Items="@_alerts.PreComAlerts.OrderByDescending(x=>x.SendTime)"
                  ReadOnly="true" EditMode="@DataGridEditMode.Cell">
         <Columns>
             <HierarchyColumn T="PreComAlert" />
