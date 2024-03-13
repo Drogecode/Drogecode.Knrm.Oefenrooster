@@ -122,14 +122,14 @@ public class GraphService : IGraphService
         if (sharePointActions == null || clt.IsCancellationRequested)
             return false;
         var dbActions = await _database.ReportActions
-            .Where(x=>x.CustomerId == customerId)
+            .Where(x => x.CustomerId == customerId)
             .Include(x => x.Users).ToListAsync();
 
         foreach (var action in sharePointActions)
         {
-            if (clt.IsCancellationRequested) 
+            if (clt.IsCancellationRequested)
                 return false;
-            var dbAction = dbActions.FirstOrDefault(x=>x.Id == action.Id);
+            var dbAction = dbActions.FirstOrDefault(x => x.Id == action.Id);
             if (dbAction is null)
             {
                 dbAction = action.ToDbDefaultSchedule(customerId);
@@ -141,7 +141,7 @@ public class GraphService : IGraphService
             }
         }
         var changeCount = await _database.SaveChangesAsync(clt);
-        _logger.LogInformation("SharePoint actions synced (count {changeCount})",changeCount);
+        _logger.LogInformation("SharePoint actions synced (count {changeCount})", changeCount);
         return changeCount > 0;
     }
     public async Task<bool> SyncSharePointTrainings(Guid customerId, CancellationToken clt)
@@ -276,15 +276,18 @@ public class GraphService : IGraphService
         if (sharePointUsers == null)
         {
             sharePointUsers = await GraphHelper.FindSharePointUsers();
-            var dbUsers = await _database.Users.Where(x=> x.CustomerId == customerId).Select(x => new { x.Id, x.SharePointID, x.Name }).ToListAsync();
+            var dbUsers = await _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null).Select(x => new { x.Id, x.SharePointID, x.Name }).ToListAsync();
             foreach (var sharePointUser in sharePointUsers)
             {
                 var dbUser = dbUsers.FirstOrDefault(x => x.SharePointID == sharePointUser.SharePointID);
                 if (dbUser is null)
+                {
                     dbUser = dbUsers.FirstOrDefault(x => x.Name == sharePointUser.Name);
+                    if (dbUser is not null)
+                        await _database.Users.Where(x => x.Id == dbUser.Id && x.CustomerId == customerId && x.DeletedOn == null).ExecuteUpdateAsync(x => x.SetProperty(p => p.SharePointID, sharePointUser.SharePointID), clt);
+                }
                 if (dbUser is not null)
                     sharePointUser.DrogeCodeId = dbUser.Id;
-
             }
             _ = _memoryCache.Set(string.Format(SP_USERS, customerId), sharePointUsers, DateTimeOffset.UtcNow.AddMinutes(30));
         }
