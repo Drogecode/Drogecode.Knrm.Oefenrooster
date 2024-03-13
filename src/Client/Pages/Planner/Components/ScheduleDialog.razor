@@ -135,12 +135,12 @@
                 }
                 @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
                 {
-                    @if (Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available && x.PlannedFunctionId == function.Id))
+                    @if (Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available && x.UserFunctionId == function.Id))
                     {
                         <MudText Typo="Typo.h6">
                             @function.Name
                         </MudText>
-                        @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available && x.PlannedFunctionId == function.Id))
+                        @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty == Oefenrooster.Shared.Enums.Availabilty.Available && x.UserFunctionId == function.Id))
                         {
                             <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                                 <MudItem xs="@_colmn1">
@@ -174,12 +174,12 @@
                 {
                     @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
                     {
-                        @if (Users.Any(x => x.UserFunctionId == function.Id) || Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty != Availabilty.Available && x.PlannedFunctionId == function.Id))
+                        @if (Users.Any(x => x.UserFunctionId == function.Id) || Planner.PlanUsers.Any(x => !x.Assigned && x.Availabilty != Availabilty.Available && x.UserFunctionId == function.Id))
                         {
                             <MudText Typo="Typo.h6">
                                 @function.Name
                             </MudText>
-                            @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty != Availabilty.Available && x.PlannedFunctionId == function.Id).OrderBy(o => o.Availabilty))
+                            @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availabilty != Availabilty.Available && x.UserFunctionId == function.Id).OrderBy(o => o.Availabilty))
                             {
                                 <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                                     <MudItem xs="@_colmn1">
