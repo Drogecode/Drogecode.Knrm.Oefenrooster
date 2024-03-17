@@ -117,31 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Add new special day" xml:space="preserve">
-    <value>Maak nieuw speciale dag aan</value>
+  <data name="Description" xml:space="preserve">
+    <value>Omschrijving</value>
   </data>
-  <data name="Add or change special day" xml:space="preserve">
-    <value>Maak of wijzig speciale dag</value>
+  <data name="Month" xml:space="preserve">
+    <value>Maand</value>
   </data>
-  <data name="Custom" xml:space="preserve">
-    <value>Aangepast</value>
+  <data name="Month banner" xml:space="preserve">
+    <value>Maand banner</value>
   </data>
-  <data name="Default" xml:space="preserve">
-    <value>Standaard</value>
+  <data name="Repeating" xml:space="preserve">
+    <value>Harhalend</value>
   </data>
-  <data name="Edit day item" xml:space="preserve">
-    <value>Bewerk dag item</value>
+  <data name="Severity" xml:space="preserve">
+    <value>Prioriteit</value>
   </data>
-  <data name="PersonPublic" xml:space="preserve">
-    <value>Persoon publiek</value>
-  </data>
-  <data name="Special day" xml:space="preserve">
-    <value>Speciale dagen</value>
-  </data>
-  <data name="SpecialDate" xml:space="preserve">
-    <value>Feestdagen</value>
-  </data>
-  <data name="Who" xml:space="preserve">
-    <value>Wie</value>
+  <data name="Year" xml:space="preserve">
+    <value>Jaar</value>
   </data>
 </root>

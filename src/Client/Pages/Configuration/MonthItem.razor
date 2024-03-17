@@ -1,7 +1,39 @@
 ﻿@page "/configuration/month-item"
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem
 @attribute [Authorize(Roles = $"{AccessesNames.AUTH_scheduler_monthitem},{AccessesNames.AUTH_Taco}")]
 <h3>MonthItem</h3>
 
-@code {
-
-}
+<PageTitle>@L["Month banner"]</PageTitle>
+<MudPaper Elevation="0" Class="p-2">
+    @if (_monthItems is not null)
+    {
+        <MudDataGrid Items="@_monthItems.MonthItems"
+                     ReadOnly="true" EditMode="@DataGridEditMode.Cell">
+            <Columns>
+                <PropertyColumn Property="x => x.Text" Title="@L["Description"]" />
+                <PropertyColumn Property="x => x.Year" Title="@L["Year"]" >
+                    <CellTemplate>
+                        @(context.Item.Year == null ? @L["Repeating"] : context.Item.Year)
+                    </CellTemplate>
+                </PropertyColumn>
+                <PropertyColumn Property="x => x.Month" Title="@L["Month"]" />
+                <PropertyColumn Property="x => x.Severity" Title="@L["Severity"]">
+                    <CellTemplate>
+                        @context.Item.Severity
+                    </CellTemplate>
+                </PropertyColumn>
+            </Columns>
+        </MudDataGrid>
+        @if (_monthItems.TotalCount > _count)
+        {
+            <MudPagination Disabled="_bussy" ShowFirstButton="true" ShowLastButton="true" Count="@(Convert.ToInt32(Math.Ceiling((double)_monthItems.TotalCount/(double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4" />
+        }
+    }
+    else
+    {
+        <MudSkeleton />
+        <MudSkeleton />
+        <MudSkeleton />
+        <MudSkeleton />
+    }
+</MudPaper>

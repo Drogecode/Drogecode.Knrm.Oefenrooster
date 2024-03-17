@@ -10,7 +10,7 @@ using System.Security.Claims;
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers.Obsolite;
 
 /// <summary>
-/// Can only be deleted are updated to a version after this split
+/// Can only be deleted if all user clients are updated to a version after the split
 /// </summary>
 [Obsolete("Use DayItem or MonthItem controller")]
 [Authorize]
@@ -54,7 +54,7 @@ public class CalendarItemController : ControllerBase
         {
             var result = new GetMultipleMonthItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            result = await _monthItemService.GetMonthItems(year, month, customerId, clt);
+            result = await _monthItemService.GetItems(year, month, customerId, clt);
             return result;
         }
         catch (Exception ex)
@@ -169,7 +169,7 @@ public class CalendarItemController : ControllerBase
             var result = new PutMonthItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            result = await _monthItemService.PutMonthItem(roosterItemMonth, customerId, userId, clt);
+            result = await _monthItemService.PutItem(roosterItemMonth, customerId, userId, clt);
             return result;
         }
         catch (Exception ex)

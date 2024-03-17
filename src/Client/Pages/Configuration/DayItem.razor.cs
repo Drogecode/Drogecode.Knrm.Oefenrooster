@@ -1,14 +1,11 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
@@ -16,10 +13,11 @@ public sealed partial class DayItem : IDisposable
 {
     [Inject] private IStringLocalizer<DayItem> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private IDayItemClient _dayItemClient { get; set; } = default!;
-    [Inject] private IDialogService _dialogProvider { get; set; } = default!;
-    [Inject] private UserRepository _userRepository { get; set; } = default!;
-    [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
+    [Inject] private IDayItemClient DayItemClient { get; set; } = default!;
+    [Inject] private IDialogService DialogProvider { get; set; } = default!;
+    [Inject] private UserRepository UserRepository { get; set; } = default!;
+    [Inject] private FunctionRepository FunctionRepository { get; set; } = default!;
+
     private CancellationTokenSource _cls = new();
     private RefreshModel _refreshModel = new();
     private GetMultipleDayItemResponse? _items;
@@ -32,9 +30,9 @@ public sealed partial class DayItem : IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        _items = await _dayItemClient.GetAllFutureAsync(_count, _skip, true);
-        _users = await _userRepository.GetAllUsersAsync(false, false, _cls.Token);
-        _functions = await _functionRepository.GetAllFunctionsAsync();
+        _items = await DayItemClient.GetAllFutureAsync(_count, _skip, true);
+        _users = await UserRepository.GetAllUsersAsync(false, false, _cls.Token);
+        _functions = await FunctionRepository.GetAllFunctionsAsync();
         _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
     }
 
@@ -49,7 +47,7 @@ public sealed partial class DayItem : IDisposable
             { x=> x.Refresh, _refreshModel },
         };
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-        _dialogProvider.Show<DayItemDialog>(L["Edit day item"], parameters, options);
+        DialogProvider.Show<DayItemDialog>(L["Edit day item"], parameters, options);
     }
 
     private async Task Next(int nextPage)
@@ -60,7 +58,7 @@ public sealed partial class DayItem : IDisposable
         _currentPage = nextPage;
         if (nextPage <= 0) return;
         _skip = (nextPage - 1) * _count;
-        _items = await _dayItemClient.GetAllFutureAsync(_count, _skip, true);
+        _items = await DayItemClient.GetAllFutureAsync(_count, _skip, true);
         _bussy = false;
         StateHasChanged();
     }
@@ -69,7 +67,7 @@ public sealed partial class DayItem : IDisposable
     {
         if (dayItem is null)
             return;
-        var deleteResult = await _dayItemClient.DeleteDayItemAsync(dayItem.Id, _cls.Token);
+        var deleteResult = await DayItemClient.DeleteDayItemAsync(dayItem.Id, _cls.Token);
         if (deleteResult is true)
         {
             _items!.DayItems!.Remove(dayItem);
@@ -81,7 +79,7 @@ public sealed partial class DayItem : IDisposable
         if (_bussy) return;
         _bussy = true;
         StateHasChanged();
-        _items = await _dayItemClient.GetAllFutureAsync(_count, _skip, true);
+        _items = await DayItemClient.GetAllFutureAsync(_count, _skip, true);
         _bussy = false;
         StateHasChanged();
     }

@@ -626,14 +626,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = new Guid("287359b1-2035-435b-97b0-eb260dc497d6"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Admin",
-                Accesses = $"{AccessesNames.AUTH_configure_training_types},{AccessesNames.AUTH_users_settigns}"
+                Accesses = $"{AccessesNames.AUTH_configure_training_types},{AccessesNames.AUTH_users_settigns},{AccessesNames.AUTH_scheduler_dayitem},{AccessesNames.AUTH_scheduler_monthitem}"
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {
                 Id = new Guid("f6b0c571-9050-40d6-bf58-807981e5ed6e"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Scheduler",
-                Accesses = $"{AccessesNames.AUTH_scheduler},{AccessesNames.AUTH_scheduler_in_table_view},{AccessesNames.AUTH_scheduler_edit_past},{AccessesNames.AUTH_scheduler_dayitem},{AccessesNames.AUTH_scheduler_other_user}"
+                Accesses = $"{AccessesNames.AUTH_scheduler},{AccessesNames.AUTH_scheduler_in_table_view},{AccessesNames.AUTH_scheduler_edit_past},{AccessesNames.AUTH_scheduler_dayitem},{AccessesNames.AUTH_scheduler_other_user},{AccessesNames.AUTH_scheduler_monthitem}"
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {
@@ -677,7 +677,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = new Guid("2197a054-e81f-4720-9f08-321377398cb6"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "aankomend opstapper",
-                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}"
+                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full},{AccessesNames.AUTH_scheduler_other_user}"
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {

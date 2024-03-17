@@ -20,9 +20,8 @@ public sealed partial class Alerts : IDisposable
     private DrogeUser? _user;
     private bool _showHowTo;
     private int _currentPage = 1;
-    private int _count = 10;
+    private int _count = 30;
     private bool _bussy;
-    private bool _multiSelection;
     protected override async Task OnInitializedAsync()
     {
         _alerts = await PreComRepository.GetAll(_count, 0, _cls.Token);

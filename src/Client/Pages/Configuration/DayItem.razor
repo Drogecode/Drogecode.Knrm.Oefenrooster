@@ -3,28 +3,28 @@
 @attribute [Authorize(Roles = AccessesNames.AUTH_scheduler_dayitem)]
 <MudAlert Severity="Severity.Info" Variant="Variant.Filled">Werkt (nog) niet op mobiel</MudAlert>
 <PageTitle>@L["Special day"]</PageTitle>
-    <MudPaper Elevation="0" Class="p-2">
-        <MudText Typo="Typo.h4">@L["Add or change special day"]</MudText>
+<MudPaper Elevation="0" Class="p-2">
+    <MudText Typo="Typo.h4">@L["Add or change special day"]</MudText>
     @if (_items?.DayItems is not null)
     {
         <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{OpenDayItemDialog(null, true);}">@L["Add new special day"]</MudButton>
         <MudTable Items="_items.DayItems.OrderBy(x=>x.DateStart)">
             <HeaderContent>
                 <MudTh>@LApp["Description"]</MudTh>
-                    <MudTh>@LApp["Type"]</MudTh>
-                    <MudTh>@L["Who"]</MudTh>
-                    <MudTh>@LApp["From"]</MudTh>
-                    <MudTh>@LApp["Till"]</MudTh>
-                    <MudTh>@LApp["Edit"]</MudTh>
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="@LApp["Description"]">@context.Text</MudTd>
-                    <MudTd DataLabel="@L["Type"]">@L[@context.Type.ToString()]</MudTd>
-                    <MudTd DataLabel="@L["Who"]">@_users?.FirstOrDefault(x => x.Id == context?.LinkedUsers?.FirstOrDefault()?.UserId)?.Name</MudTd>
-                    <MudTd DataLabel="@LApp["From"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateStart" /></MudTd>
-                    <MudTd DataLabel="@LApp["Till"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateEnd" /></MudTd>
-                    <MudTd DataLabel="@LApp["Edit"]">
-                        @if (context.Type != CalendarItemType.SpecialDate)
+                <MudTh>@LApp["Type"]</MudTh>
+                <MudTh>@L["Who"]</MudTh>
+                <MudTh>@LApp["From"]</MudTh>
+                <MudTh>@LApp["Till"]</MudTh>
+                <MudTh>@LApp["Edit"]</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="@LApp["Description"]">@context.Text</MudTd>
+                <MudTd DataLabel="@L["Type"]">@L[@context.Type.ToString()]</MudTd>
+                <MudTd DataLabel="@L["Who"]">@_users?.FirstOrDefault(x => x.Id == context?.LinkedUsers?.FirstOrDefault()?.UserId)?.Name</MudTd>
+                <MudTd DataLabel="@LApp["From"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateStart" /></MudTd>
+                <MudTd DataLabel="@LApp["Till"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateEnd" /></MudTd>
+                <MudTd DataLabel="@LApp["Edit"]">
+                    @if (context.Type != CalendarItemType.SpecialDate)
                     {
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context);}" />
                         <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenDayItemDialog(context, false);}" />

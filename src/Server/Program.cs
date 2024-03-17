@@ -66,6 +66,7 @@ builder.Services.AddScoped<IGraphService, GraphService>();
 
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IDayItemService, DayItemService>();
+builder.Services.AddScoped<IMonthItemService, MonthItemService>();
 builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 builder.Services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();

@@ -38,7 +38,7 @@ public class MonthItemController : ControllerBase
         {
             var result = new GetMultipleMonthItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            result = await _monthItemService.GetMonthItems(year, month, customerId, clt);
+            result = await _monthItemService.GetItems(year, month, customerId, clt);
             return result;
         }
         catch (Exception ex)
@@ -46,7 +46,28 @@ public class MonthItemController : ControllerBase
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in GetMonthItem");
+            _logger.LogError(ex, "Exception in month GetItems");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("all/{take:int}/{skip:int}/{includeExpired:bool}")]
+    public async Task<ActionResult<GetMultipleMonthItemResponse>> GetAllItems(int take, int skip, bool includeExpired, CancellationToken clt = default)
+    {
+        try
+        {
+            var result = new GetMultipleMonthItemResponse();
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            result = await _monthItemService.GetAllItems(take, skip, includeExpired, customerId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in month GetAllItems");
             return BadRequest();
         }
     }
@@ -60,7 +81,7 @@ public class MonthItemController : ControllerBase
             var result = new PutMonthItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            result = await _monthItemService.PutMonthItem(roosterItemMonth, customerId, userId, clt);
+            result = await _monthItemService.PutItem(roosterItemMonth, customerId, userId, clt);
             return result;
         }
         catch (Exception ex)
@@ -68,7 +89,7 @@ public class MonthItemController : ControllerBase
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in PutMonthtem");
+            _logger.LogError(ex, "Exception in month PutItem");
             return BadRequest();
         }
     }

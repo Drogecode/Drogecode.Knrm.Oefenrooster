@@ -55,6 +55,64 @@
         }
       }
     },
+    "/api/MonthItem/all/{take}/{skip}/{includeExpired}": {
+      "get": {
+        "tags": [
+          "MonthItem"
+        ],
+        "operationId": "GetAllItems",
+        "parameters": [
+          {
+            "name": "take",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "includeExpired",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleMonthItemResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleMonthItemResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleMonthItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/MonthItem": {
       "put": {
         "tags": [
