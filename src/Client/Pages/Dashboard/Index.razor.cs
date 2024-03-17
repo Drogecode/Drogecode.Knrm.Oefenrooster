@@ -1,5 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
@@ -17,7 +17,7 @@ public sealed partial class Index : IDisposable
     [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
-    [Inject] private CalendarItemRepository _calendarItemRepository { get; set; } = default!;
+    [Inject] private DayItemRepository _calendarItemRepository { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private DrogeUser? _user;
     private List<DrogeFunction>? _functions;

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
+namespace Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 
 public sealed class RoosterItemDay : ICloneable
 {
@@ -20,6 +20,6 @@ public sealed class RoosterItemDay : ICloneable
 
     public object Clone()
     {
-        return this.MemberwiseClone();
+        return MemberwiseClone();
     }
 }

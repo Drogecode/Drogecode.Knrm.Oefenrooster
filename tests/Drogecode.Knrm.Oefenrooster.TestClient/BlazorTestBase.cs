@@ -37,7 +37,8 @@ public abstract class BlazorTestBase : TestContext
         this.AddBlazoredSessionStorage();
 
 
-        Services.AddScoped<ICalendarItemClient, CalendarItemClient>();
+        Services.AddScoped<IDayItemClient, DayItemClient>();
+        Services.AddScoped<IMonthItemClient, MonthItemClient>();
         Services.AddScoped<IConfigurationClient, ConfigurationClient>();
         Services.AddScoped<IDefaultScheduleClient, DefaultScheduleClient>();
         Services.AddScoped<IFunctionClient, FunctionClient>();
@@ -49,7 +50,7 @@ public abstract class BlazorTestBase : TestContext
         Services.AddScoped<IUserClient, UserClient>();
         Services.AddScoped<IVehicleClient, VehicleClient>();
 
-        Services.AddScoped<CalendarItemRepository>();
+        Services.AddScoped<DayItemRepository>();
         Services.AddScoped<ConfigurationRepository>();
         Services.AddScoped<DefaultScheduleRepository>();
         Services.AddScoped<FunctionRepository>();

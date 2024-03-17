@@ -1,12 +1,14 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
+using Drogecode.Knrm.Oefenrooster.Server.Controllers.Obsolite;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
@@ -17,12 +19,7 @@ using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests;
 
@@ -56,7 +53,8 @@ public class BaseTest : IAsyncLifetime
     protected readonly FunctionController FunctionController;
     protected readonly HolidayController HolidayController;
     protected readonly TrainingTypesController TrainingTypesController;
-    protected readonly CalendarItemController CalendarItemController;
+    protected readonly DayItemController DayItemController;
+    protected readonly MonthItemController MonthItemController;
     protected readonly PreComController PreComController;
     protected readonly VehicleController VehicleController;
     protected readonly DefaultScheduleController DefaultScheduleController;
@@ -68,7 +66,8 @@ public class BaseTest : IAsyncLifetime
         FunctionController functionController,
         HolidayController holidayController,
         TrainingTypesController trainingTypesController,
-        CalendarItemController calendarItemController,
+        DayItemController dayItemController,
+        MonthItemController monthItemController,
         PreComController preComController,
         VehicleController vehicleController,
         DefaultScheduleController defaultScheduleController)
@@ -81,7 +80,8 @@ public class BaseTest : IAsyncLifetime
         FunctionController = functionController;
         HolidayController = holidayController;
         TrainingTypesController = trainingTypesController;
-        CalendarItemController = calendarItemController;
+        DayItemController = dayItemController;
+        MonthItemController = monthItemController;
         PreComController = preComController;
         VehicleController = vehicleController;
         DefaultScheduleController = defaultScheduleController;
@@ -105,7 +105,8 @@ public class BaseTest : IAsyncLifetime
         MockAuthenticatedUser(functionController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(holidayController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(trainingTypesController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(calendarItemController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(dayItemController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(monthItemController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(preComController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(vehicleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(defaultScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
@@ -229,7 +230,7 @@ public class BaseTest : IAsyncLifetime
             Month = month.Value,
             Year = year
         };
-        var result = await CalendarItemController.PutMonthItem(body);
+        var result = await MonthItemController.PutItem(body);
         Assert.NotNull(result?.Value?.NewId);
         return result.Value.NewId;
     }
@@ -249,7 +250,7 @@ public class BaseTest : IAsyncLifetime
         {
             body.LinkedUsers = [new RoosterItemDayLinkedUsers { UserId = userId.Value }];
         }
-        var result = await CalendarItemController.PutDayItem(body);
+        var result = await DayItemController.PutDayItem(body);
         Assert.NotNull(result?.Value?.NewId);
         return result.Value.NewId;
     }

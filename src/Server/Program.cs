@@ -65,7 +65,7 @@ builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
 builder.Services.AddScoped<IGraphService, GraphService>();
 
 builder.Services.AddScoped<IAuditService, AuditService>();
-builder.Services.AddScoped<ICalendarItemService, CalendarItemService>();
+builder.Services.AddScoped<IDayItemService, DayItemService>();
 builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 builder.Services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
@@ -88,7 +88,8 @@ var groupNames = new List<string>
 {
     "Audit",
     "Authentication",
-    "CalendarItem",
+    "DayItem",
+    "MonthItem",
     "Configuration",
     "Function",
     "Schedule",

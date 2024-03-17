@@ -1,0 +1,213 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MonthItem",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/MonthItem/{year}/{month}": {
+      "get": {
+        "tags": [
+          "MonthItem"
+        ],
+        "operationId": "GetItems",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleMonthItemResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleMonthItemResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleMonthItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MonthItem": {
+      "put": {
+        "tags": [
+          "MonthItem"
+        ],
+        "operationId": "PutItem",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoosterItemMonth"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoosterItemMonth"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoosterItemMonth"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutMonthItemResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutMonthItemResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutMonthItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CalendarItemType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "GetMultipleMonthItemResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "monthItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RoosterItemMonth"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PutMonthItemResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "newId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RoosterItemMonth": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/CalendarItemType"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Severity": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
+      }
+    }
+  }
+}

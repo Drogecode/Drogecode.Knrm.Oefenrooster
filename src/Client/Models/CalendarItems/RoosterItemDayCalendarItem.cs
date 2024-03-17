@@ -1,4 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 using Heron.MudCalendar;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;

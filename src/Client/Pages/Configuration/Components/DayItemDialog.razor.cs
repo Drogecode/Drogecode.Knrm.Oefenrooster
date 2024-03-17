@@ -1,7 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -13,7 +13,7 @@ public sealed partial class DayItemDialog : IDisposable
 {
     [Inject] private IStringLocalizer<DayItemDialog> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private ICalendarItemClient CalendarItemClient { get; set; } = default!;
+    [Inject] private IDayItemClient DayItemClient { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public RoosterItemDay? DayItem { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }
@@ -64,7 +64,7 @@ public sealed partial class DayItemDialog : IDisposable
 
         if (IsNew is true)
         {
-            var isPut = await CalendarItemClient.PutDayItemAsync(DayItem, _cls.Token);
+            var isPut = await DayItemClient.PutDayItemAsync(DayItem, _cls.Token);
             if (isPut?.Success is true)
             {
                 DayItem!.Id = isPut.NewId;
@@ -73,7 +73,7 @@ public sealed partial class DayItemDialog : IDisposable
         }
         else
         {
-            var isPatched = await CalendarItemClient.PatchDayItemAsync(DayItem, _cls.Token);
+            var isPatched = await DayItemClient.PatchDayItemAsync(DayItem, _cls.Token);
         }
         if (Refresh is not null) await Refresh.CallRequestRefreshAsync();
         MudDialog.Close(DialogResult.Ok(true));

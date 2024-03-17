@@ -16,12 +16,13 @@ public class PreComControllerTests : BaseTest
         UserController userController,
         HolidayController holidayController,
         TrainingTypesController trainingTypesController,
-        CalendarItemController calendarItemController,
+        DayItemController dayItemController,
+        MonthItemController monthItemController,
         PreComController preComController,
         VehicleController vehicleController,
         DefaultScheduleController defaultScheduleController) :
-        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController,
-            vehicleController, defaultScheduleController)
+        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
+            preComController, vehicleController, defaultScheduleController)
     {
     }
 

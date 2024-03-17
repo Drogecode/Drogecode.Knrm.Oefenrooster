@@ -3,8 +3,8 @@ using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
@@ -17,9 +17,10 @@ public sealed partial class ScheduleCalendar : IDisposable
     [Inject] private IStringLocalizer<ScheduleCalendar> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ISessionExpireService SessionExpireService { get; set; } = default!;
-    [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
-    [Inject] private CalendarItemRepository _calendarItemRepository { get; set; } = default!;
-    [Inject] private UserRepository _userRepository { get; set; } = default!;
+    [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
+    [Inject] private DayItemRepository DayItemRepository { get; set; } = default!;
+    [Inject] private MonthItemRepository MonthItemRepository { get; set; } = default!;
+    [Inject] private UserRepository UserRepository { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
@@ -41,7 +42,7 @@ public sealed partial class ScheduleCalendar : IDisposable
     {
         _firstMonth = await SessionExpireService.GetSelectedMonth(_cls.Token);
         Global.NewTrainingAddedAsync += HandleNewTraining;
-        _user = await _userRepository.GetCurrentUserAsync();
+        _user = await UserRepository.GetCurrentUserAsync();
         await SetMonth(_firstMonth);
         _initialized = true;
     }
@@ -65,7 +66,7 @@ public sealed partial class ScheduleCalendar : IDisposable
         _events = new();
         _userTrainingCounter = null;
         TrainingWeek scheduleForUser = new();
-        var scheduleForAll = await _scheduleRepository.ScheduleForAll(dateRange, false, _cls.Token);
+        var scheduleForAll = await ScheduleRepository.ScheduleForAll(dateRange, false, _cls.Token);
         if (scheduleForAll == null) return;
         _userTrainingCounter = scheduleForAll.UserTrainingCounters;
         var trainingsInRange = scheduleForAll.Planners;
@@ -87,18 +88,18 @@ public sealed partial class ScheduleCalendar : IDisposable
         {
             _firstMonth = _month.Value;
             _currentMonth = DateTime.Today.Month == _month.Value.Month;
-            var monthItems = await _calendarItemRepository.GetMonthItemAsync(_month.Value.Year, _month.Value.Month, _cls.Token);
+            var monthItems = await MonthItemRepository.GetMonthItemAsync(_month.Value.Year, _month.Value.Month, _cls.Token);
             _monthItems = monthItems?.MonthItems;
-            var dayItems = await _calendarItemRepository.GetDayItemsAsync(dateRange, Guid.Empty, _cls.Token);
+            var dayItems = await DayItemRepository.GetDayItemsAsync(dateRange, Guid.Empty, _cls.Token);
             if (dayItems?.DayItems != null)
             {
-                foreach (var dayItem in dayItems.DayItems.Where(x=>x.DateStart is not null))
+                foreach (var dayItem in dayItems.DayItems.Where(x => x.DateStart is not null))
                 {
 
                     if (dayItem.LinkedUsers?.FirstOrDefault()?.UserId is not null)
                     {
                         var user = Users?.FirstOrDefault(x => x.Id == dayItem.LinkedUsers.FirstOrDefault()!.UserId);
-                        user ??= await _userRepository.GetById(dayItem.LinkedUsers.FirstOrDefault()!.UserId, true);
+                        user ??= await UserRepository.GetById(dayItem.LinkedUsers.FirstOrDefault()!.UserId, true);
                         if (user != null)
                         {
                             dayItem.Text += ": " + user.Name;

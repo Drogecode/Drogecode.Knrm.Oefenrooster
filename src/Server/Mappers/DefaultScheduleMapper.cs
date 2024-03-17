@@ -1,5 +1,4 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;

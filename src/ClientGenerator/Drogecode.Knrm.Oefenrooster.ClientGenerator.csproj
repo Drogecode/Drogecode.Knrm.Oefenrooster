@@ -8,10 +8,6 @@
 		<!-- https://github.com/RicoSuter/NSwag/issues/4633 -->
 		<NSwagGenerateExceptionClasses>true</NSwagGenerateExceptionClasses>
 	</PropertyGroup>
-	
-	<ItemGroup>
-		<None Remove="OpenAPIs\CalendarItem.json" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<OpenApiReference Include="OpenAPIs\Audit.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="AuditClient">
@@ -22,9 +18,13 @@
 			<OutputPath>../Clients/AuthenticationClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.User</Options>
 		</OpenApiReference>
-		<OpenApiReference Include="OpenAPIs\CalendarItem.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="CalendarItemClient">
-			<OutputPath>../Clients/CalendarItemClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem</Options>
+		<OpenApiReference Include="OpenAPIs\DayItem.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="DayItemClient">
+			<OutputPath>../Clients/DayItemClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem</Options>
+		</OpenApiReference>
+		<OpenApiReference Include="OpenAPIs\MonthItem.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="MonthItemClient">
+			<OutputPath>../Clients/MonthItemClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Configuration.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ConfigurationClient">
 			<OutputPath>../Clients/ConfigurationClient.g.cs</OutputPath>

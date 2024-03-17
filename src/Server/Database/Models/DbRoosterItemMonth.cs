@@ -1,4 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 using MudBlazor;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

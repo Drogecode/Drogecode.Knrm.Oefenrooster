@@ -7,9 +7,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Graph.Models;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
@@ -23,12 +21,13 @@ public class ScheduleControllerTests : BaseTest
         UserController userController,
         HolidayController holidayController,
         TrainingTypesController trainingTypesController,
-        CalendarItemController calendarItemController,
+        DayItemController dayItemController,
+        MonthItemController monthItemController,
         PreComController preComController,
         VehicleController vehicleController,
         DefaultScheduleController defaultScheduleController) :
-        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController,
-            vehicleController, defaultScheduleController)
+        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
+            preComController, vehicleController, defaultScheduleController)
     {
     }
 

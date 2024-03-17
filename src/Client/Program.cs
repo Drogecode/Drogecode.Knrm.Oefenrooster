@@ -1,6 +1,7 @@
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
 using Drogecode.Knrm.Oefenrooster.Client;
+using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
@@ -32,7 +33,8 @@ builder.Services.AddBlazoredSessionStorage();
 
 builder.Services.TryAddScoped<IAuditClient, AuditClient>();
 builder.Services.TryAddScoped<IAuthenticationClient, AuthenticationClient>();
-builder.Services.TryAddScoped<ICalendarItemClient, CalendarItemClient>();
+builder.Services.TryAddScoped<IDayItemClient, DayItemClient>();
+builder.Services.TryAddScoped<IMonthItemClient, MonthItemClient>();
 builder.Services.TryAddScoped<IConfigurationClient, ConfigurationClient>();
 builder.Services.TryAddScoped<ICustomerSettingsClient, CustomerSettingsClient>();
 builder.Services.TryAddScoped<IDefaultScheduleClient, DefaultScheduleClient>();
@@ -46,7 +48,8 @@ builder.Services.TryAddScoped<IUserClient, UserClient>();
 builder.Services.TryAddScoped<IUserSettingsClient, UserSettingsClient>();
 builder.Services.TryAddScoped<IVehicleClient, VehicleClient>();
 
-builder.Services.TryAddScoped<CalendarItemRepository>();
+builder.Services.TryAddScoped<DayItemRepository>();
+builder.Services.TryAddScoped<MonthItemRepository>();
 builder.Services.TryAddScoped<ConfigurationRepository>();
 builder.Services.TryAddScoped<DefaultScheduleRepository>();
 builder.Services.TryAddScoped<FunctionRepository>();

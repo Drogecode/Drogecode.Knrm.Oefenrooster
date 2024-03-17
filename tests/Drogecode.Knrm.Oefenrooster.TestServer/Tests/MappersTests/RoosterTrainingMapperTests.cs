@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
+using Drogecode.Knrm.Oefenrooster.Server.Controllers.Obsolite;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
@@ -18,16 +19,17 @@ public class RoosterTrainingMapperTests : BaseTest
         DataContext dataContext,
         IDateTimeService dateTimeServiceMock,
         ScheduleController scheduleController,
-        UserController userController,
         FunctionController functionController,
+        UserController userController,
         HolidayController holidayController,
         TrainingTypesController trainingTypesController,
-        CalendarItemController calendarItemController,
+        DayItemController dayItemController,
+        MonthItemController monthItemController,
         PreComController preComController,
         VehicleController vehicleController,
         DefaultScheduleController defaultScheduleController) :
-        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, calendarItemController, preComController,
-            vehicleController, defaultScheduleController)
+        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
+            preComController, vehicleController, defaultScheduleController)
     {
     }
 

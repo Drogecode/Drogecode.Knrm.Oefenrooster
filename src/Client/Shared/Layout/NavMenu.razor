@@ -19,10 +19,11 @@
             <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
                 <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/configuration/global" Match="NavLinkMatch.Prefix">@L["Configuration"]</MudNavLink>
                 <MudNavLink Icon="@Icons.Material.Filled.History" Href="/configuration/audit" Match="NavLinkMatch.Prefix">@L["Audit"]</MudNavLink>
+                <MudNavLink Icon="@Icons.Material.Filled.AdUnits" Href="/configuration/month-item" Match="NavLinkMatch.Prefix">@L["Month banner"]</MudNavLink>
             </AuthorizeView>
-                <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_dayitem" Context="inner">
-                    <MudNavLink Icon="@Icons.Material.Filled.Curtains" Href="/configuration/day-item" Match="NavLinkMatch.Prefix">@L["Special days"]</MudNavLink>
-                </AuthorizeView>
+            <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_dayitem" Context="inner">
+                <MudNavLink Icon="@Icons.Material.Filled.Curtains" Href="/configuration/day-item" Match="NavLinkMatch.Prefix">@L["Special days"]</MudNavLink>
+            </AuthorizeView>
         </MudNavGroup>
     </AuthorizeView>
     <MudDivider />
