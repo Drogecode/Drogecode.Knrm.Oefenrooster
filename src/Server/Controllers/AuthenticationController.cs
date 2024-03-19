@@ -289,11 +289,13 @@ public class AuthenticationController : ControllerBase
         var email = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "email")?.Value ?? "";
         var fullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? "";
         var userId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "oid")?.Value ?? "";
+        var loginHint = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "login_hint")?.Value ?? "";
         var customerId = new Guid(jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "tid")?.Value ?? throw new Exception("customerId not found"));
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, email),
             new("FullName", fullName),
+            new("login_hint", loginHint),
             new(REFRESHTOKEN, refresh_token),
             new("ValidFrom", jwtSecurityToken.ValidFrom.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             new("ValidTo", jwtSecurityToken.ValidTo.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),

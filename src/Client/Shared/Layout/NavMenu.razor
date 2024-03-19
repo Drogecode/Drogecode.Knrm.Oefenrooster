@@ -27,7 +27,7 @@
         </MudNavGroup>
     </AuthorizeView>
     <MudDivider />
-    <MudNavLink Href="https://dorus1824.sharepoint.com/" Target="_blank" Match="NavLinkMatch.All">@L["Sharepoint"]</MudNavLink>
+    <MudNavLink Href="@_sharePointUrl" Target="_blank" Match="NavLinkMatch.All">@L["Sharepoint"]</MudNavLink>
     <MudDivider />
     @if (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriCalendar.Substring(1)) ||
     (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriSchedule.Substring(1)) && !Navigation.Uri.EndsWith("Table")))
