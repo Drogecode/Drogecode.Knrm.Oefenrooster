@@ -18,7 +18,7 @@
             {
                 var user = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 _updateDetails = await ConfigurationRepository.NewVersionAvailable();
-                if (_updateDetails?.NewVersionAvailable == true)
+                if (_updateDetails?.UpdateMessageVersion != DefaultSettingsHelper.UPDATE_VERSION)
                 {
                     var config = (SnackbarOptions options) =>
                     {
@@ -45,7 +45,7 @@
             }
             finally
             {
-                await Task.Delay(1000 * 30);
+                await Task.Delay(1000 * 120);
             }
         }
     }
