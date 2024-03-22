@@ -18,6 +18,7 @@ public sealed partial class IndexCard : IDisposable
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
     [Parameter] public string? MinWidth { get; set; }
     [Parameter] public string? MaxWidth { get; set; }
+    [Parameter] public bool ShowDayOfWeek { get; set; } = false;
     private CancellationTokenSource _cls = new();
     private PlanUser? _planUser;
 

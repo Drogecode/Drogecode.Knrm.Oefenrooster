@@ -4,7 +4,7 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 @if (_planUser != null)
 {
-    <ScheduleCard MinWidth="@MinWidth" MaxWidth="@MaxWidth" ReplaceEmtyName="true" ShowDate="true" Planner="Training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" >
+    <ScheduleCard MinWidth="@MinWidth" MaxWidth="@MaxWidth" ReplaceEmtyName="true" ShowDate="true" Planner="Training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowDayOfWeek="ShowDayOfWeek" >
         <MudText Color="@PlannerHelper.ColorAvailabilty(_planUser.Availabilty)" Typo="Typo.subtitle2">@LApp[_planUser.Availabilty.ToString() ?? "None"]</MudText>
         @if (Functions != null && Training.PlannedFunctionId != User?.UserFunctionId && Functions.Any(x => x.Id == Training.PlannedFunctionId))
         {

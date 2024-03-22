@@ -73,7 +73,8 @@ public class ConfigurationController : ControllerBase
             {
                 NewVersionAvailable = string.Compare(DefaultSettingsHelper.CURRENT_VERSION, clientVersion, StringComparison.OrdinalIgnoreCase) != 0,
                 CurrentVersion = DefaultSettingsHelper.CURRENT_VERSION,
-                UpdateMessageVersion = DefaultSettingsHelper.UPDATE_VERSION,
+                UpdateVersion = DefaultSettingsHelper.UPDATE_VERSION,
+                ButtonVersion = DefaultSettingsHelper.BUTTON_VERSION,
             };
             sw.Stop();
             response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
