@@ -66,7 +66,8 @@ public sealed partial class Calendar : IDisposable
         {
             var monthItems = await MonthItemRepository.GetMonthItemAsync(_month.Value.Year, _month.Value.Month, _cls.Token);
             _monthItems = monthItems?.MonthItems;
-            var dayItems = await DayItemRepository.GetDayItemsAsync(dateRange, _user.Id, _cls.Token);
+            _user ??= await UserRepository.GetCurrentUserAsync();
+            var dayItems = await DayItemRepository.GetDayItemsAsync(dateRange, _user?.Id ?? Guid.Empty, _cls.Token);
             if (dayItems?.DayItems != null)
             {
                 foreach (var dayItem in dayItems.DayItems.Where(x => x.DateStart is not null))

@@ -39,6 +39,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbLinkVehicleTraining> LinkVehicleTraining { get; set; }
         public DbSet<DbLinkUserDayItem> LinkUserDayItems { get; set; }
         public DbSet<DbLinkUserUser> LinkUserUsers { get; set; }
+        public DbSet<DbLinkExchange> LinkExchanges{ get; set; }
 
 
         public DataContext(DbContextOptions<DataContext> context) : base(context)
@@ -112,6 +113,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.User).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.UserId).IsRequired();
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.UserFunction).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.UserFunctionId);
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.Vehicle).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.VehicleId);
+            modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.LinkExchange).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.LinkExchangeId);
 
             // Rooster default
             modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.Id).IsRequired(); });
@@ -169,6 +171,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             // Vehicles <--> Rooster available
             modelBuilder.Entity<DbLinkVehicleTraining>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbLinkVehicleTraining>().HasOne(p => p.Customer).WithMany(g => g.LinkVehicleTrainings).HasForeignKey(s => s.CustomerId).IsRequired();
+
+            // Vehicle with training with outlook exchange calender
+            modelBuilder.Entity<DbLinkExchange>().HasOne(p => p.Customer).WithMany(g => g.LinkExchanges).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // Required data
             SetCustomer(modelBuilder);
@@ -626,7 +631,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = new Guid("287359b1-2035-435b-97b0-eb260dc497d6"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Admin",
-                Accesses = $"{AccessesNames.AUTH_configure_training_types},{AccessesNames.AUTH_users_settigns},{AccessesNames.AUTH_scheduler_dayitem},{AccessesNames.AUTH_scheduler_monthitem}"
+                Accesses = $"{AccessesNames.AUTH_configure_training_types},{AccessesNames.AUTH_users_settigns},{AccessesNames.AUTH_scheduler_dayitem},{AccessesNames.AUTH_scheduler_monthitem},{AccessesNames.AUTH_scheduler_history}"
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {
@@ -646,7 +651,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             {
                 Id = new Guid("d72ed2e9-911e-4ee5-b07e-cbd5917d432b"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                Name = "Users",
+                Name = "Users admin",
                 Accesses = $"{AccessesNames.AUTH_users_counter},{AccessesNames.AUTH_users_details},{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}"
             }));
 
@@ -701,6 +706,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             {
                 Id = new Guid("4589535c-9064-4448-bc01-3b5a00e9410d"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                ExchangeId = new Guid("dbaeaa44-d318-464e-ac39-f85029dd9e8f"),
                 Name = "Nikolaas Wijsenbeek",
                 Code = "NWI",
                 IsDefault = true,
@@ -711,6 +717,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             {
                 Id = new Guid("c759950b-8264-4521-9a6e-ff98ad358cc1"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                ExchangeId = new Guid("731fa301-d7cc-41de-9063-f86a32c2b25b"),
                 Name = "De Huizer",
                 Code = "HZR",
                 IsActive = true,

@@ -52,7 +52,7 @@ public sealed partial class MainLayout : IDisposable
             if (!_isAuthenticated)
             {
                 if (!Navigation.Uri.Contains("/authentication/login-callback"))
-                    Navigation.NavigateTo("landing_page");
+                    Navigation.NavigateTo("/authentication/login");
                 return;
             }
             _hubConnection = new HubConnectionBuilder()
@@ -108,11 +108,6 @@ public sealed partial class MainLayout : IDisposable
             RefreshMe();
         }
 
-    }
-
-    private async Task BeginLogout(MouseEventArgs args)
-    {
-        Navigation.NavigateTo("/authentication/logout");
     }
 
     private async Task Login(MouseEventArgs args)

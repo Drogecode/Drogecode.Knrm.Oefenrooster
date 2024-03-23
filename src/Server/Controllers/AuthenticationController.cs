@@ -92,7 +92,7 @@ public class AuthenticationController : ControllerBase
             var found = _memoryCache.Get<CacheLoginSecrets>(state);
             if (found?.Success is not true || found?.CodeVerifier is null)
             {
-                _logger.LogWarning("fund?.success = `{false}` || found?.CodeVerifier = `{null}`", found?.Success is not true, found?.CodeVerifier is null);
+                _logger.LogWarning("found?.success = `{false}` || found?.CodeVerifier = `{null}`", found?.Success is not true, found?.CodeVerifier is null);
                 return false;
             }
             _memoryCache.Remove(state);

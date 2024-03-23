@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,4 +11,6 @@ public class AuditAssignedUser
 {
     public Guid? UserId { get; set; }
     public bool? Assigned { get; set; }
+    public Availabilty? Availabilty { get; set; }
+    public AvailabilitySetBy? SetBy { get; set; }
 }

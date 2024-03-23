@@ -12,6 +12,7 @@ public class UserRepository
 
     private const string MONTHITEMS = "usr_all_{0}";
     private const string USERID = "usr_{0}";
+    private const string CURRENTUSER = "cur_usr";
 
     public UserRepository(IUserClient userClient, IOfflineService offlineService)
     {
@@ -30,7 +31,10 @@ public class UserRepository
 
     public async Task<DrogeUser?> GetCurrentUserAsync(CancellationToken clt = default)
     {
-        var dbUser = await _userClient.GetCurrentUserAsync(clt);
+        var dbUser = await _offlineService.CachedRequestAsync(string.Format(CURRENTUSER),
+            async () => await _userClient.GetCurrentUserAsync(clt),
+            new ApiCachedRequest { OneCallPerSession = true, ForceCache = false, ExpireSession = DateTime.UtcNow.AddMinutes(1), ExpireLocalStorage = DateTime.UtcNow.AddHours(2) },
+            clt: clt);
         return dbUser.DrogeUser;
     }
 

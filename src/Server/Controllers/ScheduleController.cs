@@ -6,6 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -239,6 +240,10 @@ public class ScheduleController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _scheduleService.PatchScheduleForUserAsync(userId, customerId, training, clt);
+            if (result.Success && result.PatchedTraining?.Assigned == true)
+            {
+                await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = userId, Assigned = result.PatchedTraining.Assigned, Availabilty = result.PatchedTraining.Availabilty, SetBy = result.PatchedTraining.SetBy }), training?.TrainingId);
+            }
             await _userService.PatchLastOnline(userId, clt);
             return result;
         }
@@ -261,7 +266,7 @@ public class ScheduleController : ControllerBase
             if (!inRoleEditOther && !userId.Equals(body.User?.UserId))
                 return Unauthorized();
             PatchAssignedUserResponse result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
-            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.User?.UserId, Assigned = body?.User?.Assigned }), body?.TrainingId);
+            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.User?.UserId, Assigned = body?.User?.Assigned, Availabilty = result.Availabilty, SetBy = result.SetBy }), body?.TrainingId);
             await _userService.PatchLastOnline(userId, clt);
             if (result.Success && body?.User?.UserId is not null)
             {
@@ -289,7 +294,7 @@ public class ScheduleController : ControllerBase
             if (!inRoleEditOther && !userId.Equals(body.UserId))
                 return Unauthorized();
             var result = await _scheduleService.PutAssignedUserAsync(userId, customerId, body, clt);
-            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.UserId, Assigned = body?.Assigned }), body?.TrainingId);
+            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.UserId, Assigned = body?.Assigned, Availabilty = result.Availabilty, SetBy = result.SetBy }), body?.TrainingId);
             await _userService.PatchLastOnline(userId, clt);
             if (result.Success && body?.UserId is not null)
             {
@@ -407,6 +412,10 @@ public class ScheduleController : ControllerBase
         {
             if (assigned && await _userSettingService.TrainingToCalendar(customerId, planUserId))
             {
+#if DEBUG
+                // Be carefull when debugging.
+                Debugger.Break();
+#endif
                 if (training is null && trainingId is not null)
                     training = (await _scheduleService.GetTrainingById(planUserId, customerId, trainingId.Value, clt)).Training;
                 var type = await _trainingTypesService.GetById(training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);

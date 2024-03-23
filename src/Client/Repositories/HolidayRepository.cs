@@ -15,6 +15,12 @@ public class HolidayRepository
         _offlineService = offlineService;
     }
 
+    public async Task<Holiday?> Get(Guid id, CancellationToken clt)
+    {
+        var holiday = await _holidayClient.GetAsync(id, clt);
+        return holiday?.Holiday;
+    }
+
     public async Task<List<Holiday>?> GetAll(CancellationToken clt)
     {
         var result = await _offlineService.CachedRequestAsync("List_hol_usr",
@@ -23,13 +29,13 @@ public class HolidayRepository
         return result.Holidays;
     }
 
-    public async Task<PutHolidaysForUserResponse?> PutHolidayForUser(Holiday body, CancellationToken clt)
+    public async Task<PutHolidaysForUserResponse?> PutHolidayForUser(Holiday body, CancellationToken clt = default)
     {
         var result = await _holidayClient.PutHolidayForUserAsync(body, clt);
         return result;
     }
 
-    public async Task<PatchHolidaysForUserResponse?> PatchHolidayForUser(Holiday body, CancellationToken clt)
+    public async Task<PatchHolidaysForUserResponse?> PatchHolidayForUser(Holiday body, CancellationToken clt = default)
     {
         var result = await _holidayClient.PatchHolidayForUserAsync(body, clt);
         return result;

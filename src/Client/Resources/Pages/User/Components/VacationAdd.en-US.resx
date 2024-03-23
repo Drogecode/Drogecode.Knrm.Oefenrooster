@@ -117,25 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Add vacation" xml:space="preserve">
+    <value>Add vacation</value>
+  </data>
   <data name="Description" xml:space="preserve">
-    <value>Omschrijving</value>
+    <value>Description</value>
+  </data>
+  <data name="Edit vacation" xml:space="preserve">
+    <value>Edit vacation</value>
   </data>
   <data name="No value for start date" xml:space="preserve">
-    <value>Geen waarde voor start datum</value>
+    <value>No value for start date</value>
   </data>
   <data name="No value for till date" xml:space="preserve">
-    <value>Geen waarde voor eind datum</value>
+    <value>No value for till date</value>
   </data>
   <data name="Should not be before start date" xml:space="preserve">
-    <value>Mag niet voor start datum</value>
+    <value>Should not be before start date</value>
   </data>
   <data name="Should not be in the past" xml:space="preserve">
-    <value>Mag niet in het verleden</value>
+    <value>Should not be in the past</value>
   </data>
   <data name="Valid from" xml:space="preserve">
-    <value>Start datum</value>
+    <value>Valid from</value>
   </data>
   <data name="Valid till" xml:space="preserve">
-    <value>Eind datum</value>
+    <value>Valid till</value>
   </data>
 </root>

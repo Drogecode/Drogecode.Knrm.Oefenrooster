@@ -51,8 +51,8 @@
                 </MudBadge>
                 </AuthorizeView>
                 <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft" TransformOrigin="@Origin.TopLeft">
-                    <MudMenuItem Href="/user/profile">Profile</MudMenuItem>
-                    <MudMenuItem @onclick="BeginLogout">Logout</MudMenuItem>
+                    <MudMenuItem Href="/user/profile">@L["Profile"]</MudMenuItem>
+                    <MudMenuItem Href="/authentication/logout">@L["Logout"]</MudMenuItem>
                 </MudMenu>
                 <Theming Global="_global" MudThemeProvider="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode"/>
             </MudAppBar>

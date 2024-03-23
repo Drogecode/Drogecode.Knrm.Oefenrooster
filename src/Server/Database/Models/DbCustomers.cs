@@ -40,4 +40,5 @@ public class DbCustomers
     public ICollection<DbVehicles>? Vehicles { get; set; }
     public ICollection<DbLinkVehicleTraining>? LinkVehicleTrainings { get; set; }
     public ICollection<DbPreComAlert>? PreComAlerts { get; set; }
+    public ICollection<DbLinkExchange>? LinkExchanges { get; set; }
 }

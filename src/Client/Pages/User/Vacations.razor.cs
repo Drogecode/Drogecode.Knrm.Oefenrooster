@@ -31,25 +31,16 @@ public sealed partial class Vacations : IDisposable
         _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
     }
 
-    private void OpenVacationDialog(Holiday? holiday, bool isNew)
+    private void GoToVacationAdd(Holiday? holiday = null)
     {
-        var parameters = new DialogParameters<VacationDialog> {
-            { x=> x.Holiday, holiday },
-            { x=> x.IsNew, isNew},
-            { x=> x.Refresh, _refreshModel },
-        };
-        DialogOptions options = new DialogOptions()
+        if (holiday is null)
         {
-            MaxWidth = MaxWidth.Medium,
-            CloseButton = true,
-            FullWidth = true
-        };
-        _dialogProvider.Show<VacationDialog>(L["Edit holiday"], parameters, options);
-    }
-
-    private void GoToVacationAdd()
-    {
-        Navigation.NavigateTo("/user/vacations/add");
+            Navigation.NavigateTo("/user/vacations/add");
+        }
+        else
+        {
+            Navigation.NavigateTo($"/user/vacations/edit/{holiday.Id}");
+        }
     }
 
     private async Task Delete(Holiday? holiday)

@@ -933,6 +933,12 @@
           "calendarEventId": {
             "type": "string",
             "nullable": true
+          },
+          "availabilty": {
+            "$ref": "#/components/schemas/Availabilty"
+          },
+          "setBy": {
+            "$ref": "#/components/schemas/AvailabilitySetBy"
           }
         },
         "additionalProperties": false
@@ -1130,6 +1136,12 @@
           "calendarEventId": {
             "type": "string",
             "nullable": true
+          },
+          "availabilty": {
+            "$ref": "#/components/schemas/Availabilty"
+          },
+          "setBy": {
+            "$ref": "#/components/schemas/AvailabilitySetBy"
           }
         },
         "additionalProperties": false

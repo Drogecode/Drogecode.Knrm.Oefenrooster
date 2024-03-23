@@ -670,7 +670,7 @@ public class ScheduleService : IScheduleService
         if (body.TrainingId is null)
         {
             var training = await CreateAndGetTraining(userId, customerId, body.Training, clt);
-            if (training != null)
+            if (training is not null)
             {
                 body.TrainingId = training.Id;
                 body.Training!.TrainingId = training.Id;
@@ -688,7 +688,7 @@ public class ScheduleService : IScheduleService
             return result;
         }
         var ava = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.TrainingId == body.TrainingId && x.UserId == body.User.UserId, cancellationToken: clt);
-        if (ava == null)
+        if (ava is null)
         {
             await PutAssignedUserAsync(userId, customerId, new OtherScheduleUserRequest
             {
@@ -699,7 +699,7 @@ public class ScheduleService : IScheduleService
                 Training = body.Training,
             }, clt);
             ava = await _database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.TrainingId == body.TrainingId && x.UserId == body.User.UserId, cancellationToken: clt);
-            if (ava == null)
+            if (ava is null)
             {
                 _logger.LogWarning("No RoosterAvailable with '{Id}' found for user '{User}' when Assigned = '{Assigned}'", body.TrainingId, body.User.UserId, body.User.Assigned);
                 return result;
@@ -713,6 +713,8 @@ public class ScheduleService : IScheduleService
         result.Success = true;
         result.AvailableId = ava.Id;
         result.CalendarEventId = ava.CalendarEventId;
+        result.Availabilty = ava.Available;
+        result.SetBy = ava.SetBy;
         return result;
     }
 
@@ -758,6 +760,7 @@ public class ScheduleService : IScheduleService
                     UserFunctionId = body.FunctionId,
                     Date = training.DateStart,
                     Available = Availabilty.None,
+                    SetBy = AvailabilitySetBy.None,
                     Assigned = body.Assigned
                 };
                 _database.RoosterAvailables.Add(ava);
@@ -777,6 +780,8 @@ public class ScheduleService : IScheduleService
         result.AvailableId = ava?.Id;
         result.CalendarEventId = ava?.CalendarEventId;
         result.Success = true;
+        result.Availabilty = ava?.Available;
+        result.SetBy = ava?.SetBy;
         return result;
     }
 
