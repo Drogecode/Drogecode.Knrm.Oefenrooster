@@ -147,22 +147,24 @@ public class DayItemControllerTests : BaseTest
         var new1 = await AddCalendarDayItem("GetDayItemDashboard_1", DateTime.Today.AddHours(1));
         var new2 = await AddCalendarDayItem("GetDayItemDashboard_2", DateTime.Today.AddHours(-1));
         var new3 = await AddCalendarDayItem("GetDayItemDashboard_3", DateTime.Today.AddDays(8));
-        var new4 = await AddCalendarDayItem("GetDayItemDashboard_4", DateTime.Today.AddDays(20), null, DefaultSettingsHelper.IdTaco);
-        var new5 = await AddCalendarDayItem("GetDayItemDashboard_5", DateTime.Today.AddDays(-10), null, DefaultSettingsHelper.IdTaco);
-        var new6 = await AddCalendarDayItem("GetDayItemDashboard_6", DateTime.Today.AddDays(-10), null, DefaultUserId);
-        var new7 = await AddCalendarDayItem("GetDayItemDashboard_7", DateTime.Today.AddDays(-10), DateTime.Today.AddDays(10), DefaultSettingsHelper.IdTaco);
-        var new8 = await AddCalendarDayItem("GetDayItemDashboard_7", DateTime.Today.AddDays(-10), DateTime.Today, DefaultSettingsHelper.IdTaco);
+        var new4 = await AddCalendarDayItem("GetDayItemDashboard_4", DateTime.Today.AddDays(26));
+        var new5 = await AddCalendarDayItem("GetDayItemDashboard_5", DateTime.Today.AddDays(20), null, DefaultSettingsHelper.IdTaco);
+        var new6 = await AddCalendarDayItem("GetDayItemDashboard_6", DateTime.Today.AddDays(-10), null, DefaultSettingsHelper.IdTaco);
+        var new7 = await AddCalendarDayItem("GetDayItemDashboard_7", DateTime.Today.AddDays(-10), null, DefaultUserId);
+        var new8 = await AddCalendarDayItem("GetDayItemDashboard_8", DateTime.Today.AddDays(-10), DateTime.Today.AddDays(10), DefaultSettingsHelper.IdTaco);
+        var new9 = await AddCalendarDayItem("GetDayItemDashboard_9", DateTime.Today.AddDays(-10), DateTime.Today, DefaultSettingsHelper.IdTaco);
         var result = await DayItemController.GetDashboard();
         Assert.NotNull(result?.Value?.DayItems);
         Assert.NotEmpty(result.Value.DayItems);
         result.Value.DayItems.Should().Contain(x => x.Id == new1);
         result.Value.DayItems.Should().NotContain(x => x.Id == new2);
-        result.Value.DayItems.Should().NotContain(x => x.Id == new3);
-        result.Value.DayItems.Should().Contain(x => x.Id == new4);
-        result.Value.DayItems.Should().NotContain(x => x.Id == new5);
+        result.Value.DayItems.Should().Contain(x => x.Id == new3);
+        result.Value.DayItems.Should().NotContain(x => x.Id == new4);
+        result.Value.DayItems.Should().Contain(x => x.Id == new5);
         result.Value.DayItems.Should().NotContain(x => x.Id == new6);
-        result.Value.DayItems.Should().Contain(x => x.Id == new7);
+        result.Value.DayItems.Should().NotContain(x => x.Id == new7);
         result.Value.DayItems.Should().Contain(x => x.Id == new8);
+        result.Value.DayItems.Should().Contain(x => x.Id == new9);
     }
 
     [Fact]
