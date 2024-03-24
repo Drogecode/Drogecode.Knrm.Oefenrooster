@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 
-public class RoosterItemMonth
+public class RoosterItemMonth : ICloneable
 {
     [Key] public Guid Id { get; set; }
     public short Month { get; set; }
@@ -21,4 +21,9 @@ public class RoosterItemMonth
     public Severity Severity { get; set; }
     public string Text { get; set; } = string.Empty;
     public int Order { get; set; }
+
+    public object Clone()
+    {
+        return MemberwiseClone();
+    }
 }

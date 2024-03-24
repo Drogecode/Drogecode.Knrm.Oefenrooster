@@ -5,6 +5,47 @@
     "version": "v1"
   },
   "paths": {
+    "/api/MonthItem/{id}": {
+      "get": {
+        "tags": [
+          "MonthItem"
+        ],
+        "operationId": "ById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMonthItemResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMonthItemResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMonthItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/MonthItem/{year}/{month}": {
       "get": {
         "tags": [
@@ -160,6 +201,103 @@
             }
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "MonthItem"
+        ],
+        "operationId": "PatchItem",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoosterItemMonth"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoosterItemMonth"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoosterItemMonth"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchMonthItemResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchMonthItemResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchMonthItemResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "MonthItem"
+        ],
+        "operationId": "DeleteMonthItem",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -174,6 +312,25 @@
         ],
         "type": "integer",
         "format": "int32"
+      },
+      "GetMonthItemResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "monthItem": {
+            "$ref": "#/components/schemas/RoosterItemMonth"
+          }
+        },
+        "additionalProperties": false
       },
       "GetMultipleMonthItemResponse": {
         "type": "object",
@@ -198,6 +355,22 @@
               "$ref": "#/components/schemas/RoosterItemMonth"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PatchMonthItemResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           }
         },
         "additionalProperties": false

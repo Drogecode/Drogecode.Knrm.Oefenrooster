@@ -13,4 +13,6 @@ public class DbRoosterItemMonth : RoosterItemMonth
     public DbCustomers Customer { get; set; }
     public DateTime CreatedOn { get; set; }
     public Guid CreatedBy { get; set; }
+    public DateTime? DeletedOn { get; set; }
+    public Guid? DeletedBy { get; set; }
 }

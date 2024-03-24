@@ -1,4 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers.Obsolite;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +30,29 @@ public class MonthItemController : ControllerBase
     {
         _logger = logger;
         _monthItemService = monthItemService;
+    }
+
+    [HttpGet]
+    [Authorize(Roles = AccessesNames.AUTH_scheduler_monthitem)]
+    [Route("{id:guid}")]
+    public async Task<ActionResult<GetMonthItemResponse>> ById(Guid id, CancellationToken clt = default)
+    {
+
+        try
+        {
+            var result = new GetMonthItemResponse();
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            result = await _monthItemService.GetById(customerId, id, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in GetDayItemById");
+            return BadRequest();
+        }
     }
 
     [HttpGet]
@@ -90,6 +115,50 @@ public class MonthItemController : ControllerBase
             Debugger.Break();
 #endif
             _logger.LogError(ex, "Exception in month PutItem");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
+    [Route("")]
+    public async Task<ActionResult<PatchMonthItemResponse>> PatchItem([FromBody] RoosterItemMonth roosterItemMonth, CancellationToken clt = default)
+    {
+        try
+        {
+            var result = new PatchMonthItemResponse();
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            result = await _monthItemService.PatchItem(roosterItemMonth, customerId, userId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in month PatchItem");
+            return BadRequest();
+        }
+    }
+
+    [HttpDelete]
+    [Authorize(Roles = AccessesNames.AUTH_scheduler_monthitem)]
+    [Route("")]
+    public async Task<ActionResult<bool>> DeleteMonthItem([FromBody] Guid idToDelete, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            bool result = await _monthItemService.DeleteItem(idToDelete, customerId, userId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in DeleteMonthItem");
             return BadRequest();
         }
     }

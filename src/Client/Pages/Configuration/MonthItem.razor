@@ -16,12 +16,22 @@
                         @(context.Item.Year == null ? @L["Repeating"] : context.Item.Year)
                     </CellTemplate>
                 </PropertyColumn>
-                <PropertyColumn Property="x => x.Month" Title="@L["Month"]" />
+                <PropertyColumn Property="x => x.Month" Title="@L["Month"]">
+                    <CellTemplate>
+                        @(new DateTime(2010, context.Item.Month, 1).ToString("MMMM", CultureInfo.CurrentUICulture))
+                    </CellTemplate>
+                    </PropertyColumn>
                 <PropertyColumn Property="x => x.Severity" Title="@L["Severity"]">
                     <CellTemplate>
                         @context.Item.Severity
                     </CellTemplate>
                 </PropertyColumn>
+                <TemplateColumn >
+                    <CellTemplate>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context.Item);}" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenMonthItemDialog(context.Item, false);}" />
+                    </CellTemplate>
+                </TemplateColumn>
             </Columns>
         </MudDataGrid>
         @if (_monthItems.TotalCount > _count)

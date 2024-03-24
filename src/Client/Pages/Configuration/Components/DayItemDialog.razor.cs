@@ -1,9 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
 
