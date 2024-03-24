@@ -30,20 +30,9 @@
             else if (context is RoosterItemDayCalendarItem)
             {
                 var dayItem = ((RoosterItemDayCalendarItem)context).ItemDay;
-                Color color = Color.Secondary;
-                switch (dayItem?.Type)
+                if (dayItem is not null)
                 {
-                        case CalendarItemType.Custom:
-                        case CalendarItemType.PersonPublic:
-                        case CalendarItemType.Default:
-                            color = Color.Primary;
-                            break;
-                        case CalendarItemType.SpecialDate:
-                            color = Color.Info;
-                            break;
-                }
-                @if (dayItem != null)
-                {
+                    var color = DayItemHelper.DayItemTypeColor(dayItem.Type);
                     <div class="flex gap-1">
                         <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small" />
                         <span>@dayItem.Text</span>

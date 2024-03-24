@@ -30,10 +30,12 @@
                     <MudGrid Spacing="2" Justify="Justify.FlexStart">
                         @foreach (var item in _dayItems)
                         {
+                            var color = DayItemHelper.DayItemTypeColor(item.Type);
                             <MudItem xs="12" sm="6" md="4" lg="3">
-                                <MudText>
+                                <div class="d-flex gap-1">
+                                    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small" />
                                     @item.Text <DateToString DateTimeLocal="item.DateStart" />
-                                </MudText>
+                                </div>
                             </MudItem>
                         }
                     </MudGrid>

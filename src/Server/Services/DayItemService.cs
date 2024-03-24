@@ -71,7 +71,7 @@ public class DayItemService : IDayItemService
         var dayItem = await _database.RoosterItemDays.Include(x => x.LinkUserDayItems)
             .Where(x => x.DeletedOn == null && x.CustomerId == customerId
             && (x.DateStart >= todayUtc || (x.DateEnd != null && x.DateEnd >= todayUtc))
-            && ((x.LinkUserDayItems!.Any() && x.LinkUserDayItems!.Any(y => y.UserId == userId)) || (!x.LinkUserDayItems!.Any() && x.DateStart <= todayUtc.AddDays(7))))
+            && ((x.LinkUserDayItems!.Any() && x.LinkUserDayItems!.Any(y => y.UserId == userId)) || (!x.LinkUserDayItems!.Any() && x.DateStart <= todayUtc.AddDays(25))))
             .OrderBy(x=>x.DateStart)
             .ToListAsync();
         if (dayItem is null)
