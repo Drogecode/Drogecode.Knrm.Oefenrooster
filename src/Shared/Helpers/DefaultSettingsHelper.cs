@@ -15,7 +15,7 @@ public static class DefaultSettingsHelper
     /// <summary>
     /// From what UPDATE_VERSION should we show the update button.
     /// </summary>
-    public const int BUTTON_VERSION = 0;
+    public const int BUTTON_VERSION = 1;
     public static Guid KnrmHuizenId { get; } = new Guid("d9754755-b054-4a9c-a77f-da42a4009365");
     public static Guid KompasOefeningId { get; } = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0");
     public static Guid KompasLeiderId { get; } = new Guid("d23de705-d950-4833-8b94-aa531022d450");
