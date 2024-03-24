@@ -4,9 +4,6 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		
-		<!-- https://github.com/RicoSuter/NSwag/issues/4633 -->
-		<NSwagGenerateExceptionClasses>true</NSwagGenerateExceptionClasses>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -86,7 +83,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="NSwag.ApiDescription.Client" Version="14.0.3">
+		<PackageReference Include="NSwag.ApiDescription.Client" Version="14.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
