@@ -23,8 +23,8 @@ public sealed partial class Authentication
         {
             case "login":
                 var secrets = await AuthenticationClient.GetLoginSecretsAsync();
-                var tenant = "d9754755-b054-4a9c-a77f-da42a4009365";
-                var clientId = "a9c68159-901c-449a-83e0-85243364e3cc";
+                var tenant = secrets.TenantId;
+                var clientId = secrets.ClientId;
                 var responseType = "code";
                 var responseMode = "query";
                 var scope = "openid+profile+email";
@@ -52,7 +52,7 @@ public sealed partial class Authentication
                     logoutHint = authState?.User?.FindFirst(c => c.Type == "login_hint")?.Value ?? "";
                 }
                 await CustomStateProvider.Logout();
-                var redirectLogoutUrl = $"{Navigation.BaseUri}";
+                var redirectLogoutUrl = $"{Navigation.BaseUri}landing_page";
                 string urlLogout;
                 if (string.IsNullOrEmpty(logoutHint))
                     urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri={redirectLogoutUrl}";

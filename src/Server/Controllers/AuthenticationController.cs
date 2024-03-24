@@ -50,12 +50,16 @@ public class AuthenticationController : ControllerBase
         try
         {
             var codeVerifier = CreateSecret(120);
+            var tenantId = new Guid(_configuration.GetValue<string>("AzureAd:TenantId") ?? throw new Exception("no tenant id found for azure login"));
+            var clientId = new Guid(_configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new Exception("no client id found for azure login"));
             var response = new CacheLoginSecrets
             {
                 LoginSecret = CreateSecret(64),
                 LoginNonce = CreateSecret(64),
                 CodeChallenge = GenerateCodeChallenge(codeVerifier), //BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))
                 CodeVerifier = codeVerifier,
+                TenantId = tenantId,
+                ClientId = clientId,
                 Success = true
             };
 
