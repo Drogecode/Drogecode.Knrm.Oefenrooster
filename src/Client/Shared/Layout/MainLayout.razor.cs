@@ -55,13 +55,13 @@ public sealed partial class MainLayout : IDisposable
                     Navigation.NavigateTo("/authentication/login");
                 return;
             }
-            _hubConnection = new HubConnectionBuilder()
-                .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
-            .Build();
 
             var dbUser = await _userRepository.GetCurrentUserAsync();//Force creation of user.
             if (dbUser?.Id != null && dbUser.Id != Guid.Empty)
             {
+                _hubConnection = new HubConnectionBuilder()
+                    .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
+                .Build();
                 _hubConnection.On<string, string>($"ReceivePrecomAlert_{dbUser.Id}", (user, message) =>
                 {
                     var config = (SnackbarOptions options) =>
@@ -72,9 +72,8 @@ public sealed partial class MainLayout : IDisposable
                     };
                     Snackbar.Add($"PreCom: {message}", Severity.Error, configure: config, key: "precom");
                 });
+                await _hubConnection.StartAsync(_cls.Token);
             }
-
-            await _hubConnection.StartAsync(_cls.Token);
         }
         catch (HttpRequestException ex)
         {

@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
@@ -18,6 +19,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [ApiExplorerSettings(GroupName = "Schedule")]
 public class ScheduleController : ControllerBase
 {
+    private readonly RefreshHub _refreshHub;
     private readonly ILogger<ScheduleController> _logger;
     private readonly IScheduleService _scheduleService;
     private readonly IAuditService _auditService;
@@ -28,6 +30,7 @@ public class ScheduleController : ControllerBase
     private readonly IUserService _userService;
 
     public ScheduleController(
+        RefreshHub refreshHub,
         ILogger<ScheduleController> logger,
         IScheduleService scheduleService,
         IAuditService auditService,
@@ -37,6 +40,7 @@ public class ScheduleController : ControllerBase
         IDateTimeService dateTimeService,
         IUserService userService)
     {
+        _refreshHub = refreshHub;
         _logger = logger;
         _scheduleService = scheduleService;
         _auditService = auditService;
@@ -186,6 +190,7 @@ public class ScheduleController : ControllerBase
         {
             foreach (var user in training.Training.PlanUsers)
             {
+                await _refreshHub.SendMessage(user.UserId, ItemUpdated.futureTrainings);
                 if (!string.IsNullOrEmpty(user.CalendarEventId))
                 {
                     await _graphService.PatchCalender(user.UserId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime);
@@ -243,6 +248,7 @@ public class ScheduleController : ControllerBase
             if (result.Success && result.PatchedTraining?.Assigned == true)
             {
                 await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = userId, Assigned = result.PatchedTraining.Assigned, Availabilty = result.PatchedTraining.Availabilty, SetBy = result.PatchedTraining.SetBy }), training?.TrainingId);
+                await _refreshHub.SendMessage(userId, ItemUpdated.futureTrainings);
             }
             await _userService.PatchLastOnline(userId, clt);
             return result;
@@ -272,6 +278,7 @@ public class ScheduleController : ControllerBase
             {
                 clt = CancellationToken.None;
                 await ToOutlookCalendar(body.User.UserId, body.TrainingId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
+                await _refreshHub.SendMessage(body.User.UserId, ItemUpdated.futureTrainings);
             }
             return result;
         }
@@ -299,7 +306,8 @@ public class ScheduleController : ControllerBase
             if (result.Success && body?.UserId is not null)
             {
                 clt = CancellationToken.None;
-                await ToOutlookCalendar(body.UserId.Value, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
+                await ToOutlookCalendar(body.UserId.Value, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt); 
+                await _refreshHub.SendMessage(body.UserId.Value, ItemUpdated.futureTrainings);
             }
             return result;
         }
@@ -311,8 +319,8 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("me/scheduled-trainings")]
-    public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> GetScheduledTrainingsForUser(CancellationToken clt = default)
+    [Route("me/scheduled-trainings/{callHub:bool}")]
+    public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> GetScheduledTrainingsForUser(bool callHub = false, CancellationToken clt = default)
     {
         try
         {
@@ -320,6 +328,10 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var fromDate = _dateTimeService.Today().ToUniversalTime();
             var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, clt);
+            if (callHub)
+            {
+                await _refreshHub.SendMessage(userId, ItemUpdated.futureTrainings);
+            }
             return result;
         }
         catch (Exception ex)
@@ -395,6 +407,7 @@ public class ScheduleController : ControllerBase
                     Training = training.Training
                 };
                 await PatchAssignedUser(body, clt);
+                await _refreshHub.SendMessage(user.UserId, ItemUpdated.futureTrainings);
             }
             var result = await _scheduleService.DeleteTraining(userId, customerId, id, clt);
             return result;

@@ -605,12 +605,23 @@
         }
       }
     },
-    "/api/Schedule/me/scheduled-trainings": {
+    "/api/Schedule/me/scheduled-trainings/{callHub}": {
       "get": {
         "tags": [
           "Schedule"
         ],
         "operationId": "GetScheduledTrainingsForUser",
+        "parameters": [
+          {
+            "name": "callHub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",

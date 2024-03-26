@@ -51,6 +51,7 @@ public class Startup
         services.AddScoped<DefaultScheduleController>();
 
         services.AddScoped<PreComHub>();
+        services.AddScoped<RefreshHub>();
 
         services.AddLogging(lb => lb.AddXunitOutput());
     }
