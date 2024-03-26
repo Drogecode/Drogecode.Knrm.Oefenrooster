@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
@@ -18,6 +19,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [ApiExplorerSettings(GroupName = "Schedule")]
 public class ScheduleController : ControllerBase
 {
+    private readonly DashboardHub _dashboardHub;
+    private readonly PreComHub _preComHub;
     private readonly ILogger<ScheduleController> _logger;
     private readonly IScheduleService _scheduleService;
     private readonly IAuditService _auditService;
@@ -28,6 +31,8 @@ public class ScheduleController : ControllerBase
     private readonly IUserService _userService;
 
     public ScheduleController(
+        DashboardHub dashboardHub,
+        PreComHub preComHub,
         ILogger<ScheduleController> logger,
         IScheduleService scheduleService,
         IAuditService auditService,
@@ -37,6 +42,8 @@ public class ScheduleController : ControllerBase
         IDateTimeService dateTimeService,
         IUserService userService)
     {
+        _dashboardHub = dashboardHub;
+        _preComHub = preComHub;
         _logger = logger;
         _scheduleService = scheduleService;
         _auditService = auditService;
@@ -311,8 +318,8 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("me/scheduled-trainings")]
-    public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> GetScheduledTrainingsForUser(CancellationToken clt = default)
+    [Route("me/scheduled-trainings/{callHub:bool}")]
+    public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> GetScheduledTrainingsForUser(bool callHub = false, CancellationToken clt = default)
     {
         try
         {
@@ -320,6 +327,11 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var fromDate = _dateTimeService.Today().ToUniversalTime();
             var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, clt);
+            if (callHub)
+            {
+                await _preComHub.SendMessage(userId, "test", "groetjes");
+                await _dashboardHub.SendMessage(userId, ItemUpdated.futureTrainings);
+            }
             return result;
         }
         catch (Exception ex)

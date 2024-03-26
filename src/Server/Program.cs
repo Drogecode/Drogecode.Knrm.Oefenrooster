@@ -61,6 +61,7 @@ builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceO
 
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<PreComHub>();
+builder.Services.AddSingleton<DashboardHub>();
 builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
 builder.Services.AddScoped<IGraphService, GraphService>();
 
@@ -191,5 +192,6 @@ if (!runningInContainers)
 app.MapRazorPages();
 app.MapControllers();
 app.MapHub<PreComHub>("/hub/precomhub");
+app.MapHub<DashboardHub>("/hub/dashboard");
 app.MapFallbackToFile("index.html");
 app.Run();

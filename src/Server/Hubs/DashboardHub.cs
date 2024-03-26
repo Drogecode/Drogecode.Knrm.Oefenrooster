@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Hubs;
 
-public class PreComHub : Hub
+public class DashboardHub : Hub
 {
     [Authorize]
-    public async Task SendMessage(Guid id, string user, string message)
+    public async Task SendMessage(Guid id, ItemUpdated type)
     {
         if (Clients is not null)
         {
-            await Clients.All.SendAsync($"ReceivePrecomAlert_{id}", user, message);
+            await Clients.All.SendAsync($"Dashboard_{id}", type);
         }
     }
 }

@@ -2,6 +2,7 @@
 using Blazored.SessionStorage;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
+using ZXing;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Services;
 
@@ -59,14 +60,17 @@ public class OfflineService : IOfflineService
         try
         {
             request ??= new ApiCachedRequest();
-            if (request.OneCallPerSession && !request.ForceCache)
+            if (!Offline && request.CachedAndReplace)
+                _ = function;
+
+            if ((request.CachedAndReplace || request.OneCallPerSession) && !request.ForceCache)
             {
                 var sessionResult = await _sessionStorageExpireService.GetItemAsync<TRes>(cacheKey, clt);
                 if (sessionResult is not null)
                     return sessionResult;
             }
 
-            if (!Offline)
+            if (!Offline && !request.CachedAndReplace)
             {
                 var result = await function();
                 await _localStorageExpireService.SetItemAsync(cacheKey, result, request.ExpireLocalStorage, clt);
