@@ -61,7 +61,7 @@ public class OfflineService : IOfflineService
         {
             request ??= new ApiCachedRequest();
             if (!Offline && request.CachedAndReplace)
-                _ = function;
+                Task.Run(function);
 
             if ((request.CachedAndReplace || request.OneCallPerSession) && !request.ForceCache)
             {

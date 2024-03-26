@@ -45,7 +45,7 @@ public sealed partial class Index : IDisposable
         StateHasChanged();
         _pinnedTrainings = (await _scheduleRepository.GetPinnedTrainingsForUser(_cls.Token))?.Trainings;
         StateHasChanged();
-        _futureTrainings = (await _scheduleRepository.GetScheduledTrainingsForUser(_user?.Id, false, _cls.Token))?.Trainings;
+        _futureTrainings = (await _scheduleRepository.GetScheduledTrainingsForUser(_user?.Id, true, _cls.Token))?.Trainings;
     }
 
     private async Task ConfigureHub()
@@ -53,14 +53,15 @@ public sealed partial class Index : IDisposable
         if (_user?.Id is not null)
         {
             _hubConnection = new HubConnectionBuilder()
-                        .WithUrl(Navigation.ToAbsoluteUri("/hub/dashboard"))
+                    .WithUrl(Navigation.ToAbsoluteUri("/hub/refresh"))
                     .Build();
-            _hubConnection.On<string, ItemUpdated>($"Dashboard{_user.Id}", async (user, type) =>
+            _hubConnection.On<ItemUpdated>($"Refresh_{_user.Id}", async (type) =>
             {
                 switch (type)
                 {
                     case ItemUpdated:
                         _futureTrainings = (await _scheduleRepository.GetScheduledTrainingsForUser(_user?.Id, false, _cls.Token))?.Trainings;
+                        StateHasChanged();
                         break;
                 }
             });

@@ -19,8 +19,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [ApiExplorerSettings(GroupName = "Schedule")]
 public class ScheduleController : ControllerBase
 {
-    private readonly DashboardHub _dashboardHub;
-    private readonly PreComHub _preComHub;
+    private readonly RefreshHub _refreshHub;
     private readonly ILogger<ScheduleController> _logger;
     private readonly IScheduleService _scheduleService;
     private readonly IAuditService _auditService;
@@ -31,8 +30,7 @@ public class ScheduleController : ControllerBase
     private readonly IUserService _userService;
 
     public ScheduleController(
-        DashboardHub dashboardHub,
-        PreComHub preComHub,
+        RefreshHub refreshHub,
         ILogger<ScheduleController> logger,
         IScheduleService scheduleService,
         IAuditService auditService,
@@ -42,8 +40,7 @@ public class ScheduleController : ControllerBase
         IDateTimeService dateTimeService,
         IUserService userService)
     {
-        _dashboardHub = dashboardHub;
-        _preComHub = preComHub;
+        _refreshHub = refreshHub;
         _logger = logger;
         _scheduleService = scheduleService;
         _auditService = auditService;
@@ -193,6 +190,7 @@ public class ScheduleController : ControllerBase
         {
             foreach (var user in training.Training.PlanUsers)
             {
+                await _refreshHub.SendMessage(user.UserId, ItemUpdated.futureTrainings);
                 if (!string.IsNullOrEmpty(user.CalendarEventId))
                 {
                     await _graphService.PatchCalender(user.UserId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime);
@@ -250,6 +248,7 @@ public class ScheduleController : ControllerBase
             if (result.Success && result.PatchedTraining?.Assigned == true)
             {
                 await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = userId, Assigned = result.PatchedTraining.Assigned, Availabilty = result.PatchedTraining.Availabilty, SetBy = result.PatchedTraining.SetBy }), training?.TrainingId);
+                await _refreshHub.SendMessage(userId, ItemUpdated.futureTrainings);
             }
             await _userService.PatchLastOnline(userId, clt);
             return result;
@@ -279,6 +278,7 @@ public class ScheduleController : ControllerBase
             {
                 clt = CancellationToken.None;
                 await ToOutlookCalendar(body.User.UserId, body.TrainingId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
+                await _refreshHub.SendMessage(body.User.UserId, ItemUpdated.futureTrainings);
             }
             return result;
         }
@@ -306,7 +306,8 @@ public class ScheduleController : ControllerBase
             if (result.Success && body?.UserId is not null)
             {
                 clt = CancellationToken.None;
-                await ToOutlookCalendar(body.UserId.Value, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
+                await ToOutlookCalendar(body.UserId.Value, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt); 
+                await _refreshHub.SendMessage(body.UserId.Value, ItemUpdated.futureTrainings);
             }
             return result;
         }
@@ -329,8 +330,7 @@ public class ScheduleController : ControllerBase
             var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, clt);
             if (callHub)
             {
-                await _preComHub.SendMessage(userId, "test", "groetjes");
-                await _dashboardHub.SendMessage(userId, ItemUpdated.futureTrainings);
+                await _refreshHub.SendMessage(userId, ItemUpdated.futureTrainings);
             }
             return result;
         }
@@ -407,6 +407,7 @@ public class ScheduleController : ControllerBase
                     Training = training.Training
                 };
                 await PatchAssignedUser(body, clt);
+                await _refreshHub.SendMessage(user.UserId, ItemUpdated.futureTrainings);
             }
             var result = await _scheduleService.DeleteTraining(userId, customerId, id, clt);
             return result;
