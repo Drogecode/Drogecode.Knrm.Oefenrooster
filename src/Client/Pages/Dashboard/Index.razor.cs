@@ -57,6 +57,8 @@ public sealed partial class Index : IDisposable
                     .Build();
             _hubConnection.On<ItemUpdated>($"Refresh_{_user.Id}", async (type) =>
             {
+                if (_cls.Token.IsCancellationRequested)
+                    return;
                 switch (type)
                 {
                     case ItemUpdated:

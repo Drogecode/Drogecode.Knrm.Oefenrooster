@@ -70,6 +70,8 @@ public class LocalStorageExpireService : ILocalStorageExpireService
     public async ValueTask<T?> GetItemAsync<T>(string key, CancellationToken cancellationToken = default)
     {
         var value = await _localStorageService.GetItemAsync<ExpiryStorageModel<T?>>(key, cancellationToken);
+        if (value is null)
+            return default(T);
         var result = value.Data;
         return result;
     }
