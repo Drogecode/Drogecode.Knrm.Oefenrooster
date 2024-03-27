@@ -135,6 +135,9 @@
   <data name="Defaults" xml:space="preserve">
     <value>Standaard</value>
   </data>
+  <data name="Month banner" xml:space="preserve">
+    <value>Maand banner</value>
+  </data>
   <data name="PreCom alerts" xml:space="preserve">
     <value>PreCom meldingen</value>
   </data>

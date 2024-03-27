@@ -8,7 +8,7 @@ else
 		<div>@DatePrefix</div>
 		@if (!string.IsNullOrEmpty(DateStringFormat))
 		{
-			<div>@DateTimeNotNull.ToString(@DateStringFormat, CultureInfo.InvariantCulture)</div>
+			<div>@DateTimeNotNull.ToString(@DateStringFormat, CultureInfo.CurrentUICulture)</div>
 		}
 	</div>
 }

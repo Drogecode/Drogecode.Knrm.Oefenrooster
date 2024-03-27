@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -72,12 +73,12 @@ public class ScheduleRepository
         return schedule;
     }
 
-    public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(Guid? userId, CancellationToken clt)
+    public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(Guid? userId, bool cachedAndReplace, CancellationToken clt)
     {
         if (userId is null) return null;
         var schedule = await _offlineService.CachedRequestAsync(string.Format("trFoUse_{0}", userId),
-            async () => { return await _scheduleClient.GetScheduledTrainingsForUserAsync(clt); },
-            clt: clt);
+            async () => { return await _scheduleClient.GetScheduledTrainingsForUserAsync(cachedAndReplace, clt); },
+            new ApiCachedRequest { CachedAndReplace = cachedAndReplace }, clt);
         return schedule;
     }
 

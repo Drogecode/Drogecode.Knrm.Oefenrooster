@@ -6,28 +6,28 @@ using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components;
 
-public sealed partial class VacationAdd :IDisposable
+public sealed partial class VacationAdd : IDisposable
 {
     [Inject] private HolidayRepository _holidayRepository { get; set; } = default!;
     [Inject] private IStringLocalizer<VacationAdd> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
-    [Parameter] public bool IsNew { get; set; } = true;
     [Parameter] public Guid? Id { get; set; }
 
     private CancellationTokenSource _cls = new();
     private Holiday? _holiday { get; set; }
     private Holiday? _originalHoliday { get; set; }
+    private bool _isNew { get; set; } = true;
     protected override async Task OnParametersSetAsync()
     {
-        if (_holiday is null)
+        if (Id is null)
         {
             _holiday = new Holiday();
         }
         else
         {
-            throw new NotImplementedException("Get holiday by ID does not exists");
-            //_holiday = _holidayRepository.get
+            _holiday = await _holidayRepository.Get(Id.Value, _cls.Token);
+            _isNew = false;
         }
         _originalHoliday = (Holiday?)_holiday?.Clone();
     }
@@ -59,15 +59,16 @@ public sealed partial class VacationAdd :IDisposable
         _holiday.Available = Availabilty.NotAvailable;
         _holiday.ValidFrom = DateTime.SpecifyKind(_holiday.ValidFrom.Value, DateTimeKind.Local).ToUniversalTime();
         _holiday.ValidUntil = new DateTime(_holiday.ValidUntil.Value.Year, _holiday.ValidUntil.Value.Month, _holiday.ValidUntil.Value.Day, 23, 59, 59, DateTimeKind.Local).ToUniversalTime();
-        if (IsNew == true)
+        if (_isNew == true)
         {
-            var result = await _holidayRepository.PutHolidayForUser(_holiday, _cls.Token);
+            var result = await _holidayRepository.PutHolidayForUser(_holiday);
             if (result is null || !result.Success) return;
             _holiday = result.Put;
+            _isNew = false;
         }
         else
         {
-            var result = await _holidayRepository.PatchHolidayForUser(_holiday, _cls.Token);
+            var result = await _holidayRepository.PatchHolidayForUser(_holiday);
             if (result is null || !result.Success) return;
             _holiday = result.Patched;
         }

@@ -68,9 +68,13 @@ public class ConfigurationController : ControllerBase
         try
         {
             var sw = Stopwatch.StartNew();
+
             var response = new VersionDetailResponse
             {
-                NewVersionAvailable = string.Compare(DefaultSettingsHelper.CURRENT_VERSION, clientVersion, StringComparison.OrdinalIgnoreCase) != 0
+                NewVersionAvailable = string.Compare(DefaultSettingsHelper.CURRENT_VERSION, clientVersion, StringComparison.OrdinalIgnoreCase) != 0,
+                CurrentVersion = DefaultSettingsHelper.CURRENT_VERSION,
+                UpdateVersion = DefaultSettingsHelper.UPDATE_VERSION,
+                ButtonVersion = DefaultSettingsHelper.BUTTON_VERSION,
             };
             sw.Stop();
             response.ElapsedMilliseconds = sw.ElapsedMilliseconds;

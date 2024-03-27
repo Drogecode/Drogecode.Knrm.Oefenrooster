@@ -220,6 +220,14 @@
           "codeChallenge": {
             "type": "string",
             "nullable": true
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "clientId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false

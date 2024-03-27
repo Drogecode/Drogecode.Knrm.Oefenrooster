@@ -17,10 +17,8 @@
             try
             {
                 var user = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-                if (user.User.Identity?.IsAuthenticated is not true)
-                    await AuthenticationStateProvider.Logout();
                 _updateDetails = await ConfigurationRepository.NewVersionAvailable();
-                if (_updateDetails?.NewVersionAvailable == true)
+                if (_updateDetails is not null && _updateDetails.UpdateVersion != DefaultSettingsHelper.UPDATE_VERSION && _updateDetails.UpdateVersion <= _updateDetails.ButtonVersion)
                 {
                     var config = (SnackbarOptions options) =>
                     {
@@ -36,6 +34,8 @@
                     };
                     Snackbar.Add(L["Update available"], Severity.Warning, configure: config, key: "outdated");
                 }
+                if (!OfflineService.Offline && user.User.Identity?.IsAuthenticated is not true)
+                    await AuthenticationStateProvider.Logout();
                 OfflineService.Offline = false;
             }
             catch (Exception ex)
@@ -45,7 +45,7 @@
             }
             finally
             {
-                await Task.Delay(1000 * 30);
+                await Task.Delay(1000 * 120);
             }
         }
     }

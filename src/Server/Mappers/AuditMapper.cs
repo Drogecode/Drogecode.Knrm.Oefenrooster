@@ -21,6 +21,8 @@ public static class AuditMapper
             AuditType = dbAudit.AuditType,
             Assigned = note?.Assigned,
             Date = dbAudit.Created,
+            Availabilty = note?.Availabilty,
+            SetBy = note?.SetBy,
         };
     }
 }

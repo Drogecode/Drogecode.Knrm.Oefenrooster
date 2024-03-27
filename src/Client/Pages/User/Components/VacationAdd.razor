@@ -1,8 +1,8 @@
 ﻿@page "/user/vacations/add"
-@page "/user/vacations/edit/{Id:Guid}"
+@page "/user/vacations/edit/{Id:guid}"
 @attribute [Authorize]
 
-<MudText Typo="Typo.h4">@L["Add vacation"]</MudText>
+<MudText Typo="Typo.h4">@(_isNew ? L["Add vacation"] : L["Edit vacation"])</MudText>
     @if (_holiday is not null)
 {
     <MudTextField Label="@L["Description"]" @bind-Value="_holiday.Description" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" />

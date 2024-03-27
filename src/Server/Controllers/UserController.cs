@@ -186,11 +186,11 @@ public class UserController : ControllerBase
                             var groups = await _graphService.GetGroupForUser(user.Id);
                             if (groups?.Value != null && functions.Any(x => groups.Value.Any(y => y.Id == x.RoleId.ToString())))
                             {
+                                newUserResponse.RoleFromSharePoint = true;
                                 var newFunction = functions.FirstOrDefault(x => groups.Value.Any(y => y.Id == x.RoleId.ToString()));
                                 if (newFunction is not null && newUserResponse.UserFunctionId != newFunction.Id)
                                 {
                                     newUserResponse.UserFunctionId = newFunction.Id;
-                                    newUserResponse.RoleFromSharePoint = true;
                                 }
                             }
                             else

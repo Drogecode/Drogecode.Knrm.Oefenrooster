@@ -1,6 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Helpers.JsonConverters;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
-using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

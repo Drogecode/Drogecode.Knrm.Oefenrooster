@@ -51,17 +51,17 @@ public sealed partial class MainLayout : IDisposable
             _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
             if (!_isAuthenticated)
             {
-                if (!Navigation.Uri.Contains("/authentication/login-callback"))
-                    Navigation.NavigateTo("landing_page");
+                if (!Navigation.Uri.Contains("/authentication/login-callback") && !Navigation.Uri.Contains("/landing_page"))
+                    Navigation.NavigateTo("/authentication/login");
                 return;
             }
-            _hubConnection = new HubConnectionBuilder()
-                .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
-            .Build();
 
             var dbUser = await _userRepository.GetCurrentUserAsync();//Force creation of user.
             if (dbUser?.Id != null && dbUser.Id != Guid.Empty)
             {
+                _hubConnection = new HubConnectionBuilder()
+                    .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
+                .Build();
                 _hubConnection.On<string, string>($"ReceivePrecomAlert_{dbUser.Id}", (user, message) =>
                 {
                     var config = (SnackbarOptions options) =>
@@ -72,9 +72,8 @@ public sealed partial class MainLayout : IDisposable
                     };
                     Snackbar.Add($"PreCom: {message}", Severity.Error, configure: config, key: "precom");
                 });
+                await _hubConnection.StartAsync(_cls.Token);
             }
-
-            await _hubConnection.StartAsync(_cls.Token);
         }
         catch (HttpRequestException ex)
         {
@@ -108,11 +107,6 @@ public sealed partial class MainLayout : IDisposable
             RefreshMe();
         }
 
-    }
-
-    private async Task BeginLogout(MouseEventArgs args)
-    {
-        Navigation.NavigateTo("/authentication/logout");
     }
 
     private async Task Login(MouseEventArgs args)

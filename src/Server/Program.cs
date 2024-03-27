@@ -61,11 +61,13 @@ builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceO
 
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<PreComHub>();
+builder.Services.AddSingleton<RefreshHub>();
 builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
 builder.Services.AddScoped<IGraphService, GraphService>();
 
 builder.Services.AddScoped<IAuditService, AuditService>();
-builder.Services.AddScoped<ICalendarItemService, CalendarItemService>();
+builder.Services.AddScoped<IDayItemService, DayItemService>();
+builder.Services.AddScoped<IMonthItemService, MonthItemService>();
 builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 builder.Services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
@@ -88,7 +90,8 @@ var groupNames = new List<string>
 {
     "Audit",
     "Authentication",
-    "CalendarItem",
+    "DayItem",
+    "MonthItem",
     "Configuration",
     "Function",
     "Schedule",
@@ -189,5 +192,6 @@ if (!runningInContainers)
 app.MapRazorPages();
 app.MapControllers();
 app.MapHub<PreComHub>("/hub/precomhub");
+app.MapHub<RefreshHub>("/hub/refresh");
 app.MapFallbackToFile("index.html");
 app.Run();

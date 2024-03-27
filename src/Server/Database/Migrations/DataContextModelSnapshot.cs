@@ -17,7 +17,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -195,6 +195,31 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             TenantId = "d9754755-b054-4a9c-a77f-da42a4009365",
                             TimeZone = "Europe/Amsterdam"
                         });
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkExchange", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CalendarEventId")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsSet")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("VehicleId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("LinkExchange");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkUserDayItem", b =>
@@ -487,6 +512,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("LinkExchangeId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("SetBy")
                         .HasColumnType("integer");
 
@@ -505,6 +533,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("LinkExchangeId");
 
                     b.HasIndex("TrainingId");
 
@@ -767,6 +797,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<short>("Month")
                         .HasColumnType("smallint");
@@ -1494,49 +1530,56 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("287359b1-2035-435b-97b0-eb260dc497d6"),
-                            Accesses = "configure_training-types,users_settings",
+                            Accesses = "configure_training-types,users_settings,scheduler_dayitem,scheduler_monthitem,scheduler_history",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Name = "Admin"
                         },
                         new
                         {
                             Id = new Guid("f6b0c571-9050-40d6-bf58-807981e5ed6e"),
-                            Accesses = "scheduler,scheduler_table,scheduler_past,scheduler_dayitem",
+                            Accesses = "scheduler,scheduler_table,scheduler_past,scheduler_dayitem,scheduler_other,scheduler_monthitem",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Name = "Scheduler"
+                        },
+                        new
+                        {
+                            Id = new Guid("90a40128-183f-408b-aa64-eb3b279a7042"),
+                            Accesses = "scheduler_other",
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "Basic scheduler"
                         },
                         new
                         {
                             Id = new Guid("d72ed2e9-911e-4ee5-b07e-cbd5917d432b"),
                             Accesses = "users_counter,users_details,full_training_history,full_action_history",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Name = "Users"
+                            Name = "Users admin"
                         },
                         new
                         {
                             Id = new Guid("f5b0bab6-6fdf-457d-855d-bbea6ea57bd5"),
-                            Accesses = "full_training_history,full_action_history",
+                            Accesses = "full_training_history,full_action_history,scheduler_other",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Name = "schipper"
                         },
                         new
                         {
                             Id = new Guid("54aace50-0e1f-4c35-a1b3-87c9ff6bd743"),
-                            Accesses = "full_training_history,full_action_history",
+                            Accesses = "full_training_history,full_action_history,scheduler_other",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Name = "schipper io"
                         },
                         new
                         {
                             Id = new Guid("afb45395-89ee-413d-9385-21962772dbda"),
-                            Accesses = "full_training_history,full_action_history",
+                            Accesses = "full_training_history,full_action_history,scheduler_other",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Name = "opstapper"
                         },
                         new
                         {
                             Id = new Guid("2197a054-e81f-4720-9f08-321377398cb6"),
-                            Accesses = "full_training_history,full_action_history",
+                            Accesses = "full_training_history,full_action_history,scheduler_other",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Name = "aankomend opstapper"
                         },
@@ -1608,6 +1651,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<Guid?>("Deletedby")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("ExchangeId")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
@@ -1633,6 +1679,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Id = new Guid("4589535c-9064-4448-bc01-3b5a00e9410d"),
                             Code = "NWI",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            ExchangeId = new Guid("dbaeaa44-d318-464e-ac39-f85029dd9e8f"),
                             IsActive = true,
                             IsDefault = true,
                             Name = "Nikolaas Wijsenbeek",
@@ -1643,6 +1690,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Id = new Guid("c759950b-8264-4521-9a6e-ff98ad358cc1"),
                             Code = "HZR",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            ExchangeId = new Guid("731fa301-d7cc-41de-9063-f86a32c2b25b"),
                             IsActive = true,
                             IsDefault = false,
                             Name = "De Huizer",
@@ -1739,6 +1787,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                 {
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
                         .WithMany("CustomerSettings")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkExchange", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("LinkExchanges")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1847,6 +1906,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkExchange", "LinkExchange")
+                        .WithMany("RoosterAvailables")
+                        .HasForeignKey("LinkExchangeId");
+
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterTraining", "Training")
                         .WithMany("RoosterAvailables")
                         .HasForeignKey("TrainingId")
@@ -1868,6 +1931,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .HasForeignKey("VehicleId");
 
                     b.Navigation("Customer");
+
+                    b.Navigation("LinkExchange");
 
                     b.Navigation("Training");
 
@@ -2101,6 +2166,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Navigation("CustomerSettings");
 
+                    b.Navigation("LinkExchanges");
+
                     b.Navigation("LinkVehicleTrainings");
 
                     b.Navigation("PreComAlerts");
@@ -2136,6 +2203,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("Users");
 
                     b.Navigation("Vehicles");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkExchange", b =>
+                {
+                    b.Navigation("RoosterAvailables");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportAction", b =>

@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
@@ -6,6 +7,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -17,6 +19,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [ApiExplorerSettings(GroupName = "Schedule")]
 public class ScheduleController : ControllerBase
 {
+    private readonly RefreshHub _refreshHub;
     private readonly ILogger<ScheduleController> _logger;
     private readonly IScheduleService _scheduleService;
     private readonly IAuditService _auditService;
@@ -27,6 +30,7 @@ public class ScheduleController : ControllerBase
     private readonly IUserService _userService;
 
     public ScheduleController(
+        RefreshHub refreshHub,
         ILogger<ScheduleController> logger,
         IScheduleService scheduleService,
         IAuditService auditService,
@@ -36,6 +40,7 @@ public class ScheduleController : ControllerBase
         IDateTimeService dateTimeService,
         IUserService userService)
     {
+        _refreshHub = refreshHub;
         _logger = logger;
         _scheduleService = scheduleService;
         _auditService = auditService;
@@ -185,6 +190,7 @@ public class ScheduleController : ControllerBase
         {
             foreach (var user in training.Training.PlanUsers)
             {
+                await _refreshHub.SendMessage(user.UserId, ItemUpdated.futureTrainings);
                 if (!string.IsNullOrEmpty(user.CalendarEventId))
                 {
                     await _graphService.PatchCalender(user.UserId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime);
@@ -239,6 +245,11 @@ public class ScheduleController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _scheduleService.PatchScheduleForUserAsync(userId, customerId, training, clt);
+            if (result.Success && result.PatchedTraining?.Assigned == true)
+            {
+                await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = userId, Assigned = result.PatchedTraining.Assigned, Availabilty = result.PatchedTraining.Availabilty, SetBy = result.PatchedTraining.SetBy }), training?.TrainingId);
+                await _refreshHub.SendMessage(userId, ItemUpdated.futureTrainings);
+            }
             await _userService.PatchLastOnline(userId, clt);
             return result;
         }
@@ -257,13 +268,17 @@ public class ScheduleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var inRoleEditOther = User.IsInRole(AccessesNames.AUTH_scheduler_other_user);
+            if (!inRoleEditOther && !userId.Equals(body.User?.UserId))
+                return Unauthorized();
             PatchAssignedUserResponse result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
-            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.User?.UserId, Assigned = body?.User?.Assigned }), body?.TrainingId);
+            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.User?.UserId, Assigned = body?.User?.Assigned, Availabilty = result.Availabilty, SetBy = result.SetBy }), body?.TrainingId);
             await _userService.PatchLastOnline(userId, clt);
             if (result.Success && body?.User?.UserId is not null)
             {
                 clt = CancellationToken.None;
                 await ToOutlookCalendar(body.User.UserId, body.TrainingId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
+                await _refreshHub.SendMessage(body.User.UserId, ItemUpdated.futureTrainings);
             }
             return result;
         }
@@ -282,13 +297,17 @@ public class ScheduleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var inRoleEditOther = User.IsInRole(AccessesNames.AUTH_scheduler_other_user);
+            if (!inRoleEditOther && !userId.Equals(body.UserId))
+                return Unauthorized();
             var result = await _scheduleService.PutAssignedUserAsync(userId, customerId, body, clt);
-            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.UserId, Assigned = body?.Assigned }), body?.TrainingId);
+            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.UserId, Assigned = body?.Assigned, Availabilty = result.Availabilty, SetBy = result.SetBy }), body?.TrainingId);
             await _userService.PatchLastOnline(userId, clt);
             if (result.Success && body?.UserId is not null)
             {
                 clt = CancellationToken.None;
-                await ToOutlookCalendar(body.UserId.Value, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
+                await ToOutlookCalendar(body.UserId.Value, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt); 
+                await _refreshHub.SendMessage(body.UserId.Value, ItemUpdated.futureTrainings);
             }
             return result;
         }
@@ -300,8 +319,8 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("me/scheduled-trainings")]
-    public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> GetScheduledTrainingsForUser(CancellationToken clt = default)
+    [Route("me/scheduled-trainings/{callHub:bool}")]
+    public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> GetScheduledTrainingsForUser(bool callHub = false, CancellationToken clt = default)
     {
         try
         {
@@ -309,6 +328,10 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var fromDate = _dateTimeService.Today().ToUniversalTime();
             var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, clt);
+            if (callHub)
+            {
+                await _refreshHub.SendMessage(userId, ItemUpdated.futureTrainings);
+            }
             return result;
         }
         catch (Exception ex)
@@ -346,6 +369,7 @@ public class ScheduleController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var fromDate = DateTime.UtcNow;
+            _logger.LogInformation("Get all pinned trainings for {user}", userId);
             GetPinnedTrainingsForUserResponse result = await _scheduleService.GetPinnedTrainingsForUser(userId, customerId, fromDate, clt);
             return result;
         }
@@ -383,6 +407,7 @@ public class ScheduleController : ControllerBase
                     Training = training.Training
                 };
                 await PatchAssignedUser(body, clt);
+                await _refreshHub.SendMessage(user.UserId, ItemUpdated.futureTrainings);
             }
             var result = await _scheduleService.DeleteTraining(userId, customerId, id, clt);
             return result;
@@ -400,6 +425,10 @@ public class ScheduleController : ControllerBase
         {
             if (assigned && await _userSettingService.TrainingToCalendar(customerId, planUserId))
             {
+#if DEBUG
+                // Be carefull when debugging.
+                Debugger.Break();
+#endif
                 if (training is null && trainingId is not null)
                     training = (await _scheduleService.GetTrainingById(planUserId, customerId, trainingId.Value, clt)).Training;
                 var type = await _trainingTypesService.GetById(training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);

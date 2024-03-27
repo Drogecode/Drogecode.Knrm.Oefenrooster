@@ -8,8 +8,9 @@ public class PreComHub : Hub
     [Authorize]
     public async Task SendMessage(Guid id, string user, string message)
     {
-        /*string username = Context.User.Identity.Name;
-        if (string.Compare(username, user, true) == 0)*/
+        if (Clients is not null)
+        {
             await Clients.All.SendAsync($"ReceivePrecomAlert_{id}", user, message);
+        }
     }
 }

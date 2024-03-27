@@ -1,0 +1,14 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums
+<MudDialog>
+    <DialogContent>
+        @if (MonthItem is not null)
+        {
+            <MudNumericField T="short?" @bind-Value="MonthItem.Year" />
+            <MudNumericField T="short" @bind-Value="MonthItem.Month" />
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">@LApp["Submit"]</MudButton>
+    </DialogActions>
+</MudDialog>

@@ -17,18 +17,32 @@ public sealed partial class NavMenu : IDisposable
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
 
     private CancellationTokenSource _cls = new();
     private string _uriCalendar = "/planner/calendar";
     private string _uriSchedule = "/planner/schedule";
     private string _uriPlannerUser = "/planner/user";
+    private string _sharePointUrl = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         Navigation.LocationChanged += RefreshForSubMenu;
         var installing = await _configurationRepository.InstallingActive();
         var dbUser = await _userRepository.GetCurrentUserAsync();//Force creation of user.
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (AuthenticationState is not null)
+        {
+            var authState = await AuthenticationState;
+            var loginHint = authState?.User?.FindFirst(c => c.Type == "login_hint")?.Value;
+            if (string.IsNullOrEmpty(loginHint))
+                _sharePointUrl = "https://dorus1824.sharepoint.com";
+            else
+                _sharePointUrl = $"https://dorus1824.sharepoint.com?login_hint={loginHint}";
+        }
     }
 
     private void RefreshForSubMenu(object? sender, LocationChangedEventArgs e)
@@ -38,7 +52,7 @@ public sealed partial class NavMenu : IDisposable
 
     private async Task AddTraining()
     {
-        var trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false,_cls.Token);
+        var trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, _cls.Token);
         var vehicles = await _vehicleRepository.GetAllVehiclesAsync();
         var parameters = new DialogParameters<EditTrainingDialog>
         {

@@ -8,6 +8,7 @@ public sealed partial class Authentication
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private CustomStateProvider CustomStateProvider { get; set; } = default!;
     [Inject] private IAuthenticationClient AuthenticationClient { get; set; } = default!;
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public string? Action { get; set; }
     [Parameter][SupplyParameterFromQuery] public string? code { get; set; }
     [Parameter][SupplyParameterFromQuery] public string? state { get; set; }
@@ -22,8 +23,8 @@ public sealed partial class Authentication
         {
             case "login":
                 var secrets = await AuthenticationClient.GetLoginSecretsAsync();
-                var tenant = "d9754755-b054-4a9c-a77f-da42a4009365";
-                var clientId = "a9c68159-901c-449a-83e0-85243364e3cc";
+                var tenant = secrets.TenantId;
+                var clientId = secrets.ClientId;
                 var responseType = "code";
                 var responseMode = "query";
                 var scope = "openid+profile+email";
@@ -44,9 +45,19 @@ public sealed partial class Authentication
                 Navigation.NavigateTo("/");
                 break;
             case "logout":
+                string logoutHint = "";
+                if (AuthenticationState is not null)
+                {
+                    var authState = await AuthenticationState;
+                    logoutHint = authState?.User?.FindFirst(c => c.Type == "login_hint")?.Value ?? "";
+                }
                 await CustomStateProvider.Logout();
-                var redirectLogoutUrl = $"{Navigation.BaseUri}";
-                var urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri={redirectLogoutUrl}";
+                var redirectLogoutUrl = $"{Navigation.BaseUri}landing_page";
+                string urlLogout;
+                if (string.IsNullOrEmpty(logoutHint))
+                    urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri={redirectLogoutUrl}";
+                else
+                    urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?logout_hint={logoutHint}&post_logout_redirect_uri={redirectLogoutUrl}";
                 Navigation.NavigateTo(urlLogout);
                 break;
         }

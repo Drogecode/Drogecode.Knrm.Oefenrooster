@@ -1,66 +1,16 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "CalendarItem",
+    "title": "DayItem",
     "version": "v1"
   },
   "paths": {
-    "/api/CalendarItem/month/{year}/{month}": {
+    "/api/DayItem/{yearStart}/{monthStart}/{dayStart}/{yearEnd}/{monthEnd}/{dayEnd}/{userId}": {
       "get": {
         "tags": [
-          "CalendarItem"
+          "DayItem"
         ],
-        "operationId": "GetMonthItems",
-        "parameters": [
-          {
-            "name": "year",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "month",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMultipleMonthItemResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMultipleMonthItemResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMultipleMonthItemResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/CalendarItem/day/{yearStart}/{monthStart}/{dayStart}/{yearEnd}/{monthEnd}/{dayEnd}/{userId}": {
-      "get": {
-        "tags": [
-          "CalendarItem"
-        ],
-        "operationId": "GetDayItems",
+        "operationId": "GetItems",
         "parameters": [
           {
             "name": "yearStart",
@@ -150,12 +100,12 @@
         }
       }
     },
-    "/api/CalendarItem/day/all/{count}/{skip}/{forAllUsers}": {
+    "/api/DayItem/all/{count}/{skip}/{forAllUsers}": {
       "get": {
         "tags": [
-          "CalendarItem"
+          "DayItem"
         ],
-        "operationId": "GetAllFutureDayItems",
+        "operationId": "GetAllFuture",
         "parameters": [
           {
             "name": "count",
@@ -208,12 +158,12 @@
         }
       }
     },
-    "/api/CalendarItem/day/{id}": {
+    "/api/DayItem/{id}": {
       "get": {
         "tags": [
-          "CalendarItem"
+          "DayItem"
         ],
-        "operationId": "GetDayItemById",
+        "operationId": "ById",
         "parameters": [
           {
             "name": "id",
@@ -249,12 +199,12 @@
         }
       }
     },
-    "/api/CalendarItem/day/dashboard": {
+    "/api/DayItem/dashboard": {
       "get": {
         "tags": [
-          "CalendarItem"
+          "DayItem"
         ],
-        "operationId": "GetDayItemDashboard",
+        "operationId": "GetDashboard",
         "responses": {
           "200": {
             "description": "Success",
@@ -279,59 +229,10 @@
         }
       }
     },
-    "/api/CalendarItem/month": {
+    "/api/DayItem": {
       "put": {
         "tags": [
-          "CalendarItem"
-        ],
-        "operationId": "PutMonthItem",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RoosterItemMonth"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RoosterItemMonth"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/RoosterItemMonth"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/PutMonthItemResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PutMonthItemResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PutMonthItemResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/CalendarItem/day": {
-      "put": {
-        "tags": [
-          "CalendarItem"
+          "DayItem"
         ],
         "operationId": "PutDayItem",
         "requestBody": {
@@ -378,7 +279,7 @@
       },
       "patch": {
         "tags": [
-          "CalendarItem"
+          "DayItem"
         ],
         "operationId": "PatchDayItem",
         "requestBody": {
@@ -425,7 +326,7 @@
       },
       "delete": {
         "tags": [
-          "CalendarItem"
+          "DayItem"
         ],
         "operationId": "DeleteDayItem",
         "requestBody": {
@@ -533,33 +434,6 @@
         },
         "additionalProperties": false
       },
-      "GetMultipleMonthItemResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          },
-          "offline": {
-            "type": "boolean"
-          },
-          "elapsedMilliseconds": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "totalCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "monthItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RoosterItemMonth"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "PatchDayItemResponse": {
         "type": "object",
         "properties": {
@@ -577,26 +451,6 @@
         "additionalProperties": false
       },
       "PutDayItemResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          },
-          "offline": {
-            "type": "boolean"
-          },
-          "elapsedMilliseconds": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "newId": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "additionalProperties": false
-      },
-      "PutMonthItemResponse": {
         "type": "object",
         "properties": {
           "success": {
@@ -666,50 +520,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "RoosterItemMonth": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "year": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "type": {
-            "$ref": "#/components/schemas/CalendarItemType"
-          },
-          "severity": {
-            "$ref": "#/components/schemas/Severity"
-          },
-          "text": {
-            "type": "string",
-            "nullable": true
-          },
-          "order": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "Severity": {
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4
-        ],
-        "type": "integer",
-        "format": "int32"
       }
     }
   }

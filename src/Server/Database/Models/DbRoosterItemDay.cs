@@ -1,5 +1,4 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.CalendarItem;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

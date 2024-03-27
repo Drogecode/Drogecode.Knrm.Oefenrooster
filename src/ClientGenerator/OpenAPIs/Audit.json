@@ -256,6 +256,12 @@
             "type": "boolean",
             "nullable": true
           },
+          "availabilty": {
+            "$ref": "#/components/schemas/Availabilty"
+          },
+          "setBy": {
+            "$ref": "#/components/schemas/AvailabilitySetBy"
+          },
           "auditType": {
             "$ref": "#/components/schemas/AuditType"
           },

@@ -50,12 +50,16 @@ public class AuthenticationController : ControllerBase
         try
         {
             var codeVerifier = CreateSecret(120);
+            var tenantId = new Guid(_configuration.GetValue<string>("AzureAd:TenantId") ?? throw new Exception("no tenant id found for azure login"));
+            var clientId = new Guid(_configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new Exception("no client id found for azure login"));
             var response = new CacheLoginSecrets
             {
                 LoginSecret = CreateSecret(64),
                 LoginNonce = CreateSecret(64),
                 CodeChallenge = GenerateCodeChallenge(codeVerifier), //BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))
                 CodeVerifier = codeVerifier,
+                TenantId = tenantId,
+                ClientId = clientId,
                 Success = true
             };
 
@@ -92,7 +96,7 @@ public class AuthenticationController : ControllerBase
             var found = _memoryCache.Get<CacheLoginSecrets>(state);
             if (found?.Success is not true || found?.CodeVerifier is null)
             {
-                _logger.LogWarning("fund?.success = `{false}` || found?.CodeVerifier = `{null}`", found?.Success is not true, found?.CodeVerifier is null);
+                _logger.LogWarning("found?.success = `{false}` || found?.CodeVerifier = `{null}`", found?.Success is not true, found?.CodeVerifier is null);
                 return false;
             }
             _memoryCache.Remove(state);
@@ -289,11 +293,13 @@ public class AuthenticationController : ControllerBase
         var email = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "email")?.Value ?? "";
         var fullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? "";
         var userId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "oid")?.Value ?? "";
+        var loginHint = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "login_hint")?.Value ?? "";
         var customerId = new Guid(jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "tid")?.Value ?? throw new Exception("customerId not found"));
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, email),
             new("FullName", fullName),
+            new("login_hint", loginHint),
             new(REFRESHTOKEN, refresh_token),
             new("ValidFrom", jwtSecurityToken.ValidFrom.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             new("ValidTo", jwtSecurityToken.ValidTo.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
