@@ -20,7 +20,6 @@ public class DbUsers
     public string? SharePointID { get; set; }
     public bool SyncedFromSharePoint { get; set; }
     public bool RoleFromSharePoint { get; set; }
-    public string Demo { get; set; }
 
     public DbCustomers Customer { get; set; }
     public DbUserFunctions? UserFunction{ get; set; }
