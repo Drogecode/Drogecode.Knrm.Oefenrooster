@@ -18,7 +18,7 @@
             {
                 var user = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 _updateDetails = await ConfigurationRepository.NewVersionAvailable();
-                if (_updateDetails is not null && _updateDetails.UpdateVersion != DefaultSettingsHelper.UPDATE_VERSION && _updateDetails.UpdateVersion <= _updateDetails.ButtonVersion)
+                if (_updateDetails is not null && (_updateDetails.UpdateVersion != DefaultSettingsHelper.UPDATE_VERSION || _updateDetails.ButtonVersion != DefaultSettingsHelper.BUTTON_VERSION) && _updateDetails.UpdateVersion <= _updateDetails.ButtonVersion)
                 {
                     var config = (SnackbarOptions options) =>
                     {
@@ -45,7 +45,10 @@
             }
             finally
             {
-                await Task.Delay(1000 * 120);
+                for (int i = 0; i < 120; i++)
+                {
+                    await Task.Delay(1000);
+                }
             }
         }
     }
