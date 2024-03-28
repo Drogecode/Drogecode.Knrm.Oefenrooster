@@ -31,7 +31,7 @@ public sealed partial class DayItem : IDisposable
     protected override async Task OnParametersSetAsync()
     {
         _items = await DayItemClient.GetAllFutureAsync(_count, _skip, true);
-        _users = await UserRepository.GetAllUsersAsync(false, false, _cls.Token);
+        _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
         _functions = await FunctionRepository.GetAllFunctionsAsync();
         _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
     }

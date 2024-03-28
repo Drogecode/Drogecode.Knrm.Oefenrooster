@@ -28,12 +28,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     {
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MultipleDrogeUsersResponse> GetAllAsync(bool includeHidden);
+        System.Threading.Tasks.Task<MultipleDrogeUsersResponse> GetAllAsync(bool includeHidden, bool callHub);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MultipleDrogeUsersResponse> GetAllAsync(bool includeHidden, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<MultipleDrogeUsersResponse> GetAllAsync(bool includeHidden, bool callHub, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -121,18 +121,21 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<MultipleDrogeUsersResponse> GetAllAsync(bool includeHidden)
+        public virtual System.Threading.Tasks.Task<MultipleDrogeUsersResponse> GetAllAsync(bool includeHidden, bool callHub)
         {
-            return GetAllAsync(includeHidden, System.Threading.CancellationToken.None);
+            return GetAllAsync(includeHidden, callHub, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<MultipleDrogeUsersResponse> GetAllAsync(bool includeHidden, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<MultipleDrogeUsersResponse> GetAllAsync(bool includeHidden, bool callHub, System.Threading.CancellationToken cancellationToken)
         {
             if (includeHidden == null)
                 throw new System.ArgumentNullException("includeHidden");
+
+            if (callHub == null)
+                throw new System.ArgumentNullException("callHub");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -145,9 +148,11 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/User/all/{includeHidden}"
+                    // Operation Path: "api/User/all/{includeHidden}/{callHub}"
                     urlBuilder_.Append("api/User/all/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(includeHidden, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(callHub, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 

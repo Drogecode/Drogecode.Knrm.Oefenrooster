@@ -16,7 +16,7 @@ public sealed partial class User : IDisposable
     private List<DrogeFunction>? _functions;
     protected override async Task OnParametersSetAsync()
     {
-        _users = await _userRepository.GetAllUsersAsync(false, false, _cls.Token);
+        _users = await _userRepository.GetAllUsersAsync(false, false, false, _cls.Token);
         _functions = await _functionRepository.GetAllFunctionsAsync();
         StateHasChanged();
     }

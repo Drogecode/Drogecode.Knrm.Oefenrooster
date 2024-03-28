@@ -190,7 +190,7 @@ public class ScheduleController : ControllerBase
         {
             foreach (var user in training.Training.PlanUsers)
             {
-                await _refreshHub.SendMessage(user.UserId, ItemUpdated.futureTrainings);
+                await _refreshHub.SendMessage(user.UserId, ItemUpdated.FutureTrainings);
                 if (!string.IsNullOrEmpty(user.CalendarEventId))
                 {
                     await _graphService.PatchCalender(user.UserId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime);
@@ -248,7 +248,7 @@ public class ScheduleController : ControllerBase
             if (result.Success && result.PatchedTraining?.Assigned == true)
             {
                 await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = userId, Assigned = result.PatchedTraining.Assigned, Availabilty = result.PatchedTraining.Availabilty, SetBy = result.PatchedTraining.SetBy }), training?.TrainingId);
-                await _refreshHub.SendMessage(userId, ItemUpdated.futureTrainings);
+                await _refreshHub.SendMessage(userId, ItemUpdated.FutureTrainings);
             }
             await _userService.PatchLastOnline(userId, clt);
             return result;
@@ -278,7 +278,7 @@ public class ScheduleController : ControllerBase
             {
                 clt = CancellationToken.None;
                 await ToOutlookCalendar(body.User.UserId, body.TrainingId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
-                await _refreshHub.SendMessage(body.User.UserId, ItemUpdated.futureTrainings);
+                await _refreshHub.SendMessage(body.User.UserId, ItemUpdated.FutureTrainings);
             }
             return result;
         }
@@ -307,7 +307,7 @@ public class ScheduleController : ControllerBase
             {
                 clt = CancellationToken.None;
                 await ToOutlookCalendar(body.UserId.Value, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt); 
-                await _refreshHub.SendMessage(body.UserId.Value, ItemUpdated.futureTrainings);
+                await _refreshHub.SendMessage(body.UserId.Value, ItemUpdated.FutureTrainings);
             }
             return result;
         }
@@ -330,7 +330,8 @@ public class ScheduleController : ControllerBase
             var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, clt);
             if (callHub)
             {
-                await _refreshHub.SendMessage(userId, ItemUpdated.futureTrainings);
+                _logger.LogInformation("Calling hub futureTrainings");
+                await _refreshHub.SendMessage(userId, ItemUpdated.FutureTrainings);
             }
             return result;
         }
@@ -407,7 +408,7 @@ public class ScheduleController : ControllerBase
                     Training = training.Training
                 };
                 await PatchAssignedUser(body, clt);
-                await _refreshHub.SendMessage(user.UserId, ItemUpdated.futureTrainings);
+                await _refreshHub.SendMessage(user.UserId, ItemUpdated.FutureTrainings);
             }
             var result = await _scheduleService.DeleteTraining(userId, customerId, id, clt);
             return result;

@@ -49,7 +49,7 @@ public sealed partial class Global : IDisposable
             var dbUser = await _userRepository.GetCurrentUserAsync();
             _name = authState!.User!.Identity!.Name ?? string.Empty;
         }
-        _users = await _userRepository.GetAllUsersAsync(true, true, _cls.Token);
+        _users = await _userRepository.GetAllUsersAsync(true, true, false, _cls.Token);
         _functions = await _functionRepository.GetAllFunctionsAsync();
     }
 
@@ -71,7 +71,7 @@ public sealed partial class Global : IDisposable
         _usersSynced = await _userRepository.SyncAllUsersAsync();
         if (_usersSynced == true)
         {
-            _users = await _userRepository.GetAllUsersAsync(true, true, _cls.Token);
+            _users = await _userRepository.GetAllUsersAsync(true, true, false, _cls.Token);
             await RefreshMeAsync();
         }
     }
@@ -107,7 +107,7 @@ public sealed partial class Global : IDisposable
     }
     private async Task RefreshMeAsync()
     {
-        _users = await _userRepository.GetAllUsersAsync(true, true, _cls.Token);
+        _users = await _userRepository.GetAllUsersAsync(true, true, false, _cls.Token);
         StateHasChanged();
     }
 

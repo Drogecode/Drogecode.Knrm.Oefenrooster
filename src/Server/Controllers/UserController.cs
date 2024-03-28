@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.Authorization;
@@ -21,26 +22,34 @@ public class UserController : ControllerBase
     private readonly IAuditService _auditService;
     private readonly IGraphService _graphService;
     private readonly IFunctionService _functionService;
+    private readonly RefreshHub _refreshHub;
 
-    public UserController(ILogger<UserController> logger, IUserService userService, IAuditService auditService, IGraphService graphService, IFunctionService functionService)
+    public UserController(ILogger<UserController> logger, IUserService userService, IAuditService auditService, IGraphService graphService, IFunctionService functionService, RefreshHub refreshHub)
     {
         _logger = logger;
         _userService = userService;
         _auditService = auditService;
         _graphService = graphService;
         _functionService = functionService;
+        _refreshHub = refreshHub;
     }
 
     [HttpGet]
-    [Route("all/{includeHidden:bool}")]
-    public async Task<ActionResult<MultipleDrogeUsersResponse>> GetAll(bool includeHidden, CancellationToken clt = default)
+    [Route("all/{includeHidden:bool}/{callHub:bool}")]
+    public async Task<ActionResult<MultipleDrogeUsersResponse>> GetAll(bool includeHidden, bool callHub = false, CancellationToken clt = default)
     {
         try
         {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var includeLastLogin = User.IsInRole(AccessesNames.AUTH_Taco);
             var result = await _userService.GetAllUsers(customerId, includeHidden, includeLastLogin);
 
+            if (callHub)
+            {
+                _logger.LogInformation("Calling hub AllUsers");
+                await _refreshHub.SendMessage(userId, ItemUpdated.AllUsers);
+            }
             return result;
         }
         catch (Exception ex)
