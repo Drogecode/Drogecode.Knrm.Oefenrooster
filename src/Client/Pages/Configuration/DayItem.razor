@@ -19,7 +19,15 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="@LApp["Description"]">@context.Text</MudTd>
-                <MudTd DataLabel="@L["Type"]">@L[@context.Type.ToString()]</MudTd>
+                <MudTd DataLabel="@L["Type"]">
+                    @{
+                        var color = DayItemHelper.DayItemTypeColor(context.Type);
+                    }
+                    <div class="d-flex gap-1">
+                        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small" />
+                        @L[@context.Type.ToString()]
+                    </div>
+                </MudTd>
                 <MudTd DataLabel="@L["Who"]">@_users?.FirstOrDefault(x => x.Id == context?.LinkedUsers?.FirstOrDefault()?.UserId)?.Name</MudTd>
                 <MudTd DataLabel="@LApp["From"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateStart" /></MudTd>
                 <MudTd DataLabel="@LApp["Till"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateEnd" /></MudTd>
