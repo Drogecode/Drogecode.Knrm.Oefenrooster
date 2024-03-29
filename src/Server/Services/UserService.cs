@@ -17,16 +17,16 @@ public class UserService : IUserService
         _database = database;
     }
 
-    public async Task<MultipleDrogeUsersResponse> GetAllUsers(Guid customerId, bool includeHidden, bool includeLastLogin)
+    public async Task<MultipleDrogeUsersResponse> GetAllUsers(Guid customerId, bool includeHidden, bool includeLastLogin, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new MultipleDrogeUsersResponse { DrogeUsers = new List<DrogeUser>() };
-        var dbUsers = _database.Users
+        var dbUsers = await _database.Users
             .Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.IsActive))
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
             .ThenInclude(x => x.UserB)
             .OrderBy(x => x.Name)
-            .ToList();
+            .ToListAsync();
         foreach (var dbUser in dbUsers)
         {
             result.DrogeUsers.Add(dbUser.ToSharedUser());

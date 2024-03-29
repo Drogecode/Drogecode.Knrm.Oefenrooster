@@ -11,3 +11,10 @@
         <MudSwitch Label="setting training to calendar" Color="Color.Primary" T="bool" Checked="@_settingTrainingToCalendar.Value" CheckedChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))" />
     }
 </AuthorizeView>
+<MudText>
+    <p>Client versie: @DefaultSettingsHelper.CURRENT_VERSION</p>
+    @if (_updateDetails is not null)
+    {
+        <p>Server versie: @_updateDetails.CurrentVersion </p>
+    }
+</MudText>

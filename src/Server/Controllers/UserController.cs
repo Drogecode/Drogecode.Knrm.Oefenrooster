@@ -43,7 +43,7 @@ public class UserController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var includeLastLogin = User.IsInRole(AccessesNames.AUTH_Taco);
-            var result = await _userService.GetAllUsers(customerId, includeHidden, includeLastLogin);
+            var result = await _userService.GetAllUsers(customerId, includeHidden, includeLastLogin, clt);
 
             if (callHub)
             {
@@ -172,7 +172,7 @@ public class UserController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             _graphService.InitializeGraph();
-            var existingUsers = (await _userService.GetAllUsers(customerId, true, false)).DrogeUsers;
+            var existingUsers = (await _userService.GetAllUsers(customerId, true, false, clt)).DrogeUsers;
             var functions = (await _functionService.GetAllFunctions(customerId, clt)).Functions;
             var users = await _graphService.ListUsersAsync();
             if (users?.Value != null)
