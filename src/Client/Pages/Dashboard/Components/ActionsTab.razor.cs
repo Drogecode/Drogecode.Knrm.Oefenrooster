@@ -57,6 +57,7 @@ public sealed partial class ActionsTab : IDisposable
 
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
     {
+        if (_bussy) return;
         _bussy = true;
         StateHasChanged();
         _selectedUsersAction = selection;
@@ -71,8 +72,8 @@ public sealed partial class ActionsTab : IDisposable
         if (_bussy) return;
         _bussy = true;
         StateHasChanged();
-        _currentPage = nextPage;
         if (nextPage <= 0) return;
+        _currentPage = nextPage;
         var skip = (nextPage - 1) * _count;
         _sharePointActions = await _sharePointRepository.GetLastActions(_selectedUsersAction, _count, skip, _cls.Token);
         _bussy = false;
