@@ -21,17 +21,20 @@ public class ConfigurationController : ControllerBase
     private readonly IConfiguration _configuration;
     private readonly IConfigurationService _configurationService;
     private readonly IAuditService _auditService;
+    private readonly IUserService _userService;
 
     public ConfigurationController(
         ILogger<ConfigurationController> logger,
         IConfiguration configuration,
         IConfigurationService configurationService,
-        IAuditService auditService)
+        IAuditService auditService,
+        IUserService userService)
     {
         _logger = logger;
         _configuration = configuration;
         _configurationService = configurationService;
         _auditService = auditService;
+        _userService = userService;
     }
 
     [HttpPatch]
@@ -63,12 +66,13 @@ public class ConfigurationController : ControllerBase
     [HttpGet]
     [AllowAnonymous]
     [Route("new-version-available/{clientVersion}")]
-    public async Task<ActionResult<VersionDetailResponse>> NewVersionAvailable(string clientVersion, CancellationToken token = default)
+    public async Task<ActionResult<VersionDetailResponse>> NewVersionAvailable(string clientVersion, CancellationToken clt = default)
     {
         try
         {
             var sw = Stopwatch.StartNew();
 
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var response = new VersionDetailResponse
             {
                 NewVersionAvailable = string.Compare(DefaultSettingsHelper.CURRENT_VERSION, clientVersion, StringComparison.OrdinalIgnoreCase) != 0,
@@ -76,6 +80,7 @@ public class ConfigurationController : ControllerBase
                 UpdateVersion = DefaultSettingsHelper.UPDATE_VERSION,
                 ButtonVersion = DefaultSettingsHelper.BUTTON_VERSION,
             };
+            await _userService.PatchLastOnline(userId, clt);
             sw.Stop();
             response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
             return Ok(response);
