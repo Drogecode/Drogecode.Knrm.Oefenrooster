@@ -25,9 +25,9 @@ public sealed partial class Index : IDisposable
     [Inject] private DayItemRepository _calendarItemRepository { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
-    private ClaimsPrincipal _userClaims;
+    private readonly CancellationTokenSource _cls = new();
+    private ClaimsPrincipal? _userClaims;
     private HubConnection? _hubConnection;
-    private CancellationTokenSource _cls = new();
     private DrogeUser? _user;
     private List<DrogeFunction>? _functions;
     private List<PlannedTraining>? _futureTrainings;
@@ -45,8 +45,8 @@ public sealed partial class Index : IDisposable
         await ConfigureHub();
 
         _users = await _userRepository.GetAllUsersAsync(false, false, true, _cls.Token);
-        _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
-        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, _cls.Token);
+        _vehicles = await _vehicleRepository.GetAllVehiclesAsync(true, _cls.Token);
+        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, true, _cls.Token);
         _functions = await _functionRepository.GetAllFunctionsAsync();
         _dayItems = (await _calendarItemRepository.GetDayItemDashboardAsync(_userId, _cls.Token))?.DayItems;
         StateHasChanged();
@@ -91,6 +91,12 @@ public sealed partial class Index : IDisposable
                     break;
                 case ItemUpdated.AllUsers:
                     _users = await _userRepository.GetAllUsersAsync(false, false, false, _cls.Token);
+                    break;
+                case ItemUpdated.AllVehicles:
+                    _vehicles = await _vehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
+                    break;
+                case ItemUpdated.AllTrainingTypes:
+                    _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
                     break;
             }
         });

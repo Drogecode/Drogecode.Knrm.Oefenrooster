@@ -53,34 +53,6 @@
           }
         }
       },
-      "get": {
-        "tags": [
-          "TrainingTypes"
-        ],
-        "operationId": "GetTrainingTypes",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultiplePlannerTrainingTypesResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultiplePlannerTrainingTypesResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultiplePlannerTrainingTypesResponse"
-                }
-              }
-            }
-          }
-        }
-      },
       "patch": {
         "tags": [
           "TrainingTypes"
@@ -122,6 +94,47 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PatchTrainingTypeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TrainingTypes/{callHub}": {
+      "get": {
+        "tags": [
+          "TrainingTypes"
+        ],
+        "operationId": "GetTrainingTypes",
+        "parameters": [
+          {
+            "name": "callHub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultiplePlannerTrainingTypesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultiplePlannerTrainingTypesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultiplePlannerTrainingTypesResponse"
                 }
               }
             }

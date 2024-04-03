@@ -16,12 +16,12 @@ public class MockTrainingTypesClient : ITrainingTypesClient
         throw new NotImplementedException();
     }
 
-    public async Task<MultiplePlannerTrainingTypesResponse> GetTrainingTypesAsync()
+    public async Task<MultiplePlannerTrainingTypesResponse> GetTrainingTypesAsync(bool callHub)
     {
-        return await GetTrainingTypesAsync(CancellationToken.None);
+        return await GetTrainingTypesAsync(callHub, CancellationToken.None);
     }
 
-    public async Task<MultiplePlannerTrainingTypesResponse> GetTrainingTypesAsync(CancellationToken cancellationToken)
+    public async Task<MultiplePlannerTrainingTypesResponse> GetTrainingTypesAsync(bool callHub, CancellationToken cancellationToken)
     {
         return new MultiplePlannerTrainingTypesResponse
         {

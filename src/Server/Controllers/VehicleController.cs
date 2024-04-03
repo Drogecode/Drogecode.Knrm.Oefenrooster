@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -17,23 +18,31 @@ public class VehicleController : ControllerBase
     private readonly ILogger<VehicleController> _logger;
     private readonly IVehicleService _vehicleService;
     private readonly IAuditService _auditService;
+    private readonly RefreshHub _refreshHub;
 
-    public VehicleController(ILogger<VehicleController> logger, IVehicleService vehicleService, IAuditService auditService)
+    public VehicleController(ILogger<VehicleController> logger, IVehicleService vehicleService, IAuditService auditService, RefreshHub refreshHub)
     {
         _logger = logger;
         _vehicleService = vehicleService;
         _auditService = auditService;
+        _refreshHub = refreshHub;
     }
 
     [HttpGet]
-    [Route("")]
-    public async Task<ActionResult<MultipleVehicleResponse>> GetAll(CancellationToken clt = default)
+    [Route("{callHub:bool}")]
+    public async Task<ActionResult<MultipleVehicleResponse>> GetAll(bool callHub = false, CancellationToken clt = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No object identifier found"));
             var result = await _vehicleService.GetAllVehicles(customerId);
 
+            if (callHub)
+            {
+                _logger.LogInformation("Calling hub AllVehicles");
+                await _refreshHub.SendMessage(userId, ItemUpdated.AllVehicles);
+            }
             return new MultipleVehicleResponse { DrogeVehicles = result };
         }
         catch (Exception ex)
@@ -68,7 +77,7 @@ public class VehicleController : ControllerBase
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No object identifier found"));
             Guid? result = await _vehicleService.PutVehicle(vehicle, customerId, userId, clt);
 
             return result;

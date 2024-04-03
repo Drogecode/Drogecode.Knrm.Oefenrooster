@@ -12,4 +12,6 @@ public enum ItemUpdated
     None = 0,
     FutureTrainings = 1,
     AllUsers = 2,
+    AllVehicles = 3,
+    AllTrainingTypes = 4,
 }
