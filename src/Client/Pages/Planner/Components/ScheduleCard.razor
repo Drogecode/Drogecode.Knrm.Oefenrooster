@@ -6,7 +6,7 @@
 {
     @if (Functions is not null && Vehicles is not null && Planner.PlanUsers?.Any(x => x.Assigned) == true)
     {
-        <CalendarBaseCard ReplaceEmtyName="@ReplaceEmtyName" Width="@Width" MaxWidth="@MaxWidth" MinWidth="@MinWidth" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" OnClickHistory="_showHistory ? OpenHistoryDialog : null!" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" ShowPastBody="ShowPastBody" MoreMessage="@L["Show attendees"]">
+        <CalendarBaseCard ReplaceEmtyName="@ReplaceEmtyName" Width="@Width" MaxWidth="@MaxWidth" MinWidth="@MinWidth" Training="@Planner" OnClickCallback="@OpenScheduleDialog" OnClickSettings="@OpenConfigDialog" OnClickHistory="_showHistory ? @OpenHistoryDialog : null!" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" ShowPastBody="@ShowPastBody" MoreMessage="@L["Show attendees"]">
             @if (ChildContent is not null)
             {
                 @ChildContent
@@ -24,7 +24,7 @@
                         {
                             @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))))
                             {
-                                <MudListItem>@assignedUser.Name@(assignedUser.PlannedFunctionId != assignedUser.UserFunctionId ? $" - {LApp["as"]} {function.Name}" : "")</MudListItem>
+                                <MudListItem OnClick="@OpenScheduleDialog">@assignedUser.Name@(assignedUser.PlannedFunctionId != assignedUser.UserFunctionId ? $" - {LApp["as"]} {function.Name}" : "")</MudListItem>
                             }
                         }
                     }
