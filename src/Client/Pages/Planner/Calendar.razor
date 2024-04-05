@@ -34,7 +34,7 @@
                 {
                     var color = DayItemHelper.DayItemTypeColor(dayItem.Type);
                     <div class="flex gap-1">
-                        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small" />
+                        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@color" Size="Size.Small" />
                         <span>@dayItem.Text</span>
                     </div>
                 }
@@ -54,7 +54,11 @@
         }
         else
         {
-            @foreach (var ev in _events.Where(x => x.Start.Month == _month.Value.Month && x.Start.Year == _month.Value.Year && x.End >= DateTime.Now).OrderBy(x => x.Start))
+            @foreach (var ev in _events.Where(x =>
+                              x.Start.Month == _month.Value.Month &&
+                              x.Start.Year == _month.Value.Year &&
+                              ((x.End.Equals(DateTime.MinValue) && x.Start >= DateTime.Today) || x.End >= DateTime.Today))
+                          .OrderBy(x => x.Start))
             {
                 <div class="flex-1">
                     @if (ev is DrogeCodeCalendarItem)
@@ -70,8 +74,9 @@
                         var dayItem = ((RoosterItemDayCalendarItem)ev).ItemDay;
                         @if (dayItem != null)
                         {
+                            var color = DayItemHelper.DayItemTypeColor(dayItem.Type);
                             <div class="flex gap-1" style="min-width:300px;max-width:600px;">
-                                <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Secondary" Size="Size.Small" />
+                                <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@color" Size="Size.Small" />
                                 <div>@dayItem.Text - @dayItem.DateStart!.Value.ToString("dddd dd MMM")</div>
                             </div>
                         }
