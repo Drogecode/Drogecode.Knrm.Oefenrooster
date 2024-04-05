@@ -29,7 +29,8 @@ public class VehicleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("{callHub:bool}")]
+    [Route("all/{callHub:bool}", Order = 0)]
+    [Route("", Order = 1)]// from version v0.3.39 and older
     public async Task<ActionResult<MultipleVehicleResponse>> GetAll(bool callHub = false, CancellationToken clt = default)
     {
         try
