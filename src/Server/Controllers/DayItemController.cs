@@ -65,7 +65,8 @@ public class DayItemController : ControllerBase
     }
 
     [HttpGet]
-    [Route("all/{count:int}/{skip:int}/{forAllUsers:bool}/{callHub:bool}")]
+    [Route("all/{count:int}/{skip:int}/{forAllUsers:bool}/{callHub:bool}", Order = 0)]
+    [Route("all/{count:int}/{skip:int}/{forAllUsers:bool}", Order = 1)]
     public async Task<ActionResult<GetMultipleDayItemResponse>> GetAllFuture(int count, int skip, bool forAllUsers, bool callHub = false, CancellationToken clt = default)
     {
         try
