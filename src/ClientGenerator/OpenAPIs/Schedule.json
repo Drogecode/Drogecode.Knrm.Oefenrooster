@@ -687,12 +687,23 @@
         }
       }
     },
-    "/api/Schedule/me/pinned": {
+    "/api/Schedule/me/pinned/{callHub}": {
       "get": {
         "tags": [
           "Schedule"
         ],
         "operationId": "GetPinnedTrainingsForUser",
+        "parameters": [
+          {
+            "name": "callHub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",

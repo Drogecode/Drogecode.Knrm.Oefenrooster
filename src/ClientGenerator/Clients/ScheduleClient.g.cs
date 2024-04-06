@@ -145,12 +145,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUserAsync();
+        System.Threading.Tasks.Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUserAsync(bool callHub);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUserAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUserAsync(bool callHub, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -1316,16 +1316,19 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUserAsync()
+        public virtual System.Threading.Tasks.Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUserAsync(bool callHub)
         {
-            return GetPinnedTrainingsForUserAsync(System.Threading.CancellationToken.None);
+            return GetPinnedTrainingsForUserAsync(callHub, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUserAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUserAsync(bool callHub, System.Threading.CancellationToken cancellationToken)
         {
+            if (callHub == null)
+                throw new System.ArgumentNullException("callHub");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -1337,8 +1340,9 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/Schedule/me/pinned"
-                    urlBuilder_.Append("api/Schedule/me/pinned");
+                    // Operation Path: "api/Schedule/me/pinned/{callHub}"
+                    urlBuilder_.Append("api/Schedule/me/pinned/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(callHub, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 

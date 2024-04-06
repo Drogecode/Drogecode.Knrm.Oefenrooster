@@ -50,7 +50,7 @@ public sealed partial class Global : IDisposable
             _name = authState!.User!.Identity!.Name ?? string.Empty;
         }
         _users = await _userRepository.GetAllUsersAsync(true, true, false, _cls.Token);
-        _functions = await _functionRepository.GetAllFunctionsAsync();
+        _functions = await _functionRepository.GetAllFunctionsAsync(false, _cls.Token);
     }
 
     private async Task PatchTrainingToCalendar(bool isChecked)

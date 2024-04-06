@@ -30,9 +30,9 @@ public sealed partial class DayItem : IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        _items = await DayItemClient.GetAllFutureAsync(_count, _skip, true);
+        _items = await DayItemClient.GetAllFutureAsync(_count, _skip, true, false);
         _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
-        _functions = await FunctionRepository.GetAllFunctionsAsync();
+        _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
         _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
     }
 
@@ -58,7 +58,7 @@ public sealed partial class DayItem : IDisposable
         _currentPage = nextPage;
         if (nextPage <= 0) return;
         _skip = (nextPage - 1) * _count;
-        _items = await DayItemClient.GetAllFutureAsync(_count, _skip, true);
+        _items = await DayItemClient.GetAllFutureAsync(_count, _skip, true, false);
         _bussy = false;
         StateHasChanged();
     }
@@ -79,7 +79,7 @@ public sealed partial class DayItem : IDisposable
         if (_bussy) return;
         _bussy = true;
         StateHasChanged();
-        _items = await DayItemClient.GetAllFutureAsync(_count, _skip, true);
+        _items = await DayItemClient.GetAllFutureAsync(_count, _skip, true, false);
         _bussy = false;
         StateHasChanged();
     }

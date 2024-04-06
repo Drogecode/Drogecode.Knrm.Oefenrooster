@@ -14,6 +14,7 @@ using MudBlazor;
 using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard;
+
 public sealed partial class Index : IDisposable
 {
     [Inject] private IStringLocalizer<Index> L { get; set; } = default!;
@@ -38,6 +39,7 @@ public sealed partial class Index : IDisposable
     private List<RoosterItemDay>? _dayItems;
     private string _name = string.Empty;
     private Guid _userId;
+
     protected override async Task OnParametersSetAsync()
     {
         if (!await SetUser())
@@ -47,10 +49,10 @@ public sealed partial class Index : IDisposable
         _users = await _userRepository.GetAllUsersAsync(false, false, true, _cls.Token);
         _vehicles = await _vehicleRepository.GetAllVehiclesAsync(true, _cls.Token);
         _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, true, _cls.Token);
-        _functions = await _functionRepository.GetAllFunctionsAsync();
-        _dayItems = (await _calendarItemRepository.GetDayItemDashboardAsync(_userId, _cls.Token))?.DayItems;
+        _functions = await _functionRepository.GetAllFunctionsAsync(true, _cls.Token);
+        _dayItems = (await _calendarItemRepository.GetDayItemDashboardAsync(_userId, true, _cls.Token))?.DayItems;
         StateHasChanged();
-        _pinnedTrainings = (await _scheduleRepository.GetPinnedTrainingsForUser(_cls.Token))?.Trainings;
+        _pinnedTrainings = (await _scheduleRepository.GetPinnedTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
         StateHasChanged();
         _futureTrainings = (await _scheduleRepository.GetScheduledTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
     }
@@ -70,6 +72,7 @@ public sealed partial class Index : IDisposable
             // Should never happen.
             return false;
         }
+
         _user = await _userRepository.GetCurrentUserAsync();
         return true;
     }
@@ -77,8 +80,8 @@ public sealed partial class Index : IDisposable
     private async Task ConfigureHub()
     {
         _hubConnection = new HubConnectionBuilder()
-                .WithUrl(Navigation.ToAbsoluteUri("/hub/refresh"))
-                .Build();
+            .WithUrl(Navigation.ToAbsoluteUri("/hub/refresh"))
+            .Build();
         _hubConnection.On<ItemUpdated>($"Refresh_{_userId}", async (type) =>
         {
             if (_cls.Token.IsCancellationRequested)
@@ -97,6 +100,15 @@ public sealed partial class Index : IDisposable
                     break;
                 case ItemUpdated.AllTrainingTypes:
                     _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
+                    break;
+                case ItemUpdated.AllFunctions:
+                    _functions = await _functionRepository.GetAllFunctionsAsync(false, _cls.Token);
+                    break;
+                case ItemUpdated.DayItemDashboard:
+                    _dayItems = (await _calendarItemRepository.GetDayItemDashboardAsync(_userId, false, _cls.Token))?.DayItems;
+                    break;
+                case ItemUpdated.PinnedDashboard:
+                    _pinnedTrainings = (await _scheduleRepository.GetPinnedTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
                     break;
             }
         });

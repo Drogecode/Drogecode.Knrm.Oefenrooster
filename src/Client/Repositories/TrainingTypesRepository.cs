@@ -16,8 +16,7 @@ public class TrainingTypesRepository
         _offlineService = offlineService;
     }
 
-    internal async Task<List<PlannerTrainingType>?> GetTrainingTypes(bool forceCache, bool cachedAndReplace,
-        CancellationToken clt = default)
+    internal async Task<List<PlannerTrainingType>?> GetTrainingTypes(bool forceCache, bool cachedAndReplace, CancellationToken clt = default)
     {
         var response = await _offlineService.CachedRequestAsync(string.Format("tra_tp_all"),
             async () => await _trainingTypesClient.GetTrainingTypesAsync(cachedAndReplace, clt),

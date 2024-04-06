@@ -37,12 +37,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetAllFutureAsync(int count, int skip, bool forAllUsers);
+        System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetAllFutureAsync(int count, int skip, bool forAllUsers, bool callHub);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetAllFutureAsync(int count, int skip, bool forAllUsers, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetAllFutureAsync(int count, int skip, bool forAllUsers, bool callHub, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -55,12 +55,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetDashboardAsync();
+        System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetDashboardAsync(bool callHub);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetDashboardAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetDashboardAsync(bool callHub, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -233,15 +233,15 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetAllFutureAsync(int count, int skip, bool forAllUsers)
+        public virtual System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetAllFutureAsync(int count, int skip, bool forAllUsers, bool callHub)
         {
-            return GetAllFutureAsync(count, skip, forAllUsers, System.Threading.CancellationToken.None);
+            return GetAllFutureAsync(count, skip, forAllUsers, callHub, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetAllFutureAsync(int count, int skip, bool forAllUsers, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetAllFutureAsync(int count, int skip, bool forAllUsers, bool callHub, System.Threading.CancellationToken cancellationToken)
         {
             if (count == null)
                 throw new System.ArgumentNullException("count");
@@ -251,6 +251,9 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
             if (forAllUsers == null)
                 throw new System.ArgumentNullException("forAllUsers");
+
+            if (callHub == null)
+                throw new System.ArgumentNullException("callHub");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -263,13 +266,15 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/DayItem/all/{count}/{skip}/{forAllUsers}"
+                    // Operation Path: "api/DayItem/all/{count}/{skip}/{forAllUsers}/{callHub}"
                     urlBuilder_.Append("api/DayItem/all/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(count, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('/');
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(skip, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('/');
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(forAllUsers, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(callHub, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -407,16 +412,19 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetDashboardAsync()
+        public virtual System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetDashboardAsync(bool callHub)
         {
-            return GetDashboardAsync(System.Threading.CancellationToken.None);
+            return GetDashboardAsync(callHub, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetDashboardAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetMultipleDayItemResponse> GetDashboardAsync(bool callHub, System.Threading.CancellationToken cancellationToken)
         {
+            if (callHub == null)
+                throw new System.ArgumentNullException("callHub");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -428,8 +436,9 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/DayItem/dashboard"
-                    urlBuilder_.Append("api/DayItem/dashboard");
+                    // Operation Path: "api/DayItem/dashboard/{callHub}"
+                    urlBuilder_.Append("api/DayItem/dashboard/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(callHub, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 

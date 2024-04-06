@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Diagnostics;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -22,6 +23,7 @@ public class DayItemController : ControllerBase
     private readonly IAuditService _auditService;
     private readonly IUserSettingService _userSettingService;
     private readonly IGraphService _graphService;
+    private readonly RefreshHub _refreshHub;
 
     public DayItemController(
         ILogger<DayItemController> logger,
@@ -29,7 +31,8 @@ public class DayItemController : ControllerBase
         IDayItemService dayItemService,
         IAuditService auditService,
         IUserSettingService userSettingService,
-        IGraphService graphService)
+        IGraphService graphService, 
+        RefreshHub refreshHub)
     {
         _logger = logger;
         _configuration = configuration;
@@ -37,6 +40,7 @@ public class DayItemController : ControllerBase
         _auditService = auditService;
         _userSettingService = userSettingService;
         _graphService = graphService;
+        _refreshHub = refreshHub;
     }
 
     [HttpGet]
@@ -61,8 +65,8 @@ public class DayItemController : ControllerBase
     }
 
     [HttpGet]
-    [Route("all/{count:int}/{skip:int}/{forAllUsers:bool}")]
-    public async Task<ActionResult<GetMultipleDayItemResponse>> GetAllFuture(int count, int skip, bool forAllUsers, CancellationToken clt = default)
+    [Route("all/{count:int}/{skip:int}/{forAllUsers:bool}/{callHub:bool}")]
+    public async Task<ActionResult<GetMultipleDayItemResponse>> GetAllFuture(int count, int skip, bool forAllUsers, bool callHub = false, CancellationToken clt = default)
     {
         try
         {
@@ -75,6 +79,11 @@ public class DayItemController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             result = await _dayItemService.GetAllFutureDayItems(customerId, count, skip, forAllUsers, userId, clt);
+            if (callHub)
+            {
+                _logger.LogInformation("Calling hub AllFutureDayItems");
+                await _refreshHub.SendMessage(userId, ItemUpdated.AllFutureDayItems);
+            }
             return result;
         }
         catch (Exception ex)
@@ -110,8 +119,8 @@ public class DayItemController : ControllerBase
     }
 
     [HttpGet]
-    [Route("dashboard")]
-    public async Task<ActionResult<GetMultipleDayItemResponse>> GetDashboard(CancellationToken clt = default)
+    [Route("dashboard/{callHub:bool}")]
+    public async Task<ActionResult<GetMultipleDayItemResponse>> GetDashboard(bool callHub = false, CancellationToken clt = default)
     {
 
         try
@@ -120,6 +129,11 @@ public class DayItemController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             result = await _dayItemService.GetDayItemDashboard(userId, customerId, clt);
+            if (callHub)
+            {
+                _logger.LogInformation("Calling hub AllFutureDayItems");
+                await _refreshHub.SendMessage(userId, ItemUpdated.DayItemDashboard);
+            }
             return result;
         }
         catch (Exception ex)

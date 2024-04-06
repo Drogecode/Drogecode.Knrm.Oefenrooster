@@ -38,7 +38,7 @@ public sealed partial class Schedule : IDisposable
         else
             _view = ScheduleView.Calendar;
         _users = await _userRepository.GetAllUsersAsync(false, false, false, _cls.Token);
-        _functions = await _functionRepository.GetAllFunctionsAsync();
+        _functions = await _functionRepository.GetAllFunctionsAsync(false, _cls.Token);
         _vehicles = await _vehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
         _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
         if (AuthenticationState is not null)

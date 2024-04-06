@@ -362,8 +362,8 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("me/pinned")]
-    public async Task<ActionResult<GetPinnedTrainingsForUserResponse>> GetPinnedTrainingsForUser(CancellationToken clt = default)
+    [Route("me/pinned/{callHub:bool}")]
+    public async Task<ActionResult<GetPinnedTrainingsForUserResponse>> GetPinnedTrainingsForUser(bool callHub = false, CancellationToken clt = default)
     {
         try
         {
@@ -372,6 +372,11 @@ public class ScheduleController : ControllerBase
             var fromDate = DateTime.UtcNow;
             _logger.LogInformation("Get all pinned trainings for {user}", userId);
             GetPinnedTrainingsForUserResponse result = await _scheduleService.GetPinnedTrainingsForUser(userId, customerId, fromDate, clt);
+            if (callHub)
+            {
+                _logger.LogInformation("Calling hub PinnedDashboard");
+                await _refreshHub.SendMessage(userId, ItemUpdated.PinnedDashboard);
+            }
             return result;
         }
         catch (Exception ex)

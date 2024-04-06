@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Authorize]
@@ -15,11 +16,13 @@ public class FunctionController : ControllerBase
 {
     private readonly ILogger<FunctionController> _logger;
     private readonly IFunctionService _functionService;
+    private readonly RefreshHub _refreshHub;
 
-    public FunctionController(ILogger<FunctionController> logger, IFunctionService functionService)
+    public FunctionController(ILogger<FunctionController> logger, IFunctionService functionService, RefreshHub refreshHub)
     {
         _logger = logger;
         _functionService = functionService;
+        _refreshHub = refreshHub;
     }
 
     [HttpPut]
@@ -41,14 +44,20 @@ public class FunctionController : ControllerBase
     }
 
     [HttpGet]
-    [Route("")]
-    public async Task<ActionResult<MultipleFunctionsResponse>> GetAll(CancellationToken clt = default)
+    [Route("all/{callHub:bool}", Order = 0)]
+    [Route("", Order = 1)]// from version v0.3.41 and older
+    public async Task<ActionResult<MultipleFunctionsResponse>> GetAll(bool callHub = false, CancellationToken clt = default)
     {
         try
         {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _functionService.GetAllFunctions(customerId, clt);
-
+            if (callHub)
+            {
+                _logger.LogInformation("Calling hub AllFunctions");
+                await _refreshHub.SendMessage(userId, ItemUpdated.AllFunctions);
+            }
             return result;
         }
         catch (Exception ex)

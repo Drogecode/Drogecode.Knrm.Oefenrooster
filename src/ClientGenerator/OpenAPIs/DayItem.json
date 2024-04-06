@@ -100,7 +100,7 @@
         }
       }
     },
-    "/api/DayItem/all/{count}/{skip}/{forAllUsers}": {
+    "/api/DayItem/all/{count}/{skip}/{forAllUsers}/{callHub}": {
       "get": {
         "tags": [
           "DayItem"
@@ -131,6 +131,15 @@
             "required": true,
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "callHub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -199,12 +208,23 @@
         }
       }
     },
-    "/api/DayItem/dashboard": {
+    "/api/DayItem/dashboard/{callHub}": {
       "get": {
         "tags": [
           "DayItem"
         ],
         "operationId": "GetDashboard",
+        "parameters": [
+          {
+            "name": "callHub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
