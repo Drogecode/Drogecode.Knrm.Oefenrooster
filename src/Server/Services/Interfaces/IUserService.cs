@@ -10,6 +10,7 @@ public interface IUserService
     Task<bool> UpdateUser(DrogeUser user, Guid userId, Guid customerId);
     Task<UpdateLinkUserUserForUserResponse> UpdateLinkUserUserForUser(UpdateLinkUserUserForUserRequest body, Guid userId, Guid customerId, CancellationToken clt);
     Task<UpdateLinkUserUserForUserResponse> RemoveLinkUserUserForUser(UpdateLinkUserUserForUserRequest body, Guid userId, Guid customerId, CancellationToken clt);
+    Task<bool> PatchLastOnline(Guid userId, Guid? customerId, string? clientVersion, CancellationToken clt);
     Task<bool> PatchLastOnline(Guid userId, CancellationToken clt);
     Task<bool> MarkUsersDeleted(List<DrogeUser> existingUsers, Guid userId, Guid customerId);
 }

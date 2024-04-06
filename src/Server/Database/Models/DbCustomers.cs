@@ -1,5 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Database.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
@@ -29,6 +28,7 @@ public class DbCustomers
     public ICollection<DbUserDefaultGroup>? UserDefaultGroups { get; set; }
     public ICollection<DbUserDefaultAvailable>? UserDefaultAvailables { get; set; }
     public ICollection<DbUserHolidays>? UserHolidays { get; set; }
+    public ICollection<DbUserOnVersion>? UserOnVersions { get; set; }
     public ICollection<DbUserSettings>? UserSettings { get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
     public ICollection<DbRoosterDefault>? RoosterDefaults { get; set; }

@@ -33,5 +33,5 @@ services:
       Linux64:/opt/rider-debugger"
     - "C:\\Users\\Taco\\AppData\\Local\\JetBrains\\Installations\\Rider233\\bin:/etc/opt/rider-debugger/backend-log.xml"
     - "C:\\Users\\Taco\\AppData\\Local\\JetBrains\\Rider2023.3\\log\\DebuggerWorker\\\
-      JetBrains.Debugger.Worker.2024_4_05_17_35_17:/var/opt/rider-debugger:rw"
+      JetBrains.Debugger.Worker.2024_4_06_13_05_40:/var/opt/rider-debugger:rw"
     working_dir: "/app"

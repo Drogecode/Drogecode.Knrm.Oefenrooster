@@ -1,4 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Database.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;

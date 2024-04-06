@@ -73,6 +73,7 @@ public class ConfigurationController : ControllerBase
             var sw = Stopwatch.StartNew();
 
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var response = new VersionDetailResponse
             {
                 NewVersionAvailable = string.Compare(DefaultSettingsHelper.CURRENT_VERSION, clientVersion, StringComparison.OrdinalIgnoreCase) != 0,
@@ -80,7 +81,7 @@ public class ConfigurationController : ControllerBase
                 UpdateVersion = DefaultSettingsHelper.UPDATE_VERSION,
                 ButtonVersion = DefaultSettingsHelper.BUTTON_VERSION,
             };
-            await _userService.PatchLastOnline(userId, clt);
+            await _userService.PatchLastOnline(userId, customerId, clientVersion, clt);
             sw.Stop();
             response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
             return Ok(response);

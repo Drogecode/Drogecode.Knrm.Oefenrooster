@@ -1,9 +1,7 @@
-﻿using Drogecode.Knrm.Oefenrooster.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database
@@ -20,6 +18,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbUserDefaultGroup> UserDefaultGroups { get; set; }
         public DbSet<DbUserDefaultAvailable> UserDefaultAvailables { get; set; }
         public DbSet<DbUserHolidays> UserHolidays { get; set; }
+        public DbSet<DbUserOnVersion> UserOnVersions { get; set; }
         public DbSet<DbUserSettings> UserSettings { get; set; }
         public DbSet<DbCustomers> Customers { get; set; }
         public DbSet<DbCustomerSettings> CustomerSettings { get; set; }
@@ -101,6 +100,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserHolidays>().HasOne(p => p.Customer).WithMany(g => g.UserHolidays).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserHolidays>().HasOne(p => p.User).WithMany(g => g.UserHolidays).HasForeignKey(s => s.UserId).IsRequired();
 
+            //UserOnVersions
+            modelBuilder.Entity<DbUserOnVersion>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserOnVersion>().HasOne(p => p.Customer).WithMany(g => g.UserOnVersions).HasForeignKey(s => s.CustomerId).IsRequired();
+            modelBuilder.Entity<DbUserOnVersion>().HasOne(p => p.User).WithMany(g => g.UserOnVersions).HasForeignKey(s => s.UserId).IsRequired();
+            
             //UserSettings
             modelBuilder.Entity<DbUserSettings>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbUserSettings>().HasOne(p => p.Customer).WithMany(g => g.UserSettings).HasForeignKey(s => s.CustomerId).IsRequired();
