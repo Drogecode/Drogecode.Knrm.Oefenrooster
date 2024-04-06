@@ -727,6 +727,36 @@
           }
         }
       }
+    },
+    "/api/Schedule/me/pinned": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "GetPinnedTrainingsForUser",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPinnedTrainingsForUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPinnedTrainingsForUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPinnedTrainingsForUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

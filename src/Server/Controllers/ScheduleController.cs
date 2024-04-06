@@ -362,7 +362,8 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("me/pinned/{callHub:bool}")]
+    [Route("me/pinned/{callHub:bool}", Order = 0)]
+    [Route("me/pinned", Order = 1)]
     public async Task<ActionResult<GetPinnedTrainingsForUserResponse>> GetPinnedTrainingsForUser(bool callHub = false, CancellationToken clt = default)
     {
         try
