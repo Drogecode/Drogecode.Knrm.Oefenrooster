@@ -132,7 +132,7 @@ public class DayItemController : ControllerBase
             result = await _dayItemService.GetDayItemDashboard(userId, customerId, clt);
             if (callHub)
             {
-                _logger.LogInformation("Calling hub AllFutureDayItems");
+                _logger.LogInformation("Calling hub DayItemDashboard");
                 await _refreshHub.SendMessage(userId, ItemUpdated.DayItemDashboard);
             }
             return result;

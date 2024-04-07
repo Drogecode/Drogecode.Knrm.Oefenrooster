@@ -23,7 +23,7 @@ public class TrainingTypesRepository
             new ApiCachedRequest
                 { OneCallPerSession = true, ForceCache = forceCache, CachedAndReplace = cachedAndReplace },
             clt: clt);
-        return response.PlannerTrainingTypes?.ToList();
+        return response?.PlannerTrainingTypes?.ToList();
     }
 
     internal async Task<PutTrainingTypeResponse> Post(PlannerTrainingType trainingType, CancellationToken clt = default)

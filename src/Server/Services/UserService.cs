@@ -4,6 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using System.Diagnostics;
 using System.Runtime.Intrinsics.X86;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -11,11 +12,13 @@ public class UserService : IUserService
 {
     private readonly ILogger<UserService> _logger;
     private readonly DataContext _database;
+    private readonly IMemoryCache _memoryCache;
 
-    public UserService(ILogger<UserService> logger, DataContext database)
+    public UserService(ILogger<UserService> logger, DataContext database, IMemoryCache memoryCache)
     {
         _logger = logger;
         _database = database;
+        _memoryCache = memoryCache;
     }
 
     public async Task<MultipleDrogeUsersResponse> GetAllUsers(Guid customerId, bool includeHidden, bool includeLastLogin, CancellationToken clt)
@@ -174,11 +177,17 @@ public class UserService : IUserService
 
     public async Task<bool> PatchLastOnline(Guid userId, Guid? customerId, string? clientVersion, CancellationToken clt)
     {
-        var userObj = await _database.Users.Where(u => u.Id == userId).Include(x => x.UserOnVersions).FirstOrDefaultAsync(clt);
+        var cacheKey = "LastOnline_" + userId;
+        var lastUpdated = _memoryCache.Get<DateTime?>(cacheKey);
+        if (lastUpdated is not null && lastUpdated.Value.AddMinutes(1).CompareTo(DateTime.UtcNow) >= 0) return false;
+        var userObj = await _database.Users.Where(u => u.Id == userId)
+            .Include(x => x.UserOnVersions!.Where(y => clientVersion != null && y.Version == clientVersion))
+            .FirstOrDefaultAsync(clt);
         if (userObj is null || userObj.LastLogin.AddMinutes(1).CompareTo(DateTime.UtcNow) >= 0) return false;
         {
             userObj.LastLogin = DateTime.UtcNow;
             _database.Users.Update(userObj);
+            _memoryCache.Set(cacheKey, DateTime.UtcNow, DateTimeOffset.Now.AddMinutes(1));
             if (customerId is null || clientVersion is null) return (await _database.SaveChangesAsync(clt) > 0);
             // Remember for multiple versions, because a user can be logged in on multiple devices running on different versions.
             // PWA can be on any version including years old versions.
@@ -196,14 +205,13 @@ public class UserService : IUserService
                     UserId = userId,
                     CustomerId = customerId.Value,
                     Version = clientVersion,
-                    LastSeenOnThisVersion =DateTime.UtcNow
+                    LastSeenOnThisVersion = DateTime.UtcNow
                 };
                 _database.UserOnVersions.Add(newUserOnVersion);
             }
 
             return (await _database.SaveChangesAsync(clt) > 0);
         }
-
     }
 
     public async Task<AddUserResponse> AddUser(DrogeUser user, Guid customerId)
