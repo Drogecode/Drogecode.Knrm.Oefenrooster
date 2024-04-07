@@ -58,8 +58,8 @@
                 {
                     @foreach (var user in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id))
                     {
-                        <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
-                            <MudItem xs="12" sm="@(_colmn1 * 2)" md="@_colmn1">
+                        <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="py-2">
+                            <MudItem Class="order-1" xs="12" sm="@(_colmn1 * 2)" md="@_colmn1">
                                 @if (_authEditOtherUser || user.UserId.Equals(_currentUserId))
                                 {
                                     <MudButtonGroup Variant="Variant.Text">
@@ -68,11 +68,11 @@
                                     </MudButtonGroup>
                                 }
                             </MudItem>
-                            <MudItem xs="12" sm="@(_colmn2 * 2)" md="@_colmn2">
+                            <MudItem Class="order-3" xs="12" sm="@(_colmn2 * 2)" md="@_colmn2">
                                 <MudText Typo="Typo.body1">@user.Name</MudText>
                             </MudItem>
-                            <MudItem xs="12" sm="@(_colmn3 * 2)" md="@_colmn3">
-                                <MudText Typo="Typo.body2" @onclick="() => { if (!_canEdit) return; user.ClickedFunction = !user.ClickedFunction; }">
+                            <MudItem Class="order-4" xs="12" sm="@(_colmn3 * 2)" md="@_colmn3">
+                                <MudText Typo="Typo.body1" @onclick="() => { if (!_canEdit) return; user.ClickedFunction = !user.ClickedFunction; }">
                                     @Functions.FirstOrDefault(x => x.Id == user.UserFunctionId)?.Name
                                 </MudText>
                                 @if (user.ClickedFunction)
@@ -87,7 +87,7 @@
                             </MudItem>
                             @if (_vehicleInfoForThisTraining != null && _vehicleCount > 0)
                             {
-                                <MudItem xs="12" sm="@(_colmn4 * 2)" md="@_colmn4">
+                                <MudItem Class="order-5" xs="12" sm="@(_colmn4 * 2)" md="@_colmn4">
                                     @if (_vehicleCount > 1)
                                     {
                                         @if (user.VehicleId == null && _vehicleInfoForThisTraining.Any(x => x.IsDefault))
@@ -119,9 +119,9 @@
                             }
                             @if (user.PlannedFunctionId != Guid.Empty && user.UserFunctionId != user.PlannedFunctionId)
                             {
-                                <MudItem xs="12" sm="@(_colmn5 * 2)" md="@_colmn5">
-                                    <MudText Typo="Typo.body2">
-                                        @($"{LApp["as"]} {Functions.FirstOrDefault(x => x.Id == user.PlannedFunctionId)?.Name}")
+                                <MudItem Class="max-md:order-2 md:order-6" xs="12" sm="@(_colmn5 * 2)" md="@_colmn5">
+                                    <MudText Typo="Typo.body1">
+                                        @($"{LApp["As"]} {Functions.FirstOrDefault(x => x.Id == user.PlannedFunctionId)?.Name}")
                                     </MudText>
                                 </MudItem>
                             }

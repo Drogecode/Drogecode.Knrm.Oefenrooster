@@ -12,6 +12,7 @@ using System.Security.Claims;
 using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
+
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
@@ -71,14 +72,16 @@ public class ScheduleController : ControllerBase
 
     [HttpGet]
     [Route("all/period/{forMonth:int}/{yearStart:int}/{monthStart:int}/{dayStart:int}/{yearEnd:int}/{monthEnd:int}/{dayEnd:int}/{includeUnAssigned:bool}")]
-    public async Task<ActionResult<ScheduleForAllResponse>> ForAll(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, bool includeUnAssigned, CancellationToken clt = default)
+    public async Task<ActionResult<ScheduleForAllResponse>> ForAll(int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, bool includeUnAssigned,
+        CancellationToken clt = default)
     {
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var countPerUser = User.IsInRole(AccessesNames.AUTH_users_counter);
-            ScheduleForAllResponse result = await _scheduleService.ScheduleForAllAsync(userId, customerId, forMonth, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, countPerUser, includeUnAssigned, clt);
+            ScheduleForAllResponse result =
+                await _scheduleService.ScheduleForAllAsync(userId, customerId, forMonth, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, countPerUser, includeUnAssigned, clt);
             return result;
         }
         catch (Exception ex)
@@ -160,6 +163,7 @@ public class ScheduleController : ControllerBase
                 await _auditService.Log(userId, AuditType.PatchTraining, customerId, "Failed", patchedTraining.TrainingId, patchedTraining.Name);
                 return BadRequest();
             }
+
             await _userService.PatchLastOnline(userId, clt);
             clt = CancellationToken.None;
             await PatchTrainingCalenderUsers(patchedTraining.TrainingId!.Value, customerId, clt);
@@ -247,9 +251,12 @@ public class ScheduleController : ControllerBase
             var result = await _scheduleService.PatchScheduleForUserAsync(userId, customerId, training, clt);
             if (result.Success && result.PatchedTraining?.Assigned == true)
             {
-                await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = userId, Assigned = result.PatchedTraining.Assigned, Availabilty = result.PatchedTraining.Availabilty, SetBy = result.PatchedTraining.SetBy }), training?.TrainingId);
+                await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
+                    JsonSerializer.Serialize(new AuditAssignedUser
+                        { UserId = userId, Assigned = result.PatchedTraining.Assigned, Availabilty = result.PatchedTraining.Availabilty, SetBy = result.PatchedTraining.SetBy }), training?.TrainingId);
                 await _refreshHub.SendMessage(userId, ItemUpdated.FutureTrainings);
             }
+
             await _userService.PatchLastOnline(userId, clt);
             return result;
         }
@@ -272,7 +279,9 @@ public class ScheduleController : ControllerBase
             if (!inRoleEditOther && !userId.Equals(body.User?.UserId))
                 return Unauthorized();
             PatchAssignedUserResponse result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
-            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.User?.UserId, Assigned = body?.User?.Assigned, Availabilty = result.Availabilty, SetBy = result.SetBy }), body?.TrainingId);
+            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
+                JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.User?.UserId, Assigned = body?.User?.Assigned, Availabilty = result.Availabilty, SetBy = result.SetBy }),
+                body?.TrainingId);
             await _userService.PatchLastOnline(userId, clt);
             if (result.Success && body?.User?.UserId is not null)
             {
@@ -280,8 +289,10 @@ public class ScheduleController : ControllerBase
                 await ToOutlookCalendar(body.User.UserId, body.TrainingId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
                 await _refreshHub.SendMessage(body.User.UserId, ItemUpdated.FutureTrainings);
             }
+
             return result;
         }
+        catch (OperationCanceledException) { return Ok(); }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in PatchAssignedUser");
@@ -301,16 +312,19 @@ public class ScheduleController : ControllerBase
             if (!inRoleEditOther && !userId.Equals(body.UserId))
                 return Unauthorized();
             var result = await _scheduleService.PutAssignedUserAsync(userId, customerId, body, clt);
-            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId, JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.UserId, Assigned = body?.Assigned, Availabilty = result.Availabilty, SetBy = result.SetBy }), body?.TrainingId);
+            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
+                JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.UserId, Assigned = body?.Assigned, Availabilty = result.Availabilty, SetBy = result.SetBy }), body?.TrainingId);
             await _userService.PatchLastOnline(userId, clt);
             if (result.Success && body?.UserId is not null)
             {
                 clt = CancellationToken.None;
-                await ToOutlookCalendar(body.UserId.Value, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt); 
+                await ToOutlookCalendar(body.UserId.Value, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
                 await _refreshHub.SendMessage(body.UserId.Value, ItemUpdated.FutureTrainings);
             }
+
             return result;
         }
+        catch (OperationCanceledException) { return Ok(); }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in PutAssignedUser");
@@ -333,8 +347,10 @@ public class ScheduleController : ControllerBase
                 _logger.LogInformation("Calling hub futureTrainings");
                 await _refreshHub.SendMessage(userId, ItemUpdated.FutureTrainings);
             }
+
             return result;
         }
+        catch (OperationCanceledException) { return Ok(); }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in GetScheduledTrainingsForUser");
@@ -354,6 +370,7 @@ public class ScheduleController : ControllerBase
             GetScheduledTrainingsForUserResponse result = await _scheduleService.GetScheduledTrainingsForUser(id, customerId, null, clt);
             return result;
         }
+        catch (OperationCanceledException) { return Ok(); }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in AllTrainingsForUser");
@@ -378,8 +395,10 @@ public class ScheduleController : ControllerBase
                 _logger.LogInformation("Calling hub PinnedDashboard");
                 await _refreshHub.SendMessage(userId, ItemUpdated.PinnedDashboard);
             }
+
             return result;
         }
+        catch (OperationCanceledException) { return Ok(); }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in GetPinnedTrainingsForUser");
@@ -416,6 +435,7 @@ public class ScheduleController : ControllerBase
                 await PatchAssignedUser(body, clt);
                 await _refreshHub.SendMessage(user.UserId, ItemUpdated.FutureTrainings);
             }
+
             var result = await _scheduleService.DeleteTraining(userId, customerId, id, clt);
             return result;
         }
@@ -426,7 +446,8 @@ public class ScheduleController : ControllerBase
         }
     }
 
-    private async Task ToOutlookCalendar(Guid planUserId, Guid? trainingId, bool assigned, TrainingAdvance? training, Guid currentUserId, Guid customerId, Guid? availableId, string? calendarEventId, CancellationToken clt)
+    private async Task ToOutlookCalendar(Guid planUserId, Guid? trainingId, bool assigned, TrainingAdvance? training, Guid currentUserId, Guid customerId, Guid? availableId, string? calendarEventId,
+        CancellationToken clt)
     {
         try
         {
@@ -445,6 +466,7 @@ public class ScheduleController : ControllerBase
                     _logger.LogWarning("Failed to set a training for trainingId {trainingId}", trainingId);
                     return;
                 }
+
                 _graphService.InitializeGraph();
                 if (string.IsNullOrEmpty(calendarEventId))
                 {
@@ -455,12 +477,15 @@ public class ScheduleController : ControllerBase
                             await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, eventResult.Id, clt);
                     }
                     else
-                        _logger.LogWarning("text is null or empty for {customerId} {planUserId} {trainingId} {assigned} {currentUserId} {availableId} {calendarEventId} and training is {trainingNullOrNot}", customerId, planUserId, trainingId, assigned, currentUserId, availableId, calendarEventId, training is null ? "null" : "not null");
+                        _logger.LogWarning(
+                            "text is null or empty for {customerId} {planUserId} {trainingId} {assigned} {currentUserId} {availableId} {calendarEventId} and training is {trainingNullOrNot}",
+                            customerId, planUserId, trainingId, assigned, currentUserId, availableId, calendarEventId, training is null ? "null" : "not null");
                 }
                 else
                 {
                     await _graphService.PatchCalender(planUserId, calendarEventId, text, training.DateStart, training.DateEnd, !training.ShowTime);
-                    await _auditService.Log(currentUserId, AuditType.PatchTraining, customerId, $"Preventing duplicate event '{type?.TrainingType?.Name}' on '{training?.DateStart.ToString("o")}' : '{training?.DateEnd.ToString("o")}'");
+                    await _auditService.Log(currentUserId, AuditType.PatchTraining, customerId,
+                        $"Preventing duplicate event '{type?.TrainingType?.Name}' on '{training?.DateStart.ToString("o")}' : '{training?.DateEnd.ToString("o")}'");
                 }
             }
             else if (!string.IsNullOrEmpty(calendarEventId))
@@ -472,7 +497,8 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in ToOutlookCalendar {customerId} {planUserId} {trainingId} {assigned} {currentUserId} {availableId} {calendarEventId} and training is {trainingNullOrNot}", customerId, planUserId, trainingId, assigned, currentUserId, availableId, calendarEventId, training is null ? "null" : "not null");
+            _logger.LogError(ex, "Exception in ToOutlookCalendar {customerId} {planUserId} {trainingId} {assigned} {currentUserId} {availableId} {calendarEventId} and training is {trainingNullOrNot}",
+                customerId, planUserId, trainingId, assigned, currentUserId, availableId, calendarEventId, training is null ? "null" : "not null");
         }
     }
 }
