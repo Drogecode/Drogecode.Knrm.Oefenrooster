@@ -5,7 +5,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
 
 internal static class UserMapper
 {
-    public static DrogeUser ToSharedUser(this DbUsers dbUsers)
+    public static DrogeUser ToSharedUser(this DbUsers dbUsers, bool includeLastLogin)
     {
         var user = new DrogeUser
         {
@@ -32,6 +32,7 @@ internal static class UserMapper
                 });
             }
         }
+
         if (dbUsers.LinkedUserAsB?.Count > 0)
         {
             user.LinkedAsB = [];
@@ -44,6 +45,17 @@ internal static class UserMapper
                 });
             }
         }
+
+        if (dbUsers.UserOnVersions?.Count > 0)
+        {
+            user.Versions = string.Empty;
+            foreach (var version in dbUsers.UserOnVersions.OrderByDescending(x => x.LastSeenOnThisVersion))
+            {
+                if (version.LastSeenOnThisVersion.AddDays(31).CompareTo(dbUsers.LastLogin) >= 0)
+                    user.Versions += version.Version + " ";
+            }
+        }
+
         return user;
     }
 }

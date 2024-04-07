@@ -39,7 +39,7 @@ else if (_specialDatesUpdated == false)
 
 @if (_settingTrainingToCalendar is not null)
 {
-    <MudSwitch Label="setting training to calendar" Color="Color.Primary" T="bool" Checked="@_settingTrainingToCalendar.Value" CheckedChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))" />
+    <MudSwitch Label="setting training to calendar" Color="Color.Primary" T="bool" Checked="@_settingTrainingToCalendar.Value" CheckedChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))"/>
 }
 
 @if (_users != null && _functions != null)
@@ -52,8 +52,9 @@ else if (_specialDatesUpdated == false)
                 {
                     <MudListItem>
                         <div class="flex space-x-4">
-                            <div>@user.Name</div>
-                            <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin" />
+                            <p>@user.Name</p>
+                            <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin"/>
+                            <p class="text-gray-400/25">@user.Versions</p>
                         </div>
                     </MudListItem>
                 }
@@ -69,10 +70,11 @@ else if (_specialDatesUpdated == false)
                     <MudText>@function.Name</MudText>
                     @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id).OrderBy(x => x.Name))
                     {
-                        <MudListItem OnClick="()=>ChangeUser(user)">
+                        <MudListItem OnClick="() => ChangeUser(user)">
                             <div class="flex space-x-4">
-                                <div>@user.Name</div>
-                                <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin" />
+                                <p>@user.Name</p>
+                                <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin"/>
+                                <p class="text-gray-400/25">@user.Versions</p>
                             </div>
                         </MudListItem>
                     }

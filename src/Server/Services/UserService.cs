@@ -29,11 +29,12 @@ public class UserService : IUserService
             .Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.IsActive))
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
             .ThenInclude(x => x.UserB)
+            .Include(x=>x.UserOnVersions!.Where(y=> includeLastLogin && y.LastSeenOnThisVersion.CompareTo(DateTime.UtcNow.AddYears(-1)) >= 0))
             .OrderBy(x => x.Name)
-            .ToListAsync();
+            .ToListAsync(clt);
         foreach (var dbUser in dbUsers)
         {
-            result.DrogeUsers.Add(dbUser.ToSharedUser());
+            result.DrogeUsers.Add(dbUser.ToSharedUser(includeLastLogin));
         }
 
         sw.Stop();
@@ -48,7 +49,7 @@ public class UserService : IUserService
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
             .Include(x => x.LinkedUserAsB!.Where(y => y.DeletedOn == null))
             .Where(u => u.Id == userId).FirstOrDefaultAsync();
-        return userObj?.ToSharedUser();
+        return userObj?.ToSharedUser(false);
     }
 
     public async Task<DrogeUser?> GetOrSetUserFromDb(Guid userId, string userName, string userEmail, Guid customerId, bool setLastOnline)
@@ -92,7 +93,7 @@ public class UserService : IUserService
             await _database.SaveChangesAsync();
         }
 
-        return userObj?.ToSharedUser();
+        return userObj?.ToSharedUser(false);
     }
 
     public async Task<bool> UpdateUser(DrogeUser user, Guid userId, Guid customerId)
