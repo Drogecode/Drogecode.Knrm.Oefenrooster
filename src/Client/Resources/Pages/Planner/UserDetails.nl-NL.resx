@@ -141,4 +141,7 @@
   <data name="Trainings for {0}" xml:space="preserve">
     <value>Oefeningen voor {0}</value>
   </data>
+  <data name="User number" xml:space="preserve">
+    <value>Bemannings nummer</value>
+  </data>
 </root>

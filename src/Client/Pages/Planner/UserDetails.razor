@@ -11,7 +11,7 @@
                     @foreach (var training in _trainings.Trainings.OrderByDescending(x => x.DateStart))
                     {
                         <div class="flex-1">
-                            <IndexCard MinWidth="300px" MaxWidth="600px" User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" />
+                            <IndexCard MinWidth="300px" MaxWidth="600px" User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles"/>
                         </div>
                     }
                 </MudPaper>
@@ -36,14 +36,16 @@
             </DrogeCodeMudTabPanel>
             <AuthorizeView Roles="@AccessesNames.AUTH_users_settigns">
                 <DrogeCodeMudTabPanel Text="@L["Settings"]">
-                    <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" Value="_user.UserFunctionId" ValueChanged="UserFunctionChanged" Disabled="@_user.RoleFromSharePoint">
-                        @foreach (var function in _functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
-                        {
-                            <MudSelectItem T="Guid?" Value="@function.Id">@function.Name</MudSelectItem>
-                        }
-                    </MudSelect>
-                    <SelectMultipleUsers Users="_users" Functions="_functions" Label="@L["Buddy"]" Selection="_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="false" ReadOnly="_updatingSelection" />
-                    <MudNumericField T="int?" Value="_user.Nr" ValueChanged="UserNumberChanged" />
+                    <MudPaper Class="pa-4" MaxWidth="500px">
+                        <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" Value="_user.UserFunctionId" ValueChanged="UserFunctionChanged" Disabled="@_user.RoleFromSharePoint">
+                            @foreach (var function in _functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
+                            {
+                                <MudSelectItem T="Guid?" Value="@function.Id">@function.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <SelectMultipleUsers Users="_users" Functions="_functions" Label="@L["Buddy"]" Selection="_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="false" ReadOnly="_updatingSelection"/>
+                        <MudNumericField T="int?" Value="_user.Nr" Label="@L["User number"]" ValueChanged="UserNumberChanged"/>
+                    </MudPaper>
                 </DrogeCodeMudTabPanel>
             </AuthorizeView>
         </DrogeCodeMudTabs>
@@ -51,8 +53,8 @@
 }
 else
 {
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
 }
