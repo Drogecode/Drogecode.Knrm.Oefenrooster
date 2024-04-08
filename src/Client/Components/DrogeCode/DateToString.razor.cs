@@ -12,8 +12,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode
         [Parameter] public DateTime? DateTimeLocal { get; set; }
         [Parameter] public bool ShowDayOfWeek { get; set; }
         [Parameter] public bool ShowTime { get; set; }
-        [Parameter] public bool? ShowDate { get; set; }
-        private bool _showDate = true;
+        [Parameter] public bool ShowDate { get; set; } = true;
         public DateTime DateTimeNotNull { get; set; }
         public string DateStringFormat { get; set; } = string.Empty;
         public string DatePrefix { get; set; } = string.Empty;
@@ -21,38 +20,34 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode
         protected override void OnParametersSet()
         {
             DateTimeNotNull = DateTimeUtc?.ToLocalTime() ?? DateTimeLocal ?? DateTime.MinValue;
-            if (ShowDate == null)
-                _showDate = DateTimeNotNull.Date.CompareTo(DateTime.Today) != 0;
-            else
-                _showDate = (bool)ShowDate;
             SetDatePrefix();
             SetDateStringFormat();
         }
 
         private void SetDatePrefix()
         {
-            if (!_showDate) return;
+            if (!ShowDate) return;
             var today = DateTime.Today;
-            if (_showDate && DateTimeNotNull.Date.CompareTo(today.AddDays(-1)) == 0)
+            if (ShowDate && DateTimeNotNull.Date.CompareTo(today.AddDays(-1)) == 0)
                 DatePrefix = L["Yesterday"];
-            else if (_showDate && DateTimeNotNull.Date.CompareTo(today.AddDays(0)) == 0)
+            else if (ShowDate && DateTimeNotNull.Date.CompareTo(today.AddDays(0)) == 0)
                 DatePrefix = L["Today"];
-            else if (_showDate && DateTimeNotNull.Date.CompareTo(today.AddDays(1)) == 0)
+            else if (ShowDate && DateTimeNotNull.Date.CompareTo(today.AddDays(1)) == 0)
                 DatePrefix = L["Tomorrow"];
             if (!string.IsNullOrEmpty(DatePrefix))
-                _showDate = false;
+                ShowDate = false;
         }
 
         private void SetDateStringFormat()
         {
             var dsFormat = new StringBuilder();
 
-            if (_showDate && ShowDayOfWeek)
+            if (ShowDate && ShowDayOfWeek)
                 dsFormat.Append("dddd ");
 
-            if (_showDate && DateTimeNotNull.Year == DateTime.Today.Year)
+            if (ShowDate && DateTimeNotNull.Year == DateTime.Today.Year)
                 dsFormat.Append("dd MMM");
-            else if (_showDate)
+            else if (ShowDate)
                 dsFormat.Append("dd MMM yyyy");
 
             if (ShowTime)

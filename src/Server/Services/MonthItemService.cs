@@ -51,7 +51,7 @@ public class MonthItemService : IMonthItemService
         var sw = Stopwatch.StartNew();
         var now = DateTime.UtcNow;
         var dbCall = _database.RoosterItemMonths.Where(x => x.CustomerId == customerId && x.DeletedOn == null && (includeExpired || ((x.Year == null || x.Year == 0 || x.Year > now.Year || (x.Year == now.Year && x.Month >= now.Month)))));
-        var monthItems = await dbCall.Skip(skip).Take(take).Select(DbSelectItem()).OrderBy(x => x.Year).ThenBy(x => x.Month).ThenBy(x => x.Order).ToListAsync(clt);
+        var monthItems = await dbCall.Select(DbSelectItem()).OrderBy(x => x.Year).ThenBy(x => x.Month).ThenBy(x => x.Order).Skip(skip).Take(take).ToListAsync(clt);
         var result = new GetMultipleMonthItemResponse
         {
             MonthItems = monthItems,

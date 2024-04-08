@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
@@ -27,11 +28,11 @@ public class DayItemRepository
         return response;
     }
 
-    public async Task<GetMultipleDayItemResponse?> GetDayItemDashboardAsync(Guid? userId, CancellationToken clt)
+    public async Task<GetMultipleDayItemResponse?> GetDayItemDashboardAsync(Guid? userId, bool cachedAndReplace, CancellationToken clt)
     {
         var response = await _offlineService.CachedRequestAsync(string.Format(DAYITEMSDASHBOARD, userId),
-            async () => await _dayItemClient.GetDashboardAsync(clt),
-            clt: clt);
+            async () => await _dayItemClient.GetDashboardAsync(cachedAndReplace, clt),
+           new ApiCachedRequest{CachedAndReplace = cachedAndReplace}, clt);
         return response;
     }
 }

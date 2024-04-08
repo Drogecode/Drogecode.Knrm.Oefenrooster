@@ -81,6 +81,47 @@
           }
         }
       }
+    },
+    "/api/Function/all/{callHub}": {
+      "get": {
+        "tags": [
+          "Function"
+        ],
+        "operationId": "GetAll",
+        "parameters": [
+          {
+            "name": "callHub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleFunctionsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleFunctionsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleFunctionsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

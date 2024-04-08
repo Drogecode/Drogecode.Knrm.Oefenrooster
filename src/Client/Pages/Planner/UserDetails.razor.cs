@@ -30,10 +30,10 @@ public sealed partial class UserDetails
     private bool _updatingSelection = false;
     protected override async Task OnParametersSetAsync()
     {
-        _users = await _userRepository.GetAllUsersAsync(false, false, _cls.Token);
-        _functions = await _functionRepository.GetAllFunctionsAsync();
-        _vehicles = await _vehicleRepository.GetAllVehiclesAsync();
-        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, _cls.Token);
+        _users = await _userRepository.GetAllUsersAsync(false, false, false, _cls.Token);
+        _functions = await _functionRepository.GetAllFunctionsAsync(false, _cls.Token);
+        _vehicles = await _vehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
+        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
         if (Id is not null)
         {
             _user = await _userRepository.GetById(Id.Value, false);

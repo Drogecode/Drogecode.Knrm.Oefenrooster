@@ -55,13 +55,13 @@ public class OfflineService : IOfflineService
         }
     }
 
-    public async Task<TRes> CachedRequestAsync<TRes>(string cacheKey, Func<Task<TRes>> function, ApiCachedRequest? request = null, CancellationToken clt = default)
+    public async Task<TRes?> CachedRequestAsync<TRes>(string cacheKey, Func<Task<TRes>> function, ApiCachedRequest? request = null, CancellationToken clt = default)
     {
         try
         {
             request ??= new ApiCachedRequest();
             if (!Offline && request.CachedAndReplace)
-                Task.Run(function);
+                _ = Task.Run(function);
 
             if ((request.CachedAndReplace || request.OneCallPerSession) && !request.ForceCache)
             {
@@ -88,11 +88,20 @@ public class OfflineService : IOfflineService
             DebugHelper.WriteLine(ex);
         }
 
-        var cacheResult = await _localStorageExpireService.GetItemAsync<TRes>(cacheKey, clt) ?? Activator.CreateInstance<TRes>();
-        if (cacheResult is BaseResponse response)
+        try
         {
-            response.Offline = true;
+            var cacheResult = (await _localStorageExpireService.GetItemAsync<TRes?>(cacheKey, clt));
+            cacheResult ??= Activator.CreateInstance<TRes>();
+            if (cacheResult is BaseResponse response)
+            {
+                response.Offline = true;
+            }
+            return cacheResult;
         }
-        return cacheResult;
+        catch (Exception ex)
+        {
+            DebugHelper.WriteLine(ex);
+        }
+        return default(TRes);
     }
 }

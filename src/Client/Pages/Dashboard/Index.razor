@@ -13,11 +13,11 @@
 <MudPaper Elevation="0" Class="p-2">
     <DrogeCodeMudTabs Rounded="true">
         <DrogeCodeMudTabPanel Text="@L["Planner"]">
-            @if (_user is not null)
+            @if (_name is not null)
             {
                 <div class="inline-flex">
-                    <MudText Typo="Typo.h5">Welkom @_user.Name </MudText>
-                    @if (_user.Nr is not null)
+                    <MudText Typo="Typo.h5">Welkom @_name </MudText>
+                    @if (_user?.Nr is not null)
                     {
                         <MudText Typo="Typo.subtitle2">@($" ({_user.Nr})")</MudText>
                     }

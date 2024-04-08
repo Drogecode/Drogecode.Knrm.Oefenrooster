@@ -5,6 +5,47 @@
     "version": "v1"
   },
   "paths": {
+    "/api/Vehicle/all/{callHub}": {
+      "get": {
+        "tags": [
+          "Vehicle"
+        ],
+        "operationId": "GetAll",
+        "parameters": [
+          {
+            "name": "callHub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleVehicleResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleVehicleResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleVehicleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Vehicle": {
       "get": {
         "tags": [

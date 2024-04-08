@@ -20,13 +20,13 @@ public class UserRepository
         _offlineService = offlineService;
     }
 
-    public async Task<List<DrogeUser>?> GetAllUsersAsync(bool includeHidden, bool forceCache, CancellationToken clt)
+    public async Task<List<DrogeUser>?> GetAllUsersAsync(bool includeHidden, bool forceCache, bool cachedAndReplace, CancellationToken clt)
     {
         var response = await _offlineService.CachedRequestAsync(string.Format(MONTHITEMS, includeHidden),
-            async () => await _userClient.GetAllAsync(includeHidden), 
-            new ApiCachedRequest { OneCallPerSession = true, ForceCache = forceCache},
+            async () => await _userClient.GetAllAsync(includeHidden, cachedAndReplace), 
+            new ApiCachedRequest { OneCallPerSession = true, ForceCache = forceCache, CachedAndReplace = cachedAndReplace},
             clt: clt);
-        return response.DrogeUsers?.ToList();
+        return response?.DrogeUsers?.ToList();
     }
 
     public async Task<DrogeUser?> GetCurrentUserAsync(CancellationToken clt = default)
@@ -35,7 +35,7 @@ public class UserRepository
             async () => await _userClient.GetCurrentUserAsync(clt),
             new ApiCachedRequest { OneCallPerSession = true, ForceCache = false, ExpireSession = DateTime.UtcNow.AddMinutes(1), ExpireLocalStorage = DateTime.UtcNow.AddHours(2) },
             clt: clt);
-        return dbUser.DrogeUser;
+        return dbUser?.DrogeUser;
     }
 
     public async Task<DrogeUser?> GetById(Guid id, bool oneCallPerSession, CancellationToken clt = default)
@@ -44,7 +44,7 @@ public class UserRepository
             async () => await _userClient.GetByIdAsync(id, clt),
             new ApiCachedRequest { OneCallPerSession = oneCallPerSession, ExpireSession = DateTime.UtcNow.AddMinutes(30) },
             clt: clt);
-        return response.User;
+        return response?.User;
     }
 
     public async Task<bool> UpdateUserAsync(DrogeUser user)

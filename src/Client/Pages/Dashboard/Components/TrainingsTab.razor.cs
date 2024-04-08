@@ -54,6 +54,7 @@ public sealed partial class TrainingsTab : IDisposable
 
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
     {
+        if (_bussy) return;
         _bussy = true;
         StateHasChanged();
         _selectedUsersTraining = selection;
@@ -68,8 +69,8 @@ public sealed partial class TrainingsTab : IDisposable
         if (_bussy) return;
         _bussy = true;
         StateHasChanged();
-        _currentPage = nextPage;
         if (nextPage <= 0) return;
+        _currentPage = nextPage;
         var skip = (nextPage - 1) * _count;
         _sharePointTrainings = await _sharePointRepository.GetLastTrainings(_selectedUsersTraining, _count, skip, _cls.Token);
         _bussy = false;

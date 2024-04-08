@@ -120,7 +120,7 @@ public class BaseTest : IAsyncLifetime
         DefaultTraining = await AddTraining(TRAINING_DEFAULT, false);
         DefaultAssignedTraining = await AssignTrainingToUser(DefaultTraining, DefaultUserId, true);
         DefaultTrainingType = await AddTrainingType(TRAINING_TYPE_DEFAULT, 20);
-        DefaultCalendarMonthItem = await AddCalendarMonthItem(TRAINING_CALENDAR_MONTH);
+        DefaultCalendarMonthItem = await AddCalendarMonthItem(TRAINING_CALENDAR_MONTH, 3, 2020);
         DefaultCalendarDayItem = await AddCalendarDayItem(TRAINING_CALENDAR_DAY);
         DefaultVehicle = await AddVehicle(VEHICLE_DEFAULT);
         DefaultDefaultSchedule = await AddDefaultSchedule();

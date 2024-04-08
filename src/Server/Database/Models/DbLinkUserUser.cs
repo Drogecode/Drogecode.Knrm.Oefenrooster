@@ -1,6 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Database.Models;
-
-namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+﻿namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 
 public class DbLinkUserUser
 {

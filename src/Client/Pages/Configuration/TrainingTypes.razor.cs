@@ -20,7 +20,7 @@ public sealed partial class TrainingTypes : IDisposable
     private RefreshModel _refreshModel = new();
     protected override async Task OnParametersSetAsync()
     {
-        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(true, _cls.Token);
+        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(true, false, _cls.Token);
         _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
     }
 
@@ -47,7 +47,7 @@ public sealed partial class TrainingTypes : IDisposable
 
     private async Task RefreshMeAsync()
     {
-        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(true, _cls.Token);
+        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(true, false, _cls.Token);
         StateHasChanged();
     }
 

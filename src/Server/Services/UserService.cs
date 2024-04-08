@@ -1,36 +1,42 @@
-﻿using Drogecode.Knrm.Oefenrooster.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Server.Database;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using System.Diagnostics;
 using System.Runtime.Intrinsics.X86;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
+
 public class UserService : IUserService
 {
     private readonly ILogger<UserService> _logger;
     private readonly DataContext _database;
-    public UserService(ILogger<UserService> logger, DataContext database)
+    private readonly IMemoryCache _memoryCache;
+
+    public UserService(ILogger<UserService> logger, DataContext database, IMemoryCache memoryCache)
     {
         _logger = logger;
         _database = database;
+        _memoryCache = memoryCache;
     }
 
-    public async Task<MultipleDrogeUsersResponse> GetAllUsers(Guid customerId, bool includeHidden, bool includeLastLogin)
+    public async Task<MultipleDrogeUsersResponse> GetAllUsers(Guid customerId, bool includeHidden, bool includeLastLogin, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new MultipleDrogeUsersResponse { DrogeUsers = new List<DrogeUser>() };
-        var dbUsers = _database.Users
+        var dbUsers = await _database.Users
             .Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.IsActive))
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
             .ThenInclude(x => x.UserB)
+            .Include(x=>x.UserOnVersions!.Where(y=> includeLastLogin && y.LastSeenOnThisVersion.CompareTo(DateTime.UtcNow.AddYears(-1)) >= 0))
             .OrderBy(x => x.Name)
-            .ToList();
+            .ToListAsync(clt);
         foreach (var dbUser in dbUsers)
         {
-            result.DrogeUsers.Add(dbUser.ToSharedUser());
+            result.DrogeUsers.Add(dbUser.ToSharedUser(includeLastLogin));
         }
+
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         result.Success = true;
@@ -43,7 +49,7 @@ public class UserService : IUserService
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
             .Include(x => x.LinkedUserAsB!.Where(y => y.DeletedOn == null))
             .Where(u => u.Id == userId).FirstOrDefaultAsync();
-        return userObj?.ToSharedUser();
+        return userObj?.ToSharedUser(false);
     }
 
     public async Task<DrogeUser?> GetOrSetUserFromDb(Guid userId, string userName, string userEmail, Guid customerId, bool setLastOnline)
@@ -62,6 +68,7 @@ public class UserService : IUserService
             _database.SaveChanges();
             userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
         }
+
         if (userObj is not null)
         {
             if (setLastOnline)
@@ -81,10 +88,12 @@ public class UserService : IUserService
                     _logger.LogWarning("No default UserFunction found for {CustomerId}", customerId);
                 }
             }
+
             _database.Users.Update(userObj);
             await _database.SaveChangesAsync();
         }
-        return userObj?.ToSharedUser();
+
+        return userObj?.ToSharedUser(false);
     }
 
     public async Task<bool> UpdateUser(DrogeUser user, Guid userId, Guid customerId)
@@ -100,17 +109,21 @@ public class UserService : IUserService
             await _database.SaveChangesAsync();
             return true;
         }
+
         return false;
     }
+
     public async Task<UpdateLinkUserUserForUserResponse> UpdateLinkUserUserForUser(UpdateLinkUserUserForUserRequest body, Guid userId, Guid customerId, CancellationToken clt)
     {
         var result = new UpdateLinkUserUserForUserResponse();
         var sw = Stopwatch.StartNew();
 
-        var userA = await _database.Users.Include(x => x.LinkedUserAsA!.Where(y => y.DeletedBy == null)).Include(x => x.LinkedUserAsB!.Where(y => y.DeletedBy == null)).FirstOrDefaultAsync(x => x.Id == body.UserAId && x.CustomerId == customerId && x.DeletedBy == null);
+        var userA = await _database.Users.Include(x => x.LinkedUserAsA!.Where(y => y.DeletedBy == null)).Include(x => x.LinkedUserAsB!.Where(y => y.DeletedBy == null))
+            .FirstOrDefaultAsync(x => x.Id == body.UserAId && x.CustomerId == customerId && x.DeletedBy == null);
         if (userA?.LinkedUserAsA?.Any(x => x.UserBId == body.UserBId) != true)
         {
-            var userB = await _database.Users.Include(x => x.LinkedUserAsA!.Where(y => y.DeletedBy == null)).Include(x => x.LinkedUserAsB!.Where(y => y.DeletedBy == null)).FirstOrDefaultAsync(x => x.Id == body.UserBId && x.CustomerId == customerId && x.DeletedBy == null);
+            var userB = await _database.Users.Include(x => x.LinkedUserAsA!.Where(y => y.DeletedBy == null)).Include(x => x.LinkedUserAsB!.Where(y => y.DeletedBy == null))
+                .FirstOrDefaultAsync(x => x.Id == body.UserBId && x.CustomerId == customerId && x.DeletedBy == null);
             if (userB is not null)
             {
                 var linkExistTest = await _database.LinkUserUsers.Where(x => x.UserAId == body.UserAId && x.UserBId == body.UserBId).FirstOrDefaultAsync();
@@ -125,7 +138,7 @@ public class UserService : IUserService
                     _database.LinkUserUsers.Add(newLink);
                     result.Success = (await _database.SaveChangesAsync()) > 0;
                 }
-                else if (linkExistTest.DeletedOn is  not null)
+                else if (linkExistTest.DeletedOn is not null)
                 {
                     linkExistTest.DeletedOn = null;
                     linkExistTest.DeletedBy = null;
@@ -139,6 +152,7 @@ public class UserService : IUserService
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
+
     public async Task<UpdateLinkUserUserForUserResponse> RemoveLinkUserUserForUser(UpdateLinkUserUserForUserRequest body, Guid userId, Guid customerId, CancellationToken clt)
     {
         var result = new UpdateLinkUserUserForUserResponse();
@@ -151,23 +165,54 @@ public class UserService : IUserService
             _database.LinkUserUsers.Update(link);
             result.Success = (await _database.SaveChangesAsync()) > 0;
         }
+
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
 
-
-    public async Task<bool> PatchLastOnline(Guid userId, CancellationToken clt)
+    public Task<bool> PatchLastOnline(Guid userId, CancellationToken clt)
     {
+        return PatchLastOnline(userId, null, null, clt);
+    }
 
-        var userObj = await _database.Users.Where(u => u.Id == userId).FirstOrDefaultAsync(clt);
-        if (userObj is not null && userObj.LastLogin.AddMinutes(1).CompareTo(DateTime.UtcNow) < 0)
+    public async Task<bool> PatchLastOnline(Guid userId, Guid? customerId, string? clientVersion, CancellationToken clt)
+    {
+        var cacheKey = "LastOnline_" + userId;
+        var lastUpdated = _memoryCache.Get<DateTime?>(cacheKey);
+        if (lastUpdated is not null && lastUpdated.Value.AddMinutes(1).CompareTo(DateTime.UtcNow) >= 0) return false;
+        var userObj = await _database.Users.Where(u => u.Id == userId)
+            .Include(x => x.UserOnVersions!.Where(y => clientVersion != null && y.Version == clientVersion))
+            .FirstOrDefaultAsync(clt);
+        if (userObj is null || userObj.LastLogin.AddMinutes(1).CompareTo(DateTime.UtcNow) >= 0) return false;
         {
             userObj.LastLogin = DateTime.UtcNow;
             _database.Users.Update(userObj);
+            _memoryCache.Set(cacheKey, DateTime.UtcNow, DateTimeOffset.Now.AddMinutes(1));
+            if (customerId is null || clientVersion is null) return (await _database.SaveChangesAsync(clt) > 0);
+            // Remember for multiple versions, because a user can be logged in on multiple devices running on different versions.
+            // PWA can be on any version including years old versions.
+            if (userObj.UserOnVersions?.Any(x => x.UserId == userId && x.CustomerId == customerId && x.Version == clientVersion) == true)
+            {
+                var userOnVersion = userObj.UserOnVersions.FirstOrDefault(x => x.UserId == userId && x.CustomerId == customerId && x.Version == clientVersion);
+                userOnVersion!.LastSeenOnThisVersion = DateTime.UtcNow;
+                _database.UserOnVersions.Update(userOnVersion);
+            }
+            else
+            {
+                var newUserOnVersion = new DbUserOnVersion
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    CustomerId = customerId.Value,
+                    Version = clientVersion,
+                    LastSeenOnThisVersion = DateTime.UtcNow
+                };
+                _database.UserOnVersions.Add(newUserOnVersion);
+            }
+
             return (await _database.SaveChangesAsync(clt) > 0);
         }
-        return false;
     }
 
     public async Task<AddUserResponse> AddUser(DrogeUser user, Guid customerId)
@@ -198,6 +243,7 @@ public class UserService : IUserService
                 dbUser.DeletedBy = userId;
             }
         }
+
         return await _database.SaveChangesAsync() > 0;
     }
 }

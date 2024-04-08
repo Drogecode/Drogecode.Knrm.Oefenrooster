@@ -63,7 +63,7 @@ public class MonthItemControllerTests : BaseTest
         var new7 = await AddCalendarMonthItem("GetAllMonth_7", (short.Parse((DateTime.Today.Month - 1).ToString())), short.Parse(DateTime.Today.AddYears(1).Year.ToString()));
         var result = await MonthItemController.GetItems(DateTime.Today.Year, DateTime.Today.Month);
         Assert.NotNull(result?.Value?.MonthItems);
-        result.Value.MonthItems.Should().Contain(x => x.Id == DefaultCalendarMonthItem);
+        result.Value.MonthItems.Should().NotContain(x => x.Id == DefaultCalendarMonthItem);
         result.Value.MonthItems.Should().Contain(x => x.Id == new1);
         result.Value.MonthItems.Should().NotContain(x => x.Id == new2);
         result.Value.MonthItems.Should().NotContain(x => x.Id == new3);
@@ -109,7 +109,7 @@ public class MonthItemControllerTests : BaseTest
         var new7 = await AddCalendarMonthItem("GetFutureMonthItems_7", (short.Parse((compareDate.AddMonths(-1).Month).ToString())), short.Parse(compareDate.AddMonths(-1).AddYears(1).Year.ToString()));
         var result = await MonthItemController.GetAllItems(100, 0, false);
         Assert.NotNull(result?.Value?.MonthItems);
-        result.Value.MonthItems.Should().Contain(x => x.Id == DefaultCalendarMonthItem);
+        result.Value.MonthItems.Should().NotContain(x => x.Id == DefaultCalendarMonthItem);
         result.Value.MonthItems.Should().Contain(x => x.Id == new1);
         result.Value.MonthItems.Should().Contain(x => x.Id == new2);
         result.Value.MonthItems.Should().Contain(x => x.Id == new3);

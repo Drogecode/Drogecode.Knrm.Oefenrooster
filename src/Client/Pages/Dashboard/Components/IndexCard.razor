@@ -9,7 +9,7 @@
         @if (Functions != null && Training.PlannedFunctionId != User?.UserFunctionId && Functions.Any(x => x.Id == Training.PlannedFunctionId))
         {
             <MudChip Color="Color.Info">
-                @($"{LApp["as"]} - {Functions.FirstOrDefault(x => x.Id == Training.PlannedFunctionId)?.Name}")
+                @($"{LApp["As"]} - {Functions.FirstOrDefault(x => x.Id == Training.PlannedFunctionId)?.Name}")
             </MudChip>
         }
     </ScheduleCard>

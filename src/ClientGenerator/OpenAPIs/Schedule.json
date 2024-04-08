@@ -687,6 +687,47 @@
         }
       }
     },
+    "/api/Schedule/me/pinned/{callHub}": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "GetPinnedTrainingsForUser",
+        "parameters": [
+          {
+            "name": "callHub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPinnedTrainingsForUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPinnedTrainingsForUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPinnedTrainingsForUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Schedule/me/pinned": {
       "get": {
         "tags": [

@@ -40,10 +40,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Demo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
@@ -1505,6 +1501,34 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.ToTable("UserHolidays");
                 });
 
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserOnVersion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("LastSeenOnThisVersion")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserOnVersion");
+                });
+
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserRoles", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1624,6 +1648,59 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserSettings");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("LastLogin")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Nr")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("RoleFromSharePoint")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SharePointID")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("SyncedFromSharePoint")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("UserFunctionId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("UserFunctionId");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbVehicles", b =>
@@ -1747,23 +1824,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.ToTable("DataProtectionKeys");
                 });
 
-            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", b =>
-                {
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
-                        .WithMany("Users")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserFunctions", "UserFunction")
-                        .WithMany("Users")
-                        .HasForeignKey("UserFunctionId");
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("UserFunction");
-                });
-
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbAudit", b =>
                 {
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
@@ -1772,7 +1832,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "User")
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "User")
                         .WithMany("Audits")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1813,7 +1873,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "User")
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "User")
                         .WithMany("LinkUserDayItems")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1826,13 +1886,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkUserUser", b =>
                 {
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "UserA")
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "UserA")
                         .WithMany("LinkedUserAsA")
                         .HasForeignKey("UserAId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "UserB")
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "UserB")
                         .WithMany("LinkedUserAsB")
                         .HasForeignKey("UserBId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1920,7 +1980,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .WithMany("RoosterAvailables")
                         .HasForeignKey("UserFunctionId");
 
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "User")
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "User")
                         .WithMany("RoosterAvailables")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2034,7 +2094,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "User")
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "User")
                         .WithMany("UserDefaultAvailables")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2057,7 +2117,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "User")
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "User")
                         .WithMany("UserDefaultGroups")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2087,8 +2147,27 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "User")
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "User")
                         .WithMany("UserHolidays")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserOnVersion", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("UserOnVersions")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "User")
+                        .WithMany("UserOnVersions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2117,7 +2196,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", "User")
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "User")
                         .WithMany("UserSettings")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2126,6 +2205,23 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("Users")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserFunctions", "UserFunction")
+                        .WithMany("Users")
+                        .HasForeignKey("UserFunctionId");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("UserFunction");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbVehicles", b =>
@@ -2137,27 +2233,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Database.Models.DbUsers", b =>
-                {
-                    b.Navigation("Audits");
-
-                    b.Navigation("LinkUserDayItems");
-
-                    b.Navigation("LinkedUserAsA");
-
-                    b.Navigation("LinkedUserAsB");
-
-                    b.Navigation("RoosterAvailables");
-
-                    b.Navigation("UserDefaultAvailables");
-
-                    b.Navigation("UserDefaultGroups");
-
-                    b.Navigation("UserHolidays");
-
-                    b.Navigation("UserSettings");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", b =>
@@ -2195,6 +2270,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("UserFunctions");
 
                     b.Navigation("UserHolidays");
+
+                    b.Navigation("UserOnVersions");
 
                     b.Navigation("UserRoles");
 
@@ -2254,6 +2331,29 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("RoosterAvailables");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", b =>
+                {
+                    b.Navigation("Audits");
+
+                    b.Navigation("LinkUserDayItems");
+
+                    b.Navigation("LinkedUserAsA");
+
+                    b.Navigation("LinkedUserAsB");
+
+                    b.Navigation("RoosterAvailables");
+
+                    b.Navigation("UserDefaultAvailables");
+
+                    b.Navigation("UserDefaultGroups");
+
+                    b.Navigation("UserHolidays");
+
+                    b.Navigation("UserOnVersions");
+
+                    b.Navigation("UserSettings");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbVehicles", b =>

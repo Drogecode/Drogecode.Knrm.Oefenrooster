@@ -41,10 +41,10 @@
                         @switch (user?.SetBy)
                         {
                             case AvailabilitySetBy.DefaultAvailable:
-                                <MudIcon Icon="@Icons.Material.Filled.AutoGraph" Style="font-size:1rem;" />
+                                <MudIcon Icon="@Icons.Material.Filled.AutoGraph" Class="opacity-75 text-base" />
                                 break;
                             case AvailabilitySetBy.Holiday:
-                                <MudIcon Icon="@Icons.Material.Filled.WbSunny" Style="font-size:1rem;" />
+                                <MudIcon Icon="@Icons.Material.Filled.WbSunny" Class="opacity-75 text-base" />
                                 break;
                         }
                         @if (user?.Assigned == true)

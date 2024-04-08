@@ -10,7 +10,7 @@ public static class DefaultSettingsHelper
     /// <summary>
     /// Increase to show update button for next update.
     /// </summary>
-    public const int UPDATE_VERSION = 1;
+    public const int UPDATE_VERSION = 2;
 
     /// <summary>
     /// From what UPDATE_VERSION should we show the update button.

@@ -1,14 +1,8 @@
 # Drogecode.Knrm.Oefenrooster
 
-How to host in dpodman-compose
+This is an application for organisations that have a complex training requirement
+and volunteers with conflicting calenders.
 
-## local
-
-* `cd C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster` main folder
-* `docker-compose up --build`
-* push to docker.com
-
-## server
-
-* Create `docker-compose.yaml` file
-* run `podman-compose up`
+Every user can configure there default availability in the week calendar and change it
+for day's that are different. If the user goes on vacation, they can block the full
+period in a single action.

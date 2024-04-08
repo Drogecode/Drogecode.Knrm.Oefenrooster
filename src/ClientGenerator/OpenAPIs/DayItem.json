@@ -100,6 +100,73 @@
         }
       }
     },
+    "/api/DayItem/all/{count}/{skip}/{forAllUsers}/{callHub}": {
+      "get": {
+        "tags": [
+          "DayItem"
+        ],
+        "operationId": "GetAllFuture",
+        "parameters": [
+          {
+            "name": "count",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "forAllUsers",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "callHub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/DayItem/all/{count}/{skip}/{forAllUsers}": {
       "get": {
         "tags": [
@@ -199,12 +266,23 @@
         }
       }
     },
-    "/api/DayItem/dashboard": {
+    "/api/DayItem/dashboard/{callHub}": {
       "get": {
         "tags": [
           "DayItem"
         ],
         "operationId": "GetDashboard",
+        "parameters": [
+          {
+            "name": "callHub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
