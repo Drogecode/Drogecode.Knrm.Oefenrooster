@@ -141,18 +141,23 @@ public sealed partial class Theming : IDisposable
     [JSInvokable]
     public async Task VisibilityChange()
     {
+        if (DarkModeToggle != DarkLightMode.System) return;
+        await OnSystemPreferenceChanged(await MudThemeProvider.GetSystemPreference());
         if (!_isTaco) return;
-        var config = (SnackbarOptions options) =>
+
+        Snackbar.Add(L["Visibility change"], Severity.Warning, configure: Config, key: "VisibilityChange");
+        return;
+
+        void Config(SnackbarOptions options)
         {
             options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
             options.ActionColor = Color.Default;
-        };
-        Snackbar.Add(L["Visibility change"], Severity.Warning, configure: config, key: "outdated");
+        }
     }
 
     public async Task OnSystemPreferenceChanged(bool newValue)
     {
-        if (DarkModeToggle == DarkLightMode.System)
+        if (DarkModeToggle == DarkLightMode.System && IsDarkMode != newValue)
         {
             IsDarkMode = newValue;
             RefreshMe();
