@@ -179,11 +179,11 @@ public sealed partial class EditTrainingDialog : IDisposable
                     await _vehicleRepository.UpdateLinkVehicleTrainingAsync(link);
                 }
             }
+            _training.Id = newId;
             if (Refresh is not null)
                 await Refresh.CallRequestRefreshAsync();
             if (_training.IsNew)
                 await Global.CallNewTrainingAddedAsync(_training);
-            _training.Id = newId;
             _training.IsNew = false;
             _training.IsNewFromDefault = false;
             Planner.TrainingId = newId;
