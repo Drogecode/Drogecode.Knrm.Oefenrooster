@@ -1,8 +1,11 @@
-﻿using Blazored.LocalStorage;
+﻿using System.Diagnostics.CodeAnalysis;
+using Blazored.LocalStorage;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Microsoft.Extensions.Localization;
+using Microsoft.JSInterop;
 using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
@@ -11,9 +14,11 @@ public sealed partial class Theming : IDisposable
 {
     [Inject] private IStringLocalizer<Theming> L { get; set; } = default!;
     [Inject] private ILocalStorageService LocalStorage { get; set; } = default!;
+    [Inject, NotNull] private IJSRuntime? JsRuntime { get; set; }
     [Parameter, EditorRequired] public DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter, EditorRequired] public MudThemeProvider MudThemeProvider { get; set; } = default!;
     [Parameter] public EventCallback<bool> IsDarkModeChanged { get; set; }
+    [Inject] ISnackbar Snackbar { get; set; } = default!;
     [Parameter]
     public bool IsDarkMode
     {
@@ -31,15 +36,29 @@ public sealed partial class Theming : IDisposable
             }
         }
     }
-    private bool _isDarkMode;
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+    
     private DarkLightMode _darkModeToggle;
     private LocalUserSettings? _localUserSettings;
+    private DotNetObjectReference<Theming>? _dotNetHelper;
+    private CancellationTokenSource _cls = new();
+    private bool _isDarkMode;
     private bool _watchStarted;
+    private bool _isTaco;
     private int counter = 0;
     protected override async Task OnInitializedAsync()
     {
         _localUserSettings = (await LocalStorage.GetItemAsync<LocalUserSettings>("localUserSettings")) ?? new LocalUserSettings();
         DarkModeToggle = _localUserSettings.DarkLightMode;
+        if (AuthenticationState is not null)
+        {
+            var authState = await AuthenticationState;
+            var user = authState?.User;
+            if (user != null)
+            {
+                _isTaco = user.IsInRole(AccessesNames.AUTH_Taco);
+            }
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -109,7 +128,26 @@ public sealed partial class Theming : IDisposable
         {
             _watchStarted = true;
             await MudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+
+            if (_isTaco)
+            {
+                var accessorJsRef = new Lazy<IJSObjectReference>(await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/VisibilityWatcher.js"));
+                _dotNetHelper = DotNetObjectReference.Create(this);
+                await accessorJsRef.Value.InvokeVoidAsync("AddVisibilityWatcher", _dotNetHelper);
+            }
         }
+    }
+    
+    [JSInvokable]
+    public async Task VisibilityChange()
+    {
+        if (!_isTaco) return;
+        var config = (SnackbarOptions options) =>
+        {
+            options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
+            options.ActionColor = Color.Default;
+        };
+        Snackbar.Add(L["Visibility change"], Severity.Warning, configure: config, key: "outdated");
     }
 
     public async Task OnSystemPreferenceChanged(bool newValue)
@@ -129,5 +167,6 @@ public sealed partial class Theming : IDisposable
 
     public void Dispose()
     {
+        _cls.Cancel();
     }
 }

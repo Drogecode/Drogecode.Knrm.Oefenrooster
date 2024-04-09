@@ -364,8 +364,6 @@ FodyWeavers.xsd
 
 # Drogecode.Knrm.Oefenrooster
 /src/Client/wwwroot/css/tailWind.min.css
-/src/Client/wwwroot/js/empty.js.map
-/src/Client/wwwroot/js/empty.js
-/src/Client/wwwroot/js/LocalStorageAccessor.js
-/src/Client/wwwroot/js/LocalStorageAccessor.js.map
+/src/Client/wwwroot/js/*.js
+/src/Client/wwwroot/js/*.js.map
 /src/Server/appsettings.Development.json
