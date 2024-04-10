@@ -128,13 +128,10 @@ public sealed partial class Theming : IDisposable
         {
             _watchStarted = true;
             await MudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
-
-            if (_isTaco)
-            {
-                var accessorJsRef = new Lazy<IJSObjectReference>(await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/VisibilityWatcher.js"));
-                _dotNetHelper = DotNetObjectReference.Create(this);
-                await accessorJsRef.Value.InvokeVoidAsync("AddVisibilityWatcher", _dotNetHelper);
-            }
+            
+            var accessorJsRef = new Lazy<IJSObjectReference>(await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/VisibilityWatcher.js"));
+            _dotNetHelper = DotNetObjectReference.Create(this);
+            await accessorJsRef.Value.InvokeVoidAsync("AddVisibilityWatcher", _dotNetHelper);
         }
     }
     
@@ -143,16 +140,6 @@ public sealed partial class Theming : IDisposable
     {
         if (DarkModeToggle != DarkLightMode.System) return;
         await OnSystemPreferenceChanged(await MudThemeProvider.GetSystemPreference());
-        if (!_isTaco) return;
-
-        Snackbar.Add(L["Visibility change"], Severity.Warning, configure: Config, key: "VisibilityChange");
-        return;
-
-        void Config(SnackbarOptions options)
-        {
-            options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
-            options.ActionColor = Color.Default;
-        }
     }
 
     public async Task OnSystemPreferenceChanged(bool newValue)
