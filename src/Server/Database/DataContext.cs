@@ -227,6 +227,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     RoosterTrainingTypeId = DefaultSettingsHelper.KompasOefeningId,
                     TimeZone = "Europe/Amsterdam",
                     Order = 10,
+                    VehicleIds = new List<Guid>{DefaultSettingsHelper.NwiId}
                 });
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
@@ -708,7 +709,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         {
             modelBuilder.Entity<DbVehicles>(e => e.HasData(new DbVehicles
             {
-                Id = new Guid("4589535c-9064-4448-bc01-3b5a00e9410d"),
+                Id = DefaultSettingsHelper.NwiId,
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 ExchangeId = new Guid("dbaeaa44-d318-464e-ac39-f85029dd9e8f"),
                 Name = "Nikolaas Wijsenbeek",

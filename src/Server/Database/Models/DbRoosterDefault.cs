@@ -9,6 +9,7 @@ public class DbRoosterDefault
     [Key] public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
     public Guid? RoosterTrainingTypeId { get; set; }
+    public List<Guid>? VehicleIds { get; set; }
     public string? Name { get; set; }
     public DayOfWeek WeekDay { get; set; }
     public TimeOnly TimeStart { get; set; }

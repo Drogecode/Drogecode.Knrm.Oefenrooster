@@ -7,8 +7,8 @@
 
 # Revert
 
-1. dotnet ef database update "20240309124702_bemannings-nr"
+1. dotnet ef database update "20240406105742_UserOnVersion"
 
 # Update tools:
 
-1. dotnet tool update --global dotnet-ef --version 8.0.3
+1. dotnet tool update --global dotnet-ef --version 8.0.4

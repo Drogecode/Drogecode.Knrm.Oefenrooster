@@ -202,11 +202,6 @@
             "format": "uuid",
             "nullable": true
           },
-          "vehicleId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
           "plannedFunctionId": {
             "type": "string",
             "format": "uuid",
