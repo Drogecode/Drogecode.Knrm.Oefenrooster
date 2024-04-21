@@ -12,7 +12,6 @@ public class OfflineService : IOfflineService
     private readonly ILocalStorageService _localStorageService;
     private readonly ILocalStorageExpireService _localStorageExpireService;
     private readonly ISessionExpireService _sessionStorageExpireService;
-    private static bool _offline;
     private static bool _mockOffline;
     public event Action? OfflineStatusChanged;
 
@@ -26,41 +25,12 @@ public class OfflineService : IOfflineService
         _sessionStorageExpireService = sessionStorageExpireService;
     }
 
-    private void CallOfflineStatusChanged()
-    {
-        OfflineStatusChanged?.Invoke();
-    }
-
-    public bool Offline
-    {
-        get => (_offline || MockOffline);
-        set
-        {
-            if (_offline == value) return;
-            _offline = value;
-            CallOfflineStatusChanged();
-        }
-    }
-
-    /// <summary>
-    /// Not all HttpClient calls check the Offline value!
-    /// </summary>
-    public bool MockOffline
-    {
-        get => _mockOffline;
-        set
-        {
-            _mockOffline = value;
-            CallOfflineStatusChanged();
-        }
-    }
-
     public async Task<TRes?> CachedRequestAsync<TRes>(string cacheKey, Func<Task<TRes>> function, ApiCachedRequest? request = null, CancellationToken clt = default)
     {
         try
         {
             request ??= new ApiCachedRequest();
-            if (!Offline && request.CachedAndReplace)
+            if (request.CachedAndReplace)
                 _ = Task.Run(function);
 
             if ((request.CachedAndReplace || request.OneCallPerSession) && !request.ForceCache)
@@ -70,7 +40,7 @@ public class OfflineService : IOfflineService
                     return sessionResult;
             }
 
-            if (!Offline && !request.CachedAndReplace)
+            if (!request.CachedAndReplace)
             {
                 var result = await function();
                 await _localStorageExpireService.SetItemAsync(cacheKey, result, request.ExpireLocalStorage, clt);
@@ -78,10 +48,6 @@ public class OfflineService : IOfflineService
                     await _sessionStorageExpireService.SetItemAsync(cacheKey, result, request.ExpireSession, clt);
                 return result;
             }
-        }
-        catch (HttpRequestException)
-        {
-            Offline = true;
         }
         catch (Exception ex)
         {

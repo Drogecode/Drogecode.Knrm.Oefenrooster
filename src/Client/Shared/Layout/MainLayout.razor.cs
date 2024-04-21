@@ -84,7 +84,6 @@ public sealed partial class MainLayout : IDisposable
     protected override async Task OnParametersSetAsync()
     {
         _global.RefreshRequested += RefreshMe;
-        _offlineService.OfflineStatusChanged += OfflineStatusChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -129,12 +128,6 @@ public sealed partial class MainLayout : IDisposable
     public void ToggleOpen()
     {
         _settingsOpen = !_settingsOpen;
-    }
-
-    private void OfflineStatusChanged()
-    {
-        _isOffline = _offlineService.Offline;
-        RefreshMe();
     }
 
     private void RefreshMe()
