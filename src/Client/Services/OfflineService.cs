@@ -9,18 +9,13 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Services;
 public class OfflineService : IOfflineService
 {
 
-    private readonly ILocalStorageService _localStorageService;
     private readonly ILocalStorageExpireService _localStorageExpireService;
     private readonly ISessionExpireService _sessionStorageExpireService;
-    private static bool _mockOffline;
-    public event Action? OfflineStatusChanged;
 
     public OfflineService(
-        ILocalStorageService localStorageService,
         ILocalStorageExpireService localStorageExpireService,
         ISessionExpireService sessionStorageExpireService)
     {
-        _localStorageService = localStorageService;
         _localStorageExpireService = localStorageExpireService;
         _sessionStorageExpireService = sessionStorageExpireService;
     }
