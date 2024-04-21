@@ -28,8 +28,13 @@ public class VehicleRepository
 
     public async Task<List<DrogeLinkVehicleTraining>?> GetForTrainingAsync(Guid trainingId)
     {
-
         var dbVehicle = await _vehicleClient.GetForTrainingAsync(trainingId);
+        return dbVehicle.DrogeLinkVehicleTrainingLinks?.ToList();
+    }
+
+    public async Task<List<DrogeLinkVehicleTraining>?> GetForDefaultAsync(Guid defaultId)
+    {
+        var dbVehicle = await _vehicleClient.GetForDefaultAsync(defaultId);
         return dbVehicle.DrogeLinkVehicleTrainingLinks?.ToList();
     }
 

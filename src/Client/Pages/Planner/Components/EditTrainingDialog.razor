@@ -16,6 +16,14 @@
                 <MudIcon Icon="@Icons.Material.Outlined.Lock" Class="mr-3 mb-n1" />
             }
         }
+        @if (_isDebug && _training?.IsNew == true )
+        {
+            <MudIcon Icon="@Icons.Material.Outlined.FiberNew" Class="mr-3 mb-n1" />
+        }
+        @if (_isDebug && _training?.IsNewFromDefault == true)
+        {
+            <MudIcon Icon="@Icons.Material.Outlined.NewLabel" Class="mr-3 mb-n1" />
+        }
     </TitleContent>
     <DialogContent>
         @if (_training == null || TrainingTypes == null)

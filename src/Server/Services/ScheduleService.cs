@@ -462,17 +462,13 @@ public class ScheduleService : IScheduleService
         DbVehicles? vehiclePrev = null;
         foreach (var vehicle in vehicles)
         {
-            if (vehicle is null) continue;
             if (link.Any(x => x.VehicleId == vehicle.Id))
             {
                 var veh = link.FirstOrDefault(x => x.VehicleId == vehicle.Id);
-                if (veh!.IsSelected)
-                {
-                    if (vehicle.IsDefault)
-                        return vehicle.Id;
-                    vehiclePrev = vehicle;
-                    continue;
-                }
+                if (!veh!.IsSelected) continue;
+                if (vehicle.IsDefault)
+                    return vehicle.Id;
+                vehiclePrev = vehicle;
             }
             else if (vehicle.IsDefault)
             {

@@ -60,9 +60,26 @@ public class VehicleController : ControllerBase
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var result = await _vehicleService.GetForTraining(customerId, trainingId);
+            var result = await _vehicleService.GetForTraining(customerId, trainingId, clt);
 
-            return new MultipleVehicleTrainingLinkResponse { DrogeLinkVehicleTrainingLinks = result };
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetForTraining");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("default/{defaultId:guid}")]
+    public async Task<ActionResult<MultipleVehicleTrainingLinkResponse>> GetForDefault(Guid defaultId, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            MultipleVehicleTrainingLinkResponse result = await _vehicleService.GetForDefault(customerId, defaultId, clt);
+            return result;
         }
         catch (Exception ex)
         {

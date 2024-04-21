@@ -10,6 +10,7 @@ public class VehicleService : IVehicleService
 {
     private readonly ILogger<VehicleService> _logger;
     private readonly Database.DataContext _database;
+
     public VehicleService(ILogger<VehicleService> logger, Database.DataContext database)
     {
         _logger = logger;
@@ -32,16 +33,21 @@ public class VehicleService : IVehicleService
                 IsActive = dbVehicle.IsActive,
             });
         }
+
         return result;
     }
 
-    public async Task<List<DrogeLinkVehicleTraining>> GetForTraining(Guid customerId, Guid trainingId)
+    public async Task<MultipleVehicleTrainingLinkResponse> GetForTraining(Guid customerId, Guid trainingId, CancellationToken clt)
     {
-        var result = new List<DrogeLinkVehicleTraining>();
-        var dbVehicles = _database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.RoosterTrainingId == trainingId).ToList();
+        var sw = Stopwatch.StartNew();
+        var result = new MultipleVehicleTrainingLinkResponse
+        {
+            DrogeLinkVehicleTrainingLinks = []
+        };
+        var dbVehicles = await _database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.RoosterTrainingId == trainingId).ToListAsync(clt);
         foreach (var dbVehicle in dbVehicles)
         {
-            result.Add(new DrogeLinkVehicleTraining
+            result.DrogeLinkVehicleTrainingLinks.Add(new DrogeLinkVehicleTraining
             {
                 Id = dbVehicle.Id,
                 RoosterTrainingId = dbVehicle.RoosterTrainingId,
@@ -49,6 +55,43 @@ public class VehicleService : IVehicleService
                 IsSelected = dbVehicle.IsSelected,
             });
         }
+
+        sw.Start();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<MultipleVehicleTrainingLinkResponse> GetForDefault(Guid customerId, Guid defaultId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new MultipleVehicleTrainingLinkResponse
+        {
+            DrogeLinkVehicleTrainingLinks = []
+        };
+        var dbVehicles = await _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.Id == defaultId).Select(x => x.VehicleIds).FirstOrDefaultAsync(clt);
+        if (dbVehicles == null) return result;
+        var defaultSelectedVehicles = await _database.Vehicles.Where(x => x.IsDefault).Select(x => x.Id).ToListAsync(clt);
+        foreach (var dbVehicle in dbVehicles)
+        {
+            result.DrogeLinkVehicleTrainingLinks.Add(new DrogeLinkVehicleTraining
+            {
+                VehicleId = dbVehicle,
+                IsSelected = true,
+            });
+        }
+
+        foreach (var defVehicle in defaultSelectedVehicles)
+        {
+            if (dbVehicles.Any(x => x == defVehicle)) continue;
+            result.DrogeLinkVehicleTrainingLinks.Add(new DrogeLinkVehicleTraining
+            {
+                VehicleId = defVehicle,
+                IsSelected = false,
+            });
+        }
+
+        sw.Start();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
 
@@ -100,6 +143,7 @@ public class VehicleService : IVehicleService
                 result.DrogeLinkVehicleTraining = link;
             }
         }
+
         if (!link.IsSelected)
         {
             var trainings = _database.RoosterAvailables.Where(x => x.TrainingId == link.RoosterTrainingId && x.VehicleId == link.VehicleId);
@@ -109,6 +153,7 @@ public class VehicleService : IVehicleService
                 _database.RoosterAvailables.Update(training);
             }
         }
+
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;

@@ -56,6 +56,8 @@ public sealed partial class ScheduleDialog : IDisposable
             latestVersionTask = _scheduleRepository.GetPlannedTrainingForDefaultDate(Planner.DateStart, Planner.DefaultId, _cls.Token);
         if (Planner.TrainingId != null)
             _linkVehicleTraining = await _vehicleRepository.GetForTrainingAsync(Planner.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
+        else if (Planner.DefaultId is not null)
+            _linkVehicleTraining = await _vehicleRepository.GetForDefaultAsync(Planner.DefaultId ?? throw new ArgumentNullException("Planner.DefaultId"));
         if (Vehicles != null && _linkVehicleTraining != null)
         {
             _vehicleInfoForThisTraining = new();

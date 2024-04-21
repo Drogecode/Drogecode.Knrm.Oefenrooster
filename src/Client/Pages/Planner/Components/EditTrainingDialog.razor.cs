@@ -31,6 +31,11 @@ public sealed partial class EditTrainingDialog : IDisposable
     private bool _canEdit;
     private bool _showPadlock;
     private bool _editOld;
+#if DEBUG
+    private const bool _isDebug = true;
+#else
+    private const bool _isDebug = false;
+#endif
     private string[] _errors = Array.Empty<string>();
     [AllowNull] private MudForm _form;
     protected override async Task OnParametersSetAsync()
@@ -74,7 +79,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 IsPinned = Planner.IsPinned,
                 ShowTime = Planner.ShowTime,
             };
-            _linkVehicleTraining = new();
+            _linkVehicleTraining = (await _vehicleRepository.GetForDefaultAsync(Planner.DefaultId ?? throw new ArgumentNullException("Planner.DefaultId"))) ?? [];
         }
         else
         {
@@ -236,7 +241,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         if (link is not null)
         {
             link.IsSelected = toggled;
-            if (!_training!.IsNew)
+            if (!_training!.IsNew && !_training!.IsNewFromDefault)
                 await _vehicleRepository.UpdateLinkVehicleTrainingAsync(link);
         }
         else
