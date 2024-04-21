@@ -125,6 +125,7 @@ public sealed partial class ScheduleDialog : IDisposable
     {
         if (!_canEdit) return;
         user.Assigned = toggled;
+        user.VehicleId = _vehicleInfoForThisTraining?.FirstOrDefault(x => x.IsDefault)?.Id ?? _vehicleInfoForThisTraining?.FirstOrDefault()?.Id;
         if (toggled)
             user.PlannedFunctionId = functionId;
         else

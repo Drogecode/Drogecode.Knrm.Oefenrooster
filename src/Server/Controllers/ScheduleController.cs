@@ -278,7 +278,7 @@ public class ScheduleController : ControllerBase
             var inRoleEditOther = User.IsInRole(AccessesNames.AUTH_scheduler_other_user);
             if (!inRoleEditOther && !userId.Equals(body.User?.UserId))
                 return Unauthorized();
-            PatchAssignedUserResponse result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
+            var result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
                 JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.User?.UserId, Assigned = body?.User?.Assigned, Availabilty = result.Availabilty, SetBy = result.SetBy }),
                 body?.TrainingId);
