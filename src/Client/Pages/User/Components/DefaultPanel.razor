@@ -2,7 +2,7 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 @if (_defaultSchedules is not null)
 {
-    <MudDataGrid Items="@_defaultSchedules">
+    <MudDataGrid Items="@_defaultSchedules" Striped="true" Hover="true">
         <Columns>
             <HierarchyColumn T="DefaultSchedule"/>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]" CellClassFunc="@(x=>$"trainingType-{x.RoosterTrainingTypeId}")" />

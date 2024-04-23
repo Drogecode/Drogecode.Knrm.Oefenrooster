@@ -147,4 +147,7 @@
   <data name="Weekday" xml:space="preserve">
     <value>Weekdag</value>
   </data>
+  <data name="Name" xml:space="preserve">
+    <value>Naam</value>
+  </data>
 </root>
