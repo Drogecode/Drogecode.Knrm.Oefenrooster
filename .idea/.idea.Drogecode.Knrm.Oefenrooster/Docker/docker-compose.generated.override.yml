@@ -10,8 +10,9 @@ services:
         BUILD_CONFIGURATION: "Debug"
     command: []
     entrypoint:
-    - "/opt/rider-debugger/linux-x64/dotnet/dotnet"
-    - "/opt/rider-debugger/JetBrains.Debugger.Worker.exe"
+    - "/opt/rider-debugger/linux-x64/JetBrains.Debugger.Worker"
+    - "--runtimeconfig"
+    - "/opt/rider-debugger/JetBrains.Debugger.Worker.runtimeconfig.json"
     - "--mode=server"
     - "--frontend-port=57100"
     - "--backend-port=57300"
@@ -23,15 +24,15 @@ services:
       RESHARPER_LOG_CONF: "/etc/opt/rider-debugger/backend-log.xml"
     image: "kanman/drogecode.knrm.oefenrooster:dev"
     ports:
-    - "127.0.0.1:57010:57100"
-    - "127.0.0.1:57210:57300"
+    - "127.0.0.1:56338:57100"
+    - "127.0.0.1:57205:57300"
     volumes:
     - "C:\\Users\\Taco\\.nuget\\packages:/root/.nuget/packages"
     - "C:\\Users\\Taco\\source\\repos\\Drogecode.Knrm.Oefenrooster\\src\\Server:/app:rw"
     - "C:\\Users\\Taco\\source\\repos\\Drogecode.Knrm.Oefenrooster:/src:rw"
-    - "C:\\Users\\Taco\\AppData\\Local\\JetBrains\\RiderRemoteDebugger\\2023.3.4\\\
+    - "C:\\Users\\Taco\\AppData\\Local\\JetBrains\\RiderRemoteDebugger\\2024.1.1\\\
       Linux64:/opt/rider-debugger"
     - "C:\\Users\\Taco\\AppData\\Local\\JetBrains\\Installations\\Rider233\\bin:/etc/opt/rider-debugger/backend-log.xml"
-    - "C:\\Users\\Taco\\AppData\\Local\\JetBrains\\Rider2023.3\\log\\DebuggerWorker\\\
-      JetBrains.Debugger.Worker.2024_4_06_14_56_17:/var/opt/rider-debugger:rw"
+    - "C:\\Users\\Taco\\AppData\\Local\\JetBrains\\Rider2024.1\\log\\DebuggerWorker\\\
+      JetBrains.Debugger.Worker.2024_4_23_23_08_33:/var/opt/rider-debugger:rw"
     working_dir: "/app"

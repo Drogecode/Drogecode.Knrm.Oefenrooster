@@ -94,12 +94,13 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet]
+    [Obsolete("Not used anymore, deleted on client with v0.3.48")]
     [Route("installing-active")]
     public ActionResult<InstallingActiveResponse> InstallingActive(CancellationToken token = default)
     {
         try
         {
-            return Ok(new InstallingActiveResponse { Success = _configuration.GetValue<bool>("Drogecode:Installing") });
+            return Ok(new InstallingActiveResponse { Success = true });
         }
         catch (Exception ex)
         {

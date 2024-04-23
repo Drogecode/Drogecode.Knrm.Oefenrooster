@@ -29,7 +29,6 @@ public sealed partial class NavMenu : IDisposable
     protected override async Task OnInitializedAsync()
     {
         Navigation.LocationChanged += RefreshForSubMenu;
-        var installing = await _configurationRepository.InstallingActive();
         var dbUser = await _userRepository.GetCurrentUserAsync();//Force creation of user.
     }
     protected override async Task OnParametersSetAsync()

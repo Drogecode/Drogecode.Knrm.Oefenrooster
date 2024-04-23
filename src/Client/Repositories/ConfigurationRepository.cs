@@ -26,12 +26,6 @@ public class ConfigurationRepository
         return response;
     }
 
-    public async Task<bool?> InstallingActive()
-    {
-        var response = await _configurationClient.InstallingActiveAsync();
-        return response.Success;
-    }
-
     public async Task<bool?> UpdateSpecialDates()
     {
         var response = await _configurationClient.UpdateSpecialDatesAsync();

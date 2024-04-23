@@ -75,36 +75,6 @@
         }
       }
     },
-    "/api/Configuration/installing-active": {
-      "get": {
-        "tags": [
-          "Configuration"
-        ],
-        "operationId": "InstallingActive",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/InstallingActiveResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InstallingActiveResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InstallingActiveResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Configuration/update-special-dates": {
       "patch": {
         "tags": [
@@ -138,22 +108,6 @@
   },
   "components": {
     "schemas": {
-      "InstallingActiveResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          },
-          "offline": {
-            "type": "boolean"
-          },
-          "elapsedMilliseconds": {
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        "additionalProperties": false
-      },
       "UpdateSpecialDatesResponse": {
         "type": "object",
         "properties": {
