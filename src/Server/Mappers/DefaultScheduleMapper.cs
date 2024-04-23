@@ -21,9 +21,10 @@ public static class DefaultScheduleMapper
             CustomerId = customerId,
             TimeZone = timeZone,
             ShowTime = defaultSchedule.ShowTime,
+            Name = defaultSchedule.Name
         };
     }
-    public static DefaultSchedule ToDefaultSchedule(this DbRoosterDefault defaultSchedule)
+    public static DefaultSchedule ToDefaultSchedule(this DbRoosterDefault defaultSchedule, List<DefaultUserSchedule>? userSchedules)
     {
         return new DefaultSchedule
         {
@@ -37,6 +38,8 @@ public static class DefaultScheduleMapper
             CountToTrainingTarget = defaultSchedule.CountToTrainingTarget,
             Order = defaultSchedule.Order,
             ShowTime = defaultSchedule.ShowTime ?? true,
+            Name = defaultSchedule.Name,
+            UserSchedules = userSchedules
         };
     }
 

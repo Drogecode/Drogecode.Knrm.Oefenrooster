@@ -16,6 +16,7 @@ public class DefaultSchedule
     public TimeOnly TimeEnd { get; set; }
     public DateTime ValidFromDefault { get; set; }
     public DateTime ValidUntilDefault { get; set; }
+    public string? Name { get; set; }
     public bool CountToTrainingTarget { get; set; } = true;
     public int Order { get; set; }
     public bool ShowTime { get; set; } = true;

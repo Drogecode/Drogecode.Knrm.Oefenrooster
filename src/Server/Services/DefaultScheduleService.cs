@@ -91,20 +91,8 @@ public class DefaultScheduleService : IDefaultScheduleService
                     });
                 }
             }
-            var defaultSchedule = new DefaultSchedule
-            {
-                Id = dbDefault!.Id,
-                RoosterTrainingTypeId = dbDefault.RoosterTrainingTypeId,
-                WeekDay = dbDefault.WeekDay,
-                TimeStart = dbDefault.TimeStart,
-                TimeEnd = dbDefault.TimeEnd,
-                ValidFromDefault = dbDefault.ValidFrom,
-                ValidUntilDefault = dbDefault.ValidUntil,
-                CountToTrainingTarget = dbDefault.CountToTrainingTarget,
-                Order = dbDefault.Order,
-                ShowTime = dbDefault.ShowTime ?? true,
-                UserSchedules = innerList,
-            };
+
+            var defaultSchedule = dbDefault.ToDefaultSchedule(innerList);
             list.Add(defaultSchedule);
         }
         response.DefaultSchedules = list;
@@ -160,7 +148,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         dbDefault.Id = Guid.NewGuid();
         await _database.RoosterDefaults.AddAsync(dbDefault);
         result.Success = (await _database.SaveChangesAsync()) >= 1;
-        result.DefaultSchedule = dbDefault.ToDefaultSchedule();
+        result.DefaultSchedule = dbDefault.ToDefaultSchedule(null);
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;

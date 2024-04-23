@@ -4,7 +4,8 @@
 {
     <MudDataGrid Items="@_defaultSchedules">
         <Columns>
-            <HierarchyColumn T="DefaultSchedule" />
+            <HierarchyColumn T="DefaultSchedule"/>
+            <PropertyColumn Property="x => x.Name" Title="@L["Name"]" CellClassFunc="@(x=>$"trainingType-{x.RoosterTrainingTypeId}")" />
             <PropertyColumn Property="x => x.WeekDay" Title="@L["Weekday"]">
                 <CellTemplate>
                     @LApp[context.Item.WeekDay.ToString() ?? "None"]
@@ -52,7 +53,7 @@
                     </CardHeaderContent>
                 </MudCardHeader>
                 <MudCardContent>
-                    <MudSelect T="Availabilty?" Variant="Variant.Text" Value="userSchedule.Available" ValueChanged="async(e)=>await OnChange(e, userSchedule, context.Item.Id, isNew)" AdornmentColor="@PlannerHelper.ColorAvailabilty(userSchedule?.Available)">
+                    <MudSelect T="Availabilty?" Variant="Variant.Text" Value="userSchedule.Available" ValueChanged="async (e) => await OnChange(e, userSchedule, context.Item.Id, isNew)" AdornmentColor="@PlannerHelper.ColorAvailabilty(userSchedule?.Available)">
                         <MudSelectItem T="Availabilty?" Value="Availabilty.None">@LApp["None"]</MudSelectItem>
                         <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
                         <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
@@ -65,8 +66,8 @@
 }
 else
 {
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
 }
