@@ -11,15 +11,16 @@ using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
-public sealed partial class Global : IDisposable
+public sealed partial class SpecialSettings : IDisposable
 {
-    [Inject] private IStringLocalizer<Global> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<SpecialSettings> L { get; set; } = default!;
     [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private ConfigurationRepository _configurationRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
     [Inject] private ICustomerSettingsClient _customerSettingsClient { get; set; } = default!;
+    [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     private ClaimsPrincipal _user;
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
@@ -37,6 +38,7 @@ public sealed partial class Global : IDisposable
     protected override void OnInitialized()
     {
         _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
+        Global.VisibilityChangeAsync += VisibilityChanged;
     }
     protected override async Task OnParametersSetAsync()
     {
@@ -49,6 +51,12 @@ public sealed partial class Global : IDisposable
             var dbUser = await _userRepository.GetCurrentUserAsync();
             _name = authState!.User!.Identity!.Name ?? string.Empty;
         }
+        _users = await _userRepository.GetAllUsersAsync(true, true, false, _cls.Token);
+        _functions = await _functionRepository.GetAllFunctionsAsync(false, _cls.Token);
+    }
+
+    private async Task VisibilityChanged()
+    {
         _users = await _userRepository.GetAllUsersAsync(true, true, false, _cls.Token);
         _functions = await _functionRepository.GetAllFunctionsAsync(false, _cls.Token);
     }
@@ -114,6 +122,7 @@ public sealed partial class Global : IDisposable
     public void Dispose()
     {
         _refreshModel.RefreshRequestedAsync -= RefreshMeAsync;
+        Global.VisibilityChangeAsync -= VisibilityChanged;
         _cls.Cancel();
     }
 }

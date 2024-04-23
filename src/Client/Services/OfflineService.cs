@@ -24,6 +24,7 @@ public class OfflineService : IOfflineService
     {
         try
         {
+            if (clt.IsCancellationRequested) return default(TRes);
             request ??= new ApiCachedRequest();
             if (request.CachedAndReplace)
                 _ = Task.Run(function);
