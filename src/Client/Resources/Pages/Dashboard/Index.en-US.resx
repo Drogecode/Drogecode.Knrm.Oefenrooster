@@ -138,4 +138,7 @@
   <data name="Trainings" xml:space="preserve">
     <value>Trainings</value>
   </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Welcome {0}</value>
+  </data>
 </root>

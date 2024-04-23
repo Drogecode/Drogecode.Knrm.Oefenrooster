@@ -16,14 +16,14 @@
             @if (_name is not null)
             {
                 <div class="inline-flex">
-                    <MudText Typo="Typo.h5">Welkom @_name </MudText>
+                    <MudText Typo="Typo.h5">@L["Welcome",_name] </MudText>
                     @if (_user?.Nr is not null)
                     {
                         <MudText Typo="Typo.subtitle2">@($" ({_user.Nr})")</MudText>
                     }
                 </div>
             }
-            @if (_dayItems != null && _dayItems.Count() > 0)
+            @if (_dayItems != null && _dayItems.Any())
             {
                 <MudText Typo="Typo.h5">@L["Special days"]</MudText>
                 <MudPaper Elevation="0" Class="p-2">
@@ -42,11 +42,11 @@
                     </MudGrid>
                 </MudPaper>
             }
-            @if (_pinnedTrainings != null)
+            @if (_pinnedTrainings is not null)
             {
-                @if (_pinnedTrainings.Count() > 0)
+                @if (_pinnedTrainings.Any())
                 {
-                    <MudText Typo="Typo.h3">@L["Pinned trainings"]</MudText>
+                    <MudText Typo="Typo.h5">@L["Pinned trainings"]</MudText>
                     <MudPaper Elevation="0" Class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
                         @foreach (var training in _pinnedTrainings)
                         {
@@ -57,17 +57,17 @@
                     </MudPaper>
                 }
             }
-            else
+            else if (_loading)
             {
                 <MudSkeleton />
                 <MudSkeleton />
                 <MudSkeleton />
                 <MudSkeleton />
             }
-            <MudText Typo="Typo.h3">@L["Future trainings"]</MudText>
+            <MudText Typo="Typo.h5">@L["Future trainings"]</MudText>
             @if (_futureTrainings != null)
             {
-                @if (_futureTrainings.Count() > 0)
+                @if (_futureTrainings.Any())
                 {
                     <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
                         @foreach (var training in _futureTrainings)
@@ -80,10 +80,10 @@
                 }
                 else
                 {
-                    <MudText Typo="Typo.h4">@L["No future trainings"]</MudText>
+                    <MudText Typo="Typo.h6">@L["No future trainings"]</MudText>
                 }
             }
-            else
+            else if (_loading)
             {
                 <MudSkeleton />
                 <MudSkeleton />

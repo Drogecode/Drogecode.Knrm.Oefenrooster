@@ -125,5 +125,6 @@ public sealed partial class ScheduleCard : IDisposable
     public void Dispose()
     {
         _refreshModel.RefreshRequested -= RefreshMe;
+        Global.TrainingDeletedAsync -= TrainingDeleted;
     }
 }

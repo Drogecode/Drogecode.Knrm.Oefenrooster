@@ -16,7 +16,6 @@ public class ConfigurationService : IConfigurationService
     public async Task<bool> UpgradeDatabase()
     {
         await _database.Database.MigrateAsync();
-        var d = _database.Database.GetMigrations();
 
         return true;
     }

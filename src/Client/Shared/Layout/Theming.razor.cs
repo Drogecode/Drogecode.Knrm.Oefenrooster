@@ -139,6 +139,7 @@ public sealed partial class Theming : IDisposable
     public async Task VisibilityChange()
     {
         if (DarkModeToggle != DarkLightMode.System) return;
+        await Global.CallVisibilityChangeAsync();
         await OnSystemPreferenceChanged(await MudThemeProvider.GetSystemPreference());
     }
 

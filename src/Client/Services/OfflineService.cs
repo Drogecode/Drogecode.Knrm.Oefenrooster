@@ -44,6 +44,14 @@ public class OfflineService : IOfflineService
                 return result;
             }
         }
+        catch (HttpRequestException)
+        {
+            DebugHelper.WriteLine("a HttpRequestException");
+        }
+        catch (TaskCanceledException)
+        {
+            DebugHelper.WriteLine("a TaskCanceledException");
+        }
         catch (Exception ex)
         {
             DebugHelper.WriteLine(ex);
@@ -58,6 +66,14 @@ public class OfflineService : IOfflineService
                 response.Offline = true;
             }
             return cacheResult;
+        }
+        catch (HttpRequestException)
+        {
+            DebugHelper.WriteLine("b HttpRequestException");
+        }
+        catch (TaskCanceledException)
+        {
+            DebugHelper.WriteLine("b TaskCanceledException");
         }
         catch (Exception ex)
         {
