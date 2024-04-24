@@ -34,7 +34,7 @@ public class DrogeCodeGlobal : RefreshModel
     }
     public async Task CallVisibilityChangeAsync()
     {
-        if (_lastVisibilityChange.AddMinutes(1).CompareTo(DateTime.UtcNow) > 0)
+        if (_lastVisibilityChange.AddMinutes(5).CompareTo(DateTime.UtcNow) > 0)
             return;
         _lastVisibilityChange = DateTime.UtcNow;
         var task = VisibilityChangeAsync?.Invoke();

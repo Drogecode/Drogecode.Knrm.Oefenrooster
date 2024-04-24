@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Heron.MudCalendar;
@@ -11,6 +12,7 @@ public sealed partial class Calendar : IDisposable
 {
     [Inject] private IStringLocalizer<Calendar> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
+    [Inject] private ISessionExpireService SessionExpireService { get; set; } = default!;
     [Inject] private ScheduleRepository scheduleRepository { get; set; } = default!;
     [Inject] private DayItemRepository DayItemRepository { get; set; } = default!;
     [Inject] private MonthItemRepository MonthItemRepository { get; set; } = default!;
@@ -23,9 +25,11 @@ public sealed partial class Calendar : IDisposable
     private DrogeUser? _user;
     private bool _updating;
     private DateTime? _month;
+    private DateTime _firstMonth = DateTime.Today;
 
     protected override async Task OnInitializedAsync()
     {
+        _firstMonth = await SessionExpireService.GetSelectedMonth(_cls.Token);
         Global.NewTrainingAddedAsync += HandleNewTraining;
         _user = await UserRepository.GetCurrentUserAsync();
     }
@@ -62,8 +66,9 @@ public sealed partial class Calendar : IDisposable
             }
         }
         _month = PlannerHelper.ForMonth(dateRange);
-        if (_month != null)
+        if (_month is not null)
         {
+            _firstMonth = _month.Value;
             var monthItems = await MonthItemRepository.GetMonthItemAsync(_month.Value.Year, _month.Value.Month, _cls.Token);
             _monthItems = monthItems?.MonthItems;
             _user ??= await UserRepository.GetCurrentUserAsync();
@@ -82,6 +87,7 @@ public sealed partial class Calendar : IDisposable
                 }
             }
         }
+        await SessionExpireService.SetSelectedMonth(_month, _cls.Token);
         _updating = false;
         StateHasChanged();
     }

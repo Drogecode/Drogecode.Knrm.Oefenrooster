@@ -84,7 +84,7 @@ public sealed partial class ScheduleCalendar : IDisposable
             }
         }
         _month = PlannerHelper.ForMonth(dateRange);
-        if (_month != null)
+        if (_month is not null)
         {
             _firstMonth = _month.Value;
             _currentMonth = DateTime.Today.Month == _month.Value.Month;
