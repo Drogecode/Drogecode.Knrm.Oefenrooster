@@ -117,6 +117,15 @@
   },
   "components": {
     "schemas": {
+      "AuditReason": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "AuditType": {
         "enum": [
           0,
@@ -256,6 +265,9 @@
           },
           "setBy": {
             "$ref": "#/components/schemas/AvailabilitySetBy"
+          },
+          "auditReason": {
+            "$ref": "#/components/schemas/AuditReason"
           },
           "auditType": {
             "$ref": "#/components/schemas/AuditType"

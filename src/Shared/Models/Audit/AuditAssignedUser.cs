@@ -11,6 +11,17 @@ public class AuditAssignedUser
 {
     public Guid? UserId { get; set; }
     public bool? Assigned { get; set; }
+
+    // Typo, but used in both server and client and can not be changed without a breaking update
+    // Availability
     public Availabilty? Availabilty { get; set; }
     public AvailabilitySetBy? SetBy { get; set; }
+    public AuditReason? AuditReason { get; set; }
+}
+
+public enum AuditReason
+{
+    None = 0,
+    Assigned = 1,
+    ChangeAvailability = 2,
 }

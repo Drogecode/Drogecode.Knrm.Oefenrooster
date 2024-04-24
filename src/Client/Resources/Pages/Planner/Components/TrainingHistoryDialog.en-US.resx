@@ -129,4 +129,16 @@
   <data name="User" xml:space="preserve">
     <value>User</value>
   </data>
+  <data name="AuditReason" xml:space="preserve">
+    <value>Audit reason</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Assigned" xml:space="preserve">
+    <value>Assigned</value>
+  </data>
+  <data name="ChangeAvailability" xml:space="preserve">
+    <value>Change availability</value>
+  </data>
 </root>

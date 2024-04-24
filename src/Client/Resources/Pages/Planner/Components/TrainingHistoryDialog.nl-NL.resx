@@ -129,4 +129,16 @@
   <data name="User" xml:space="preserve">
     <value>Gebruiker</value>
   </data>
+  <data name="AuditReason" xml:space="preserve">
+    <value>Reden wijziging</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Onbekend</value>
+  </data>
+  <data name="Assigned" xml:space="preserve">
+    <value>Ingedeeld</value>
+  </data>
+  <data name="ChangeAvailability" xml:space="preserve">
+    <value>Wijzig beschikbaarheid</value>
+  </data>
 </root>

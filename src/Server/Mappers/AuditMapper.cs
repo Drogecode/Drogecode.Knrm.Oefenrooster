@@ -23,6 +23,7 @@ public static class AuditMapper
             Date = dbAudit.Created,
             Availabilty = note?.Availabilty,
             SetBy = note?.SetBy,
+            AuditReason = note?.AuditReason,
         };
     }
 }

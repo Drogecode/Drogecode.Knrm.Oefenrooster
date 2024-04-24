@@ -2,11 +2,16 @@
     <DialogContent>
         @if (_trainingAudits is not null && Users is not null)
         {
-            <MudDataGrid Items="_trainingAudits.OrderByDescending(x=>x.Date)">
+            <MudDataGrid Items="_trainingAudits.OrderByDescending(x=>x.Date)" Striped="true" Hover="true">
                 <Columns>
                     <PropertyColumn Property="x => x.Date" Title="@L["Date"]">
                         <CellTemplate>
                             <DateToString DateTimeUtc="context.Item.Date" ShowDate="true" ShowTime="true"/>
+                        </CellTemplate>
+                    </PropertyColumn>
+                    <PropertyColumn Property="x => x.AuditReason" Title="@L["AuditReason"]">
+                        <CellTemplate>
+                            @L[context.Item.AuditReason?.ToString() ?? ""]
                         </CellTemplate>
                     </PropertyColumn>
                     <PropertyColumn Property="x => x.UserId" Title="@L["User"]">

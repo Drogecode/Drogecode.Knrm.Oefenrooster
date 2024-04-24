@@ -1,11 +1,16 @@
 ﻿@page "/configuration/audit"
 @if (_trainingAudits?.TrainingAudits is not null && _users is not null)
 {
-    <MudDataGrid Items="_trainingAudits.TrainingAudits">
+    <MudDataGrid Items="_trainingAudits.TrainingAudits" Striped="true" Hover="true">
         <Columns>
             <PropertyColumn Property="x => x.Date" Title="@L["Date"]">
                 <CellTemplate>
                     <DateToString DateTimeUtc="context.Item.Date" ShowDate="true" ShowTime="true" />
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.AuditReason" Title="@L["AuditReason"]">
+                <CellTemplate>
+                    @LApp[context.Item.AuditReason?.ToString() ?? ""]
                 </CellTemplate>
             </PropertyColumn>
             <PropertyColumn Property="x => x.UserId" Title="@L["User"]">
@@ -16,6 +21,11 @@
             <PropertyColumn Property="x => x.Assigned" Title="@LApp["Assigned"]">
                 <CellTemplate>
                     <MudCheckBox Disabled="true" Checked="context.Item.Assigned ?? false" />
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Availabilty" Title="@L["Availabilty"]">
+                <CellTemplate>
+                    @LApp[context.Item.Availabilty?.ToString() ?? ""]
                 </CellTemplate>
             </PropertyColumn>
             <PropertyColumn Property="x => x.ByUser" Title="@L["By user"]">
