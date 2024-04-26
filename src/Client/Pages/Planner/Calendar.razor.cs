@@ -24,6 +24,7 @@ public sealed partial class Calendar : IDisposable
     private CancellationTokenSource _cls = new();
     private DrogeUser? _user;
     private bool _updating;
+    private bool _initialized;
     private DateTime? _month;
     private DateTime _firstMonth = DateTime.Today;
 
@@ -32,6 +33,8 @@ public sealed partial class Calendar : IDisposable
         _firstMonth = await SessionExpireService.GetSelectedMonth(_cls.Token);
         Global.NewTrainingAddedAsync += HandleNewTraining;
         _user = await UserRepository.GetCurrentUserAsync();
+        await SetMonth(_firstMonth);
+        _initialized = true;
     }
     private async Task SetMonth(DateTime? dateTime)
     {

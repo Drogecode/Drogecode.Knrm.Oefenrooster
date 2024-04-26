@@ -17,30 +17,33 @@
     }
 }
 <div class="d-none d-md-flex">
-    <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false CurrentDay="@_firstMonth">
-        <CellTemplate>
-            @if (context is DrogeCodeCalendarItem)
-            {
-                var training = ((DrogeCodeCalendarItem)context).Training;
-                @if (training != null)
+    @if (_initialized)
+    {
+        <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false CurrentDay="@_firstMonth">
+            <CellTemplate>
+                @if (context is DrogeCodeCalendarItem)
                 {
-                    <CalendarCard Training="training"/>
+                    var training = ((DrogeCodeCalendarItem)context).Training;
+                    @if (training != null)
+                    {
+                        <CalendarCard Training="training"/>
+                    }
                 }
-            }
-            else if (context is RoosterItemDayCalendarItem)
-            {
-                var dayItem = ((RoosterItemDayCalendarItem)context).ItemDay;
-                if (dayItem is not null)
+                else if (context is RoosterItemDayCalendarItem)
                 {
-                    var color = DayItemHelper.DayItemTypeColor(dayItem.Type);
-                    <div class="flex gap-1">
-                        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@color" Size="Size.Small"/>
-                        <span>@dayItem.Text</span>
-                    </div>
+                    var dayItem = ((RoosterItemDayCalendarItem)context).ItemDay;
+                    if (dayItem is not null)
+                    {
+                        var color = DayItemHelper.DayItemTypeColor(dayItem.Type);
+                        <div class="flex gap-1">
+                            <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@color" Size="Size.Small"/>
+                            <span>@dayItem.Text</span>
+                        </div>
+                    }
                 }
-            }
-        </CellTemplate>
-    </MudCalendar>
+            </CellTemplate>
+        </MudCalendar>
+    }
 </div>
 <div class="d-md-none">
     <MonthSelector Month="_month" MonthChanged="SetMonth"/>
