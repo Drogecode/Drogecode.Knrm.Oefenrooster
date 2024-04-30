@@ -97,13 +97,13 @@ static async Task<HttpClient> SendWithWhatsapp(string message)
     WhatsAppclient.BaseAddress = WhatsAppBusinessRequestEndpoint.BaseAddress;
     var whatsAppBusinessClient = new WhatsAppBusinessClient(WhatsAppclient, new WhatsAppBusinessCloudApiConfig
     {
-        WhatsAppBusinessPhoneNumberId = "119008671191114",
-        WhatsAppBusinessAccountId = "118041241288520",
-        WhatsAppBusinessId = "630230422459125",
-        AccessToken = "EAACFeYX2RJwBAGct6j4z8VfPzcfjoA2g6KZByAPyaEfZAFagYbmHfaj3bDx2KYIzkdjZB4yXUaiZBZB9CWDHlNfIYqnXfyW3YI597o3WYlEte4nOXpuVRdVZB3F6H840aUPZBFR8WlyMQ9Owpysf1AYnZApkORNsxCKEG0JgidXxED0joGrqFRDLocwn3TEMJHSiP3h1YiC0mwZDZD",
+        WhatsAppBusinessPhoneNumberId = "",
+        WhatsAppBusinessAccountId = "",
+        WhatsAppBusinessId = "",
+        AccessToken = "",
     });
     TextMessageRequest textMessageRequest = new TextMessageRequest();
-    textMessageRequest.To = "+31636215775";
+    textMessageRequest.To = "";
     textMessageRequest.Text = new WhatsAppText();
     textMessageRequest.Text.Body = message;
     textMessageRequest.Text.PreviewUrl = false;

@@ -40,25 +40,28 @@ public sealed partial class Index : IDisposable
     private Guid _userId;
     private bool _loading = true;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!await SetUser())
-            return;
-        await ConfigureHub();
+        if (firstRender)
+        {
+            if (!await SetUser())
+                return;
+            await ConfigureHub();
 
-        _users = await _userRepository.GetAllUsersAsync(false, false, true, _cls.Token);
-        _vehicles = await _vehicleRepository.GetAllVehiclesAsync(true, _cls.Token);
-        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, true, _cls.Token);
-        _functions = await _functionRepository.GetAllFunctionsAsync(true, _cls.Token);
-        _dayItems = (await _calendarItemRepository.GetDayItemDashboardAsync(_userId, true, _cls.Token))?.DayItems;
-        StateHasChanged();
-        _pinnedTrainings = (await _scheduleRepository.GetPinnedTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
-        StateHasChanged();
-        _futureTrainings = (await _scheduleRepository.GetScheduledTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
-        
-        Global.VisibilityChangeAsync += VisibilityChanged;
-        _loading = false;
-        StateHasChanged();
+            _users = await _userRepository.GetAllUsersAsync(false, false, true, _cls.Token);
+            _vehicles = await _vehicleRepository.GetAllVehiclesAsync(true, _cls.Token);
+            _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, true, _cls.Token);
+            _functions = await _functionRepository.GetAllFunctionsAsync(true, _cls.Token);
+            _dayItems = (await _calendarItemRepository.GetDayItemDashboardAsync(_userId, true, _cls.Token))?.DayItems;
+            StateHasChanged();
+            _pinnedTrainings = (await _scheduleRepository.GetPinnedTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
+            StateHasChanged();
+            _futureTrainings = (await _scheduleRepository.GetScheduledTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
+
+            Global.VisibilityChangeAsync += VisibilityChanged;
+            _loading = false;
+            StateHasChanged();
+        }
     }
 
     private async Task<bool> SetUser()

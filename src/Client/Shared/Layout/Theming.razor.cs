@@ -19,13 +19,11 @@ public sealed partial class Theming : IDisposable
     [Parameter, EditorRequired] public MudThemeProvider MudThemeProvider { get; set; } = default!;
     [Parameter] public EventCallback<bool> IsDarkModeChanged { get; set; }
     [Inject] ISnackbar Snackbar { get; set; } = default!;
+
     [Parameter]
     public bool IsDarkMode
     {
-        get
-        {
-            return _isDarkMode;
-        }
+        get { return _isDarkMode; }
         set
         {
             if (_isDarkMode == value) return;
@@ -36,8 +34,9 @@ public sealed partial class Theming : IDisposable
             }
         }
     }
+
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
-    
+
     private DarkLightMode _darkModeToggle;
     private LocalUserSettings? _localUserSettings;
     private DotNetObjectReference<Theming>? _dotNetHelper;
@@ -46,6 +45,7 @@ public sealed partial class Theming : IDisposable
     private bool _watchStarted;
     private bool _isTaco;
     private int counter = 0;
+
     protected override async Task OnInitializedAsync()
     {
         _localUserSettings = (await LocalStorage.GetItemAsync<LocalUserSettings>("localUserSettings")) ?? new LocalUserSettings();
@@ -78,6 +78,7 @@ public sealed partial class Theming : IDisposable
                     IsDarkMode = true;
                     break;
             }
+
             await Global.CallDarkLightChangedAsync(IsDarkMode);
             await Global.CallRequestRefreshAsync();
         }
@@ -96,6 +97,7 @@ public sealed partial class Theming : IDisposable
             {
                 return;
             }
+
             _localUserSettings.DarkLightMode = _darkModeToggle;
             LocalStorage.SetItemAsync("localUserSettings", _localUserSettings);
         }
@@ -119,6 +121,7 @@ public sealed partial class Theming : IDisposable
                 await StartWatch();
                 break;
         }
+
         await Global.CallDarkLightChangedAsync(IsDarkMode);
     }
 
@@ -128,16 +131,17 @@ public sealed partial class Theming : IDisposable
         {
             _watchStarted = true;
             await MudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
-            
-            var accessorJsRef = new Lazy<IJSObjectReference>(await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/VisibilityWatcher.js"));
             _dotNetHelper = DotNetObjectReference.Create(this);
-            await accessorJsRef.Value.InvokeVoidAsync("AddVisibilityWatcher", _dotNetHelper);
+            if (_cls.IsCancellationRequested) return;
+            await JsRuntime.InvokeVoidAsync("AddVisibilityWatcher", _dotNetHelper);
         }
     }
-    
+
     [JSInvokable]
-    public async Task VisibilityChange()
+    public async Task VisibilityChange(string dingdong)
     {
+        if (string.Compare(dingdong, "visible", StringComparison.InvariantCulture) != 0)
+            return;
         if (DarkModeToggle != DarkLightMode.System) return;
         await Global.CallVisibilityChangeAsync();
         await OnSystemPreferenceChanged(await MudThemeProvider.GetSystemPreference());
