@@ -90,6 +90,7 @@ public sealed partial class Index : IDisposable
         {
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(Navigation.ToAbsoluteUri("/hub/refresh"))
+                .WithAutomaticReconnect()
                 .Build();
             _hubConnection.On<ItemUpdated>($"Refresh_{_userId}", async (type) =>
             {
