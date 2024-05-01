@@ -15,7 +15,7 @@ public static class DefaultUserScheduleMapper
         {
             UserDefaultAvailableId = defaultUserSchedule.UserDefaultAvailableId,
             GroupId = defaultUserSchedule.GroupId,
-            Available = defaultUserSchedule.Available,
+            Availability = defaultUserSchedule.Availability,
             ValidFromUser = defaultUserSchedule.ValidFromUser,
             ValidUntilUser = defaultUserSchedule.ValidUntilUser,
             Assigned = defaultUserSchedule.Assigned,
@@ -30,7 +30,7 @@ public static class DefaultUserScheduleMapper
             clone.Add(new DefaultUserSchedule
             {
                 UserDefaultAvailableId = item.UserDefaultAvailableId,
-                Available = item.Available,
+                Availability = item.Availability,
                 ValidFromUser = item.ValidFromUser,
                 ValidUntilUser = item.ValidUntilUser,
                 Assigned = item.Assigned,

@@ -84,7 +84,7 @@ public class DefaultScheduleService : IDefaultScheduleService
                     {
                         UserDefaultAvailableId = userDefault.Id,
                         GroupId = userDefault.DefaultGroupId,
-                        Available = userDefault.Available,
+                        Availability = userDefault.Available,
                         ValidFromUser = userDefault.ValidFrom,
                         ValidUntilUser = userDefault.ValidUntil,
                         Assigned = userDefault.Assigned,
@@ -178,7 +178,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         if (userDefault?.ValidFrom?.Date.CompareTo(_dateTimeService.UtcNow().Date) >= 0)
         {
             userDefault.DefaultGroupId = body.GroupId;
-            userDefault.Available = body.Available;
+            userDefault.Available = body.Availability;
             userDefault.Assigned = body.Assigned;
             userDefault.ValidFrom = validFrom;
             userDefault.ValidUntil = validUntil;
@@ -200,7 +200,7 @@ public class DefaultScheduleService : IDefaultScheduleService
                 CustomerId = customerId,
                 DefaultGroupId = body.GroupId,
                 RoosterDefaultId = body.DefaultId,
-                Available = body.Available,
+                Available = body.Availability,
                 Assigned = body.Assigned,
                 ValidFrom = validFrom,
                 ValidUntil = validUntil

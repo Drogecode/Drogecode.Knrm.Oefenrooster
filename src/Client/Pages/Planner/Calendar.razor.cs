@@ -64,7 +64,7 @@ public sealed partial class Calendar : IDisposable
                     Start = training.DateStart,
                     End = training.DateEnd,
                     Training = training,
-                    Text = training.Availabilty.ToString() ?? ""
+                    Text = training.Availability.ToString() ?? ""
                 });
             }
         }
@@ -113,7 +113,7 @@ public sealed partial class Calendar : IDisposable
             Start = asTraining.DateStart,
             End = asTraining.DateEnd,
             Training = asTraining,
-            Text = asTraining.Availabilty.ToString() ?? "",
+            Text = asTraining.Availability.ToString() ?? "",
         });
         StateHasChanged();
     }

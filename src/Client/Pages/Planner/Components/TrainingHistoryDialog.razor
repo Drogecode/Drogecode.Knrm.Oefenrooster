@@ -24,9 +24,9 @@
                             <MudCheckBox Disabled = "true" Checked="context.Item.Assigned ?? false"/>
                         </CellTemplate>
                     </PropertyColumn>
-                    <PropertyColumn Property="x => x.Availabilty" Title="@L["Availabilty"]">
+                    <PropertyColumn Property="x => x.Availability" Title="@L["Availabilty"]">
                         <CellTemplate>
-                            @LApp[context.Item.Availabilty?.ToString() ?? ""]
+                            @LApp[context.Item.Availability?.ToString() ?? ""]
                         </CellTemplate>
                     </PropertyColumn>
                     <PropertyColumn Property="x => x.ByUser" Title="@L["By user"]">

@@ -25,7 +25,7 @@ public static class RoosterTrainingMapper
             if (userAva is not null)
             {
                 training.Assigned = userAva.Assigned;
-                training.Availabilty = userAva.Available;
+                training.Availability = userAva.Available;
                 training.SetBy = userAva.SetBy;
             }
         }
@@ -56,7 +56,7 @@ public static class RoosterTrainingMapper
                     UserFunctionId = ava.User?.UserFunctionId,
                     PlannedFunctionId = ava.UserFunctionId ?? ava.User?.UserFunctionId,
                     Assigned = ava.Assigned,
-                    Availabilty = ava.Available,
+                    Availability = ava.Available,
                     SetBy = ava.SetBy,
                     Name = ava.User?.Name ?? "Some dude",
                     VehicleId = ava.VehicleId,

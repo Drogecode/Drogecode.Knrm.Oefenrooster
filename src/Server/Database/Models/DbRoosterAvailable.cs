@@ -15,7 +15,7 @@ public class DbRoosterAvailable
     public Guid? LinkExchangeId { get; set; }
     public string? CalendarEventId { get; set; }
     public DateTime Date { get; set; }
-    public Availabilty? Available { get; set; }
+    public Availability? Available { get; set; }
     public AvailabilitySetBy SetBy { get; set; }
     public bool Assigned { get; set; }
 
