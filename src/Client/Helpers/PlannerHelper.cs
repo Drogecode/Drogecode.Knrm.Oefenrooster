@@ -8,33 +8,33 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Helpers;
 public static class PlannerHelper
 {
 
-    public static Color ColorAvailabilty(Availabilty? availabilty)
+    public static Color ColorAvailabilty(Availability? availabilty)
     {
         switch (availabilty)
         {
-            case Availabilty.Available:
+            case Availability.Available:
                 return Color.Success;
-            case Availabilty.NotAvailable:
+            case Availability.NotAvailable:
                 return Color.Error;
-            case Availabilty.Maybe:
+            case Availability.Maybe:
                 return Color.Warning;
-            case Availabilty.None:
+            case Availability.None:
             default:
                 return Color.Inherit;
         }
     }
 
-    public static string StyleAvailabilty(Availabilty? availabilty)
+    public static string StyleAvailabilty(Availability? availabilty)
     {
         switch (availabilty)
         {
-            case Availabilty.Available:
+            case Availability.Available:
                 return "bg-green-400";
-            case Availabilty.NotAvailable:
+            case Availability.NotAvailable:
                 return "bg-red-400";
-            case Availabilty.Maybe:
+            case Availability.Maybe:
                 return "bg-orange-400";
-            case Availabilty.None:
+            case Availability.None:
             default:
                 return "";
         }

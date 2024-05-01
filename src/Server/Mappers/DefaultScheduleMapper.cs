@@ -51,7 +51,7 @@ public static class DefaultScheduleMapper
             DefaultId = defaultSchedule.Id,
             GroupId = userDefault?.DefaultGroupId,
             UserDefaultAvailableId = userDefault?.Id,
-            Available = userDefault?.Available,
+            Availability = userDefault?.Available,
             ValidFromUser = userDefault?.ValidFrom,
             ValidUntilUser = userDefault?.ValidUntil,
             Assigned = userDefault?.Assigned ?? false,

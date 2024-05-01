@@ -13,5 +13,6 @@ public class PutAssignedUserResponse : BaseResponse
     public Guid? AvailableId { get; set; }
     public string? CalendarEventId { get; set; }
     public Availabilty? Availabilty { get; set; }
+    public Availability? Availability { get; set; }
     public AvailabilitySetBy? SetBy { get; set; }
 }

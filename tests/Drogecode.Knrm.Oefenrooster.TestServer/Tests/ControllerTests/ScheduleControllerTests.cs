@@ -197,14 +197,14 @@ public class ScheduleControllerTests : BaseTest
         var trainingId = await AddTraining("PatchScheduleForUserTest", false, start, end);
         var training = (await ScheduleController.GetTrainingById(trainingId))?.Value?.Training;
         Assert.NotNull(training);
-        training.Availabilty.Should().NotBe(Availabilty.Available);
-        training.Availabilty = Availabilty.Available;
+        training.Availability.Should().NotBe(Availability.Available);
+        training.Availability = Availability.Available;
         var patchedResult = await ScheduleController.PatchScheduleForUser(training);
         Assert.NotNull(patchedResult?.Value);
         Assert.True(patchedResult.Value.Success);
         var trainingAfterPatch = (await ScheduleController.GetTrainingById(trainingId))?.Value?.Training;
         Assert.NotNull(trainingAfterPatch);
-        trainingAfterPatch.Availabilty.Should().Be(Availabilty.Available);
+        trainingAfterPatch.Availability.Should().Be(Availability.Available);
     }
 
     [Fact]
@@ -213,14 +213,14 @@ public class ScheduleControllerTests : BaseTest
         var triningInPastId = await AddTraining("PatchScheduleForUserPastTest", false, DateTime.Today.AddDays(-1).AddHours(10), DateTime.Today.AddDays(-1).AddHours(12));
         var training = (await ScheduleController.GetTrainingById(triningInPastId))?.Value?.Training;
         Assert.NotNull(training);
-        training.Availabilty.Should().Be(null);
-        training.Availabilty = Availabilty.Available;
+        training.Availability.Should().Be(null);
+        training.Availability = Availability.Available;
         var patchedResult = await ScheduleController.PatchScheduleForUser(training);
         Assert.NotNull(patchedResult?.Value);
         Assert.False(patchedResult.Value.Success);
         var trainingAfterPatch = (await ScheduleController.GetTrainingById(DefaultTraining))?.Value?.Training;
         Assert.NotNull(trainingAfterPatch);
-        trainingAfterPatch.Availabilty.Should().Be(null);
+        trainingAfterPatch.Availability.Should().Be(null);
     }
 
     [Fact]
@@ -333,7 +333,7 @@ public class ScheduleControllerTests : BaseTest
         trainings.Value.Trainings.Should().Contain(x => x.TrainingId == trainingId);
         var training = trainings.Value.Trainings.FirstOrDefault(x => x.TrainingId == trainingId);
         training.Should().NotBeNull();
-        training!.Availabilty = Availabilty.Available;
+        training!.Availability = Availability.Available;
         MockAuthenticatedUser(ScheduleController, DefaultUserId, DefaultCustomerId);
         trainings = await ScheduleController.GetPinnedTrainingsForUser();
         Assert.NotNull(trainings?.Value?.Trainings);

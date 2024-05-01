@@ -16,7 +16,7 @@ public class CalendarCardTests : BlazorTestBase
         var training = new Training
         {
             Name = "xUnit meets bUnit",
-            Availabilty = Shared.Enums.Availabilty.Available,
+            Availability = Shared.Enums.Availability.Available,
             DateStart = DateTime.UtcNow,
             ShowTime = true,
         };
@@ -34,7 +34,7 @@ public class CalendarCardTests : BlazorTestBase
         var training = new Training
         {
             Name = "xUnit meets bUnit",
-            Availabilty = Shared.Enums.Availabilty.Available,
+            Availability = Shared.Enums.Availability.Available,
             DateStart = DateTime.UtcNow
         };
         var cut = RenderComponent<CalendarCard>(parameter => parameter

@@ -47,7 +47,7 @@ public sealed partial class DefaultDialog : IDisposable
             ValidFromUser = DefaultUserSchedule.ValidFromUser,
             ValidUntilUser = DefaultUserSchedule.ValidUntilUser,
             Assigned = DefaultUserSchedule.Assigned,
-            Available = DefaultUserSchedule.Available,
+            Availability = DefaultUserSchedule.Availability,
         };
         var result = await _defaultScheduleRepository.PatchDefaultScheduleForUser(body, _cls.Token);
         if (Refresh is not null)

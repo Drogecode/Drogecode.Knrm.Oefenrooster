@@ -37,7 +37,7 @@
                 @foreach (var item in _events)
                 {
                     var user = item.PlanUsers?.FirstOrDefault(x => x.UserId == @context.Id);
-                    <MudTd Class="@PlannerHelper.StyleAvailabilty(user?.Availabilty)" DataLabel="@L["Name"]" @onclick="()=>Click(user, item)">
+                    <MudTd Class="@PlannerHelper.StyleAvailabilty(user?.Availability)" DataLabel="@L["Name"]" @onclick="()=>Click(user, item)">
                         @switch (user?.SetBy)
                         {
                             case AvailabilitySetBy.DefaultAvailable:

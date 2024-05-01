@@ -9,7 +9,7 @@ public class DbUserHolidays
     [Key] public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public Guid CustomerId { get; set; }
-    public Availabilty? Available { get; set; }
+    public Availability? Available { get; set; }
     public DateTime? ValidFrom { get; set; }
     public DateTime? ValidUntil { get; set; }
     public string? Description { get; set; }

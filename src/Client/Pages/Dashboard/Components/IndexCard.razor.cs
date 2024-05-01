@@ -25,8 +25,8 @@ public sealed partial class IndexCard : IDisposable
     protected override void OnParametersSet()
     {
         _planUser = Training?.PlanUsers?.FirstOrDefault(x => x.UserId == User?.Id);
-        if (_planUser?.Availabilty == Availabilty.None)
-            _planUser.Availabilty = null;
+        if (_planUser?.Availability == Availability.None)
+            _planUser.Availability = null;
     }
 
     public void Dispose()

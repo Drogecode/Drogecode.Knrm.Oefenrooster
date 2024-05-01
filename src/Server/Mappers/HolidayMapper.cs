@@ -13,7 +13,7 @@ public static class HolidayMapper
             Id = holiday.Id,
             Description = holiday.Description,
             UserId = holiday.UserId,
-            Available = holiday.Available,
+            Available = holiday.Availability,
             ValidFrom = holiday.ValidFrom,
             ValidUntil = holiday.ValidUntil,
         };
@@ -26,7 +26,7 @@ public static class HolidayMapper
             Id = holiday.Id,
             Description = holiday.Description,
             UserId = holiday.UserId,
-            Available = holiday.Available,
+            Availability = holiday.Available,
             ValidFrom = holiday.ValidFrom,
             ValidUntil = holiday.ValidUntil,
         };

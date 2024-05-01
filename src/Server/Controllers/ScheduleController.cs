@@ -253,7 +253,7 @@ public class ScheduleController : ControllerBase
             {
                 await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
                     JsonSerializer.Serialize(new AuditAssignedUser
-                        { UserId = userId, Assigned = result.PatchedTraining.Assigned, Availabilty = result.PatchedTraining.Availabilty, SetBy = result.PatchedTraining.SetBy, 
+                        { UserId = userId, Assigned = result.PatchedTraining.Assigned, Availability = result.PatchedTraining.Availability, SetBy = result.PatchedTraining.SetBy, 
                             AuditReason = AuditReason.ChangeAvailability}), 
                     training?.TrainingId);
                 await _refreshHub.SendMessage(userId, ItemUpdated.FutureTrainings);
@@ -282,7 +282,7 @@ public class ScheduleController : ControllerBase
                 return Unauthorized();
             var result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
-                JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.User?.UserId, Assigned = body?.User?.Assigned, Availabilty = result.Availabilty, SetBy = result.SetBy,
+                JsonSerializer.Serialize(new AuditAssignedUser { UserId = body.User?.UserId, Assigned = body?.User?.Assigned, Availability = result.Availability, SetBy = result.SetBy,
                     AuditReason = AuditReason.Assigned }),
                 body?.TrainingId);
             await _userService.PatchLastOnline(userId, clt);
@@ -318,7 +318,7 @@ public class ScheduleController : ControllerBase
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
                 JsonSerializer.Serialize(new AuditAssignedUser
                 {
-                    UserId = body.UserId, Assigned = body?.Assigned, Availabilty = result.Availabilty, SetBy = result.SetBy,
+                    UserId = body.UserId, Assigned = body?.Assigned, Availability = result.Availability, SetBy = result.SetBy,
                     AuditReason = AuditReason.Assigned
                 }), 
                 body?.TrainingId);

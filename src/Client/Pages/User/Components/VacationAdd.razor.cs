@@ -56,7 +56,7 @@ public sealed partial class VacationAdd : IDisposable
     {
         // https://github.com/MudBlazor/MudBlazor/issues/4047
         if (_holiday is null || _holiday.Description is null || _holiday.ValidUntil is null || _holiday.ValidFrom is null) return;
-        _holiday.Available = Availabilty.NotAvailable;
+        _holiday.Availability = Availability.NotAvailable;
         _holiday.ValidFrom = DateTime.SpecifyKind(_holiday.ValidFrom.Value, DateTimeKind.Local).ToUniversalTime();
         _holiday.ValidUntil = new DateTime(_holiday.ValidUntil.Value.Year, _holiday.ValidUntil.Value.Month, _holiday.ValidUntil.Value.Day, 23, 59, 59, DateTimeKind.Local).ToUniversalTime();
         if (_isNew == true)

@@ -51,13 +51,13 @@ public class DefaultScheduleControllerTests : BaseTest
         var body = new PatchDefaultUserSchedule
         {
             DefaultId = DefaultDefaultSchedule,
-            Available = Availabilty.Available,
+            Availability = Availability.Available,
             ValidFromUser = DateTime.Today,
             ValidUntilUser = DateTime.Today.AddDays(7),
         };
         var result = await DefaultScheduleController.PatchDefaultScheduleForUser(body);
         Assert.NotNull(result?.Value?.Patched?.UserDefaultAvailableId);
-        result!.Value!.Patched!.Available.Should().Be(Availabilty.Available);
+        result!.Value!.Patched!.Availability.Should().Be(Availability.Available);
         result!.Value!.Patched!.ValidFromUser.Should().Be(DateTime.Today);
         result!.Value!.Patched!.ValidUntilUser.Should().Be(DateTime.Today.AddDays(7));
     }
@@ -69,7 +69,7 @@ public class DefaultScheduleControllerTests : BaseTest
         var body = new PatchDefaultUserSchedule
         {
             DefaultId = DefaultDefaultSchedule,
-            Available = Availabilty.Available,
+            Availability = Availability.Available,
             ValidFromUser = DateTimeServiceMock.Today(),
             ValidUntilUser = DateTimeServiceMock.Today().AddDays(7),
         };
@@ -80,7 +80,7 @@ public class DefaultScheduleControllerTests : BaseTest
         {
             UserDefaultAvailableId = resultOrignal!.Value!.Patched!.UserDefaultAvailableId,
             DefaultId = DefaultDefaultSchedule,
-            Available = Availabilty.Available,
+            Availability = Availability.Available,
             ValidFromUser = DateTimeServiceMock.Today(),
             ValidUntilUser = DateTimeServiceMock.Today().AddDays(7),
         };
@@ -95,7 +95,7 @@ public class DefaultScheduleControllerTests : BaseTest
         var body = new PatchDefaultUserSchedule
         {
             DefaultId = DefaultDefaultSchedule,
-            Available = Availabilty.Available,
+            Availability = Availability.Available,
             ValidFromUser = DateTimeServiceMock.Today().AddDays(7),
             ValidUntilUser = DateTimeServiceMock.Today().AddDays(14),
         };
@@ -105,14 +105,14 @@ public class DefaultScheduleControllerTests : BaseTest
         {
             UserDefaultAvailableId = resultOrignal!.Value!.Patched!.UserDefaultAvailableId,
             DefaultId = DefaultDefaultSchedule,
-            Available = Availabilty.Maybe,
+            Availability = Availability.Maybe,
             ValidFromUser = DateTimeServiceMock.Today().AddDays(7),
             ValidUntilUser = DateTimeServiceMock.Today().AddDays(19),
         };
         var resultPatched = await DefaultScheduleController.PatchDefaultScheduleForUser(body);
         Assert.NotNull(resultPatched?.Value?.Patched?.UserDefaultAvailableId);
         resultPatched!.Value!.Patched!.UserDefaultAvailableId.Should().Be(resultOrignal!.Value!.Patched!.UserDefaultAvailableId);
-        resultPatched!.Value!.Patched!.Available.Should().Be(Availabilty.Maybe);
+        resultPatched!.Value!.Patched!.Availability.Should().Be(Availability.Maybe);
         resultPatched!.Value!.Patched!.ValidFromUser.Should().Be(DateTime.Today.AddDays(7));
         resultPatched!.Value!.Patched!.ValidUntilUser.Should().Be(DateTime.Today.AddDays(19));
     }
@@ -168,7 +168,7 @@ public class DefaultScheduleControllerTests : BaseTest
             UserDefaultAvailableId = null,
             DefaultId = DefaultDefaultSchedule,
             Assigned = false,
-            Available = Availabilty.Available,
+            Availability = Availability.Available,
             ValidFromUser = newGroup!.ValidFrom,
             ValidUntilUser = newGroup!.ValidUntil,
         };
@@ -203,12 +203,12 @@ public class DefaultScheduleControllerTests : BaseTest
             UserDefaultAvailableId = null,
             DefaultId = DefaultDefaultSchedule,
             Assigned = false,
-            Available = Availabilty.NotAvailable,
+            Availability = Availability.NotAvailable,
             ValidFromUser = new DateTime(2020, 1, 12)
         };
         var patchResult = await DefaultScheduleController.PatchDefaultScheduleForUser(defaultSchedule);
         defaultSchedule.GroupId = newGroup!.Id;
-        defaultSchedule.Available = Availabilty.Available;
+        defaultSchedule.Availability = Availability.Available;
         patchResult = await DefaultScheduleController.PatchDefaultScheduleForUser(defaultSchedule);
 
         // default default
@@ -217,7 +217,7 @@ public class DefaultScheduleControllerTests : BaseTest
         scheduledTraining.Value!.Training!.PlanUsers.Should().NotBeNull();
         var user = scheduledTraining.Value.Training.PlanUsers.FirstOrDefault(x => x.UserId == DefaultUserId);
         user.Should().NotBeNull();
-        user!.Availabilty.Should().Be(Availabilty.NotAvailable);
+        user!.Availability.Should().Be(Availability.NotAvailable);
 
         // group default
         scheduledTraining = await ScheduleController.GetPlannedTrainingForDefaultDate(new DateTime(2020, 8, 10), DefaultDefaultSchedule);
@@ -225,7 +225,7 @@ public class DefaultScheduleControllerTests : BaseTest
         scheduledTraining.Value!.Training!.PlanUsers.Should().NotBeNull();
         user = scheduledTraining.Value.Training.PlanUsers.FirstOrDefault(x => x.UserId == DefaultUserId);
         user.Should().NotBeNull();
-        user!.Availabilty.Should().Be(Availabilty.Available);
+        user!.Availability.Should().Be(Availability.Available);
         MockAuthenticatedUser(DefaultScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
         MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
     }
