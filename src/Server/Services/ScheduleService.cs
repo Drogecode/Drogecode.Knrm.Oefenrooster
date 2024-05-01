@@ -626,9 +626,9 @@ public class ScheduleService : IScheduleService
                 {
                     result.Training!.PlanUsers.Add(new PlanUser
                     {
-                        Availabilty = (Availabilty)(int)(available ?? Availability.None), //ToDo Remove when all users on v0.3.50 or above
+                        Availabilty = (Availabilty)(int)available, //ToDo Remove when all users on v0.3.50 or above
                         Availability = available,
-                        SetBy = setBy ?? AvailabilitySetBy.None,
+                        SetBy = setBy.Value,
                         Name = user.Name,
                         UserId = user.Id,
                         UserFunctionId = user.UserFunctionId,
