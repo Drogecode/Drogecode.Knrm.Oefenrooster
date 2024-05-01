@@ -40,7 +40,7 @@ public class ScheduleService : IScheduleService
             .Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: clt);
         var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
             .ToListAsync(cancellationToken: clt);
-        var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).OrderBy(x=>x.DateStart);
+        var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).OrderBy(x => x.DateStart);
         var availables = await _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate)
             .ToListAsync(cancellationToken: clt);
         var roosterTrainingTypes = await _database.RoosterTrainingTypes.Where(x => x.CustomerId == customerId).ToListAsync(cancellationToken: clt);
@@ -303,8 +303,9 @@ public class ScheduleService : IScheduleService
                         IsSelected = true,
                     });
                 }
+
                 var defaultSelectedVehicles = await _database.Vehicles.Where(x => x.IsDefault).Select(x => x.Id).ToListAsync(clt);
-                
+
                 foreach (var defVehicle in defaultSelectedVehicles)
                 {
                     if (roosterDefault.VehicleIds.Any(x => x == defVehicle)) continue;
@@ -340,6 +341,7 @@ public class ScheduleService : IScheduleService
 
     private async Task<bool> PatchAvailableInternalAsync(DbRoosterAvailable available, Training training)
     {
+        training.Availability ??= (Availability)(int)(training.Availabilty ?? Availabilty.None);//ToDo Remove when all users on v0.3.50 or above
         available.Available = training.Availability;
         available.SetBy = training.SetBy;
         _database.RoosterAvailables.Update(available);
@@ -370,7 +372,7 @@ public class ScheduleService : IScheduleService
         var defaultAveUser = await _database.UserDefaultAvailables.Include(x => x.DefaultGroup).Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
             .ToListAsync(cancellationToken: clt);
         var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).ToListAsync(cancellationToken: clt);
-        var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).OrderBy(x=>x.DateStart).ToList();
+        var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).OrderBy(x => x.DateStart).ToList();
         var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && (includeUnAssigned || x.Assigned) && x.Date >= startDate && x.Date <= tillDate).ToList();
 
         var scheduleDate = DateOnly.FromDateTime(startDate);
