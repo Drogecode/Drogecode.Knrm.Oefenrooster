@@ -84,6 +84,7 @@ public class DefaultScheduleService : IDefaultScheduleService
                     {
                         UserDefaultAvailableId = userDefault.Id,
                         GroupId = userDefault.DefaultGroupId,
+                        Availabilty = (Availabilty)(int)(userDefault.Available ?? Availability.None), //ToDo Remove when all users on v0.3.50 or above
                         Availability = userDefault.Available,
                         ValidFromUser = userDefault.ValidFrom,
                         ValidUntilUser = userDefault.ValidUntil,
@@ -159,6 +160,8 @@ public class DefaultScheduleService : IDefaultScheduleService
         var sw = Stopwatch.StartNew();
         var result = new PatchDefaultScheduleForUserResponse();
         DbRoosterDefault? dbDefault = DbQuery(body, userId);
+        body.Availability ??= (Availability)(int)(body.Availabilty ?? Availabilty.None);//ToDo Remove when all users on v0.3.50 or above
+
         DbUserDefaultGroup? dbGroup = await _database.UserDefaultGroups.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Id == body.GroupId && !x.IsDefault);
         if (dbDefault is null)
         {

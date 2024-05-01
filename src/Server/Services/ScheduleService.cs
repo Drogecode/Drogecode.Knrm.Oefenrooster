@@ -159,6 +159,7 @@ public class ScheduleService : IScheduleService
     {
         var sw = Stopwatch.StartNew();
         training.Updated = false;
+        training.Availability ??= (Availability)(int)(training.Availabilty ?? Availabilty.None);//ToDo Remove when all users on v0.3.50 or above
         var result = new PatchScheduleForUserResponse();
         if (training.DateStart.CompareTo(DateTime.UtcNow) >= 0)
         {
@@ -341,7 +342,6 @@ public class ScheduleService : IScheduleService
 
     private async Task<bool> PatchAvailableInternalAsync(DbRoosterAvailable available, Training training)
     {
-        training.Availability ??= (Availability)(int)(training.Availabilty ?? Availabilty.None);//ToDo Remove when all users on v0.3.50 or above
         available.Available = training.Availability;
         available.SetBy = training.SetBy;
         _database.RoosterAvailables.Update(available);
