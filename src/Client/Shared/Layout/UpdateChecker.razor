@@ -2,6 +2,8 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Services
 @using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
+@using Toolbelt.Blazor.PWA.Updater
+<PWAUpdater State="PWAUpdater.States.Showing" />
 @code {
     [Inject] private IStringLocalizer<UpdateChecker> L { get; set; } = default!;
     [Inject] private ConfigurationRepository ConfigurationRepository { get; set; } = default!;

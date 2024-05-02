@@ -13,6 +13,7 @@ using Microsoft.JSInterop;
 using MudBlazor.Services;
 using MudExtensions.Services;
 using System.Globalization;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -30,6 +31,7 @@ builder.Services.AddMudServices(config =>
 builder.Services.AddMudExtensions();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();
+builder.Services.AddPWAUpdater();
 
 builder.Services.TryAddScoped<IAuditClient, AuditClient>();
 builder.Services.TryAddScoped<IAuthenticationClient, AuthenticationClient>();

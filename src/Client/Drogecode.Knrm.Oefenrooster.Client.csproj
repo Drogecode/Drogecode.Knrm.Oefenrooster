@@ -32,6 +32,7 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="MudBlazor" Version="6.19.1" />
+		<PackageReference Include="Toolbelt.Blazor.PWA.Updater" Version="2.1.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
