@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 
-public sealed partial class UserDetails
+public sealed partial class UserDetails : IDisposable
 {
     [Inject] private IStringLocalizer<UserDetails> L { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
