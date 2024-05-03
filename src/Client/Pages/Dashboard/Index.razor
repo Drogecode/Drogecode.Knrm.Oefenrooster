@@ -11,8 +11,8 @@
 <PageTitle>Dashboard</PageTitle>
 
 <MudPaper Elevation="0" Class="p-2">
-    <DrogeCodeMudTabs Rounded="true">
-        <DrogeCodeMudTabPanel Text="@L["Planner"]">
+    <MudTabs Rounded="true">
+        <MudTabPanel Text="@L["Planner"]">
             @if (_name is not null)
             {
                 <div class="inline-flex">
@@ -90,12 +90,12 @@
                 <MudSkeleton />
                 <MudSkeleton />
             }
-        </DrogeCodeMudTabPanel>
-        <DrogeCodeMudTabPanel Text="@L["Actions"]">
+        </MudTabPanel>
+        <MudTabPanel Text="@L["Actions"]">
             <ActionsTab User="@_user" Users="@_users" Functions="@_functions" />
-        </DrogeCodeMudTabPanel>
-        <DrogeCodeMudTabPanel Text="@L["Trainings"]">
+        </MudTabPanel>
+        <MudTabPanel Text="@L["Trainings"]">
             <TrainingsTab User="@_user" Users="@_users" Functions="@_functions" />
-        </DrogeCodeMudTabPanel>
-    </DrogeCodeMudTabs>
+        </MudTabPanel>
+    </MudTabs>
 </MudPaper>
