@@ -1,15 +1,49 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+﻿@using System.Diagnostics.CodeAnalysis
+@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Client.Services
 @using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
+@if (_newVersionAvailable)
+{
+<button type="button" class="btn btn-warning shadow floating-update-button" onclick="window.location.reload()">
+    A new version of the application is available. Click here to reload.
+</button>
+}
 @code {
     [Inject] private IStringLocalizer<UpdateChecker> L { get; set; } = default!;
+    [Inject, NotNull] private IJSRuntime? JsRuntime { get; set; }
     [Inject] private ConfigurationRepository ConfigurationRepository { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
     [Inject] IOfflineService OfflineService { get; set; } = default!;
     [Inject] ISnackbar Snackbar { get; set; } = default!;
     private VersionDetailResponse? _updateDetails;
+    
+    private bool _newVersionAvailable = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RegisterForUpdateAvailableNotification();
+    }
+
+    private async Task RegisterForUpdateAvailableNotification()
+    {
+        await JsRuntime.InvokeAsync<object>(
+            identifier: "registerForUpdateAvailableNotification",
+            DotNetObjectReference.Create(this),
+            nameof(OnUpdateAvailable));
+    }
+
+    [JSInvokable(nameof(OnUpdateAvailable))]
+    public Task OnUpdateAvailable()
+    {
+        _newVersionAvailable = true;
+
+        StateHasChanged();
+
+        return Task.CompletedTask;
+    }
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         while (true)
