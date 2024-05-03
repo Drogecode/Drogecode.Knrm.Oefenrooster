@@ -16,7 +16,7 @@ public sealed partial class CalendarCard : IDisposable
     [Parameter] public string? MaxWidth { get; set; }
     [Parameter] public bool ShowDate { get; set; } = false;
     [Parameter] public bool ShowDayOfWeek { get; set; } = false;
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private bool _updating;
 
     protected override void OnParametersSet()

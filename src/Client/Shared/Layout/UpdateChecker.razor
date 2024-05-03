@@ -6,10 +6,11 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 @if (_newVersionAvailable)
 {
-<button type="button" class="btn btn-warning shadow floating-update-button" onclick="window.location.reload()">
-    A new version of the application is available. Click here to reload.
-</button>
+    <button type="button" class="btn btn-warning shadow floating-update-button" onclick="window.location.reload()">
+        A new version of the application is available. Click here to reload.
+    </button>
 }
+
 @code {
     [Inject] private IStringLocalizer<UpdateChecker> L { get; set; } = default!;
     [Inject, NotNull] private IJSRuntime? JsRuntime { get; set; }
@@ -20,7 +21,7 @@
     [Inject] ISnackbar Snackbar { get; set; } = default!;
     private VersionDetailResponse? _updateDetails;
     private CancellationTokenSource _cls = new();
-    
+
     private bool _newVersionAvailable = false;
 
     protected override async Task OnInitializedAsync()
@@ -39,13 +40,14 @@
     [JSInvokable(nameof(OnUpdateAvailable))]
     public Task OnUpdateAvailable()
     {
+        DebugHelper.WriteLine("New version detected by OnUpdateAvailable()");
         _newVersionAvailable = true;
 
         StateHasChanged();
 
         return Task.CompletedTask;
     }
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         while (!_cls.IsCancellationRequested)
@@ -70,6 +72,7 @@
                     };
                     Snackbar.Add(L["Update available"], Severity.Warning, configure: config, key: "outdated");
                 }
+
                 if (user.User.Identity?.IsAuthenticated is not true)
                     await AuthenticationStateProvider.Logout();
             }
@@ -93,4 +96,5 @@
     {
         _cls.Cancel();
     }
+
 }
