@@ -622,7 +622,7 @@ public class ScheduleService : IScheduleService
                     result.Training!.PlanUsers.Add(new PlanUser
                     {
                         Availabilty = availabilty,
-                        SetBy = setBy ?? AvailabilitySetBy.None,
+                        SetBy = setBy.Value,
                         Name = user.Name,
                         UserId = user.Id,
                         UserFunctionId = user.UserFunctionId,
