@@ -22,6 +22,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode
             DateTimeNotNull = DateTimeUtc?.ToLocalTime() ?? DateTimeLocal ?? DateTime.MinValue;
             SetDatePrefix();
             SetDateStringFormat();
+            StateHasChanged();
         }
 
         private void SetDatePrefix()

@@ -797,6 +797,7 @@ public class ScheduleService : IScheduleService
         result.Success = true;
         result.AvailableId = ava.Id;
         result.CalendarEventId = ava.CalendarEventId;
+        result.Availabilty = (Availabilty)(int)(ava.Available ?? Availability.None); //ToDo Remove when all users on v0.3.50 or above
         result.Availability = ava.Available;
         result.SetBy = ava.SetBy;
         return result;
@@ -869,6 +870,7 @@ public class ScheduleService : IScheduleService
         result.AvailableId = ava?.Id;
         result.CalendarEventId = ava?.CalendarEventId;
         result.Success = true;
+        result.Availabilty = result.Availabilty = (Availabilty)(int)(ava?.Available ?? Availability.None); //ToDo Remove when all users on v0.3.50 or above
         result.Availability = ava?.Available;
         result.SetBy = ava?.SetBy;
         return result;
@@ -914,6 +916,7 @@ public class ScheduleService : IScheduleService
                     new PlanUser
                     {
                         UserId = a.UserId,
+                        Availabilty = (Availabilty)(int)(a.Available ?? Availability.None), //ToDo Remove when all users on v0.3.50 or above
                         Availability = a.Available,
                         Assigned = a.Assigned,
                         Name = users?.FirstOrDefault(x => x.Id == a.UserId)?.Name ?? "Name not found",
