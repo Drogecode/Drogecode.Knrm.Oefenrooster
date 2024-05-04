@@ -153,7 +153,7 @@ public sealed partial class ScheduleDialog : IDisposable
                 TrainingId = Planner.TrainingId,
                 UserFunctionId = user.UserFunctionId,
                 PlannedFunctionId = functionId,
-                Availabilty = Availabilty.None,
+                Availability = Availability.None,
                 Assigned = toggled,
                 Name = user.Name,
                 VehicleId = _vehicleInfoForThisTraining?.FirstOrDefault(x => x.IsDefault)?.Id ?? _vehicleInfoForThisTraining?.FirstOrDefault()?.Id,
@@ -173,15 +173,15 @@ public sealed partial class ScheduleDialog : IDisposable
         await Refresh.CallRequestRefreshAsync();
     }
 
-    private Color GetColor(Availabilty? availabilty)
+    private Color GetColor(Availability? availabilty)
     {
         switch (availabilty)
         {
-            case Availabilty.Available:
+            case Availability.Available:
                 return Color.Success;
-            case Availabilty.NotAvailable:
+            case Availability.NotAvailable:
                 return Color.Error;
-            case Availabilty.Maybe:
+            case Availability.Maybe:
                 return Color.Warning;
             default: return Color.Inherit;
         }

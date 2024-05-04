@@ -3,10 +3,10 @@
     <DialogContent>
         @if (DefaultUserSchedule is not null)
         {
-            <MudSelect T="Availabilty?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="DefaultUserSchedule.Available" AdornmentColor="@PlannerHelper.ColorAvailabilty(DefaultUserSchedule.Available)">
-                <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
-                <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
-                <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
+            <MudSelect T="Availability?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="DefaultUserSchedule.Availability" AdornmentColor="@PlannerHelper.ColorAvailabilty(DefaultUserSchedule.Availability)">
+                <MudSelectItem T="Availability?" Value="Availability.Available">@LApp["Available"]</MudSelectItem>
+                <MudSelectItem T="Availability?" Value="Availability.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
+                <MudSelectItem T="Availability?" Value="Availability.Maybe">@LApp["Maybe"]</MudSelectItem>
             </MudSelect>
             <MudDatePicker Label="@LApp["ValidFrom"]" @bind-Date="DefaultUserSchedule.ValidFromUser" Disabled="@(DefaultUserSchedule.ValidFromUser?.InPast() ?? false)" />
             <MudDatePicker Label="@LApp["ValidUntil"]" @bind-Date="DefaultUserSchedule.ValidUntilUser" Disabled="@(DefaultUserSchedule.ValidUntilUser?.InPast() ?? false)" />

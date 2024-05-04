@@ -11,7 +11,7 @@ public class DbUserDefaultAvailable
     public Guid CustomerId { get; set; }
     public Guid RoosterDefaultId { get; set; }
     public Guid? DefaultGroupId { get; set; }
-    public Availabilty? Available { get; set; }
+    public Availability? Available { get; set; }
     public DateTime? ValidFrom { get; set; }
     public DateTime? ValidUntil { get; set; }
     public bool Assigned { get; set; }

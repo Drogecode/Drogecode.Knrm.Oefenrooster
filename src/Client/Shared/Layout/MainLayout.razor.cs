@@ -117,7 +117,7 @@ public sealed partial class MainLayout : IDisposable
     {
         var key = $"table_{user.UserId}_{training.TrainingId}";
         Snackbar.RemoveByKey(key);
-        Snackbar.Add(L["{0} {1} {2} {3} {4}", user.Assigned ? L["Assigned"] : L["Removed"], user.Name, user.Assigned ? L["to"] : L["from"], training.DateStart.ToShortDateString(), training.Name ?? ""], (user.Availabilty == Availabilty.NotAvailable || user.Availabilty == Availabilty.Maybe) && user.Assigned ? Severity.Warning : user.Assigned ? Severity.Normal : Severity.Info, configure: _snackbarConfig, key: key);
+        Snackbar.Add(L["{0} {1} {2} {3} {4}", user.Assigned ? L["Assigned"] : L["Removed"], user.Name, user.Assigned ? L["to"] : L["from"], training.DateStart.ToShortDateString(), training.Name ?? ""], (user.Availability == Availability.NotAvailable || user.Availability == Availability.Maybe) && user.Assigned ? Severity.Warning : user.Assigned ? Severity.Normal : Severity.Info, configure: _snackbarConfig, key: key);
     }
 
     void DrawerToggle()

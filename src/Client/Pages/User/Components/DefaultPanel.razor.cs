@@ -37,14 +37,14 @@ public sealed partial class DefaultPanel
     {
         _cls.Cancel();
     }
-    private async Task OnChange(Availabilty? value, DefaultUserSchedule? old, Guid defaultId, bool isNew)
+    private async Task OnChange(Availability? value, DefaultUserSchedule? old, Guid defaultId, bool isNew)
     {
         if (_updating) return;
         _updating = true;
         if (old is not null && value is not null)
         {
             old.GroupId = Group.Id;
-            old.Available = value;
+            old.Availability = value;
             var body = old.ToPatchDefaultUserSchedule();
             body.DefaultId = defaultId;
             var patched = await _defaultScheduleRepository.PatchDefaultScheduleForUser(body, _cls.Token);

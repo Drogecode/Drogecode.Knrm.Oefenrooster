@@ -21,8 +21,8 @@ public sealed partial class CalendarCard : IDisposable
 
     protected override void OnParametersSet()
     {
-        if (Training.Availabilty == Availabilty.None)
-            Training.Availabilty = null;
+        if (Training.Availability == Availability.None)
+            Training.Availability = null;
     }
 
     private async Task OnChange()

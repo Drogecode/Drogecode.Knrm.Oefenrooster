@@ -25,10 +25,12 @@ public class DefaultScheduleRepository
 
     public async Task<List<DefaultSchedule>?> GetAllByGroupId(Guid groupId, CancellationToken clt)
     {
-        var result = await _offlineService.CachedRequestAsync(string.Format("List_def_sche_{0}", groupId),
+        return (await _defaultScheduleClient.GetAllByGroupIdAsync(groupId, clt)).DefaultSchedules;
+        // Do not use cache for this one
+        /*var result = await _offlineService.CachedRequestAsync(string.Format("List_def_sche_{0}", groupId),
             async () => await _defaultScheduleClient.GetAllByGroupIdAsync(groupId, clt),
-            clt: clt);
-        return result.DefaultSchedules;
+             clt: clt);
+        return result.DefaultSchedules;*/
     }
 
     public async Task<PatchDefaultUserSchedule?> PatchDefaultScheduleForUser(PatchDefaultUserSchedule body, CancellationToken clt)

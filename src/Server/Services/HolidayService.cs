@@ -33,7 +33,7 @@ public class HolidayService : IHolidayService
                 Id = dbHoliday.Id,
                 UserId = userId,
                 Description = dbHoliday.Description,
-                Available = dbHoliday.Available,
+                Availability = dbHoliday.Available,
                 ValidFrom = dbHoliday.ValidFrom,
                 ValidUntil = dbHoliday.ValidUntil,
             });
@@ -51,7 +51,7 @@ public class HolidayService : IHolidayService
             Id = dbHoliday.Id,
             UserId = userId,
             Description = dbHoliday.Description,
-            Available = dbHoliday.Available,
+            Availability = dbHoliday.Available,
             ValidFrom = dbHoliday.ValidFrom,
             ValidUntil = dbHoliday.ValidUntil,
         };
@@ -88,7 +88,7 @@ public class HolidayService : IHolidayService
         if (dbHoliday.ValidFrom is not null && dbHoliday.ValidFrom.Value.CompareTo(_dateTimeService.UtcNow()) <= 0) body.ValidFrom = dbHoliday.ValidFrom;
 
         dbHoliday.Description = body.Description;
-        dbHoliday.Available = body.Available;
+        dbHoliday.Available = body.Availability;
         dbHoliday.ValidFrom = body.ValidFrom!.Value;
         dbHoliday.ValidUntil = body.ValidUntil!.Value;
         _database.UserHolidays.Update(dbHoliday);

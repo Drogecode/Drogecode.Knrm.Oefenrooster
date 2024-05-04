@@ -15,6 +15,7 @@ public class AuditAssignedUser
     // Typo, but used in both server and client and can not be changed without a breaking update
     // Availability
     public Availabilty? Availabilty { get; set; }
+    public Availability? Availability { get; set; }
     public AvailabilitySetBy? SetBy { get; set; }
     public AuditReason? AuditReason { get; set; }
 }

@@ -32,7 +32,7 @@
                     @{
                         DefaultUserSchedule userSchedule = context.Item.UserSchedules?.FirstOrDefault() ?? new DefaultUserSchedule();
                     }
-                    @LApp[userSchedule?.Available.ToString() ?? "None"]
+                    @LApp[userSchedule?.Availability.ToString() ?? "None"]
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
@@ -49,15 +49,15 @@
             <MudCard>
                 <MudCardHeader>
                     <CardHeaderContent>
-                        <MudText Typo="Typo.h6">@L["Configure your default availabilty here"]</MudText>
+                        <MudText Typo="Typo.h6">@L["Configure your default availability here"]</MudText>
                     </CardHeaderContent>
                 </MudCardHeader>
                 <MudCardContent>
-                    <MudSelect T="Availabilty?" Variant="Variant.Text" Value="userSchedule.Available" ValueChanged="async (e) => await OnChange(e, userSchedule, context.Item.Id, isNew)" AdornmentColor="@PlannerHelper.ColorAvailabilty(userSchedule?.Available)">
-                        <MudSelectItem T="Availabilty?" Value="Availabilty.None">@LApp["None"]</MudSelectItem>
-                        <MudSelectItem T="Availabilty?" Value="Availabilty.Available">@LApp["Available"]</MudSelectItem>
-                        <MudSelectItem T="Availabilty?" Value="Availabilty.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
-                        <MudSelectItem T="Availabilty?" Value="Availabilty.Maybe">@LApp["Maybe"]</MudSelectItem>
+                    <MudSelect T="Availability?" Variant="Variant.Text" Value="userSchedule.Availability" ValueChanged="async (e) => await OnChange(e, userSchedule, context.Item.Id, isNew)" AdornmentColor="@PlannerHelper.ColorAvailabilty(userSchedule?.Availability)">
+                        <MudSelectItem T="Availability?" Value="Availability.None">@LApp["None"]</MudSelectItem>
+                        <MudSelectItem T="Availability?" Value="Availability.Available">@LApp["Available"]</MudSelectItem>
+                        <MudSelectItem T="Availability?" Value="Availability.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
+                        <MudSelectItem T="Availability?" Value="Availability.Maybe">@LApp["Maybe"]</MudSelectItem>
                     </MudSelect>
                 </MudCardContent>
             </MudCard>

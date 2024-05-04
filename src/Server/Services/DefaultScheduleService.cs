@@ -84,7 +84,8 @@ public class DefaultScheduleService : IDefaultScheduleService
                     {
                         UserDefaultAvailableId = userDefault.Id,
                         GroupId = userDefault.DefaultGroupId,
-                        Available = userDefault.Available,
+                        Available = (Availabilty)(int)(userDefault.Available ?? Availability.None), //ToDo Remove when all users on v0.3.50 or above
+                        Availability = userDefault.Available,
                         ValidFromUser = userDefault.ValidFrom,
                         ValidUntilUser = userDefault.ValidUntil,
                         Assigned = userDefault.Assigned,
@@ -159,6 +160,8 @@ public class DefaultScheduleService : IDefaultScheduleService
         var sw = Stopwatch.StartNew();
         var result = new PatchDefaultScheduleForUserResponse();
         DbRoosterDefault? dbDefault = DbQuery(body, userId);
+        body.Availability ??= (Availability)(int)(body.Available ?? Availabilty.None);//ToDo Remove when all users on v0.3.50 or above
+
         DbUserDefaultGroup? dbGroup = await _database.UserDefaultGroups.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Id == body.GroupId && !x.IsDefault);
         if (dbDefault is null)
         {
@@ -178,7 +181,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         if (userDefault?.ValidFrom?.Date.CompareTo(_dateTimeService.UtcNow().Date) >= 0)
         {
             userDefault.DefaultGroupId = body.GroupId;
-            userDefault.Available = body.Available;
+            userDefault.Available = body.Availability;
             userDefault.Assigned = body.Assigned;
             userDefault.ValidFrom = validFrom;
             userDefault.ValidUntil = validUntil;
@@ -200,7 +203,7 @@ public class DefaultScheduleService : IDefaultScheduleService
                 CustomerId = customerId,
                 DefaultGroupId = body.GroupId,
                 RoosterDefaultId = body.DefaultId,
-                Available = body.Available,
+                Available = body.Availability,
                 Assigned = body.Assigned,
                 ValidFrom = validFrom,
                 ValidUntil = validUntil
