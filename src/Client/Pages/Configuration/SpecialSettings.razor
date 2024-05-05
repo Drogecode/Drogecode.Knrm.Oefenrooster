@@ -27,7 +27,7 @@ else if (_usersSynced == false)
 {
     <MudText Typo="Typo.body1">Something went wrong while syncing users :')</MudText>
 }
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateSpecialDates">Update special dates </MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateSpecialDates">Update special dates</MudButton>
 @if (_specialDatesUpdated == true)
 {
     <MudText Typo="Typo.body1">special dates bijgewerkt</MudText>
@@ -35,6 +35,15 @@ else if (_usersSynced == false)
 else if (_specialDatesUpdated == false)
 {
     <MudText Typo="Typo.body1">Something went wrong while updating special dates :')</MudText>
+}
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RunDbCorrection1">Run db correction 1</MudButton>
+@if (_dbCorrection1 == true)
+{
+    <MudText Typo="Typo.body1">db correction 1 done</MudText>
+}
+else if (_dbCorrection1 == false)
+{
+    <MudText Typo="Typo.body1">Something went wrong while running db correction 1 :')</MudText>
 }
 
 @if (_settingTrainingToCalendar is not null)

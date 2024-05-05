@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
+
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
@@ -40,7 +41,7 @@ public class ConfigurationController : ControllerBase
     [HttpPatch]
     [Route("upgrade-database")]
     [Authorize(Roles = AccessesNames.AUTH_Taco)]
-    public async Task<ActionResult<UpgradeDatabaseResponse>> UpgradeDatabase(CancellationToken token = default)
+    public async Task<ActionResult<UpgradeDatabaseResponse>> UpgradeDatabase(CancellationToken clt = default)
     {
         try
         {
@@ -96,7 +97,7 @@ public class ConfigurationController : ControllerBase
     [HttpGet]
     [Obsolete("Not used anymore, deleted on client with v0.3.48")]
     [Route("installing-active")]
-    public ActionResult<InstallingActiveResponse> InstallingActive(CancellationToken token = default)
+    public ActionResult<InstallingActiveResponse> InstallingActive(CancellationToken clt = default)
     {
         try
         {
@@ -112,7 +113,7 @@ public class ConfigurationController : ControllerBase
     [HttpPatch]
     [Route("update-special-dates")]
     [Authorize(Roles = AccessesNames.AUTH_Taco)]
-    public async Task<ActionResult<UpdateSpecialDatesResponse>> UpdateSpecialDates(CancellationToken token = default)
+    public async Task<ActionResult<UpdateSpecialDatesResponse>> UpdateSpecialDates(CancellationToken clt = default)
     {
         try
         {
@@ -126,9 +127,10 @@ public class ConfigurationController : ControllerBase
                 if (holidays == null) continue;
                 foreach (var holiday in holidays)
                 {
-                    await _configurationService.AddSpecialDay(customerId, holiday, token);
+                    await _configurationService.AddSpecialDay(customerId, holiday, clt);
                 }
             }
+
             sw.Stop();
             return Ok(new UpdateSpecialDatesResponse { Success = true, ElapsedMilliseconds = sw.ElapsedMilliseconds });
         }
@@ -136,6 +138,23 @@ public class ConfigurationController : ControllerBase
         {
             _logger.LogError(ex, "Exception in InstallingActive");
             return new UpdateSpecialDatesResponse { Success = false };
+        }
+    }
+
+    [HttpPatch]
+    [Route("db-correction-1")]
+    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    public async Task<ActionResult<DbCorrectionResponse>> DbCorrection1(CancellationToken clt = default)
+    {
+        try
+        {
+            DbCorrectionResponse response = await _configurationService.DbCorrection1(clt);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in DbCorrection1");
+            return new DbCorrectionResponse { Success = false };
         }
     }
 }

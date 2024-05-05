@@ -781,6 +781,16 @@
         },
         "additionalProperties": false
       },
+      "Availability": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "AvailabilitySetBy": {
         "enum": [
           0,
@@ -989,6 +999,9 @@
           "availabilty": {
             "$ref": "#/components/schemas/Availabilty"
           },
+          "availability": {
+            "$ref": "#/components/schemas/Availability"
+          },
           "setBy": {
             "$ref": "#/components/schemas/AvailabilitySetBy"
           }
@@ -1072,6 +1085,9 @@
           },
           "availabilty": {
             "$ref": "#/components/schemas/Availabilty"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/Availability"
           },
           "setBy": {
             "$ref": "#/components/schemas/AvailabilitySetBy"
@@ -1187,6 +1203,9 @@
           "availabilty": {
             "$ref": "#/components/schemas/Availabilty"
           },
+          "availability": {
+            "$ref": "#/components/schemas/Availability"
+          },
           "setBy": {
             "$ref": "#/components/schemas/AvailabilitySetBy"
           }
@@ -1272,6 +1291,9 @@
           },
           "availabilty": {
             "$ref": "#/components/schemas/Availabilty"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/Availability"
           },
           "setBy": {
             "$ref": "#/components/schemas/AvailabilitySetBy"

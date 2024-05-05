@@ -33,6 +33,7 @@ public sealed partial class SpecialSettings : IDisposable
     private bool? _usersSynced;
     private bool? _specialDatesUpdated;
     private bool? _settingTrainingToCalendar;
+    private bool? _dbCorrection1;
 
 
     protected override void OnInitialized()
@@ -86,6 +87,12 @@ public sealed partial class SpecialSettings : IDisposable
     private async Task UpdateSpecialDates()
     {
         _specialDatesUpdated = await _configurationRepository.UpdateSpecialDates();
+        StateHasChanged();
+    }
+
+    private async Task RunDbCorrection1()
+    {
+        _dbCorrection1 = await _configurationRepository.DbCorrection1();
         StateHasChanged();
     }
 

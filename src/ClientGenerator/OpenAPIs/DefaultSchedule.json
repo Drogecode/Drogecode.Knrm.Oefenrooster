@@ -226,6 +226,16 @@
   },
   "components": {
     "schemas": {
+      "Availability": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "Availabilty": {
         "enum": [
           0,
@@ -347,6 +357,9 @@
           "available": {
             "$ref": "#/components/schemas/Availabilty"
           },
+          "availability": {
+            "$ref": "#/components/schemas/Availability"
+          },
           "validFromUser": {
             "type": "string",
             "format": "date-time",
@@ -451,6 +464,9 @@
           },
           "available": {
             "$ref": "#/components/schemas/Availabilty"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/Availability"
           },
           "validFromUser": {
             "type": "string",
