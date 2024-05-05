@@ -3,7 +3,6 @@ using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using System.Diagnostics;
-using System.Runtime.Intrinsics.X86;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -54,10 +53,10 @@ public class UserService : IUserService
 
     public async Task<DrogeUser?> GetOrSetUserFromDb(Guid userId, string userName, string userEmail, Guid customerId, bool setLastOnline)
     {
-        var userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
+        var userObj = _database.Users.FirstOrDefault(u => u.Id == userId);
         if (userObj is null)
         {
-            var result = _database.Users.Add(new DbUsers
+            _database.Users.Add(new DbUsers
             {
                 Id = userId,
                 Name = userName,
@@ -65,8 +64,8 @@ public class UserService : IUserService
                 CreatedOn = DateTime.UtcNow,
                 CustomerId = customerId
             });
-            _database.SaveChanges();
-            userObj = _database.Users.Where(u => u.Id == userId).FirstOrDefault();
+            await _database.SaveChangesAsync();
+            userObj = _database.Users.FirstOrDefault(u => u.Id == userId);
         }
 
         if (userObj is not null)

@@ -36,15 +36,6 @@ else if (_specialDatesUpdated == false)
 {
     <MudText Typo="Typo.body1">Something went wrong while updating special dates :')</MudText>
 }
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RunDbCorrection1">Run db correction 1</MudButton>
-@if (_dbCorrection1 == true)
-{
-    <MudText Typo="Typo.body1">db correction 1 done</MudText>
-}
-else if (_dbCorrection1 == false)
-{
-    <MudText Typo="Typo.body1">db correction 1 failed or did run before</MudText>
-}
 
 @if (_settingTrainingToCalendar is not null)
 {

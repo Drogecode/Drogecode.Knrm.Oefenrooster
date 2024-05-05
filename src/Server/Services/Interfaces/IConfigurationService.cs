@@ -7,5 +7,4 @@ public interface IConfigurationService
 {
     Task<bool> UpgradeDatabase();
     Task<bool> AddSpecialDay(Guid customerId, PublicHoliday holiday, CancellationToken token);
-    Task<DbCorrectionResponse> DbCorrection1(CancellationToken clt);
 }

@@ -90,12 +90,6 @@ public sealed partial class SpecialSettings : IDisposable
         StateHasChanged();
     }
 
-    private async Task RunDbCorrection1()
-    {
-        _dbCorrection1 = await _configurationRepository.DbCorrection1();
-        StateHasChanged();
-    }
-
     private void AddUser()
     {
 
