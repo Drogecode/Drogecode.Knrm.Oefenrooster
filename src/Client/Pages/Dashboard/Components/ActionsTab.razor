@@ -38,7 +38,7 @@
         </MudDataGrid>
         @if (_sharePointActions.TotalCount > _count)
         {
-            <MudPagination Disabled="_bussy" ShowFirstButton="true" ShowLastButton="true" Count="@(Convert.ToInt32(Math.Ceiling((double)_sharePointActions.TotalCount/(double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4" />
+            <MudPagination Disabled="_bussy" ShowFirstButton="true" ShowLastButton="true" MiddleCount="5" Count="@(Convert.ToInt32(Math.Ceiling((double)_sharePointActions.TotalCount/(double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4" />
         }
     }
 }

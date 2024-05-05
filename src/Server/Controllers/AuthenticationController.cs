@@ -1,4 +1,6 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.Authentication;
@@ -44,7 +46,7 @@ public partial class AuthenticationController : ControllerBase
 
     [HttpGet]
     [Route("login-secrets")]
-    public async Task<ActionResult<GetLoginSecretsResponse>> GetLoginSecrets()
+    public ActionResult<GetLoginSecretsResponse> GetLoginSecrets()
     {
         try
         {
@@ -55,7 +57,7 @@ public partial class AuthenticationController : ControllerBase
             {
                 LoginSecret = CreateSecret(64),
                 LoginNonce = CreateSecret(64),
-                CodeChallenge = GenerateCodeChallenge(codeVerifier), //BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))
+                CodeChallenge = GenerateCodeChallenge(codeVerifier),
                 CodeVerifier = codeVerifier,
                 TenantId = tenantId,
                 ClientId = clientId,
@@ -65,7 +67,7 @@ public partial class AuthenticationController : ControllerBase
             var cacheOptions = new MemoryCacheEntryOptions();
             cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
             _memoryCache.Set(response.LoginSecret, response, cacheOptions);
-            return response as GetLoginSecretsResponse;
+            return response;
         }
         catch (Exception e)
         {
@@ -91,8 +93,8 @@ public partial class AuthenticationController : ControllerBase
     {
         try
         {
-            string id_token = "";
-            string refresh_token = "";
+            var idToken = "";
+            var refreshToken = "";
             var found = _memoryCache.Get<CacheLoginSecrets>(state);
             if (found?.Success is not true || found?.CodeVerifier is null)
             {
@@ -116,12 +118,12 @@ public partial class AuthenticationController : ControllerBase
             });
             using (var response = await _httpClient.PostAsync($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token", formContent))
             {
-                string responseString = await response.Content.ReadAsStringAsync();
+                var responseString = await response.Content.ReadAsStringAsync(clt);
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     var resObj = JsonConvert.DeserializeObject<AzureLoginResponse>(responseString);
-                    id_token = resObj?.id_token ?? "";
-                    refresh_token = resObj?.refresh_token ?? "";
+                    idToken = resObj?.id_token ?? "";
+                    refreshToken = resObj?.refresh_token ?? "";
                 }
                 else
                 {
@@ -131,14 +133,14 @@ public partial class AuthenticationController : ControllerBase
             }
 
             var handler = new JwtSecurityTokenHandler();
-            var jwtSecurityToken = handler.ReadJwtToken(id_token);
-            if (string.Compare(found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value, false) != 0)
+            var jwtSecurityToken = handler.ReadJwtToken(idToken);
+            if (string.Compare(found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value, false, CultureInfo.InvariantCulture) != 0)
             {
                 _logger.LogWarning("Nonce is wrong `{cache}` != `{jwt}`", found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value ?? "null");
                 return false;
             }
 
-            await SetUser(jwtSecurityToken, refresh_token, false, clt);
+            await SetUser(jwtSecurityToken, refreshToken, false, clt);
             return true;
         }
         catch (Exception e)
@@ -148,14 +150,15 @@ public partial class AuthenticationController : ControllerBase
         }
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     private class AzureLoginResponse
     {
-        public string access_token { get; set; }
-        public string token_type { get; set; }
+        public string? access_token { get; set; }
+        public string? token_type { get; set; }
         public int expires_in { get; set; }
-        public string scope { get; set; }
-        public string refresh_token { get; set; }
-        public string id_token { get; set; }
+        public string? scope { get; set; }
+        public string? refresh_token { get; set; }
+        public string? id_token { get; set; }
     }
 
     [HttpGet]

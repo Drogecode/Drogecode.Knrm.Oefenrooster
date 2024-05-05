@@ -105,6 +105,7 @@ public class UserService : IUserService
             oldVersion.SyncedFromSharePoint = user.SyncedFromSharePoint;
             oldVersion.RoleFromSharePoint = user.RoleFromSharePoint;
             oldVersion.Nr = user.Nr;
+            oldVersion.Name = user.Name;
             _database.Users.Update(oldVersion);
             await _database.SaveChangesAsync();
             return true;
