@@ -53,12 +53,15 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode
 
             if (ShowTime)
             {
-                if (dsFormat.Length != 0 && !Regex.IsMatch(dsFormat.ToString(), @"\s+$"))
+                if (dsFormat.Length != 0 && !MyRegex().IsMatch(dsFormat.ToString()))
                     dsFormat.Append(' ');
                 dsFormat.Append("H:mm");
             }
 
             DateStringFormat = dsFormat.ToString();
         }
+
+        [GeneratedRegex(@"\s+$")]
+        private static partial Regex MyRegex();
     }
 }

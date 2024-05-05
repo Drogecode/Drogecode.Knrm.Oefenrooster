@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace Drogecode.Knrm.Oefenrooster.Server.Pages
 {
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    [IgnoreAntiforgeryToken]
+    //[IgnoreAntiforgeryToken] // https://stackoverflow.com/questions/58163734/asp-net-core-razor-pages-onget-of-error-model-not-being-executed/65602765#65602765
     public class ErrorModel : PageModel
     {
         public string? RequestId { get; set; }

@@ -35,12 +35,72 @@
         }
       }
     },
+    "/api/Authentication/authenticate-user": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "AuthenticateUser",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sessionState",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "redirectUrl",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Authentication/authenticat-user": {
       "get": {
         "tags": [
           "Authentication"
         ],
-        "operationId": "AuthenticatUser",
+        "operationId": "AuthenticateUser",
         "parameters": [
           {
             "name": "code",

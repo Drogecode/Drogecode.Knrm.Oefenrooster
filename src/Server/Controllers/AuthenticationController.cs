@@ -12,14 +12,13 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using ZXing.QrCode.Internal;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 [ApiExplorerSettings(GroupName = "Authentication")]
-public class AuthenticationController : ControllerBase
+public partial class AuthenticationController : ControllerBase
 {
     private readonly ILogger<AuthenticationController> _logger;
     private readonly IMemoryCache _memoryCache;
@@ -79,15 +78,16 @@ public class AuthenticationController : ControllerBase
         using var sha256 = SHA256.Create();
         var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
         var b64Hash = Convert.ToBase64String(hash);
-        var code = Regex.Replace(b64Hash, "\\+", "-");
-        code = Regex.Replace(code, "\\/", "_");
-        code = Regex.Replace(code, "=+$", "");
+        var code = MyRegex().Replace(b64Hash, "-");
+        code = MyRegex1().Replace(code, "_");
+        code = MyRegex2().Replace(code, "");
         return code;
     }
 
     [HttpGet]
-    [Route("authenticat-user")]
-    public async Task<ActionResult<bool>> AuthenticatUser(string code, string state, string sessionState, string redirectUrl, CancellationToken clt = default)
+    [Route("authenticate-user", Order = 0)]
+    [Route("authenticat-user", Order = 1)] //ToDo Remove when all users on v0.3.52 or above
+    public async Task<ActionResult<bool>> AuthenticateUser(string code, string state, string sessionState, string redirectUrl, CancellationToken clt = default)
     {
         try
         {
@@ -340,4 +340,11 @@ public class AuthenticationController : ControllerBase
         }
         return res.ToString();
     }
+
+    [GeneratedRegex("\\+")]
+    private static partial Regex MyRegex();
+    [GeneratedRegex("\\/")]
+    private static partial Regex MyRegex1();
+    [GeneratedRegex("=+$")]
+    private static partial Regex MyRegex2();
 }
