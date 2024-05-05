@@ -69,7 +69,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         var list = new List<DefaultSchedule>();
         var group = await _database.UserDefaultGroups.FindAsync(groupId);
         var groupIsDefault = group?.IsDefault ?? false;
-        var dbDefaults = _database.RoosterDefaults.Include(x => x.UserDefaultAvailables!.Where(y => y.CustomerId == customerId && y.UserId == userId && y.DefaultGroupId == groupId));
+        var dbDefaults = _database.RoosterDefaults.Where(x=> x.ValidFrom <= DateTime.UtcNow && x.ValidUntil >= DateTime.UtcNow).Include(x => x.UserDefaultAvailables!.Where(y => y.CustomerId == customerId && y.UserId == userId && y.DefaultGroupId == groupId));
         foreach (var dbDefault in dbDefaults)
         {
             if (dbDefault is null) continue;
