@@ -10,17 +10,14 @@
                        SelectedValues="@Selection"
                        SelectedValuesChanged="OnSelectionChanged"
                        ReadOnly="@ReadOnly">
-        @foreach (var function in Functions)
+        @foreach (var function in Functions.Where(function => Users.Any(x => x.UserFunctionId == function.Id)))
         {
-            if (Users.Any(x => x.UserFunctionId == function.Id))
-            {
-                <MudSelectItemGroupExtended T="DrogeUser" Text="@function.Name" Sticky="true">
-                    @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
-                    {
-                        <MudSelectItemExtended T="DrogeUser" Value="@user">@user.Name</MudSelectItemExtended>
-                    }
-                </MudSelectItemGroupExtended>
-            }
+            <MudSelectItemGroupExtended T="DrogeUser" Text="@function.Name" Sticky="true">
+                @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
+                {
+                    <MudSelectItemExtended T="DrogeUser" Value="@user">@user.Name</MudSelectItemExtended>
+                }
+            </MudSelectItemGroupExtended>
         }
     </MudSelectExtended>
 }

@@ -1,6 +1,6 @@
 ﻿namespace Drogecode.Knrm.Oefenrooster.Client.Helpers;
 
-public class DebugHelper
+public static class DebugHelper
 {
     public static bool LogToConsole { get; set; } = true;
     /// <summary>

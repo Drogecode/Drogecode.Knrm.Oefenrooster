@@ -19,10 +19,10 @@ public sealed partial class Audit : IDisposable
     [Parameter] public List<DrogeUser>? _users { get; set; }
 
     private GetTrainingAuditResponse? _trainingAudits = null;
-    private CancellationTokenSource _cls = new();
-    private bool _bussy;
+    private readonly CancellationTokenSource _cls = new();
+    private bool _busy;
     private int _currentPage = 1;
-    private int _count = 30;
+    private readonly int _count = 30;
     private int _skip = 0;
     protected override async Task OnParametersSetAsync()
     {
@@ -32,14 +32,14 @@ public sealed partial class Audit : IDisposable
 
     private async Task Next(int nextPage)
     {
-        if (_bussy) return;
-        _bussy = true;
+        if (_busy) return;
+        _busy = true;
         StateHasChanged();
         _currentPage = nextPage;
         if (nextPage <= 0) return;
         _skip = (nextPage - 1) * _count;
         _trainingAudits = await AuditClient.GetAllTrainingsAuditAsync(_count, _skip, _cls.Token);
-        _bussy = false;
+        _busy = false;
         StateHasChanged();
     }
 

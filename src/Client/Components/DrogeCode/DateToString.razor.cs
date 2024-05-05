@@ -29,11 +29,11 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode
         {
             if (!ShowDate) return;
             var today = DateTime.Today;
-            if (ShowDate && DateTimeNotNull.Date.CompareTo(today.AddDays(-1)) == 0)
+            if (DateTimeNotNull.Date.CompareTo(today.AddDays(-1)) == 0)
                 DatePrefix = L["Yesterday"];
-            else if (ShowDate && DateTimeNotNull.Date.CompareTo(today.AddDays(0)) == 0)
+            else if (DateTimeNotNull.Date.CompareTo(today.AddDays(0)) == 0)
                 DatePrefix = L["Today"];
-            else if (ShowDate && DateTimeNotNull.Date.CompareTo(today.AddDays(1)) == 0)
+            else if (DateTimeNotNull.Date.CompareTo(today.AddDays(1)) == 0)
                 DatePrefix = L["Tomorrow"];
             if (!string.IsNullOrEmpty(DatePrefix))
                 ShowDate = false;

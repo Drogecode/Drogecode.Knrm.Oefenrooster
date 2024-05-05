@@ -53,7 +53,7 @@ public static class PlannerHelper
     {
         DateTime? forMonth = null;
         var findMonth = dateRange.Start!.Value;
-        while (forMonth == null)
+        while (forMonth is null)
         {
             if (findMonth.Day != 1)
             {
@@ -63,7 +63,6 @@ public static class PlannerHelper
                 continue;
             }
             forMonth = findMonth;
-            break;
         }
 
         return forMonth;

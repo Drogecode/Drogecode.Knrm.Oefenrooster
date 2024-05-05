@@ -27,18 +27,18 @@
 @code {
     [Inject] private IStringLocalizer<EditUserDialog> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private UserRepository _userRepository { get; set; } = default!;
+    [Inject] private UserRepository UserRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public List<DrogeFunction>? Functions { get; set; } = default!;
     [Parameter] public RefreshModel Refresh { get; set; } = default!;
 
-    private DrogeUser _user = new();
+    private readonly DrogeUser _user = new();
 
 
     private async Task Submit()
     {
 
-        await _userRepository.AddUserAsync(_user);
+        await UserRepository.AddUserAsync(_user);
         await Refresh.CallRequestRefreshAsync();
         MudDialog.Close(DialogResult.Ok(true));
     }
