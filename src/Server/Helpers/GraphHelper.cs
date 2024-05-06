@@ -363,7 +363,6 @@ public static class GraphHelper
                 fromGet.AdditionalData = new Dictionary<string, object>(); // https://github.com/microsoftgraph/msgraph-sdk-dotnet/issues/2471
                 var patch = await _appClient.Users[userId.ToString()].Events[eventId].PatchAsync(fromGet);
             }
-            return;
         }
         catch (Microsoft.Graph.Models.ODataErrors.ODataError ex)
         {

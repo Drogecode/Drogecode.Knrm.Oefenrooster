@@ -6,7 +6,7 @@
 {
     <MudPaper>
         <MudText Typo="Typo.h3">@L["Click user to view"]</MudText>
-        <MudList Clickable="false">
+        <MudList T="string" ReadOnly="true">
             @foreach (var function in _functions.OrderBy(x => x.Order))
             {
                 @if (_users.Any(x => x.UserFunctionId == function.Id))
@@ -14,7 +14,7 @@
                     <MudText>@function.Name</MudText>
                     @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id).OrderBy(x => x.Name))
                     {
-                        <MudListItem OnClick="()=>ClickUser(user)">
+                        <MudListItem T="string" OnClick="()=>ClickUser(user)">
                             <div class="flex space-x-4">
                                 <div>@user.Name</div>
                             </div>

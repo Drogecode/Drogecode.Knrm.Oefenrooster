@@ -6,13 +6,13 @@
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
                 <MudNumericField Label="@L["Order"]" @bind-Value="@TrainingType.Order" />
                 <MudTextField T="string" @bind-Value="@TrainingType.Name" Label="@L["Description"]" Required="true" RequiredError="@L["Description is required"]" id="trainingtype-edit-name" />
-                <MudColorPicker Label="@L["Light background"]" @bind-Text="@TrainingType.ColorLight" Style="@($"color: {@TrainingType.ColorLight};")" Placeholder="@L["Select Color"]" DisableToolbar="false" id="trainingtype-edit-color-light" />
-                <MudColorPicker Label="@L["Light text"]" @bind-Text="@TrainingType.TextColorLight" Style="@($"color: {@TrainingType.TextColorLight};")" Placeholder="@L["Select Color"]" DisableToolbar="false" id="trainingtype-edit-text-light" />
-                <MudColorPicker Label="@L["Dark background"]" @bind-Text="@TrainingType.ColorDark" Style="@($"color: {@TrainingType.ColorDark};")" Placeholder="@L["Select Color"]" DisableToolbar="false" id="trainingtype-edit-color-dark" />
-                <MudColorPicker Label="@L["Dark text"]" @bind-Text="@TrainingType.TextColorDark" Style="@($"color: {@TrainingType.TextColorDark};")" Placeholder="@L["Select Color"]" DisableToolbar="false" id="trainingtype-edit-text-dark" />
-                <MudCheckBox id="CountToTrainingTarget" Label="@L["CountToTrainingTarget"]" @bind-Checked="@TrainingType.CountToTrainingTarget"></MudCheckBox>
-                <MudCheckBox id="IsDefault" Label="@L["IsDefault"]" @bind-Checked="@TrainingType.IsDefault"></MudCheckBox>
-                <MudCheckBox id="IsActive" Label="@L["IsActive"]" @bind-Checked="@TrainingType.IsActive"></MudCheckBox>
+                <MudColorPicker Label="@L["Light background"]" @bind-Text="@TrainingType.ColorLight" Style="@($"color: {@TrainingType.ColorLight};")" Placeholder="@L["Select Color"]" ShowToolbar="true" id="trainingtype-edit-color-light" />
+                <MudColorPicker Label="@L["Light text"]" @bind-Text="@TrainingType.TextColorLight" Style="@($"color: {@TrainingType.TextColorLight};")" Placeholder="@L["Select Color"]" ShowToolbar="true" id="trainingtype-edit-text-light" />
+                <MudColorPicker Label="@L["Dark background"]" @bind-Text="@TrainingType.ColorDark" Style="@($"color: {@TrainingType.ColorDark};")" Placeholder="@L["Select Color"]" ShowToolbar="true" id="trainingtype-edit-color-dark" />
+                <MudColorPicker Label="@L["Dark text"]" @bind-Text="@TrainingType.TextColorDark" Style="@($"color: {@TrainingType.TextColorDark};")" Placeholder="@L["Select Color"]" ShowToolbar="true" id="trainingtype-edit-text-dark" />
+                <MudCheckBox id="CountToTrainingTarget" Label="@L["CountToTrainingTarget"]" @bind-Value="@TrainingType.CountToTrainingTarget"></MudCheckBox>
+                <MudCheckBox id="IsDefault" Label="@L["IsDefault"]" @bind-Value="@TrainingType.IsDefault"></MudCheckBox>
+                <MudCheckBox id="IsActive" Label="@L["IsActive"]" @bind-Value="@TrainingType.IsActive"></MudCheckBox>
             </MudForm>
         }
     </DialogContent>

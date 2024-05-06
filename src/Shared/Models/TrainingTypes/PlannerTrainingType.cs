@@ -12,7 +12,7 @@ public class PlannerTrainingType : ICloneable
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }
-    public string ColorLight { get; set; } = Colors.Grey.Lighten1;
+    public string ColorLight { get; set; } = Colors.Gray.Lighten1;
     public string ColorDark { get; set; } = string.Empty;
     public string? TextColorLight { get; set; }
     public string? TextColorDark { get; set; }

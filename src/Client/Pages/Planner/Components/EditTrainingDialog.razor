@@ -43,7 +43,7 @@
 
                 @if (!_training.ShowTime || _startedWithShowNoTime)
                 {
-                    <MudSwitch Label="@L["Set time"]" @bind-Checked="_training.ShowTime"/>
+                    <MudSwitch Label="@L["Set time"]" @bind-Value="_training.ShowTime"/>
                 }
                 @if (_training.ShowTime)
                 {
@@ -74,7 +74,7 @@
                         foreach (var vehicle in Vehicles.Where(x => x.IsActive))
                         {
                             bool? isSelected = _linkVehicleTraining?.FirstOrDefault(x => x.VehicleId == vehicle.Id)?.IsSelected;
-                            <MudSwitch T="bool" CheckedChanged="(e) => CheckChanged(e, vehicle)" Color="Color.Success" Label="@vehicle.Name" Tag="@vehicle" Checked="@(isSelected == true || (isSelected == null && vehicle.IsDefault))"/>
+                            <MudSwitch T="bool" ValueChanged="(e) => CheckChanged(e, vehicle)" Color="Color.Success" Label="@vehicle.Name" Tag="@vehicle" Value="@(isSelected == true || (isSelected == null && vehicle.IsDefault))"/>
                             <br/>
                         }
                     }

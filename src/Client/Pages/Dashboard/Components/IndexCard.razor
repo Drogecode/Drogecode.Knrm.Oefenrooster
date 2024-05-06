@@ -8,7 +8,7 @@
         <MudText Color="@PlannerHelper.ColorAvailabilty(_planUser.Availability)" Typo="Typo.subtitle2">@LApp[_planUser.Availability.ToString() ?? "None"]</MudText>
         @if (Functions != null && Training.PlannedFunctionId != User?.UserFunctionId && Functions.Any(x => x.Id == Training.PlannedFunctionId))
         {
-            <MudChip Color="Color.Info">
+            <MudChip T="string" Color="Color.Info">
                 @($"{LApp["As"]} - {Functions.FirstOrDefault(x => x.Id == Training.PlannedFunctionId)?.Name}")
             </MudChip>
         }

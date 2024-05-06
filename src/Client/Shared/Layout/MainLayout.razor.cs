@@ -32,7 +32,7 @@ public sealed partial class MainLayout : IDisposable
 
     private MudTheme _myCustomTheme = new()
     {
-        Palette = new PaletteLight(),
+        PaletteLight = new PaletteLight(),
         PaletteDark = new PaletteDark(),
     };
     private Action<SnackbarOptions> _snackbarConfig = (SnackbarOptions options) =>

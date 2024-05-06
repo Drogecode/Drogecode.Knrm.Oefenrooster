@@ -21,7 +21,7 @@
                     </PropertyColumn>
                     <PropertyColumn Property="x => x.Assigned" Title="@LApp["Assigned"]">
                         <CellTemplate>
-                            <MudCheckBox Disabled = "true" Checked="context.Item.Assigned ?? false"/>
+                            <MudCheckBox Disabled = "true" Value="context.Item.Assigned ?? false"/>
                         </CellTemplate>
                     </PropertyColumn>
                     <PropertyColumn Property="x => x.Availability" Title="@L["Availabilty"]">

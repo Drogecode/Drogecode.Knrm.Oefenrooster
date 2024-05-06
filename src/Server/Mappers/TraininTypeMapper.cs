@@ -31,7 +31,7 @@ public static class TraininTypeMapper
         {
             Id = trainingType.Id,
             Name = trainingType.Name,
-            ColorLight = trainingType.ColorLight ?? Colors.Grey.Lighten1,
+            ColorLight = trainingType.ColorLight ?? Colors.Gray.Lighten1,
             ColorDark = trainingType.ColorDark ?? string.Empty,
             TextColorLight = trainingType.TextColorLight,
             TextColorDark = trainingType.TextColorDark,

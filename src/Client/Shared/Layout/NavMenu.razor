@@ -11,7 +11,7 @@
     <AuthorizeView Roles="@AccessesNames.AUTH_users_details" Context="inner">
         <MudNavLink Icon="@Icons.Material.Filled.ManageAccounts" Href="@_uriPlannerUser" Match="NavLinkMatch.Prefix">@L["User details"]</MudNavLink>
     </AuthorizeView>
-    <AuthorizeView Roles="@(AccessesNames.AUTH_configure_training_types + ", " +AccessesNames.AUTH_Taco)">
+    <AuthorizeView Roles="@(AccessesNames.AUTH_configure_training_types + ", " + AccessesNames.AUTH_Taco)">
         <MudNavGroup Title="@L["Configuration"]" Expanded="true">
             <AuthorizeView Roles="@AccessesNames.AUTH_configure_training_types" Context="inner">
                 <MudNavLink Icon="@Icons.Material.Filled.DirectionsRun" Href="/configuration/training-types" Match="NavLinkMatch.Prefix">@L["Training types"]</MudNavLink>
@@ -26,15 +26,22 @@
             </AuthorizeView>
         </MudNavGroup>
     </AuthorizeView>
-    <MudDivider />
+    <MudDivider/>
     <MudNavLink Href="@_sharePointUrl" Target="_blank" Match="NavLinkMatch.All">@L["Sharepoint"]</MudNavLink>
-    <MudDivider />
+    <MudDivider/>
     @if (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriCalendar.Substring(1)) ||
-    (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriSchedule.Substring(1)) && !Navigation.Uri.EndsWith("Table")))
+         (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriSchedule.Substring(1)) && !Navigation.Uri.EndsWith("Table")))
     {
-        <MudList>
-            <MudListItem OnClick="AddTraining" Avatar="@Icons.Material.Filled.Add" Class="cursor-pointer">
-                @L["Training"]
+        <MudList T="string">
+            <MudListItem T="string" OnClick="AddTraining" Class="cursor-pointer">
+                <AvatarContent>
+                    <MudAvatar>
+                        <MudIcon Icon="@Icons.Material.Filled.Add" />
+                    </MudAvatar>
+                </AvatarContent>
+                <ChildContent>
+                    @L["Training"]
+                </ChildContent>
             </MudListItem>
         </MudList>
     }

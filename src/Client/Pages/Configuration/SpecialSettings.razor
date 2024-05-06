@@ -39,18 +39,18 @@ else if (_specialDatesUpdated == false)
 
 @if (_settingTrainingToCalendar is not null)
 {
-    <MudSwitch Label="setting training to calendar" Color="Color.Primary" T="bool" Checked="@_settingTrainingToCalendar.Value" CheckedChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))"/>
+    <MudSwitch Label="setting training to calendar" Color="Color.Primary" T="bool" Value="@_settingTrainingToCalendar.Value" ValueChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))"/>
 }
 
 @if (_users != null && _functions != null)
 {
     <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
         <MudPaper>
-            <MudList Clickable="false">
+            <MudList T="string" ReadOnly="true">
                 <MudText>vijf meest recente logins maximaal 7 dagen geleden</MudText>
                 @foreach (var user in _users.Where(x => x.LastLogin >= DateTime.Today.AddDays(-7)).OrderByDescending(x => x.LastLogin).Take(5))
                 {
-                    <MudListItem>
+                    <MudListItem T="string">
                         <div class="flex space-x-4">
                             <p>@user.Name</p>
                             <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin"/>
@@ -62,7 +62,7 @@ else if (_specialDatesUpdated == false)
         </MudPaper>
     </AuthorizeView>
     <MudPaper>
-        <MudList Clickable="false">
+        <MudList T="string" ReadOnly="true">
             @foreach (var function in _functions.OrderBy(x => x.Order))
             {
                 @if (_users.Any(x => x.UserFunctionId == function.Id))
@@ -70,7 +70,7 @@ else if (_specialDatesUpdated == false)
                     <MudText>@function.Name</MudText>
                     @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id).OrderBy(x => x.Name))
                     {
-                        <MudListItem OnClick="() => ChangeUser(user)">
+                        <MudListItem T="string" OnClick="() => ChangeUser(user)">
                             <div class="flex space-x-4">
                                 <p>@user.Name</p>
                                 <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin"/>

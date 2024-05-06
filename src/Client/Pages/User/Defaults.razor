@@ -14,7 +14,7 @@
             @foreach (var group in _defaultGroups.OrderByDescending(x => x.IsDefault).ThenBy(x => x.ValidFrom))
             {
                 string groupTitle = GetGroupTitle(group);
-                <MudExpansionPanel Text="@groupTitle" IsInitiallyExpanded="@group.IsDefault">
+                <MudExpansionPanel Text="@groupTitle" Expanded="@group.IsDefault">
                     <DefaultPanel Group="@group" />
                 </MudExpansionPanel>
             }
