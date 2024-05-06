@@ -39,10 +39,3 @@ period in a single action.
 
 ## Configure default trainings
 <img width="1389" alt="2024-05-05_17h48_05" src="https://github.com/Drogecode/Drogecode.Knrm.Oefenrooster/assets/34547552/6bfcfa90-5ac6-40e9-90b8-cf0624620d56">
-
-## User details
-### List
-<img width="1389" alt="2024-05-05_17h50_07" src="https://github.com/Drogecode/Drogecode.Knrm.Oefenrooster/assets/34547552/669c0c8e-f777-45a2-b20f-bd62462d2fa6">
-
-### All past trainings from selected user
-<img width="1389" alt="2024-05-05_17h50_30" src="https://github.com/Drogecode/Drogecode.Knrm.Oefenrooster/assets/34547552/40baba63-a3d8-48ef-9fd5-0de185e40546">
