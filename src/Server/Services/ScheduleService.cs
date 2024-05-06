@@ -234,6 +234,7 @@ public class ScheduleService : IScheduleService
 
         oldTraining.RoosterTrainingTypeId = patchedTraining.RoosterTrainingTypeId;
         oldTraining.Name = patchedTraining.Name;
+        oldTraining.Description = patchedTraining.Description;
         oldTraining.DateStart = patchedTraining.DateStart;
         oldTraining.DateEnd = patchedTraining.DateEnd;
         oldTraining.CountToTrainingTarget = patchedTraining.CountToTrainingTarget;
@@ -257,6 +258,7 @@ public class ScheduleService : IScheduleService
             DefaultId = newTraining.DefaultId,
             RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId,
             Name = newTraining.Name,
+            Description = newTraining.Description,
             DateStart = newTraining.DateStart,
             DateEnd = newTraining.DateEnd,
             CountToTrainingTarget = newTraining.CountToTrainingTarget,
@@ -282,6 +284,7 @@ public class ScheduleService : IScheduleService
             CustomerId = customerId,
             RoosterTrainingTypeId = training.RoosterTrainingTypeId,
             Name = training.Name,
+            Description = training.Description,
             DateStart = training.DateStart,
             DateEnd = training.DateEnd,
             CountToTrainingTarget = training.CountToTrainingTarget,

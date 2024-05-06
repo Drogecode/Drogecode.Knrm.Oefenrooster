@@ -7,16 +7,16 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 public class DbCustomers
 {
     [Key] public Guid Id { get; set; }
-    public string Name { get; set; } = "New customer";
-    public string TimeZone { get; set; } = "Europe/Amsterdam";
+    [StringLength(50)] public string Name { get; set; } = "New customer";
+    [StringLength(20)] public string TimeZone { get; set; } = "Europe/Amsterdam";
     public DateTime Created { get; set; }
-    public string? Instance {  get; set; }
-    public string? Domain {  get; set; }
-    public string? TenantId {  get; set; }
-    public string? ClientIdServer {  get; set; }
-    public string? ClientIdLogin {  get; set; }
-    public string? ClientSecretServer {  get; set; }
-    public string? ClientSecretLogin {  get; set; }
+    [StringLength(50)] public string? Instance { get; set; }
+    [StringLength(50)] public string? Domain { get; set; }
+    [StringLength(50)] public string? TenantId { get; set; }
+    [StringLength(50)] public string? ClientIdServer { get; set; }
+    [StringLength(50)] public string? ClientIdLogin { get; set; }
+    [StringLength(50)] public string? ClientSecretServer { get; set; }
+    [StringLength(50)] public string? ClientSecretLogin { get; set; }
 
 
     public ICollection<DbCustomerSettings>? CustomerSettings { get; set; }

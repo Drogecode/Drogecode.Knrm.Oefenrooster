@@ -360,6 +360,7 @@ public static class GraphHelper
                 fromGet.Start = body.Start;
                 fromGet.End = body.End;
                 fromGet.IsAllDay = isAllDay;
+                fromGet.AdditionalData = new Dictionary<string, object>(); // https://github.com/microsoftgraph/msgraph-sdk-dotnet/issues/2471
                 var patch = await _appClient.Users[userId.ToString()].Events[eventId].PatchAsync(fromGet);
             }
             return;

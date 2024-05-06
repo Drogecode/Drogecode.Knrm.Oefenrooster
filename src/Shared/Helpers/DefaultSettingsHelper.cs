@@ -26,4 +26,5 @@ public static class DefaultSettingsHelper
     public static Guid NwiId { get; } =new Guid("4589535c-9064-4448-bc01-3b5a00e9410d");
 
     public const int MAX_LENGTH_TRAINING_TITLE = 50;
+    public const int MAX_LENGTH_TRAINING_DESCRIPTION = 1000;
 }

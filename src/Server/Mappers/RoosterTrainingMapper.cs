@@ -39,6 +39,7 @@ public static class RoosterTrainingMapper
             DefaultId = roosterTraining.RoosterDefaultId,
             RoosterTrainingTypeId = roosterTraining.RoosterTrainingTypeId,
             Name = roosterTraining.Name,
+            Description = roosterTraining.Description,
             DateStart = roosterTraining.DateStart,
             DateEnd = roosterTraining.DateEnd,
             CountToTrainingTarget = roosterTraining.CountToTrainingTarget,

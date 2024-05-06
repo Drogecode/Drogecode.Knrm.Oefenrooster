@@ -1,13 +1,10 @@
-﻿@using System.Text.RegularExpressions
-@using System.ComponentModel.DataAnnotations
-@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
-
 <MudDialog>
     <DialogContent>
-        @if (User != null && Functions != null)
+        @if (Functions is not null)
         {
             <MudTextField @bind-Value="User.Name" Label="@L["Name"]" Variant="Variant.Text" />
             <MudDatePicker Date="User.Created" Label="@L["Created"]" Disabled />
@@ -30,7 +27,7 @@
 @code {
     [Inject] private IStringLocalizer<EditUserDialog> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private UserRepository _userRepository { get; set; } = default!;
+    [Inject] private UserRepository UserRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public DrogeUser User { get; set; } = default!;
     [Parameter] public List<DrogeFunction>? Functions { get; set; } = default!;
@@ -40,7 +37,7 @@
     private async Task Submit()
     {
 
-        await _userRepository.UpdateUserAsync(User);
+        await UserRepository.UpdateUserAsync(User);
         await Refresh.CallRequestRefreshAsync();
         MudDialog.Close(DialogResult.Ok(true));
     }

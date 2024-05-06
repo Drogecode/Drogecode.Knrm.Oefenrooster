@@ -9,58 +9,63 @@
         {
             if (_canEdit)
             {
-                <MudIcon Icon="@Icons.Material.Outlined.LockOpen" Class="mr-3 mb-n1" />
+                <MudIcon Icon="@Icons.Material.Outlined.LockOpen" Class="mr-3 mb-n1"/>
             }
             else
             {
-                <MudIcon Icon="@Icons.Material.Outlined.Lock" Class="mr-3 mb-n1" />
+                <MudIcon Icon="@Icons.Material.Outlined.Lock" Class="mr-3 mb-n1"/>
             }
         }
-        @if (_isDebug && _training?.IsNew == true )
+        @if (_isDebug && _training?.IsNew == true)
         {
-            <MudIcon Icon="@Icons.Material.Outlined.FiberNew" Class="mr-3 mb-n1" />
+            <MudIcon Icon="@Icons.Material.Outlined.FiberNew" Class="mr-3 mb-n1"/>
         }
         @if (_isDebug && _training?.IsNewFromDefault == true)
         {
-            <MudIcon Icon="@Icons.Material.Outlined.NewLabel" Class="mr-3 mb-n1" />
+            <MudIcon Icon="@Icons.Material.Outlined.NewLabel" Class="mr-3 mb-n1"/>
         }
     </TitleContent>
     <DialogContent>
         @if (_training == null || TrainingTypes == null)
         {
-            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="110px" />
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="110px"/>
         }
         else
         {
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors" Disabled="@(!_canEdit)">
-                <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" />
-                <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Validation="@(new Func<DateTime?, string?>(DateValidation))" Required Disabled="!_training.IsNew" />
-
-                 @if (!_training.ShowTime || _startedWithShowNoTime)
+                <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" Counter="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" Immediate="true"/>
+                @if (false)
                 {
-                    <MudSwitch Label="@L["Set time"]" @bind-Checked="_training.ShowTime" />
+                    @* Comming soon! But do not enable configuration untill it is visible on other places *@
+                    <MudTextField T="string" Label="@L["Description"]" @bind-Value="_training.Description" Lines="5" Counter="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION" Immediate="true"/>
+                }
+                <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Validation="@(new Func<DateTime?, string?>(DateValidation))" Required Disabled="!_training.IsNew"/>
+
+                @if (!_training.ShowTime || _startedWithShowNoTime)
+                {
+                    <MudSwitch Label="@L["Set time"]" @bind-Checked="_training.ShowTime"/>
                 }
                 @if (_training.ShowTime)
                 {
-                    <MudTimePicker Label="@L["From"]" @bind-Time="_training.TimeStart" Validation="@(new Func<TimeSpan?, string?>(StartBeforeEndValidation))" Required />
-                    <MudTimePicker Label="@LApp["till"]" @bind-Time="_training.TimeEnd" Validation="@(new Func<TimeSpan?, string?>(EndAfterStartValidation))" Required />
+                    <MudTimePicker Label="@L["From"]" @bind-Time="_training.TimeStart" Validation="@(new Func<TimeSpan?, string?>(StartBeforeEndValidation))" Required/>
+                    <MudTimePicker Label="@LApp["till"]" @bind-Time="_training.TimeEnd" Validation="@(new Func<TimeSpan?, string?>(EndAfterStartValidation))" Required/>
                 }
                 @if (_currentTrainingType?.IsActive == false)
                 {
-                    <MudTextField Label="@L["Training type"]" Disabled="true" Value="_currentTrainingType.Name" />
+                    <MudTextField Label="@L["Training type"]" Disabled="true" Value="_currentTrainingType.Name"/>
                 }
                 else
                 {
                     <MudSelect T="Guid?" Label="@L["Training type"]" AnchorOrigin="Origin.BottomCenter" Value="_training.RoosterTrainingTypeId" ValueChanged="RoosterTrainingTypeChanged" Required>
-                     @foreach (PlannerTrainingType trainingType in TrainingTypes.Where(x => x.IsActive).OrderBy(x => x.Order))
+                        @foreach (PlannerTrainingType trainingType in TrainingTypes.Where(x => x.IsActive).OrderBy(x => x.Order))
                         {
                             <MudSelectItem T="Guid?" Value="@trainingType.Id">@trainingType.Name</MudSelectItem>
                         }
                     </MudSelect>
                 }
-                <MudSwitchM3 Label="@L["Count to training target"]" T="bool" @bind-Checked="_training.CountToTrainingTarget" />
-                <MudDivider />
-                <MudSwitchM3 Label="@L["Pin to dashboard"]" T="bool" @bind-Checked="_training.IsPinned" />
+                <MudSwitchM3 Label="@L["Count to training target"]" T="bool" @bind-Checked="_training.CountToTrainingTarget"/>
+                <MudDivider/>
+                <MudSwitchM3 Label="@L["Pin to dashboard"]" T="bool" @bind-Checked="_training.IsPinned"/>
                 @if (Vehicles != null)
                 {
                     <MudText Typo="Typo.h4">@L["Which vehicle?"]</MudText>
@@ -69,7 +74,8 @@
                         foreach (var vehicle in Vehicles.Where(x => x.IsActive))
                         {
                             bool? isSelected = _linkVehicleTraining?.FirstOrDefault(x => x.VehicleId == vehicle.Id)?.IsSelected;
-                            <MudSwitch T="bool" CheckedChanged="(e)=> CheckChanged(e, vehicle)" Color="Color.Success" Label="@vehicle.Name" Tag="@vehicle" Checked="@(isSelected == true || (isSelected == null && vehicle.IsDefault))" /> <br />
+                            <MudSwitch T="bool" CheckedChanged="(e) => CheckChanged(e, vehicle)" Color="Color.Success" Label="@vehicle.Name" Tag="@vehicle" Checked="@(isSelected == true || (isSelected == null && vehicle.IsDefault))"/>
+                            <br/>
                         }
                     }
                 }
@@ -82,13 +88,15 @@
             {
                 if (_showDelete)
                 {
-                    <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">@L["Are you sure This can not be reverted"]<MudButton Color="Color.Warning" OnClick="Delete">@LApp["Delete"]</MudButton></MudAlert>
+                    <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">
+                        @L["Are you sure This can not be reverted"]<MudButton Color="Color.Warning" OnClick="Delete">@LApp["Delete"]</MudButton>
+                    </MudAlert>
                 }
-                <MudButton Color="Color.Warning" OnClick="()=> _showDelete = !_showDelete" Disabled="@(!_canEdit)">@LApp["Delete"]</MudButton>
+
+                <MudButton Color="Color.Warning" OnClick="() => _showDelete = !_showDelete" Disabled="@(!_canEdit)">@LApp["Delete"]</MudButton>
             }
             <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
             <MudButton Color="Color.Primary" OnClick="OnSubmit" Disabled="@(!_canEdit)">@LApp["save"]</MudButton>
         </div>
     </DialogActions>
 </MudDialog>
-
