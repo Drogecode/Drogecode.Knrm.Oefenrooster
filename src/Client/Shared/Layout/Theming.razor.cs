@@ -149,6 +149,7 @@ public sealed partial class Theming : IDisposable
         if ((_isTaco && _lastVisibilityChange.AddSeconds(5).CompareTo(DateTime.UtcNow) > 0) ||
             (!_isTaco && _lastVisibilityChange.AddMinutes(3).CompareTo(DateTime.UtcNow) > 0))
             return;
+        await Task.Delay(50);
         _lastVisibilityChange = DateTime.UtcNow;
         if (isIos && await CustomerSettingsClient.GetIosDarkLightCheckAsync(_cls.Token))
         {
