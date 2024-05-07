@@ -31,6 +31,6 @@ function EventQueue(eventName) {
         }
 
         let nextCallArg = queuedUpCalls.shift();
-        dotNetHelper.invokeMethodAsync('VisibilityChange', nextCallArg, /iPad|iPhone|iPod/.test(navigator.userAgent));
+        dotNetHelper.invokeMethodAsync('VisibilityChange', nextCallArg, /iPad|iPhone|iPod/.test(navigator.userAgent), navigator.userAgent);
     }, 1000);
 }

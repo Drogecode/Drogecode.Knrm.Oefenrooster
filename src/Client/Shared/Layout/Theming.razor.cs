@@ -141,18 +141,30 @@ public sealed partial class Theming : IDisposable
     }
 
     [JSInvokable]
-    public async Task VisibilityChange(string newState, bool isIos)
+    public async Task VisibilityChange(string newState, bool isIos, string userAgent)
     {
         if (string.Compare(newState, "visible", StringComparison.InvariantCulture) != 0)
             return;
         if (DarkModeToggle != DarkLightMode.System) return;
-        if (_lastVisibilityChange.AddMinutes(3).CompareTo(DateTime.UtcNow) > 0)
+        if ((_isTaco && _lastVisibilityChange.AddSeconds(5).CompareTo(DateTime.UtcNow) > 0) ||
+            _lastVisibilityChange.AddMinutes(3).CompareTo(DateTime.UtcNow) > 0)
             return;
         _lastVisibilityChange = DateTime.UtcNow;
         if (isIos && await CustomerSettingsClient.GetIosDarkLightCheckAsync(_cls.Token))
         {
             //https://forums.developer.apple.com/forums/thread/739154
             await JsRuntime.InvokeVoidAsync("ColorschemeFix");
+        }
+
+        if (_isTaco)
+        {
+            Snackbar.Add(L["Visibility change"] + $": {isIos} {userAgent}", Severity.Warning, configure: Config, key: "VisibilityChange");
+
+            void Config(SnackbarOptions options)
+            {
+                options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
+                options.ActionColor = Color.Default;
+            }
         }
 
         await Global.CallVisibilityChangeAsync();

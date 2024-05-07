@@ -90,12 +90,12 @@ public sealed partial class EditTrainingDialog : IDisposable
             IsPinned = Planner.IsPinned,
             ShowTime = Planner.ShowTime,
         };
-        _linkVehicleTraining = await VehicleRepository.GetForDefaultAsync(Planner.DefaultId ?? throw new ArgumentNullException($"Planner.DefaultId")) ?? [];
+        _linkVehicleTraining = await VehicleRepository.GetForDefaultAsync(Planner.DefaultId ?? throw new ArgumentNullException("Planner.DefaultId")) ?? [];
     }
 
     private async Task SetExistingTraining()
     {
-        _linkVehicleTraining = await VehicleRepository.GetForTrainingAsync(Planner!.TrainingId ?? throw new ArgumentNullException($"Planner.TrainingId"));
+        _linkVehicleTraining = await VehicleRepository.GetForTrainingAsync(Planner!.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
         var latestVersion = (await ScheduleRepository.GetPlannedTrainingById(Planner.TrainingId, _cls.Token))?.Training;
         var dateStartLocal = Planner.DateStart.ToLocalTime();
         var dateEndLocal = Planner.DateEnd.ToLocalTime();
@@ -134,7 +134,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         }
         else
         {
-            var dateEnd = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException($"Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException($"TimeEnd is null")),
+            var dateEnd = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException( "_training.Date", "Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException($"TimeEnd is null")),
                 DateTimeKind.Local).ToUniversalTime();
             if (dateEnd >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
             {

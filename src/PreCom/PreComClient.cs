@@ -14,7 +14,7 @@ public class PreComClient
     readonly HttpClient httpClient;
     readonly ILogger _logger;
 
-    public static readonly string[] HourKeys = GenerateHourKeys();
+    private static readonly string[] HourKeys = GenerateHourKeys();
 
     static string[] GenerateHourKeys()
     {
