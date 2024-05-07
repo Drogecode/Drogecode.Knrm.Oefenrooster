@@ -35,8 +35,8 @@ public class ReportController : ControllerBase
         {
             if (count > 30) return Forbid();
             var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var users = new List<Guid>() { userId };
 
             var result = await _reportService.GetListTrainingUser(users, userId, count, skip, customerId, clt);
@@ -57,8 +57,8 @@ public class ReportController : ControllerBase
         {
             if (count > 30) return Forbid();
             var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var usersAsList = System.Text.Json.JsonSerializer.Deserialize<List<Guid>>(users);
             if (usersAsList is null)
                 return BadRequest("users is null");
@@ -81,8 +81,8 @@ public class ReportController : ControllerBase
         {
             if (count > 30) return Forbid();
             var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var users = new List<Guid>() { userId };
 
             var result = await _reportService.GetListActionsUser(users, userId, count, skip, customerId, clt);
@@ -102,8 +102,8 @@ public class ReportController : ControllerBase
         try
         {
             if (count > 30) return Forbid();
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var usersAsList = System.Text.Json.JsonSerializer.Deserialize<List<Guid>>(users);
             if (usersAsList is null)
                 return BadRequest("users is null");
