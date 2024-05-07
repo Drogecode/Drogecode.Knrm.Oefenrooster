@@ -147,7 +147,7 @@ public sealed partial class Theming : IDisposable
             return;
         if (DarkModeToggle != DarkLightMode.System) return;
         if ((_isTaco && _lastVisibilityChange.AddSeconds(5).CompareTo(DateTime.UtcNow) > 0) ||
-            _lastVisibilityChange.AddMinutes(3).CompareTo(DateTime.UtcNow) > 0)
+            (!_isTaco && _lastVisibilityChange.AddMinutes(3).CompareTo(DateTime.UtcNow) > 0))
             return;
         _lastVisibilityChange = DateTime.UtcNow;
         if (isIos && await CustomerSettingsClient.GetIosDarkLightCheckAsync(_cls.Token))
