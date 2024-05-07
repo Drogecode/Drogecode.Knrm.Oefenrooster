@@ -1116,6 +1116,10 @@
             "type": "string",
             "nullable": true
           },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
           "roosterTrainingTypeId": {
             "type": "string",
             "format": "uuid",
@@ -1249,6 +1253,10 @@
             "type": "string",
             "nullable": true
           },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
           "roosterTrainingTypeId": {
             "type": "string",
             "format": "uuid",
@@ -1308,6 +1316,10 @@
         "type": "object",
         "properties": {
           "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
             "type": "string",
             "nullable": true
           },

@@ -25,6 +25,28 @@ public class CustomerSettingController : ControllerBase
     }
 
     [HttpGet]
+    [Route("ios-dark-light-check")]
+    public async Task<ActionResult<bool>> GetIosDarkLightCheck(CancellationToken token = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            bool result = await _customerSettingService.IosDarkLightCheck(customerId);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in GetTrainingToCalendar");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
     [Route("training-to-calendar")]
     public async Task<ActionResult<bool>> GetTrainingToCalendar(CancellationToken token = default)
     {

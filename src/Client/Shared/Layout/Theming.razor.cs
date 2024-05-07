@@ -2,6 +2,7 @@
 using Blazored.LocalStorage;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Microsoft.Extensions.Localization;
@@ -14,6 +15,7 @@ public sealed partial class Theming : IDisposable
 {
     [Inject] private IStringLocalizer<Theming> L { get; set; } = default!;
     [Inject] private ILocalStorageService LocalStorage { get; set; } = default!;
+    [Inject, NotNull] private ICustomerSettingsClient? CustomerSettingsClient { get; set; }
     [Inject, NotNull] private IJSRuntime? JsRuntime { get; set; }
     [Parameter, EditorRequired] public DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter, EditorRequired] public MudThemeProvider MudThemeProvider { get; set; } = default!;
@@ -41,6 +43,7 @@ public sealed partial class Theming : IDisposable
     private LocalUserSettings? _localUserSettings;
     private DotNetObjectReference<Theming>? _dotNetHelper;
     private CancellationTokenSource _cls = new();
+    private DateTime _lastVisibilityChange = DateTime.UtcNow;
     private bool _isDarkMode;
     private bool _watchStarted;
     private bool _isTaco;
@@ -138,11 +141,20 @@ public sealed partial class Theming : IDisposable
     }
 
     [JSInvokable]
-    public async Task VisibilityChange(string dingdong)
+    public async Task VisibilityChange(string newState, bool isIos)
     {
-        if (string.Compare(dingdong, "visible", StringComparison.InvariantCulture) != 0)
+        if (string.Compare(newState, "visible", StringComparison.InvariantCulture) != 0)
             return;
         if (DarkModeToggle != DarkLightMode.System) return;
+        if (_lastVisibilityChange.AddMinutes(3).CompareTo(DateTime.UtcNow) > 0)
+            return;
+        _lastVisibilityChange = DateTime.UtcNow;
+        if (isIos && await CustomerSettingsClient.GetIosDarkLightCheckAsync(_cls.Token))
+        {
+            //https://forums.developer.apple.com/forums/thread/739154
+            await JsRuntime.InvokeVoidAsync("ColorschemeFix");
+        }
+
         await Global.CallVisibilityChangeAsync();
         await OnSystemPreferenceChanged(await MudThemeProvider.GetSystemPreference());
     }

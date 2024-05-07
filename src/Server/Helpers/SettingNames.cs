@@ -2,7 +2,8 @@
 
 internal static class SettingNames
 {
-    internal static readonly string TRAINING_TO_CALENDAR = "TrainingToCalendar";
+    internal const string TRAINING_TO_CALENDAR = "TrainingToCalendar";
+    internal const string IOS_DARK_LIGHT_CHECK = "IosDarkLightCheck";
 
     internal static bool StringToBool(string shouldBeBool)
     {
