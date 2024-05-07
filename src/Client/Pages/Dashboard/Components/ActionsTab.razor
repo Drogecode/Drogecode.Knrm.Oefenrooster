@@ -4,7 +4,7 @@
 @using System.Web;
 @if (_sharePointActions != null)
 {
-    <MudText Typo="Typo.h3">@L["All your actions from SharePoint"]</MudText>
+    <MudText Typo="Typo.h5">@L["Actions from SharePoint"]</MudText>
     <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection" />
     @if (_sharePointActions?.SharePointActions?.Count() > 0)
     {
