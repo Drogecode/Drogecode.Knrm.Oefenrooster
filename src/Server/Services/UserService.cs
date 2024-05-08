@@ -178,13 +178,15 @@ public class UserService : IUserService
 
     public async Task<bool> PatchLastOnline(Guid userId, Guid? customerId, string? clientVersion, CancellationToken clt)
     {
-        var cacheKey = "LastOnline_" + userId;
+        if (clientVersion?.Length > 10 == true)
+            clientVersion = clientVersion[..10];
+        var cacheKey = "LastOnline_" + userId + clientVersion?.Replace(Environment.NewLine, "");
         var lastUpdated = _memoryCache.Get<DateTime?>(cacheKey);
         if (lastUpdated is not null && lastUpdated.Value.AddMinutes(1).CompareTo(DateTime.UtcNow) >= 0) return false;
         var userObj = await _database.Users.Where(u => u.Id == userId)
             .Include(x => x.UserOnVersions!.Where(y => clientVersion != null && y.Version == clientVersion))
             .FirstOrDefaultAsync(clt);
-        if (userObj is null || userObj.LastLogin.AddMinutes(1).CompareTo(DateTime.UtcNow) >= 0) return false;
+        if (userObj is null) return false;
         {
             userObj.LastLogin = DateTime.UtcNow;
             _database.Users.Update(userObj);
