@@ -34,7 +34,7 @@
                             <MudItem xs="12" sm="6" md="4" lg="3">
                                 <div class="d-flex gap-1">
                                     <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small" />
-                                    <DateToString DateTimeLocal="item.DateStart" @key="item.DateStart?.Ticks" />
+                                    <DateToString DateTimeLocal="item.DateStart" @key="@( item.DateStart?.Ticks + DateTime.Today.Day )" />
                                     @item.Text
                                 </div>
                             </MudItem>
