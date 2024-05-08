@@ -7,6 +7,21 @@ Every user can configure there default availability in the week calendar and cha
 for day's that are different. If the user goes on vacation, they can block the full
 period in a single action.
 
+# Features
+
+* Single sign-on with Microsoft Entra ID
+  * Get function and access roles from Entra groups
+* Sync with outlook calendar
+* Sync with sharepoint lists
+* Dashboard with your future trainings
+* Set availability per training
+  * Set a default schedule
+  * Set vacations for multiple days unavailable
+* Different training types with different colors
+* One line day items
+  * Can be synced to specific users outlook calendar
+* And much more
+
 # Screenshots
 
 ## Dashboard
