@@ -13,7 +13,7 @@ public sealed partial class Calendar : IDisposable
     [Inject] private IStringLocalizer<Calendar> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ISessionExpireService SessionExpireService { get; set; } = default!;
-    [Inject] private ScheduleRepository scheduleRepository { get; set; } = default!;
+    [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
     [Inject] private DayItemRepository DayItemRepository { get; set; } = default!;
     [Inject] private MonthItemRepository MonthItemRepository { get; set; } = default!;
     [Inject] private UserRepository UserRepository { get; set; } = default!;
@@ -54,7 +54,7 @@ public sealed partial class Calendar : IDisposable
         _updating = true;
         _events = new();
         TrainingWeek scheduleForUser = new();
-        var trainingsInWeek = (await scheduleRepository.CalendarForUser(dateRange, _cls.Token))?.Trainings;
+        var trainingsInWeek = (await ScheduleRepository.CalendarForUser(dateRange, _cls.Token))?.Trainings;
         if (trainingsInWeek != null && trainingsInWeek.Count > 0)
         {
             foreach (var training in trainingsInWeek)

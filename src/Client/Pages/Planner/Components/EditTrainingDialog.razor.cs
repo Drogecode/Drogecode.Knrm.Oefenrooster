@@ -15,7 +15,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
     [Inject] private VehicleRepository VehicleRepository { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter] public List<PlannerTrainingType>? TrainingTypes { get; set; }
@@ -67,7 +67,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             await SetRoleBasedVariables();
 
             StateHasChanged();
-            MudDialog.StateHasChanged();
+            MudDialog?.StateHasChanged();
         }
     }
 
@@ -99,7 +99,9 @@ public sealed partial class EditTrainingDialog : IDisposable
         var latestVersion = (await ScheduleRepository.GetPlannedTrainingById(Planner.TrainingId, _cls.Token))?.Training;
         var dateStartLocal = Planner.DateStart.ToLocalTime();
         var dateEndLocal = Planner.DateEnd.ToLocalTime();
-        _startedWithShowNoTime = Planner.ShowTime;
+        _startedWithShowNoTime = !Planner.ShowTime;
+        DebugHelper.WriteLine("ShowTime " + (Planner.ShowTime ? "true" : "false"));
+        DebugHelper.WriteLine("_startedWithShowNoTime " + (_startedWithShowNoTime ? "true" : "false"));
         _training = new()
         {
             Id = Planner.TrainingId,
@@ -153,7 +155,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         }
     }
 
-    void Cancel() => MudDialog.Cancel();
+    void Cancel() => MudDialog?.Cancel();
 
     private string? DateValidation(DateTime? newDate)
     {
@@ -235,7 +237,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 await Refresh.CallRequestRefreshAsync();
         }
 
-        MudDialog.Close(DialogResult.Ok(true));
+        MudDialog?.Close(DialogResult.Ok(true));
     }
 
     private void UpdatePlannerObject()
@@ -337,7 +339,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         {
             await Global.CallTrainingDeletedAsync(_training!.Id!.Value);
             await Refresh.CallRequestRefreshAsync();
-            MudDialog.Close(DialogResult.Ok(true));
+            MudDialog?.Close(DialogResult.Ok(true));
         }
     }
 

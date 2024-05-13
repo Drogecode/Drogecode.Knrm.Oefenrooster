@@ -51,7 +51,7 @@ internal static class UserMapper
             user.Versions = string.Empty;
             foreach (var version in dbUsers.UserOnVersions.OrderByDescending(x => x.LastSeenOnThisVersion))
             {
-                if (version.LastSeenOnThisVersion.AddDays(31).CompareTo(dbUsers.LastLogin) >= 0)
+                if (version.LastSeenOnThisVersion.AddDays(7).CompareTo(dbUsers.LastLogin) >= 0)
                     user.Versions += version.Version + " ";
             }
         }

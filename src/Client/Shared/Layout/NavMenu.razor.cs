@@ -11,12 +11,12 @@ public sealed partial class NavMenu : IDisposable
     [Inject] private IStringLocalizer<NavMenu> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
-    [Inject] private IDialogService _dialogProvider { get; set; } = default!;
-    [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
-    [Inject] private ConfigurationRepository _configurationRepository { get; set; } = default!;
-    [Inject] private UserRepository _userRepository { get; set; } = default!;
-    [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
-    [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
+    [Inject] private IDialogService DialogProvider { get; set; } = default!;
+    [Inject] private VehicleRepository VehicleRepository { get; set; } = default!;
+    [Inject] private ConfigurationRepository ConfigurationRepository { get; set; } = default!;
+    [Inject] private UserRepository UserRepository { get; set; } = default!;
+    [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
+    [Inject] private TrainingTypesRepository TrainingTypesRepository { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
 
@@ -29,7 +29,7 @@ public sealed partial class NavMenu : IDisposable
     protected override async Task OnInitializedAsync()
     {
         Navigation.LocationChanged += RefreshForSubMenu;
-        var dbUser = await _userRepository.GetCurrentUserAsync();//Force creation of user.
+        var dbUser = await UserRepository.GetCurrentUserAsync();//Force creation of user.
     }
     protected override async Task OnParametersSetAsync()
     {
@@ -51,8 +51,8 @@ public sealed partial class NavMenu : IDisposable
 
     private async Task AddTraining()
     {
-        var trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
-        var vehicles = await _vehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
+        var trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
+        var vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
         var parameters = new DialogParameters<EditTrainingDialog>
         {
             { x=>x.Planner, null },
@@ -68,7 +68,7 @@ public sealed partial class NavMenu : IDisposable
             FullWidth = true,
             DisableBackdropClick = true
         };
-        _dialogProvider.Show<EditTrainingDialog>(L["Add training"], parameters, options);
+        DialogProvider.Show<EditTrainingDialog>(L["Add training"], parameters, options);
     }
 
     public void Dispose()

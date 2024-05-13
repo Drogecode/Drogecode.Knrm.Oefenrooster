@@ -1,3 +1,35 @@
 ﻿@page "/training"
 @page "/training/{Id:guid}"
+@using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
 <h3>TrainingDetails</h3>
+<MudPaper Elevation="0" Class="p-2">
+    @if (_training is not null)
+    {
+        <MudText Typo="Typo.h5">@_training.Name</MudText>
+        <MudTabs Rounded="true">
+            <MudTabPanel Text="@L["Details"]">
+                <MudText Typo="Typo.body1">@_training.Description</MudText>
+            </MudTabPanel>
+            <MudTabPanel Text="@L["Edit"]">
+                <EditTrainingDialog Planner="_training" TrainingTypes="_trainingTypes" Vehicles="_vehicles" Global="Global" />
+            </MudTabPanel>
+            @if (_showHistory)
+            {
+                <MudTabPanel Text="@L["History"]">
+                    <MudText Typo="Typo.body1">@_training.Description</MudText>
+                </MudTabPanel>
+            }
+        </MudTabs>
+    }
+    else if (_loading)
+    {
+        <MudSkeleton/>
+        <MudSkeleton/>
+        <MudSkeleton/>
+        <MudSkeleton/>
+    }
+    else
+    {
+        <MudText>@LApp["Loading failed try again later"]</MudText>
+    }
+</MudPaper>

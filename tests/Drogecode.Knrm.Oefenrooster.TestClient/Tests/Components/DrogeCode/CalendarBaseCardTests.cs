@@ -30,7 +30,7 @@ public class CalendarBaseCardTests : BlazorTestBase
         Localize(L);
 
         var training = new TrainingAdvance { DateStart = DateTime.UtcNow };
-        var cut = RenderComponent<CalendarBaseCard>(parameter => parameter.Add(p => p.Training, training).Add(p => p.ReplaceEmtyName, true));
+        var cut = RenderComponent<CalendarBaseCard>(parameter => parameter.Add(p => p.Training, training).Add(p => p.ReplaceEmptyName, true));
         cut.Markup.Should().Contain(training.DateStart.ToLocalTime().ToString("dddd"));
     }
 

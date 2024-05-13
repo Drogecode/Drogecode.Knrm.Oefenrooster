@@ -192,4 +192,7 @@
   <data name="Wednesday" xml:space="preserve">
     <value>Woensdag</value>
   </data>
+  <data name="Loading failed try again later" xml:space="preserve">
+    <value>Het is niet gelukt om te laden, probeer het later nogmaals.</value>
+  </data>
 </root>
