@@ -32,4 +32,5 @@ public class SharePointAction : SharePointListBase
     public string? ProblemsWithWeed { get; set; }
     public string? Completedby { get; set; }
     public DateTime Commencement { get; set; }
+    public DateTime Departure { get; set; }
 }

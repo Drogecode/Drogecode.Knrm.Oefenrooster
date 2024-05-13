@@ -44,6 +44,7 @@ public static class ReportActionMapper
             End = spAction.End,
             Date = spAction.Date,
             Commencement = spAction.Commencement,
+            Departure = spAction.Departure,
 
             Users = new List<DbReportUser>()
         };

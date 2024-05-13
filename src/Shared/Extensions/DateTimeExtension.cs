@@ -1,4 +1,8 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Extensions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
+using Microsoft.Extensions.Localization;
+
+namespace Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 
 public static class DateTimeExtension
 {
@@ -16,7 +20,7 @@ public static class DateTimeExtension
         {
             return dateTime.CompareTo(DateTime.UtcNow.Date) <= 0;
         }
-        else
-            return dateTime.CompareTo(DateTime.Now.Date) <= 0;
+
+        return dateTime.CompareTo(DateTime.Now.Date) <= 0;
     }
 }
