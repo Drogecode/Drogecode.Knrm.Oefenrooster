@@ -35,7 +35,7 @@
             </PropertyColumn>
             <PropertyColumn Property="x => x.TrainingId" Title="@L["Training"]">
                 <CellTemplate>
-                    <div class="@(context.Item.IsDeleted ? "text-gray-500" : "")">
+                    <div class="@(context.Item.IsDeleted ? "text-gray-500" : "")" @onclick="@(e => Goto(context.Item.TrainingId))">
                         @context.Item.Training?.Name - <DateToString DateTimeUtc="@context.Item.Training?.DateStart" ShowTime="true" />
                     </div>
                 </CellTemplate>

@@ -6,10 +6,17 @@ public class CustomerSettingService : ICustomerSettingService
 {
     private readonly ILogger<CustomerSettingService> _logger;
     private readonly Database.DataContext _database;
+
     public CustomerSettingService(ILogger<CustomerSettingService> logger, Database.DataContext database)
     {
         _logger = logger;
         _database = database;
+    }
+
+    public async Task<bool> IosDarkLightCheck(Guid customerId)
+    {
+        var result = await GetCustomerSetting(customerId, SettingNames.IOS_DARK_LIGHT_CHECK, "true");
+        return SettingNames.StringToBool(result);
     }
 
     public async Task<bool> TrainingToCalendar(Guid customerId)
@@ -32,7 +39,7 @@ public class CustomerSettingService : ICustomerSettingService
 
     private async Task PatchCustomerSetting(Guid customerId, string setting, string value)
     {
-        var result = await _database.CustomerSettings.Where(x => x.CustomerId == customerId  && x.Setting == setting).FirstOrDefaultAsync();
+        var result = await _database.CustomerSettings.Where(x => x.CustomerId == customerId && x.Setting == setting).FirstOrDefaultAsync();
         if (result is null)
             _database.CustomerSettings.Add(new Database.Models.DbCustomerSettings
             {
@@ -45,6 +52,7 @@ public class CustomerSettingService : ICustomerSettingService
             result.Value = value;
             _database.CustomerSettings.Update(result);
         }
+
         _database.SaveChanges();
     }
 }

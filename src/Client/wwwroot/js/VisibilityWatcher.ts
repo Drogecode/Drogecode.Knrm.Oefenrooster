@@ -5,8 +5,14 @@ let timerId;
 function AddVisibilityWatcher(dotNet) {
     dotNetHelper = dotNet;
     document.addEventListener('visibilitychange', (event) => {
-        this.EventQueue(document.visibilityState);
+        if (document.visibilityState === "visible") {
+            this.EventQueue(document.visibilityState);
+        }
     });
+}
+
+function ColorschemeFix () : void{
+    window.open('/colorscheme-fix.html')
 }
 
 function EventQueue(eventName) {
@@ -25,6 +31,6 @@ function EventQueue(eventName) {
         }
 
         let nextCallArg = queuedUpCalls.shift();
-        dotNetHelper.invokeMethodAsync('VisibilityChange', nextCallArg);
+        dotNetHelper.invokeMethodAsync('VisibilityChange', nextCallArg, /iPad|iPhone|iPod/.test(navigator.userAgent));
     }, 1000);
 }

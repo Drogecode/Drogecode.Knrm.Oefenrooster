@@ -2,11 +2,11 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-@if (!_isDelted)
+@if (!_isDeleted)
 {
     @if (Functions is not null && Vehicles is not null && Planner.PlanUsers?.Any(x => x.Assigned) == true)
     {
-        <CalendarBaseCard ReplaceEmtyName="@ReplaceEmtyName" Width="@Width" MaxWidth="@MaxWidth" MinWidth="@MinWidth" Training="@Planner" OnClickCallback="@OpenScheduleDialog" OnClickSettings="@OpenConfigDialog" OnClickHistory="_showHistory ? OpenHistoryDialog : null!" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" ShowPastBody="@ShowPastBody" MoreMessage="@L["Show attendees"]">
+        <CalendarBaseCard ReplaceEmptyName="@ReplaceEmptyName" Width="@Width" MaxWidth="@MaxWidth" MinWidth="@MinWidth" Training="@Planner" OnClickCallback="@OpenScheduleDialog" OnClickSettings="@OpenConfigDialog" OnClickHistory="_showHistory ? OpenHistoryDialog : null!" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" ShowPastBody="@ShowPastBody" MoreMessage="@L["Show attendees"]">
             @if (ChildContent is not null)
             {
                 @ChildContent
@@ -34,6 +34,6 @@
     }
     else
     {
-        <CalendarBaseCard ReplaceEmtyName="@ReplaceEmtyName" Width="@Width" MaxWidth="@MaxWidth" MinWidth="@MinWidth" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" OnClickHistory="_showHistory ? OpenHistoryDialog : null!" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" ShowPastBody="ShowPastBody" MoreMessage="@L["Show attendees"]" />
+        <CalendarBaseCard ReplaceEmptyName="@ReplaceEmptyName" Width="@Width" MaxWidth="@MaxWidth" MinWidth="@MinWidth" Training="@Planner" OnClickCallback="OpenScheduleDialog" OnClickSettings="OpenConfigDialog" OnClickHistory="_showHistory ? OpenHistoryDialog : null!" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" ShowPastBody="ShowPastBody" MoreMessage="@L["Show attendees"]" />
     }
 }

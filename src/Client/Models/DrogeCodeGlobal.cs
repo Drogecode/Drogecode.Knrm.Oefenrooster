@@ -10,7 +10,6 @@ public class DrogeCodeGlobal : RefreshModel
     public event Func<Task>? VisibilityChangeAsync;
 
     private bool _isDarkMode;
-    private DateTime _lastVisibilityChange = DateTime.UtcNow;
 
     public async Task CallNewTrainingAddedAsync(EditTraining arg)
     {
@@ -34,9 +33,6 @@ public class DrogeCodeGlobal : RefreshModel
     }
     public async Task CallVisibilityChangeAsync()
     {
-        if (_lastVisibilityChange.AddMinutes(5).CompareTo(DateTime.UtcNow) > 0)
-            return;
-        _lastVisibilityChange = DateTime.UtcNow;
         var task = VisibilityChangeAsync?.Invoke();
         if (task != null)
             await task;

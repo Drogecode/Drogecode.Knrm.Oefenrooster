@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Errors;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
@@ -43,6 +44,27 @@ public class DefaultScheduleControllerTests : BaseTest
         };
         var result = await DefaultScheduleController.PutDefaultSchedule(body);
         Assert.NotNull(result?.Value?.DefaultSchedule?.Id);
+    }
+
+    [Fact]
+    public async Task PutExistingFailsTest()
+    {
+        var body = new DefaultSchedule
+        {
+            Id = DefaultDefaultSchedule,
+            RoosterTrainingTypeId = DefaultTrainingType,
+            WeekDay = DayOfWeek.Tuesday,
+            TimeStart = new TimeOnly(11, 0),
+            TimeEnd = new TimeOnly(14, 0),
+            ValidFromDefault = DateTime.Today,
+            ValidUntilDefault = DateTime.Today.AddDays(7),
+            CountToTrainingTarget = false,
+            Order = 55
+        };
+        var result = await DefaultScheduleController.PutDefaultSchedule(body);
+        Assert.NotNull(result?.Value);
+        result.Value.Error.Should().Be(PutError.IdAlreadyExists);
+        result.Value.Success.Should().BeFalse();
     }
 
     [Fact]

@@ -46,9 +46,9 @@ public class ConfigurationController : ControllerBase
         try
         {
             var sw = Stopwatch.StartNew();
-            UpgradeDatabaseResponse result = new UpgradeDatabaseResponse { Success = false };
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var result = new UpgradeDatabaseResponse { Success = false };
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             result.Success = await _configurationService.UpgradeDatabase();
             await _auditService.Log(userId, AuditType.DataBaseUpgrade, customerId);
             result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
@@ -73,8 +73,8 @@ public class ConfigurationController : ControllerBase
         {
             var sw = Stopwatch.StartNew();
 
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var response = new VersionDetailResponse
             {
                 NewVersionAvailable = string.Compare(DefaultSettingsHelper.CURRENT_VERSION, clientVersion, StringComparison.OrdinalIgnoreCase) != 0,
@@ -118,7 +118,7 @@ public class ConfigurationController : ControllerBase
         try
         {
             var sw = Stopwatch.StartNew();
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             using var holidayClient = new HolidayClient();
             var currentYear = DateTime.Now.Year;
             for (int i = currentYear; i < currentYear + 10; i++)

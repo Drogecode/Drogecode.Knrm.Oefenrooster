@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
+
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
@@ -17,6 +18,7 @@ public class PreComController : ControllerBase
     private readonly IPreComService _preComService;
     private readonly IAuditService _auditService;
     private readonly PreComHub _preComHub;
+
     public PreComController(
         ILogger<PreComController> logger,
         IPreComService preComService,
@@ -36,7 +38,7 @@ public class PreComController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Resived PreCom message");
+            _logger.LogInformation("received PreCom message");
             try
             {
                 var jsonSerializerOptions = new JsonSerializerOptions()
@@ -58,6 +60,7 @@ public class PreComController : ControllerBase
                         timestamp = timestamp.AddMilliseconds(testWebhookData.messageData.sentTime);
                     }
                 }
+
                 alert ??= "No alert found by hui.nu webhook";
                 var prioParsed = int.TryParse(data?._data?.priority, out int priority);
                 await _preComService.WriteAlertToDb(id, customerId, data?._notificationId, timestamp, alert, prioParsed ? priority : null, JsonSerializer.Serialize(body));
@@ -70,6 +73,7 @@ public class PreComController : ControllerBase
                 if (sendToHub)
                     await _preComHub.SendMessage(id, "PreCom", "piep piep");
             }
+
             return Ok();
         }
         catch (Exception ex)
@@ -85,9 +89,9 @@ public class PreComController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            MultiplePreComAlertsResponse result = await _preComService.GetAllAlerts(userId, customerId, take, skip, clt);
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var result = await _preComService.GetAllAlerts(userId, customerId, take, skip, clt);
             return result;
         }
         catch (Exception ex)

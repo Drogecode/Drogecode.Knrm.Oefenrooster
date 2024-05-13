@@ -15,7 +15,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
     [Inject] private VehicleRepository VehicleRepository { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter] public List<PlannerTrainingType>? TrainingTypes { get; set; }
@@ -46,46 +46,11 @@ public sealed partial class EditTrainingDialog : IDisposable
         {
             if (Planner?.TrainingId is not null)
             {
-                _linkVehicleTraining = await VehicleRepository.GetForTrainingAsync(Planner.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
-                var latestVersion = (await ScheduleRepository.GetPlannedTrainingById(Planner.TrainingId, _cls.Token))?.Training;
-                var dateStartLocal = Planner.DateStart.ToLocalTime();
-                var dateEndLocal = Planner.DateEnd.ToLocalTime();
-                _startedWithShowNoTime = !Planner.ShowTime;
-                _training = new()
-                {
-                    Id = Planner.TrainingId,
-                    Date = dateStartLocal.Date,
-                    TimeStart = dateStartLocal.TimeOfDay,
-                    TimeEnd = dateEndLocal.TimeOfDay,
-                    IsNew = false,
-                    Name = Planner.Name,
-                    Description = latestVersion?.Description,
-                    RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
-                    CountToTrainingTarget = Planner.CountToTrainingTarget,
-                    IsPinned = Planner.IsPinned,
-                    ShowTime = Planner.ShowTime,
-                };
+                await SetExistingTraining();
             }
             else if (Planner?.DefaultId is not null)
             {
-                var dateStartLocal = Planner.DateStart.ToLocalTime();
-                var dateEndLocal = Planner.DateEnd.ToLocalTime();
-                _startedWithShowNoTime = !Planner.ShowTime;
-                _training = new()
-                {
-                    IsNewFromDefault = true,
-                    IsNew = false,
-                    DefaultId = Planner.DefaultId,
-                    Date = dateStartLocal.Date,
-                    TimeStart = dateStartLocal.TimeOfDay,
-                    TimeEnd = dateEndLocal.TimeOfDay,
-                    Name = Planner.Name,
-                    RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
-                    CountToTrainingTarget = Planner.CountToTrainingTarget,
-                    IsPinned = Planner.IsPinned,
-                    ShowTime = Planner.ShowTime,
-                };
-                _linkVehicleTraining = (await VehicleRepository.GetForDefaultAsync(Planner.DefaultId ?? throw new ArgumentNullException("Planner.DefaultId"))) ?? [];
+                await SetNewFromDefaultTraining();
             }
             else
             {
@@ -99,46 +64,98 @@ public sealed partial class EditTrainingDialog : IDisposable
 
             _currentTrainingType = TrainingTypes?.FirstOrDefault(x => x.Id == _training?.RoosterTrainingTypeId);
 
-            if (AuthenticationState is not null)
-            {
-                var authState = await AuthenticationState;
-                var user = authState?.User;
-                if (user != null)
-                {
-                    _editOld = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
-                }
-            }
+            await SetRoleBasedVariables();
 
-            if (_training.IsNew)
+            StateHasChanged();
+            MudDialog?.StateHasChanged();
+        }
+    }
+
+    private async Task SetNewFromDefaultTraining()
+    {
+        var dateStartLocal = Planner!.DateStart.ToLocalTime();
+        var dateEndLocal = Planner.DateEnd.ToLocalTime();
+        _startedWithShowNoTime = Planner.ShowTime;
+        _training = new()
+        {
+            IsNewFromDefault = true,
+            IsNew = false,
+            DefaultId = Planner.DefaultId,
+            Date = dateStartLocal.Date,
+            TimeStart = dateStartLocal.TimeOfDay,
+            TimeEnd = dateEndLocal.TimeOfDay,
+            Name = Planner.Name,
+            RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
+            CountToTrainingTarget = Planner.CountToTrainingTarget,
+            IsPinned = Planner.IsPinned,
+            ShowTime = Planner.ShowTime,
+        };
+        _linkVehicleTraining = await VehicleRepository.GetForDefaultAsync(Planner.DefaultId ?? throw new ArgumentNullException("Planner.DefaultId")) ?? [];
+    }
+
+    private async Task SetExistingTraining()
+    {
+        _linkVehicleTraining = await VehicleRepository.GetForTrainingAsync(Planner!.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
+        var latestVersion = (await ScheduleRepository.GetPlannedTrainingById(Planner.TrainingId, _cls.Token))?.Training;
+        var dateStartLocal = Planner.DateStart.ToLocalTime();
+        var dateEndLocal = Planner.DateEnd.ToLocalTime();
+        _startedWithShowNoTime = !Planner.ShowTime;
+        DebugHelper.WriteLine("ShowTime " + (Planner.ShowTime ? "true" : "false"));
+        DebugHelper.WriteLine("_startedWithShowNoTime " + (_startedWithShowNoTime ? "true" : "false"));
+        _training = new()
+        {
+            Id = Planner.TrainingId,
+            Date = dateStartLocal.Date,
+            TimeStart = dateStartLocal.TimeOfDay,
+            TimeEnd = dateEndLocal.TimeOfDay,
+            IsNew = false,
+            Name = Planner.Name,
+            Description = latestVersion?.Description,
+            RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
+            CountToTrainingTarget = Planner.CountToTrainingTarget,
+            IsPinned = Planner.IsPinned,
+            ShowTime = Planner.ShowTime,
+        };
+    }
+
+    private async Task SetRoleBasedVariables()
+    {
+        if (AuthenticationState is not null)
+        {
+            var authState = await AuthenticationState;
+            var user = authState?.User;
+            if (user != null)
+            {
+                _editOld = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
+            }
+        }
+
+        if (_training?.IsNew ?? true)
+        {
+            _canEdit = true;
+        }
+        else
+        {
+            var dateEnd = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException( "_training.Date", "Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException($"TimeEnd is null")),
+                DateTimeKind.Local).ToUniversalTime();
+            if (dateEnd >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
             {
                 _canEdit = true;
             }
             else
             {
-                var dateEnd = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null")),
-                    DateTimeKind.Local).ToUniversalTime();
-                if (dateEnd >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
-                {
-                    _canEdit = true;
-                }
-                else
-                {
-                    _showPadlock = true;
-                    _canEdit = _editOld;
-                }
-            }
-
-            if (!_canEdit)
-            {
                 _showPadlock = true;
+                _canEdit = _editOld;
             }
+        }
 
-            StateHasChanged();
-            MudDialog.StateHasChanged();
+        if (!_canEdit)
+        {
+            _showPadlock = true;
         }
     }
 
-    void Cancel() => MudDialog.Cancel();
+    void Cancel() => MudDialog?.Cancel();
 
     private string? DateValidation(DateTime? newDate)
     {
@@ -220,7 +237,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 await Refresh.CallRequestRefreshAsync();
         }
 
-        MudDialog.Close(DialogResult.Ok(true));
+        MudDialog?.Close(DialogResult.Ok(true));
     }
 
     private void UpdatePlannerObject()
@@ -322,7 +339,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         {
             await Global.CallTrainingDeletedAsync(_training!.Id!.Value);
             await Refresh.CallRequestRefreshAsync();
-            MudDialog.Close(DialogResult.Ok(true));
+            MudDialog?.Close(DialogResult.Ok(true));
         }
     }
 

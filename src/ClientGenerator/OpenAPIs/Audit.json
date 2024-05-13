@@ -206,6 +206,10 @@
             "type": "string",
             "nullable": true
           },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
           "roosterTrainingTypeId": {
             "type": "string",
             "format": "uuid",

@@ -51,8 +51,8 @@ public partial class AuthenticationController : ControllerBase
         try
         {
             var codeVerifier = CreateSecret(120);
-            var tenantId = new Guid(_configuration.GetValue<string>("AzureAd:TenantId") ?? throw new Exception("no tenant id found for azure login"));
-            var clientId = new Guid(_configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new Exception("no client id found for azure login"));
+            var tenantId = new Guid(_configuration.GetValue<string>("AzureAd:TenantId") ?? throw new DrogeCodeNullException("no tenant id found for azure login"));
+            var clientId = new Guid(_configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new DrogeCodeNullException("no client id found for azure login"));
             var response = new CacheLoginSecrets
             {
                 LoginSecret = CreateSecret(64),
@@ -102,10 +102,10 @@ public partial class AuthenticationController : ControllerBase
                 return false;
             }
             _memoryCache.Remove(state);
-            var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new Exception("no tenant id found for azure login");
-            var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new Exception("no secret found for azure login");
-            var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new Exception("no client id found for azure login");
-            var scope = _configuration.GetValue<string>("AzureAd:LoginScope") ?? throw new Exception("no scope found for azure login");
+            var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new DrogeCodeConfigurationException("no tenant id found for azure login");
+            var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new DrogeCodeConfigurationException("no secret found for azure login");
+            var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new DrogeCodeConfigurationException("no client id found for azure login");
+            var scope = _configuration.GetValue<string>("AzureAd:LoginScope") ?? throw new DrogeCodeConfigurationException("no scope found for azure login");
             var formContent = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>("client_id", clientId),
@@ -172,7 +172,7 @@ public partial class AuthenticationController : ControllerBase
                 {
                     IsAuthenticated = false
                 };
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No objectidentifier found"));
             var res = new CurrentUser
             {
                 IsAuthenticated = User.Identity.IsAuthenticated,
@@ -215,10 +215,10 @@ public partial class AuthenticationController : ControllerBase
 
             string id_token = "";
             string refresh_token = "";
-            var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new Exception("no tenant id found for azure login");
-            var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new Exception("no secret found for azure login");
-            var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new Exception("no client id found for azure login");
-            var scope = _configuration.GetValue<string>("AzureAd:LoginScope") ?? throw new Exception("no scope found for azure login");
+            var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new DrogeCodeConfigurationException("no tenant id found for azure login");
+            var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new DrogeCodeConfigurationException("no secret found for azure login");
+            var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new DrogeCodeConfigurationException("no client id found for azure login");
+            var scope = _configuration.GetValue<string>("AzureAd:LoginScope") ?? throw new DrogeCodeConfigurationException("no scope found for azure login");
             var formContent = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>("client_id", clientId),

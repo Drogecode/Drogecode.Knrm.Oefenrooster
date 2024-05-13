@@ -37,12 +37,10 @@ public class MonthItemController : ControllerBase
     [Route("{id:guid}")]
     public async Task<ActionResult<GetMonthItemResponse>> ById(Guid id, CancellationToken clt = default)
     {
-
         try
         {
-            var result = new GetMonthItemResponse();
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            result = await _monthItemService.GetById(customerId, id, clt);
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var result = await _monthItemService.GetById(customerId, id, clt);
             return result;
         }
         catch (Exception ex)
@@ -61,9 +59,8 @@ public class MonthItemController : ControllerBase
     {
         try
         {
-            var result = new GetMultipleMonthItemResponse();
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            result = await _monthItemService.GetItems(year, month, customerId, clt);
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var result = await _monthItemService.GetItems(year, month, customerId, clt);
             return result;
         }
         catch (Exception ex)
@@ -82,9 +79,8 @@ public class MonthItemController : ControllerBase
     {
         try
         {
-            var result = new GetMultipleMonthItemResponse();
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            result = await _monthItemService.GetAllItems(take, skip, includeExpired, customerId, clt);
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var result = await _monthItemService.GetAllItems(take, skip, includeExpired, customerId, clt);
             return result;
         }
         catch (Exception ex)
@@ -103,10 +99,9 @@ public class MonthItemController : ControllerBase
     {
         try
         {
-            var result = new PutMonthItemResponse();
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            result = await _monthItemService.PutItem(roosterItemMonth, customerId, userId, clt);
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var result = await _monthItemService.PutItem(roosterItemMonth, customerId, userId, clt);
             return result;
         }
         catch (Exception ex)
@@ -125,10 +120,9 @@ public class MonthItemController : ControllerBase
     {
         try
         {
-            var result = new PatchMonthItemResponse();
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            result = await _monthItemService.PatchItem(roosterItemMonth, customerId, userId, clt);
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var result = await _monthItemService.PatchItem(roosterItemMonth, customerId, userId, clt);
             return result;
         }
         catch (Exception ex)
@@ -148,9 +142,9 @@ public class MonthItemController : ControllerBase
     {
         try
         {
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            bool result = await _monthItemService.DeleteItem(idToDelete, customerId, userId, clt);
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var result = await _monthItemService.DeleteItem(idToDelete, customerId, userId, clt);
             return result;
         }
         catch (Exception ex)

@@ -18,7 +18,7 @@ public sealed partial class CalendarBaseCard : IDisposable
     [Parameter] public string Width { get; set; } = "200px";
     [Parameter] public string? MinWidth { get; set; }
     [Parameter] public string? MaxWidth { get; set; }
-    [Parameter] public bool ReplaceEmtyName { get; set; }
+    [Parameter] public bool ReplaceEmptyName { get; set; }
     [Parameter] public bool ShowDate { get; set; } = true;
     [Parameter] public bool ShowDayOfWeek { get; set; } = false;
     [Parameter] public bool ShowPastBody { get; set; } = true;

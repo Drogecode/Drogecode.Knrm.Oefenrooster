@@ -1,6 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -42,8 +41,8 @@ public class AuditController : ControllerBase
                 _logger.LogWarning("GetAllFutureDayItems count to big {0}", count);
                 return BadRequest("Count to big");
             }
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             GetTrainingAuditResponse result = await _auditService.GetTrainingAudit(customerId, userId, count, skip, id, clt);
             return result;
         }
@@ -70,8 +69,8 @@ public class AuditController : ControllerBase
                 _logger.LogWarning("GetAllFutureDayItems count to big {0}", count);
                 return BadRequest("Count to big");
             }
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             GetTrainingAuditResponse result = await _auditService.GetTrainingAudit(customerId, userId, count, skip, Guid.Empty, clt);
             return result;
         }

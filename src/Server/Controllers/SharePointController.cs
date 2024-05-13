@@ -40,9 +40,8 @@ public class SharePointController : ControllerBase
         try
         {
             if (count > 30) return Forbid();
-            var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var users = new List<Guid>() { userId };
 
             _graphService.InitializeGraph();
@@ -63,9 +62,8 @@ public class SharePointController : ControllerBase
         try
         {
             if (count > 30) return Forbid();
-            var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var usersAsList = System.Text.Json.JsonSerializer.Deserialize<List<Guid>>(users);
             if (usersAsList is null)
                 return BadRequest("users is null");
@@ -88,9 +86,8 @@ public class SharePointController : ControllerBase
         try
         {
             if (count > 30) return Forbid();
-            var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var users = new List<Guid>() { userId };
 
             _graphService.InitializeGraph();
@@ -111,8 +108,8 @@ public class SharePointController : ControllerBase
         try
         {
             if (count > 30) return Forbid();
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var usersAsList = System.Text.Json.JsonSerializer.Deserialize<List<Guid>>(users);
             if (usersAsList is null)
                 return BadRequest("users is null");

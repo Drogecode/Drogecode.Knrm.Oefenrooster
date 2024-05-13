@@ -39,8 +39,8 @@ public class TrainingTypesController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var result = await _trainingTypesService.PostTrainingType(userId, customerId, plannerTrainingType, clt);
             return result;
         }
@@ -57,8 +57,8 @@ public class TrainingTypesController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var result = await _trainingTypesService.GetTrainingTypes(customerId, clt);
             if (callHub)
             {
@@ -80,8 +80,8 @@ public class TrainingTypesController : ControllerBase
     {
         try
         {
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            GetTraininTypeByIdResponse result = await _trainingTypesService.GetById(id, customerId, clt);
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var result = await _trainingTypesService.GetById(id, customerId, clt);
             return result;
         }
         catch (Exception ex)
@@ -98,9 +98,9 @@ public class TrainingTypesController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            PatchTrainingTypeResponse result = await _trainingTypesService.PatchTrainingType(userId, customerId, plannerTrainingType, clt);
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var result = await _trainingTypesService.PatchTrainingType(userId, customerId, plannerTrainingType, clt);
             return result;
         }
         catch (Exception ex)

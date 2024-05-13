@@ -50,7 +50,7 @@ public class DayItemController : ControllerBase
         try
         {
             var result = new GetMultipleDayItemResponse();
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             result = await _dayItemService.GetDayItems(yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, customerId, userId, clt);
             return result;
         }
@@ -77,8 +77,8 @@ public class DayItemController : ControllerBase
                 return BadRequest("Count to big");
             }
             var result = new GetMultipleDayItemResponse();
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             result = await _dayItemService.GetAllFutureDayItems(customerId, count, skip, forAllUsers, userId, clt);
             if (callHub)
             {
@@ -105,7 +105,7 @@ public class DayItemController : ControllerBase
         try
         {
             var result = new GetDayItemResponse();
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             result = await _dayItemService.GetDayItemById(customerId, id, clt);
             return result;
         }
@@ -127,8 +127,8 @@ public class DayItemController : ControllerBase
         try
         {
             var result = new GetMultipleDayItemResponse();
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             result = await _dayItemService.GetDayItemDashboard(userId, customerId, clt);
             if (callHub)
             {
@@ -154,8 +154,8 @@ public class DayItemController : ControllerBase
         try
         {
             var result = new PutDayItemResponse();
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             result = await _dayItemService.PutDayItem(roosterItemDay, customerId, userId, clt);
 
             if (roosterItemDay.LinkedUsers is not null)
@@ -187,8 +187,8 @@ public class DayItemController : ControllerBase
             if (roosterItemDay is null)
                 throw new NullReferenceException("roosterItemDay is null");
             var result = new PatchDayItemResponse();
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var old = await _dayItemService.GetDayItemById(customerId, roosterItemDay.Id, clt);
             if (old.DayItem?.Type == CalendarItemType.SpecialDate)
                 return Unauthorized();
@@ -229,8 +229,8 @@ public class DayItemController : ControllerBase
     {
         try
         {
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var old = await _dayItemService.GetDayItemById(customerId, idToDelete, clt);
             if (old.DayItem?.Type == CalendarItemType.SpecialDate)
                 return Unauthorized();

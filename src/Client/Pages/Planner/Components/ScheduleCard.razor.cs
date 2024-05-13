@@ -16,7 +16,7 @@ public sealed partial class ScheduleCard : IDisposable
 {
     [Inject] private IStringLocalizer<ScheduleCard> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private IDialogService _dialogProvider { get; set; } = default!;
+    [Inject] private IDialogService DialogProvider { get; set; } = default!;
     [CascadingParameter] public DrogeCodeGlobal Global { get; set; } = default!;
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
@@ -29,28 +29,20 @@ public sealed partial class ScheduleCard : IDisposable
     [Parameter] public string Width { get; set; } = "100%";
     [Parameter] public string? MinWidth { get; set; }
     [Parameter] public string? MaxWidth { get; set; }
-    [Parameter] public bool ReplaceEmtyName { get; set; }
+    [Parameter] public bool ReplaceEmptyName { get; set; }
     [Parameter] public bool ShowDate { get; set; }
     [Parameter] public bool ShowDayOfWeek { get; set; }
     [Parameter] public bool ShowPastBody { get; set; } = true;
     private RefreshModel _refreshModel = new();
     private bool _updating;
-    private bool _isDelted;
+    private bool _isDeleted;
     private bool _showHistory;
 
     protected override async Task OnParametersSetAsync()
     {
         _refreshModel.RefreshRequested += RefreshMe;
         Global.TrainingDeletedAsync += TrainingDeleted;
-        if (AuthenticationState is not null)
-        {
-            var authState = await AuthenticationState;
-            var user = authState?.User;
-            if (user is not null)
-            {
-                _showHistory = user.IsInRole(AccessesNames.AUTH_scheduler_history);
-            }
-        }
+        _showHistory = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_history);
     }
 
     private void OpenScheduleDialog()
@@ -71,7 +63,7 @@ public sealed partial class ScheduleCard : IDisposable
             CloseButton = true,
             FullWidth = true
         };
-        _dialogProvider.Show<ScheduleDialog>(L["Schedule people for this training"], parameters, options);
+        DialogProvider.Show<ScheduleDialog>(L["Schedule people for this training"], parameters, options);
     }
 
     private void OpenConfigDialog()
@@ -90,7 +82,7 @@ public sealed partial class ScheduleCard : IDisposable
             CloseButton = true,
             FullWidth = true
         };
-        _dialogProvider.Show<EditTrainingDialog>(L["Configure training"], parameters, options);
+        DialogProvider.Show<EditTrainingDialog>(L["Configure training"], parameters, options);
     }
 
     private void OpenHistoryDialog()
@@ -106,14 +98,14 @@ public sealed partial class ScheduleCard : IDisposable
             CloseButton = true,
             FullWidth = true
         };
-        _dialogProvider.Show<TrainingHistoryDialog>(L["Edit history"], parameters, options);
+        DialogProvider.Show<TrainingHistoryDialog>(L["Edit history"], parameters, options);
     }
 
     private async Task TrainingDeleted(Guid id)
     {
         if (id == Planner.TrainingId)
         {
-            _isDelted = true;
+            _isDeleted = true;
         }
     }
 
