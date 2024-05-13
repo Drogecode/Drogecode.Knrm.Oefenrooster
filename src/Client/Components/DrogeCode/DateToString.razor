@@ -4,8 +4,11 @@
 }
 else
 {
-	<div class="flex space-x-2">
-		<div>@DatePrefix</div>
+	<div>
+		@if (!string.IsNullOrEmpty(DatePrefix))
+		{
+			<div>@DatePrefix</div>
+		}
 		@if (!string.IsNullOrEmpty(DateStringFormat))
 		{
 			<div>@DateTimeNotNull.ToString(@DateStringFormat, CultureInfo.CurrentUICulture)</div>

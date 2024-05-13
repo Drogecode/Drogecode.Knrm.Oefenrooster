@@ -9,6 +9,7 @@ public class DbReportAction
     public Guid CustomerId { get; set; }
     public DateTime LastUpdated { get; set; }
     public DateTime Commencement { get; set; }
+    public DateTime Departure { get; set; }
     public DateTime Date { get; set; }
     public DateTime Start { get; set; }
     public DateTime End { get; set; }

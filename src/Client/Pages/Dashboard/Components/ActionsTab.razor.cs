@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
@@ -13,11 +14,12 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 public sealed partial class ActionsTab : IDisposable
 {
     [Inject] private IStringLocalizer<ActionsTab> L { get; set; } = default!;
+    [Inject] IStringLocalizer<DateToString> LDateToString { get; set; }
     [Inject] private SharePointRepository _sharePointRepository { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
-    [Parameter][EditorRequired] public DrogeUser User { get; set; } = default!;
-    [Parameter][EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
-    [Parameter][EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
+    [Parameter] [EditorRequired] public DrogeUser User { get; set; } = default!;
+    [Parameter] [EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
+    [Parameter] [EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
     private MultipleSharePointActionsResponse? _sharePointActions;
     private CancellationTokenSource _cls = new();
     private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
@@ -25,23 +27,14 @@ public sealed partial class ActionsTab : IDisposable
     private int _count = 10;
     private bool _bussy;
     private bool _multiSelection;
-    protected override async Task OnParametersSetAsync()
-    {
-        if (AuthenticationState is not null)
-        {
-            var authState = await AuthenticationState;
-            var user = authState?.User;
-            if (user is not null)
-            {
-                _multiSelection = user.IsInRole(AccessesNames.AUTH_action_history_full);
-            }
-        }
-    }
+    private bool _isTaco;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            _multiSelection = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_action_history_full);
+            _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
             _sharePointActions = await _sharePointRepository.GetLastActionsForCurrentUser(10, 0, _cls.Token);
             if (Users is not null)
             {
@@ -51,6 +44,7 @@ public sealed partial class ActionsTab : IDisposable
                     ((List<DrogeUser>)_selectedUsersAction).Add(thisUser);
                 }
             }
+
             StateHasChanged();
         }
     }

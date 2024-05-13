@@ -231,7 +231,8 @@ public static class GraphHelper
                 action.Number = AdditionalDataToDouble(det, "Actie_x0020_nummer");
                 action.Date = AdditionalDataToDateTime(det, "Datum"); ;
                 action.Start = AdditionalDataToDateTime(det, "Oproep_x0020__x0028_uren_x0029_"); ;
-                action.Commencement = AdditionalDataToDateTime(det, "Aanvang"); ;
+                action.Commencement = AdditionalDataToDateTime(det, "Aanvang");
+                action.Departure =  AdditionalDataToDateTime(det, "Vertrek_x0020__x0028_uren_x0029_");
                 action.End = AdditionalDataToDateTime(det, "Einde"); ;
                 action.Title = AdditionalDataToString(det, "LinkTitle");
                 action.ShortDescription = AdditionalDataToString(det, "Korte_x0020_Omschrijving");
