@@ -39,7 +39,7 @@ public class PreComService : IPreComService
         return result;
     }
 
-    public async Task WriteAlertToDb(Guid userId, Guid customerId, Guid? notificationId, DateTime? sendTime, string alert, int? priority, string raw)
+    public async Task WriteAlertToDb(Guid userId, Guid customerId, Guid? notificationId, DateTime? sendTime, string alert, int? priority, string raw, string? ip)
     {
         _database.PreComAlerts.Add(new DbPreComAlert
         {
@@ -49,8 +49,9 @@ public class PreComService : IPreComService
             Alert = alert,
             Priority = priority,
             Raw = raw,
-            SendTime = sendTime
+            SendTime = sendTime,
+            Ip = ip,
         });
-        _database.SaveChanges();
+        await _database.SaveChangesAsync();
     }
 }

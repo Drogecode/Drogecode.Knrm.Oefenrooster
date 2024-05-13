@@ -39,6 +39,7 @@ public class PreComController : ControllerBase
         try
         {
             _logger.LogInformation("received PreCom message");
+            var ip = GetRequesterIp();
             try
             {
                 var jsonSerializerOptions = new JsonSerializerOptions()
@@ -63,13 +64,13 @@ public class PreComController : ControllerBase
 
                 alert ??= "No alert found by hui.nu webhook";
                 var prioParsed = int.TryParse(data?._data?.priority, out int priority);
-                await _preComService.WriteAlertToDb(id, customerId, data?._notificationId, timestamp, alert, prioParsed ? priority : null, JsonSerializer.Serialize(body));
+                await _preComService.WriteAlertToDb(id, customerId, data?._notificationId, timestamp, alert, prioParsed ? priority : null, JsonSerializer.Serialize(body), ip);
                 if (sendToHub)
                     await _preComHub.SendMessage(id, "PreCom", alert);
             }
             catch (Exception ex)
             {
-                await _preComService.WriteAlertToDb(id, customerId, Guid.Empty, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body));
+                await _preComService.WriteAlertToDb(id, customerId, Guid.Empty, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body), ip);
                 if (sendToHub)
                     await _preComHub.SendMessage(id, "PreCom", "piep piep");
             }
@@ -98,6 +99,19 @@ public class PreComController : ControllerBase
         {
             _logger.LogError(ex, "Exception in AllAlerts");
             return BadRequest();
+        }
+    }
+
+    private string? GetRequesterIp()
+    {
+        try
+        {
+            return HttpContext.GetServerVariable("REMOTE_HOST") ?? this.HttpContext.GetServerVariable("REMOTE_ADDR");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception while GetRequesterIp");
+            return "Exception";
         }
     }
 

@@ -15,6 +15,7 @@ public class DbPreComAlert
     /// Only to complete the object, not all fields are always returned.
     /// </summary>
     public string? Raw { get; set; }
+    [StringLength(50)] public string? Ip { get; set; }
     public DateTime? SendTime { get; set; }
     public int? Priority { get; set; }
 
