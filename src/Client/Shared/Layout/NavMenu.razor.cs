@@ -25,6 +25,7 @@ public sealed partial class NavMenu : IDisposable
     private string _uriSchedule = "/planner/schedule";
     private string _uriPlannerUser = "/planner/user";
     private string _sharePointUrl = string.Empty;
+    private string _lplhUrl = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -38,9 +39,15 @@ public sealed partial class NavMenu : IDisposable
             var authState = await AuthenticationState;
             var loginHint = authState?.User?.FindFirst(c => c.Type == "login_hint")?.Value;
             if (string.IsNullOrEmpty(loginHint))
+            {
                 _sharePointUrl = "https://dorus1824.sharepoint.com";
+                _lplhUrl = "https://dorus1824.sharepoint.com/:b:/r/sites/KNRM/Documenten/EHBO/LPLH/20181115%20LPLH_KNRM_1_1.pdf?csf=1&web=1&e=4L3VPo";
+            }
             else
+            {
                 _sharePointUrl = $"https://dorus1824.sharepoint.com?login_hint={loginHint}";
+                _lplhUrl = $"https://dorus1824.sharepoint.com/:b:/r/sites/KNRM/Documenten/EHBO/LPLH/20181115%20LPLH_KNRM_1_1.pdf?csf=1&web=1&e=4L3VPo&login_hint={loginHint}";
+            }
         }
     }
 

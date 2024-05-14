@@ -1,7 +1,4 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
-@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-@using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
-<MudNavMenu>
+﻿<MudNavMenu>
     <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/" Match="NavLinkMatch.All">@L["Dashboard"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.CalendarMonth" Href="@_uriCalendar" Match="NavLinkMatch.Prefix">@LApp["Availibility"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.EditCalendar" Href="@_uriSchedule" Match="NavLinkMatch.Prefix">@L["Schedule"]</MudNavLink>
@@ -11,8 +8,12 @@
     <AuthorizeView Roles="@AccessesNames.AUTH_users_details" Context="inner">
         <MudNavLink Icon="@Icons.Material.Filled.ManageAccounts" Href="@_uriPlannerUser" Match="NavLinkMatch.Prefix">@L["User details"]</MudNavLink>
     </AuthorizeView>
+    <MudNavGroup Title="Handige links" Expanded="true">
+        <MudNavLink Href="@_sharePointUrl" Target="_blank" Match="NavLinkMatch.All">@L["Sharepoint"]</MudNavLink>
+        <MudNavLink Href="@_lplhUrl" Target="_blank" Match="NavLinkMatch.All">LPLH</MudNavLink>
+    </MudNavGroup>
     <AuthorizeView Roles="@(AccessesNames.AUTH_configure_training_types + ", " +AccessesNames.AUTH_Taco)">
-        <MudNavGroup Title="@L["Configuration"]" Expanded="true">
+        <MudNavGroup Title="@L["Configuration"]" Expanded="true"> @* This should probably be configurible *@
             <AuthorizeView Roles="@AccessesNames.AUTH_configure_training_types" Context="inner">
                 <MudNavLink Icon="@Icons.Material.Filled.DirectionsRun" Href="/configuration/training-types" Match="NavLinkMatch.Prefix">@L["Training types"]</MudNavLink>
             </AuthorizeView>
@@ -27,7 +28,6 @@
         </MudNavGroup>
     </AuthorizeView>
     <MudDivider />
-    <MudNavLink Href="@_sharePointUrl" Target="_blank" Match="NavLinkMatch.All">@L["Sharepoint"]</MudNavLink>
     <MudDivider />
     @if (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriCalendar.Substring(1)) ||
     (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriSchedule.Substring(1)) && !Navigation.Uri.EndsWith("Table")))
