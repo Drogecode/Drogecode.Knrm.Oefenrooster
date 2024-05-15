@@ -28,30 +28,37 @@ public sealed partial class UserDetails : IDisposable
     private List<PlannerTrainingType>? _trainingTypes;
     private IEnumerable<DrogeUser> _selectedUsersAction;
     private bool _updatingSelection = false;
-    protected override async Task OnParametersSetAsync()
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _users = await _userRepository.GetAllUsersAsync(false, false, false, _cls.Token);
-        _functions = await _functionRepository.GetAllFunctionsAsync(false, _cls.Token);
-        _vehicles = await _vehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
-        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
-        if (Id is not null)
+        if (firstRender)
         {
-            _user = await _userRepository.GetById(Id.Value, false);
-            if (_user?.LinkedAsA is not null)
+            _users = await _userRepository.GetAllUsersAsync(false, false, false, _cls.Token);
+            _functions = await _functionRepository.GetAllFunctionsAsync(false, _cls.Token);
+            _vehicles = await _vehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
+            _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
+            if (Id is not null)
             {
-                var newList = new List<DrogeUser>();
-                foreach (var linkedUser in _user.LinkedAsA.Where(x => x.LinkType == UserUserLinkType.Buddy))
+                _user = await _userRepository.GetById(Id.Value, false);
+                if (_user?.LinkedAsA is not null)
                 {
-                    var linked = await _userRepository.GetById(linkedUser.LinkedUserId, false);
-                    if (linked is not null)
-                        newList.Add(linked);
+                    var newList = new List<DrogeUser>();
+                    foreach (var linkedUser in _user.LinkedAsA.Where(x => x.LinkType == UserUserLinkType.Buddy))
+                    {
+                        var linked = await _userRepository.GetById(linkedUser.LinkedUserId, false);
+                        if (linked is not null)
+                            newList.Add(linked);
+                    }
+
+                    _selectedUsersAction = newList;
                 }
-                _selectedUsersAction = newList;
+                else
+                    _selectedUsersAction = [];
+
+                _trainings = (await _scheduleRepository.AllTrainingsForUser(Id.Value, _cls.Token));
+                _userFunction = _functions?.FirstOrDefault(x => x.Id == _user?.UserFunctionId);
             }
-            else
-                _selectedUsersAction = [];
-            _trainings = (await _scheduleRepository.AllTrainingsForUser(Id.Value, _cls.Token));
-            _userFunction = _functions?.FirstOrDefault(x => x.Id == _user?.UserFunctionId);
+            StateHasChanged();
         }
     }
 

@@ -26,48 +26,48 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial interface IDefaultScheduleClient
     {
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GetAllDefaultGroupsResponse> GetAllGroupsAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GetAllDefaultGroupsResponse> GetAllGroupsAsync(System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<MultipleDefaultSchedulesResponse> GetAllByGroupIdAsync(System.Guid id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<MultipleDefaultSchedulesResponse> GetAllByGroupIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PutGroupResponse> PutGroupAsync(DefaultGroup body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PutGroupResponse> PutGroupAsync(DefaultGroup body, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PutDefaultScheduleResponse> PutDefaultScheduleAsync(DefaultSchedule body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PutDefaultScheduleResponse> PutDefaultScheduleAsync(DefaultSchedule body, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUserAsync(PatchDefaultUserSchedule body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUserAsync(PatchDefaultUserSchedule body, System.Threading.CancellationToken cancellationToken);
 
@@ -101,7 +101,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<GetAllDefaultGroupsResponse> GetAllGroupsAsync()
         {
@@ -109,7 +109,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<GetAllDefaultGroupsResponse> GetAllGroupsAsync(System.Threading.CancellationToken cancellationToken)
         {
@@ -179,7 +179,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             }
         }
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<MultipleDefaultSchedulesResponse> GetAllByGroupIdAsync(System.Guid id)
         {
@@ -187,7 +187,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<MultipleDefaultSchedulesResponse> GetAllByGroupIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
         {
@@ -261,7 +261,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             }
         }
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<PutGroupResponse> PutGroupAsync(DefaultGroup body)
         {
@@ -269,7 +269,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<PutGroupResponse> PutGroupAsync(DefaultGroup body, System.Threading.CancellationToken cancellationToken)
         {
@@ -343,7 +343,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             }
         }
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<PutDefaultScheduleResponse> PutDefaultScheduleAsync(DefaultSchedule body)
         {
@@ -351,7 +351,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<PutDefaultScheduleResponse> PutDefaultScheduleAsync(DefaultSchedule body, System.Threading.CancellationToken cancellationToken)
         {
@@ -425,7 +425,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             }
         }
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUserAsync(PatchDefaultUserSchedule body)
         {
@@ -433,7 +433,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUserAsync(PatchDefaultUserSchedule body, System.Threading.CancellationToken cancellationToken)
         {

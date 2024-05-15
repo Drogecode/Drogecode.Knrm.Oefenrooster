@@ -27,13 +27,11 @@
         get => CultureInfo.CurrentCulture;
         set
         {
-            if (CultureInfo.CurrentCulture != value)
-            {
-                var js = (IJSInProcessRuntime)JS;
-                js.InvokeVoid("blazorCulture.set", value.Name);
+            if (Equals(CultureInfo.CurrentCulture, value)) return;
+            var js = (IJSInProcessRuntime)JS;
+            js.InvokeVoid("blazorCulture.set", value.Name);
 
-                Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
-            }
+            Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
         }
     }
 }

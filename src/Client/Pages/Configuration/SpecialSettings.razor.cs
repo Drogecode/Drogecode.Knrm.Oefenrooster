@@ -89,6 +89,11 @@ public sealed partial class SpecialSettings : IDisposable
         _specialDatesUpdated = await _configurationRepository.UpdateSpecialDates();
         StateHasChanged();
     }
+    private async Task RunDbCorrection()
+    {
+        _dbCorrection1 = await _configurationRepository.DbCorrection();
+        StateHasChanged();
+    }
 
     private void AddUser()
     {

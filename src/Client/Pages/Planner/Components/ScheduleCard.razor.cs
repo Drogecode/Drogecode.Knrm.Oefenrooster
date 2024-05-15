@@ -78,7 +78,7 @@ public sealed partial class ScheduleCard : IDisposable
         };
         var options = new DialogOptions()
         {
-            MaxWidth = MudBlazor.MaxWidth.Medium,
+            MaxWidth = MudBlazor.MaxWidth.Large,
             CloseButton = true,
             FullWidth = true
         };
@@ -94,7 +94,7 @@ public sealed partial class ScheduleCard : IDisposable
         };
         var options = new DialogOptions()
         {
-            MaxWidth = MudBlazor.MaxWidth.Medium,
+            MaxWidth = MudBlazor.MaxWidth.Large,
             CloseButton = true,
             FullWidth = true
         };

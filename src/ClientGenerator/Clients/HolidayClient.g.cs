@@ -26,48 +26,48 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial interface IHolidayClient
     {
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<MultipleHolidaysResponse> GetAllAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<MultipleHolidaysResponse> GetAllAsync(System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PutHolidaysForUserResponse> PutHolidayForUserAsync(Holiday body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PutHolidaysForUserResponse> PutHolidayForUserAsync(Holiday body, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PatchHolidaysForUserResponse> PatchHolidayForUserAsync(Holiday body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PatchHolidaysForUserResponse> PatchHolidayForUserAsync(Holiday body, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GetResponse> GetAsync(System.Guid id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GetResponse> GetAsync(System.Guid id, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<DeleteResonse> DeleteAsync(System.Guid id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<DeleteResonse> DeleteAsync(System.Guid id, System.Threading.CancellationToken cancellationToken);
 
@@ -101,7 +101,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<MultipleHolidaysResponse> GetAllAsync()
         {
@@ -109,7 +109,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<MultipleHolidaysResponse> GetAllAsync(System.Threading.CancellationToken cancellationToken)
         {
@@ -179,7 +179,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             }
         }
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<PutHolidaysForUserResponse> PutHolidayForUserAsync(Holiday body)
         {
@@ -187,7 +187,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<PutHolidaysForUserResponse> PutHolidayForUserAsync(Holiday body, System.Threading.CancellationToken cancellationToken)
         {
@@ -261,7 +261,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             }
         }
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<PatchHolidaysForUserResponse> PatchHolidayForUserAsync(Holiday body)
         {
@@ -269,7 +269,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<PatchHolidaysForUserResponse> PatchHolidayForUserAsync(Holiday body, System.Threading.CancellationToken cancellationToken)
         {
@@ -343,7 +343,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             }
         }
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<GetResponse> GetAsync(System.Guid id)
         {
@@ -351,7 +351,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<GetResponse> GetAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
         {
@@ -425,7 +425,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             }
         }
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<DeleteResonse> DeleteAsync(System.Guid id)
         {
@@ -433,7 +433,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<DeleteResonse> DeleteAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
         {

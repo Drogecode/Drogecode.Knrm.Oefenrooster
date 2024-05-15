@@ -26,57 +26,57 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial interface IMonthItemClient
     {
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GetMonthItemResponse> ByIdAsync(System.Guid id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GetMonthItemResponse> ByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GetMultipleMonthItemResponse> GetItemsAsync(int year, int month);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GetMultipleMonthItemResponse> GetItemsAsync(int year, int month, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GetMultipleMonthItemResponse> GetAllItemsAsync(int take, int skip, bool includeExpired);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GetMultipleMonthItemResponse> GetAllItemsAsync(int take, int skip, bool includeExpired, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PutMonthItemResponse> PutItemAsync(RoosterItemMonth body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PutMonthItemResponse> PutItemAsync(RoosterItemMonth body, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PatchMonthItemResponse> PatchItemAsync(RoosterItemMonth body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PatchMonthItemResponse> PatchItemAsync(RoosterItemMonth body, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<bool> DeleteMonthItemAsync(System.Guid? body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<bool> DeleteMonthItemAsync(System.Guid? body, System.Threading.CancellationToken cancellationToken);
 
@@ -110,7 +110,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<GetMonthItemResponse> ByIdAsync(System.Guid id)
         {
@@ -118,7 +118,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<GetMonthItemResponse> ByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
         {
@@ -192,7 +192,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             }
         }
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<GetMultipleMonthItemResponse> GetItemsAsync(int year, int month)
         {
@@ -200,7 +200,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<GetMultipleMonthItemResponse> GetItemsAsync(int year, int month, System.Threading.CancellationToken cancellationToken)
         {
@@ -279,7 +279,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             }
         }
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<GetMultipleMonthItemResponse> GetAllItemsAsync(int take, int skip, bool includeExpired)
         {
@@ -287,7 +287,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<GetMultipleMonthItemResponse> GetAllItemsAsync(int take, int skip, bool includeExpired, System.Threading.CancellationToken cancellationToken)
         {
@@ -371,7 +371,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             }
         }
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<PutMonthItemResponse> PutItemAsync(RoosterItemMonth body)
         {
@@ -379,7 +379,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<PutMonthItemResponse> PutItemAsync(RoosterItemMonth body, System.Threading.CancellationToken cancellationToken)
         {
@@ -453,7 +453,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             }
         }
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<PatchMonthItemResponse> PatchItemAsync(RoosterItemMonth body)
         {
@@ -461,7 +461,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<PatchMonthItemResponse> PatchItemAsync(RoosterItemMonth body, System.Threading.CancellationToken cancellationToken)
         {
@@ -535,7 +535,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             }
         }
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<bool> DeleteMonthItemAsync(System.Guid? body)
         {
@@ -543,7 +543,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<bool> DeleteMonthItemAsync(System.Guid? body, System.Threading.CancellationToken cancellationToken)
         {
