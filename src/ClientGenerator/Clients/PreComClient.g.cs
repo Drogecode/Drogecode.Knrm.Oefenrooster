@@ -26,21 +26,21 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial interface IPreComClient
     {
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task WebHookAsync(System.Guid customerId, System.Guid id, bool? sendToHub, object body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task WebHookAsync(System.Guid customerId, System.Guid id, bool? sendToHub, object body, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<MultiplePreComAlertsResponse> AllAlertsAsync(int take, int skip);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<MultiplePreComAlertsResponse> AllAlertsAsync(int take, int skip, System.Threading.CancellationToken cancellationToken);
 
@@ -74,7 +74,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task WebHookAsync(System.Guid customerId, System.Guid id, bool? sendToHub, object body)
         {
@@ -82,7 +82,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task WebHookAsync(System.Guid customerId, System.Guid id, bool? sendToHub, object body, System.Threading.CancellationToken cancellationToken)
         {
@@ -165,7 +165,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             }
         }
 
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<MultiplePreComAlertsResponse> AllAlertsAsync(int take, int skip)
         {
@@ -173,7 +173,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<MultiplePreComAlertsResponse> AllAlertsAsync(int take, int skip, System.Threading.CancellationToken cancellationToken)
         {
