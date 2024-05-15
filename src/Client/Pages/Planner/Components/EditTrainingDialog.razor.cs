@@ -32,6 +32,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private bool _canEdit;
     private bool _showPadlock;
     private bool _editOld;
+    private bool _isTaco;
 #if DEBUG
     private const bool _isDebug = true;
 #else
@@ -120,15 +121,8 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private async Task SetRoleBasedVariables()
     {
-        if (AuthenticationState is not null)
-        {
-            var authState = await AuthenticationState;
-            var user = authState?.User;
-            if (user != null)
-            {
-                _editOld = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
-            }
-        }
+        _editOld = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_edit_past);
+        _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
 
         if (_training?.IsNew ?? true)
         {

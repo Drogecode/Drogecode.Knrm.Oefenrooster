@@ -165,4 +165,7 @@
   <data name="Which vehicle?" xml:space="preserve">
     <value>Welke boot?</value>
   </data>
+  <data name="Description - Markdown" xml:space="preserve">
+    <value>Omschrijving - Markdown</value>
+  </data>
 </root>

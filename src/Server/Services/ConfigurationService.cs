@@ -25,7 +25,7 @@ public class ConfigurationService : IConfigurationService
         return true;
     }
 
-    public async Task<bool> AddSpecialDay(Guid customerId, PublicHoliday holiday, CancellationToken token)
+    public async Task<bool> AddSpecialDay(Guid customerId, PublicHoliday holiday, CancellationToken clt)
     {
         if (holiday.LocalName == null) return false;
         var date = DateTime.SpecifyKind(holiday.Date, DateTimeKind.Utc);
@@ -41,6 +41,33 @@ public class ConfigurationService : IConfigurationService
             Text = holiday.LocalName,
             IsFullDay = true
         });
-        return _database.SaveChanges() > 0;
+        return await _database.SaveChangesAsync(clt) > 0;
+    }
+
+    public async Task<DbCorrectionResponse> DbCorrection(CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new DbCorrectionResponse();
+
+        var dbLinks = await _database.LinkVehicleTraining.ToListAsync(clt);
+        foreach (var link in dbLinks)
+        {
+            var dbTr = await _database.RoosterTrainings.FindAsync(link.RoosterTrainingId, clt);
+            if (dbTr is null)
+            {
+                _database.LinkVehicleTraining.Remove(link);
+            }
+
+            var dbVeh = await _database.Vehicles.FindAsync(link.VehicleId, clt);
+            if (dbVeh is null)
+            {
+                _database.LinkVehicleTraining.Remove(link);
+            }
+        }
+
+        result.Success = await _database.SaveChangesAsync(clt) > 0;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
     }
 }

@@ -8,7 +8,7 @@
         <MudText Typo="Typo.h5">@_training.Name</MudText>
         <MudTabs Rounded="true">
             <MudTabPanel Text="@L["Details"]">
-                <MudText Typo="Typo.body1">@_training.Description</MudText>
+                <MudMarkdown Value="@_training.Description" />
             </MudTabPanel>
             <MudTabPanel Text="@L["Edit"]">
                 <EditTrainingDialog Planner="_training" TrainingTypes="_trainingTypes" Vehicles="_vehicles" Global="Global" />

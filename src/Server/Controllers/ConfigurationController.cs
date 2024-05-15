@@ -140,4 +140,22 @@ public class ConfigurationController : ControllerBase
             return new UpdateSpecialDatesResponse { Success = false };
         }
     }
+    
+
+    [HttpPatch]
+    [Route("db-correction")]
+    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    public async Task<ActionResult<DbCorrectionResponse>> DbCorrection(CancellationToken clt = default)
+    {
+        try
+        {
+            DbCorrectionResponse response = await _configurationService.DbCorrection(clt);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in DbCorrection");
+            return new DbCorrectionResponse { Success = false };
+        }
+    }
 }

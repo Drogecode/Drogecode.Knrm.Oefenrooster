@@ -165,4 +165,7 @@
   <data name="Which vehicle?" xml:space="preserve">
     <value>Which vehicle?</value>
   </data>
+  <data name="Description - Markdown" xml:space="preserve">
+    <value>Description - Markdown</value>
+  </data>
 </root>

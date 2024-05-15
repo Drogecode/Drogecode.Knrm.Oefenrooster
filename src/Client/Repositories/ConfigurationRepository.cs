@@ -31,4 +31,9 @@ public class ConfigurationRepository
         var response = await _configurationClient.UpdateSpecialDatesAsync();
         return response.Success;
     }
+    public async Task<bool?> DbCorrection()
+    {
+        var response = await _configurationClient.DbCorrectionAsync();
+        return response.Success;
+    }
 }
