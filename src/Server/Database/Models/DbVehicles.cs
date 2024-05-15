@@ -21,4 +21,5 @@ public class DbVehicles
 
     public DbCustomers Customer { get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
+    public ICollection<DbLinkVehicleTraining>? LinkVehicleTrainings { get; set; }
 }
