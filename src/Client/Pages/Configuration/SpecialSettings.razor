@@ -56,8 +56,8 @@ else if (_dbCorrection1 == false)
     <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
         <MudPaper>
             <MudList Clickable="false">
-                <MudText>vijf meest recente logins maximaal 7 dagen geleden</MudText>
-                @foreach (var user in _users.Where(x => x.LastLogin >= DateTime.Today.AddDays(-7)).OrderByDescending(x => x.LastLogin).Take(5))
+                <MudText>zeven meest recente logins maximaal 7 dagen geleden</MudText>
+                @foreach (var user in _users.Where(x => x.LastLogin >= DateTime.Today.AddDays(-7)).OrderByDescending(x => x.LastLogin).Take(7))
                 {
                     <MudListItem>
                         <div class="flex space-x-4">

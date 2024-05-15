@@ -58,8 +58,8 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var result = await _scheduleService.ScheduleForUserAsync(userId, customerId, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, clt);
             return result;
         }
@@ -77,8 +77,8 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var countPerUser = User.IsInRole(AccessesNames.AUTH_users_counter);
             var result = await _scheduleService.ScheduleForAllAsync(userId, customerId, forMonth, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, countPerUser, includeUnAssigned, clt);
             return result;
@@ -96,8 +96,8 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var result = await _scheduleService.GetTrainingById(userId, customerId, id, clt);
             return result;
         }
@@ -114,7 +114,7 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var result = await _scheduleService.GetPlannedTrainingById(customerId, id, clt);
             return result;
         }
@@ -131,7 +131,7 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var result = await _scheduleService.GetPlannedTrainingForDefaultDate(customerId, date, defaultId, clt);
             return result;
         }
@@ -149,8 +149,8 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var inRoleEditPast = User.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
             var result = await _scheduleService.PatchTraining(customerId, patchedTraining, inRoleEditPast, clt);
             if (result.Success)
@@ -183,10 +183,9 @@ public class ScheduleController : ControllerBase
     {
         var training = await _scheduleService.GetPlannedTrainingById(customerId, trainingId, clt);
         clt.ThrowIfCancellationRequested();
-        clt = CancellationToken.None;
 
         _graphService.InitializeGraph();
-        string text = GetTrainingCalenderText(training.Training?.TrainingTypeName, training.Training?.Name);
+        var text = GetTrainingCalenderText(training.Training?.TrainingTypeName, training.Training?.Name);
         if (training.Training?.PlanUsers.Count > 0)
         {
             foreach (var user in training.Training.PlanUsers)
@@ -218,8 +217,8 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var trainingId = Guid.NewGuid();
             var result = await _scheduleService.AddTrainingAsync(customerId, newTraining, trainingId, clt);
             await _userService.PatchLastOnline(userId, clt);
@@ -243,10 +242,10 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var result = await _scheduleService.PatchScheduleForUserAsync(userId, customerId, training, clt);
-            if (result.Success && result.PatchedTraining?.Assigned == true)
+            if (result is { Success: true, PatchedTraining.Assigned: true })
             {
                 await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
                     JsonSerializer.Serialize(new AuditAssignedUser
@@ -254,7 +253,7 @@ public class ScheduleController : ControllerBase
                         UserId = userId, Assigned = result.PatchedTraining.Assigned, Availability = result.PatchedTraining.Availability, SetBy = result.PatchedTraining.SetBy,
                         AuditReason = AuditReason.ChangeAvailability
                     }),
-                    training?.TrainingId);
+                    training.TrainingId);
                 await _refreshHub.SendMessage(userId, ItemUpdated.FutureTrainings);
             }
 
@@ -274,8 +273,8 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var inRoleEditOther = User.IsInRole(AccessesNames.AUTH_scheduler_other_user);
             if (!inRoleEditOther && !userId.Equals(body.User?.UserId))
                 return Unauthorized();
@@ -283,12 +282,12 @@ public class ScheduleController : ControllerBase
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
                 JsonSerializer.Serialize(new AuditAssignedUser
                 {
-                    UserId = body.User?.UserId, Assigned = body?.User?.Assigned, Availability = result.Availability, SetBy = result.SetBy,
+                    UserId = body.User?.UserId, Assigned = body.User?.Assigned, Availability = result.Availability, SetBy = result.SetBy,
                     AuditReason = AuditReason.Assigned
                 }),
-                body?.TrainingId);
+                body.TrainingId);
             await _userService.PatchLastOnline(userId, clt);
-            if (result.Success && body?.User?.UserId is not null)
+            if (result.Success && body.User?.UserId is not null)
             {
                 clt = CancellationToken.None;
                 await ToOutlookCalendar(body.User.UserId, body.TrainingId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
@@ -314,8 +313,8 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var inRoleEditOther = User.IsInRole(AccessesNames.AUTH_scheduler_other_user);
             if (!inRoleEditOther && !userId.Equals(body.UserId))
                 return Unauthorized();
@@ -323,12 +322,12 @@ public class ScheduleController : ControllerBase
             await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
                 JsonSerializer.Serialize(new AuditAssignedUser
                 {
-                    UserId = body.UserId, Assigned = body?.Assigned, Availability = result.Availability, SetBy = result.SetBy,
+                    UserId = body.UserId, Assigned = body.Assigned, Availability = result.Availability, SetBy = result.SetBy,
                     AuditReason = AuditReason.Assigned
                 }),
-                body?.TrainingId);
+                body.TrainingId);
             await _userService.PatchLastOnline(userId, clt);
-            if (result.Success && body?.UserId is not null)
+            if (result.Success && body.UserId is not null)
             {
                 clt = CancellationToken.None;
                 await ToOutlookCalendar(body.UserId.Value, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, clt);
@@ -354,8 +353,8 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var fromDate = _dateTimeService.Today().ToUniversalTime();
             var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, clt);
             if (callHub)
@@ -384,7 +383,7 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var result = await _scheduleService.GetScheduledTrainingsForUser(id, customerId, null, clt);
             return result;
         }
@@ -406,8 +405,8 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var fromDate = DateTime.UtcNow;
             _logger.LogInformation("Get all pinned trainings for {user}", userId);
             var result = await _scheduleService.GetPinnedTrainingsForUser(userId, customerId, fromDate, clt);
@@ -436,12 +435,12 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var training = await _scheduleService.GetPlannedTrainingById(customerId, id, clt);
             await _userService.PatchLastOnline(userId, clt);
             if (training.Training is null)
-                return BadRequest("Traiing not found");
+                return BadRequest("training not found");
             clt.ThrowIfCancellationRequested();
             clt = CancellationToken.None;
             var canEditPast = User.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
@@ -478,13 +477,13 @@ public class ScheduleController : ControllerBase
             if (assigned && await _userSettingService.TrainingToCalendar(customerId, planUserId))
             {
 #if DEBUG
-                // Be carefull when debugging.
+                // Be carefully when debugging.
                 Debugger.Break();
 #endif
                 if (training is null && trainingId is not null)
                     training = (await _scheduleService.GetTrainingById(planUserId, customerId, trainingId.Value, clt)).Training;
                 var type = await _trainingTypesService.GetById(training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
-                var text = GetTrainingCalenderText(type?.TrainingType?.Name, training?.Name);
+                var text = GetTrainingCalenderText(type.TrainingType?.Name, training?.Name);
                 if (training is null)
                 {
                     _logger.LogWarning("Failed to set a training for trainingId {trainingId}", trainingId);
@@ -502,14 +501,14 @@ public class ScheduleController : ControllerBase
                     }
                     else
                         _logger.LogWarning(
-                            "text is null or empty for {customerId} {planUserId} {trainingId} {assigned} {currentUserId} {availableId} {calendarEventId} and training is {trainingNullOrNot}",
-                            customerId, planUserId, trainingId, assigned, currentUserId, availableId, calendarEventId, training is null ? "null" : "not null");
+                            "text is null or empty for {customerId} {planUserId} {trainingId} {assigned} {currentUserId} {availableId} {calendarEventId}",
+                            customerId, planUserId, trainingId, assigned, currentUserId, availableId, calendarEventId);
                 }
                 else
                 {
                     await _graphService.PatchCalender(planUserId, calendarEventId, text, training.DateStart, training.DateEnd, !training.ShowTime);
                     await _auditService.Log(currentUserId, AuditType.PatchTraining, customerId,
-                        $"Preventing duplicate event '{type?.TrainingType?.Name}' on '{training?.DateStart.ToString("o")}' : '{training?.DateEnd.ToString("o")}'");
+                        $"Preventing duplicate event '{type.TrainingType?.Name}' on '{training.DateStart.ToString("o")}' : '{training.DateEnd.ToString("o")}'");
                 }
             }
             else if (!string.IsNullOrEmpty(calendarEventId))
