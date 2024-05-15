@@ -175,8 +175,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             // Vehicles <--> Rooster available
             modelBuilder.Entity<DbLinkVehicleTraining>(e => { e.Property(e => e.Id).IsRequired(); });
             modelBuilder.Entity<DbLinkVehicleTraining>().HasOne(p => p.Customer).WithMany(g => g.LinkVehicleTrainings).HasForeignKey(s => s.CustomerId).IsRequired();
-            modelBuilder.Entity<DbLinkVehicleTraining>().HasOne(p => p.RoosterTraining).WithMany(g => g.LinkVehicleTrainings).HasForeignKey(s => s.RoosterTrainingId);
-            modelBuilder.Entity<DbLinkVehicleTraining>().HasOne(p => p.Vehicles).WithMany(g => g.LinkVehicleTrainings).HasForeignKey(s => s.VehicleId);
+            modelBuilder.Entity<DbLinkVehicleTraining>().HasOne(p => p.RoosterTraining).WithMany(g => g.LinkVehicleTrainings).HasForeignKey(s => s.RoosterTrainingId).IsRequired();
+            modelBuilder.Entity<DbLinkVehicleTraining>().HasOne(p => p.Vehicles).WithMany(g => g.LinkVehicleTrainings).HasForeignKey(s => s.VehicleId).IsRequired();
 
             // Vehicle with training with outlook exchange calendar
             modelBuilder.Entity<DbLinkExchange>().HasOne(p => p.Customer).WithMany(g => g.LinkExchanges).HasForeignKey(s => s.CustomerId).IsRequired();
