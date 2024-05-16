@@ -1,13 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Blazored.LocalStorage;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
-using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 
@@ -53,15 +51,7 @@ public sealed partial class Theming : IDisposable
     {
         _localUserSettings = (await LocalStorage.GetItemAsync<LocalUserSettings>("localUserSettings")) ?? new LocalUserSettings();
         DarkModeToggle = _localUserSettings.DarkLightMode;
-        if (AuthenticationState is not null)
-        {
-            var authState = await AuthenticationState;
-            var user = authState?.User;
-            if (user != null)
-            {
-                _isTaco = user.IsInRole(AccessesNames.AUTH_Taco);
-            }
-        }
+        _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

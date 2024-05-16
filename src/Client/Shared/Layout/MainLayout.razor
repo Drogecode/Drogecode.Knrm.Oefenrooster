@@ -1,17 +1,16 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Client.Services;
-@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @inherits LayoutComponentBase
 @inject CustomStateProvider AuthenticationStateProvider
 
-<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" Theme="@_myCustomTheme" />
-<MudDialogProvider />
-<MudSnackbarProvider />
+<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" Theme="@_myCustomTheme"/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
 
 <MudLayout>
     <AuthorizeView>
         <Authorized>
             <MudAppBar>
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
                 @if (_isOffline)
                 {
                     <MudAlert Severity="Severity.Warning" Variant="Variant.Filled">
@@ -19,36 +18,36 @@
                         <span class="hidden sm:inline md:hidden">@L["You are offline"]</span>
                         <span class="hidden md:inline">@L["You are offline data could be outdated"]</span>
                     </MudAlert>
-                    <MudSpacer />
+                    <MudSpacer/>
                 }
                 @L["Title"]
-                <MudSpacer />
-                <AuthorizeView Roles="@AccessesNames.AUTH_Hide" Context="inner">
-                <MudBadge Color="Color.Secondary" Dot="true" Overlap="true" Visible="_newNotificationsAvailable">
-                    <MudMenu Icon="@Icons.Material.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter" PopoverClass="docs-layout-menu-shadow" ListClass="pa-2 docs-menu-list" LockScroll="true">
-                        <div class="d-flex justify-space-between align-center px-2">
-                            <MudText Typo="Typo.subtitle2">Notifications</MudText>
-                            <MudButton Disabled="@(_newNotificationsAvailable == false)" StartIcon="@Icons.Material.Filled.DoneAll" Variant="Variant.Text" Color="Color.Primary" Class="ml-16 mr-n2">Mark as read</MudButton>
-                        </div>
-                        @if (_messages != null && _newNotificationsAvailable)
-                        {
-                            @foreach (var (message, isRead) in _messages.Take(5))
-                            {
-                                <MudMenuItem Class="px-2 py-0 rounded" Href="@($"/mud/announcements/{message.Id}")">
-                                    <MudText Typo="Typo.subtitle2">@message.Title</MudText>
-                                    <MudText Typo="Typo.body2">@($"{message.Authors.FirstOrDefault()?.DisplayName} • {message.PublishDate.ToString("MM/dd/yyyy")}")</MudText>
-                                    </MudMenuItem>
-                                <MudDivider Class="my-2" />
-                            }
-                        }
-                        else
-                        {
-                            <div class="d-flex justify-center align-center px-2 py-8 relative">
-                                <MudText Class="mud-text-secondary my-12">Nothing new :(</MudText>
+                <MudSpacer/>
+                <AuthorizeView Roles="@AccessesNames.AUTH_Hide">
+                    <MudBadge Color="Color.Secondary" Dot="true" Overlap="true" Visible="_newNotificationsAvailable">
+                        <MudMenu Icon="@Icons.Material.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter" PopoverClass="docs-layout-menu-shadow" ListClass="pa-2 docs-menu-list" LockScroll="true">
+                            <div class="d-flex justify-space-between align-center px-2">
+                                <MudText Typo="Typo.subtitle2">Notifications</MudText>
+                                <MudButton Disabled="@(_newNotificationsAvailable == false)" StartIcon="@Icons.Material.Filled.DoneAll" Variant="Variant.Text" Color="Color.Primary" Class="ml-16 mr-n2">Mark as read</MudButton>
                             </div>
-                        }
-                    </MudMenu>
-                </MudBadge>
+                            @if (_messages != null && _newNotificationsAvailable)
+                            {
+                                @foreach (var (message, isRead) in _messages.Take(5))
+                                {
+                                    <MudMenuItem Class="px-2 py-0 rounded" Href="@($"/mud/announcements/{message.Id}")">
+                                        <MudText Typo="Typo.subtitle2">@message.Title</MudText>
+                                        <MudText Typo="Typo.body2">@($"{message.Authors.FirstOrDefault()?.DisplayName} • {message.PublishDate.ToString("MM/dd/yyyy")}")</MudText>
+                                    </MudMenuItem>
+                                    <MudDivider Class="my-2"/>
+                                }
+                            }
+                            else
+                            {
+                                <div class="d-flex justify-center align-center px-2 py-8 relative">
+                                    <MudText Class="mud-text-secondary my-12">Nothing new :(</MudText>
+                                </div>
+                            }
+                        </MudMenu>
+                    </MudBadge>
                 </AuthorizeView>
                 <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft" TransformOrigin="@Origin.TopLeft">
                     <MudMenuItem Href="/user/profile">@L["Profile"]</MudMenuItem>
@@ -58,12 +57,12 @@
             </MudAppBar>
             <CascadingValue Value="_global">
                 <MudDrawer @bind-Open="@_drawerOpen">
-                    <NavMenu />
+                    <NavMenu/>
                 </MudDrawer>
                 <MudMainContent>
                     <CascadingValue Value="this">
                         @Body
-                        <UpdateChecker />
+                        <UpdateChecker/>
                     </CascadingValue>
                 </MudMainContent>
             </CascadingValue>
@@ -75,11 +74,12 @@
                 {
                     @($".trainingType-{trainingType.Id}")
                     @("{")
-                        @($"background-color: {(_isDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)}  !important;")
-                        if(!string.IsNullOrEmpty(trainingType.TextColorLight))
-                        {
-                            @($"color: {(_isDarkMode ? string.IsNullOrEmpty(trainingType.TextColorDark) ? trainingType.TextColorLight : trainingType.TextColorDark : trainingType.TextColorLight)}  !important;")
-                        }
+                    @($"background-color: {(_isDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)}  !important;")
+                    if (!string.IsNullOrEmpty(trainingType.TextColorLight))
+                    {
+                        @($"color: {(_isDarkMode ? string.IsNullOrEmpty(trainingType.TextColorDark) ? trainingType.TextColorLight : trainingType.TextColorDark : trainingType.TextColorLight)}  !important;")
+                    }
+
                     @("}")
                 }
                 </style>
