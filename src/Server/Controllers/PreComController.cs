@@ -106,14 +106,14 @@ public class PreComController : ControllerBase
     {
         try
         {
-            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-            if (!string.IsNullOrWhiteSpace(ip)) return "a;" + ip;
-            ip = HttpContext.GetServerVariable("HTTP_X_FORWARDED_FOR");
-            if (!string.IsNullOrWhiteSpace(ip)) return "b;" + ip;
+            var ip = HttpContext.GetServerVariable("HTTP_X_FORWARDED_FOR");
+            if (!string.IsNullOrWhiteSpace(ip)) return "xf;" + ip;
             ip = HttpContext.GetServerVariable("REMOTE_HOST");
-            if (!string.IsNullOrWhiteSpace(ip)) return "c;" + ip;
+            if (!string.IsNullOrWhiteSpace(ip)) return "rh;" + ip;
             ip = HttpContext.GetServerVariable("REMOTE_ADDR");
-            if (!string.IsNullOrWhiteSpace(ip)) return "d;" + ip;
+            if (!string.IsNullOrWhiteSpace(ip)) return "ra;" + ip;
+            ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+            if (!string.IsNullOrWhiteSpace(ip)) return "ri;" + ip;
             return "No ip";
         }
         catch (Exception ex)
