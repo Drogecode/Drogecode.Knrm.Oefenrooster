@@ -25,4 +25,5 @@ public class DbRoosterTraining
     public DbRoosterDefault? RoosterDefault { get; set; }
     public DbRoosterTrainingType? RoosterTrainingType { get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
+    public ICollection<DbLinkVehicleTraining>? LinkVehicleTrainings { get; set; }
 }

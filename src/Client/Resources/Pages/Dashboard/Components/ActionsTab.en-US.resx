@@ -150,4 +150,7 @@
   <data name="Miscellaneous" xml:space="preserve">
     <value>Miscellaneous</value>
   </data>
+  <data name="minutes" xml:space="preserve">
+    <value>minutes</value>
+  </data>
 </root>

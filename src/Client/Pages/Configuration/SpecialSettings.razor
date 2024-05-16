@@ -1,9 +1,5 @@
 ﻿@page "/configuration/global"
 @attribute [Authorize(Roles = AccessesNames.AUTH_Taco)]
-@using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
-@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-@using System.Security.Claims;
-@using System.Text;
 <h3>Global configuration</h3>
 
 <MudText>Alleen Taco mag op deze knop klikken</MudText>
@@ -53,11 +49,11 @@ else if (_dbCorrection1 == false)
 
 @if (_users != null && _functions != null)
 {
-    <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
+    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
         <MudPaper>
             <MudList T="string" ReadOnly="true">
-                <MudText>vijf meest recente logins maximaal 7 dagen geleden</MudText>
-                @foreach (var user in _users.Where(x => x.LastLogin >= DateTime.Today.AddDays(-7)).OrderByDescending(x => x.LastLogin).Take(5))
+                <MudText>zeven meest recente logins maximaal 7 dagen geleden</MudText>
+                @foreach (var user in _users.Where(x => x.LastLogin >= DateTime.Today.AddDays(-7)).OrderByDescending(x => x.LastLogin).Take(7))
                 {
                     <MudListItem T="string">
                         <div class="flex space-x-4">

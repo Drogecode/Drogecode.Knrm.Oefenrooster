@@ -1,6 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Microsoft.AspNetCore.Components.Web;
@@ -12,17 +11,16 @@ public sealed partial class MainLayout : IDisposable
 {
     [Inject] private IStringLocalizer<MainLayout> L { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
-    [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
-    [Inject] private UserRepository _userRepository { get; set; } = default!;
-    [Inject] private IOfflineService _offlineService { get; set; } = default!;
+    [Inject] private TrainingTypesRepository TrainingTypesRepository { get; set; } = default!;
+    [Inject] private UserRepository UserRepository { get; set; } = default!;
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
 
-    private DrogeCodeGlobal _global { get; set; } = new();
+    private readonly DrogeCodeGlobal _global = new();
     private MudThemeProvider _mudThemeProvider = new();
     private IDictionary<NotificationMessage, bool> _messages = null;
     private List<PlannerTrainingType>? _trainingTypes;
     private HubConnection? _hubConnection;
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private bool _isDarkMode;
     private bool _isAuthenticated;
     private bool _isOffline;
@@ -56,7 +54,7 @@ public sealed partial class MainLayout : IDisposable
                 return;
             }
 
-            var dbUser = await _userRepository.GetCurrentUserAsync();//Force creation of user.
+            var dbUser = await UserRepository.GetCurrentUserAsync();//Force creation of user.
             if (dbUser?.Id != null && dbUser.Id != Guid.Empty)
             {
                 _hubConnection = new HubConnectionBuilder()
@@ -102,7 +100,7 @@ public sealed partial class MainLayout : IDisposable
         if (_isAuthenticated)
         {
             if (_trainingTypes == null)
-                _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, false);
+                _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false);
             RefreshMe();
         }
 

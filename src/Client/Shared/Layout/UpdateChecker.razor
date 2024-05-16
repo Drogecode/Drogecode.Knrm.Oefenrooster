@@ -3,6 +3,7 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Services
 @using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
+
 @code {
     [Inject] private IStringLocalizer<UpdateChecker> L { get; set; } = default!;
     [Inject] private ConfigurationRepository ConfigurationRepository { get; set; } = default!;
@@ -12,44 +13,49 @@
     [Inject] ISnackbar Snackbar { get; set; } = default!;
     private VersionDetailResponse? _updateDetails;
     private readonly CancellationTokenSource _cls = new();
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        while (!_cls.IsCancellationRequested)
+        if (firstRender)
         {
-            try
+            while (!_cls.IsCancellationRequested)
             {
-                var user = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-                _updateDetails = await ConfigurationRepository.NewVersionAvailable();
-                if (_updateDetails is not null && (_updateDetails.UpdateVersion != DefaultSettingsHelper.UPDATE_VERSION || _updateDetails.ButtonVersion != DefaultSettingsHelper.BUTTON_VERSION) && _updateDetails.UpdateVersion <= _updateDetails.ButtonVersion)
+                try
                 {
-                    var config = (SnackbarOptions options) =>
+                    var user = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                    _updateDetails = await ConfigurationRepository.NewVersionAvailable();
+                    if (_updateDetails is not null && (_updateDetails.UpdateVersion != DefaultSettingsHelper.UPDATE_VERSION || _updateDetails.ButtonVersion != DefaultSettingsHelper.BUTTON_VERSION) && _updateDetails.UpdateVersion <= _updateDetails.ButtonVersion)
                     {
-                        options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
-                        options.RequireInteraction = true;
-                        options.Action = L["Click to reload"];
-                        options.ActionColor = Color.Inherit;
-                        options.Onclick = snackbar =>
+                        var config = (SnackbarOptions options) =>
                         {
-                            Navigation.NavigateTo(Navigation.Uri, true);
-                            return Task.CompletedTask;
+                            options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
+                            options.RequireInteraction = true;
+                            options.Action = L["Click to reload"];
+                            options.ActionColor = Color.Inherit;
+                            options.Onclick = snackbar =>
+                            {
+                                Navigation.NavigateTo(Navigation.Uri, true);
+                                return Task.CompletedTask;
+                            };
                         };
-                    };
-                    Snackbar.Add(L["Update available"], Severity.Warning, configure: config, key: "outdated");
+                        Snackbar.Add(L["Update available"], Severity.Warning, configure: config, key: "outdated");
+                    }
+
+                    if (user.User.Identity?.IsAuthenticated is not true)
+                        await AuthenticationStateProvider.Logout();
                 }
-                if (user.User.Identity?.IsAuthenticated is not true)
-                    await AuthenticationStateProvider.Logout();
-            }
-            catch (Exception ex)
-            {
-                DebugHelper.WriteLine(ex);
-            }
-            finally
-            {
-                for (int i = 0; i < 30; i++)
+                catch (Exception ex)
                 {
-                    if (_cls.IsCancellationRequested)
-                        break;
-                    await Task.Delay(1000);
+                    DebugHelper.WriteLine(ex);
+                }
+                finally
+                {
+                    for (int i = 0; i < 30; i++)
+                    {
+                        if (_cls.IsCancellationRequested)
+                            break;
+                        await Task.Delay(1000);
+                    }
                 }
             }
         }
@@ -59,4 +65,5 @@
     {
         _cls.Cancel();
     }
+
 }

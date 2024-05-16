@@ -27,10 +27,8 @@ public class SharePointAction : SharePointListBase
     public double? CountSailors { get; set; }
     public double? CountSaved { get; set; }
     public double? CountAnimals { get; set; }
-    public string? Boat { get; set; }
     public string? FunctioningMaterial { get; set; }
     public string? ProblemsWithWeed { get; set; }
     public string? Completedby { get; set; }
-    public DateTime Commencement { get; set; }
     public DateTime Departure { get; set; }
 }

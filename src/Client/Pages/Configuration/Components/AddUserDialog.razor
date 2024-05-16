@@ -1,6 +1,4 @@
-﻿@using System.Text.RegularExpressions
-@using System.ComponentModel.DataAnnotations
-@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
@@ -8,7 +6,7 @@
     <DialogContent>
         @if (Functions != null)
         {
-            <MudTextField @bind-Value="_user.Name" Label="@L["Name"]" Variant="Variant.Text" />
+            <MudTextField @bind-Value="_user.Name" Label="@L["Name"]" Variant="Variant.Text"/>
             <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" @bind-Value="_user.UserFunctionId">
                 @foreach (var function in Functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
                 {
@@ -29,20 +27,19 @@
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private UserRepository UserRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
-    [Parameter] public List<DrogeFunction>? Functions { get; set; } = default!;
-    [Parameter] public RefreshModel Refresh { get; set; } = default!;
+    [Parameter] public List<DrogeFunction>? Functions { get; set; }
+    [Parameter] public RefreshModel? Refresh { get; set; }
 
     private readonly DrogeUser _user = new();
 
 
     private async Task Submit()
     {
-
         await UserRepository.AddUserAsync(_user);
-        await Refresh.CallRequestRefreshAsync();
+        if (Refresh is not null)
+            await Refresh.CallRequestRefreshAsync();
         MudDialog.Close(DialogResult.Ok(true));
     }
 
     void Cancel() => MudDialog.Cancel();
 }
-

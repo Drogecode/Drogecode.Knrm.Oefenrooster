@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using Blazored.LocalStorage;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Microsoft.AspNetCore.Components.Routing;
@@ -17,21 +18,30 @@ public sealed partial class NavMenu : IDisposable
     [Inject] private UserRepository UserRepository { get; set; } = default!;
     [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
     [Inject] private TrainingTypesRepository TrainingTypesRepository { get; set; } = default!;
+    [Inject] private ILocalStorageService LocalStorage { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
 
     private CancellationTokenSource _cls = new();
+    private UserMenuSettings? _userMenuSettings;
     private string _uriCalendar = "/planner/calendar";
     private string _uriSchedule = "/planner/schedule";
     private string _uriPlannerUser = "/planner/user";
     private string _sharePointUrl = string.Empty;
     private string _lplhUrl = string.Empty;
+    private bool _useFullLinkExpanded;
+    private bool _configurationExpanded;
 
     protected override async Task OnInitializedAsync()
     {
+        _userMenuSettings = (await LocalStorage.GetItemAsync<UserMenuSettings>("userMenuSettings")) ?? new UserMenuSettings();
+        // Can not use the object directly because it freezes the page.
+        _useFullLinkExpanded = _userMenuSettings.UseFullLinkExpanded;
+        _configurationExpanded = _userMenuSettings.ConfigurationExpanded;
         Navigation.LocationChanged += RefreshForSubMenu;
-        var dbUser = await UserRepository.GetCurrentUserAsync();//Force creation of user.
+        var dbUser = await UserRepository.GetCurrentUserAsync(); //Force creation of user.
     }
+
     protected override async Task OnParametersSetAsync()
     {
         if (AuthenticationState is not null)
@@ -62,11 +72,11 @@ public sealed partial class NavMenu : IDisposable
         var vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
         var parameters = new DialogParameters<EditTrainingDialog>
         {
-            { x=>x.Planner, null },
-            { x=>x.Refresh, null },
-            { x=>x.Vehicles, vehicles },
-            { x=>x.Global, Global },
-            { x=>x.TrainingTypes, trainingTypes }
+            { x => x.Planner, null },
+            { x => x.Refresh, null },
+            { x => x.Vehicles, vehicles },
+            { x => x.Global, Global },
+            { x => x.TrainingTypes, trainingTypes }
         };
         var options = new DialogOptions
         {
@@ -76,6 +86,22 @@ public sealed partial class NavMenu : IDisposable
             BackdropClick = false
         };
         DialogProvider.Show<EditTrainingDialog>(L["Add training"], parameters, options);
+    }
+
+    private async Task UseFullLinksExpandedChanged(bool newValue)
+    {
+        if (_userMenuSettings is null || _userMenuSettings.UseFullLinkExpanded == newValue) return;
+        _userMenuSettings.UseFullLinkExpanded = newValue;
+        _useFullLinkExpanded = newValue;
+        await LocalStorage.SetItemAsync("userMenuSettings", _userMenuSettings);
+    }
+
+    private async Task ConfigurationExpandedChanged(bool newValue)
+    {
+        if (_userMenuSettings is null || _userMenuSettings.ConfigurationExpanded == newValue) return;
+        _userMenuSettings.ConfigurationExpanded = newValue;
+        _configurationExpanded = newValue;
+        await LocalStorage.SetItemAsync("userMenuSettings", _userMenuSettings);
     }
 
     public void Dispose()

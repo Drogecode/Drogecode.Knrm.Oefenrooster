@@ -23,10 +23,10 @@ public sealed partial class DayItem : IDisposable
     private GetMultipleDayItemResponse? _items;
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
-    private bool _bussy;
+    private bool _busy;
     private int _currentPage = 1;
     private int _count = 30;
-    private int _skip = 0;
+    private int _skip;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -52,14 +52,14 @@ public sealed partial class DayItem : IDisposable
 
     private async Task Next(int nextPage)
     {
-        if (_bussy) return;
-        _bussy = true;
+        if (_busy) return;
+        _busy = true;
         StateHasChanged();
         _currentPage = nextPage;
         if (nextPage <= 0) return;
         _skip = (nextPage - 1) * _count;
         _items = await DayItemClient.GetAllFutureAsync(_count, _skip, true, false);
-        _bussy = false;
+        _busy = false;
         StateHasChanged();
     }
 
@@ -68,7 +68,7 @@ public sealed partial class DayItem : IDisposable
         if (dayItem is null)
             return;
         var deleteResult = await DayItemClient.DeleteDayItemAsync(dayItem.Id, _cls.Token);
-        if (deleteResult is true)
+        if (deleteResult)
         {
             _items!.DayItems!.Remove(dayItem);
         }
@@ -76,11 +76,11 @@ public sealed partial class DayItem : IDisposable
 
     private async Task RefreshMeAsync()
     {
-        if (_bussy) return;
-        _bussy = true;
+        if (_busy) return;
+        _busy = true;
         StateHasChanged();
         _items = await DayItemClient.GetAllFutureAsync(_count, _skip, true, false);
-        _bussy = false;
+        _busy = false;
         StateHasChanged();
     }
 

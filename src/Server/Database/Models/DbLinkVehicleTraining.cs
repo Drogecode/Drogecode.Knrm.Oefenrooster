@@ -13,4 +13,6 @@ public class DbLinkVehicleTraining
     public bool IsSelected { get; set; }
 
     public DbCustomers Customer { get; set; }
+    public DbRoosterTraining? RoosterTraining { get; set; }
+    public DbVehicles? Vehicles { get; set; }
 }

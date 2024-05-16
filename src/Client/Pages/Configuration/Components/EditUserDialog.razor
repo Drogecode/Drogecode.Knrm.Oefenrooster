@@ -6,9 +6,9 @@
     <DialogContent>
         @if (Functions is not null)
         {
-            <MudTextField @bind-Value="User.Name" Label="@L["Name"]" Variant="Variant.Text" />
-            <MudDatePicker Date="User.Created" Label="@L["Created"]" Disabled />
-            <MudDatePicker Date="User.LastLogin" Label="@L["Last login"]" Disabled />
+            <MudTextField @bind-Value="User.Name" Label="@L["Name"]" Variant="Variant.Text"/>
+            <MudDatePicker Date="User.Created" Label="@L["Created"]" Disabled/>
+            <MudDatePicker Date="User.LastLogin" Label="@L["Last login"]" Disabled/>
             <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" @bind-Value="User.UserFunctionId">
                 @foreach (var function in Functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
                 {
@@ -30,18 +30,17 @@
     [Inject] private UserRepository UserRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public DrogeUser User { get; set; } = default!;
-    [Parameter] public List<DrogeFunction>? Functions { get; set; } = default!;
-    [Parameter] public RefreshModel Refresh { get; set; } = default!;
+    [Parameter] public List<DrogeFunction>? Functions { get; set; }
+    [Parameter] public RefreshModel? Refresh { get; set; }
 
 
     private async Task Submit()
     {
-
         await UserRepository.UpdateUserAsync(User);
-        await Refresh.CallRequestRefreshAsync();
+        if (Refresh is not null)
+            await Refresh.CallRequestRefreshAsync();
         MudDialog.Close(DialogResult.Ok(true));
     }
 
     void Cancel() => MudDialog.Cancel();
 }
-

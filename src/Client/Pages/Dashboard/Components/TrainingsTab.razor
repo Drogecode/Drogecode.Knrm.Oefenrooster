@@ -1,19 +1,30 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 @using System.Text.RegularExpressions;
+@using Drogecode.Knrm.Oefenrooster.Client.Extensions
 @using System.Web;
 @if (_sharePointTrainings != null)
 {
     <MudText Typo="Typo.h5">@L["Trainings from SharePoint"]</MudText>
-    <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersTraining" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection" />
+    <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersTraining" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection"/>
     @if (_sharePointTrainings?.SharePointTrainings?.Count() > 0)
     {
-
         <MudDataGrid Items="@_sharePointTrainings.SharePointTrainings"
                      ReadOnly="true" EditMode="@DataGridEditMode.Cell">
             <Columns>
-                <HierarchyColumn T="SharePointTraining" />
-                <PropertyColumn Property="x => x.Start.ToLocalTime()" Title="@L["Start"]" />
-                <PropertyColumn Property="x => x.Title" Title="@L["Description"]" />
+                <HierarchyColumn T="SharePointTraining"/>
+                <TemplateColumn Title="@L["Start"]">
+                    <CellTemplate>
+                        @if (context.Item.Type?.Equals("HRB Evenement") == true)
+                        {
+                            <p>@context.Item.Commencement.ToNiceString(LDateToString)</p>
+                        }
+                        else
+                        {
+                            <p>@context.Item.Start.ToNiceString(LDateToString)</p>
+                        }
+                    </CellTemplate>
+                </TemplateColumn>
+                <PropertyColumn Property="x => x.Title" Title="@L["Description"]"/>
             </Columns>
             <ChildRowContent>
                 <MudCard>
@@ -24,26 +35,46 @@
                     </MudCardHeader>
                     <MudCardContent>
                         <MudText>@((MarkupString)Regex.Replace(HttpUtility.HtmlEncode(@context.Item.Description ?? string.Empty), "\r?\n|\r", "<br />"))</MudText>
-                            <MudList>
-                                @foreach (var user in context.Item.Users)
+                        <MudList>
+                            @foreach (var user in context.Item.Users)
                             {
                                 <MudListItem>@user.Name - @user.Role</MudListItem>
                             }
                         </MudList>
+                        @if (_isTaco) /*Work in progress*/
+                        {
+                            <MudText Typo="Typo.h6">@L["Times"]</MudText>
+                            <MudList>
+                                <MudListItem>
+                                    @($"{L["Start"]} - {context.Item.Start.ToNiceString(LDateToString)}")
+                                </MudListItem>
+                                <MudListItem>
+                                    @($"{L["Commencement"]} - {context.Item.Commencement.ToNiceString(LDateToString, showDate: context.Item.Start.Date != context.Item.Commencement.Date)}")
+                                </MudListItem>
+                                <MudListItem>
+                                    @($"{L["End"]} - {context.Item.End.ToNiceString(LDateToString, showDate: context.Item.Commencement.Date != context.Item.End.Date)}")
+                                </MudListItem>
+                            </MudList>
+                            <MudText Typo="Typo.h6">@L["Miscellaneous"]</MudText>
+                            <MudList>
+                                <MudListItem>@L["Boat"]: @context.Item.Boat</MudListItem>
+                                <MudListItem>@L["Type"]: @context.Item.Type</MudListItem>
+                            </MudList>
+                        }
                     </MudCardContent>
                 </MudCard>
             </ChildRowContent>
         </MudDataGrid>
         @if (_sharePointTrainings.TotalCount > _count)
         {
-            <MudPagination Disabled="_bussy" ShowFirstButton="true" ShowLastButton="true" MiddleCount="5" Count="@(Convert.ToInt32(Math.Ceiling((double)_sharePointTrainings.TotalCount/(double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4" />
+            <MudPagination Disabled="_busy" ShowFirstButton="true" ShowLastButton="true" MiddleCount="5" Count="@(Convert.ToInt32(Math.Ceiling((double)_sharePointTrainings.TotalCount / (double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4"/>
         }
     }
 }
 else
 {
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
 }

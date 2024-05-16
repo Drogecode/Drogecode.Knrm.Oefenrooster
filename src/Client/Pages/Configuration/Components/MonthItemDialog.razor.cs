@@ -1,7 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
@@ -18,17 +16,14 @@ public sealed partial class MonthItemDialog : IDisposable
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool? IsNew { get; set; }
 
-    private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
     private CancellationTokenSource _cls = new();
-    private RoosterItemMonth? _originalDayItem { get; set; }
     void Cancel() => MudDialog.Cancel();
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
         if (IsNew == true || MonthItem is null)
         {
             MonthItem = new RoosterItemMonth();
         }
-        _originalDayItem = (RoosterItemMonth?)MonthItem?.Clone();
     }
 
     private async Task Submit()
