@@ -1,9 +1,5 @@
 ﻿@page "/configuration/global"
 @attribute [Authorize(Roles = AccessesNames.AUTH_Taco)]
-@using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
-@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-@using System.Security.Claims;
-@using System.Text;
 <h3>Global configuration</h3>
 
 <MudText>Alleen Taco mag op deze knop klikken</MudText>
@@ -48,12 +44,12 @@ else if (_dbCorrection1 == false)
 
 @if (_settingTrainingToCalendar is not null)
 {
-    <MudSwitch Label="setting training to calendar" Color="Color.Primary" T="bool" Checked="@_settingTrainingToCalendar.Value" CheckedChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))"/>
+    <MudSwitch Label="setting training to calendar" Color="Color.Primary" T="bool" Value="@_settingTrainingToCalendar.Value" ValueChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))"/>
 }
 
 @if (_users != null && _functions != null)
 {
-    <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
+    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
         <MudPaper>
             <MudList Clickable="false">
                 <MudText>zeven meest recente logins maximaal 7 dagen geleden</MudText>

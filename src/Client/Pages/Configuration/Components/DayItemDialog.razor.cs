@@ -20,11 +20,10 @@ public sealed partial class DayItemDialog : IDisposable
     [Parameter] public bool? IsNew { get; set; }
 
     private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
-    private CancellationTokenSource _cls = new();
-    private RoosterItemDay? _originalDayItem { get; set; }
-    private DateRange _dateRange = new DateRange();
+    private readonly CancellationTokenSource _cls = new();
+    private DateRange _dateRange = new();
     void Cancel() => MudDialog.Cancel();
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
         if (IsNew == true || DayItem is null)
         {
@@ -32,20 +31,19 @@ public sealed partial class DayItemDialog : IDisposable
         }
         _dateRange.Start = DayItem.DateStart;
         _dateRange.End = DayItem.DateEnd;
-        _originalDayItem = (RoosterItemDay?)DayItem?.Clone();
         var user = Users?.FirstOrDefault(x => x.Id == DayItem?.LinkedUsers?.FirstOrDefault()?.UserId);
         if (user is not null)
             ((List<DrogeUser>)_selectedUsersAction).Add(user);
     }
 
-    private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
+    private void OnSelectionChanged(IEnumerable<DrogeUser> selection)
     {
         _selectedUsersAction = selection;
     }
 
     private async Task Submit()
     {
-        if (DayItem is null || _dateRange.Start is null || DayItem.Text is null)
+        if (DayItem is null || _dateRange.Start is null)
             return;
         DayItem.DateStart = DateTime.SpecifyKind(_dateRange.Start.Value, DateTimeKind.Utc);
         if (_dateRange.End is not null)
@@ -72,6 +70,8 @@ public sealed partial class DayItemDialog : IDisposable
         else
         {
             var isPatched = await DayItemClient.PatchDayItemAsync(DayItem, _cls.Token);
+            if (isPatched?.Success != true)
+                return;
         }
         if (Refresh is not null) await Refresh.CallRequestRefreshAsync();
         MudDialog.Close(DialogResult.Ok(true));

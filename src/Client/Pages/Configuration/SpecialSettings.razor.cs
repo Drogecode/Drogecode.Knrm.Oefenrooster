@@ -1,33 +1,26 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
-using MudBlazor;
-using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
 public sealed partial class SpecialSettings : IDisposable
 {
     [Inject] private IStringLocalizer<SpecialSettings> L { get; set; } = default!;
-    [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
-    [Inject] private IDialogService _dialogProvider { get; set; } = default!;
-    [Inject] private ConfigurationRepository _configurationRepository { get; set; } = default!;
-    [Inject] private UserRepository _userRepository { get; set; } = default!;
-    [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
-    [Inject] private ICustomerSettingsClient _customerSettingsClient { get; set; } = default!;
-    [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
-    private ClaimsPrincipal _user;
+    [Inject] private IDialogService DialogProvider { get; set; } = default!;
+    [Inject] private ConfigurationRepository ConfigurationRepository { get; set; } = default!;
+    [Inject] private UserRepository UserRepository { get; set; } = default!;
+    [Inject] private FunctionRepository FunctionRepository { get; set; } = default!;
+    [Inject] private ICustomerSettingsClient CustomerSettingsClient { get; set; } = default!;
+    [CascadingParameter] private DrogeCodeGlobal Global { get; set; } = default!;
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
-    private RefreshModel _refreshModel = new();
-    private CancellationTokenSource _cls = new();
-    private bool _isAuthenticated;
-    private string _name = string.Empty;
+    private readonly RefreshModel _refreshModel = new();
+    private readonly CancellationTokenSource _cls = new();
 
     private bool? _clickedUpdate;
     private bool? _usersSynced;
@@ -43,55 +36,47 @@ public sealed partial class SpecialSettings : IDisposable
     }
     protected override async Task OnParametersSetAsync()
     {
-        _settingTrainingToCalendar = await _customerSettingsClient.GetTrainingToCalendarAsync();
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        _user = authState.User;
-        _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
-        if (_isAuthenticated)
-        {
-            var dbUser = await _userRepository.GetCurrentUserAsync();
-            _name = authState!.User!.Identity!.Name ?? string.Empty;
-        }
-        _users = await _userRepository.GetAllUsersAsync(true, true, false, _cls.Token);
-        _functions = await _functionRepository.GetAllFunctionsAsync(false, _cls.Token);
+        _settingTrainingToCalendar = await CustomerSettingsClient.GetTrainingToCalendarAsync();
+        _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
+        _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
     }
 
     private async Task VisibilityChanged()
     {
-        _users = await _userRepository.GetAllUsersAsync(true, true, false, _cls.Token);
-        _functions = await _functionRepository.GetAllFunctionsAsync(false, _cls.Token);
+        _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
+        _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
     }
 
     private async Task PatchTrainingToCalendar(bool isChecked)
     {
         _settingTrainingToCalendar = isChecked;
-        await _customerSettingsClient.PatchTrainingToCalendarAsync(isChecked);
+        await CustomerSettingsClient.PatchTrainingToCalendarAsync(isChecked);
     }
 
     private async Task UpdateDatabase()
     {
-        _clickedUpdate = await _configurationRepository.UpgradeDatabaseAsync();
+        _clickedUpdate = await ConfigurationRepository.UpgradeDatabaseAsync();
         StateHasChanged();
     }
 
     private async Task SyncUsers()
     {
         _usersSynced = null;
-        _usersSynced = await _userRepository.SyncAllUsersAsync();
+        _usersSynced = await UserRepository.SyncAllUsersAsync();
         if (_usersSynced == true)
         {
-            _users = await _userRepository.GetAllUsersAsync(true, true, false, _cls.Token);
+            _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
             await RefreshMeAsync();
         }
     }
     private async Task UpdateSpecialDates()
     {
-        _specialDatesUpdated = await _configurationRepository.UpdateSpecialDates();
+        _specialDatesUpdated = await ConfigurationRepository.UpdateSpecialDates();
         StateHasChanged();
     }
     private async Task RunDbCorrection()
     {
-        _dbCorrection1 = await _configurationRepository.DbCorrection();
+        _dbCorrection1 = await ConfigurationRepository.DbCorrection();
         StateHasChanged();
     }
 
@@ -105,7 +90,7 @@ public sealed partial class SpecialSettings : IDisposable
             FullWidth = true
         };
         var parameters = new DialogParameters { { "Functions", _functions }, { "Refresh", _refreshModel } };
-        _dialogProvider.Show<AddUserDialog>(L["Add user"], parameters, options);
+        DialogProvider.Show<AddUserDialog>(L["Add user"], parameters, options);
     }
 
     private void ChangeUser(DrogeUser user)
@@ -117,11 +102,11 @@ public sealed partial class SpecialSettings : IDisposable
             FullWidth = true
         };
         var parameters = new DialogParameters { { "User", user }, { "Functions", _functions }, { "Refresh", _refreshModel } };
-        _dialogProvider.Show<EditUserDialog>(L["Edit user"], parameters, options);
+        DialogProvider.Show<EditUserDialog>(L["Edit user"], parameters, options);
     }
     private async Task RefreshMeAsync()
     {
-        _users = await _userRepository.GetAllUsersAsync(true, true, false, _cls.Token);
+        _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
         StateHasChanged();
     }
 
