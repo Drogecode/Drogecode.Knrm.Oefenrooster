@@ -36,13 +36,10 @@ public sealed partial class ActionsTab : IDisposable
             _multiSelection = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_action_history_full);
             _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
             _sharePointActions = await _sharePointRepository.GetLastActionsForCurrentUser(10, 0, _cls.Token);
-            if (Users is not null)
+            var thisUser = Users!.FirstOrDefault(x => x.Id == User.Id);
+            if (thisUser is not null)
             {
-                var thisUser = Users!.FirstOrDefault(x => x.Id == User.Id);
-                if (thisUser is not null)
-                {
-                    ((List<DrogeUser>)_selectedUsersAction).Add(thisUser);
-                }
+                ((List<DrogeUser>)_selectedUsersAction).Add(thisUser);
             }
 
             StateHasChanged();

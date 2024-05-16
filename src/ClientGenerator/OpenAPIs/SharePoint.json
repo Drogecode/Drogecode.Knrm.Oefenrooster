@@ -297,11 +297,19 @@
             "type": "string",
             "nullable": true
           },
+          "boat": {
+            "type": "string",
+            "nullable": true
+          },
           "date": {
             "type": "string",
             "format": "date-time"
           },
           "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "commencement": {
             "type": "string",
             "format": "date-time"
           },
@@ -400,10 +408,6 @@
             "format": "double",
             "nullable": true
           },
-          "boat": {
-            "type": "string",
-            "nullable": true
-          },
           "functioningMaterial": {
             "type": "string",
             "nullable": true
@@ -415,10 +419,6 @@
           "completedby": {
             "type": "string",
             "nullable": true
-          },
-          "commencement": {
-            "type": "string",
-            "format": "date-time"
           },
           "departure": {
             "type": "string",
@@ -455,11 +455,19 @@
             "type": "string",
             "nullable": true
           },
+          "boat": {
+            "type": "string",
+            "nullable": true
+          },
           "date": {
             "type": "string",
             "format": "date-time"
           },
           "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "commencement": {
             "type": "string",
             "format": "date-time"
           },
@@ -472,6 +480,10 @@
             "items": {
               "$ref": "#/components/schemas/SharePointUser"
             },
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
             "nullable": true
           }
         },

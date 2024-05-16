@@ -12,8 +12,10 @@ public class SharePointListBase
     public DateTime LastUpdated { get; set; }
     public string? Title { get; set; }
     public string? Description { get; set; }
+    public string? Boat { get; set; }
     public DateTime Date { get; set; }
     public DateTime Start { get; set; }
+    public DateTime Commencement { get; set; }
     public DateTime End { get; set; }
     public List<SharePointUser> Users { get; set; } = new List<SharePointUser>();
 }

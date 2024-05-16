@@ -167,8 +167,6 @@ public static class GraphHelper
     {
         if (_appClient == null || customerId != DefaultSettingsHelper.KnrmHuizenId) return null;
 
-        var overigeRaporten = await _appClient.Sites[STARTPAGINA].Lists[ID_OTHER_REPORTS_KNRM_HUIZEN].GetAsync();
-
         var overigeItems = await _appClient.Sites[STARTPAGINA].Lists[ID_OTHER_REPORTS_KNRM_HUIZEN].Items.GetAsync((config) =>
         {
             config.QueryParameters.Expand = new string[] { "fields" };
@@ -187,25 +185,25 @@ public static class GraphHelper
                 GetUser(users, det, "Opstapper_x0020_3LookupId", SharePointRole.Opstapper, training);
                 GetUser(users, det, "Opstapper_x0020_4LookupId", SharePointRole.Opstapper, training);
                 GetUser(users, det, "Opstapper_x0020_5LookupId", SharePointRole.Opstapper, training);
-                var start = det.Fields.AdditionalData.ContainsKey("Aanvang_x0020_O_x0026_O_x0020__x") ? (DateTime)det.Fields.AdditionalData["Aanvang_x0020_O_x0026_O_x0020__x"] : DateTime.MinValue;
-                start = DateTime.SpecifyKind(start, DateTimeKind.Utc);
-                training.Start = start;
-                training.Title = det.Fields.AdditionalData.ContainsKey("LinkTitle") ? det.Fields.AdditionalData["LinkTitle"]!.ToString() : "";
-                training.Description = det.Fields.AdditionalData.ContainsKey("Bijzonderheden_x0020_Oproep") ? det.Fields.AdditionalData["Bijzonderheden_x0020_Oproep"]!.ToString() : "";
+                training.Start = AdditionalDataToDateTime(det, "Aanvang_x0020_O_x0026_O_x0020__x");;
+                training.Commencement = AdditionalDataToDateTime(det, "Aanvang");
+                training.End = AdditionalDataToDateTime(det, "Einde"); ;
+                training.Title = AdditionalDataToString(det, "LinkTitle");
+                training.Description = AdditionalDataToString(det, "Bijzonderheden_x0020_Oproep");
+                training.Boat = AdditionalDataToString(det, "Bo_x0028_o_x0029_t_x0028_en_x002");
+                training.Type = AdditionalDataToString(det, "Soort");
                 trainings.Add(training);
             }
             if (overigeItems.OdataNextLink != null)
                 overigeItems = await NextListPage(overigeItems);
             else break;
         }
-        return trainings.OrderByDescending(x => x.Start).ToList();
+        return trainings.OrderByDescending(x => x.Commencement).ToList();
     }
 
     internal async static Task<List<SharePointAction>> GetListActions(Guid customerId, List<SharePointUser> users)
     {
         if (_appClient is null || customerId != DefaultSettingsHelper.KnrmHuizenId) return new List<SharePointAction>();
-
-        var overigeRaporten = await _appClient.Sites[STARTPAGINA].Lists[ID_ACTION_REPORTS_KNRM_HUIZEN].GetAsync();
 
         var overigeItems = await _appClient.Sites[STARTPAGINA].Lists[ID_ACTION_REPORTS_KNRM_HUIZEN].Items.GetAsync((config) =>
         {
