@@ -102,11 +102,19 @@ public class PreComController : ControllerBase
         }
     }
 
-    private string? GetRequesterIp()
+    private string GetRequesterIp()
     {
         try
         {
-            return HttpContext.GetServerVariable("REMOTE_HOST") ?? this.HttpContext.GetServerVariable("REMOTE_ADDR");
+            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+            if (!string.IsNullOrWhiteSpace(ip)) return "a;" + ip;
+            ip = HttpContext.GetServerVariable("HTTP_X_FORWARDED_FOR");
+            if (!string.IsNullOrWhiteSpace(ip)) return "b;" + ip;
+            ip = HttpContext.GetServerVariable("REMOTE_HOST");
+            if (!string.IsNullOrWhiteSpace(ip)) return "c;" + ip;
+            ip = HttpContext.GetServerVariable("REMOTE_ADDR");
+            if (!string.IsNullOrWhiteSpace(ip)) return "d;" + ip;
+            return "No ip";
         }
         catch (Exception ex)
         {
