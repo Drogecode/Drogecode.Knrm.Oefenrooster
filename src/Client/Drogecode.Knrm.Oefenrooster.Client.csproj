@@ -67,5 +67,20 @@
 	<ItemGroup>
 	  <Folder Include="wwwroot\Images\PreCom\" />
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\Components\DrogeCode\CopyToClipboard.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>CopyToClipboard.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Compile Update="Resources\Components\DrogeCode\CopyToClipboard.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>CopyToClipboard.nl-NL.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
 
 </Project>
