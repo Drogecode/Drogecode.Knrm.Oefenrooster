@@ -126,4 +126,13 @@
   <data name="Show how to configure" xml:space="preserve">
     <value>Show how to configure</value>
   </data>
+  <data name="Click settings" xml:space="preserve">
+    <value>Click settings</value>
+  </data>
+  <data name="Click webhook" xml:space="preserve">
+    <value>Click webhook</value>
+  </data>
+  <data name="Past url here" xml:space="preserve">
+    <value>Past url here</value>
+  </data>
 </root>
