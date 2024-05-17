@@ -149,6 +149,14 @@ public class ConfigurationController : ControllerBase
     {
         try
         {
+            if (true)
+            {
+                return new DbCorrectionResponse
+                {
+                    Success = false,
+                    Message = "No active DbCorrection",
+                };
+            }
             DbCorrectionResponse response = await _configurationService.DbCorrection(clt);
             return response;
         }

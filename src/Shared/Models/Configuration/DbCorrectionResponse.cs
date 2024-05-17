@@ -2,4 +2,5 @@
 
 public class DbCorrectionResponse : BaseResponse
 {
+    public string? Message { get; set; }
 }

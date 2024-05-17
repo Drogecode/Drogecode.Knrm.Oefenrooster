@@ -1,7 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Graph;
-using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;

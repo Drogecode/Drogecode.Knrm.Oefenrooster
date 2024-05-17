@@ -1,5 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers.Obsolite;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

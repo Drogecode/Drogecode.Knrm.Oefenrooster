@@ -1,5 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -29,8 +28,7 @@ public class VehicleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("all/{callHub:bool}", Order = 0)]
-    [Route("", Order = 1)]// from version v0.3.39 and older
+    [Route("all/{callHub:bool}")]
     public async Task<ActionResult<MultipleVehicleResponse>> GetAll(bool callHub = false, CancellationToken clt = default)
     {
         try

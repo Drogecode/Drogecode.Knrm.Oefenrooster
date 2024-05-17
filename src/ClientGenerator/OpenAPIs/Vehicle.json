@@ -46,86 +46,6 @@
         }
       }
     },
-    "/api/Vehicle": {
-      "get": {
-        "tags": [
-          "Vehicle"
-        ],
-        "operationId": "GetAll",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleVehicleResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleVehicleResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleVehicleResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Vehicle"
-        ],
-        "operationId": "PutVehicle",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DrogeVehicle"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DrogeVehicle"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/DrogeVehicle"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Vehicle/training/{trainingId}": {
       "get": {
         "tags": [
@@ -201,6 +121,58 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MultipleVehicleTrainingLinkResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Vehicle": {
+      "put": {
+        "tags": [
+          "Vehicle"
+        ],
+        "operationId": "PutVehicle",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeVehicle"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeVehicle"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeVehicle"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
                 }
               }
             }
