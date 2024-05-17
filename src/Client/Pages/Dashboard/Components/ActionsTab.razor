@@ -1,5 +1,4 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
-@using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 @using System.Text.RegularExpressions;
 @using Drogecode.Knrm.Oefenrooster.Client.Extensions
 @using System.Web;
@@ -62,7 +61,7 @@
         </MudDataGrid>
         @if (_sharePointActions.TotalCount > _count)
         {
-            <MudPagination Disabled="_bussy" ShowFirstButton="true" ShowLastButton="true" MiddleCount="5" Count="@(Convert.ToInt32(Math.Ceiling((double)_sharePointActions.TotalCount / (double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4"/>
+            <MudPagination Disabled="_busy" ShowFirstButton="true" ShowLastButton="true" MiddleCount="5" Count="@(Convert.ToInt32(Math.Ceiling((double)_sharePointActions.TotalCount / (double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4"/>
         }
     }
 }

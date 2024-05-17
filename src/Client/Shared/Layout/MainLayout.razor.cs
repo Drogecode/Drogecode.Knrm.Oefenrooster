@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
+
 public sealed partial class MainLayout : IDisposable
 {
     [Inject] private IStringLocalizer<MainLayout> L { get; set; } = default!;
@@ -23,7 +24,6 @@ public sealed partial class MainLayout : IDisposable
     private readonly CancellationTokenSource _cls = new();
     private bool _isDarkMode;
     private bool _isAuthenticated;
-    private bool _isOffline;
     private bool _drawerOpen = true;
     private bool _settingsOpen = true;
     private bool _newNotificationsAvailable = false;
@@ -33,6 +33,7 @@ public sealed partial class MainLayout : IDisposable
         Palette = new PaletteLight(),
         PaletteDark = new PaletteDark(),
     };
+
     private Action<SnackbarOptions> _snackbarConfig = (SnackbarOptions options) =>
     {
         options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
@@ -54,12 +55,13 @@ public sealed partial class MainLayout : IDisposable
                 return;
             }
 
-            var dbUser = await UserRepository.GetCurrentUserAsync();//Force creation of user.
+            var dbUser = await UserRepository.GetCurrentUserAsync(); //Force creation of user.
             if (dbUser?.Id != null && dbUser.Id != Guid.Empty)
             {
                 _hubConnection = new HubConnectionBuilder()
+                    .WithAutomaticReconnect()
                     .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
-                .Build();
+                    .Build();
                 _hubConnection.On<string, string>($"ReceivePrecomAlert_{dbUser.Id}", (user, message) =>
                 {
                     var config = (SnackbarOptions options) =>
@@ -103,7 +105,6 @@ public sealed partial class MainLayout : IDisposable
                 _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false);
             RefreshMe();
         }
-
     }
 
     private async Task Login(MouseEventArgs args)
@@ -115,7 +116,10 @@ public sealed partial class MainLayout : IDisposable
     {
         var key = $"table_{user.UserId}_{training.TrainingId}";
         Snackbar.RemoveByKey(key);
-        Snackbar.Add(L["{0} {1} {2} {3} {4}", user.Assigned ? L["Assigned"] : L["Removed"], user.Name, user.Assigned ? L["to"] : L["from"], training.DateStart.ToShortDateString(), training.Name ?? ""], (user.Availability == Availability.NotAvailable || user.Availability == Availability.Maybe) && user.Assigned ? Severity.Warning : user.Assigned ? Severity.Normal : Severity.Info, configure: _snackbarConfig, key: key);
+        Snackbar.Add(
+            L["{0} {1} {2} {3} {4}", user.Assigned ? L["Assigned"] : L["Removed"], user.Name, user.Assigned ? L["to"] : L["from"], training.DateStart.ToShortDateString(), training.Name ?? ""],
+            (user.Availability == Availability.NotAvailable || user.Availability == Availability.Maybe) && user.Assigned ? Severity.Warning : user.Assigned ? Severity.Normal : Severity.Info,
+            configure: _snackbarConfig, key: key);
     }
 
     void DrawerToggle()

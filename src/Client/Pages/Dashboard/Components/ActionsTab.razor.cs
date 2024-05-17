@@ -1,7 +1,4 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
-using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
@@ -14,8 +11,8 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 public sealed partial class ActionsTab : IDisposable
 {
     [Inject] private IStringLocalizer<ActionsTab> L { get; set; } = default!;
-    [Inject] IStringLocalizer<DateToString> LDateToString { get; set; }
-    [Inject] private SharePointRepository _sharePointRepository { get; set; } = default!;
+    [Inject] private IStringLocalizer<DateToString> LDateToString { get; set; } = default!;
+    [Inject] private SharePointRepository SharePointRepository { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] [EditorRequired] public DrogeUser User { get; set; } = default!;
     [Parameter] [EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
@@ -25,7 +22,7 @@ public sealed partial class ActionsTab : IDisposable
     private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
     private int _currentPage = 1;
     private int _count = 10;
-    private bool _bussy;
+    private bool _busy;
     private bool _multiSelection;
     private bool _isTaco;
 
@@ -35,8 +32,8 @@ public sealed partial class ActionsTab : IDisposable
         {
             _multiSelection = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_action_history_full);
             _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
-            _sharePointActions = await _sharePointRepository.GetLastActionsForCurrentUser(10, 0, _cls.Token);
-            var thisUser = Users!.FirstOrDefault(x => x.Id == User.Id);
+            _sharePointActions = await SharePointRepository.GetLastActionsForCurrentUser(10, 0, _cls.Token);
+            var thisUser = Users.FirstOrDefault(x => x.Id == User.Id);
             if (thisUser is not null)
             {
                 ((List<DrogeUser>)_selectedUsersAction).Add(thisUser);
@@ -48,26 +45,26 @@ public sealed partial class ActionsTab : IDisposable
 
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
     {
-        if (_bussy) return;
-        _bussy = true;
+        if (_busy) return;
+        _busy = true;
         StateHasChanged();
         _selectedUsersAction = selection;
-        _sharePointActions = await _sharePointRepository.GetLastActions(selection, 10, 0, _cls.Token);
+        _sharePointActions = await SharePointRepository.GetLastActions(selection, 10, 0, _cls.Token);
         _currentPage = 1;
-        _bussy = false;
+        _busy = false;
         StateHasChanged();
     }
 
     private async Task Next(int nextPage)
     {
-        if (_bussy) return;
-        _bussy = true;
+        if (_busy) return;
+        _busy = true;
         StateHasChanged();
         if (nextPage <= 0) return;
         _currentPage = nextPage;
         var skip = (nextPage - 1) * _count;
-        _sharePointActions = await _sharePointRepository.GetLastActions(_selectedUsersAction, _count, skip, _cls.Token);
-        _bussy = false;
+        _sharePointActions = await SharePointRepository.GetLastActions(_selectedUsersAction, _count, skip, _cls.Token);
+        _busy = false;
         StateHasChanged();
     }
 

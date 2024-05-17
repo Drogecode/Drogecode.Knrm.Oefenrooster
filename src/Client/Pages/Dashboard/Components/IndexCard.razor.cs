@@ -18,13 +18,13 @@ public sealed partial class IndexCard : IDisposable
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
     [Parameter] public string? MinWidth { get; set; }
     [Parameter] public string? MaxWidth { get; set; }
-    [Parameter] public bool ShowDayOfWeek { get; set; } = false;
+    [Parameter] public bool ShowDayOfWeek { get; set; }
     private CancellationTokenSource _cls = new();
     private PlanUser? _planUser;
 
     protected override void OnParametersSet()
     {
-        _planUser = Training?.PlanUsers?.FirstOrDefault(x => x.UserId == User?.Id);
+        _planUser = Training.PlanUsers.FirstOrDefault(x => x.UserId == User?.Id);
         if (_planUser?.Availability == Availability.None)
             _planUser.Availability = null;
     }
