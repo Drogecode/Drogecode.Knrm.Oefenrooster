@@ -16,14 +16,12 @@ public class VehicleController : ControllerBase
 {
     private readonly ILogger<VehicleController> _logger;
     private readonly IVehicleService _vehicleService;
-    private readonly IAuditService _auditService;
     private readonly RefreshHub _refreshHub;
 
-    public VehicleController(ILogger<VehicleController> logger, IVehicleService vehicleService, IAuditService auditService, RefreshHub refreshHub)
+    public VehicleController(ILogger<VehicleController> logger, IVehicleService vehicleService, RefreshHub refreshHub)
     {
         _logger = logger;
         _vehicleService = vehicleService;
-        _auditService = auditService;
         _refreshHub = refreshHub;
     }
 
