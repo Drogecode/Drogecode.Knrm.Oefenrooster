@@ -28,13 +28,14 @@ public class Worker : BackgroundService
     {
         _clt = clt;
         _memoryCache.Set(NEXT_USER_SYNC, DateTime.UtcNow); // do not run on startup
-        while (!clt.IsCancellationRequested && _configuration.GetValue<bool>("Drogecode:RunBackgroundService"))
+        while (!_clt.IsCancellationRequested && _configuration.GetValue<bool>("Drogecode:RunBackgroundService"))
         {
             try
             {
                 var sleep = 60 * (_errorCount * 3 + 1);
                 for (int i = 0; i < sleep; i++) // run once every second.
                 {
+                    if (_clt.IsCancellationRequested) return;
                     await Task.Delay(1000, clt);
                 }
 
@@ -90,7 +91,7 @@ public class Worker : BackgroundService
         catch (Exception ex)
         {
             _errorCount++;
-            _logger.LogError(ex, "Error in background service {name}", name);
+            _logger.LogError(ex, "Error in background service `{name}` {errorCount}`", name, _errorCount);
         }
         clt.ThrowIfCancellationRequested();
     }
