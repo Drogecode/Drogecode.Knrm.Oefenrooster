@@ -31,24 +31,29 @@ public sealed partial class CalendarBaseCard : IDisposable
     private bool _showAllIcons = false;
     private string _timeZone = "Europe/Amsterdam";
 
+    protected override void OnParametersSet()
+    {
+        _iconCount = 0;
+        switch (SetBy)
+        {
+            case AvailabilitySetBy.DefaultAvailable:
+            case AvailabilitySetBy.Holiday:
+                _iconCount++;
+                break;
+        }
+
+        if (OnClickHistory.HasDelegate)
+            _iconCount++;
+        if (OnClickSettings.HasDelegate)
+            _iconCount++;
+    }
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _iconCount = 0;
-            switch (SetBy)
-            {
-                case AvailabilitySetBy.DefaultAvailable:
-                case AvailabilitySetBy.Holiday:
-                    _iconCount++;
-                    break;
-            }
-
-            if (OnClickHistory.HasDelegate)
-                _iconCount++;
-            if (OnClickSettings.HasDelegate)
-                _iconCount++;
             _timeZone = await CustomerSettingRepository.GetTimeZone(_cls.Token);
+            StateHasChanged();
         }
     }
 

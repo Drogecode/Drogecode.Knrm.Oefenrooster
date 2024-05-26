@@ -40,18 +40,21 @@ public abstract class BlazorTestBase : TestContext
         Services.AddScoped<IDayItemClient, DayItemClient>();
         Services.AddScoped<IMonthItemClient, MonthItemClient>();
         Services.AddScoped<IConfigurationClient, ConfigurationClient>();
+        Services.AddScoped<ICustomerSettingsClient, CustomerSettingsClient>();
         Services.AddScoped<IDefaultScheduleClient, DefaultScheduleClient>();
         Services.AddScoped<IFunctionClient, FunctionClient>();
         Services.AddScoped<IHolidayClient, HolidayClient>();
         Services.AddScoped<IPreComClient, PreComClient>();
         Services.AddScoped<IScheduleClient, ScheduleClient>();
         Services.AddScoped<ISharePointClient, SharePointClient>();
+        Services.AddScoped<IScheduleClient, ScheduleClient>();
         Services.AddScoped<ITrainingTypesClient, MockTrainingTypesClient>();
         Services.AddScoped<IUserClient, UserClient>();
         Services.AddScoped<IVehicleClient, VehicleClient>();
 
         Services.AddScoped<DayItemRepository>();
         Services.AddScoped<ConfigurationRepository>();
+        Services.AddScoped<CustomerSettingRepository>();
         Services.AddScoped<DefaultScheduleRepository>();
         Services.AddScoped<FunctionRepository>();
         Services.AddScoped<HolidayRepository>();
