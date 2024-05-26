@@ -70,7 +70,10 @@ public class PreComController : ControllerBase
                 }
 
                 alert ??= "No alert found by hui.nu webhook";
-                var prioParsed = int.TryParse(dataIos?._data?.priority, out int priority);
+                if (timestamp.Equals(DateTime.MinValue))
+                    timestamp = DateTime.Now;
+                
+                var prioParsed = int.TryParse(dataIos?._data?.priority, out int priority);// Android does not have prio in json.
                 await _preComService.WriteAlertToDb(id, customerId, timestamp, alert, prioParsed ? priority : null, JsonSerializer.Serialize(body), ip);
                 if (sendToHub)
                     await _preComHub.SendMessage(id, "PreCom", alert);
