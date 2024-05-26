@@ -51,7 +51,7 @@ public class CustomerSettingController : ControllerBase
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var result = await _customerSettingService.GetTimeZone(customerId);
+            var result = System.Text.Json.JsonSerializer.Serialize(await _customerSettingService.GetTimeZone(customerId));
 
             return result;
         }
@@ -106,5 +106,4 @@ public class CustomerSettingController : ControllerBase
             return BadRequest();
         }
     }
-
 }
