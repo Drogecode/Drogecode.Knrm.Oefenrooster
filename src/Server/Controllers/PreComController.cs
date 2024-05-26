@@ -47,13 +47,14 @@ public class PreComController : ControllerBase
                     Converters = { new PreComConverter() }
                 };
                 var ser = JsonSerializer.Serialize(body);
-                var data = JsonSerializer.Deserialize<NotificationDataBase>(ser, jsonSerializerOptions);
-                _logger.LogInformation($"alert is '{data?._alert}'");
-                var alert = data?._alert;
-                var timestamp = DateTime.SpecifyKind(data?._data?.actionData?.Timestamp ?? DateTime.MinValue, DateTimeKind.Utc);
-                if (data is NotificationDataTestWebhookObject)
+                var dataIos = JsonSerializer.Deserialize<NotificationDataBase>(ser, jsonSerializerOptions);
+                var dataAndroid = JsonSerializer.Deserialize<NotificationDataAndroid>(ser);
+                _logger.LogInformation($"alert is '{dataIos?._alert}'");
+                var alert = dataIos?._alert ?? dataAndroid?.data?.message;
+                var timestamp = DateTime.SpecifyKind(dataIos?._data?.actionData?.Timestamp ?? DateTime.MinValue, DateTimeKind.Utc);
+                if (dataIos is NotificationDataTestWebhookObject)
                 {
-                    NotificationDataTestWebhookObject? testWebhookData = (NotificationDataTestWebhookObject)data;
+                    NotificationDataTestWebhookObject? testWebhookData = (NotificationDataTestWebhookObject)dataIos;
                     alert ??= testWebhookData?.message;
                     if (timestamp == DateTime.MinValue && testWebhookData?.messageData?.sentTime is not null)
                     {
@@ -62,15 +63,21 @@ public class PreComController : ControllerBase
                     }
                 }
 
+                if (dataAndroid?.data?.messageData is not null)
+                {
+                    timestamp = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+                    timestamp = timestamp.AddMilliseconds(dataAndroid.sentTime);
+                }
+
                 alert ??= "No alert found by hui.nu webhook";
-                var prioParsed = int.TryParse(data?._data?.priority, out int priority);
-                await _preComService.WriteAlertToDb(id, customerId, data?._notificationId, timestamp, alert, prioParsed ? priority : null, JsonSerializer.Serialize(body), ip);
+                var prioParsed = int.TryParse(dataIos?._data?.priority, out int priority);
+                await _preComService.WriteAlertToDb(id, customerId, timestamp, alert, prioParsed ? priority : null, JsonSerializer.Serialize(body), ip);
                 if (sendToHub)
                     await _preComHub.SendMessage(id, "PreCom", alert);
             }
             catch (Exception ex)
             {
-                await _preComService.WriteAlertToDb(id, customerId, Guid.Empty, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body), ip);
+                await _preComService.WriteAlertToDb(id, customerId, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body), ip);
                 if (sendToHub)
                     await _preComHub.SendMessage(id, "PreCom", "piep piep");
             }

@@ -27,7 +27,7 @@ public class PreComControllerTests : BaseTest
     }
 
     [Fact]
-    public async Task WebHookTest()
+    public async Task WebHookIOSTest()
     {
         string body = "{\"_data\":{\"actionData\":{\"MsgOutID\":\"129660402\",\"ControlID\":\"f\",\"Timestamp\":\"2023-06-15T11:50:07.203\"},\"remote\":true,\"notificationId\":\"29A12538-536D-4546-B3C0-188C32521BA8\",\"priority\":\"10\"},\"_remoteNotificationCompleteCallbackCalled\":false,\"_isRemote\":true,\"_notificationId\":\"29A12538-536D-4546-B3C0-188C32521BA8\",\"_alert\":\"Nee!!! \",\"_sound\":\"pager.caf\",\"_contentAvailable\":1}";
         var asObject = JsonSerializer.Deserialize<object>(body);
@@ -56,6 +56,22 @@ public class PreComControllerTests : BaseTest
         result.Value.PreComAlerts.Should().NotBeEmpty();
         result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("Uitruk voorstel:\r\nKNRM schipper: 1\r\nHUI Mark van den Brink\r\nKNRM opstapper: 1\r\nHUI Ferry Mol\r\nKNRM algemeen: 2\r\nHUI Laurens Klijn,\r\nHUI Ruben de Ronde\r\n\r\nNiet ingedeeld:\r\nHUI Laurens van Slooten\r\n\r\nHUI PRIO 2 MARITIEME HULPVERLENING"));
         result.Value.PreComAlerts.Should().Contain(x => x.SendTime.Equals(new DateTime(2023, 08, 11, 15, 17, 43, 373)));
+    }
+
+    [Fact]
+    public async Task WebHookAndroidTest()
+    {
+        string body = "{\"data\":{\"android_channel_id\":\"vibrate\",\"content-available\":\"1\",\"message\":\"U bent ingedeeld als KNRM Aank. Opstapper\\r\\n\\r\\nPrio 1, Vaartuig motor / stuur problemen, HUI\",\"messageData\":{\"MsgOutID\":\"149048711\",\"ControlID\":\"g\",\"Timestamp\":\"2024-04-05T13:25:19.21\"},\"notId\":\"149048711\",\"soundname\":\"\",\"vibrationPattern\":\"[500,500,500,500,500,500]\"},\"from\":\"788942585741\",\"messageId\":\"0:1712323519628673%af1e7638f9fd7ecd\",\"sentTime\":1712323519591,\"ttl\":2419200}";
+        var asObject = JsonSerializer.Deserialize<object>(body);
+        await PreComController.WebHook(DefaultCustomerId, DefaultSettingsHelper.IdTaco, asObject, false);
+
+        var result = await PreComController.AllAlerts(50, 0, CancellationToken.None);
+        Assert.NotNull(result?.Value?.PreComAlerts);
+        Assert.True(result.Value.Success);
+        result.Value.PreComAlerts.Should().NotBeNull();
+        result.Value.PreComAlerts.Should().NotBeEmpty();
+        result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("U bent ingedeeld als KNRM Aank. Opstapper\r\n\r\nPrio 1, Vaartuig motor / stuur problemen, HUI"));
+        result.Value.PreComAlerts.Should().Contain(x => x.SendTime.Equals(new DateTime(2024, 04, 05, 13, 25, 19, 591)));
     }
 
     [Fact]

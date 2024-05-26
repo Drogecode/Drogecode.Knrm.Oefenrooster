@@ -25,7 +25,6 @@ public class PreComService : IPreComService
             result.PreComAlerts.Add(new PreComAlert
             {
                 Id = alert.Id,
-                NotificationId = alert.NotificationId,
                 Alert = alert.Alert,
                 SendTime = alert.SendTime,
                 Priority = alert.Priority,
@@ -39,13 +38,12 @@ public class PreComService : IPreComService
         return result;
     }
 
-    public async Task WriteAlertToDb(Guid userId, Guid customerId, Guid? notificationId, DateTime? sendTime, string alert, int? priority, string raw, string? ip)
+    public async Task WriteAlertToDb(Guid userId, Guid customerId, DateTime? sendTime, string alert, int? priority, string raw, string? ip)
     {
         _database.PreComAlerts.Add(new DbPreComAlert
         {
             UserId = userId,
             CustomerId = customerId,
-            NotificationId = notificationId,
             Alert = alert,
             Priority = priority,
             Raw = raw,
