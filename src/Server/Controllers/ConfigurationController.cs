@@ -1,5 +1,4 @@
-﻿using Azure;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Microsoft.AspNetCore.Authorization;
@@ -19,20 +18,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 public class ConfigurationController : ControllerBase
 {
     private readonly ILogger<ConfigurationController> _logger;
-    private readonly IConfiguration _configuration;
     private readonly IConfigurationService _configurationService;
     private readonly IAuditService _auditService;
     private readonly IUserService _userService;
 
     public ConfigurationController(
         ILogger<ConfigurationController> logger,
-        IConfiguration configuration,
         IConfigurationService configurationService,
         IAuditService auditService,
         IUserService userService)
     {
         _logger = logger;
-        _configuration = configuration;
         _configurationService = configurationService;
         _auditService = auditService;
         _userService = userService;

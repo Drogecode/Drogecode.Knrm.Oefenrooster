@@ -25,6 +25,17 @@ public class CustomerSettingService : ICustomerSettingService
         return SettingNames.StringToBool(result);
     }
 
+    public async Task<string> GetTimeZone(Guid customerId)
+    {
+       var customer = await _database.Customers.FindAsync(customerId);
+       if (customer is not null)
+       {
+           return customer.TimeZone;
+       }
+
+       return string.Empty;
+    }
+
     public async Task Patch_TrainingToCalendar(Guid customerId, bool value)
     {
         await PatchCustomerSetting(customerId, SettingNames.TRAINING_TO_CALENDAR, value ? "true" : "false");

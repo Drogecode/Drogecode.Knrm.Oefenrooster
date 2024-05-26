@@ -1,4 +1,6 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
@@ -7,7 +9,8 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 
 public sealed partial class CalendarBaseCard : IDisposable
 {
-    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
+    [Inject, NotNull] private CustomerSettingRepository? CustomerSettingRepository { get; set; }
     [Parameter, EditorRequired] public TrainingAdvance Training { get; set; } = default!;
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public EventCallback OnClickCallback { get; set; }
@@ -23,26 +26,34 @@ public sealed partial class CalendarBaseCard : IDisposable
     [Parameter] public bool ShowDayOfWeek { get; set; } = false;
     [Parameter] public bool ShowPastBody { get; set; } = true;
     [Parameter] public string MoreMessage { get; set; } = "Show more";
+    private CancellationTokenSource _cls = new();
     private int _iconCount;
     private bool _showAllIcons = false;
+    private string _timeZone = "Europe/Amsterdam";
 
-    protected override void OnParametersSet()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _iconCount = 0;
-        switch (SetBy)
+        if (firstRender)
         {
-            case AvailabilitySetBy.DefaultAvailable:
-            case AvailabilitySetBy.Holiday:
+            _iconCount = 0;
+            switch (SetBy)
+            {
+                case AvailabilitySetBy.DefaultAvailable:
+                case AvailabilitySetBy.Holiday:
+                    _iconCount++;
+                    break;
+            }
+
+            if (OnClickHistory.HasDelegate)
                 _iconCount++;
-                break;
+            if (OnClickSettings.HasDelegate)
+                _iconCount++;
+            _timeZone = await CustomerSettingRepository.GetTimeZone(_cls.Token);
         }
-        if (OnClickHistory.HasDelegate)
-            _iconCount++;
-        if (OnClickSettings.HasDelegate)
-            _iconCount++;
     }
 
     public void Dispose()
     {
+        _cls.Cancel();
     }
 }
