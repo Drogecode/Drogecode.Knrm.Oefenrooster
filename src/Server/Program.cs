@@ -16,6 +16,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Diagnostics;
 using System.Text;
+using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 

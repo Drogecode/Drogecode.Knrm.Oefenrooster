@@ -16,25 +16,22 @@ public class PreComController : ControllerBase
 {
     private readonly ILogger<PreComController> _logger;
     private readonly IPreComService _preComService;
-    private readonly IAuditService _auditService;
     private readonly PreComHub _preComHub;
 
     public PreComController(
         ILogger<PreComController> logger,
         IPreComService preComService,
-        IAuditService auditService,
         PreComHub preComHub)
     {
         _logger = logger;
         _preComService = preComService;
-        _auditService = auditService;
         _preComHub = preComHub;
     }
 
     [HttpPost]
     [AllowAnonymous]
-    [Route("web-hook/{customerId:guid}/{id:guid}")]
-    public async Task<IActionResult> WebHook(Guid customerId, Guid id, [FromBody] object body, bool sendToHub = true)
+    [Route("web-hook/{customerId:guid}/{userId:guid}")]
+    public async Task<IActionResult> WebHook(Guid customerId, Guid userId, [FromBody] object body, bool sendToHub = true)
     {
         try
         {
@@ -42,47 +39,17 @@ public class PreComController : ControllerBase
             var ip = GetRequesterIp();
             try
             {
-                var jsonSerializerOptions = new JsonSerializerOptions()
-                {
-                    Converters = { new PreComConverter() }
-                };
-                var ser = JsonSerializer.Serialize(body);
-                var dataIos = JsonSerializer.Deserialize<NotificationDataBase>(ser, jsonSerializerOptions);
-                var dataAndroid = JsonSerializer.Deserialize<NotificationDataAndroid>(ser);
-                _logger.LogInformation($"alert is '{dataIos?._alert}'");
-                var alert = dataIos?._alert ?? dataAndroid?.data?.message;
-                var timestamp = DateTime.SpecifyKind(dataIos?._data?.actionData?.Timestamp ?? DateTime.MinValue, DateTimeKind.Utc);
-                if (dataIos is NotificationDataTestWebhookObject)
-                {
-                    NotificationDataTestWebhookObject? testWebhookData = (NotificationDataTestWebhookObject)dataIos;
-                    alert ??= testWebhookData?.message;
-                    if (timestamp == DateTime.MinValue && testWebhookData?.messageData?.sentTime is not null)
-                    {
-                        timestamp = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-                        timestamp = timestamp.AddMilliseconds(testWebhookData.messageData.sentTime);
-                    }
-                }
+                var alert = _preComService.AnalyzeAlert(userId, customerId, body, out DateTime timestamp, out int? priority);
+                _preComService.WriteAlertToDb(userId, customerId, timestamp, alert, priority, JsonSerializer.Serialize(body), ip);
 
-                if (dataAndroid?.data?.messageData is not null)
-                {
-                    timestamp = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-                    timestamp = timestamp.AddMilliseconds(dataAndroid.sentTime);
-                }
-
-                alert ??= "No alert found by hui.nu webhook";
-                if (timestamp.Equals(DateTime.MinValue))
-                    timestamp = DateTime.Now;
-                
-                var prioParsed = int.TryParse(dataIos?._data?.priority, out int priority);// Android does not have prio in json.
-                await _preComService.WriteAlertToDb(id, customerId, timestamp, alert, prioParsed ? priority : null, JsonSerializer.Serialize(body), ip);
                 if (sendToHub)
-                    await _preComHub.SendMessage(id, "PreCom", alert);
+                    await _preComHub.SendMessage(userId, "PreCom", alert);
             }
             catch (Exception ex)
             {
-                await _preComService.WriteAlertToDb(id, customerId, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body), ip);
+                _preComService.WriteAlertToDb(userId, customerId, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body), ip);
                 if (sendToHub)
-                    await _preComHub.SendMessage(id, "PreCom", "piep piep");
+                    await _preComHub.SendMessage(userId, "PreCom", "piep piep");
             }
 
             return Ok();

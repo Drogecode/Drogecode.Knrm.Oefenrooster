@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/api/PreCom/web-hook/{customerId}/{id}": {
+    "/api/PreCom/web-hook/{customerId}/{userId}": {
       "post": {
         "tags": [
           "PreCom"
@@ -22,7 +22,7 @@
             }
           },
           {
-            "name": "id",
+            "name": "userId",
             "in": "path",
             "required": true,
             "schema": {

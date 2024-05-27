@@ -145,7 +145,7 @@ public class ConfigurationController : ControllerBase
     {
         try
         {
-            if (true)
+            if (false)
             {
                 return new DbCorrectionResponse
                 {
@@ -153,7 +153,7 @@ public class ConfigurationController : ControllerBase
                     Message = "No active DbCorrection",
                 };
             }
-            DbCorrectionResponse response = await _configurationService.DbCorrection(clt);
+            var response = await _configurationService.DbCorrection(clt);
             return response;
         }
         catch (Exception ex)
