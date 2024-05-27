@@ -11,16 +11,7 @@
     <AuthorizeView>
         <Authorized>
             <MudAppBar>
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
-                @if (_isOffline)
-                {
-                    <MudAlert Severity="Severity.Warning" Variant="Variant.Filled">
-                        <span class="sm:hidden">@L["Offline"]</span>
-                        <span class="hidden sm:inline md:hidden">@L["You are offline"]</span>
-                        <span class="hidden md:inline">@L["You are offline data could be outdated"]</span>
-                    </MudAlert>
-                    <MudSpacer/>
-                }
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => DrawerToggle())"/>
                 @L["Title"]
                 <MudSpacer/>
                 <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">

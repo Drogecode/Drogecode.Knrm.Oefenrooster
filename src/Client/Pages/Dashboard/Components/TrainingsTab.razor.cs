@@ -11,7 +11,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 public sealed partial class TrainingsTab : IDisposable
 {
     [Inject] private IStringLocalizer<TrainingsTab> L { get; set; } = default!;
-    [Inject] IStringLocalizer<DateToString> LDateToString { get; set; }
+    [Inject] private IStringLocalizer<DateToString> LDateToString { get; set; } = default!;
     [Inject] private SharePointRepository SharePointRepository { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] [EditorRequired] public DrogeUser User { get; set; } = default!;
@@ -37,7 +37,7 @@ public sealed partial class TrainingsTab : IDisposable
         if (firstRender)
         {
             _sharePointTrainings = await SharePointRepository.GetLastTrainingsForCurrentUser(10, 0, _cls.Token);
-            var thisUser = Users!.FirstOrDefault(x => x.Id == User.Id);
+            var thisUser = Users.FirstOrDefault(x => x.Id == User.Id);
             if (thisUser is not null)
             {
                 ((List<DrogeUser>)_selectedUsersTraining).Add(thisUser);

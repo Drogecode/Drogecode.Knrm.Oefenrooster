@@ -5,7 +5,6 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph.Models;
-using MudBlazor.Services;
 using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -22,6 +21,7 @@ public class GraphService : IGraphService
     private const string SP_ACTIONS_EXP = "usrSPActEx_{0}";
     private const string SP_TRAININGS = "usrSPTrai_{0}";
     private const string SP_TRAININGS_EXP = "usrSPTraiEx_{0}";
+
     public GraphService(
         ILogger<GraphService> logger,
         IMemoryCache memoryCache,
@@ -33,29 +33,16 @@ public class GraphService : IGraphService
         _configuration = configuration;
         _database = dataContext;
     }
+
     public void InitializeGraph(Settings? settings = null)
     {
         if (settings == null)
         {
             settings = Settings.LoadSettings(_configuration);
         }
-        _logger.LogInformation($"start ClientSecret: {settings?.ClientSecret?[..3] ?? "Is null"}");
-        GraphHelper.InitializeGraphForAppOnlyAuth(settings);
-    }
 
-    public async Task<string> GetAccessTokenAsync()
-    {
-        try
-        {
-            var appOnlyToken = await GraphHelper.GetAppOnlyTokenAsync();
-            Console.WriteLine($"App-only token: {appOnlyToken}");
-            return appOnlyToken;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error getting app-only access token: {ex.Message}");
-            return null;
-        }
+        _logger.LogInformation($"Start ClientSecret: {settings.ClientSecret?[..3] ?? "Is null"}");
+        GraphHelper.InitializeGraphForAppOnlyAuth(settings);
     }
 
     public async Task<UserCollectionResponse?> ListUsersAsync()
@@ -123,8 +110,10 @@ public class GraphService : IGraphService
             return false;
         var dbActions = await _database.ReportActions
             .Where(x => x.CustomerId == customerId)
-            .Include(x => x.Users).ToListAsync();
+            .Include(x => x.Users).ToListAsync(clt);
 
+        var saveCount = 0;
+        var changeCount = 0;
         foreach (var action in sharePointActions)
         {
             if (clt.IsCancellationRequested)
@@ -134,16 +123,24 @@ public class GraphService : IGraphService
             {
                 dbAction = action.ToDbDefaultSchedule(customerId);
                 await _database.ReportActions.AddAsync(dbAction, clt);
+                saveCount++;
             }
             else if (dbAction.LastUpdated != action.LastUpdated)
             {
                 dbAction.UpdateDbDefaultSchedule(action, customerId);
+                saveCount++;
             }
+
+            if (saveCount < 10) continue;
+            changeCount += await _database.SaveChangesAsync(clt);
+            saveCount = 0;
         }
-        var changeCount = await _database.SaveChangesAsync(clt);
+
+        changeCount += await _database.SaveChangesAsync(clt);
         _logger.LogInformation("SharePoint actions synced (count {changeCount})", changeCount);
         return changeCount > 0;
     }
+
     public async Task<bool> SyncSharePointTrainings(Guid customerId, CancellationToken clt)
     {
         var keyTrainings = string.Format(SP_TRAININGS, customerId);
@@ -181,6 +178,7 @@ public class GraphService : IGraphService
             _logger.LogInformation("Lastupdated is null for action list");
             lastupdated = new UpdatedCheck();
         }
+
         if (lastupdated.NextCheck.CompareTo(DateTime.UtcNow) < 0)
         {
             var newLastUpdated = await GraphHelper.ListActionLastUpdate(customerId);
@@ -190,6 +188,7 @@ public class GraphService : IGraphService
                 lastupdated.LastUpdated = newLastUpdated;
                 _logger.LogInformation("There are changes in the action list");
             }
+
             lastupdated.NextCheck = DateTime.UtcNow.AddMinutes(5);
             cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(120));
             cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(240));
@@ -239,6 +238,7 @@ public class GraphService : IGraphService
             _logger.LogInformation("Lastupdated is null for training list");
             lastupdated = new UpdatedCheck();
         }
+
         if (lastupdated.NextCheck.CompareTo(DateTime.UtcNow) < 0)
         {
             var newLastUpdated = await GraphHelper.ListTrainingLastUpdate(customerId);
@@ -248,6 +248,7 @@ public class GraphService : IGraphService
                 lastupdated.LastUpdated = newLastUpdated;
                 _logger.LogInformation("There are changes in the training list");
             }
+
             lastupdated.NextCheck = DateTime.UtcNow.AddMinutes(5);
             cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(120));
             cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(240));
@@ -271,7 +272,6 @@ public class GraphService : IGraphService
 
     private async Task<List<SharePointUser>> GetAllSharePointUsers(Guid customerId, CancellationToken clt)
     {
-
         _memoryCache.TryGetValue<List<SharePointUser>>(string.Format(SP_USERS, customerId), out var sharePointUsers);
         if (sharePointUsers == null)
         {
@@ -284,13 +284,17 @@ public class GraphService : IGraphService
                 {
                     dbUser = dbUsers.FirstOrDefault(x => x.Name == sharePointUser.Name);
                     if (dbUser is not null)
-                        await _database.Users.Where(x => x.Id == dbUser.Id && x.CustomerId == customerId && x.DeletedOn == null).ExecuteUpdateAsync(x => x.SetProperty(p => p.SharePointID, sharePointUser.SharePointID), clt);
+                        await _database.Users.Where(x => x.Id == dbUser.Id && x.CustomerId == customerId && x.DeletedOn == null)
+                            .ExecuteUpdateAsync(x => x.SetProperty(p => p.SharePointID, sharePointUser.SharePointID), clt);
                 }
+
                 if (dbUser is not null)
                     sharePointUser.DrogeCodeId = dbUser.Id;
             }
+
             _ = _memoryCache.Set(string.Format(SP_USERS, customerId), sharePointUsers, DateTimeOffset.UtcNow.AddMinutes(30));
         }
+
         return sharePointUsers;
     }
 

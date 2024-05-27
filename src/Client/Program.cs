@@ -52,6 +52,7 @@ builder.Services.TryAddScoped<IVehicleClient, VehicleClient>();
 builder.Services.TryAddScoped<DayItemRepository>();
 builder.Services.TryAddScoped<MonthItemRepository>();
 builder.Services.TryAddScoped<ConfigurationRepository>();
+builder.Services.TryAddScoped<CustomerSettingRepository>();
 builder.Services.TryAddScoped<DefaultScheduleRepository>();
 builder.Services.TryAddScoped<FunctionRepository>();
 builder.Services.TryAddScoped<HolidayRepository>();

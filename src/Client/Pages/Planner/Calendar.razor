@@ -2,12 +2,7 @@
 @attribute [Authorize]
 @using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
-@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-@using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-@using MudBlazor.Extensions;
-@using MudBlazor;
-<PageTitle>Kalender</PageTitle>
+<PageTitle>@LApp["Availability"]</PageTitle>
 
 @if (_monthItems != null)
 {

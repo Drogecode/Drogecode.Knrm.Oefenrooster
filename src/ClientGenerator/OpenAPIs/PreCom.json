@@ -146,11 +146,6 @@
             "type": "string",
             "format": "uuid"
           },
-          "notificationId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
           "alert": {
             "type": "string",
             "nullable": true

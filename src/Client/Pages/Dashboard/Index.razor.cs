@@ -16,12 +16,12 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard;
 public sealed partial class Index : IDisposable
 {
     [Inject] private IStringLocalizer<Index> L { get; set; } = default!;
-    [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
-    [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
-    [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
-    [Inject] private UserRepository _userRepository { get; set; } = default!;
-    [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
-    [Inject] private DayItemRepository _calendarItemRepository { get; set; } = default!;
+    [Inject] private FunctionRepository FunctionRepository { get; set; } = default!;
+    [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
+    [Inject] private TrainingTypesRepository TrainingTypesRepository { get; set; } = default!;
+    [Inject] private UserRepository UserRepository { get; set; } = default!;
+    [Inject] private VehicleRepository VehicleRepository { get; set; } = default!;
+    [Inject] private DayItemRepository CalendarItemRepository { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
@@ -48,15 +48,15 @@ public sealed partial class Index : IDisposable
                 return;
             await ConfigureHub();
 
-            _users = await _userRepository.GetAllUsersAsync(false, false, true, _cls.Token);
-            _vehicles = await _vehicleRepository.GetAllVehiclesAsync(true, _cls.Token);
-            _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, true, _cls.Token);
-            _functions = await _functionRepository.GetAllFunctionsAsync(true, _cls.Token);
-            _dayItems = (await _calendarItemRepository.GetDayItemDashboardAsync(_userId, true, _cls.Token))?.DayItems;
+            _users = await UserRepository.GetAllUsersAsync(false, false, true, _cls.Token);
+            _vehicles = await VehicleRepository.GetAllVehiclesAsync(true, _cls.Token);
+            _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, true, _cls.Token);
+            _functions = await FunctionRepository.GetAllFunctionsAsync(true, _cls.Token);
+            _dayItems = (await CalendarItemRepository.GetDayItemDashboardAsync(_userId, true, _cls.Token))?.DayItems;
             StateHasChanged();
-            _pinnedTrainings = (await _scheduleRepository.GetPinnedTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
+            _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
             StateHasChanged();
-            _futureTrainings = (await _scheduleRepository.GetScheduledTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
+            _futureTrainings = (await ScheduleRepository.GetScheduledTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
 
             Global.VisibilityChangeAsync += VisibilityChanged;
             _loading = false;
@@ -80,7 +80,7 @@ public sealed partial class Index : IDisposable
             return false;
         }
 
-        _user = await _userRepository.GetCurrentUserAsync();
+        _user = await UserRepository.GetCurrentUserAsync();
         return true;
     }
 
@@ -102,25 +102,25 @@ public sealed partial class Index : IDisposable
                     switch (type)
                     {
                         case ItemUpdated.FutureTrainings:
-                            _futureTrainings = (await _scheduleRepository.GetScheduledTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
+                            _futureTrainings = (await ScheduleRepository.GetScheduledTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
                             break;
                         case ItemUpdated.AllUsers:
-                            _users = await _userRepository.GetAllUsersAsync(false, false, false, _cls.Token);
+                            _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
                             break;
                         case ItemUpdated.AllVehicles:
-                            _vehicles = await _vehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
+                            _vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
                             break;
                         case ItemUpdated.AllTrainingTypes:
-                            _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
+                            _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
                             break;
                         case ItemUpdated.AllFunctions:
-                            _functions = await _functionRepository.GetAllFunctionsAsync(false, _cls.Token);
+                            _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
                             break;
                         case ItemUpdated.DayItemDashboard:
-                            _dayItems = (await _calendarItemRepository.GetDayItemDashboardAsync(_userId, false, _cls.Token))?.DayItems;
+                            _dayItems = (await CalendarItemRepository.GetDayItemDashboardAsync(_userId, false, _cls.Token))?.DayItems;
                             break;
                         case ItemUpdated.PinnedDashboard:
-                            _pinnedTrainings = (await _scheduleRepository.GetPinnedTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
+                            _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
                             break;
                         default:
                             DebugHelper.WriteLine("Missing type, ignored");
@@ -165,13 +165,13 @@ public sealed partial class Index : IDisposable
         try
         {
             DebugHelper.WriteLine("VisibilityChanged dashboard");
-            _users = await _userRepository.GetAllUsersAsync(false, false, false, _cls.Token);
-            _vehicles = await _vehicleRepository.GetAllVehiclesAsync(true, _cls.Token);
-            _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
-            _functions = await _functionRepository.GetAllFunctionsAsync(true, _cls.Token);
-            _dayItems = (await _calendarItemRepository.GetDayItemDashboardAsync(_userId, false, _cls.Token))?.DayItems;
-            _pinnedTrainings = (await _scheduleRepository.GetPinnedTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
-            _futureTrainings = (await _scheduleRepository.GetScheduledTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
+            _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
+            _vehicles = await VehicleRepository.GetAllVehiclesAsync(true, _cls.Token);
+            _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
+            _functions = await FunctionRepository.GetAllFunctionsAsync(true, _cls.Token);
+            _dayItems = (await CalendarItemRepository.GetDayItemDashboardAsync(_userId, false, _cls.Token))?.DayItems;
+            _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
+            _futureTrainings = (await ScheduleRepository.GetScheduledTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
             DebugHelper.WriteLine("Dashboard reloaded");
             StateHasChanged();
         }

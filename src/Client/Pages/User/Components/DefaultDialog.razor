@@ -3,7 +3,7 @@
     <DialogContent>
         @if (DefaultUserSchedule is not null)
         {
-            <MudSelect T="Availability?" Label="@LApp["Availibility"]" Variant="Variant.Text" @bind-Value="DefaultUserSchedule.Availability" AdornmentColor="@PlannerHelper.ColorAvailabilty(DefaultUserSchedule.Availability)">
+            <MudSelect T="Availability?" Label="@LApp["Availability"]" Variant="Variant.Text" @bind-Value="DefaultUserSchedule.Availability" AdornmentColor="@PlannerHelper.ColorAvailabilty(DefaultUserSchedule.Availability)">
                 <MudSelectItem T="Availability?" Value="Availability.Available">@LApp["Available"]</MudSelectItem>
                 <MudSelectItem T="Availability?" Value="Availability.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>
                 <MudSelectItem T="Availability?" Value="Availability.Maybe">@LApp["Maybe"]</MudSelectItem>

@@ -3,10 +3,6 @@
 @attribute [Authorize]
 @using Drogecode.Knrm.Oefenrooster.Client.Enums;
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
-@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-@using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-@using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-@using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 <PageTitle>Planner</PageTitle>
 
 <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
@@ -20,10 +16,10 @@
 
 @switch (_view)
 {
-    case Enums.ScheduleView.Calendar:
+    case ScheduleView.Calendar:
         <ScheduleCalendar Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" />
         break;
-    case Enums.ScheduleView.Table:
+    case ScheduleView.Table:
         <ScheduleTable Users="_users" Functions="_functions" Vehicles=" _vehicles" TrainingTypes="_trainingTypes" CanEdit="_editOnClick" />
         break;
 }

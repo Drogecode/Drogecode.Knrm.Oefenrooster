@@ -1,5 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;

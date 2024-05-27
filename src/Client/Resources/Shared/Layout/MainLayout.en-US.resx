@@ -123,15 +123,6 @@
   <data name="One moment" xml:space="preserve">
     <value>One moment</value>
   </data>
-  <data name="Offline" xml:space="preserve">
-    <value>Offline!</value>
-  </data>
-  <data name="You are offline" xml:space="preserve">
-    <value>You are offline!</value>
-  </data>
-  <data name="You are offline data could be outdated" xml:space="preserve">
-    <value>You are offline, data could be outdated!</value>
-  </data>
   <data name="Not authorized" xml:space="preserve">
     <value>Not authorized</value>
   </data>

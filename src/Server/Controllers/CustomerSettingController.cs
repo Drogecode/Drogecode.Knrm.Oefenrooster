@@ -30,7 +30,28 @@ public class CustomerSettingController : ControllerBase
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            bool result = await _customerSettingService.IosDarkLightCheck(customerId);
+            var result = await _customerSettingService.IosDarkLightCheck(customerId);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in GetTrainingToCalendar");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("time-zone")]
+    public async Task<ActionResult<string>> GetTimeZone(CancellationToken token = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var result = System.Text.Json.JsonSerializer.Serialize(await _customerSettingService.GetTimeZone(customerId));
 
             return result;
         }
@@ -51,7 +72,7 @@ public class CustomerSettingController : ControllerBase
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            bool result = await _customerSettingService.TrainingToCalendar(customerId);
+            var result = await _customerSettingService.TrainingToCalendar(customerId);
 
             return result;
         }
@@ -85,5 +106,4 @@ public class CustomerSettingController : ControllerBase
             return BadRequest();
         }
     }
-
 }

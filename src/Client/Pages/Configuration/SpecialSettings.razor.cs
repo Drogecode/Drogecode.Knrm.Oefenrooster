@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
@@ -26,7 +27,7 @@ public sealed partial class SpecialSettings : IDisposable
     private bool? _usersSynced;
     private bool? _specialDatesUpdated;
     private bool? _settingTrainingToCalendar;
-    private bool? _dbCorrection1;
+    private DbCorrectionResponse? _dbCorrection;
 
 
     protected override void OnInitialized()
@@ -76,7 +77,7 @@ public sealed partial class SpecialSettings : IDisposable
     }
     private async Task RunDbCorrection()
     {
-        _dbCorrection1 = await ConfigurationRepository.DbCorrection();
+        _dbCorrection = await ConfigurationRepository.DbCorrection();
         StateHasChanged();
     }
 

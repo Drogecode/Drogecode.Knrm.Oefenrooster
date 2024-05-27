@@ -34,12 +34,8 @@ public sealed partial class NavMenu : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        _userMenuSettings = (await LocalStorage.GetItemAsync<UserMenuSettings>("userMenuSettings")) ?? new UserMenuSettings();
-        // Can not use the object directly because it freezes the page.
-        _useFullLinkExpanded = _userMenuSettings.UseFullLinkExpanded;
-        _configurationExpanded = _userMenuSettings.ConfigurationExpanded;
         Navigation.LocationChanged += RefreshForSubMenu;
-        var dbUser = await UserRepository.GetCurrentUserAsync(); //Force creation of user.
+        await UserRepository.GetCurrentUserAsync(); //Force creation of user.
     }
 
     protected override async Task OnParametersSetAsync()
@@ -47,7 +43,7 @@ public sealed partial class NavMenu : IDisposable
         if (AuthenticationState is not null)
         {
             var authState = await AuthenticationState;
-            var loginHint = authState?.User?.FindFirst(c => c.Type == "login_hint")?.Value;
+            var loginHint = authState.User.FindFirst(c => c.Type == "login_hint")?.Value;
             if (string.IsNullOrEmpty(loginHint))
             {
                 _sharePointUrl = "https://dorus1824.sharepoint.com";
@@ -58,6 +54,18 @@ public sealed partial class NavMenu : IDisposable
                 _sharePointUrl = $"https://dorus1824.sharepoint.com?login_hint={loginHint}";
                 _lplhUrl = $"https://dorus1824.sharepoint.com/:b:/r/sites/KNRM/Documenten/EHBO/LPLH/20181115%20LPLH_KNRM_1_1.pdf?csf=1&web=1&e=4L3VPo&login_hint={loginHint}";
             }
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _userMenuSettings = (await LocalStorage.GetItemAsync<UserMenuSettings>("userMenuSettings")) ?? new UserMenuSettings();
+            // Can not use the object directly because it freezes the page.
+            _useFullLinkExpanded = _userMenuSettings.UseFullLinkExpanded;
+            _configurationExpanded = _userMenuSettings.ConfigurationExpanded;
+            StateHasChanged();
         }
     }
 

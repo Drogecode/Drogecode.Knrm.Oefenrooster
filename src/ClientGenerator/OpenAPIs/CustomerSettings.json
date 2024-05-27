@@ -35,6 +35,36 @@
         }
       }
     },
+    "/api/CustomerSetting/time-zone": {
+      "get": {
+        "tags": [
+          "CustomerSetting"
+        ],
+        "operationId": "GetTimeZone",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/CustomerSetting/training-to-calendar": {
       "get": {
         "tags": [

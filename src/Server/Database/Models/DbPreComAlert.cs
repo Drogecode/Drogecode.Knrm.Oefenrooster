@@ -9,7 +9,6 @@ public class DbPreComAlert
     [Key] public Guid Id { get; set; }
     public Guid? UserId { get; set; }
     public Guid? CustomerId { get; set; }
-    public Guid? NotificationId { get; set; }
     public string? Alert { get; set; }
     /// <summary>
     /// Only to complete the object, not all fields are always returned.
