@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
+using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Nager.Holiday;
@@ -11,11 +13,16 @@ public class ConfigurationService : IConfigurationService
 {
     private readonly ILogger<ConfigurationService> _logger;
     private readonly Database.DataContext _database;
+    private readonly IPreComService _preComService;
 
-    public ConfigurationService(ILogger<ConfigurationService> logger, Database.DataContext database)
+    public ConfigurationService(
+        ILogger<ConfigurationService> logger, 
+        Database.DataContext database, 
+        IPreComService preComService)
     {
         _logger = logger;
         _database = database;
+        _preComService = preComService;
     }
 
     public async Task<bool> UpgradeDatabase()
@@ -48,24 +55,39 @@ public class ConfigurationService : IConfigurationService
     {
         var sw = Stopwatch.StartNew();
         var result = new DbCorrectionResponse();
+        var success = true;
+        var count = 0;
 
-        var dbLinks = await _database.LinkVehicleTraining.ToListAsync(clt);
-        foreach (var link in dbLinks)
+        var dbAlerts = await _database.PreComAlerts.Where(x=>x.Alert == "No alert found by hui.nu webhook" && x.UserId != null && x.Raw != null).ToListAsync(clt);
+        if (dbAlerts.Count > 0)
         {
-            var dbTr = await _database.RoosterTrainings.FindAsync(link.RoosterTrainingId, clt);
-            if (dbTr is null)
+            foreach (var alert in dbAlerts)
             {
-                _database.LinkVehicleTraining.Remove(link);
-            }
-
-            var dbVeh = await _database.Vehicles.FindAsync(link.VehicleId, clt);
-            if (dbVeh is null)
-            {
-                _database.LinkVehicleTraining.Remove(link);
+                var message = _preComService.AnalyzeAlert(alert.UserId.Value, alert.CustomerId.Value, JsonSerializer.Deserialize<object>(alert.Raw), out DateTime timestamp, out int? priority);
+                alert.Alert = message;
+                alert.Priority = priority;
+                alert.SendTime = timestamp;
+                if (!await _preComService.PatchAlertToDb(alert) || clt.IsCancellationRequested)
+                {
+                    success = false;
+                    result.Message = $"Not all alerts fixed, stopped after `{count}`, see log in azure";
+                    break;
+                }
+                count++;
             }
         }
+        else
+        {
+            result.Message = "No valid alerts found.";
+            success = false;
+        }
 
-        result.Success = await _database.SaveChangesAsync(clt) > 0;
+        if (success)
+        {
+            result.Message = $"Fixed `{count}` alerts";
+        }
+
+        result.Success = success;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
