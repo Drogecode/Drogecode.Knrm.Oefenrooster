@@ -127,7 +127,7 @@
     <value>Prio</value>
   </data>
   <data name="Start" xml:space="preserve">
-    <value>Vanaf</value>
+    <value>Eerste melding</value>
   </data>
   <data name="Crew" xml:space="preserve">
     <value>Bemanning</value>
@@ -142,15 +142,24 @@
     <value>Eind</value>
   </data>
   <data name="Commencement" xml:space="preserve">
-    <value>Aanvang</value>
+    <value>Uitvaren</value>
   </data>
   <data name="Departure" xml:space="preserve">
-    <value>Vertrek</value>
+    <value>Incident locatie</value>
   </data>
   <data name="Miscellaneous" xml:space="preserve">
     <value>Divers</value>
   </data>
   <data name="minutes" xml:space="preserve">
     <value>minuten</value>
+  </data>
+  <data name="CallMadeBy" xml:space="preserve">
+    <value>Melding gedaan door</value>
+  </data>
+  <data name="Causes" xml:space="preserve">
+    <value>Oorzaak</value>
+  </data>
+  <data name="Implications" xml:space="preserve">
+    <value>Gevolg</value>
   </data>
 </root>

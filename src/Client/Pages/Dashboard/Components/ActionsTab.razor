@@ -25,7 +25,7 @@
                         </CardHeaderContent>
                     </MudCardHeader>
                     <MudCardContent>
-                        <MudText>@((MarkupString)Regex.Replace(HttpUtility.HtmlEncode(@context.Item.Description ?? string.Empty), "\r?\n|\r", "<br />"))</MudText>
+                        <MudMarkdown Value="@context.Item.Description"/>
                         <MudText Typo="Typo.h6">@L["Crew"]</MudText>
                         <MudList>
                             @foreach (var user in context.Item.Users)
@@ -33,28 +33,28 @@
                                 <MudListItem>@user.Name - @user.Role</MudListItem>
                             }
                         </MudList>
-                        @if (_isTaco) /*Work in progress*/
-                        {
-                            <MudText Typo="Typo.h6">@L["Times"]</MudText>
-                            <MudList>
-                                <MudListItem>
-                                    @($"{L["Start"]} - {context.Item.Start.ToNiceString(LDateToString)}")
-                                </MudListItem>
-                                <MudListItem>
-                                    @($"{L["Commencement"]} - {context.Item.Commencement.ToNiceString(LDateToString, showDate: context.Item.Start.Date != context.Item.Commencement.Date)}") - @((context.Item.Commencement - context.Item.Start).TotalMinutes) @L["minutes"]
-                                </MudListItem>
-                                <MudListItem>
-                                    @($"{L["Departure"]} - {context.Item.Departure.ToNiceString(LDateToString, showDate: context.Item.Commencement.Date != context.Item.Departure.Date)}") - @((context.Item.Departure - context.Item.Start).TotalMinutes) @L["minutes"]
-                                </MudListItem>
-                                <MudListItem>
-                                    @($"{L["End"]} - {context.Item.End.ToNiceString(LDateToString, showDate: context.Item.Departure.Date != context.Item.End.Date)}") - @((context.Item.End - context.Item.Start).TotalMinutes) @L["minutes"]
-                                </MudListItem>
-                            </MudList>
-                            <MudText Typo="Typo.h6">@L["Miscellaneous"]</MudText>
-                            <MudList>
-                                <MudListItem>@L["Boat"]: @context.Item.Boat</MudListItem>
-                            </MudList>
-                        }
+                        <MudText Typo="Typo.h6">@L["Times"]</MudText>
+                        <MudList>
+                            <MudListItem>
+                                @($"{L["Start"]} - {context.Item.Start.ToNiceString(LDateToString)}")
+                            </MudListItem>
+                            <MudListItem>
+                                @($"{L["Commencement"]} - {context.Item.Commencement.ToNiceString(LDateToString, showDate: context.Item.Start.Date != context.Item.Commencement.Date)}") - @((context.Item.Commencement - context.Item.Start).TotalMinutes) @L["minutes"]
+                            </MudListItem>
+                            <MudListItem>
+                                @($"{L["Departure"]} - {context.Item.Departure.ToNiceString(LDateToString, showDate: context.Item.Commencement.Date != context.Item.Departure.Date)}") - @((context.Item.Departure - context.Item.Start).TotalMinutes) @L["minutes"]
+                            </MudListItem>
+                            <MudListItem>
+                                @($"{L["End"]} - {context.Item.End.ToNiceString(LDateToString, showDate: context.Item.Departure.Date != context.Item.End.Date)}") - @((context.Item.End - context.Item.Start).TotalMinutes) @L["minutes"]
+                            </MudListItem>
+                        </MudList>
+                        <MudText Typo="Typo.h6">@L["Miscellaneous"]</MudText>
+                        <MudList>
+                            <MudListItem>@L["Boat"]: @context.Item.Boat</MudListItem>
+                            <MudListItem>@L["CallMadeBy"]: @context.Item.CallMadeBy</MudListItem>
+                            <MudListItem>@L["Causes"]: @context.Item.Causes</MudListItem>
+                            <MudListItem>@L["Implications"]: @context.Item.Implications</MudListItem>
+                        </MudList>
                     </MudCardContent>
                 </MudCard>
             </ChildRowContent>
