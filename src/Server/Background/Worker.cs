@@ -52,6 +52,7 @@ public class Worker : BackgroundService
                 _errorCount++;
                 _logger.LogError(ex, "Error `{errorCount}` in worker", _errorCount);
             }
+            if (_clt.IsCancellationRequested) return;
         }
     }
 

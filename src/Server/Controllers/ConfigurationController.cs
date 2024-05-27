@@ -145,7 +145,7 @@ public class ConfigurationController : ControllerBase
     {
         try
         {
-            if (false)
+            if (true)
             {
                 return new DbCorrectionResponse
                 {

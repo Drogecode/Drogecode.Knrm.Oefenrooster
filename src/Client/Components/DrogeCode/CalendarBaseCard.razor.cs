@@ -29,7 +29,7 @@ public sealed partial class CalendarBaseCard : IDisposable
     private CancellationTokenSource _cls = new();
     private int _iconCount;
     private bool _showAllIcons = false;
-    private string _timeZone = "Europe/Amsterdam";
+    private static string _timeZone = "Europe/Amsterdam";
 
     protected override void OnParametersSet()
     {
