@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using System.Text.Json;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
@@ -100,11 +101,68 @@ public class PreComControllerTests : BaseTest
         await PreComController.WebHook(DefaultCustomerId, DefaultSettingsHelper.IdTaco, asObject, false);
 
         var result = await PreComController.AllAlerts(50, 0, CancellationToken.None);
-        Assert.NotNull(result?.Value?.PreComAlerts);
+        Assert.NotNull(result.Value?.PreComAlerts);
         Assert.True(result.Value.Success);
         result.Value.PreComAlerts.Should().NotBeNull();
         result.Value.PreComAlerts.Should().NotBeEmpty();
         result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("PreCom test bericht voor Webhook"));
         result.Value.PreComAlerts.Should().Contain(x => x.SendTime.Equals(new DateTime(2024, 03, 01, 19, 46, 08, 215)));
+    }
+
+    [Fact]
+    public async Task PutPreComForwardTest()
+    {
+        var body = new PreComForward
+        {
+            ForwardUrl = "https://PutPreComForward.Test"
+        };
+
+        var result = await PreComController.PutForward(body);
+        Assert.NotNull(result.Value?.NewId);
+        Assert.True(result.Value.Success);
+        result.Value.NewId.Should().NotBe(Guid.Empty);
+    }
+
+    [Fact]
+    public async Task AllForwardsTest()
+    {
+        var body = new PreComForward
+        {
+            ForwardUrl = "https://AllForwardsTest.Test"
+        };
+
+        var result = await PreComController.PutForward(body);
+        Assert.NotNull(result.Value?.NewId);
+        result.Value.NewId.Should().NotBe(Guid.Empty);
+
+        var allResult = await PreComController.AllForwards();
+        Assert.NotNull(allResult.Value?.PreComForwards);
+        allResult.Value.PreComForwards.Should().NotBeEmpty();
+        allResult.Value.PreComForwards.Should().Contain(x => x.Id == result.Value.NewId);
+    }
+
+    [Fact]
+    public async Task PatchForwardTest()
+    {
+        const string PATCHED = "https://AllForwardsTest.patched";
+        var body = new PreComForward
+        {
+            ForwardUrl = "https://AllForwardsTest.Test"
+        };
+
+        var result = await PreComController.PutForward(body);
+        Assert.NotNull(result.Value?.NewId);
+        result.Value.NewId.Should().NotBe(Guid.Empty);
+        body.Id = result.Value.NewId.Value;
+        body.ForwardUrl = PATCHED;
+
+        var patchResult = await PreComController.PatchForward(body);
+        Assert.NotNull(patchResult.Value?.Success);
+        Assert.True(patchResult.Value.Success);
+
+        var allResult = await PreComController.AllForwards();
+        Assert.NotNull(allResult.Value?.PreComForwards);
+        allResult.Value.PreComForwards.Should().NotBeEmpty();
+        allResult.Value.PreComForwards.Should().Contain(x => x.Id == result.Value.NewId && x.ForwardUrl == PATCHED);
     }
 }

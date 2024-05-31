@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Helpers.JsonConverters;
+﻿using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Server.Helpers.JsonConverters;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 using Microsoft.AspNetCore.Authorization;
@@ -56,6 +57,9 @@ public class PreComController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in PreCom WebHook");
             return BadRequest("Exception in PreCom WebHook");
         }
@@ -63,7 +67,7 @@ public class PreComController : ControllerBase
 
     [HttpGet]
     [Route("{take:int}/{skip:int}")]
-    public async Task<ActionResult<MultiplePreComAlertsResponse>> AllAlerts(int take, int skip, CancellationToken clt)
+    public async Task<ActionResult<MultiplePreComAlertsResponse>> AllAlerts(int take, int skip, CancellationToken clt = default)
     {
         try
         {
@@ -74,7 +78,73 @@ public class PreComController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in AllAlerts");
+            return BadRequest();
+        }
+    }
+
+    [HttpPut]
+    [Route("forwards")]
+    public async Task<ActionResult<PutPreComForwardResponse>> PutForward([FromBody] PreComForward forward, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var result = await _preComService.PutForward(forward, customerId, userId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in month PutItem");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
+    [Route("forwards")]
+    public async Task<ActionResult<PatchPreComForwardResponse>> PatchForward([FromBody] PreComForward forward, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var result = await _preComService.PatchForward(forward, customerId, userId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in month PutItem");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("forwards")]
+    public async Task<ActionResult<MultiplePreComForwardsResponse>> AllForwards(CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var result = await _preComService.GetAllForwards(userId, customerId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in AllForwards");
             return BadRequest();
         }
     }
@@ -112,6 +182,9 @@ public class PreComController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in CatchallController CatchAll POST");
             return BadRequest("Exception in CatchallController CatchAll POST");
         }

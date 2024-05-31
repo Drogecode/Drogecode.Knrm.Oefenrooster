@@ -9,4 +9,7 @@ public interface IPreComService
     string AnalyzeAlert(Guid userId, Guid customerId, object body, out DateTime timestamp, out int? priority);
     void WriteAlertToDb(Guid userId, Guid customerId, DateTime? sendTime, string alert, int? priority, string raw, string? ip);
     Task<bool> PatchAlertToDb(DbPreComAlert alert);
+    Task<PutPreComForwardResponse> PutForward(PreComForward forward, Guid customerId, Guid userId, CancellationToken clt);
+    Task<PatchPreComForwardResponse> PatchForward(PreComForward forward, Guid customerId, Guid userId, CancellationToken clt);
+    Task<MultiplePreComForwardsResponse> GetAllForwards(Guid userId, Guid customerId, CancellationToken clt);
 }
