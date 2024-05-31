@@ -9,7 +9,7 @@ public class DbLinkExchange
     [Key] public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
     public Guid VehicleId { get; set; }
-    public string? CalendarEventId { get; set; }
+    [StringLength(200)] public string? CalendarEventId { get; set; }
     public bool IsSet { get; set; }
 
     public DbCustomers Customer { get; set; }

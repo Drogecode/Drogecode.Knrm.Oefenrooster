@@ -29,6 +29,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbRoosterTrainingType> RoosterTrainingTypes { get; set; }
         public DbSet<DbRoosterAvailable> RoosterAvailables { get; set; }
         public DbSet<DbVehicles> Vehicles { get; set; }
+        public DbSet<DbPreComForward> PreComForwards { get; set; }
         public DbSet<DbPreComAlert> PreComAlerts { get; set; }
 
         public DbSet<DbReportAction> ReportActions { get; set; }
@@ -48,23 +49,23 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Audit
-            modelBuilder.Entity<DbAudit>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbAudit>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbAudit>().HasOne(p => p.User).WithMany(g => g.Audits).HasForeignKey(s => s.UserId).IsRequired();
             modelBuilder.Entity<DbAudit>().HasOne(p => p.Customer).WithMany(g => g.Audits).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // Customers
-            modelBuilder.Entity<DbCustomers>(e => { e.Property(e => e.Id).IsRequired(); });
-            modelBuilder.Entity<DbCustomers>(e => { e.Property(e => e.Name).IsRequired(); });
-            modelBuilder.Entity<DbCustomers>(e => { e.Property(e => e.Created).IsRequired(); });
+            modelBuilder.Entity<DbCustomers>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbCustomers>(e => { e.Property(en => en.Name).IsRequired(); });
+            modelBuilder.Entity<DbCustomers>(e => { e.Property(en => en.Created).IsRequired(); });
 
             // CustomerSettings
-            modelBuilder.Entity<DbCustomerSettings>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbCustomerSettings>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbCustomerSettings>().HasOne(p => p.Customer).WithMany(g => g.CustomerSettings).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // Users
-            modelBuilder.Entity<DbUsers>(e => { e.Property(e => e.Id).IsRequired(); });
-            modelBuilder.Entity<DbUsers>(e => { e.Property(e => e.Name).IsRequired(); });
-            modelBuilder.Entity<DbUsers>(e => { e.Property(e => e.Email).IsRequired(); });
+            modelBuilder.Entity<DbUsers>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbUsers>(e => { e.Property(en => en.Name).IsRequired(); });
+            modelBuilder.Entity<DbUsers>(e => { e.Property(en => en.Email).IsRequired(); });
             modelBuilder.Entity<DbUsers>().HasOne(p => p.Customer).WithMany(g => g.Users).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUsers>().HasOne(p => p.UserFunction).WithMany(g => g.Users).HasForeignKey(s => s.UserFunctionId);
             modelBuilder.Entity<DbUsers>().HasMany(p => p.LinkedUserA).WithMany(g => g.LinkedUserB)
@@ -73,45 +74,45 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     r => r.HasOne<DbUsers>(e => e.UserB).WithMany(e => e.LinkedUserAsB).HasForeignKey(e => e.UserBId));
 
             //UserFunctions
-            modelBuilder.Entity<DbUserFunctions>(e => { e.Property(e => e.Id).IsRequired(); });
-            modelBuilder.Entity<DbUserFunctions>(e => { e.Property(e => e.Name).IsRequired(); });
-            modelBuilder.Entity<DbUserFunctions>(e => { e.Property(e => e.Order).IsRequired(); });
-            modelBuilder.Entity<DbUserFunctions>(e => { e.Property(e => e.CustomerId).IsRequired(); });
+            modelBuilder.Entity<DbUserFunctions>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserFunctions>(e => { e.Property(en => en.Name).IsRequired(); });
+            modelBuilder.Entity<DbUserFunctions>(e => { e.Property(en => en.Order).IsRequired(); });
+            modelBuilder.Entity<DbUserFunctions>(e => { e.Property(en => en.CustomerId).IsRequired(); });
             modelBuilder.Entity<DbUserFunctions>().HasOne(p => p.Customer).WithMany(g => g.UserFunctions).HasForeignKey(s => s.CustomerId).IsRequired();
 
             //UserRoles
-            modelBuilder.Entity<DbUserRoles>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserRoles>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserRoles>().HasOne(p => p.Customer).WithMany(g => g.UserRoles).HasForeignKey(s => s.CustomerId).IsRequired();
 
             //UserDefaultGroup
-            modelBuilder.Entity<DbUserDefaultGroup>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserDefaultGroup>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserDefaultGroup>().HasOne(p => p.Customer).WithMany(g => g.UserDefaultGroups).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserDefaultGroup>().HasOne(p => p.User).WithMany(g => g.UserDefaultGroups).HasForeignKey(s => s.UserId).IsRequired();
 
             //UserDefaultAvailables
-            modelBuilder.Entity<DbUserDefaultAvailable>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserDefaultAvailable>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserDefaultAvailable>().HasOne(p => p.Customer).WithMany(g => g.UserDefaultAvailables).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserDefaultAvailable>().HasOne(p => p.User).WithMany(g => g.UserDefaultAvailables).HasForeignKey(s => s.UserId).IsRequired();
             modelBuilder.Entity<DbUserDefaultAvailable>().HasOne(p => p.RoosterDefault).WithMany(g => g.UserDefaultAvailables).HasForeignKey(s => s.RoosterDefaultId).IsRequired();
             modelBuilder.Entity<DbUserDefaultAvailable>().HasOne(p => p.DefaultGroup).WithMany(g => g.UserDefaultAvailables).HasForeignKey(s => s.DefaultGroupId);
 
             //UserHolidays
-            modelBuilder.Entity<DbUserHolidays>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserHolidays>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserHolidays>().HasOne(p => p.Customer).WithMany(g => g.UserHolidays).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserHolidays>().HasOne(p => p.User).WithMany(g => g.UserHolidays).HasForeignKey(s => s.UserId).IsRequired();
 
             //UserOnVersions
-            modelBuilder.Entity<DbUserOnVersion>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserOnVersion>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserOnVersion>().HasOne(p => p.Customer).WithMany(g => g.UserOnVersions).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserOnVersion>().HasOne(p => p.User).WithMany(g => g.UserOnVersions).HasForeignKey(s => s.UserId).IsRequired();
             
             //UserSettings
-            modelBuilder.Entity<DbUserSettings>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserSettings>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserSettings>().HasOne(p => p.Customer).WithMany(g => g.UserSettings).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserSettings>().HasOne(p => p.User).WithMany(g => g.UserSettings).HasForeignKey(s => s.UserId).IsRequired();
 
             // Rooster available
-            modelBuilder.Entity<DbRoosterAvailable>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbRoosterAvailable>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.Training).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.TrainingId).IsRequired();
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.Customer).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.User).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.UserId).IsRequired();
@@ -120,15 +121,15 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.LinkExchange).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.LinkExchangeId);
 
             // Rooster default
-            modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.Id).IsRequired(); });
-            modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.ValidFrom).IsRequired(); });
-            modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.ValidUntil).IsRequired(); });
-            modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(e => e.ShowTime).HasDefaultValue(true); });
+            modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(en => en.ValidFrom).IsRequired(); });
+            modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(en => en.ValidUntil).IsRequired(); });
+            modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(en => en.ShowTime).HasDefaultValue(true); });
             modelBuilder.Entity<DbRoosterDefault>().HasOne(p => p.RoosterTrainingType).WithMany(g => g.RoosterDefaults).HasForeignKey(s => s.RoosterTrainingTypeId);
             modelBuilder.Entity<DbRoosterDefault>().HasOne(p => p.Customer).WithMany(g => g.RoosterDefaults).HasForeignKey(s => s.CustomerId).IsRequired();
 
             //Rooster item day
-            modelBuilder.Entity<DbRoosterItemDay>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbRoosterItemDay>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbRoosterItemDay>().HasOne(p => p.Customer).WithMany(g => g.RoosterItemDays).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbRoosterItemDay>().HasMany(p => p.Users).WithMany(g => g.RoosterItemDays)
                 .UsingEntity<DbLinkUserDayItem>(
@@ -136,44 +137,50 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     r => r.HasOne<DbRoosterItemDay>(e => e.DayItem).WithMany(e => e.LinkUserDayItems).HasForeignKey(e => e.DayItemId));
 
             //Rooster item month
-            modelBuilder.Entity<DbRoosterItemMonth>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbRoosterItemMonth>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbRoosterItemMonth>().HasOne(p => p.Customer).WithMany(g => g.RoosterItemMonths).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // Rooster training
-            modelBuilder.Entity<DbRoosterTraining>(e => { e.Property(e => e.Id).IsRequired(); });
-            modelBuilder.Entity<DbRoosterTraining>(e => { e.Property(e => e.ShowTime).HasDefaultValue(true); });
+            modelBuilder.Entity<DbRoosterTraining>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbRoosterTraining>(e => { e.Property(en => en.ShowTime).HasDefaultValue(true); });
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.Customer).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.RoosterDefault).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.RoosterDefaultId);
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.RoosterTrainingType).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.RoosterTrainingTypeId);
 
             // Rooster training type
-            modelBuilder.Entity<DbRoosterTrainingType>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbRoosterTrainingType>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbRoosterTrainingType>().HasOne(p => p.Customer).WithMany(g => g.RoosterTrainingTypes).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // Vehicles
-            modelBuilder.Entity<DbVehicles>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbVehicles>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbVehicles>().HasOne(p => p.Customer).WithMany(g => g.Vehicles).HasForeignKey(s => s.CustomerId).IsRequired();
+
+            //PreComForward
+            modelBuilder.Entity<DbPreComForward>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbPreComForward>().HasOne(p => p.User).WithMany(g => g.PreComForwards).HasForeignKey(s => s.UserId).IsRequired();
+            modelBuilder.Entity<DbPreComForward>().HasOne(p => p.Customer).WithMany(g => g.PreComForwards).HasForeignKey(s => s.CustomerId).IsRequired();
             // PreComAlerts
-            modelBuilder.Entity<DbPreComAlert>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbPreComAlert>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbPreComAlert>().HasOne(p => p.User).WithMany(g => g.PreComAlerts).HasForeignKey(s => s.UserId).IsRequired();
             modelBuilder.Entity<DbPreComAlert>().HasOne(p => p.Customer).WithMany(g => g.PreComAlerts).HasForeignKey(s => s.CustomerId).IsRequired();
 
             //// Reports
             // ReportActions
-            modelBuilder.Entity<DbReportAction>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbReportAction>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbReportAction>().HasMany(p => p.Users);
             modelBuilder.Entity<DbReportAction>().HasOne(p => p.Customer).WithMany(g => g.ReportActions).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // ReportTrainings
-            modelBuilder.Entity<DbReportTraining>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbReportTraining>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbReportTraining>().HasMany(p => p.Users);
             modelBuilder.Entity<DbReportTraining>().HasOne(p => p.Customer).WithMany(g => g.ReportTrainings).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // ReportUsers
-            modelBuilder.Entity<DbReportUser>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbReportUser>(e => { e.Property(en => en.Id).IsRequired(); });
 
             //// Links
             // Vehicles <--> Rooster available
-            modelBuilder.Entity<DbLinkVehicleTraining>(e => { e.Property(e => e.Id).IsRequired(); });
+            modelBuilder.Entity<DbLinkVehicleTraining>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbLinkVehicleTraining>().HasOne(p => p.Customer).WithMany(g => g.LinkVehicleTrainings).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbLinkVehicleTraining>().HasOne(p => p.RoosterTraining).WithMany(g => g.LinkVehicleTrainings).HasForeignKey(s => s.RoosterTrainingId).IsRequired();
             modelBuilder.Entity<DbLinkVehicleTraining>().HasOne(p => p.Vehicles).WithMany(g => g.LinkVehicleTrainings).HasForeignKey(s => s.VehicleId).IsRequired();

@@ -7,7 +7,7 @@
 
 # Revert
 
-1. dotnet ef database update "20240406105742_UserOnVersion"
+1. dotnet ef database update "20240515162244_dblinkforlinktrainingvehicle"
 
 # Update tools:
 
