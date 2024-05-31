@@ -20,7 +20,7 @@
 	<ItemGroup>
 		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 		<PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
-        <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="7.0.0-preview.3" />
+        <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="7.0.0-preview.4" />
         <PackageReference Include="Heron.MudCalendar" Version="2.0.0-beta.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.5" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.5" />
@@ -34,7 +34,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-		<PackageReference Include="MudBlazor" Version="7.0.0-preview.3" />
+		<PackageReference Include="MudBlazor" Version="7.0.0-preview.4" />
 		<PackageReference Include="MudBlazor.Markdown" Version="1.0.0" />
 	</ItemGroup>
 
