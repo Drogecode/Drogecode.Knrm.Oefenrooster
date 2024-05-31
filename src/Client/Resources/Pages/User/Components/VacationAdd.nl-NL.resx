@@ -144,4 +144,7 @@
   <data name="Valid till" xml:space="preserve">
     <value>Eind datum</value>
   </data>
+  <data name="Failed to save" xml:space="preserve">
+    <value>Opslaan mislukt, probeer het later nogmaals</value>
+  </data>
 </root>
