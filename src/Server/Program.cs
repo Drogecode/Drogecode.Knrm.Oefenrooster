@@ -17,6 +17,9 @@ using Swashbuckle.AspNetCore.Swagger;
 using System.Diagnostics;
 using System.Text;
 using Drogecode.Knrm.Oefenrooster.Server.Controllers;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using Azure.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +43,27 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });
 
-var dbConnectionString = builder.Configuration.GetConnectionString("postgresDB");
+
+SecretClientOptions options = new SecretClientOptions()
+{
+    Retry =
+    {
+        Delay= TimeSpan.FromSeconds(2),
+        MaxDelay = TimeSpan.FromSeconds(16),
+        MaxRetries = 5,
+        Mode = RetryMode.Exponential
+    }
+};
+string dbConnectionString;
+var keyVaultUri = builder.Configuration.GetValue<string>("KEYVAULTURI");
+if (keyVaultUri is null)
+    dbConnectionString= builder.Configuration.GetConnectionString("postgresDB");
+else
+{
+    var client = new SecretClient(new Uri(keyVaultUri), new DefaultAzureCredential(),options);
+    KeyVaultSecret secret = client.GetSecret("postgresDB");
+    dbConnectionString = secret.Value;
+}
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
