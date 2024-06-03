@@ -34,7 +34,8 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    [Route("all/{includeHidden:bool}/{callHub:bool}")]
+    [Route("all/{includeHidden:bool}/{callHub:bool}", Order = 0)]
+    [Route("all/{includeHidden:bool}", Order = 10)]// v0.3.36
     public async Task<ActionResult<MultipleDrogeUsersResponse>> GetAll(bool includeHidden, bool callHub = false, CancellationToken clt = default)
     {
         try
