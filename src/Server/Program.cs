@@ -56,13 +56,15 @@ SecretClientOptions options = new SecretClientOptions()
 };
 string dbConnectionString;
 var keyVaultUri = builder.Configuration.GetValue<string>("KEYVAULTURI");
-if (keyVaultUri is null)
+if (string.IsNullOrEmpty(keyVaultUri))
     dbConnectionString= builder.Configuration.GetConnectionString("postgresDB");
 else
 {
     var client = new SecretClient(new Uri(keyVaultUri), new DefaultAzureCredential(),options);
-    KeyVaultSecret secret = client.GetSecret("postgresDB");
-    dbConnectionString = secret.Value;
+    KeyVaultSecret dbUserName = client.GetSecret("administratorLogin");
+    KeyVaultSecret dbPassword = client.GetSecret("administratorLoginPassword");
+    KeyVaultSecret dbUri = client.GetSecret("databaseFQDN");
+    dbConnectionString = $"host={dbUri.Value};port=5432;database=OefenroosterProd;username={dbUserName.Value};password={dbPassword.Value}";
 }
 
 builder.Services.AddControllersWithViews();
