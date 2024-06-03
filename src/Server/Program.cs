@@ -67,9 +67,14 @@ else
         KeyVaultSecret dbPassword = client.GetSecret("administratorLoginPassword");
         KeyVaultSecret dbUri = client.GetSecret("databaseFQDN");
         Console.WriteLine($"dbUserName = {dbUserName.Value}");
-        dbConnectionString = $"host={dbUri.Value};port=5432;database=OefenroosterProd;username={dbUserName.Value};password={dbPassword.Value}";
+#if DEBUG
+        var dbName = "OefenroosterDev";
+#else
+        var dbName = "OefenroosterAcc";
+#endif
+        dbConnectionString = $"host={dbUri.Value};port=5432;database={dbName};username={dbUserName.Value};password={dbPassword.Value}";
     }
-    catch(Exception ex)
+    catch (Exception ex)
     {
         Console.WriteLine("Exception while constructing dbConnectionString");
         Console.WriteLine(ex);
