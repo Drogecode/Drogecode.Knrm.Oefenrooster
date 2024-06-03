@@ -16,12 +16,12 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Diagnostics;
 using System.Text;
-using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Core;
 
 var builder = WebApplication.CreateBuilder(args);
+Console.WriteLine("Start oefenrooster");
 
 // Add services to the container.
 builder.Configuration
@@ -44,27 +44,37 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 
-SecretClientOptions options = new SecretClientOptions()
-{
-    Retry =
-    {
-        Delay= TimeSpan.FromSeconds(2),
-        MaxDelay = TimeSpan.FromSeconds(16),
-        MaxRetries = 5,
-        Mode = RetryMode.Exponential
-    }
-};
 string dbConnectionString;
 var keyVaultUri = builder.Configuration.GetValue<string>("KEYVAULTURI");
 if (string.IsNullOrEmpty(keyVaultUri))
-    dbConnectionString= builder.Configuration.GetConnectionString("postgresDB");
+    dbConnectionString = builder.Configuration.GetConnectionString("postgresDB");
 else
 {
-    var client = new SecretClient(new Uri(keyVaultUri), new DefaultAzureCredential(),options);
-    KeyVaultSecret dbUserName = client.GetSecret("administratorLogin");
-    KeyVaultSecret dbPassword = client.GetSecret("administratorLoginPassword");
-    KeyVaultSecret dbUri = client.GetSecret("databaseFQDN");
-    dbConnectionString = $"host={dbUri.Value};port=5432;database=OefenroosterProd;username={dbUserName.Value};password={dbPassword.Value}";
+    try
+    {
+        var options = new SecretClientOptions()
+        {
+            Retry =
+            {
+                Delay = TimeSpan.FromSeconds(2),
+                MaxDelay = TimeSpan.FromSeconds(16),
+                MaxRetries = 5,
+                Mode = RetryMode.Exponential
+            }
+        };
+        var client = new SecretClient(new Uri(keyVaultUri), new DefaultAzureCredential(), options);
+        KeyVaultSecret dbUserName = client.GetSecret("administratorLogin");
+        KeyVaultSecret dbPassword = client.GetSecret("administratorLoginPassword");
+        KeyVaultSecret dbUri = client.GetSecret("databaseFQDN");
+        Console.WriteLine($"dbUserName = {dbUserName.Value}");
+        dbConnectionString = $"host={dbUri.Value};port=5432;database=OefenroosterProd;username={dbUserName.Value};password={dbPassword.Value}";
+    }
+    catch(Exception ex)
+    {
+        Console.WriteLine("Exception while constructing dbConnectionString");
+        Console.WriteLine(ex);
+        dbConnectionString = builder.Configuration.GetConnectionString("postgresDB");
+    }
 }
 
 builder.Services.AddControllersWithViews();
@@ -76,7 +86,7 @@ builder.Services.AddHealthChecks()
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-       new[] { "application/octet-stream" });
+        new[] { "application/octet-stream" });
 });
 
 builder.Services.AddDbContextPool<DataContext>(options => options.UseNpgsql(dbConnectionString));
@@ -139,7 +149,8 @@ if (!runningInContainers)
     builder.Services.AddSwaggerGen(c =>
     {
         //c.UseInlineDefinitionsForEnums();
-        c.CustomOperationIds(d => d.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor ? controllerActionDescriptor.MethodInfo.Name : d.ActionDescriptor.AttributeRouteInfo?.Name);
+        c.CustomOperationIds(
+            d => d.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor ? controllerActionDescriptor.MethodInfo.Name : d.ActionDescriptor.AttributeRouteInfo?.Name);
         groupNames.ForEach(x => c.SwaggerDoc(x, new OpenApiInfo { Title = x.Split('.').LastOrDefault(), Version = "v1" }));
 
         c.DocInclusionPredicate((controllerName, apiDescription) =>
