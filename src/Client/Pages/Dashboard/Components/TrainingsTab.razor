@@ -14,13 +14,13 @@
                 <HierarchyColumn T="SharePointTraining"/>
                 <TemplateColumn Title="@L["Start"]">
                     <CellTemplate>
-                        @if (context.Item.Type?.Equals("HRB Evenement") == true)
+                        @if (_trainingDifferentStart.Contains(context.Item?.Type ?? string.Empty))
                         {
-                            <p>@context.Item.Commencement.ToNiceString(LDateToString)</p>
+                            <p>@context.Item?.Commencement.ToNiceString(LDateToString)</p>
                         }
                         else
                         {
-                            <p>@context.Item.Start.ToNiceString(LDateToString)</p>
+                            <p>@context.Item?.Start.ToNiceString(LDateToString)</p>
                         }
                     </CellTemplate>
                 </TemplateColumn>
@@ -34,7 +34,7 @@
                         </CardHeaderContent>
                     </MudCardHeader>
                     <MudCardContent>
-                        <MudText>@((MarkupString)Regex.Replace(HttpUtility.HtmlEncode(@context.Item.Description ?? string.Empty), "\r?\n|\r", "<br />"))</MudText>
+                        <MudMarkdown Value="@context.Item.Description"/>
                         <MudList>
                             @foreach (var user in context.Item.Users)
                             {

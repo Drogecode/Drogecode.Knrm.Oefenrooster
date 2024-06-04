@@ -20,6 +20,7 @@ public sealed partial class TrainingsTab : IDisposable
     private MultipleSharePointTrainingsResponse? _sharePointTrainings;
     private CancellationTokenSource _cls = new();
     private IEnumerable<DrogeUser> _selectedUsersTraining = new List<DrogeUser>();
+    private static readonly List<string> _trainingDifferentStart = ["HRB Evenement", "KNRM Evenement"];
     private int _currentPage = 1;
     private int _count = 10;
     private bool _busy;
