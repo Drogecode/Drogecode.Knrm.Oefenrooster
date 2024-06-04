@@ -127,14 +127,13 @@ public sealed partial class ScheduleCalendar : IDisposable
         {
             TrainingId = newTraining.Id,
             Name = newTraining.Name,
-            DateStart = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Local),
-            DateEnd = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Local),
+            DateStart = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Local).ToUniversalTime(),
+            DateEnd = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Local).ToUniversalTime(),
             RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId,
             ShowTime = newTraining.ShowTime,
             IsCreated = true,
             IsPinned = newTraining.IsPinned,
         };
-        var date = DateOnly.FromDateTime(newTraining.Date ?? throw new ArgumentNullException("newTraining.Date is null after null check"));
         _events.Add(new ScheduleCalendarItem
         {
             Start = asTraining.DateStart,

@@ -144,4 +144,7 @@
   <data name="Valid till" xml:space="preserve">
     <value>Valid till</value>
   </data>
+  <data name="Failed to save" xml:space="preserve">
+    <value>Failed to save, try again later</value>
+  </data>
 </root>
