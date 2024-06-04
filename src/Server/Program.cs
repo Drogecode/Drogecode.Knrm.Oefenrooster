@@ -46,6 +46,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 string dbConnectionString;
 var keyVaultUri = builder.Configuration.GetValue<string>("KEYVAULTURI");
+Exception? potentialException = null;
+string? messagePotentialException = null;
 if (string.IsNullOrEmpty(keyVaultUri))
     dbConnectionString = builder.Configuration.GetConnectionString("postgresDB");
 else
@@ -76,6 +78,8 @@ else
     }
     catch (Exception ex)
     {
+        potentialException = ex;
+        messagePotentialException = "Exception while constructing dbConnectionString";
         Console.WriteLine("Exception while constructing dbConnectionString");
         Console.WriteLine(ex);
         dbConnectionString = builder.Configuration.GetConnectionString("postgresDB");
@@ -99,7 +103,6 @@ builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceO
 {
     ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"],
 });
-
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<PreComHub>();
 builder.Services.AddSingleton<RefreshHub>();
@@ -167,6 +170,11 @@ if (!runningInContainers)
 #endif
 
 var app = builder.Build();
+app.Logger.LogInformation("Starting app oefenrooster");
+if (potentialException is not null)
+{
+    app.Logger.LogError(potentialException, "Found except: {messagePotentialException}", messagePotentialException);
+}
 app.UseResponseCompression();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
