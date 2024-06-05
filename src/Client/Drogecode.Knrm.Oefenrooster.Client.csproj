@@ -73,6 +73,10 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>CopyToClipboard.nl-NL.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Pages\PreCom\ForwardList.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ForwardList.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -80,6 +84,11 @@
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>CopyToClipboard.nl-NL.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Pages\PreCom\ForwardList.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ForwardList.nl-NL.resx</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 

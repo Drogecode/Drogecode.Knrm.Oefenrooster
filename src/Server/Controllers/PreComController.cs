@@ -153,13 +153,13 @@ public class PreComController : ControllerBase
     {
         try
         {
-            var ip = HttpContext.GetServerVariable("HTTP_X_FORWARDED_FOR");
+            var ip = Request.HttpContext.GetServerVariable("HTTP_X_FORWARDED_FOR");
             if (!string.IsNullOrWhiteSpace(ip)) return "xf;" + ip;
-            ip = HttpContext.GetServerVariable("REMOTE_HOST");
+            ip = Request.HttpContext.GetServerVariable("REMOTE_HOST");
             if (!string.IsNullOrWhiteSpace(ip)) return "rh;" + ip;
-            ip = HttpContext.GetServerVariable("REMOTE_ADDR");
+            ip = Request.HttpContext.GetServerVariable("REMOTE_ADDR");
             if (!string.IsNullOrWhiteSpace(ip)) return "ra;" + ip;
-            ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+            ip = Request.HttpContext.Connection.RemoteIpAddress?.ToString();
             if (!string.IsNullOrWhiteSpace(ip)) return "ri;" + ip;
             return "No ip";
         }

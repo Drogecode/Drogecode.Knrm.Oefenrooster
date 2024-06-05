@@ -195,4 +195,7 @@
   <data name="Loading failed try again later" xml:space="preserve">
     <value>Het is niet gelukt om te laden, probeer het later nogmaals.</value>
   </data>
+  <data name="Add" xml:space="preserve">
+    <value>Toevoegen</value>
+  </data>
 </root>
