@@ -135,4 +135,7 @@
   <data name="Past url here" xml:space="preserve">
     <value>Copieer url hier</value>
   </data>
+  <data name="Forward webhooks" xml:space="preserve">
+    <value>Stuur webhook door naar andre sites</value>
+  </data>
 </root>

@@ -18,21 +18,24 @@ public class PreComController : ControllerBase
     private readonly ILogger<PreComController> _logger;
     private readonly IPreComService _preComService;
     private readonly PreComHub _preComHub;
+    private readonly IHttpClientFactory _clientFactory;
 
     public PreComController(
         ILogger<PreComController> logger,
         IPreComService preComService,
-        PreComHub preComHub)
+        PreComHub preComHub,
+        IHttpClientFactory clientFactory)
     {
         _logger = logger;
         _preComService = preComService;
         _preComHub = preComHub;
+        _clientFactory = clientFactory;
     }
 
     [HttpPost]
     [AllowAnonymous]
     [Route("web-hook/{customerId:guid}/{userId:guid}")]
-    public async Task<IActionResult> WebHook(Guid customerId, Guid userId, [FromBody] object body, bool sendToHub = true)
+    public async Task<IActionResult> WebHook(Guid customerId, Guid userId, [FromBody] object body, bool sendToHub = true, CancellationToken clt = default)
     {
         try
         {
@@ -44,7 +47,26 @@ public class PreComController : ControllerBase
                 _preComService.WriteAlertToDb(userId, customerId, timestamp, alert, priority, JsonSerializer.Serialize(body), ip);
 
                 if (sendToHub)
+                {
                     await _preComHub.SendMessage(userId, "PreCom", alert);
+                    var forwards = await _preComService.GetAllForwards(30, 0, userId, customerId, clt);
+                    if (forwards?.PreComForwards?.Any() == true)
+                    {
+                        var client = _clientFactory.CreateClient();
+                        foreach (var forward in forwards.PreComForwards)
+                        {
+                            if (Uri.IsWellFormedUriString(forward.ForwardUrl, UriKind.Absolute))
+                            {
+                                await client.PostAsJsonAsync(forward.ForwardUrl, body, clt);
+                                _logger.LogInformation("Forwarded request to `{Uri}`", forward.ForwardUrl.Replace(Environment.NewLine, ""));
+                            }
+                            else
+                            {
+                                _logger.LogWarning("Forward uri `{Uri}` not correct formatted", forward.ForwardUrl?.Replace(Environment.NewLine, ""));
+                            }
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {

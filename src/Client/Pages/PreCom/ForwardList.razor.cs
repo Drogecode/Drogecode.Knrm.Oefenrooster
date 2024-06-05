@@ -57,7 +57,10 @@ public sealed partial class ForwardList : IDisposable
         bool success = false;
         if (item.CreatedOn is null)
         {
-            success = (await PreComClient.PutForwardAsync(item)).Success;
+            if (_forwards?.TotalCount < 5)
+            {
+                success = (await PreComClient.PutForwardAsync(item)).Success;
+            }
         }
         else
         {

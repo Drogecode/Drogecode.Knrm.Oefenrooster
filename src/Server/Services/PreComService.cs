@@ -111,7 +111,12 @@ public class PreComService : IPreComService
     {
         var sw = Stopwatch.StartNew();
         var result = new PutPreComForwardResponse();
-
+        if (_database.PreComForwards.Count(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null) > 5)
+        {
+            sw.Stop();
+            result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+            return result;
+        }
         forward.Id = Guid.NewGuid();
         forward.CreatedOn = DateTime.UtcNow;
         forward.CreatedBy = userId;
