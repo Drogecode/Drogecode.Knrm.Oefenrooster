@@ -21,6 +21,7 @@ public class Startup
 
         services.AddScoped<IDateTimeService, DateTimeServiceMock>();
 
+        services.AddHttpClient();
         services.AddScoped<IDayItemService, DayItemService>();
         services.AddScoped<IMonthItemService, MonthItemService>();
         services.AddScoped<IAuditService, AuditService>();
