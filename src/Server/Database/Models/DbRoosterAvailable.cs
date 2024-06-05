@@ -13,7 +13,7 @@ public class DbRoosterAvailable
     public Guid? UserFunctionId { get; set; }
     public Guid? VehicleId { get; set; }
     public Guid? LinkExchangeId { get; set; }
-    public string? CalendarEventId { get; set; }
+    [StringLength(200)] public string? CalendarEventId { get; set; }
     public DateTime Date { get; set; }
     public Availability? Available { get; set; }
     public AvailabilitySetBy SetBy { get; set; }

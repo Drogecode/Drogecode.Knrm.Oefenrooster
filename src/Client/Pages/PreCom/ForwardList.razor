@@ -1,0 +1,37 @@
+﻿@page "/precom/forward-list"
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom
+@if (_forwards is not null)
+{
+    <MudDataGrid T="PreComForward" Items="_forwards.PreComForwards" Striped="true" Hover="true" ReadOnly="false" EditTrigger="@DataGridEditTrigger.Manual"
+                 StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges">
+        <Columns>
+            <PropertyColumn Property="x => x.CreatedOn" Title="@L["Date"]" IsEditable="false">
+                <CellTemplate>
+                    <DateToString DateTimeUtc="context.Item.CreatedOn" ShowDate="true" ShowTime="true"/>
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.ForwardUrl" Title="@L["ForwardUrl"]"/>
+            <TemplateColumn CellClass="d-flex justify-end">
+                <CellTemplate>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+    @if (_forwards.TotalCount < 5)
+    {
+        <MudButton OnClick="@(() => _forwards.PreComForwards.Add(new PreComForward()))">@LApp["Add"]</MudButton>
+    }
+
+    @if (_skip > 0 || _forwards.TotalCount > (_count + _skip))
+    {
+        <MudPagination Disabled="_busy" ShowFirstButton="true" ShowLastButton="true" MiddleCount="5" Count="@(Convert.ToInt32(Math.Ceiling((double)_forwards.TotalCount / (double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4"/>
+    }
+}
+else
+{
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+}

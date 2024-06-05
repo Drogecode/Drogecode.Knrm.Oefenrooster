@@ -18,5 +18,6 @@ public class DbPreComAlert
     public DateTime? SendTime { get; set; }
     public int? Priority { get; set; }
 
+    public DbUsers? User { get; set; }
     public DbCustomers? Customer { get; set; }
 }

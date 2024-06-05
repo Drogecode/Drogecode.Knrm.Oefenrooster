@@ -135,4 +135,7 @@
   <data name="Past url here" xml:space="preserve">
     <value>Past url here</value>
   </data>
+  <data name="Forward webhooks" xml:space="preserve">
+    <value>Forward webhooks</value>
+  </data>
 </root>

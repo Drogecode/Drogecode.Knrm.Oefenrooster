@@ -8,7 +8,7 @@ public class DbUserFunctions
     [Key] public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
     public Guid? RoleId { get; set; }
-    public string Name { get; set; }
+    [StringLength(50)]  public string Name { get; set; }
     public int Order { get; set; }
     public int TrainingTarget { get; set; }
     public bool TrainingOnly { get; set; }

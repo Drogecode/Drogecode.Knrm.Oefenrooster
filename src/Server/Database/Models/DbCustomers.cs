@@ -39,6 +39,7 @@ public class DbCustomers
     public ICollection<DbAudit>? Audits { get; set; }
     public ICollection<DbVehicles>? Vehicles { get; set; }
     public ICollection<DbLinkVehicleTraining>? LinkVehicleTrainings { get; set; }
+    public ICollection<DbPreComForward>? PreComForwards { get; set; }
     public ICollection<DbPreComAlert>? PreComAlerts { get; set; }
     public ICollection<DbLinkExchange>? LinkExchanges { get; set; }
 }

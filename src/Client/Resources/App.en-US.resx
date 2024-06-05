@@ -195,4 +195,7 @@
   <data name="Loading failed try again later" xml:space="preserve">
     <value>Loading failed, try again later.</value>
   </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
 </root>

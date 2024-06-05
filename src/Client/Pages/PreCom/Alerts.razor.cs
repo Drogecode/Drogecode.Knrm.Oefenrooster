@@ -6,6 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
 using System.Text.Json;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.PreCom;
 
@@ -15,17 +16,25 @@ public sealed partial class Alerts : IDisposable
     [Inject] private PreComRepository PreComRepository { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private UserRepository UserRepository { get; set; } = default!;
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     private CancellationTokenSource _cls = new();
     private MultiplePreComAlertsResponse? _alerts;
     private DrogeUser? _user;
+    private bool _isTaco;
     private bool _showHowTo;
     private int _currentPage = 1;
     private int _count = 30;
     private bool _bussy;
-    protected override async Task OnInitializedAsync()
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _alerts = await PreComRepository.GetAll(_count, 0, _cls.Token);
-        _user = await UserRepository.GetCurrentUserAsync(_cls.Token);
+        if (firstRender)
+        {
+            _alerts = await PreComRepository.GetAllAlerts(_count, 0, _cls.Token);
+            _user = await UserRepository.GetCurrentUserAsync(_cls.Token);
+            _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
+            StateHasChanged();
+        }
     }
 
     public static string JsonPrettify(string? json)
@@ -46,7 +55,7 @@ public sealed partial class Alerts : IDisposable
         _currentPage = nextPage;
         if (nextPage <= 0) return;
         var skip = (nextPage - 1) * _count;
-        _alerts = await PreComRepository.GetAll(_count, skip, _cls.Token);
+        _alerts = await PreComRepository.GetAllAlerts(_count, skip, _cls.Token);
         _bussy = false;
         StateHasChanged();
     }
