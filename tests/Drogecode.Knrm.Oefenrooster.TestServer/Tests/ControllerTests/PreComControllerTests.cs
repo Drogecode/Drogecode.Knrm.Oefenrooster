@@ -135,7 +135,7 @@ public class PreComControllerTests : BaseTest
         Assert.NotNull(result.Value?.NewId);
         result.Value.NewId.Should().NotBe(Guid.Empty);
 
-        var allResult = await PreComController.AllForwards();
+        var allResult = await PreComController.AllForwards(0, 30);
         Assert.NotNull(allResult.Value?.PreComForwards);
         allResult.Value.PreComForwards.Should().NotBeEmpty();
         allResult.Value.PreComForwards.Should().Contain(x => x.Id == result.Value.NewId);
@@ -160,7 +160,7 @@ public class PreComControllerTests : BaseTest
         Assert.NotNull(patchResult.Value?.Success);
         Assert.True(patchResult.Value.Success);
 
-        var allResult = await PreComController.AllForwards();
+        var allResult = await PreComController.AllForwards(0, 30);
         Assert.NotNull(allResult.Value?.PreComForwards);
         allResult.Value.PreComForwards.Should().NotBeEmpty();
         allResult.Value.PreComForwards.Should().Contain(x => x.Id == result.Value.NewId && x.ForwardUrl == PATCHED);

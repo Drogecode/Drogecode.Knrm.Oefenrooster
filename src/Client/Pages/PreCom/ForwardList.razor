@@ -1,0 +1,18 @@
+﻿@page "/precom/forward-list"
+<h3>ForwardList</h3>
+@if (_forwards is not null)
+{
+    <MudDataGrid Items="_forwards.PreComForwards" Striped="true" Hover="true">
+        <Columns>
+            <PropertyColumn Property="x => x.CreatedOn" Title="@L["Date"]">
+                <CellTemplate>
+                    <DateToString DateTimeUtc="context.Item.CreatedOn" ShowDate="true" ShowTime="true" />
+                </CellTemplate>
+            </PropertyColumn>
+        </Columns>
+    </MudDataGrid>
+    @if (_skip > 0 || _forwards.TotalCount > (_count + _skip))
+    {
+        <MudPagination Disabled="_busy" ShowFirstButton="true" ShowLastButton="true" MiddleCount="5" Count="@(Convert.ToInt32(Math.Ceiling((double)_forwards.TotalCount/(double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4" />
+    }
+}

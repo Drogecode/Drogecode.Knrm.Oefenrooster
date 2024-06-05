@@ -113,6 +113,8 @@ public class PreComService : IPreComService
         var result = new PutPreComForwardResponse();
 
         forward.Id = Guid.NewGuid();
+        forward.CreatedOn = DateTime.UtcNow;
+        forward.CreatedBy = userId;
         if (!string.IsNullOrEmpty(forward.ForwardUrl))
         {
             await _database.PreComForwards.AddAsync(forward.ToDb(customerId, userId), clt);
@@ -134,7 +136,7 @@ public class PreComService : IPreComService
         var sw = Stopwatch.StartNew();
         var result = new PatchPreComForwardResponse();
 
-        var dbForward = await _database.PreComForwards.FirstOrDefaultAsync(x => x.Id == forward.Id && x.CustomerId == customerId && x.UserId == userId, clt);
+        var dbForward = await _database.PreComForwards.FirstOrDefaultAsync(x => x.Id == forward.Id && x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null, clt);
         if (dbForward is not null && !string.IsNullOrEmpty(forward.ForwardUrl))
         {
             dbForward.ForwardUrl = forward.ForwardUrl;
@@ -147,16 +149,16 @@ public class PreComService : IPreComService
         return result;
     }
 
-    public async Task<MultiplePreComForwardsResponse> GetAllForwards(Guid userId, Guid customerId, CancellationToken clt)
+    public async Task<MultiplePreComForwardsResponse> GetAllForwards(int take, int skip, Guid userId, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new MultiplePreComForwardsResponse
         {
             PreComForwards = new List<PreComForward>()
         };
-        var dbForwards = await _database.PreComForwards.Where(x => x.CustomerId == customerId && x.UserId == userId).ToListAsync(clt);
-        result.TotalCount = dbForwards.Count;
-        foreach (var forward in dbForwards)
+        var dbForwards = _database.PreComForwards.Where(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null);
+        result.TotalCount = dbForwards.Count();
+        foreach (var forward in await dbForwards.OrderBy(x=>x.CreatedOn).Skip(skip).Take(take).ToListAsync(clt))
         {
             result.PreComForwards.Add(forward.ToPreComForward());
         }

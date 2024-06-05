@@ -11,4 +11,4 @@
 
 # Update tools:
 
-1. dotnet tool update --global dotnet-ef --version 8.0.5
+1. dotnet tool update --global dotnet-ef --version 8.0.6

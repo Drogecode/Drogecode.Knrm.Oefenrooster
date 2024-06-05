@@ -203,12 +203,34 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/PreCom/forwards/{take}/{skip}": {
       "get": {
         "tags": [
           "PreCom"
         ],
         "operationId": "AllForwards",
+        "parameters": [
+          {
+            "name": "take",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -344,6 +366,14 @@
           "forwardUrl": {
             "type": "string",
             "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false

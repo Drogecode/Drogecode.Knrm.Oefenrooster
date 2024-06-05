@@ -13,6 +13,8 @@ public static class PreComMapper
             ForwardUrl = forward.ForwardUrl ?? throw new NullReferenceException("ForwardUrl is empty"),
             CustomerId = customerId,
             UserId = userId,
+            CreatedOn = forward.CreatedOn,
+            CreatedBy = forward.CreatedBy,
         };
     }
     public static PreComForward ToPreComForward(this DbPreComForward dbForward)
@@ -21,6 +23,8 @@ public static class PreComMapper
         {
             Id = dbForward.Id,
             ForwardUrl = dbForward.ForwardUrl,
+            CreatedOn = dbForward.CreatedOn,
+            CreatedBy = dbForward.CreatedBy,
         };
     }
 }

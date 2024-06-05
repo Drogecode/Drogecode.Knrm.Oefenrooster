@@ -129,14 +129,14 @@ public class PreComController : ControllerBase
     }
 
     [HttpGet]
-    [Route("forwards")]
-    public async Task<ActionResult<MultiplePreComForwardsResponse>> AllForwards(CancellationToken clt = default)
+    [Route("forwards/{take:int}/{skip:int}")]
+    public async Task<ActionResult<MultiplePreComForwardsResponse>> AllForwards(int take, int skip, CancellationToken clt = default)
     {
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var result = await _preComService.GetAllForwards(userId, customerId, clt);
+            var result = await _preComService.GetAllForwards(take, skip, userId, customerId, clt);
             return result;
         }
         catch (Exception ex)
