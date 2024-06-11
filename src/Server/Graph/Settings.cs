@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Helpers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Graph.Models.ExternalConnectors;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Graph;
@@ -14,9 +15,16 @@ public class Settings
         return new Settings
         {
             ClientId = configuration.GetValue<string>("AzureAd:ClientId"),
-            ClientSecret = configuration.GetValue<string>("AzureAd:ClientSecret"),
+            ClientSecret = InternalGetClientSecret(configuration),
             TenantId = configuration.GetValue<string>("AzureAd:TenantId")
         };
+    }
+
+    private static string InternalGetClientSecret(IConfiguration configuration)
+    {
+        var fromKeyVault = KeyVaultHelper.GetSecret("ClientSecret");
+        if (fromKeyVault is not null) return fromKeyVault.Value;
+        return configuration.GetValue<string>("AzureAd:ClientSecret") ?? throw new DrogeCodeConfigurationException("no secret found for azure login");
     }
 
     public static Settings LoadSettingsLikeThis()
