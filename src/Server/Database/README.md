@@ -7,8 +7,8 @@
 
 # Revert
 
-1. dotnet ef database update "20240406105742_UserOnVersion"
+1. dotnet ef database update "20240515162244_dblinkforlinktrainingvehicle"
 
 # Update tools:
 
-1. dotnet tool update --global dotnet-ef --version 8.0.5
+1. dotnet tool update --global dotnet-ef --version 8.0.6

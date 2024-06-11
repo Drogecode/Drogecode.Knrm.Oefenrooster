@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers.JsonConverters;
+using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -103,6 +104,73 @@ public class PreComService : IPreComService
         dbPreComAlert.Priority = alert.Priority;
         dbPreComAlert.SendTime = alert.SendTime;
         _database.PreComAlerts.Update(dbPreComAlert);
-       return await _database.SaveChangesAsync() > 0;
+        return await _database.SaveChangesAsync() > 0;
+    }
+
+    public async Task<PutPreComForwardResponse> PutForward(PreComForward forward, Guid customerId, Guid userId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new PutPreComForwardResponse();
+        if (_database.PreComForwards.Count(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null) > 5)
+        {
+            sw.Stop();
+            result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+            return result;
+        }
+        forward.Id = Guid.NewGuid();
+        forward.CreatedOn = DateTime.UtcNow;
+        forward.CreatedBy = userId;
+        if (!string.IsNullOrEmpty(forward.ForwardUrl))
+        {
+            await _database.PreComForwards.AddAsync(forward.ToDb(customerId, userId), clt);
+            result.Success = await _database.SaveChangesAsync(clt) > 0;
+        }
+
+        if (result.Success)
+        {
+            result.NewId = forward.Id;
+        }
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<PatchPreComForwardResponse> PatchForward(PreComForward forward, Guid customerId, Guid userId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new PatchPreComForwardResponse();
+
+        var dbForward = await _database.PreComForwards.FirstOrDefaultAsync(x => x.Id == forward.Id && x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null, clt);
+        if (dbForward is not null && !string.IsNullOrEmpty(forward.ForwardUrl))
+        {
+            dbForward.ForwardUrl = forward.ForwardUrl;
+            _database.Update(dbForward);
+            result.Success = await _database.SaveChangesAsync(clt) > 0;
+        }
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<MultiplePreComForwardsResponse> GetAllForwards(int take, int skip, Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new MultiplePreComForwardsResponse
+        {
+            PreComForwards = new List<PreComForward>()
+        };
+        var dbForwards = _database.PreComForwards.Where(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null);
+        result.TotalCount = dbForwards.Count();
+        foreach (var forward in await dbForwards.OrderBy(x=>x.CreatedOn).Skip(skip).Take(take).ToListAsync(clt))
+        {
+            result.PreComForwards.Add(forward.ToPreComForward());
+        }
+
+        result.Success = true;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
     }
 }

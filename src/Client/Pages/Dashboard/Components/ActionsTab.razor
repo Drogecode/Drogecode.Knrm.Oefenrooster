@@ -42,10 +42,10 @@
                                 @($"{L["Commencement"]} - {context.Item.Commencement.ToNiceString(LDateToString, showDate: context.Item.Start.Date != context.Item.Commencement.Date)}") - @((context.Item.Commencement - context.Item.Start).TotalMinutes) @L["minutes"]
                             </MudListItem>
                             <MudListItem>
-                                @($"{L["Departure"]} - {context.Item.Departure.ToNiceString(LDateToString, showDate: context.Item.Commencement.Date != context.Item.Departure.Date)}") - @((context.Item.Departure - context.Item.Start).TotalMinutes) @L["minutes"]
+                                @($"{L["Departure"]} - {context.Item.Departure.ToNiceString(LDateToString, showDate: context.Item.Commencement.ToLocalTime().Date != context.Item.Departure.ToLocalTime().Date)}") - @((context.Item.Departure - context.Item.Start).TotalMinutes) @L["minutes"]
                             </MudListItem>
                             <MudListItem>
-                                @($"{L["End"]} - {context.Item.End.ToNiceString(LDateToString, showDate: context.Item.Departure.Date != context.Item.End.Date)}") - @((context.Item.End - context.Item.Start).TotalMinutes) @L["minutes"]
+                                @($"{L["End"]} - {context.Item.End.ToNiceString(LDateToString, showDate: context.Item.Departure.ToLocalTime().Date != context.Item.End.ToLocalTime().Date)}") - @((context.Item.End - context.Item.Start).TotalMinutes) @L["minutes"]
                             </MudListItem>
                         </MudList>
                         <MudText Typo="Typo.h6">@L["Miscellaneous"]</MudText>

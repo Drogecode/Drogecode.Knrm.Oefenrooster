@@ -15,6 +15,7 @@ public sealed partial class Theming : IDisposable
     [Inject] private ILocalStorageService LocalStorage { get; set; } = default!;
     [Inject, NotNull] private ICustomerSettingsClient? CustomerSettingsClient { get; set; }
     [Inject, NotNull] private IJSRuntime? JsRuntime { get; set; }
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter, EditorRequired] public DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter, EditorRequired] public MudThemeProvider MudThemeProvider { get; set; } = default!;
     [Parameter] public EventCallback<bool> IsDarkModeChanged { get; set; }
@@ -35,7 +36,6 @@ public sealed partial class Theming : IDisposable
         }
     }
 
-    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     private DarkLightMode _darkModeToggle;
     private LocalUserSettings? _localUserSettings;
