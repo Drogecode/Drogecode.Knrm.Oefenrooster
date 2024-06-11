@@ -214,7 +214,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Compo
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ernst.
+        ///   Looks up a localized string similar to Prioriteit.
         /// </summary>
         internal static string Severity {
             get {

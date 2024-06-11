@@ -22,7 +22,7 @@
         <value>Omschrijving</value>
     </data>
     <data name="Severity" xml:space="preserve">
-        <value>Ernst</value>
+        <value>Prioriteit</value>
     </data>
     <data name="Normal" xml:space="preserve">
         <value>Normaal</value>

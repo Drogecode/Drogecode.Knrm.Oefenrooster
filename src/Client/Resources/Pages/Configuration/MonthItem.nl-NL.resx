@@ -138,4 +138,7 @@
   <data name="Add new month item" xml:space="preserve">
     <value>Maak nieuwe maand banner aan</value>
   </data>
+  <data name="Include expired" xml:space="preserve">
+    <value>Inclusief verleden tijd</value>
+  </data>
 </root>
