@@ -34,7 +34,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="MudBlazor" Version="7.0.0-preview.4" />
+		<PackageReference Include="MudBlazor" Version="7.0.0-rc.1" />
 		<PackageReference Include="MudBlazor.Markdown" Version="1.0.2" />
 	</ItemGroup>
 
