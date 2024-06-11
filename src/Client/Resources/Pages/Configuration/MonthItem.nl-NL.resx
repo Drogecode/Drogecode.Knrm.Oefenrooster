@@ -135,4 +135,7 @@
   <data name="Year" xml:space="preserve">
     <value>Jaar</value>
   </data>
+  <data name="Add new month item" xml:space="preserve">
+    <value>Maak nieuwe maand banner aan</value>
+  </data>
 </root>

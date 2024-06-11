@@ -1,11 +1,13 @@
 ﻿@page "/configuration/month-item"
-@attribute [Authorize(Roles = $"{AccessesNames.AUTH_scheduler_monthitem},{AccessesNames.AUTH_Taco}")]
+@attribute [Authorize(Roles = $"{AccessesNames.AUTH_scheduler_monthitem}")]
 <h3>MonthItem</h3>
 
 <PageTitle>@L["Month banner"]</PageTitle>
 <MudPaper Elevation="0" Class="p-2">
     @if (_monthItems is not null)
     {
+        <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{OpenMonthItemDialog(null, true);}">@L["Add new month item"]</MudButton>
+        <MudSwitchM3 T="bool"  Value="@_includeExpired" ValueChanged="@(async (isChecked) => await IncludeExpiredChanged(isChecked))">@L["include expired"]</MudSwitchM3>
         <MudDataGrid Items="@_monthItems.MonthItems"
                      ReadOnly="true" EditMode="@DataGridEditMode.Cell">
             <Columns>

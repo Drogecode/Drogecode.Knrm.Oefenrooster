@@ -1,6 +1,4 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Helpers;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Graph.Models.ExternalConnectors;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Graph;
 

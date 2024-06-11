@@ -72,6 +72,7 @@ public class MonthItemController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = AccessesNames.AUTH_scheduler_monthitem)]
     [Route("all/{take:int}/{skip:int}/{includeExpired:bool}")]
     public async Task<ActionResult<GetMultipleMonthItemResponse>> GetAllItems(int take, int skip, bool includeExpired, CancellationToken clt = default)
     {
@@ -92,6 +93,7 @@ public class MonthItemController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = AccessesNames.AUTH_scheduler_monthitem)]
     [Route("")]
     public async Task<ActionResult<PutMonthItemResponse>> PutItem([FromBody] RoosterItemMonth roosterItemMonth, CancellationToken clt = default)
     {
@@ -113,6 +115,7 @@ public class MonthItemController : ControllerBase
     }
 
     [HttpPatch]
+    [Authorize(Roles = AccessesNames.AUTH_scheduler_monthitem)]
     [Route("")]
     public async Task<ActionResult<PatchMonthItemResponse>> PatchItem([FromBody] RoosterItemMonth roosterItemMonth, CancellationToken clt = default)
     {

@@ -2,8 +2,29 @@
     <DialogContent>
         @if (MonthItem is not null)
         {
-            <MudNumericField T="short?" @bind-Value="MonthItem.Year" />
-            <MudNumericField T="short" @bind-Value="MonthItem.Month" />
+            <MudTextField @bind-Value="MonthItem.Text" Label="@L["Description"]"/>
+            <MudSelect T="Severity" Variant="Variant.Text" @bind-Value="MonthItem.Severity" Label="@L["Severity"]">
+                <MudSelectItem T="Severity" Value="Severity.Normal">@L["Normal"]</MudSelectItem>
+                <MudSelectItem T="Severity" Value="Severity.Info">@L["Info"]</MudSelectItem>
+                <MudSelectItem T="Severity" Value="Severity.Success">@L["Success"]</MudSelectItem>
+                <MudSelectItem T="Severity" Value="Severity.Warning">@L["Warning"]</MudSelectItem>
+                <MudSelectItem T="Severity" Value="Severity.Error">@L["Error"]</MudSelectItem>
+            </MudSelect>
+            <MudNumericField T="short?" @bind-Value="MonthItem.Year" Label="@L["Year"]"/>
+            <MudSelect T="short" Variant="Variant.Text" @bind-Value="MonthItem.Month" Label="@L["Month"]">
+                <MudSelectItem T="short" Value="1">@L["January"]</MudSelectItem>
+                <MudSelectItem T="short" Value="2">@L["February"]</MudSelectItem>
+                <MudSelectItem T="short" Value="3">@L["March"]</MudSelectItem>
+                <MudSelectItem T="short" Value="4">@L["April"]</MudSelectItem>
+                <MudSelectItem T="short" Value="5">@L["May"]</MudSelectItem>
+                <MudSelectItem T="short" Value="6">@L["June"]</MudSelectItem>
+                <MudSelectItem T="short" Value="7">@L["July"]</MudSelectItem>
+                <MudSelectItem T="short" Value="8">@L["August"]</MudSelectItem>
+                <MudSelectItem T="short" Value="9">@L["September"]</MudSelectItem>
+                <MudSelectItem T="short" Value="10">@L["October"]</MudSelectItem>
+                <MudSelectItem T="short" Value="11">@L["November"]</MudSelectItem>
+                <MudSelectItem T="short" Value="12">@L["December"]</MudSelectItem>
+            </MudSelect>
         }
     </DialogContent>
     <DialogActions>

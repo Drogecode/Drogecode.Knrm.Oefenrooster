@@ -16,9 +16,6 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Diagnostics;
 using System.Text;
-using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
-using Azure.Core;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
