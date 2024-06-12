@@ -25,6 +25,7 @@
                 <MudSelectItem T="short" Value="11">@L["November"]</MudSelectItem>
                 <MudSelectItem T="short" Value="12">@L["December"]</MudSelectItem>
             </MudSelect>
+            <MudNumericField T="int" @bind-Value="MonthItem.Order" Label="@L["Order"]"/>
         }
     </DialogContent>
     <DialogActions>

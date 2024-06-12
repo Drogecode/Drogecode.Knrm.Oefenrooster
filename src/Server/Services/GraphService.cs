@@ -128,6 +128,7 @@ public class GraphService : IGraphService
             else if (dbAction.LastUpdated != action.LastUpdated)
             {
                 dbAction.UpdateDbDefaultSchedule(action, customerId);
+                _database.ReportActions.Update(dbAction);
                 saveCount++;
             }
 

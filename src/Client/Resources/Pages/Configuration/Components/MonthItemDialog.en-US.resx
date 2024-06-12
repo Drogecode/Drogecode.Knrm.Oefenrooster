@@ -81,4 +81,7 @@
     <data name="December" xml:space="preserve">
         <value>December</value>
     </data>
+    <data name="Order" xml:space="preserve">
+        <value>Order</value>
+    </data>
 </root>

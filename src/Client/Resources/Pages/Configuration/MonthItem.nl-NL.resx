@@ -141,4 +141,7 @@
   <data name="Include expired" xml:space="preserve">
     <value>Inclusief verleden tijd</value>
   </data>
+  <data name="Order" xml:space="preserve">
+    <value>Volgorde</value>
+  </data>
 </root>

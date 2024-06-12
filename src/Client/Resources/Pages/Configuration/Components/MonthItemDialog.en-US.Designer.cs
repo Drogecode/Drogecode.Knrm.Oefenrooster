@@ -205,6 +205,15 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Compo
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Order.
+        /// </summary>
+        internal static string Order {
+            get {
+                return ResourceManager.GetString("Order", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to September.
         /// </summary>
         internal static string September {

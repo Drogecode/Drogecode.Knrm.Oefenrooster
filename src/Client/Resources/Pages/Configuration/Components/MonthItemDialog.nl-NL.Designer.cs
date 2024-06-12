@@ -61,7 +61,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Compo
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to April.
+        ///   Looks up a localized string similar to april.
         /// </summary>
         internal static string April {
             get {
@@ -70,7 +70,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Compo
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Augustus.
+        ///   Looks up a localized string similar to augustus.
         /// </summary>
         internal static string August {
             get {
@@ -79,7 +79,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Compo
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to December.
+        ///   Looks up a localized string similar to december.
         /// </summary>
         internal static string December {
             get {
@@ -106,7 +106,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Compo
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Februari.
+        ///   Looks up a localized string similar to februari.
         /// </summary>
         internal static string February {
             get {
@@ -124,7 +124,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Compo
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Januari.
+        ///   Looks up a localized string similar to januari.
         /// </summary>
         internal static string January {
             get {
@@ -133,7 +133,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Compo
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Juli.
+        ///   Looks up a localized string similar to juli.
         /// </summary>
         internal static string July {
             get {
@@ -142,7 +142,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Compo
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Juni.
+        ///   Looks up a localized string similar to juni.
         /// </summary>
         internal static string June {
             get {
@@ -151,7 +151,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Compo
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Maart.
+        ///   Looks up a localized string similar to maart.
         /// </summary>
         internal static string March {
             get {
@@ -160,7 +160,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Compo
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mei.
+        ///   Looks up a localized string similar to mei.
         /// </summary>
         internal static string May {
             get {
@@ -187,7 +187,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Compo
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to November.
+        ///   Looks up a localized string similar to november.
         /// </summary>
         internal static string November {
             get {
@@ -205,7 +205,16 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Compo
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to September.
+        ///   Looks up a localized string similar to Volgorde.
+        /// </summary>
+        internal static string Order {
+            get {
+                return ResourceManager.GetString("Order", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to september.
         /// </summary>
         internal static string September {
             get {
