@@ -43,6 +43,12 @@ public class LocalStorageExpireService : ILocalStorageExpireService
                 {
                     expiryStorageModel = JsonSerializer.Deserialize<ExpiryStorageModel<object>>(package.Value);
                     if (expiryStorageModel == null) continue;
+                    if (expiryStorageModel.Ttl == 0)
+                    {
+                        // ToDo: Remove this log if issue is fixed.
+                        DebugHelper.WriteLine($"Would have deleted {package.Key}, expired {new DateTime(expiryStorageModel.Ttl)}");
+                        continue;
+                    }
                 }
                 catch
                 {
