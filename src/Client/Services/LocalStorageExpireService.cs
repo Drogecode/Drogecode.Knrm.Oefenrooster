@@ -28,7 +28,7 @@ public class LocalStorageExpireService : ILocalStorageExpireService
             var ttl = DateTime.UtcNow.Ticks;
             for (var i = 0; i < 60; i++)
             {
-                await Task.Delay(1000); //Wait 60 seconds before starting to delete, do not slowdown page loading for cleanup.
+                await Task.Delay(1000); //Wait 60 seconds before starting to delete, do not slow down page loading for cleanup.
             }
             if (_accessorJsRef.IsValueCreated is false)
             {
@@ -42,16 +42,11 @@ public class LocalStorageExpireService : ILocalStorageExpireService
                 try
                 {
                     expiryStorageModel = JsonSerializer.Deserialize<ExpiryStorageModel<object>>(package.Value);
-                    if (expiryStorageModel == null) continue;
-                    if (expiryStorageModel.Ttl == 0)
-                    {
-                        // ToDo: Remove this log if issue is fixed.
-                        DebugHelper.WriteLine($"Would have deleted {package.Key}, expired {new DateTime(expiryStorageModel.Ttl)}");
-                        continue;
-                    }
+                    if (expiryStorageModel == null || expiryStorageModel.Ttl == 0) continue;
                 }
-                catch
+                catch (Exception ex)
                 {
+                    DebugHelper.WriteLine(ex);
                     continue;
                 }
 
