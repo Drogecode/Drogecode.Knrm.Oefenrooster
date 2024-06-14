@@ -41,31 +41,30 @@
                                 <MudListItem>@user.Name - @user.Role</MudListItem>
                             }
                         </MudList>
-                        @if (_isTaco) /*Work in progress*/
-                        {
+                        @{
                             var differentStart = _trainingDifferentStart.Contains(context.Item?.Type ?? string.Empty);
                             var start = differentStart ? context.Item.Commencement : context.Item.Start;
-                            <MudText Typo="Typo.h6">@L["Times"]</MudText>
-                            <MudList>
-                                <MudListItem>
-                                    @($"{L["Start"]} - {start.ToNiceString(LDateToString)}")
-                                </MudListItem>
-                                @if (!differentStart)
-                                {
-                                    <MudListItem>
-                                        @($"{L["Commencement"]} - {context.Item.Commencement.ToNiceString(LDateToString, showDate: context.Item.Start.Date != context.Item.Commencement.Date)}") - @((context.Item.Commencement - start).TotalMinutes) @L["minutes"]
-                                    </MudListItem>
-                                }
-                                <MudListItem>
-                                    @($"{L["End"]} - {context.Item.End.ToNiceString(LDateToString, showDate: context.Item.Commencement.Date != context.Item.End.Date)}") - @((context.Item.End - start).TotalMinutes) @L["minutes"]
-                                </MudListItem>
-                            </MudList>
-                            <MudText Typo="Typo.h6">@L["Miscellaneous"]</MudText>
-                            <MudList>
-                                <MudListItem>@L["Boat"]: @context.Item.Boat</MudListItem>
-                                <MudListItem>@L["Type"]: @context.Item.Type</MudListItem>
-                            </MudList>
                         }
+                        <MudText Typo="Typo.h6">@L["Times"]</MudText>
+                        <MudList>
+                            <MudListItem>
+                                @($"{L["Start"]} - {start.ToNiceString(LDateToString)}")
+                            </MudListItem>
+                            @if (!differentStart)
+                            {
+                                <MudListItem>
+                                    @($"{L["Commencement"]} - {context.Item.Commencement.ToNiceString(LDateToString, showDate: context.Item.Start.Date != context.Item.Commencement.Date)}") - @((context.Item.Commencement - start).TotalMinutes) @L["minutes"]
+                                </MudListItem>
+                            }
+                            <MudListItem>
+                                @($"{L["End"]} - {context.Item.End.ToNiceString(LDateToString, showDate: context.Item.Commencement.Date != context.Item.End.Date)}") - @((context.Item.End - start).TotalMinutes) @L["minutes"]
+                            </MudListItem>
+                        </MudList>
+                        <MudText Typo="Typo.h6">@L["Miscellaneous"]</MudText>
+                        <MudList>
+                            <MudListItem>@L["Boat"]: @context.Item.Boat</MudListItem>
+                            <MudListItem>@L["Type"]: @context.Item.Type</MudListItem>
+                        </MudList>
                     </MudCardContent>
                 </MudCard>
             </ChildRowContent>

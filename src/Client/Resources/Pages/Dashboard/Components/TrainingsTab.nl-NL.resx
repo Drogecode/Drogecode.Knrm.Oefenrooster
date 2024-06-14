@@ -126,4 +126,19 @@
   <data name="Start" xml:space="preserve">
     <value>Vanaf</value>
   </data>
+  <data name="Commencement" xml:space="preserve">
+    <value>Uitvaren</value>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>Eind</value>
+  </data>
+  <data name="Miscellaneous" xml:space="preserve">
+    <value>Divers</value>
+  </data>
+  <data name="Boat" xml:space="preserve">
+    <value>Boot</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Soort</value>
+  </data>
 </root>

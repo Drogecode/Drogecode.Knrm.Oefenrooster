@@ -126,4 +126,19 @@
   <data name="Start" xml:space="preserve">
     <value>Start</value>
   </data>
+  <data name="Commencement" xml:space="preserve">
+    <value>Commencement</value>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="Miscellaneous" xml:space="preserve">
+    <value>Miscellaneous</value>
+  </data>
+  <data name="Boat" xml:space="preserve">
+    <value>Boat</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
 </root>
