@@ -96,6 +96,7 @@ public sealed partial class ScheduleCalendar : IDisposable
                 foreach (var dayItem in dayItems.DayItems.Where(x => x.DateStart is not null))
                 {
 
+                    var userDeleted = false;
                     if (dayItem.LinkedUsers?.FirstOrDefault()?.UserId is not null)
                     {
                         var user = Users?.FirstOrDefault(x => x.Id == dayItem.LinkedUsers.FirstOrDefault()!.UserId);
@@ -104,6 +105,11 @@ public sealed partial class ScheduleCalendar : IDisposable
                         {
                             dayItem.Text += ": " + user.Name;
                         }
+                        else
+                        {
+                            dayItem.Text += ": " + LApp["User not found or deleted"];
+                            userDeleted = true;
+                        }
                     }
                     _events.Add(new RoosterItemDayCalendarItem
                     {
@@ -111,6 +117,7 @@ public sealed partial class ScheduleCalendar : IDisposable
                         End = dayItem.DateEnd,
                         AllDay = dayItem.IsFullDay,
                         ItemDay = dayItem,
+                        UserDeleted = userDeleted,
                     });
                 }
             }

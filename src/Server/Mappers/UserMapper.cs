@@ -13,7 +13,7 @@ internal static class UserMapper
             Name = dbUsers.Name,
             Nr = dbUsers.Nr,
             Created = dbUsers.CreatedOn,
-            LastLogin = dbUsers.LastLogin,
+            LastLogin = includeLastLogin ? dbUsers.LastLogin : DateTime.MinValue,
             UserFunctionId = dbUsers.UserFunctionId,
             CustomerId = dbUsers.CustomerId,
             SyncedFromSharePoint = dbUsers.SyncedFromSharePoint,

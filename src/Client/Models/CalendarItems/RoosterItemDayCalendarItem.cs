@@ -6,4 +6,5 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
 public class RoosterItemDayCalendarItem : CalendarItem
 {
     public RoosterItemDay? ItemDay { get; set; }
+    public bool UserDeleted { get; set; }
 }

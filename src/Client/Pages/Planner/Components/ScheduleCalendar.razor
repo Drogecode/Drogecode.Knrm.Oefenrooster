@@ -22,13 +22,13 @@
                 }
                 else if (context is RoosterItemDayCalendarItem)
                 {
-                    var dayItem = ((RoosterItemDayCalendarItem)context).ItemDay;
-                    @if (dayItem is not null)
+                    var dayItem = ((RoosterItemDayCalendarItem)context);
+                    @if (dayItem.ItemDay is not null)
                     {
-                        var color = DayItemHelper.DayItemTypeColor(dayItem.Type);
-                        <div class="d-flex gap-1">
+                        var color = DayItemHelper.DayItemTypeColor(dayItem.ItemDay.Type);
+                        <div class="d-flex gap-1 @(dayItem.UserDeleted ? "text-red-600" : "")">
                             <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@color" Size="Size.Small"/>
-                            <span>@dayItem.Text</span>
+                            <span>@dayItem.ItemDay.Text</span>
                         </div>
                     }
                 }

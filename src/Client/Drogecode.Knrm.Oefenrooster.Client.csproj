@@ -85,6 +85,10 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>MonthItemDialog.en-US.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Pages\Planner\Components\ScheduleCalendar.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ScheduleCalendar.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -107,6 +111,11 @@
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>MonthItemDialog.en-US.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Pages\Planner\Components\ScheduleCalendar.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ScheduleCalendar.nl-NL.resx</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
