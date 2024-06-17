@@ -1,15 +1,9 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using Drogecode.Knrm.Oefenrooster.Server.Controllers.Obsolite;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.MappersTests;
 
@@ -46,7 +40,7 @@ public class RoosterTrainingMapperTests : BaseTest
             Name = name,
             RoosterAvailables = new List<DbRoosterAvailable>
             {
-                new DbRoosterAvailable
+                new()
                 {
                     Id = Guid.NewGuid(),
                     UserId = DefaultSettingsHelper.IdTaco,

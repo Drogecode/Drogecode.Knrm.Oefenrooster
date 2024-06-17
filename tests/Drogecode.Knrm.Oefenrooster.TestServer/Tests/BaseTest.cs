@@ -1,5 +1,4 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using Drogecode.Knrm.Oefenrooster.Server.Controllers.Obsolite;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
@@ -143,17 +142,33 @@ public class BaseTest : IAsyncLifetime
 
     public void SeedReportAction(DataContext dataContext)
     {
-        var start = DateTime.Today.AddDays(-1).AddHours(3);
+        var start = DateTime.Today.AddDays(3).AddHours(3);
         dataContext.ReportActions.Add(new DbReportAction
         {
             Id = Guid.NewGuid(),
-            Description = "xUnit Description",
+            CustomerId = DefaultCustomerId,
+            Description = "xUnit Description A",
             Start = start,
             Commencement = start.AddMinutes(5),
             Departure = start.AddMinutes(15),
             End = start.AddMinutes(121),
             Boat = "xUnit boat",
             Prio = "Prio 69",
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+        });
+        start = start.AddDays(1);
+        dataContext.ReportActions.Add(new DbReportAction
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = DefaultCustomerId,
+            Description = "xUnit Description B",
+            Start = start,
+            Commencement = start.AddMinutes(5),
+            Departure = start.AddMinutes(15),
+            End = start.AddMinutes(121),
+            Boat = "xUnit boat",
+            Prio = "Prio 1",
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
         });
         dataContext.SaveChanges();
     }

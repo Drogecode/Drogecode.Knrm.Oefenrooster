@@ -7,7 +7,7 @@ using Microsoft.Identity.Web.Resource;
 using System.Diagnostics;
 using System.Security.Claims;
 
-namespace Drogecode.Knrm.Oefenrooster.Server.Controllers.Obsolite;
+namespace Drogecode.Knrm.Oefenrooster.Server.Controllers.Obsolete;
 
 /// <summary>
 /// Can only be deleted if all user clients are updated to a version after the split
@@ -17,7 +17,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers.Obsolite;
 [ApiController]
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
-[ApiExplorerSettings(GroupName = "CalendarItem")]
 public class CalendarItemController : ControllerBase
 {
     private readonly ILogger<CalendarItemController> _logger;

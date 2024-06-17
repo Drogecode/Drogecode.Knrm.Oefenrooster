@@ -20,11 +20,7 @@ public class MonthItemController : ControllerBase
 
     public MonthItemController(
         ILogger<MonthItemController> logger,
-        IConfiguration configuration,
-        IMonthItemService monthItemService,
-        IAuditService auditService,
-        IUserSettingService userSettingService,
-        IGraphService graphService)
+        IMonthItemService monthItemService)
     {
         _logger = logger;
         _monthItemService = monthItemService;

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
+using System.Text.Json;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
@@ -15,16 +16,13 @@ public class ReportActionController : ControllerBase
 {
     private readonly ILogger<ScheduleController> _logger;
     private readonly IReportActionService _reportActionService;
-    private readonly IAuditService _auditService;
 
     public ReportActionController(
         ILogger<ScheduleController> logger,
-        IReportActionService reportActionService,
-        IAuditService auditService)
+        IReportActionService reportActionService)
     {
         _logger = logger;
         _reportActionService = reportActionService;
-        _auditService = auditService;
     }
 
     [HttpGet]
@@ -58,7 +56,7 @@ public class ReportActionController : ControllerBase
             if (count > 30) return Forbid();
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var usersAsList = System.Text.Json.JsonSerializer.Deserialize<List<Guid>>(users);
+            var usersAsList = JsonSerializer.Deserialize<List<Guid>>(users);
             if (usersAsList is null)
                 return BadRequest("users is null");
 
