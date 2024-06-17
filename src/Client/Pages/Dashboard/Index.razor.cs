@@ -134,7 +134,6 @@ public sealed partial class Index : IDisposable
                 }
                 catch (TaskCanceledException)
                 {
-                    DebugHelper.WriteLine("c TaskCanceledException");
                 }
                 catch (Exception e)
                 {
@@ -151,7 +150,6 @@ public sealed partial class Index : IDisposable
         }
         catch (TaskCanceledException)
         {
-            DebugHelper.WriteLine("d TaskCanceledException");
         }
         catch (Exception e)
         {
