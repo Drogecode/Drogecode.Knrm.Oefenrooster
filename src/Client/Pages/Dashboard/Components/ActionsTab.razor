@@ -6,8 +6,7 @@
     <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection"/>
     @if (_reportActions?.Actions?.Count() > 0)
     {
-        <MudDataGrid Items="@_reportActions.Actions"
-                     ReadOnly="true" Filterable="false">
+        <MudDataGrid Items="@_reportActions.Actions" ReadOnly="true" Filterable="false" SortMode="@SortMode.None">
             <Columns>
                 <HierarchyColumn T="DrogeAction"/>
                 <PropertyColumn Property="x => x.Number" Title="Nr"/>
