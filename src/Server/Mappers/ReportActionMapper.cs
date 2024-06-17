@@ -1,7 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
-using System;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
 
@@ -60,6 +58,59 @@ public static class ReportActionMapper
             });
         }
         return dbReports;
+    }
+
+    public static DrogeAction ToDrogeAction(this DbReportAction dbAction)
+    {
+        return new DrogeAction
+        {
+            Number = dbAction.Number,
+            ShortDescription = dbAction.ShortDescription,
+            Prio = dbAction.Prio,
+            Type = dbAction.Type,
+            Request = dbAction.Request,
+            ForTheBenefitOf = dbAction.ForTheBenefitOf,
+            Causes = dbAction.Causes,
+            Implications = dbAction.Implications,
+            Area = dbAction.Area,
+            WindDirection = dbAction.WindDirection,
+            WindPower = dbAction.WindPower,
+            WaterTemperature = dbAction.WaterTemperature,
+            GolfHight = dbAction.GolfHight,
+            Sight = dbAction.Sight,
+            WeatherCondition = dbAction.WeatherCondition,
+            CallMadeBy = dbAction.CallMadeBy,
+            CountSailors = dbAction.CountSailors,
+            CountSaved = dbAction.CountSaved,
+            CountAnimals = dbAction.CountAnimals,
+            FunctioningMaterial = dbAction.FunctioningMaterial,
+            ProblemsWithWeed = dbAction.ProblemsWithWeed,
+            Completedby = dbAction.Completedby,
+            Departure = dbAction.Departure,
+            
+            //Shared
+            Id = dbAction.Id,
+            LastUpdated = dbAction.LastUpdated,
+            Title = dbAction.Title,
+            Description = dbAction.Description,
+            Boat = dbAction.Boat,
+            Date = dbAction.Date,
+            Start = dbAction.Start,
+            Commencement = dbAction.Commencement,
+            End = dbAction.End,
+            Users = dbAction.Users?.Select(x=>x.ToSharePointUser()).ToList()
+        };
+    }
+
+    public static SharePointUser ToSharePointUser(this DbReportUser dbReportUser)
+    {
+        return new SharePointUser
+        {
+            SharePointID = dbReportUser.SharePointID,
+            DrogeCodeId = dbReportUser.DrogeCodeId,
+            Name = dbReportUser.Name,
+            Role = dbReportUser.Role,
+        };
     }
 
     public static void UpdateDbDefaultSchedule(this DbReportAction dbAction, SharePointAction spAction, Guid customerId)

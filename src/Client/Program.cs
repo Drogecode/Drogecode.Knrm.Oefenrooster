@@ -1,7 +1,6 @@
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
 using Drogecode.Knrm.Oefenrooster.Client;
-using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;

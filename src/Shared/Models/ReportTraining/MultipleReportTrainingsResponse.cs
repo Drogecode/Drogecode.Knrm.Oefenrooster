@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Report;
+namespace Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
 
 public class MultipleReportTrainingsResponse : BaseMultipleResponse
 {

@@ -21,9 +21,11 @@ public class UserControllerTests : BaseTest
         MonthItemController monthItemController,
         PreComController preComController,
         VehicleController vehicleController,
-        DefaultScheduleController defaultScheduleController) :
+        DefaultScheduleController defaultScheduleController,
+        ReportActionController reportActionController,
+        ReportTrainingController reportTrainingController) :
         base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController)
+            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController)
     {
     }
 

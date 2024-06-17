@@ -17,5 +17,5 @@ public class SharePointListBase
     public DateTime Start { get; set; }
     public DateTime Commencement { get; set; }
     public DateTime End { get; set; }
-    public List<SharePointUser> Users { get; set; } = new List<SharePointUser>();
+    public List<SharePointUser>? Users { get; set; }
 }

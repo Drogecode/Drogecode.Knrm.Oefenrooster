@@ -105,7 +105,8 @@ builder.Services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
 builder.Services.AddScoped<IHolidayService, HolidayService>();
 builder.Services.AddScoped<IPreComService, PreComService>();
-builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IReportActionService, ReportActionService>();
+builder.Services.AddScoped<IReportTrainingService, ReportTrainingService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -130,7 +131,8 @@ var groupNames = new List<string>
     "User",
     "Vehicle",
     "SharePoint",
-    "Report",
+    "ReportAction",
+    "ReportTraining",
     "DefaultSchedule",
     "Holiday",
     "PreCom",

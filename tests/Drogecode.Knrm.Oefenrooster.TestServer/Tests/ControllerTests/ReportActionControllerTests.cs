@@ -1,13 +1,12 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
-public class VehicleControllerTests : BaseTest
+public class ReportActionControllerTests : BaseTest
 {
-    public VehicleControllerTests(
+    public ReportActionControllerTests(
         DataContext dataContext,
         IDateTimeService dateTimeServiceMock,
         ScheduleController scheduleController,
@@ -28,29 +27,9 @@ public class VehicleControllerTests : BaseTest
     }
 
     [Fact]
-    public async Task AddVehicleTest()
+    public async Task GetReportActionTest()
     {
-        var vehicle = new DrogeVehicle
-        {
-            Name = "xUnit test AddVehicleTest",
-            Code = "xUnit",
-            IsDefault = false,
-            IsActive = true,
-        };
-        var result = await VehicleController.PutVehicle(vehicle);
-        Assert.NotNull(result?.Value);
-    }
-
-    [Fact]
-    public async Task LinkVehicle()
-    {
-        var body = new DrogeLinkVehicleTraining()
-        {
-            RoosterTrainingId = DefaultTraining,
-            VehicleId = DefaultVehicle,
-        };
-        var result = await VehicleController.UpdateLinkVehicleTraining(body);
-        Assert.NotNull(result?.Value?.DrogeLinkVehicleTraining);
-        Assert.True(result.Value.Success);
+        var getResult = await ReportActionController.GetLastActionsForCurrentUser(10, 0);
+        Assert.NotNull(getResult.Value);
     }
 }

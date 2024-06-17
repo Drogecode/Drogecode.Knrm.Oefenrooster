@@ -178,7 +178,7 @@ public static class GraphHelper
             foreach (var det in overigeItems.Value)
             {
                 if (det?.Fields?.AdditionalData == null) continue;
-                var training = new SharePointTraining();
+                var training = new SharePointTraining{Users = new List<SharePointUser>()};
                 GetUser(users, det, "SchipperLookupId", SharePointRole.Schipper, training);
                 GetUser(users, det, "Opstapper_x0020_1LookupId", SharePointRole.Opstapper, training);
                 GetUser(users, det, "Opstapper_x0020_2LookupId", SharePointRole.Opstapper, training);
@@ -216,7 +216,7 @@ public static class GraphHelper
             foreach (var det in overigeItems.Value)
             {
                 if (det?.Fields?.AdditionalData is null || det.ETag is null) continue;
-                var action = new SharePointAction();
+                var action = new SharePointAction{Users = new List<SharePointUser>()};
                 action.Id = new Guid(det.ETag!.Split('\"', ',')[1]);
                 if (det.LastModifiedDateTime is not null)
                     action.LastUpdated = DateTime.SpecifyKind(det.LastModifiedDateTime.Value.DateTime, DateTimeKind.Utc);
