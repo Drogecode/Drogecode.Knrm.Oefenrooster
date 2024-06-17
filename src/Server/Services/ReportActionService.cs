@@ -21,7 +21,7 @@ public class ReportActionService : IReportActionService
         var listWhere = _database.ReportActions.Include(x=>x.Users).Where(x => x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count());
         var sharePointActionsUser = new MultipleReportActionsResponse
         {
-            Actions = await listWhere.Skip(skip).Take(count).Select(x=>x.ToDrogeAction()).ToListAsync(clt),
+            Actions = await listWhere.OrderByDescending(x=>x.Commencement).Skip(skip).Take(count).Select(x=>x.ToDrogeAction()).ToListAsync(clt),
             TotalCount = listWhere.Count()
         };
         sw.Stop();
