@@ -506,6 +506,10 @@
           },
           "role": {
             "$ref": "#/components/schemas/SharePointRole"
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

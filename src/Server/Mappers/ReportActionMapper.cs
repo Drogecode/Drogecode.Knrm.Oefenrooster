@@ -55,6 +55,7 @@ public static class ReportActionMapper
                 Name = user.Name,
                 DrogeCodeId = user.DrogeCodeId,
                 Role = user.Role,
+                Order = user.Order,
             });
         }
         return dbReports;
@@ -110,6 +111,7 @@ public static class ReportActionMapper
             DrogeCodeId = dbReportUser.DrogeCodeId,
             Name = dbReportUser.Name,
             Role = dbReportUser.Role,
+            Order = dbReportUser.Order,
         };
     }
 

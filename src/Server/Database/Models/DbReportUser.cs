@@ -10,4 +10,5 @@ public class DbReportUser
     public string? Name { get; set; }
     public SharePointRole Role { get; set; }
     public bool IsDeleted { get; set; }
+    public int Order { get; set; }
 }

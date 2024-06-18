@@ -12,24 +12,26 @@
     {
         <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" CurrentDay="_firstMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
             <CellTemplate>
-                @if (context is ScheduleCalendarItem)
+                @switch (context)
                 {
-                    var training = ((ScheduleCalendarItem)context).Training;
-                    @if (training != null)
+                    case ScheduleCalendarItem item:
                     {
-                        <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth"/>
+                        var training = item.Training;
+                        if (training != null)
+                        {
+                            <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth"/>
+                        }
+
+                        break;
                     }
-                }
-                else if (context is RoosterItemDayCalendarItem)
-                {
-                    var dayItem = ((RoosterItemDayCalendarItem)context);
-                    @if (dayItem.ItemDay is not null)
+                    case RoosterItemDayCalendarItem { ItemDay: not null } dayItem:
                     {
                         var color = DayItemHelper.DayItemTypeColor(dayItem.ItemDay.Type);
                         <div class="d-flex gap-1 @(dayItem.UserDeleted ? "text-red-600" : "")">
                             <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@color" Size="Size.Small"/>
                             <span>@dayItem.ItemDay.Text</span>
                         </div>
+                        break;
                     }
                 }
             </CellTemplate>
@@ -39,7 +41,7 @@
 <div class="d-md-none">
     <MonthSelector Month="_month" MonthChanged="SetMonth"/>
     <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-        @if (_events == null || _month == null)
+        @if (_month == null)
         {
             <MudSkeleton/>
             <MudSkeleton/>
@@ -55,24 +57,26 @@
                           .OrderBy(x => x.Start))
             {
                 <div class="flex-1">
-                    @if (ev is ScheduleCalendarItem)
+                    @switch (ev)
                     {
-                        var training = ((ScheduleCalendarItem)ev).Training;
-                        @if (training is not null)
+                        case ScheduleCalendarItem item:
                         {
-                            <ScheduleCard MinWidth="300px" MaxWidth="600px" Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowDate="true" ShowDayOfWeek="true" ShowPastBody="!_currentMonth"/>
+                            var training = item.Training;
+                            if (training is not null)
+                            {
+                                <ScheduleCard MinWidth="300px" MaxWidth="600px" Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowDate="true" ShowDayOfWeek="true" ShowPastBody="!_currentMonth"/>
+                            }
+
+                            break;
                         }
-                    }
-                    else if (ev is RoosterItemDayCalendarItem)
-                    {
-                        var dayItem = ((RoosterItemDayCalendarItem)ev).ItemDay;
-                        @if (dayItem is not null)
+                        case RoosterItemDayCalendarItem { ItemDay: not null } dayItem:
                         {
-                            var color = DayItemHelper.DayItemTypeColor(dayItem.Type);
+                            var color = DayItemHelper.DayItemTypeColor(dayItem.ItemDay.Type);
                             <div class="flex gap-1" style="min-width:300px;max-width:600px;">
                                 <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@color" Size="Size.Small"/>
-                                <div>@dayItem.Text - @dayItem.DateStart!.Value.ToString("dddd dd MMM")</div>
+                                <div class="@(dayItem.UserDeleted ? "text-red-600" : "")">@dayItem.ItemDay.Text - @dayItem.ItemDay.DateStart!.Value.ToString("dddd dd MMM")</div>
                             </div>
+                            break;
                         }
                     }
                 </div>
