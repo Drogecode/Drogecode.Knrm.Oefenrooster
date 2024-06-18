@@ -141,4 +141,7 @@
   <data name="Welcome" xml:space="preserve">
     <value>Welcome {0}</value>
   </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
 </root>

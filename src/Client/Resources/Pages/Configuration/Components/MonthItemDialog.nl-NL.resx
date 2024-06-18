@@ -84,4 +84,7 @@
     <data name="Order" xml:space="preserve">
         <value>Volgorde</value>
     </data>
+    <data name="Feb" xml:space="preserve">
+        <value>feb</value>
+    </data>
 </root>

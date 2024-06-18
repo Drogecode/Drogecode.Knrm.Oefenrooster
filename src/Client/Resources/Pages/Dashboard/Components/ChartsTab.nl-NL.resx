@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Apr" xml:space="preserve">
+        <value>apr</value>
+    </data>
+    <data name="Aug" xml:space="preserve">
+        <value>aug</value>
+    </data>
+    <data name="Dec" xml:space="preserve">
+        <value>dec</value>
+    </data>
+    <data name="jan" xml:space="preserve">
+        <value>jan</value>
+    </data>
+    <data name="Jul" xml:space="preserve">
+        <value>juli</value>
+    </data>
+    <data name="Jun" xml:space="preserve">
+        <value>juni</value>
+    </data>
+    <data name="Mar" xml:space="preserve">
+        <value>Maa</value>
+    </data>
+    <data name="May" xml:space="preserve">
+        <value>mei</value>
+    </data>
+    <data name="Nov" xml:space="preserve">
+        <value>nov</value>
+    </data>
+    <data name="Oct" xml:space="preserve">
+        <value>okt</value>
+    </data>
+    <data name="Sep" xml:space="preserve">
+        <value>sep</value>
+    </data>
+</root>

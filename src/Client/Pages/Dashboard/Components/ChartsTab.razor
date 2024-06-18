@@ -1,0 +1,16 @@
+﻿@if (_series is not null)
+{
+    <div>
+        <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+            @_elapsedMilliseconds
+        </AuthorizeView>
+        <MudChart ChartType="ChartType.Line" ChartSeries="@_series" XAxisLabels="@_xAxisLabels" Width="100%" Height="350px" CanHideSeries/>
+    </div>
+}
+else
+{
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+}

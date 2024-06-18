@@ -30,4 +30,10 @@ public class ReportActionRepository
         var result = await _reportActionClient.GetLastActionsAsync(usersAsstring, count, skip, clt);
         return result;
     }
+    
+    public async Task<AnalyzeYearChartAllResponse?> AnalyzeYearChartsAll(CancellationToken clt)
+    {
+        var result = await _reportActionClient.AnalyzeYearChartsAllAsync(clt);
+        return result;
+    }
 }

@@ -142,7 +142,7 @@ public class BaseTest : IAsyncLifetime
 
     public void SeedReportAction(DataContext dataContext)
     {
-        var start = DateTime.Today.AddDays(3).AddHours(3);
+        var start = new DateTime(2022, 3, 8, 8, 5, 41);
         dataContext.ReportActions.Add(new DbReportAction
         {
             Id = Guid.NewGuid(),
@@ -162,6 +162,20 @@ public class BaseTest : IAsyncLifetime
             Id = Guid.NewGuid(),
             CustomerId = DefaultCustomerId,
             Description = "xUnit Description B",
+            Start = start,
+            Commencement = start.AddMinutes(5),
+            Departure = start.AddMinutes(15),
+            End = start.AddMinutes(121),
+            Boat = "xUnit boat",
+            Prio = "Prio 1",
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+        });
+        start = start.AddMonths(1);
+        dataContext.ReportActions.Add(new DbReportAction
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = DefaultCustomerId,
+            Description = "xUnit Description C",
             Start = start,
             Commencement = start.AddMinutes(5),
             Departure = start.AddMinutes(15),

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Localization;
 using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard;
 
@@ -25,6 +26,7 @@ public sealed partial class Index : IDisposable
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     private readonly CancellationTokenSource _cls = new();
     private ClaimsPrincipal? _userClaims;
     private HubConnection? _hubConnection;
@@ -39,6 +41,7 @@ public sealed partial class Index : IDisposable
     private string? _name;
     private Guid _userId;
     private bool _loading = true;
+    private bool _isTaco;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -47,6 +50,7 @@ public sealed partial class Index : IDisposable
             if (!await SetUser())
                 return;
             await ConfigureHub();
+            _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
 
             _users = await UserRepository.GetAllUsersAsync(false, false, true, _cls.Token);
             _vehicles = await VehicleRepository.GetAllVehiclesAsync(true, _cls.Token);

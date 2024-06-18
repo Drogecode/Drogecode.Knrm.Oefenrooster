@@ -5,4 +5,5 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 public interface IReportActionService
 {
     Task<MultipleReportActionsResponse> GetListActionsUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt);
+    Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(Guid customerId, CancellationToken clt);
 }

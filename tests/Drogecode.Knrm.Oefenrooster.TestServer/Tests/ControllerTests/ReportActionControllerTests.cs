@@ -63,4 +63,18 @@ public class ReportActionControllerTests : BaseTest
         Assert.True(getResult.Value.Success);
         getResult.Value.Actions.Should().BeEmpty();
     }
+
+    [Fact]
+    public async Task AnalyzeYearChartsAllTest()
+    {
+        var getResult = await ReportActionController.AnalyzeYearChartsAll();
+        Assert.NotNull(getResult.Value?.Years);
+        Assert.True(getResult.Value.Success);
+        getResult.Value.Years.Should().HaveCount(1);
+        getResult.Value.TotalCount.Should().Be(3);
+        var y2022 = getResult.Value.Years.FirstOrDefault(x => x.Year == 2022);
+        Assert.NotNull(y2022);
+        y2022.Months.Should().Contain(x => x.Month == 3 && x.Count == 2);
+        y2022.Months.Should().Contain(x => x.Month == 4 && x.Count == 1);
+    }
 }

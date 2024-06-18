@@ -2,6 +2,9 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Extensions
 @if (_reportActions?.Actions is not null)
 {
+    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+        @_reportActions.ElapsedMilliseconds
+    </AuthorizeView>
     <MudText Typo="Typo.h5">@L["Actions from SharePoint"]</MudText>
     <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection"/>
     @if (_reportActions?.Actions?.Count() > 0)

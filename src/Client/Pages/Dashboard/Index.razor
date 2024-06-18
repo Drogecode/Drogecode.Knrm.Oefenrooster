@@ -10,7 +10,7 @@
             @if (_name is not null)
             {
                 <div class="inline-flex">
-                    <MudText Typo="Typo.h5">@L["Welcome",_name] </MudText>
+                    <MudText Typo="Typo.h5">@L["Welcome", _name] </MudText>
                     @if (_user?.Nr is not null)
                     {
                         <MudText Typo="Typo.subtitle2">@($" ({_user.Nr})")</MudText>
@@ -27,8 +27,8 @@
                             var color = DayItemHelper.DayItemTypeColor(item.Type);
                             <MudItem xs="12" sm="6" md="4" lg="3">
                                 <div class="d-flex gap-1">
-                                    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small" />
-                                    <DateToString DateTimeLocal="item.DateStart" @key="@( item.DateStart?.Ticks + DateTime.Today.Day )" />
+                                    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small"/>
+                                    <DateToString DateTimeLocal="item.DateStart" @key="@(item.DateStart?.Ticks + DateTime.Today.Day)"/>
                                     @item.Text
                                 </div>
                             </MudItem>
@@ -45,7 +45,7 @@
                         @foreach (var training in _pinnedTrainings)
                         {
                             <div class="flex-1">
-                                <CalendarCard MinWidth="300px" MaxWidth="600px" Training="training" ShowDate="true" ShowDayOfWeek="true" />
+                                <CalendarCard MinWidth="300px" MaxWidth="600px" Training="training" ShowDate="true" ShowDayOfWeek="true"/>
                             </div>
                         }
                     </MudPaper>
@@ -53,10 +53,10 @@
             }
             else if (_loading)
             {
-                <MudSkeleton />
-                <MudSkeleton />
-                <MudSkeleton />
-                <MudSkeleton />
+                <MudSkeleton/>
+                <MudSkeleton/>
+                <MudSkeleton/>
+                <MudSkeleton/>
             }
             <MudText Typo="Typo.h5">@L["Future trainings"]</MudText>
             @if (_futureTrainings != null)
@@ -67,7 +67,7 @@
                         @foreach (var training in _futureTrainings)
                         {
                             <div class="flex-1">
-                                <IndexCard MinWidth="300px" MaxWidth="600px" User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" ShowDayOfWeek="true" />
+                                <IndexCard MinWidth="300px" MaxWidth="600px" User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" ShowDayOfWeek="true"/>
                             </div>
                         }
                     </MudPaper>
@@ -79,17 +79,22 @@
             }
             else if (_loading)
             {
-                <MudSkeleton />
-                <MudSkeleton />
-                <MudSkeleton />
-                <MudSkeleton />
+                <MudSkeleton/>
+                <MudSkeleton/>
+                <MudSkeleton/>
+                <MudSkeleton/>
             }
         </MudTabPanel>
         <MudTabPanel Text="@L["Actions"]">
-            <ActionsTab User="@_user" Users="@_users" Functions="@_functions" />
+            <ActionsTab User="@_user" Users="@_users" Functions="@_functions"/>
         </MudTabPanel>
         <MudTabPanel Text="@L["Trainings"]">
-            <TrainingsTab User="@_user" Users="@_users" Functions="@_functions" />
+            <TrainingsTab User="@_user" Users="@_users" Functions="@_functions"/>
         </MudTabPanel>
+        <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+            <MudTabPanel Text="@L["Statistics"]">
+                <ChartsTab/>
+            </MudTabPanel>
+        </AuthorizeView>
     </MudTabs>
 </MudPaper>
