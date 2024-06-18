@@ -322,7 +322,7 @@ public partial class AuthenticationController : ControllerBase
         if (string.Compare(userId, DefaultSettingsHelper.IdTaco.ToString(), true) == 0)
         {
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_Taco));
-            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_scheduler_history));
+            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_dashboard_Statistics));
         }
 
         var accesses = await _userRoleService.GetAccessForUser(customerId, jwtSecurityToken.Claims);

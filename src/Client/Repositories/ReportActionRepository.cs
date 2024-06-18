@@ -26,14 +26,20 @@ public class ReportActionRepository
         {
             workingList.Add(user.Id);
         }
-        var usersAsstring = System.Text.Json.JsonSerializer.Serialize(workingList);
-        var result = await _reportActionClient.GetLastActionsAsync(usersAsstring, count, skip, clt);
+        var usersAsString = System.Text.Json.JsonSerializer.Serialize(workingList);
+        var result = await _reportActionClient.GetLastActionsAsync(usersAsString, count, skip, clt);
         return result;
     }
     
-    public async Task<AnalyzeYearChartAllResponse?> AnalyzeYearChartsAll(CancellationToken clt)
+    public async Task<AnalyzeYearChartAllResponse?> AnalyzeYearChartsAll(IEnumerable<DrogeUser> users, CancellationToken clt)
     {
-        var result = await _reportActionClient.AnalyzeYearChartsAllAsync(clt);
+        var workingList = new List<Guid>();
+        foreach(var user in users)
+        {
+            workingList.Add(user.Id);
+        }
+        var usersAsString = System.Text.Json.JsonSerializer.Serialize(workingList);
+        var result = await _reportActionClient.AnalyzeYearChartsAllAsync(usersAsString, clt);
         return result;
     }
 }

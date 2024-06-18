@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
 using System.Text.Json;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
@@ -72,14 +73,18 @@ public class ReportActionController : ControllerBase
 
     [HttpGet]
     [Route("analyze/years")]
-    public async Task<ActionResult<AnalyzeYearChartAllResponse>> AnalyzeYearChartsAll(CancellationToken clt = default)
+    [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics)]
+    public async Task<ActionResult<AnalyzeYearChartAllResponse>> AnalyzeYearChartsAll(string users, CancellationToken clt = default)
     {
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var usersAsList = JsonSerializer.Deserialize<List<Guid>>(users);
+            if (usersAsList is null)
+                return BadRequest("users is null");
 
-            var result = await _reportActionService.AnalyzeYearChartsAll(customerId, clt);
+            var result = await _reportActionService.AnalyzeYearChartsAll(usersAsList, customerId, clt);
             return result;
         }
         catch (Exception ex)

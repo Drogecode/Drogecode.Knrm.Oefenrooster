@@ -27,6 +27,7 @@ public static class AccessesNames
 
     public const string AUTH_action_history_full = "full_action_history";
     public const string AUTH_training_history_full = "full_training_history";
+    public const string AUTH_dashboard_Statistics = "full_dashboard_statistics";
 }
 
 public static class AccessesSettings

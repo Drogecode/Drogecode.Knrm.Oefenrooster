@@ -91,9 +91,9 @@
         <MudTabPanel Text="@L["Trainings"]">
             <TrainingsTab User="@_user" Users="@_users" Functions="@_functions"/>
         </MudTabPanel>
-        <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+        <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_Statistics">
             <MudTabPanel Text="@L["Statistics"]">
-                <ChartsTab/>
+                <ChartsTab User="@_user" Users="@_users" Functions="@_functions"/>
             </MudTabPanel>
         </AuthorizeView>
     </MudTabs>

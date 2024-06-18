@@ -16,7 +16,7 @@ public class ReportActionService : IReportActionService
     public async Task<MultipleReportActionsResponse> GetListActionsUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var listWhere = _database.ReportActions.Include(x => x.Users).Where(x => x.CustomerId == customerId && x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count());
+        var listWhere = _database.ReportActions.Include(x => x.Users).Where(x => x.CustomerId == customerId && x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count);
         var sharePointActionsUser = new MultipleReportActionsResponse
         {
             Actions = await listWhere.OrderByDescending(x => x.Commencement).Skip(skip).Take(count).Select(x => x.ToDrogeAction()).ToListAsync(clt),
@@ -29,10 +29,10 @@ public class ReportActionService : IReportActionService
     }
 
 
-    public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(Guid customerId, CancellationToken clt)
+    public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(List<Guid> users, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var allReports = _database.ReportActions.Where(x=>x.CustomerId == customerId);
+        var allReports = _database.ReportActions.Where(x=>x.CustomerId == customerId && x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count);
         var result = new AnalyzeYearChartAllResponse { TotalCount = allReports.Count() };
         foreach (var report in allReports)
         {
