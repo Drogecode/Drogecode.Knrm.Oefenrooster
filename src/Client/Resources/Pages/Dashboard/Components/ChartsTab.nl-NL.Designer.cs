@@ -97,7 +97,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Component
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to juli.
+        ///   Looks up a localized string similar to jul.
         /// </summary>
         internal static string Jul {
             get {
@@ -106,7 +106,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Component
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to juni.
+        ///   Looks up a localized string similar to jun.
         /// </summary>
         internal static string Jun {
             get {

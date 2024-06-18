@@ -4,7 +4,7 @@
         <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
             @_elapsedMilliseconds
         </AuthorizeView>
-        <MudChart ChartType="ChartType.Line" ChartSeries="@_series" XAxisLabels="@_xAxisLabels" Width="100%" Height="350px" CanHideSeries/>
+        <MudChart ChartType="ChartType.Line" ChartSeries="@_series" XAxisLabels="@_xAxisLabels" Width="100%" Height="350px" ChartOptions="@_options" CanHideSeries/>
     </div>
 }
 else
