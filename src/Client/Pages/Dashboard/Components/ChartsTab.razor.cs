@@ -120,6 +120,7 @@ public sealed partial class ChartsTab : IDisposable
 
     public void Dispose()
     {
+        Global.DarkLightChangedAsync -= DarkModeChanged;
         _cls.Cancel();
     }
 }
