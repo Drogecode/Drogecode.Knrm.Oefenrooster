@@ -10,6 +10,10 @@ public class DrogeCodeGlobal : RefreshModel
     public event Func<Task>? VisibilityChangeAsync;
 
     private bool _isDarkMode;
+    public bool DarkMode
+    {
+        get { return _isDarkMode; }
+    }
 
     public async Task CallNewTrainingAddedAsync(EditTraining arg)
     {

@@ -1,17 +1,30 @@
-﻿@if (_series is not null)
-{
-    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
-        @_elapsedMilliseconds
-    </AuthorizeView>
-    <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsers" SelectionChanged="OnSelectionChanged" MultiSelection="true"/>
-    <div>
-        <MudChart ChartType="ChartType.Line" ChartSeries="@_series" XAxisLabels="@_xAxisLabels" Width="100%" Height="350px" ChartOptions="@_options" CanHideSeries/>
-    </div>
-}
-else
-{
-    <MudSkeleton/>
-    <MudSkeleton/>
-    <MudSkeleton/>
-    <MudSkeleton/>
-}
+﻿@using ApexCharts
+<AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+    @_elapsedMilliseconds
+</AuthorizeView>
+<SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsers" SelectionChanged="OnSelectionChanged" MultiSelection="true"/>
+<MudPaper MaxWidth="600px">
+    @if (_data is not null && _renderChart)
+    {
+        <ApexChart @ref=_chart TItem="ChartMonth" Title="Actions" Options="_options">
+
+            @foreach (var data in _data)
+            {
+                <ApexPointSeries @key="@data.updateKey"
+                                 TItem="ChartMonth"
+                                 Items="data.MyData"
+                                 Name="@data.Name"
+                                 SeriesType="SeriesType.Line"
+                                 XValue="e => e.Month"
+                                 YValue="e => e.Count"/>
+            }
+        </ApexChart>
+    }
+    else
+    {
+        <MudSkeleton/>
+        <MudSkeleton/>
+        <MudSkeleton/>
+        <MudSkeleton/>
+    }
+</MudPaper>

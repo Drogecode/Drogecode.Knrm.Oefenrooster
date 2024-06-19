@@ -667,6 +667,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Name = "Users admin",
                 Accesses = $"{AccessesNames.AUTH_users_counter},{AccessesNames.AUTH_users_details},{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}"
             }));
+            modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
+            {
+                Id = new Guid("d526e5ed-e838-499d-a96c-62180db28bed"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "Beta user",
+                Accesses = $"{AccessesNames.AUTH_dashboard_Statistics}"
+            }));
 
             //roles
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
