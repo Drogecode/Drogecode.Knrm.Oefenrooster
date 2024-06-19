@@ -5,6 +5,9 @@ using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 
+
+// Should probably replace with https://github.com/apexcharts/Blazor-ApexCharts
+
 public sealed partial class ChartsTab : IDisposable
 {
     [Inject] private IStringLocalizer<ChartsTab> L { get; set; } = default!;
@@ -14,7 +17,7 @@ public sealed partial class ChartsTab : IDisposable
     [Parameter] [EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<ChartSeries>? _series;
-    private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
+    private IEnumerable<DrogeUser> _selectedUsers = new List<DrogeUser>();
     private readonly ChartOptions _options = new();
     private string[]? _xAxisLabels;
     private long _elapsedMilliseconds = -1;
@@ -25,7 +28,6 @@ public sealed partial class ChartsTab : IDisposable
         {
             _series = new List<ChartSeries>();
             _xAxisLabels = [L["Jan"], L["Feb"], L["Mar"], L["Apr"], L["May"], L["Jun"], L["Jul"], L["Aug"], L["Sep"], L["Oct"], L["Nov"], L["Dec"]];
-            _options.YAxisTicks = 10;
             await UpdateAnalyzeYearChartAll();
             StateHasChanged();
         }
@@ -33,7 +35,7 @@ public sealed partial class ChartsTab : IDisposable
 
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
     {
-        _selectedUsersAction = selection;
+        _selectedUsers = selection;
         await UpdateAnalyzeYearChartAll();
         StateHasChanged();
     }
@@ -41,9 +43,10 @@ public sealed partial class ChartsTab : IDisposable
     private async Task UpdateAnalyzeYearChartAll()
     {
         _series = new List<ChartSeries>();
-        var get = await ReportActionRepository.AnalyzeYearChartsAll(_selectedUsersAction, _cls.Token);
+        var get = await ReportActionRepository.AnalyzeYearChartsAll(_selectedUsers, _cls.Token);
         if (get is null) return;
         _elapsedMilliseconds = get.ElapsedMilliseconds;
+        _options.YAxisTicks = _selectedUsers.Any() ? 5 : 10;
         foreach (var year in get.Years.OrderByDescending(x=>x.Year))
         {
             var month = new double[12];

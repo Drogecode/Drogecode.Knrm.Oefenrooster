@@ -1,10 +1,10 @@
 ﻿@if (_series is not null)
 {
+    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+        @_elapsedMilliseconds
+    </AuthorizeView>
+    <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsers" SelectionChanged="OnSelectionChanged" MultiSelection="true"/>
     <div>
-        <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
-            @_elapsedMilliseconds
-        </AuthorizeView>
-        <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="true"/>
         <MudChart ChartType="ChartType.Line" ChartSeries="@_series" XAxisLabels="@_xAxisLabels" Width="100%" Height="350px" ChartOptions="@_options" CanHideSeries/>
     </div>
 }
