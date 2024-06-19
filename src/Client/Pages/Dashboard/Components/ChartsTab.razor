@@ -1,30 +1,10 @@
-﻿@using ApexCharts
-<AuthorizeView Roles="@AccessesNames.AUTH_Taco">
-    @_elapsedMilliseconds
-</AuthorizeView>
-<SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsers" SelectionChanged="OnSelectionChanged" MultiSelection="true"/>
-<MudPaper MaxWidth="600px">
-    @if (_data is not null && _renderChart)
-    {
-        <ApexChart @ref=_chart TItem="ChartMonth" Title="@L["Actions"]" Options="_options">
+﻿<SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsers" SelectionChanged="OnSelectionChanged" MultiSelection="true"/>
 
-            @foreach (var data in _data)
-            {
-                <ApexPointSeries @key="@data.updateKey"
-                                 TItem="ChartMonth"
-                                 Items="data.MyData"
-                                 Name="@data.Name"
-                                 SeriesType="SeriesType.Line"
-                                 XValue="e => e.Month"
-                                 YValue="e => e.Count"/>
-            }
-        </ApexChart>
-    }
-    else
-    {
-        <MudSkeleton/>
-        <MudSkeleton/>
-        <MudSkeleton/>
-        <MudSkeleton/>
-    }
+<MudPaper Elevation="0" Class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+    <div class="flex-1">
+        <StatisticsActionsAll @ref="_statisticsActionsAll" SelectedUsers="_selectedUsers"/>
+    </div>
+    <div class="flex-1">
+        <StatisticsTrainingsAll @ref="_statisticsTrainingsAll" SelectedUsers="_selectedUsers"/>
+    </div>
 </MudPaper>

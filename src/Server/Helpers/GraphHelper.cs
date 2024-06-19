@@ -98,7 +98,7 @@ public static class GraphHelper
         return nextPage;
     }
 
-    public static async Task<ListItemCollectionResponse> NextListPage(ListItemCollectionResponse listPage)
+    private static async Task<ListItemCollectionResponse> NextListPage(ListItemCollectionResponse listPage)
     {
         var nextPageRequest = new ItemsRequestBuilder(listPage.OdataNextLink, _appClient.RequestAdapter);
         var nextPage = await nextPageRequest.GetAsync();
@@ -171,7 +171,7 @@ public static class GraphHelper
         return spUsers;
     }
 
-    internal async static Task<List<SharePointTraining>> GetListTraining(Guid customerId, List<SharePointUser> users)
+    internal static async Task<List<SharePointTraining>> GetListTraining(Guid customerId, List<SharePointUser> users)
     {
         if (_appClient == null || customerId != DefaultSettingsHelper.KnrmHuizenId) return null;
 
@@ -187,6 +187,7 @@ public static class GraphHelper
             {
                 if (det?.Fields?.AdditionalData == null) continue;
                 var training = new SharePointTraining { Users = new List<SharePointUser>() };
+                training.Id = new Guid(det.ETag!.Split('\"', ',')[1]);
                 GetUser(users, det, "SchipperLookupId", SharePointRole.Schipper, training, 0);
                 GetUser(users, det, "Opstapper_x0020_1LookupId", SharePointRole.Opstapper, training, 1);
                 GetUser(users, det, "Opstapper_x0020_2LookupId", SharePointRole.Opstapper, training,2);
@@ -197,15 +198,25 @@ public static class GraphHelper
                 GetUser(users, det, "Opstapper_x0020_7LookupId", SharePointRole.Opstapper, training,7);
                 GetUser(users, det, "Opstapper_x0020_8LookupId", SharePointRole.Opstapper, training,8);
                 GetUser(users, det, "Opstapper_x0020_9LookupId", SharePointRole.Opstapper, training,9);
+                training.Date = AdditionalDataToDateTime(det, "Datum");
                 training.Start = AdditionalDataToDateTime(det, "Aanvang_x0020_O_x0026_O_x0020__x");
-                ;
                 training.Commencement = AdditionalDataToDateTime(det, "Aanvang");
                 training.End = AdditionalDataToDateTime(det, "Einde");
-                ;
+                training.OdataEtag = AdditionalDataToString(det, "@odata.etag");
                 training.Title = AdditionalDataToString(det, "LinkTitle");
                 training.Description = AdditionalDataToString(det, "Bijzonderheden_x0020_Oproep");
+                training.TypeTraining = AdditionalDataToString(det, "Type_x0020_Oefening");
                 training.Boat = AdditionalDataToString(det, "Bo_x0028_o_x0029_t_x0028_en_x002");
+                training.Area = AdditionalDataToString(det, "Gebied");
+                training.WindDirection = AdditionalDataToString(det, "Windrichting");
+                training.WindPower = AdditionalDataToInt(det, "Windkracht_x0020__x0028_Beaufort");
+                training.WaterTemperature = AdditionalDataToDouble(det, "Temperatuur_x0020_Water");
+                training.GolfHight = AdditionalDataToDouble(det, "Golf_x0020_Hoogte");
+                training.Sight = AdditionalDataToInt(det, "Zicht");
+                training.WeatherCondition = AdditionalDataToString(det, "Weersomstandigheden");
                 training.Type = AdditionalDataToString(det, "Soort");
+                training.FunctioningMaterial = AdditionalDataToString(det, "Functioneren_x0020_materieel");
+                training.ProblemsWithWeed = AdditionalDataToString(det, "Problemen_x0020_met_x0020_fontei");
                 trainings.Add(training);
             }
 
@@ -246,15 +257,13 @@ public static class GraphHelper
                 GetUser(users, det, "Opstapper_x0020_7LookupId", SharePointRole.Opstapper, action, 7);
                 GetUser(users, det, "Opstapper_x0020_8LookupId", SharePointRole.Opstapper, action, 8);
                 GetUser(users, det, "Opstapper_x0020_9LookupId", SharePointRole.Opstapper, action, 9);
+                action.OdataEtag = AdditionalDataToString(det, "@odata.etag");
                 action.Number = AdditionalDataToDouble(det, "Actie_x0020_nummer");
                 action.Date = AdditionalDataToDateTime(det, "Datum");
-                ;
                 action.Start = AdditionalDataToDateTime(det, "Oproep_x0020__x0028_uren_x0029_");
-                ;
                 action.Commencement = AdditionalDataToDateTime(det, "Aanvang");
                 action.Departure = AdditionalDataToDateTime(det, "Vertrek_x0020__x0028_uren_x0029_");
                 action.End = AdditionalDataToDateTime(det, "Einde");
-                ;
                 action.Title = AdditionalDataToString(det, "LinkTitle");
                 action.ShortDescription = AdditionalDataToString(det, "Korte_x0020_Omschrijving");
                 action.Description = AdditionalDataToString(det, "Bijzonderheden_x0020_Oproep");
@@ -264,7 +273,6 @@ public static class GraphHelper
                 action.ForTheBenefitOf = AdditionalDataToString(det, "Ten_x0020_behoeve_x0020_van");
                 action.Causes = AdditionalDataToString(det, "Oorzaken");
                 action.Implications = AdditionalDataToString(det, "Gevolgen");
-                action.Area = AdditionalDataToString(det, "Gebied");
                 action.Area = AdditionalDataToString(det, "Gebied");
                 action.WindDirection = AdditionalDataToString(det, "Windrichting");
                 action.WindPower = AdditionalDataToInt(det, "Windkracht_x0020__x0028_Beaufort");

@@ -53,7 +53,7 @@
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\ReportTraining.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ReportTrainingClient">
 			<OutputPath>../Clients/ReportTrainingClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:"Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining,Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction"</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Schedule.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ScheduleClient">
 			<OutputPath>../Clients/ScheduleClient.g.cs</OutputPath>

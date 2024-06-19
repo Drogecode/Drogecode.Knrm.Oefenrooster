@@ -224,6 +224,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "odataEtag": {
+            "type": "string",
+            "nullable": true
+          },
           "title": {
             "type": "string",
             "nullable": true

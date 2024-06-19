@@ -7,6 +7,7 @@ public class DbReportAction
 {
     [Key] public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
+    public string? OdataEtag { get; set; }
     public DateTime LastUpdated { get; set; }
     public DateTime Commencement { get; set; }
     public DateTime Departure { get; set; }

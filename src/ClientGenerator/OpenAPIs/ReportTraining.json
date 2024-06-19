@@ -112,10 +112,208 @@
           }
         }
       }
+    },
+    "/api/ReportTraining/analyze/years": {
+      "get": {
+        "tags": [
+          "ReportTraining"
+        ],
+        "operationId": "AnalyzeYearChartsAll",
+        "parameters": [
+          {
+            "name": "users",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyzeYearChartAllResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyzeYearChartAllResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyzeYearChartAllResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AnalyzeMonthDetails": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AnalyzeYearChartAllResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "years": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnalyzeYearDetails"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AnalyzeYearDetails": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "months": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnalyzeMonthDetails"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrogeTraining": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "odataEtag": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "boat": {
+            "type": "string",
+            "nullable": true
+          },
+          "area": {
+            "type": "string",
+            "nullable": true
+          },
+          "windDirection": {
+            "type": "string",
+            "nullable": true
+          },
+          "windPower": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "waterTemperature": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "golfHight": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "sight": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "weatherCondition": {
+            "type": "string",
+            "nullable": true
+          },
+          "functioningMaterial": {
+            "type": "string",
+            "nullable": true
+          },
+          "problemsWithWeed": {
+            "type": "string",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "commencement": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SharePointUser"
+            },
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "typeTraining": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "MultipleReportTrainingsResponse": {
         "type": "object",
         "properties": {
@@ -130,6 +328,47 @@
             "format": "int64"
           },
           "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "trainings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrogeTraining"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharePointRole": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "SharePointUser": {
+        "type": "object",
+        "properties": {
+          "sharePointID": {
+            "type": "string",
+            "nullable": true
+          },
+          "drogeCodeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "$ref": "#/components/schemas/SharePointRole"
+          },
+          "order": {
             "type": "integer",
             "format": "int32"
           }

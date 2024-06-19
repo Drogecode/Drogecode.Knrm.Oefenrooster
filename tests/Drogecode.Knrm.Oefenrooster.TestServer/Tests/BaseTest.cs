@@ -95,6 +95,7 @@ public class BaseTest : IAsyncLifetime
         DefaultCustomerId = Guid.NewGuid();
         SeedCustomer(dataContext);
         SeedReportAction(dataContext);
+        SeedReportTraining(dataContext);
 
         var defaultRoles = new List<string>
         {
@@ -182,6 +183,47 @@ public class BaseTest : IAsyncLifetime
             End = start.AddMinutes(121),
             Boat = "xUnit boat",
             Prio = "Prio 1",
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+        });
+        dataContext.SaveChanges();
+    }
+
+    public void SeedReportTraining(DataContext dataContext)
+    {
+        var start = new DateTime(2022, 3, 8, 8, 5, 41);
+        dataContext.ReportTrainings.Add(new DbReportTraining
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = DefaultCustomerId,
+            Description = "xUnit Description A",
+            Start = start,
+            Commencement = start.AddMinutes(5),
+            End = start.AddMinutes(121),
+            Boat = "xUnit boat",
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+        });
+        start = start.AddDays(1);
+        dataContext.ReportTrainings.Add(new DbReportTraining
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = DefaultCustomerId,
+            Description = "xUnit Description B",
+            Start = start,
+            Commencement = start.AddMinutes(5),
+            End = start.AddMinutes(121),
+            Boat = "xUnit boat",
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+        });
+        start = start.AddMonths(1);
+        dataContext.ReportTrainings.Add(new DbReportTraining
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = DefaultCustomerId,
+            Description = "xUnit Description C",
+            Start = start,
+            Commencement = start.AddMinutes(5),
+            End = start.AddMinutes(121),
+            Boat = "xUnit boat",
             Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
         });
         dataContext.SaveChanges();

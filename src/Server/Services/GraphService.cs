@@ -110,7 +110,8 @@ public class GraphService : IGraphService
             return false;
         var dbActions = await _database.ReportActions
             .Where(x => x.CustomerId == customerId)
-            .Include(x => x.Users).ToListAsync(clt);
+            .Include(x => x.Users)
+            .ToListAsync(clt);
 
         var saveCount = 0;
         var changeCount = 0;
@@ -121,13 +122,13 @@ public class GraphService : IGraphService
             var dbAction = dbActions.FirstOrDefault(x => x.Id == action.Id);
             if (dbAction is null)
             {
-                dbAction = action.ToDbDefaultSchedule(customerId);
+                dbAction = action.ToDbReportAction(customerId);
                 await _database.ReportActions.AddAsync(dbAction, clt);
                 saveCount++;
             }
             else if (dbAction.LastUpdated != action.LastUpdated)
             {
-                dbAction.UpdateDbDefaultSchedule(action, customerId);
+                dbAction.UpdateDbReportAction(action, customerId);
                 _database.ReportActions.Update(dbAction);
                 saveCount++;
             }
@@ -148,7 +149,42 @@ public class GraphService : IGraphService
         await ShouldUpdateCacheSharePointTrainings(customerId, keyTrainings);
         _memoryCache.TryGetValue<List<SharePointTraining>>(keyTrainings, out var sharePointTrainings);
         sharePointTrainings ??= await GetSharePointTrainings(customerId, keyTrainings, clt);
-        return true;
+        
+        if (sharePointTrainings == null || clt.IsCancellationRequested)
+            return false;
+        var dbTrainings = await _database.ReportTrainings
+            .Where(x => x.CustomerId == customerId)
+            .Include(x => x.Users)
+            .ToListAsync(clt);
+
+        var saveCount = 0;
+        var changeCount = 0;
+        foreach (var training in sharePointTrainings)
+        {
+            if (clt.IsCancellationRequested)
+                return false;
+            var dbTraining = dbTrainings.FirstOrDefault(x => x.Id == training.Id);
+            if (dbTraining is null)
+            {
+                dbTraining = training.ToDbReportTraining(customerId);
+                await _database.ReportTrainings.AddAsync(dbTraining, clt);
+                saveCount++;
+            }
+            else if (dbTraining.LastUpdated != training.LastUpdated)
+            {
+                dbTraining.UpdateDbReportTraining(training, customerId);
+                _database.ReportTrainings.Update(dbTraining);
+                saveCount++;
+            }
+
+            if (saveCount < 10) continue;
+            changeCount += await _database.SaveChangesAsync(clt);
+            saveCount = 0;
+        }
+
+        changeCount += await _database.SaveChangesAsync(clt);
+        _logger.LogInformation("SharePoint training synced (count {changeCount})", changeCount);
+        return changeCount > 0;
     }
 
     public async Task<MultipleSharePointActionsResponse> GetListActionsUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)

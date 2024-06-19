@@ -61,11 +61,11 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Component
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Acties.
+        ///   Looks up a localized string similar to acties.
         /// </summary>
-        internal static string Actions {
+        internal static string actions {
             get {
-                return ResourceManager.GetString("Actions", resourceCulture);
+                return ResourceManager.GetString("actions", resourceCulture);
             }
         }
         
@@ -151,6 +151,15 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Component
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Geen {0} gevonden voor deze selectie.
+        /// </summary>
+        internal static string No__0__found_for_this_selection {
+            get {
+                return ResourceManager.GetString("No {0} found for this selection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to nov.
         /// </summary>
         internal static string Nov {
@@ -174,6 +183,15 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Component
         internal static string Sep {
             get {
                 return ResourceManager.GetString("Sep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to oefeningen.
+        /// </summary>
+        internal static string trainings {
+            get {
+                return ResourceManager.GetString("trainings", resourceCulture);
             }
         }
     }

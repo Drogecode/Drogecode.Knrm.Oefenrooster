@@ -47,7 +47,13 @@
     <data name="Feb" xml:space="preserve">
         <value>Feb</value>
     </data>
-    <data name="Actions" xml:space="preserve">
-        <value>Actions</value>
+    <data name="actions" xml:space="preserve">
+        <value>actions</value>
+    </data>
+    <data name="No {0} found for this selection" xml:space="preserve">
+        <value>No {0} found for this selection</value>
+    </data>
+    <data name="trainings" xml:space="preserve">
+        <value>trainings</value>
     </data>
 </root>

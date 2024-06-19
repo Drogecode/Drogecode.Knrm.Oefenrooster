@@ -59,6 +59,7 @@ builder.Services.TryAddScoped<FunctionRepository>();
 builder.Services.TryAddScoped<HolidayRepository>();
 builder.Services.TryAddScoped<PreComRepository>();
 builder.Services.TryAddScoped<ReportActionRepository>();
+builder.Services.TryAddScoped<ReportTrainingRepository>();
 builder.Services.TryAddScoped<ScheduleRepository>();
 builder.Services.TryAddScoped<SharePointRepository>();
 builder.Services.TryAddScoped<TrainingTypesRepository>();

@@ -10,7 +10,7 @@
             @if (_name is not null)
             {
                 <div class="inline-flex">
-                    <MudText Typo="Typo.h5">@L["Welcome", _name] </MudText>
+                    <MudText Typo="Typo.h5">@L["Welcome", _name]</MudText>
                     @if (_user?.Nr is not null)
                     {
                         <MudText Typo="Typo.subtitle2">@($" ({_user.Nr})")</MudText>

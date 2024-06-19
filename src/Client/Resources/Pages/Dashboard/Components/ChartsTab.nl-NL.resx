@@ -54,7 +54,13 @@
     <data name="Feb" xml:space="preserve">
         <value>feb</value>
     </data>
-    <data name="Actions" xml:space="preserve">
-        <value>Acties</value>
+    <data name="No {0} found for this selection" xml:space="preserve">
+        <value>Geen {0} gevonden voor deze selectie</value>
+    </data>
+    <data name="actions" xml:space="preserve">
+        <value>acties</value>
+    </data>
+    <data name="trainings" xml:space="preserve">
+        <value>oefeningen</value>
     </data>
 </root>
