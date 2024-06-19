@@ -61,6 +61,15 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Component
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Acties.
+        /// </summary>
+        internal static string Actions {
+            get {
+                return ResourceManager.GetString("Actions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to apr.
         /// </summary>
         internal static string Apr {
@@ -88,11 +97,20 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Component
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to feb.
+        /// </summary>
+        internal static string Feb {
+            get {
+                return ResourceManager.GetString("Feb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to jan.
         /// </summary>
-        internal static string jan {
+        internal static string Jan {
             get {
-                return ResourceManager.GetString("jan", resourceCulture);
+                return ResourceManager.GetString("Jan", resourceCulture);
             }
         }
         
@@ -115,7 +133,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Component
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Maa.
+        ///   Looks up a localized string similar to maa.
         /// </summary>
         internal static string Mar {
             get {

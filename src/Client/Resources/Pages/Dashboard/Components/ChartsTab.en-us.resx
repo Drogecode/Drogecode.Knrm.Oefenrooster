@@ -20,7 +20,7 @@
     <data name="Dec" xml:space="preserve">
         <value>Dec</value>
     </data>
-    <data name="jan" xml:space="preserve">
+    <data name="Jan" xml:space="preserve">
         <value>Jan</value>
     </data>
     <data name="Jul" xml:space="preserve">
@@ -43,5 +43,11 @@
     </data>
     <data name="Sep" xml:space="preserve">
         <value>Sep</value>
+    </data>
+    <data name="Feb" xml:space="preserve">
+        <value>Feb</value>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Actions</value>
     </data>
 </root>
