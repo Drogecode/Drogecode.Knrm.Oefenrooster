@@ -114,20 +114,30 @@
       }
     },
     "/api/ReportTraining/analyze/years": {
-      "get": {
+      "post": {
         "tags": [
           "ReportTraining"
         ],
         "operationId": "AnalyzeYearChartsAll",
-        "parameters": [
-          {
-            "name": "users",
-            "in": "query",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeTrainingRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeTrainingRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeTrainingRequest"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -165,6 +175,24 @@
           "count": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AnalyzeTrainingRequest": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
+          "prio": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

@@ -2,7 +2,9 @@
 using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
@@ -69,8 +71,11 @@ public class ReportActionControllerTests : BaseTest
     [Fact]
     public async Task AnalyzeYearChartsAllForAllUsersTest()
     {
-        var emptyList = JsonSerializer.Serialize(new List<Guid>());
-        var getResult = await ReportActionController.AnalyzeYearChartsAll(emptyList);
+        var request = new AnalyzeActionRequest()
+        {
+            Users = new List<Guid> {  },
+        };
+        var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
         Assert.True(getResult.Value.Success);
         getResult.Value.Years.Should().HaveCount(1);
@@ -84,8 +89,11 @@ public class ReportActionControllerTests : BaseTest
     [Fact]
     public async Task AnalyzeYearChartsAllForTacoTest()
     {
-        var listWithTaco = JsonSerializer.Serialize(new List<Guid> { DefaultSettingsHelper.IdTaco });
-        var getResult = await ReportActionController.AnalyzeYearChartsAll(listWithTaco);
+        var request = new AnalyzeActionRequest()
+        {
+            Users = new List<Guid> { DefaultSettingsHelper.IdTaco },
+        };
+        var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
         Assert.True(getResult.Value.Success);
         getResult.Value.Years.Should().HaveCount(1);
@@ -99,8 +107,11 @@ public class ReportActionControllerTests : BaseTest
     [Fact]
     public async Task AnalyzeYearChartsAllForUnknownUserTest()
     {
-        var unknownUser = JsonSerializer.Serialize(new List<Guid> { Guid.NewGuid() });
-        var getResult = await ReportActionController.AnalyzeYearChartsAll(unknownUser);
+        var request = new AnalyzeActionRequest()
+        {
+            Users = new List<Guid> { Guid.NewGuid() },
+        };
+        var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
         Assert.True(getResult.Value.Success);
         getResult.Value.Years.Should().HaveCount(0);
@@ -128,8 +139,11 @@ public class ReportActionControllerTests : BaseTest
             Users = new List<DbReportUser> { new() { DrogeCodeId = DefaultSettingsHelper.IdTaco }, new() { DrogeCodeId = otherUser } },
         });
         await DataContext.SaveChangesAsync();
-        var unknownUser = JsonSerializer.Serialize(new List<Guid> { otherUser, DefaultSettingsHelper.IdTaco });
-        var getResult = await ReportActionController.AnalyzeYearChartsAll(unknownUser);
+        var request = new AnalyzeActionRequest()
+        {
+            Users = new List<Guid> { otherUser, DefaultSettingsHelper.IdTaco },
+        };
+        var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
         Assert.True(getResult.Value.Success);
         getResult.Value.Years.Should().HaveCount(1);
@@ -137,5 +151,24 @@ public class ReportActionControllerTests : BaseTest
         var y2022 = getResult.Value.Years.FirstOrDefault(x => x.Year == 2022);
         Assert.NotNull(y2022);
         y2022.Months.Should().Contain(x => x.Month == 4 && x.Count == 1);
+    }
+
+    [Fact]
+    public async Task GetDistinctNoneTest()
+    {
+        var prioResponse = await ReportActionController.Distinct(DistinctReportAction.None);
+        Assert.Null(prioResponse.Value?.Values);
+        Assert.NotNull(prioResponse.Value?.Message);
+        prioResponse.Value.Message.Should().Be("None is not valid");
+    }
+
+    [Fact]
+    public async Task GetDistinctPrioTest()
+    {
+        var prioResponse = await ReportActionController.Distinct(DistinctReportAction.Prio);
+        Assert.NotNull(prioResponse.Value?.Values);
+        Assert.NotEmpty(prioResponse.Value.Values);
+        prioResponse.Value.Values.Should().HaveCount(2);
+        prioResponse.Value.Values.Where(x => x.Equals("Prio 1")).Should().HaveCount(1);
     }
 }

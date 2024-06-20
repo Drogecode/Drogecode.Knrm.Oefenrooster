@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
@@ -12,7 +13,7 @@ public class ReportActionRepository
     {
         _reportActionClient = reportActionClient;
     }
-    
+
     public async Task<MultipleReportActionsResponse?> GetLastActionsForCurrentUser(int count, int skip, CancellationToken clt)
     {
         var result = await _reportActionClient.GetLastActionsForCurrentUserAsync(count, skip, clt);
@@ -22,24 +23,39 @@ public class ReportActionRepository
     public async Task<MultipleReportActionsResponse> GetLastActions(IEnumerable<DrogeUser> users, int count, int skip, CancellationToken clt)
     {
         var workingList = new List<Guid>();
-        foreach(var user in users)
+        foreach (var user in users)
         {
             workingList.Add(user.Id);
         }
+
         var usersAsString = System.Text.Json.JsonSerializer.Serialize(workingList);
         var result = await _reportActionClient.GetLastActionsAsync(usersAsString, count, skip, clt);
         return result;
     }
-    
-    public async Task<AnalyzeYearChartAllResponse?> AnalyzeYearChartsAll(IEnumerable<DrogeUser> users, CancellationToken clt)
+
+    public async Task<AnalyzeYearChartAllResponse?> AnalyzeYearChartsAll(IEnumerable<DrogeUser> users, IEnumerable<string?> prio, CancellationToken clt)
     {
-        var workingList = new List<Guid>();
-        foreach(var user in users)
+        try
         {
-            workingList.Add(user.Id);
+            var request = new AnalyzeActionRequest()
+            {
+                Users = users.Select(x => x.Id).ToList(),
+                Prio = prio
+            };
+            var result = await _reportActionClient.AnalyzeYearChartsAllAsync(request, clt);
+            return result;
         }
-        var usersAsString = System.Text.Json.JsonSerializer.Serialize(workingList);
-        var result = await _reportActionClient.AnalyzeYearChartsAllAsync(usersAsString, clt);
+        catch (Exception ex)
+        {
+            DebugHelper.WriteLine(ex);
+        }
+
+        return new AnalyzeYearChartAllResponse();
+    }
+
+    public async Task<DistinctResponse?> Distinct(DistinctReportAction column, CancellationToken clt)
+    {
+        var result = await _reportActionClient.DistinctAsync(column, clt);
         return result;
     }
 }

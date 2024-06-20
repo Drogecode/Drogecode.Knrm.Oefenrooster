@@ -3,7 +3,6 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
 
@@ -21,7 +20,6 @@ public sealed partial class TrainingsTab : IDisposable
     private MultipleReportTrainingsResponse? _reportTrainings;
     private CancellationTokenSource _cls = new();
     private IEnumerable<DrogeUser> _selectedUsersTraining = new List<DrogeUser>();
-    private static readonly List<string> _trainingDifferentStart = ["HRB Evenement", "KNRM Evenement", "KNRM Onderhoud"];
     private int _currentPage = 1;
     private int _count = 10;
     private bool _busy;

@@ -35,13 +35,22 @@ public class ReportTrainingRepository
     
     public async Task<AnalyzeYearChartAllResponse?> AnalyzeYearChartsAll(IEnumerable<DrogeUser> users, CancellationToken clt)
     {
-        var workingList = new List<Guid>();
-        foreach(var user in users)
+        try
         {
-            workingList.Add(user.Id);
+            DebugHelper.WriteLine("dupe");
+            var request = new AnalyzeTrainingRequest()
+            {
+                Users = users.Select(x => x.Id).ToList(),
+            };
+            var result = await _reportTrainingClient.AnalyzeYearChartsAllAsync(request, clt);
+            return result;
         }
-        var usersAsString = System.Text.Json.JsonSerializer.Serialize(workingList);
-        var result = await _reportTrainingClient.AnalyzeYearChartsAllAsync(usersAsString, clt);
-        return result;
+        catch (Exception ex)
+        {
+            DebugHelper.WriteLine("dap");
+            DebugHelper.WriteLine(ex);
+        }
+
+        return new AnalyzeYearChartAllResponse();
     }
 }

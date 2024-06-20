@@ -6,6 +6,8 @@
 
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
+using Drogecode.Knrm.Oefenrooster.Shared.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
 #pragma warning disable 114 // Disable "CS0114 '{derivedDto}.RaisePropertyChanged(String)' hides inherited member 'dtoBase.RaisePropertyChanged(String)'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword."
@@ -47,12 +49,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAllAsync(string users);
+        System.Threading.Tasks.Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAllAsync(AnalyzeTrainingRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAllAsync(string users, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAllAsync(AnalyzeTrainingRequest body, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -265,15 +267,15 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAllAsync(string users)
+        public virtual System.Threading.Tasks.Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAllAsync(AnalyzeTrainingRequest body)
         {
-            return AnalyzeYearChartsAllAsync(users, System.Threading.CancellationToken.None);
+            return AnalyzeYearChartsAllAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAllAsync(string users, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAllAsync(AnalyzeTrainingRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -281,19 +283,17 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
                     // Operation Path: "api/ReportTraining/analyze/years"
                     urlBuilder_.Append("api/ReportTraining/analyze/years");
-                    urlBuilder_.Append('?');
-                    if (users != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("users")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(users, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
-                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 

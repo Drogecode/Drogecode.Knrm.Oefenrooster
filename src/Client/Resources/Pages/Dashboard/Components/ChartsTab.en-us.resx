@@ -56,4 +56,7 @@
     <data name="trainings" xml:space="preserve">
         <value>trainings</value>
     </data>
+    <data name="Prio" xml:space="preserve">
+        <value>Prio</value>
+    </data>
 </root>

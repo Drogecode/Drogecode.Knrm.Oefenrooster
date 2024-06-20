@@ -29,4 +29,13 @@
         <MudSkeleton/>
         <MudSkeleton/>
     }
+    @if (Prios is not null)
+    {
+        <MudSelect T="string?" Label="@L["Prio"]" SelectedValues="_selectedPrio" SelectedValuesChanged="PrioChanged" Clearable="true" MultiSelection="true">
+            @foreach (var prio in Prios)
+            {
+                <MudSelectItem T="string?" Value="@prio">@prio</MudSelectItem>
+            }
+        </MudSelect>
+    }
 </MudPaper>

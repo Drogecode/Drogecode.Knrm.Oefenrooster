@@ -14,7 +14,7 @@
                 <HierarchyColumn T="DrogeTraining"/>
                 <TemplateColumn Title="@L["Start"]">
                     <CellTemplate>
-                        @if (_trainingDifferentStart.Contains(context.Item?.Type ?? string.Empty))
+                        @if (ReportSettingsHelper.TrainingDifferentStart.Contains(context.Item?.Type ?? string.Empty))
                         {
                             <p>@context.Item?.Commencement.ToNiceString(LDateToString)</p>
                         }
@@ -42,7 +42,7 @@
                             }
                         </MudList>
                         @{
-                            var differentStart = _trainingDifferentStart.Contains(context.Item?.Type ?? string.Empty);
+                            var differentStart = ReportSettingsHelper.TrainingDifferentStart.Contains(context.Item?.Type ?? string.Empty);
                             var start = differentStart ? context.Item.Commencement : context.Item.Start;
                         }
                         <MudText Typo="Typo.h6">@L["Times"]</MudText>

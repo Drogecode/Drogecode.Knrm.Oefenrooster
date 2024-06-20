@@ -178,6 +178,15 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Component
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Prio.
+        /// </summary>
+        internal static string Prio {
+            get {
+                return ResourceManager.GetString("Prio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to sep.
         /// </summary>
         internal static string Sep {

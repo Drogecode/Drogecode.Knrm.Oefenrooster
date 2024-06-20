@@ -114,20 +114,30 @@
       }
     },
     "/api/ReportAction/analyze/years": {
-      "get": {
+      "post": {
         "tags": [
           "ReportAction"
         ],
         "operationId": "AnalyzeYearChartsAll",
-        "parameters": [
-          {
-            "name": "users",
-            "in": "query",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeActionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeActionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeActionRequest"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -151,10 +161,71 @@
           }
         }
       }
+    },
+    "/api/ReportAction/distinct/{column}": {
+      "get": {
+        "tags": [
+          "ReportAction"
+        ],
+        "operationId": "Distinct",
+        "parameters": [
+          {
+            "name": "column",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DistinctReportAction"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DistinctResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DistinctResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DistinctResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AnalyzeActionRequest": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
+          "prio": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AnalyzeMonthDetails": {
         "type": "object",
         "properties": {
@@ -208,6 +279,45 @@
             "items": {
               "$ref": "#/components/schemas/AnalyzeMonthDetails"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DistinctReportAction": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "DistinctResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
             "nullable": true
           }
         },

@@ -1,6 +1,7 @@
 ﻿using ApexCharts;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
@@ -17,6 +18,8 @@ public sealed partial class StatisticsActionsAll : IDisposable
     private List<ChartYear>? _data;
     private readonly ApexChartOptions<ChartMonth> _options = new() { Theme = new Theme() { Mode = Mode.Dark } };
     private string[]? _xAxisLabels;
+    private IEnumerable<string?>? _selectedPrio;
+    private List<string?>? Prios;
     private long _elapsedMilliseconds = -1;
     private AnalyzeYearChartAllResponse? _analyzeData;
     private ApexChart<ChartMonth> _chart = null!;
@@ -44,6 +47,7 @@ public sealed partial class StatisticsActionsAll : IDisposable
         {
             _xAxisLabels = [L["Jan"], L["Feb"], L["Mar"], L["Apr"], L["May"], L["Jun"], L["Jul"], L["Aug"], L["Sep"], L["Oct"], L["Nov"], L["Dec"]];
             _options.Theme.Mode = Global.DarkMode ? Mode.Dark : Mode.Light;
+            Prios = (await ReportActionRepository.Distinct(DistinctReportAction.Prio, _cls.Token))?.Values;
             await UpdateAnalyzeYearChartAll();
         }
     }
@@ -54,7 +58,7 @@ public sealed partial class StatisticsActionsAll : IDisposable
         await Task.Delay(1); // Will not update without this delay
         StateHasChanged();
         _data = new List<ChartYear>();
-        _analyzeData = await ReportActionRepository.AnalyzeYearChartsAll(SelectedUsers, _cls.Token);
+        _analyzeData = await ReportActionRepository.AnalyzeYearChartsAll(SelectedUsers, _selectedPrio, _cls.Token);
         if (_analyzeData is null) return;
         _elapsedMilliseconds = _analyzeData.ElapsedMilliseconds;
         foreach (var year in _analyzeData.Years.OrderByDescending(x => x.Year))
@@ -87,6 +91,13 @@ public sealed partial class StatisticsActionsAll : IDisposable
             });
         }
         _renderChart = true;
+        StateHasChanged();
+    }
+
+    public async Task PrioChanged(IEnumerable<string?> newPrio)
+    {
+        _selectedPrio = newPrio;
+        await UpdateAnalyzeYearChartAll();
         StateHasChanged();
     }
 

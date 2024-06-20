@@ -29,10 +29,13 @@ public class ReportActionService : IReportActionService
     }
 
 
-    public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(List<Guid> users, Guid customerId, CancellationToken clt)
+    public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(AnalyzeActionRequest actionRequest, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var allReports = _database.ReportActions.Where(x=>x.CustomerId == customerId && x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count);
+        var allReports = _database.ReportActions.Where(
+            x=>x.CustomerId == customerId 
+               && (actionRequest.Prio == null || !actionRequest.Prio.Any() ||  actionRequest.Prio.Contains(x.Prio))
+               && x.Users!.Count(y => actionRequest.Users!.Contains(y.DrogeCodeId)) == actionRequest.Users!.Count);
         var result = new AnalyzeYearChartAllResponse { TotalCount = allReports.Count() };
         foreach (var report in allReports)
         {
@@ -54,6 +57,32 @@ public class ReportActionService : IReportActionService
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         result.Success = true;
+        return result;
+    }
+
+    public async Task<DistinctResponse> Distinct(DistinctReportAction column, Guid customerId, CancellationToken clt)
+    {
+        
+        var sw = Stopwatch.StartNew();
+        var result = new DistinctResponse();
+        
+        switch (column)
+        {
+            case DistinctReportAction.None:
+                result.Message = "None is not valid";
+                break;
+            case DistinctReportAction.Prio:
+                var prio = _database.ReportActions.Select(x => x.Prio).Distinct();
+                if (prio.Any())
+                {
+                    result.Values = prio.ToList();
+                    result.Success = true;
+                }
+                break;
+        }
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
 }

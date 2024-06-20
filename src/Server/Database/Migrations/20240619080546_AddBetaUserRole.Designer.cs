@@ -1610,7 +1610,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         new
                         {
                             Id = new Guid("d526e5ed-e838-499d-a96c-62180db28bed"),
-                            Accesses = "full_dashboard_statistics",
+                            Accesses = "full_dashboard_statistics1",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             Name = "Beta user"
                         },
