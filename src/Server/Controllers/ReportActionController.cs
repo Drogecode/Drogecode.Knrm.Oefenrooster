@@ -74,16 +74,21 @@ public class ReportActionController : ControllerBase
     [HttpPost]
     [Route("analyze/years")]
     [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics)]
-    public async Task<ActionResult<AnalyzeYearChartAllResponse>> AnalyzeYearChartsAll([FromBody] AnalyzeActionRequest actionRequest, CancellationToken clt = default)
+    public async Task<ActionResult<AnalyzeYearChartAllResponse>> AnalyzeYearChartsAll([FromBody] AnalyzeActionRequest request, CancellationToken clt = default)
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            if (actionRequest.Users is null)
-                return BadRequest("users is null");
+            if (request.Users is null)
+                return BadRequest("Users is null");
+            if (request.Users.Count > 5)
+                return new AnalyzeYearChartAllResponse() { Message = "To many users" };
+            if (request.Prio?.Count() > 5)
+                return new AnalyzeYearChartAllResponse() { Message = "To many prio" };
+            if (request.Prio?.Any(x => x.Length > 10) == true)
+                return BadRequest("To long");
 
-            var result = await _reportActionService.AnalyzeYearChartsAll(actionRequest, customerId, clt);
+            var result = await _reportActionService.AnalyzeYearChartsAll(request, customerId, clt);
             return result;
         }
         catch (Exception ex)

@@ -3,6 +3,7 @@
 public class AnalyzeYearChartAllResponse : BaseMultipleResponse
 {
     public List<AnalyzeYearDetails> Years { get; set; } = new List<AnalyzeYearDetails>();
+    public string? Message { get; set; }
 }
 
 public class AnalyzeYearDetails

@@ -83,10 +83,11 @@ public class ReportTrainingController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             if (request.Users is null)
-                return BadRequest("users is null");
+                return BadRequest("Users is null");
+            if (request.Users.Count > 5)
+                return new AnalyzeYearChartAllResponse() { Message = "To many users" };
 
             var result = await _reportTrainingService.AnalyzeYearChartsAll(request.Users, customerId, clt);
             return result;

@@ -13,6 +13,7 @@ public class ReportTrainingService : IReportTrainingService
     {
         _database = database;
     }
+
     public async Task<MultipleReportTrainingsResponse> GetListTrainingUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
@@ -32,7 +33,9 @@ public class ReportTrainingService : IReportTrainingService
     public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(List<Guid> users, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var allReports = _database.ReportTrainings.Where(x=>x.CustomerId == customerId && x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count);
+        var allReports = _database.ReportTrainings
+            .Where(x => x.CustomerId == customerId && x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count)
+            .Select(x => new { x.Start });
         var result = new AnalyzeYearChartAllResponse { TotalCount = allReports.Count() };
         foreach (var report in allReports)
         {

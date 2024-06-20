@@ -32,10 +32,11 @@ public class ReportActionService : IReportActionService
     public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(AnalyzeActionRequest actionRequest, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var allReports = _database.ReportActions.Where(
-            x=>x.CustomerId == customerId 
-               && (actionRequest.Prio == null || !actionRequest.Prio.Any() ||  actionRequest.Prio.Contains(x.Prio))
-               && x.Users!.Count(y => actionRequest.Users!.Contains(y.DrogeCodeId)) == actionRequest.Users!.Count);
+        var allReports = _database.ReportActions
+            .Where(x => x.CustomerId == customerId
+                        && (actionRequest.Prio == null || !actionRequest.Prio.Any() || actionRequest.Prio.Contains(x.Prio))
+                        && x.Users!.Count(y => actionRequest.Users!.Contains(y.DrogeCodeId)) == actionRequest.Users!.Count)
+            .Select(x => new { x.Start });
         var result = new AnalyzeYearChartAllResponse { TotalCount = allReports.Count() };
         foreach (var report in allReports)
         {
@@ -62,10 +63,9 @@ public class ReportActionService : IReportActionService
 
     public async Task<DistinctResponse> Distinct(DistinctReportAction column, Guid customerId, CancellationToken clt)
     {
-        
         var sw = Stopwatch.StartNew();
         var result = new DistinctResponse();
-        
+
         switch (column)
         {
             case DistinctReportAction.None:
@@ -78,6 +78,7 @@ public class ReportActionService : IReportActionService
                     result.Values = prio.ToList();
                     result.Success = true;
                 }
+
                 break;
         }
 

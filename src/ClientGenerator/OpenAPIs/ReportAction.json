@@ -263,6 +263,10 @@
               "$ref": "#/components/schemas/AnalyzeYearDetails"
             },
             "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

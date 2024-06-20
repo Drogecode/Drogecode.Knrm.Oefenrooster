@@ -189,10 +189,6 @@
               "format": "uuid"
             },
             "nullable": true
-          },
-          "prio": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -219,6 +215,10 @@
             "items": {
               "$ref": "#/components/schemas/AnalyzeYearDetails"
             },
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
             "nullable": true
           }
         },
