@@ -22,6 +22,11 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services
             throw new NotImplementedException();
         }
 
+        public Task<GetHistoricalResponse> SyncHistorical(Guid customerId, CancellationToken clt)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<string?> GetAccessTokenAsync()
         {
             throw new NotImplementedException();

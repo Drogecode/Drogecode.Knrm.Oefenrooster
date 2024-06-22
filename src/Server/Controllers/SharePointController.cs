@@ -1,8 +1,10 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
+﻿using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -118,6 +120,29 @@ public class SharePointController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in GetLastActions");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
+    [Route("historical")]
+    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    public async Task<ActionResult<GetHistoricalResponse>> SyncHistorical(CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+
+            _graphService.InitializeGraph();
+            GetHistoricalResponse result = await _graphService.SyncHistorical(customerId, clt);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in SyncHistorical");
             return BadRequest();
         }
     }

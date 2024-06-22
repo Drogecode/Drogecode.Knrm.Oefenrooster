@@ -47,6 +47,7 @@ public static class ReportActionMapper
 
             Users = new List<DbReportUser>()
         };
+        if (spAction.Users is null) return dbReport;
         foreach (var user in spAction.Users)
         {
             dbReport.Users.Add(new()
@@ -224,6 +225,7 @@ public static class ReportActionMapper
         dbAction.End = spAction.End;
         dbAction.Date = spAction.Date;
         dbAction.Commencement = spAction.Commencement;
+        dbAction.Departure = spAction.Departure;
 
         if (dbAction.Users is not null)
         {

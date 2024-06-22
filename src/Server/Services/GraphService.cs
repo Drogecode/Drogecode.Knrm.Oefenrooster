@@ -149,7 +149,7 @@ public class GraphService : IGraphService
         await ShouldUpdateCacheSharePointTrainings(customerId, keyTrainings);
         _memoryCache.TryGetValue<List<SharePointTraining>>(keyTrainings, out var sharePointTrainings);
         sharePointTrainings ??= await GetSharePointTrainings(customerId, keyTrainings, clt);
-        
+
         if (sharePointTrainings == null || clt.IsCancellationRequested)
             return false;
         var dbTrainings = await _database.ReportTrainings
@@ -349,6 +349,54 @@ public class GraphService : IGraphService
     public async Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt)
     {
         await GraphHelper.DeleteCalendarEvent(userId, calendarEventId, clt);
+    }
+
+    public async Task<GetHistoricalResponse> SyncHistorical(Guid customerId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var spUsers = await GetAllSharePointUsers(customerId, clt);
+        var fromSharePoint = await GraphHelper.GetHistorical(customerId, spUsers, clt);
+
+        var response = new GetHistoricalResponse();
+        var saveCount = 0;
+        var changeCount = 0;
+        
+        if (fromSharePoint.Actions is not null)
+        {
+            var dbActions = await _database.ReportActions
+                .Where(x => x.CustomerId == customerId)
+                .Include(x => x.Users)
+                .ToListAsync(clt);
+            foreach (var action in fromSharePoint.Actions)
+            {
+                if (clt.IsCancellationRequested)
+                    return response;
+                var dbAction = dbActions.FirstOrDefault(x => x.Id == action.Id);
+                if (dbAction is null)
+                {
+                    dbAction = action.ToDbReportAction(customerId);
+                    await _database.ReportActions.AddAsync(dbAction, clt);
+                    saveCount++;
+                }
+                else if (true || dbAction.LastUpdated != action.LastUpdated)// Always update while debugging
+                {
+                    dbAction.UpdateDbReportAction(action, customerId);
+                    _database.ReportActions.Update(dbAction);
+                    saveCount++;
+                }
+
+                if (saveCount < 10) continue;
+                changeCount += await _database.SaveChangesAsync(clt);
+                saveCount = 0;
+            }
+        }
+        
+        changeCount += await _database.SaveChangesAsync(clt);
+        _logger.LogInformation("SharePoint historical synced (count {changeCount})", changeCount);
+        sw.Start();
+        response.Success = changeCount > 0;
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
     }
 
     private class UpdatedCheck
