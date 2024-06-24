@@ -393,6 +393,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<double?>("Number")
                         .HasColumnType("double precision");
 
+                    b.Property<string>("OdataEtag")
+                        .HasColumnType("text");
+
                     b.Property<string>("Prio")
                         .HasColumnType("text");
 
@@ -442,17 +445,68 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Area")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Boat")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Commencement")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("End")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FunctioningMaterial")
+                        .HasColumnType("text");
+
+                    b.Property<double?>("GolfHight")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("OdataEtag")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProblemsWithWeed")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Sight")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("Start")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TypeTraining")
+                        .HasColumnType("text");
+
+                    b.Property<double?>("WaterTemperature")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("WeatherCondition")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WindDirection")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("WindPower")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -481,6 +535,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Role")
                         .HasColumnType("integer");
@@ -1603,6 +1660,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         },
                         new
                         {
+                            Id = new Guid("d526e5ed-e838-499d-a96c-62180db28bed"),
+                            Accesses = "full_dashboard_statistics1",
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "Beta user"
+                        },
+                        new
+                        {
                             Id = new Guid("f5b0bab6-6fdf-457d-855d-bbea6ea57bd5"),
                             Accesses = "full_training_history,full_action_history,scheduler_other",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
@@ -2016,13 +2080,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportUser", b =>
                 {
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportAction", null)
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportAction", "Action")
                         .WithMany("Users")
                         .HasForeignKey("DbReportActionId");
 
-                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportTraining", null)
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportTraining", "Training")
                         .WithMany("Users")
                         .HasForeignKey("DbReportTrainingId");
+
+                    b.Navigation("Action");
+
+                    b.Navigation("Training");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterAvailable", b =>

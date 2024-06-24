@@ -31,9 +31,9 @@ public class ConfigurationRepository
         var response = await _configurationClient.UpdateSpecialDatesAsync();
         return response.Success;
     }
-    public async Task<DbCorrectionResponse?> DbCorrection()
+    public async Task<DbCorrectionResponse?> DbCorrection(CancellationToken clt)
     {
-        var response = await _configurationClient.DbCorrectionAsync();
+        var response = await _configurationClient.DbCorrectionAsync(clt);
         return response;
     }
 }

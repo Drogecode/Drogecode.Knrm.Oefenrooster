@@ -51,7 +51,6 @@ public class OfflineService : IOfflineService
         }
         catch (TaskCanceledException)
         {
-            DebugHelper.WriteLine("a TaskCanceledException");
         }
         catch (Exception ex)
         {
@@ -74,7 +73,6 @@ public class OfflineService : IOfflineService
         }
         catch (TaskCanceledException)
         {
-            DebugHelper.WriteLine("b TaskCanceledException");
         }
         catch (Exception ex)
         {

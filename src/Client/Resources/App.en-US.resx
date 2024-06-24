@@ -198,4 +198,7 @@
   <data name="Add" xml:space="preserve">
     <value>Add</value>
   </data>
+  <data name="User not found or deleted" xml:space="preserve">
+    <value>User not found or deleted</value>
+  </data>
 </root>

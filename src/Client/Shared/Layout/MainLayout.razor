@@ -16,10 +16,14 @@
                 <MudSpacer/>
                 <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
                     <MudBadge Color="Color.Secondary" Dot="true" Overlap="true" Visible="_newNotificationsAvailable">
-                        <MudMenu Icon="@Icons.Material.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter" PopoverClass="docs-layout-menu-shadow" ListClass="pa-2 docs-menu-list" LockScroll="true">
+                        <MudMenu Icon="@Icons.Material.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter"
+                                 PopoverClass="docs-layout-menu-shadow" ListClass="pa-2 docs-menu-list" LockScroll="true">
                             <div class="d-flex justify-space-between align-center px-2">
                                 <MudText Typo="Typo.subtitle2">Notifications</MudText>
-                                <MudButton Disabled="@(_newNotificationsAvailable == false)" StartIcon="@Icons.Material.Filled.DoneAll" Variant="Variant.Text" Color="Color.Primary" Class="ml-16 mr-n2">Mark as read</MudButton>
+                                <MudButton Disabled="@(_newNotificationsAvailable == false)" StartIcon="@Icons.Material.Filled.DoneAll" Variant="Variant.Text" Color="Color.Primary"
+                                           Class="ml-16 mr-n2">
+                                    Mark as read
+                                </MudButton>
                             </div>
                             @if (_messages != null && _newNotificationsAvailable)
                             {
@@ -54,6 +58,13 @@
                 <MudMainContent>
                     <CascadingValue Value="this">
                         @Body
+                        <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
+                            <footer class="fixed bottom-0">
+                                <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+                                    © 2022-2024 Taco Droogers
+                                </span>
+                            </footer>
+                        </AuthorizeView>
                         <UpdateChecker/>
                     </CascadingValue>
                 </MudMainContent>
@@ -74,7 +85,7 @@
 
                     @("}")
                 }
-                </style>
+            </style>
             }
         </Authorized>
         <Authorizing>

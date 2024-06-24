@@ -1,8 +1,11 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Report;
+﻿using System.Security.Claims;
+using System.Text.Json;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
-using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -10,25 +13,25 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
-[ApiExplorerSettings(GroupName = "Report")]
-public class ReportController : ControllerBase
+[ApiExplorerSettings(GroupName = "ReportTraining")]
+public class ReportTrainingController : ControllerBase
 {
     private readonly ILogger<ScheduleController> _logger;
-    private readonly IReportService _reportService;
+    private readonly IReportTrainingService _reportTrainingService;
     private readonly IAuditService _auditService;
 
-    public ReportController(
+    public ReportTrainingController(
         ILogger<ScheduleController> logger,
-        IReportService reportService,
+        IReportTrainingService reportTrainingService,
         IAuditService auditService)
     {
         _logger = logger;
-        _reportService = reportService;
+        _reportTrainingService = reportTrainingService;
         _auditService = auditService;
     }
-
+    
     [HttpGet]
-    [Route("training/user/{count:int}/{skip:int}")]
+    [Route("user/{count:int}/{skip:int}")]
     public async Task<ActionResult<MultipleReportTrainingsResponse>> GetLastTrainingsForCurrentUser(int count, int skip, CancellationToken clt = default)
     {
         try
@@ -39,7 +42,7 @@ public class ReportController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var users = new List<Guid>() { userId };
 
-            var result = await _reportService.GetListTrainingUser(users, userId, count, skip, customerId, clt);
+            var result = await _reportTrainingService.GetListTrainingUser(users, userId, count, skip, customerId, clt);
             return result;
         }
         catch (Exception ex)
@@ -50,7 +53,7 @@ public class ReportController : ControllerBase
     }
 
     [HttpGet]
-    [Route("training/{users}/{count:int}/{skip:int}")]
+    [Route("{users}/{count:int}/{skip:int}")]
     public async Task<ActionResult<MultipleReportTrainingsResponse>> GetLastTrainings(string users, int count, int skip, CancellationToken clt = default)
     {
         try
@@ -63,7 +66,7 @@ public class ReportController : ControllerBase
             if (usersAsList is null)
                 return BadRequest("users is null");
 
-            var result = await _reportService.GetListTrainingUser(usersAsList, userId, count, skip, customerId, clt);
+            var result = await _reportTrainingService.GetListTrainingUser(usersAsList, userId, count, skip, customerId, clt);
             return result;
         }
         catch (Exception ex)
@@ -73,47 +76,25 @@ public class ReportController : ControllerBase
         }
     }
 
-    [HttpGet]
-    [Route("action/user/{count:int}/{skip:int}")]
-    public async Task<ActionResult<MultipleReportActionsResponse>> GetLastActionsForCurrentUser(int count, int skip, CancellationToken clt = default)
+    [HttpPost]
+    [Route("analyze/years")]
+    [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics)]
+    public async Task<ActionResult<AnalyzeYearChartAllResponse>> AnalyzeYearChartsAll([FromBody] AnalyzeTrainingRequest request, CancellationToken clt = default)
     {
         try
         {
-            if (count > 30) return Forbid();
-            var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var users = new List<Guid>() { userId };
+            if (request.Users is null)
+                return BadRequest("Users is null");
+            if (request.Users.Count > 5)
+                return new AnalyzeYearChartAllResponse() { Message = "To many users" };
 
-            var result = await _reportService.GetListActionsUser(users, userId, count, skip, customerId, clt);
+            var result = await _reportTrainingService.AnalyzeYearChartsAll(request.Users, customerId, clt);
             return result;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in GetLastActionsForCurrentUser");
-            return BadRequest();
-        }
-    }
-
-    [HttpGet]
-    [Route("action/{users}/{count:int}/{skip:int}")]
-    public async Task<ActionResult<MultipleReportActionsResponse>> GetLastActions(string users, int count, int skip, CancellationToken clt = default)
-    {
-        try
-        {
-            if (count > 30) return Forbid();
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var usersAsList = System.Text.Json.JsonSerializer.Deserialize<List<Guid>>(users);
-            if (usersAsList is null)
-                return BadRequest("users is null");
-
-            var result = await _reportService.GetListActionsUser(usersAsList, userId, count, skip, customerId, clt);
-            return result;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Exception in GetLastActions");
+            _logger.LogError(ex, "Exception in AnalyzeYearChartsAll");
             return BadRequest();
         }
     }

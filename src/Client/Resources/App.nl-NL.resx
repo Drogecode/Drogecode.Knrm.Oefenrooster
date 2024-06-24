@@ -198,4 +198,7 @@
   <data name="Add" xml:space="preserve">
     <value>Toevoegen</value>
   </data>
+  <data name="User not found or deleted" xml:space="preserve">
+    <value>Gebruiker niet gevonden, mogelijk verwijderd</value>
+  </data>
 </root>

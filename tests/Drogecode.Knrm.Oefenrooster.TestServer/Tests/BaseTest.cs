@@ -1,5 +1,4 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using Drogecode.Knrm.Oefenrooster.Server.Controllers.Obsolite;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
@@ -58,6 +57,9 @@ public class BaseTest : IAsyncLifetime
     protected readonly PreComController PreComController;
     protected readonly VehicleController VehicleController;
     protected readonly DefaultScheduleController DefaultScheduleController;
+    protected readonly ReportActionController ReportActionController;
+    protected readonly ReportTrainingController ReportTrainingController;
+
     public BaseTest(
         DataContext dataContext,
         IDateTimeService dateTimeService,
@@ -70,7 +72,9 @@ public class BaseTest : IAsyncLifetime
         MonthItemController monthItemController,
         PreComController preComController,
         VehicleController vehicleController,
-        DefaultScheduleController defaultScheduleController)
+        DefaultScheduleController defaultScheduleController,
+        ReportActionController reportActionController,
+        ReportTrainingController reportTrainingController)
     {
         DataContext = dataContext;
         DateTimeServiceMock = (IDateTimeServiceMock)dateTimeService;
@@ -85,16 +89,13 @@ public class BaseTest : IAsyncLifetime
         PreComController = preComController;
         VehicleController = vehicleController;
         DefaultScheduleController = defaultScheduleController;
+        ReportActionController = reportActionController;
+        ReportTrainingController = reportTrainingController;
 
         DefaultCustomerId = Guid.NewGuid();
-        dataContext.Customers.Add(new DbCustomers
-        {
-            Id = DefaultCustomerId,
-            Name = "xUnit customer",
-            TimeZone = "Europe/Amsterdam",
-            Created = DateTime.UtcNow
-        });
-        dataContext.SaveChanges();
+        SeedCustomer(dataContext);
+        SeedReportAction(dataContext);
+        SeedReportTraining(dataContext);
 
         var defaultRoles = new List<string>
         {
@@ -110,6 +111,8 @@ public class BaseTest : IAsyncLifetime
         MockAuthenticatedUser(preComController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(vehicleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(defaultScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(reportActionController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(reportTrainingController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
     }
 
     public async Task InitializeAsync()
@@ -124,6 +127,106 @@ public class BaseTest : IAsyncLifetime
         DefaultCalendarDayItem = await AddCalendarDayItem(TRAINING_CALENDAR_DAY);
         DefaultVehicle = await AddVehicle(VEHICLE_DEFAULT);
         DefaultDefaultSchedule = await AddDefaultSchedule();
+    }
+
+    private void SeedCustomer(DataContext dataContext)
+    {
+        dataContext.Customers.Add(new DbCustomers
+        {
+            Id = DefaultCustomerId,
+            Name = "xUnit customer",
+            TimeZone = "Europe/Amsterdam",
+            Created = DateTime.UtcNow
+        });
+        dataContext.SaveChanges();
+    }
+
+    public void SeedReportAction(DataContext dataContext)
+    {
+        var start = new DateTime(2022, 3, 8, 8, 5, 41);
+        dataContext.ReportActions.Add(new DbReportAction
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = DefaultCustomerId,
+            Description = "xUnit Description A",
+            Start = start,
+            Commencement = start.AddMinutes(5),
+            Departure = start.AddMinutes(15),
+            End = start.AddMinutes(121),
+            Boat = "xUnit boat",
+            Prio = "Prio 69",
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+        });
+        start = start.AddDays(1);
+        dataContext.ReportActions.Add(new DbReportAction
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = DefaultCustomerId,
+            Description = "xUnit Description B",
+            Start = start,
+            Commencement = start.AddMinutes(5),
+            Departure = start.AddMinutes(15),
+            End = start.AddMinutes(121),
+            Boat = "xUnit boat",
+            Prio = "Prio 1",
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+        });
+        start = start.AddMonths(1);
+        dataContext.ReportActions.Add(new DbReportAction
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = DefaultCustomerId,
+            Description = "xUnit Description C",
+            Start = start,
+            Commencement = start.AddMinutes(5),
+            Departure = start.AddMinutes(15),
+            End = start.AddMinutes(121),
+            Boat = "xUnit boat",
+            Prio = "Prio 1",
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+        });
+        dataContext.SaveChanges();
+    }
+
+    public void SeedReportTraining(DataContext dataContext)
+    {
+        var start = new DateTime(2022, 3, 8, 8, 5, 41);
+        dataContext.ReportTrainings.Add(new DbReportTraining
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = DefaultCustomerId,
+            Description = "xUnit Description A",
+            Start = start,
+            Commencement = start.AddMinutes(5),
+            End = start.AddMinutes(121),
+            Boat = "xUnit boat",
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+        });
+        start = start.AddDays(1);
+        dataContext.ReportTrainings.Add(new DbReportTraining
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = DefaultCustomerId,
+            Description = "xUnit Description B",
+            Start = start,
+            Commencement = start.AddMinutes(5),
+            End = start.AddMinutes(121),
+            Boat = "xUnit boat",
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+        });
+        start = start.AddMonths(1);
+        dataContext.ReportTrainings.Add(new DbReportTraining
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = DefaultCustomerId,
+            Description = "xUnit Description C",
+            Start = start,
+            Commencement = start.AddMinutes(5),
+            End = start.AddMinutes(121),
+            Boat = "xUnit boat",
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+        });
+        dataContext.SaveChanges();
     }
 
     protected async Task<Guid> AddUser(string name)
@@ -179,6 +282,7 @@ public class BaseTest : IAsyncLifetime
         Assert.NotNull(result?.Value?.NewId);
         return result.Value.NewId;
     }
+
     protected async Task<Guid> AssignTrainingToUser(Guid trainingId, Guid userId, bool assigned)
     {
         var user = (await UserController.GetById(userId))!.Value!.User;
@@ -250,10 +354,12 @@ public class BaseTest : IAsyncLifetime
         {
             body.LinkedUsers = [new RoosterItemDayLinkedUsers { UserId = userId.Value }];
         }
+
         var result = await DayItemController.PutDayItem(body);
         Assert.NotNull(result?.Value?.NewId);
         return result.Value.NewId;
     }
+
     protected async Task<Guid> AddVehicle(string name, string code = "xUnit", bool isDefault = false, bool isActive = true)
     {
         var vehicle = new DrogeVehicle
@@ -307,6 +413,7 @@ public class BaseTest : IAsyncLifetime
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
         }
+
         var claimsIdentity = new ClaimsIdentity(
             claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var fakeUser = new ClaimsPrincipal(claimsIdentity);

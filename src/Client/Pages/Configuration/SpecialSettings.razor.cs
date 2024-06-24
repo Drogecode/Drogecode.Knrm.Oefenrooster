@@ -4,6 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
 
@@ -17,6 +18,7 @@ public sealed partial class SpecialSettings : IDisposable
     [Inject] private UserRepository UserRepository { get; set; } = default!;
     [Inject] private FunctionRepository FunctionRepository { get; set; } = default!;
     [Inject] private ICustomerSettingsClient CustomerSettingsClient { get; set; } = default!;
+    [Inject] private ISharePointClient SharePointClient { get; set; } = default!;
     [CascadingParameter] private DrogeCodeGlobal Global { get; set; } = default!;
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
@@ -27,6 +29,7 @@ public sealed partial class SpecialSettings : IDisposable
     private bool? _usersSynced;
     private bool? _specialDatesUpdated;
     private bool? _settingTrainingToCalendar;
+    private GetHistoricalResponse? _syncHistorical;
     private DbCorrectionResponse? _dbCorrection;
 
 
@@ -77,7 +80,12 @@ public sealed partial class SpecialSettings : IDisposable
     }
     private async Task RunDbCorrection()
     {
-        _dbCorrection = await ConfigurationRepository.DbCorrection();
+        _dbCorrection = await ConfigurationRepository.DbCorrection(_cls.Token);
+        StateHasChanged();
+    }
+    private async Task RunSyncHistorical()
+    {
+        _syncHistorical = await SharePointClient.SyncHistoricalAsync(_cls.Token);
         StateHasChanged();
     }
 

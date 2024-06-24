@@ -1,20 +1,20 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
-@using System.Text.RegularExpressions;
 @using Drogecode.Knrm.Oefenrooster.Client.Extensions
-@using System.Web;
-@if (_sharePointTrainings != null)
+@if (_reportTrainings != null)
 {
+    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+        @_reportTrainings.ElapsedMilliseconds
+    </AuthorizeView>
     <MudText Typo="Typo.h5">@L["Trainings from SharePoint"]</MudText>
     <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersTraining" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection"/>
-    @if (_sharePointTrainings?.SharePointTrainings?.Count() > 0)
+    @if (_reportTrainings?.Trainings?.Count() > 0)
     {
-        <MudDataGrid Items="@_sharePointTrainings.SharePointTrainings"
-                     ReadOnly="true" EditMode="@DataGridEditMode.Cell">
+        <MudDataGrid Items="@_reportTrainings.Trainings" ReadOnly="true" Filterable="false" SortMode="@SortMode.None">
             <Columns>
-                <HierarchyColumn T="SharePointTraining"/>
+                <HierarchyColumn T="DrogeTraining"/>
                 <TemplateColumn Title="@L["Start"]">
                     <CellTemplate>
-                        @if (_trainingDifferentStart.Contains(context.Item?.Type ?? string.Empty))
+                        @if (ReportSettingsHelper.TrainingDifferentStart.Contains(context.Item?.Type ?? string.Empty))
                         {
                             <p>@context.Item?.Commencement.ToNiceString(LDateToString)</p>
                         }
@@ -41,38 +41,37 @@
                                 <MudListItem>@user.Name - @user.Role</MudListItem>
                             }
                         </MudList>
-                        @if (_isTaco) /*Work in progress*/
-                        {
-                            var differentStart = _trainingDifferentStart.Contains(context.Item?.Type ?? string.Empty);
+                        @{
+                            var differentStart = ReportSettingsHelper.TrainingDifferentStart.Contains(context.Item?.Type ?? string.Empty);
                             var start = differentStart ? context.Item.Commencement : context.Item.Start;
-                            <MudText Typo="Typo.h6">@L["Times"]</MudText>
-                            <MudList>
-                                <MudListItem>
-                                    @($"{L["Start"]} - {start.ToNiceString(LDateToString)}")
-                                </MudListItem>
-                                @if (!differentStart)
-                                {
-                                    <MudListItem>
-                                        @($"{L["Commencement"]} - {context.Item.Commencement.ToNiceString(LDateToString, showDate: context.Item.Start.Date != context.Item.Commencement.Date)}") - @((context.Item.Commencement - start).TotalMinutes) @L["minutes"]
-                                    </MudListItem>
-                                }
-                                <MudListItem>
-                                    @($"{L["End"]} - {context.Item.End.ToNiceString(LDateToString, showDate: context.Item.Commencement.Date != context.Item.End.Date)}") - @((context.Item.End - start).TotalMinutes) @L["minutes"]
-                                </MudListItem>
-                            </MudList>
-                            <MudText Typo="Typo.h6">@L["Miscellaneous"]</MudText>
-                            <MudList>
-                                <MudListItem>@L["Boat"]: @context.Item.Boat</MudListItem>
-                                <MudListItem>@L["Type"]: @context.Item.Type</MudListItem>
-                            </MudList>
                         }
+                        <MudText Typo="Typo.h6">@L["Times"]</MudText>
+                        <MudList>
+                            <MudListItem>
+                                @($"{L["Start"]} - {start.ToNiceString(LDateToString)}")
+                            </MudListItem>
+                            @if (!differentStart)
+                            {
+                                <MudListItem>
+                                    @($"{L["Commencement"]} - {context.Item.Commencement.ToNiceString(LDateToString, showDate: context.Item.Start.Date != context.Item.Commencement.Date)}") - @((context.Item.Commencement - start).TotalMinutes) @L["minutes"]
+                                </MudListItem>
+                            }
+                            <MudListItem>
+                                @($"{L["End"]} - {context.Item.End.ToNiceString(LDateToString, showDate: context.Item.Commencement.Date != context.Item.End.Date)}") - @((context.Item.End - start).TotalMinutes) @L["minutes"]
+                            </MudListItem>
+                        </MudList>
+                        <MudText Typo="Typo.h6">@L["Miscellaneous"]</MudText>
+                        <MudList>
+                            <MudListItem>@L["Boat"]: @context.Item.Boat</MudListItem>
+                            <MudListItem>@L["Type"]: @context.Item.Type</MudListItem>
+                        </MudList>
                     </MudCardContent>
                 </MudCard>
             </ChildRowContent>
         </MudDataGrid>
-        @if (_sharePointTrainings.TotalCount > _count)
+        @if (_reportTrainings.TotalCount > _count)
         {
-            <MudPagination Disabled="_busy" ShowFirstButton="true" ShowLastButton="true" MiddleCount="5" Count="@(Convert.ToInt32(Math.Ceiling((double)_sharePointTrainings.TotalCount / (double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4"/>
+            <MudPagination Disabled="_busy" ShowFirstButton="true" ShowLastButton="true" MiddleCount="5" Count="@(Convert.ToInt32(Math.Ceiling((double)_reportTrainings.TotalCount / (double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4"/>
         }
     }
 }

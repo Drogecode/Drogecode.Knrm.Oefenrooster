@@ -1,0 +1,43 @@
+﻿@using ApexCharts
+<MudPaper MaxWidth="800px" MinWidth="400px">
+    @if (_renderChart && _data is not null && _data.Any())
+    {
+        <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+            @_elapsedMilliseconds
+        </AuthorizeView>
+        <ApexChart @ref=_chart TItem="ChartMonth" Title="@L["actions"]" Options="_options">
+
+            @foreach (var data in _data)
+            {
+                <ApexPointSeries TItem="ChartMonth"
+                                 Items="data.Months"
+                                 Name="@data.Name"
+                                 SeriesType="SeriesType.Line"
+                                 XValue="e => e.Month"
+                                 YValue="e => e.Count"
+                                 Color="@data.Color"
+                />
+            }
+        </ApexChart>
+    }
+    else if (_data is not null)
+    {
+        <MudText Typo="Typo.h5">@L["No {0} found for this selection", L["actions"]]</MudText>
+    }
+    else
+    {
+        <MudSkeleton/>
+        <MudSkeleton/>
+        <MudSkeleton/>
+        <MudSkeleton/>
+    }
+    @if (Prios is not null)
+    {
+        <MudSelect T="string?" Label="@L["Prio"]" SelectedValues="_selectedPrio" SelectedValuesChanged="PrioChanged" Clearable="true" MultiSelection="true">
+            @foreach (var prio in Prios)
+            {
+                <MudSelectItem T="string?" Value="@prio">@prio</MudSelectItem>
+            }
+        </MudSelect>
+    }
+</MudPaper>

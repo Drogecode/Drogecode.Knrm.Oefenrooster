@@ -220,10 +220,56 @@
           }
         }
       }
+    },
+    "/api/SharePoint/historical": {
+      "patch": {
+        "tags": [
+          "SharePoint"
+        ],
+        "operationId": "SyncHistorical",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetHistoricalResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetHistoricalResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetHistoricalResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "GetHistoricalResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
       "MultipleSharePointActionsResponse": {
         "type": "object",
         "properties": {
@@ -289,6 +335,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "odataEtag": {
+            "type": "string",
+            "nullable": true
+          },
           "title": {
             "type": "string",
             "nullable": true
@@ -297,7 +347,51 @@
             "type": "string",
             "nullable": true
           },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
           "boat": {
+            "type": "string",
+            "nullable": true
+          },
+          "area": {
+            "type": "string",
+            "nullable": true
+          },
+          "windDirection": {
+            "type": "string",
+            "nullable": true
+          },
+          "windPower": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "waterTemperature": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "golfHight": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "sight": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "weatherCondition": {
+            "type": "string",
+            "nullable": true
+          },
+          "functioningMaterial": {
+            "type": "string",
+            "nullable": true
+          },
+          "problemsWithWeed": {
             "type": "string",
             "nullable": true
           },
@@ -337,10 +431,6 @@
             "type": "string",
             "nullable": true
           },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
           "request": {
             "type": "string",
             "nullable": true
@@ -354,6 +444,76 @@
             "nullable": true
           },
           "implications": {
+            "type": "string",
+            "nullable": true
+          },
+          "callMadeBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "countSailors": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "countSaved": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "countAnimals": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "completedby": {
+            "type": "string",
+            "nullable": true
+          },
+          "departure": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SharePointRole": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "SharePointTraining": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "odataEtag": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "boat": {
             "type": "string",
             "nullable": true
           },
@@ -389,73 +549,11 @@
             "type": "string",
             "nullable": true
           },
-          "callMadeBy": {
-            "type": "string",
-            "nullable": true
-          },
-          "countSailors": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "countSaved": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "countAnimals": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
           "functioningMaterial": {
             "type": "string",
             "nullable": true
           },
           "problemsWithWeed": {
-            "type": "string",
-            "nullable": true
-          },
-          "completedby": {
-            "type": "string",
-            "nullable": true
-          },
-          "departure": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      },
-      "SharePointRole": {
-        "enum": [
-          0,
-          1,
-          2
-        ],
-        "type": "integer",
-        "format": "int32"
-      },
-      "SharePointTraining": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "lastUpdated": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "boat": {
             "type": "string",
             "nullable": true
           },
@@ -482,7 +580,7 @@
             },
             "nullable": true
           },
-          "type": {
+          "typeTraining": {
             "type": "string",
             "nullable": true
           }
@@ -506,6 +604,10 @@
           },
           "role": {
             "$ref": "#/components/schemas/SharePointRole"
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

@@ -18,11 +18,15 @@ public sealed partial class MonthItemDialog : IDisposable
 
     private CancellationTokenSource _cls = new();
     void Cancel() => MudDialog.Cancel();
+
     protected override void OnParametersSet()
     {
         if (IsNew == true || MonthItem is null)
         {
-            MonthItem = new RoosterItemMonth();
+            MonthItem = new RoosterItemMonth
+            {
+                Month = 1,
+            };
         }
     }
 
@@ -37,6 +41,7 @@ public sealed partial class MonthItemDialog : IDisposable
         {
             var patchResult = await MonthItemClient.PatchItemAsync(MonthItem, _cls.Token);
         }
+
         if (Refresh is not null) await Refresh.CallRequestRefreshAsync();
         MudDialog.Close(DialogResult.Ok(true));
     }

@@ -8,11 +8,11 @@ public sealed partial class Authentication
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private CustomStateProvider CustomStateProvider { get; set; } = default!;
     [Inject] private IAuthenticationClient AuthenticationClient { get; set; } = default!;
-    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+    [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
     [Parameter] public string? Action { get; set; }
-    [Parameter][SupplyParameterFromQuery] public string? code { get; set; }
-    [Parameter][SupplyParameterFromQuery] public string? state { get; set; }
-    [Parameter][SupplyParameterFromQuery] public string? session_state { get; set; }
+    [Parameter] [SupplyParameterFromQuery] public string? code { get; set; }
+    [Parameter] [SupplyParameterFromQuery] public string? state { get; set; }
+    [Parameter] [SupplyParameterFromQuery] public string? session_state { get; set; }
 
     //https://learn.microsoft.com/nl-nl/azure/active-directory/develop/v2-protocols-oidc
     //https://codewithmukesh.com/blog/authentication-in-blazor-webassembly/
@@ -31,7 +31,8 @@ public sealed partial class Authentication
                     var responseMode = "query";
                     var scope = "openid+profile+email";
                     var code_challenge_method = "S256";
-                    var url = $"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize?client_id={clientId}&response_type={responseType}&redirect_uri={redirectUrl}&response_mode={responseMode}&scope={scope}&state={secrets.LoginSecret}&nonce={secrets.LoginNonce}&code_challenge={secrets.CodeChallenge}&code_challenge_method={code_challenge_method}";
+                    var url =
+                        $"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize?client_id={clientId}&response_type={responseType}&redirect_uri={redirectUrl}&response_mode={responseMode}&scope={scope}&state={secrets.LoginSecret}&nonce={secrets.LoginNonce}&code_challenge={secrets.CodeChallenge}&code_challenge_method={code_challenge_method}";
                     Navigation.NavigateTo(url);
                     break;
                 case "login-callback":
@@ -49,14 +50,11 @@ public sealed partial class Authentication
                     {
                         Navigation.NavigateTo("/landing_page");
                     }
+
                     break;
                 case "logout":
-                    string logoutHint = "";
-                    if (AuthenticationState is not null)
-                    {
-                        var authState = await AuthenticationState;
-                        logoutHint = authState?.User?.FindFirst(c => c.Type == "login_hint")?.Value ?? "";
-                    }
+                    var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                    var logoutHint = authState?.User?.FindFirst(c => c.Type == "login_hint")?.Value ?? "";
                     await CustomStateProvider.Logout();
                     var redirectLogoutUrl = $"{Navigation.BaseUri}landing_page";
                     string urlLogout;

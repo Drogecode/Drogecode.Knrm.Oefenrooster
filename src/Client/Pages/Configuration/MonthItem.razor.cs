@@ -23,10 +23,11 @@ public sealed partial class MonthItem : IDisposable
     private int _currentPage = 1;
     private int _count = 30;
     private bool _bussy;
+    private bool _includeExpired;
 
     protected override async Task OnParametersSetAsync()
     {
-        _monthItems = await MonthItemClient.GetAllItemsAsync(_count, 0, false, _cls.Token);
+        _monthItems = await MonthItemClient.GetAllItemsAsync(_count, 0, _includeExpired, _cls.Token);
         _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
     }
 
@@ -38,9 +39,15 @@ public sealed partial class MonthItem : IDisposable
         _currentPage = nextPage;
         if (nextPage <= 0) return;
         var skip = (nextPage - 1) * _count;
-        _monthItems = await MonthItemClient.GetAllItemsAsync(_count, skip, false, _cls.Token);
+        _monthItems = await MonthItemClient.GetAllItemsAsync(_count, skip, _includeExpired, _cls.Token);
         _bussy = false;
         StateHasChanged();
+    }
+
+    private async Task IncludeExpiredChanged(bool value)
+    {
+        _includeExpired = value;
+        _monthItems = await MonthItemClient.GetAllItemsAsync(_count, 0, _includeExpired, _cls.Token);
     }
 
     private async Task Delete(RoosterItemMonth? monthItem)
@@ -71,7 +78,7 @@ public sealed partial class MonthItem : IDisposable
         if (_bussy) return;
         _bussy = true;
         StateHasChanged();
-        _monthItems = await MonthItemClient.GetAllItemsAsync(_count, 0, false, _cls.Token);
+        _monthItems = await MonthItemClient.GetAllItemsAsync(_count, 0, _includeExpired, _cls.Token);
         _bussy = false;
         StateHasChanged();
     }

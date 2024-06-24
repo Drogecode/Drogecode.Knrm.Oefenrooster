@@ -135,4 +135,13 @@
   <data name="Year" xml:space="preserve">
     <value>Year</value>
   </data>
+  <data name="Add new month item" xml:space="preserve">
+    <value>Add new month item</value>
+  </data>
+  <data name="Include expired" xml:space="preserve">
+    <value>Include expired</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Order</value>
+  </data>
 </root>

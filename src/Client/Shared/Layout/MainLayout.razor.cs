@@ -80,16 +80,12 @@ public sealed partial class MainLayout : IDisposable
             DebugHelper.WriteLine("Faild to start hubconnection.", ex);
         }
     }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        _global.RefreshRequested += RefreshMe;
-    }
-
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            _global.RefreshRequested += RefreshMe;
             await GetTrainingTypes();
             RefreshMe();
         }

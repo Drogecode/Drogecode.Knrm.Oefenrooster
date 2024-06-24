@@ -177,6 +177,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
 
             // ReportUsers
             modelBuilder.Entity<DbReportUser>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbReportUser>().HasOne(p => p.Action).WithMany(g => g.Users).HasForeignKey(s => s.DbReportActionId);
+            modelBuilder.Entity<DbReportUser>().HasOne(p => p.Training).WithMany(g => g.Users).HasForeignKey(s => s.DbReportTrainingId);
 
             //// Links
             // Vehicles <--> Rooster available
@@ -666,6 +668,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Users admin",
                 Accesses = $"{AccessesNames.AUTH_users_counter},{AccessesNames.AUTH_users_details},{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}"
+            }));
+            modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
+            {
+                Id = new Guid("d526e5ed-e838-499d-a96c-62180db28bed"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "Beta user",
+                Accesses = $"{AccessesNames.AUTH_dashboard_Statistics}"
             }));
 
             //roles

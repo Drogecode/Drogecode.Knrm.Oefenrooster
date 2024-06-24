@@ -16,9 +16,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Diagnostics;
 using System.Text;
-using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
-using Azure.Core;
+using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 Console.WriteLine("Start oefenrooster");
@@ -46,6 +44,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 string dbConnectionString;
 var keyVaultUri = builder.Configuration.GetValue<string>("KEYVAULTURI");
+KeyVaultHelper.KeyVaultUri = keyVaultUri;
 Exception? potentialException = null;
 string? messagePotentialException = null;
 if (string.IsNullOrEmpty(keyVaultUri))
@@ -54,27 +53,16 @@ else
 {
     try
     {
-        var options = new SecretClientOptions()
-        {
-            Retry =
-            {
-                Delay = TimeSpan.FromSeconds(2),
-                MaxDelay = TimeSpan.FromSeconds(16),
-                MaxRetries = 5,
-                Mode = RetryMode.Exponential
-            }
-        };
-        var client = new SecretClient(new Uri(keyVaultUri), new DefaultAzureCredential(), options);
-        KeyVaultSecret dbUserName = client.GetSecret("administratorLogin");
-        KeyVaultSecret dbPassword = client.GetSecret("administratorLoginPassword");
-        KeyVaultSecret dbUri = client.GetSecret("databaseFQDN");
-        Console.WriteLine($"dbUserName = {dbUserName.Value}");
+        var dbUserName = KeyVaultHelper.GetSecret("administratorLogin");
+        var dbPassword = KeyVaultHelper.GetSecret("administratorLoginPassword");
+        var dbUri = KeyVaultHelper.GetSecret("databaseFQDN");
+        Console.WriteLine($"dbUserName = {dbUserName?.Value}");
 #if DEBUG
         var dbName = "OefenroosterDev";
 #else
         var dbName = "OefenroosterAcc";
 #endif
-        dbConnectionString = $"host={dbUri.Value};port=5432;database={dbName};username={dbUserName.Value};password={dbPassword.Value}";
+        dbConnectionString = $"host={dbUri?.Value};port=5432;database={dbName};username={dbUserName?.Value};password={dbPassword?.Value}";
     }
     catch (Exception ex)
     {
@@ -117,7 +105,8 @@ builder.Services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
 builder.Services.AddScoped<IHolidayService, HolidayService>();
 builder.Services.AddScoped<IPreComService, PreComService>();
-builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IReportActionService, ReportActionService>();
+builder.Services.AddScoped<IReportTrainingService, ReportTrainingService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -142,7 +131,8 @@ var groupNames = new List<string>
     "User",
     "Vehicle",
     "SharePoint",
-    "Report",
+    "ReportAction",
+    "ReportTraining",
     "DefaultSchedule",
     "Holiday",
     "PreCom",

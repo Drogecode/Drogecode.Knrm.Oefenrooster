@@ -1,17 +1,17 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
-@using System.Text.RegularExpressions;
 @using Drogecode.Knrm.Oefenrooster.Client.Extensions
-@using System.Web;
-@if (_sharePointActions != null)
+@if (_reportActions?.Actions is not null)
 {
+    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+        @_reportActions.ElapsedMilliseconds
+    </AuthorizeView>
     <MudText Typo="Typo.h5">@L["Actions from SharePoint"]</MudText>
     <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection"/>
-    @if (_sharePointActions?.SharePointActions?.Count() > 0)
+    @if (_reportActions?.Actions?.Count() > 0)
     {
-        <MudDataGrid Items="@_sharePointActions.SharePointActions"
-                     ReadOnly="true" EditMode="@DataGridEditMode.Cell">
+        <MudDataGrid Items="@_reportActions.Actions" ReadOnly="true" Filterable="false" SortMode="@SortMode.None">
             <Columns>
-                <HierarchyColumn T="SharePointAction"/>
+                <HierarchyColumn T="DrogeAction"/>
                 <PropertyColumn Property="x => x.Number" Title="Nr"/>
                 <PropertyColumn Property="x => x.Start.ToLocalTime()" Title="@L["Start"]"/>
                 <PropertyColumn Property="x => x.ShortDescription" Title="@L["Description"]"/>
@@ -28,7 +28,8 @@
                         <MudMarkdown Value="@context.Item.Description"/>
                         <MudText Typo="Typo.h6">@L["Crew"]</MudText>
                         <MudList>
-                            @foreach (var user in context.Item.Users)
+                            @{ var users = context.Item.Users?.OrderBy(x => x.Order).ToList() ?? new List<SharePointUser>(); }
+                            @foreach (var user in users)
                             {
                                 <MudListItem>@user.Name - @user.Role</MudListItem>
                             }
@@ -59,9 +60,9 @@
                 </MudCard>
             </ChildRowContent>
         </MudDataGrid>
-        @if (_sharePointActions.TotalCount > _count)
+        @if (_reportActions.TotalCount > _count)
         {
-            <MudPagination Disabled="_busy" ShowFirstButton="true" ShowLastButton="true" MiddleCount="5" Count="@(Convert.ToInt32(Math.Ceiling((double)_sharePointActions.TotalCount / (double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4"/>
+            <MudPagination Disabled="_busy" ShowFirstButton="true" ShowLastButton="true" MiddleCount="5" Count="@(Convert.ToInt32(Math.Ceiling((double)_reportActions.TotalCount / (double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4"/>
         }
     }
 }

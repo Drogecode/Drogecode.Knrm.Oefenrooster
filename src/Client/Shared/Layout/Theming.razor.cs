@@ -47,17 +47,13 @@ public sealed partial class Theming : IDisposable
     private bool _isTaco;
     private int counter = 0;
 
-    protected override async Task OnInitializedAsync()
-    {
-        _localUserSettings = (await LocalStorage.GetItemAsync<LocalUserSettings>("localUserSettings")) ?? new LocalUserSettings();
-        DarkModeToggle = _localUserSettings.DarkLightMode;
-        _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            _localUserSettings = (await LocalStorage.GetItemAsync<LocalUserSettings>("localUserSettings")) ?? new LocalUserSettings();
+            DarkModeToggle = _localUserSettings.DarkLightMode;
+            _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
             switch (DarkModeToggle)
             {
                 case DarkLightMode.System:
@@ -72,6 +68,8 @@ public sealed partial class Theming : IDisposable
                     break;
             }
 
+            DebugHelper.WriteLine($"Start darkmode = {IsDarkMode}");
+            
             await Global.CallDarkLightChangedAsync(IsDarkMode);
             await Global.CallRequestRefreshAsync();
         }

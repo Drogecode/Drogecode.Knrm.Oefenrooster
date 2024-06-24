@@ -1,8 +1,9 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
 
@@ -12,12 +13,12 @@ public sealed partial class ActionsTab : IDisposable
 {
     [Inject] private IStringLocalizer<ActionsTab> L { get; set; } = default!;
     [Inject] private IStringLocalizer<DateToString> LDateToString { get; set; } = default!;
-    [Inject] private SharePointRepository SharePointRepository { get; set; } = default!;
+    [Inject] private ReportActionRepository ReportActionRepository { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] [EditorRequired] public DrogeUser User { get; set; } = default!;
     [Parameter] [EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
     [Parameter] [EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
-    private MultipleSharePointActionsResponse? _sharePointActions;
+    private MultipleReportActionsResponse? _reportActions;
     private CancellationTokenSource _cls = new();
     private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
     private int _currentPage = 1;
@@ -32,13 +33,12 @@ public sealed partial class ActionsTab : IDisposable
         {
             _multiSelection = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_action_history_full);
             _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
-            _sharePointActions = await SharePointRepository.GetLastActionsForCurrentUser(10, 0, _cls.Token);
+            _reportActions = await ReportActionRepository.GetLastActionsForCurrentUser(10, 0, _cls.Token);
             var thisUser = Users.FirstOrDefault(x => x.Id == User.Id);
             if (thisUser is not null)
             {
                 ((List<DrogeUser>)_selectedUsersAction).Add(thisUser);
             }
-
             StateHasChanged();
         }
     }
@@ -49,7 +49,7 @@ public sealed partial class ActionsTab : IDisposable
         _busy = true;
         StateHasChanged();
         _selectedUsersAction = selection;
-        _sharePointActions = await SharePointRepository.GetLastActions(selection, 10, 0, _cls.Token);
+        _reportActions = await ReportActionRepository.GetLastActions(selection, 10, 0, _cls.Token);
         _currentPage = 1;
         _busy = false;
         StateHasChanged();
@@ -63,7 +63,7 @@ public sealed partial class ActionsTab : IDisposable
         if (nextPage <= 0) return;
         _currentPage = nextPage;
         var skip = (nextPage - 1) * _count;
-        _sharePointActions = await SharePointRepository.GetLastActions(_selectedUsersAction, _count, skip, _cls.Token);
+        _reportActions = await ReportActionRepository.GetLastActions(_selectedUsersAction, _count, skip, _cls.Token);
         _busy = false;
         StateHasChanged();
     }

@@ -27,7 +27,6 @@ public class UserService : IUserService
         var dbUsers = await _database.Users
             .Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.IsActive))
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
-            .ThenInclude(x => x.UserB)
             .Include(x=>x.UserOnVersions!.Where(y=> includeLastLogin && y.LastSeenOnThisVersion.CompareTo(DateTime.UtcNow.AddYears(-1)) >= 0))
             .OrderBy(x => x.Name)
             .ToListAsync(clt);
@@ -47,7 +46,7 @@ public class UserService : IUserService
         var userObj = await _database.Users
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
             .Include(x => x.LinkedUserAsB!.Where(y => y.DeletedOn == null))
-            .Where(u => u.Id == userId).FirstOrDefaultAsync();
+            .Where(u => u.Id == userId && u.DeletedOn == null).FirstOrDefaultAsync();
         return userObj?.ToSharedUser(false);
     }
 

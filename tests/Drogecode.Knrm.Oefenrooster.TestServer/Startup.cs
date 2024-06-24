@@ -1,6 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using Drogecode.Knrm.Oefenrooster.Server.Controllers.Obsolite;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
+using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
@@ -29,6 +29,8 @@ public class Startup
         services.AddScoped<IFunctionService, FunctionService>();
         services.AddScoped<IHolidayService, HolidayService>();
         services.AddScoped<IPreComService, PreComService>();
+        services.AddScoped<IReportActionService, ReportActionService>();
+        services.AddScoped<IReportTrainingService, ReportTrainingService>();
         services.AddScoped<IGraphService, GraphServiceMock>();
         services.AddScoped<IScheduleService, ScheduleService>();
         services.AddScoped<ITrainingTypesService, TrainingTypesService>();
@@ -45,6 +47,8 @@ public class Startup
         services.AddScoped<FunctionController>();
         services.AddScoped<HolidayController>();
         services.AddScoped<PreComController>();
+        services.AddScoped<ReportActionController>();
+        services.AddScoped<ReportTrainingController>();
         services.AddScoped<ScheduleController>();
         services.AddScoped<TrainingTypesController>();
         services.AddScoped<UserController>();

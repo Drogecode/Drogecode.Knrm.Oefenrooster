@@ -14,6 +14,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -75,6 +76,7 @@ public partial class AuthenticationController : ControllerBase
             return BadRequest();
         }
     }
+
     private static string GenerateCodeChallenge(string codeVerifier)
     {
         using var sha256 = SHA256.Create();
@@ -101,9 +103,10 @@ public partial class AuthenticationController : ControllerBase
                 _logger.LogWarning("found?.success = `{false}` || found?.CodeVerifier = `{null}`", found?.Success is not true, found?.CodeVerifier is null);
                 return false;
             }
+
             _memoryCache.Remove(state);
             var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new DrogeCodeConfigurationException("no tenant id found for azure login");
-            var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new DrogeCodeConfigurationException("no secret found for azure login");
+            var secret = InternalGetLoginClientSecret();
             var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new DrogeCodeConfigurationException("no client id found for azure login");
             var scope = _configuration.GetValue<string>("AzureAd:LoginScope") ?? throw new DrogeCodeConfigurationException("no scope found for azure login");
             var formContent = new FormUrlEncodedContent(new[]
@@ -148,6 +151,13 @@ public partial class AuthenticationController : ControllerBase
             _logger.LogError(e, "AuthenticatUser");
             return false;
         }
+    }
+
+    private string InternalGetLoginClientSecret()
+    {
+        var fromKeyVault = KeyVaultHelper.GetSecret("LoginClientSecret");
+        if (fromKeyVault is not null) return fromKeyVault.Value;
+        return _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new DrogeCodeConfigurationException("no secret found for azure login");
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -216,7 +226,7 @@ public partial class AuthenticationController : ControllerBase
             string id_token = "";
             string refresh_token = "";
             var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new DrogeCodeConfigurationException("no tenant id found for azure login");
-            var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new DrogeCodeConfigurationException("no secret found for azure login");
+            var secret = InternalGetLoginClientSecret();
             var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new DrogeCodeConfigurationException("no client id found for azure login");
             var scope = _configuration.GetValue<string>("AzureAd:LoginScope") ?? throw new DrogeCodeConfigurationException("no scope found for azure login");
             var formContent = new FormUrlEncodedContent(new[]
@@ -312,8 +322,8 @@ public partial class AuthenticationController : ControllerBase
         if (string.Compare(userId, DefaultSettingsHelper.IdTaco.ToString(), true) == 0)
         {
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_Taco));
-            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_scheduler_history));
         }
+
         var accesses = await _userRoleService.GetAccessForUser(customerId, jwtSecurityToken.Claims);
         if (accesses == null) return claims;
         foreach (var access in accesses)
@@ -338,16 +348,20 @@ public partial class AuthenticationController : ControllerBase
                     cryptoProvider.GetBytes(random);
                     rndChar = (char)((random[0] % 92) + 33);
                 } while (!char.IsLetterOrDigit(rndChar));
+
                 res.Append(rndChar);
             }
         }
+
         return res.ToString();
     }
 
     [GeneratedRegex("\\+")]
     private static partial Regex MyRegex();
+
     [GeneratedRegex("\\/")]
     private static partial Regex MyRegex1();
+
     [GeneratedRegex("=+$")]
     private static partial Regex MyRegex2();
 }
