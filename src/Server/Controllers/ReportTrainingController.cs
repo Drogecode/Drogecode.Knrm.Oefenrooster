@@ -19,15 +19,18 @@ public class ReportTrainingController : ControllerBase
     private readonly ILogger<ScheduleController> _logger;
     private readonly IReportTrainingService _reportTrainingService;
     private readonly IAuditService _auditService;
+    private readonly ICustomerSettingService _customerSettingService;
 
     public ReportTrainingController(
         ILogger<ScheduleController> logger,
         IReportTrainingService reportTrainingService,
-        IAuditService auditService)
+        IAuditService auditService, 
+        ICustomerSettingService customerSettingService)
     {
         _logger = logger;
         _reportTrainingService = reportTrainingService;
         _auditService = auditService;
+        _customerSettingService = customerSettingService;
     }
     
     [HttpGet]
@@ -84,12 +87,13 @@ public class ReportTrainingController : ControllerBase
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var timeZone = await _customerSettingService.GetTimeZone(customerId);
             if (request.Users is null)
                 return BadRequest("Users is null");
             if (request.Users.Count > 5)
                 return new AnalyzeYearChartAllResponse() { Message = "To many users" };
 
-            var result = await _reportTrainingService.AnalyzeYearChartsAll(request.Users, customerId, clt);
+            var result = await _reportTrainingService.AnalyzeYearChartsAll(request.Users, customerId, timeZone, clt);
             return result;
         }
         catch (Exception ex)

@@ -17,13 +17,16 @@ public class ReportActionController : ControllerBase
 {
     private readonly ILogger<ScheduleController> _logger;
     private readonly IReportActionService _reportActionService;
+    private readonly ICustomerSettingService _customerSettingService;
 
     public ReportActionController(
         ILogger<ScheduleController> logger,
-        IReportActionService reportActionService)
+        IReportActionService reportActionService,
+        ICustomerSettingService customerSettingService)
     {
         _logger = logger;
         _reportActionService = reportActionService;
+        _customerSettingService = customerSettingService;
     }
 
     [HttpGet]
@@ -79,6 +82,7 @@ public class ReportActionController : ControllerBase
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var timeZone = await _customerSettingService.GetTimeZone(customerId);
             if (request.Users is null)
                 return BadRequest("Users is null");
             if (request.Users.Count > 5)
@@ -88,7 +92,7 @@ public class ReportActionController : ControllerBase
             if (request.Prio?.Any(x => x.Length > 10) == true)
                 return BadRequest("To long");
 
-            var result = await _reportActionService.AnalyzeYearChartsAll(request, customerId, clt);
+            var result = await _reportActionService.AnalyzeYearChartsAll(request, customerId, timeZone, clt);
             return result;
         }
         catch (Exception ex)
