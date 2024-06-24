@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
+using Microsoft.Graph.Models;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -30,7 +31,7 @@ public class ReportTrainingService : IReportTrainingService
     }
 
 
-    public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(List<Guid> users, Guid customerId, CancellationToken clt)
+    public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(List<Guid> users, Guid customerId, string timeZone, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var allReports = _database.ReportTrainings
@@ -39,18 +40,19 @@ public class ReportTrainingService : IReportTrainingService
         var result = new AnalyzeYearChartAllResponse { TotalCount = allReports.Count() };
         foreach (var report in allReports)
         {
-            if (result.Years.All(x => x.Year != report.Start.Year))
+            var start = report.Start.ToDateTimeTimeZone(timeZone).ToDateTime();
+            if (result.Years.All(x => x.Year != start.Year))
             {
-                result.Years.Add(new AnalyzeYearDetails() { Year = report.Start.Year });
+                result.Years.Add(new AnalyzeYearDetails() { Year = start.Year });
             }
 
-            var year = result.Years.First(x => x.Year == report.Start.Year);
-            if (year.Months.All(x => x.Month != report.Start.Month))
+            var year = result.Years.First(x => x.Year == start.Year);
+            if (year.Months.All(x => x.Month != start.Month))
             {
-                year.Months.Add(new AnalyzeMonthDetails() { Month = report.Start.Month });
+                year.Months.Add(new AnalyzeMonthDetails() { Month = start.Month });
             }
 
-            var month = year.Months.First(x => x.Month == report.Start.Month);
+            var month = year.Months.First(x => x.Month == start.Month);
             month.Count++;
         }
 
