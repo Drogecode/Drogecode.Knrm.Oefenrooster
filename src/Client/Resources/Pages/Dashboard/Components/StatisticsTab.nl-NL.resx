@@ -66,4 +66,7 @@
     <data name="Prio" xml:space="preserve">
         <value>Prio</value>
     </data>
+    <data name="Analyze all years" xml:space="preserve">
+        <value>Analyzer alle jaren</value>
+    </data>
 </root>

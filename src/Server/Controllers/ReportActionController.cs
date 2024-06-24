@@ -89,7 +89,7 @@ public class ReportActionController : ControllerBase
                 return new AnalyzeYearChartAllResponse() { Message = "To many users" };
             if (request.Prio?.Count() > 5)
                 return new AnalyzeYearChartAllResponse() { Message = "To many prio" };
-            if (request.Prio?.Any(x => x.Length > 10) == true)
+            if (request.Prio?.Any(x => x.Length > 15) == true)
                 return BadRequest("To long");
 
             var result = await _reportActionService.AnalyzeYearChartsAll(request, customerId, timeZone, clt);
