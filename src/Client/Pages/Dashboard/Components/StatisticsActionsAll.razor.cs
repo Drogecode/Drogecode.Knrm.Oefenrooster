@@ -10,10 +10,11 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 
 public sealed partial class StatisticsActionsAll : IDisposable
 {
-    [Inject] private IStringLocalizer<ChartsTab> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<StatisticsTab> L { get; set; } = default!;
     [Inject] private ReportActionRepository ReportActionRepository { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter] [EditorRequired] public IEnumerable<DrogeUser> SelectedUsers { get; set; } = default!;
+    [Parameter] [EditorRequired] public bool AllYears { get; set; }
     private CancellationTokenSource _cls = new();
     private List<ChartYear>? _data;
     private readonly ApexChartOptions<ChartMonth> _options = new() { Theme = new Theme() { Mode = Mode.Dark } };
@@ -22,7 +23,7 @@ public sealed partial class StatisticsActionsAll : IDisposable
     private List<string?>? Prios;
     private long _elapsedMilliseconds = -1;
     private AnalyzeYearChartAllResponse? _analyzeData;
-    private ApexChart<ChartMonth> _chart = null!;
+    private ApexChart<ChartMonth>? _chart;
     private bool _renderChart;
 
     protected override async Task OnInitializedAsync()
@@ -40,7 +41,7 @@ public sealed partial class StatisticsActionsAll : IDisposable
         _renderChart = true;
         StateHasChanged();
     }
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -61,6 +62,7 @@ public sealed partial class StatisticsActionsAll : IDisposable
         _analyzeData = await ReportActionRepository.AnalyzeYearChartsAll(SelectedUsers, _selectedPrio, _cls.Token);
         if (_analyzeData is null) return;
         _elapsedMilliseconds = _analyzeData.ElapsedMilliseconds;
+        var yearCount = 0;
         foreach (var year in _analyzeData.Years.OrderByDescending(x => x.Year))
         {
             var month = new List<ChartMonth>();
@@ -84,12 +86,16 @@ public sealed partial class StatisticsActionsAll : IDisposable
                 }
             }
 
+            if (!AllYears && yearCount >= 5)
+                break;
             _data.Add(new ChartYear()
             {
                 Name = year.Year.ToString(),
                 Months = month,
             });
+            yearCount++;
         }
+
         _renderChart = true;
         StateHasChanged();
     }
@@ -98,13 +104,13 @@ public sealed partial class StatisticsActionsAll : IDisposable
     {
         _selectedPrio = newPrio;
         await UpdateAnalyzeYearChartAll();
-        StateHasChanged();
     }
 
     private class ChartYear
     {
         public List<ChartMonth> Months { get; set; }
         public string Name { get; set; }
+        public string Color { get; set; }
     }
 
     private class ChartMonth

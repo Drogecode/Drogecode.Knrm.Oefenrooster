@@ -9,10 +9,11 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 
 public sealed partial class StatisticsTrainingsAll : IDisposable
 {
-    [Inject] private IStringLocalizer<ChartsTab> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<StatisticsTab> L { get; set; } = default!;
     [Inject] private ReportTrainingRepository ReportTrainingRepository { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter] [EditorRequired] public IEnumerable<DrogeUser> SelectedUsers { get; set; } = default!;
+    [Parameter] [EditorRequired] public bool AllYears { get; set; }
     private CancellationTokenSource _cls = new();
     private List<ChartYear>? _data;
     private readonly ApexChartOptions<ChartMonth> _options = new() { Theme = new Theme() { Mode = Mode.Dark } };
@@ -57,6 +58,7 @@ public sealed partial class StatisticsTrainingsAll : IDisposable
         _analyzeData = await ReportTrainingRepository.AnalyzeYearChartsAll(SelectedUsers, _cls.Token);
         if (_analyzeData is null) return;
         _elapsedMilliseconds = _analyzeData.ElapsedMilliseconds;
+        var yearCount = 0;
         foreach (var year in _analyzeData.Years.OrderByDescending(x => x.Year))
         {
             var month = new List<ChartMonth>();
@@ -80,11 +82,14 @@ public sealed partial class StatisticsTrainingsAll : IDisposable
                 }
             }
 
+            if (!AllYears && yearCount >= 5)
+                break;
             _data.Add(new ChartYear()
             {
                 Name = year.Year.ToString(),
                 Months = month,
             });
+            yearCount++;
         }
         _renderChart = true;
         StateHasChanged();

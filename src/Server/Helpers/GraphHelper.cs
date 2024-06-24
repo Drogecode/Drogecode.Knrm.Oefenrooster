@@ -473,7 +473,7 @@ public static class GraphHelper
         }
     }
 
-    public static async Task<ActionsAndTrainings> GetHistorical(Guid customerId, List<SharePointUser> users, CancellationToken clt)
+    public static async Task<ActionsAndTrainings> GetHistorical(Guid customerId, List<SharePointUser> users, Guid listId, CancellationToken clt)
     {
         if (_appClient is null || customerId != DefaultSettingsHelper.KnrmHuizenId) return new ActionsAndTrainings();
         /*
@@ -486,17 +486,17 @@ public static class GraphHelper
             Actions = new List<SharePointAction>(),
             Trainings = new List<SharePointTraining>(),
         };
-        var overigeItems = await _appClient.Sites[OLDKNRM].Lists[ID_VAAR2021_KNRM_HUIZEN_OLD].Items.GetAsync((config) =>
+        var overigeItems = await _appClient.Sites[OLDKNRM].Lists[listId.ToString()].Items.GetAsync((config) =>
         {
-            config.QueryParameters.Expand = new string[] { "fields" };
+            config.QueryParameters.Expand = ["fields"];
             config.QueryParameters.Top = 25;
-        });
+        }, clt);
 
         while (overigeItems?.Value != null)
         {
             foreach (var det in overigeItems.Value)
             {
-                if (det.Fields?.AdditionalData is null || det.ETag is null) continue;
+                if (det.Fields?.AdditionalData is null || det.ETag is null || clt.IsCancellationRequested) continue;
                 var type = AdditionalDataToString(det, "Soort");
                 switch (type)
                 {
@@ -531,24 +531,8 @@ public static class GraphHelper
     {
         var training = new SharePointTraining { Users = new List<SharePointUser>() };
         if (det.Fields?.AdditionalData is null || det.ETag is null) return training;
-        var date = AdditionalDataToDateTime(det, "Datum");
 
-        training.Id = new Guid(det.ETag!.Split('\"', ',')[1]);
-        training.LastUpdated = AdditionalDataToDateTime(det, "Modified");
-        training.Type = AdditionalDataToString(det, "Soort");
-        training.Title = AdditionalDataToString(det, "LinkTitle");
-        training.Description = AdditionalDataToString(det, "Bijzonderheden_x0020_Oproep");
-        training.Boat = AdditionalDataToString(det, "Bo_x0028_o_x0029_t_x0028_en_x002");
-        training.Start = InternalGetHistoricalDate(date, det, "Oproep_x0020__x0028_uren_x0029_", "Oproep_x0020__x0028_minuten_x002");
-        training.Commencement = InternalGetHistoricalDate(date, det, "Aanvang", "Aanvang_x0020_minuten");
-        training.End = InternalGetHistoricalDate(date, det, "Einde", "Einde_x0020__x0028_minuten_x0029");
-
-        InternalGetHistoricalUser(users, det, "Schipper2", SharePointRole.Schipper, training, 0);
-        InternalGetHistoricalUser(users, det, "Opstapper_x0020_1a", SharePointRole.Opstapper, training, 1);
-        InternalGetHistoricalUser(users, det, "Opstapper_x0020_2a", SharePointRole.Opstapper, training, 2);
-        InternalGetHistoricalUser(users, det, "Opstapper_x0020_3a", SharePointRole.Opstapper, training, 3);
-        InternalGetHistoricalUser(users, det, "Opstapper_x0020_4a", SharePointRole.Opstapper, training, 4);
-        InternalGetHistoricalUser(users, det, "Opstapper_x0020_5a", SharePointRole.Opstapper, training, 5);
+        InternalFlllBaseObject(training, det, users);
 
         return training;
     }
@@ -559,26 +543,34 @@ public static class GraphHelper
         if (det.Fields?.AdditionalData is null || det.ETag is null) return action;
         var date = AdditionalDataToDateTime(det, "Datum");
 
-        action.Id = new Guid(det.ETag!.Split('\"', ',')[1]);
-        action.LastUpdated = AdditionalDataToDateTime(det, "Modified");
-        action.Type = AdditionalDataToString(det, "Soort");
+        InternalFlllBaseObject(action, det, users);
         action.ShortDescription = AdditionalDataToString(det, "LinkTitle");
-        action.Description = AdditionalDataToString(det, "Bijzonderheden_x0020_Oproep");
         action.Prio = AdditionalDataToString(det, "Prioriteit");
-        action.Boat = AdditionalDataToString(det, "Bo_x0028_o_x0029_t_x0028_en_x002");
-        action.Start = InternalGetHistoricalDate(date, det, "Oproep_x0020__x0028_uren_x0029_", "Oproep_x0020__x0028_minuten_x002");
-        action.Commencement = InternalGetHistoricalDate(date, det, "Aanvang", "Aanvang_x0020_minuten");
         action.Departure = InternalGetHistoricalDate(date, det, "Vertrek_x0020__x0028_uren_x0029_", "Ter_x0020_plaatse_x0020__x0028_m");
-        action.End = InternalGetHistoricalDate(date, det, "Einde", "Einde_x0020__x0028_minuten_x0029");
-
-        InternalGetHistoricalUser(users, det, "Schipper2", SharePointRole.Schipper, action, 0);
-        InternalGetHistoricalUser(users, det, "Opstapper_x0020_1a", SharePointRole.Opstapper, action, 1);
-        InternalGetHistoricalUser(users, det, "Opstapper_x0020_2a", SharePointRole.Opstapper, action, 2);
-        InternalGetHistoricalUser(users, det, "Opstapper_x0020_3a", SharePointRole.Opstapper, action, 3);
-        InternalGetHistoricalUser(users, det, "Opstapper_x0020_4a", SharePointRole.Opstapper, action, 4);
-        InternalGetHistoricalUser(users, det, "Opstapper_x0020_5a", SharePointRole.Opstapper, action, 5);
 
         return action;
+    }
+
+    private static void InternalFlllBaseObject(SharePointListBase baseObject, ListItem det, List<SharePointUser> users)
+    {
+        var date = AdditionalDataToDateTime(det, "Datum");
+
+        baseObject.Id = new Guid(det.ETag!.Split('\"', ',')[1]);
+        baseObject.LastUpdated = AdditionalDataToDateTime(det, "Modified");
+        baseObject.Type = AdditionalDataToString(det, "Soort");
+        baseObject.Title = AdditionalDataToString(det, "LinkTitle");
+        baseObject.Description = AdditionalDataToString(det, "Bijzonderheden_x0020_Oproep");
+        baseObject.Boat = AdditionalDataToString(det, "Bo_x0028_o_x0029_t_x0028_en_x002");
+        baseObject.Start = InternalGetHistoricalDate(date, det, "Oproep_x0020__x0028_uren_x0029_", "Oproep_x0020__x0028_minuten_x002");
+        baseObject.Commencement = InternalGetHistoricalDate(date, det, "Aanvang", "Aanvang_x0020_minuten");
+        baseObject.End = InternalGetHistoricalDate(date, det, "Einde", "Einde_x0020__x0028_minuten_x0029");
+
+        InternalGetHistoricalUser(users, det, "Schipper2", SharePointRole.Schipper, baseObject, 0);
+        InternalGetHistoricalUser(users, det, "Opstapper_x0020_1a", SharePointRole.Opstapper, baseObject, 1);
+        InternalGetHistoricalUser(users, det, "Opstapper_x0020_2a", SharePointRole.Opstapper, baseObject, 2);
+        InternalGetHistoricalUser(users, det, "Opstapper_x0020_3a", SharePointRole.Opstapper, baseObject, 3);
+        InternalGetHistoricalUser(users, det, "Opstapper_x0020_4a", SharePointRole.Opstapper, baseObject, 4);
+        InternalGetHistoricalUser(users, det, "Opstapper_x0020_5a", SharePointRole.Opstapper, baseObject, 5);
     }
 
     private static DateTime InternalGetHistoricalDate(DateTime date, ListItem det, string hours, string minutes)
@@ -594,8 +586,7 @@ public static class GraphHelper
     {
         var sharePointName = det.Fields?.AdditionalData.ContainsKey(key) == true ? det.Fields.AdditionalData[key]?.ToString() : "";
         if (string.IsNullOrEmpty(sharePointName)) return;
-        var user = (SharePointUser?)users.FirstOrDefault(x => x.Name == sharePointName)?.Clone();
-        if (user is null) return;
+        var user = (SharePointUser?)users.FirstOrDefault(x => x.Name == sharePointName)?.Clone() ?? new SharePointUser() { Name = "* " + sharePointName };
         user.Role = role;
         user.Order = order;
         listBase.Users!.Add(user);

@@ -130,6 +130,17 @@ public class GraphService : IGraphService
             {
                 dbAction.UpdateDbReportAction(action, customerId);
                 _database.ReportActions.Update(dbAction);
+                if (dbAction.Users is not null)
+                {
+                    foreach (var user in dbAction.Users)
+                    {
+                        if (user.IsNew)
+                            _database.ReportUsers.Add(user);
+                        else
+                            _database.ReportUsers.Update(user);
+                    }
+                }
+
                 saveCount++;
             }
 
@@ -174,6 +185,17 @@ public class GraphService : IGraphService
             {
                 dbTraining.UpdateDbReportTraining(training, customerId);
                 _database.ReportTrainings.Update(dbTraining);
+                if (dbTraining.Users is not null)
+                {
+                    foreach (var user in dbTraining.Users)
+                    {
+                        if (user.IsNew)
+                            _database.ReportUsers.Add(user);
+                        else
+                            _database.ReportUsers.Update(user);
+                    }
+                }
+
                 saveCount++;
             }
 
@@ -353,80 +375,144 @@ public class GraphService : IGraphService
 
     public async Task<GetHistoricalResponse> SyncHistorical(Guid customerId, CancellationToken clt)
     {
+        clt = CancellationToken.None; // Ignore CancellationToken
         var sw = Stopwatch.StartNew();
         var spUsers = await GetAllSharePointUsers(customerId, clt);
-        var fromSharePoint = await GraphHelper.GetHistorical(customerId, spUsers, clt);
+
+        var l2006 = new Guid("fbc090f0-b144-47b3-bede-f962b59c02c2");
+        var l2007 = new Guid("58cbd576-4e47-4302-9210-952d67a728e6");
+        var l2008 = new Guid("10aec7c3-d7d2-401b-a348-a712cff1d967");
+        var l2009 = new Guid("872e8292-7a4a-42fc-adeb-1eeeaf63ddfa");
+        var l2010 = new Guid("315d7b40-0d0f-4735-a090-3e57d8db372a");
+        var l2011 = new Guid("a46548b3-e776-424b-af12-69bddc253437");
+        var l2012 = new Guid("47c03884-8171-425f-8312-59f8fbf6947c");
+        var l2013 = new Guid("18fb5d8c-4279-4baf-bb40-ed2e2f389001");
+        var l2014 = new Guid("e8ba9706-2980-41a7-b4f2-592f6a78506d");
+        var l2015 = new Guid("2d62b89e-52c8-4454-9559-5e50e4d8c3c7");
+        var l2016 = new Guid("f88f4d9d-2553-451c-9df4-1a90d05cc11d");
+        var l2017 = new Guid("d955d4be-59ea-4bab-bcc9-872d0c64e193");
+        var l2018 = new Guid("ab2ac7f9-c829-4dcf-8583-3da3062979f6");
+        var l2019 = new Guid("cd7548a1-c4ab-4477-bd38-37e3780bd79b");
+        var l2020 = new Guid("4225c7ff-b29f-452c-8eaf-be59ff62b6ea");
+        var l2021 = new Guid("0ef18f42-ea1b-4215-b110-fc914c01ecfe");
 
         var response = new GetHistoricalResponse();
-        var saveCount = 0;
         var changeCount = 0;
-
-        if (fromSharePoint.Actions is not null)
+        foreach (var listId in new List<Guid> { l2006, l2007, l2008, l2009, l2010, l2011, l2012, l2013, l2014, l2015, l2016, l2017, l2018, l2019, l2020, l2021 })
         {
-            var dbActions = await _database.ReportActions
-                .Where(x => x.CustomerId == customerId)
-                .Include(x => x.Users)
-                .ToListAsync(clt);
-            foreach (var action in fromSharePoint.Actions)
+            var fromSharePoint = await GraphHelper.GetHistorical(customerId, spUsers, listId, clt);
+            if (fromSharePoint.Actions is not null && !clt.IsCancellationRequested)
             {
-                if (clt.IsCancellationRequested)
-                    return response;
-                var dbAction = dbActions.FirstOrDefault(x => x.Id == action.Id);
-                if (dbAction is null)
-                {
-                    dbAction = action.ToDbReportAction(customerId);
-                    await _database.ReportActions.AddAsync(dbAction, clt);
-                    saveCount++;
-                }
-                else if (true || dbAction.LastUpdated != action.LastUpdated) // Always update while debugging
-                {
-                    dbAction.UpdateDbReportAction(action, customerId);
-                    _database.ReportActions.Update(dbAction);
-                    saveCount++;
-                }
-
-                if (saveCount < 10) continue;
-                changeCount += await _database.SaveChangesAsync(clt);
-                saveCount = 0;
+                changeCount += await SyncHistoricalActions(customerId, clt, fromSharePoint.Actions);
             }
+
+            if (fromSharePoint.Trainings is not null && !clt.IsCancellationRequested)
+            {
+                changeCount += await SyncHistoricalTrainings(customerId, clt, fromSharePoint.Trainings);
+            }
+
+            if (_database.ChangeTracker.HasChanges())
+                changeCount += await _database.SaveChangesAsync(clt);
         }
 
-        if (fromSharePoint.Trainings is not null)
-        {
-            var dbTrainings = await _database.ReportTrainings
-                .Where(x => x.CustomerId == customerId)
-                .Include(x => x.Users)
-                .ToListAsync(clt);
-            foreach (var training in fromSharePoint.Trainings)
-            {
-                if (clt.IsCancellationRequested)
-                    return response;
-                var dbTraining = dbTrainings.FirstOrDefault(x => x.Id == training.Id);
-                if (dbTraining is null)
-                {
-                    dbTraining = training.ToDbReportTraining(customerId);
-                    await _database.ReportTrainings.AddAsync(dbTraining, clt);
-                    saveCount++;
-                }
-                else if (true || dbTraining.LastUpdated != training.LastUpdated) // Always update while debugging
-                {
-                    dbTraining.UpdateDbReportTraining(training, customerId);
-                    _database.ReportTrainings.Update(dbTraining);
-                    saveCount++;
-                }
-
-                if (saveCount < 10) continue;
-                changeCount += await _database.SaveChangesAsync(clt);
-                saveCount = 0;
-            }
-        }
-
-        changeCount += await _database.SaveChangesAsync(clt);
         _logger.LogInformation("SharePoint historical synced (count {changeCount})", changeCount);
         sw.Start();
         response.Success = changeCount > 0;
         response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return response;
+    }
+
+    private async Task<int> SyncHistoricalActions(Guid customerId, CancellationToken clt, List<SharePointAction> actions)
+    {
+        var saveCount = 0;
+        var changeCount = 0;
+        var dbActions = await _database.ReportActions
+            .Where(x => x.CustomerId == customerId)
+            .Include(x => x.Users)
+            .ToListAsync(clt);
+        foreach (var action in actions)
+        {
+            if (clt.IsCancellationRequested) return changeCount;
+
+
+            var dbAction = dbActions.FirstOrDefault(x => x.Id == action.Id);
+            if (dbAction is null)
+            {
+                dbAction = action.ToDbReportAction(customerId);
+                await _database.ReportActions.AddAsync(dbAction, clt);
+                saveCount++;
+            }
+            else if (true || dbAction.LastUpdated != action.LastUpdated) // Always update while debugging
+            {
+                dbAction.UpdateDbReportAction(action, customerId);
+                _database.ReportActions.Update(dbAction);
+                if (dbAction.Users is not null)
+                {
+                    foreach (var user in dbAction.Users)
+                    {
+                        if (user.IsNew)
+                            _database.ReportUsers.Add(user);
+                        else
+                            _database.ReportUsers.Update(user);
+                    }
+                }
+
+                saveCount++;
+            }
+
+            if (saveCount < 10) continue;
+            if (_database.ChangeTracker.HasChanges())
+                changeCount += await _database.SaveChangesAsync(clt);
+            saveCount = 0;
+        }
+
+        return changeCount;
+    }
+
+    private async Task<int> SyncHistoricalTrainings(Guid customerId, CancellationToken clt, List<SharePointTraining> trainings)
+    {
+        var saveCount = 0;
+        var changeCount = 0;
+        var dbTrainings = await _database.ReportTrainings
+            .Where(x => x.CustomerId == customerId)
+            .Include(x => x.Users)
+            .ToListAsync(clt);
+        foreach (var training in trainings)
+        {
+            if (clt.IsCancellationRequested) return changeCount;
+
+            var dbTraining = dbTrainings.FirstOrDefault(x => x.Id == training.Id);
+            if (dbTraining is null)
+            {
+                dbTraining = training.ToDbReportTraining(customerId);
+                await _database.ReportTrainings.AddAsync(dbTraining, clt);
+                saveCount++;
+            }
+            else if (true || dbTraining.LastUpdated != training.LastUpdated) // Always update while debugging
+            {
+                dbTraining.UpdateDbReportTraining(training, customerId);
+                _database.ReportTrainings.Update(dbTraining);
+                if (dbTraining.Users is not null)
+                {
+                    foreach (var user in dbTraining.Users)
+                    {
+                        if (user.IsNew)
+                            _database.ReportUsers.Add(user);
+                        else
+                            _database.ReportUsers.Update(user);
+                    }
+                }
+
+                saveCount++;
+            }
+
+            if (saveCount < 10) continue;
+            if (_database.ChangeTracker.HasChanges())
+                changeCount += await _database.SaveChangesAsync(clt);
+            saveCount = 0;
+        }
+
+        return changeCount;
     }
 
     private class UpdatedCheck

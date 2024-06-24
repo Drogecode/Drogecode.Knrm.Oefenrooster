@@ -1,0 +1,12 @@
+﻿@using ApexCharts
+@using Color = MudBlazor.Color
+<SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsers" SelectionChanged="OnSelectionChanged" MultiSelection="true"/>
+<MudSwitch Label="@L["Analyze all years"]" Color="Color.Primary" T="bool" Value="@_allYears" ValueChanged="@(async (isChecked) => await AllYearsChanged(isChecked))"/>
+<MudPaper Elevation="0" Class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+    <div class="flex-1">
+        <StatisticsActionsAll @ref="_statisticsActionsAll" SelectedUsers="_selectedUsers" AllYears="@_allYears"/>
+    </div>
+    <div class="flex-1">
+        <StatisticsTrainingsAll @ref="_statisticsTrainingsAll" SelectedUsers="_selectedUsers" AllYears="@_allYears"/>
+    </div>
+</MudPaper>

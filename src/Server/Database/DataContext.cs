@@ -177,6 +177,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
 
             // ReportUsers
             modelBuilder.Entity<DbReportUser>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbReportUser>().HasOne(p => p.Action).WithMany(g => g.Users).HasForeignKey(s => s.DbReportActionId);
+            modelBuilder.Entity<DbReportUser>().HasOne(p => p.Training).WithMany(g => g.Users).HasForeignKey(s => s.DbReportTrainingId);
 
             //// Links
             // Vehicles <--> Rooster available

@@ -134,7 +134,7 @@ public class SharePointController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
 
             _graphService.InitializeGraph();
-            GetHistoricalResponse result = await _graphService.SyncHistorical(customerId, clt);
+            var result = await _graphService.SyncHistorical(customerId, clt);
             return Ok(result);
         }
         catch (Exception ex)

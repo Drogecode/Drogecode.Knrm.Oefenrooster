@@ -21,14 +21,14 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Component
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ChartsTab_nl_NL {
+    internal class StatisticsTab_nl_NL {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ChartsTab_nl_NL() {
+        internal StatisticsTab_nl_NL() {
         }
         
         /// <summary>
@@ -38,8 +38,8 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Component
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Components.ChartsTab" +
-                            ".nl-NL", typeof(ChartsTab_nl_NL).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Components.Statistic" +
+                            "sTab.nl-NL", typeof(StatisticsTab_nl_NL).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

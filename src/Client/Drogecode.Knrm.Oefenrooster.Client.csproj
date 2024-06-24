@@ -90,7 +90,7 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>ScheduleCalendar.nl-NL.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Dashboard\Components\ChartsTab.nl-NL.resx">
+	  <EmbeddedResource Update="Resources\Pages\Dashboard\Components\StatisticsTab.nl-NL.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>ChartsTab.nl-NL.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
@@ -122,10 +122,10 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>ScheduleCalendar.nl-NL.resx</DependentUpon>
 	  </Compile>
-	  <Compile Update="Resources\Pages\Dashboard\Components\ChartsTab.nl-NL.Designer.cs">
+	  <Compile Update="Resources\Pages\Dashboard\Components\StatisticsTab.nl-NL.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
-	    <DependentUpon>ChartsTab.nl-NL.resx</DependentUpon>
+	    <DependentUpon>StatisticsTab.nl-NL.resx</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 

@@ -11,7 +11,6 @@ public class SharePointAction : SharePointListBase
     public double? Number { get; set; }
     public string? ShortDescription { get; set; }
     public string? Prio { get; set; }
-    public string? Type { get; set; }
     public string? Request { get; set; }
     public string? ForTheBenefitOf { get; set; }
     public string? Causes { get; set; }

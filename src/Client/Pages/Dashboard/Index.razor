@@ -93,7 +93,7 @@
         </MudTabPanel>
         <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_Statistics">
             <MudTabPanel Text="@L["Statistics"]">
-                <ChartsTab User="@_user" Users="@_users" Functions="@_functions"/>
+                <StatisticsTab User="@_user" Users="@_users" Functions="@_functions"/>
             </MudTabPanel>
         </AuthorizeView>
     </MudTabs>
