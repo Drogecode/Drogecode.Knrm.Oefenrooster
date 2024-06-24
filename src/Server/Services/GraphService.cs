@@ -360,7 +360,7 @@ public class GraphService : IGraphService
         var response = new GetHistoricalResponse();
         var saveCount = 0;
         var changeCount = 0;
-        
+
         if (fromSharePoint.Actions is not null)
         {
             var dbActions = await _database.ReportActions
@@ -378,7 +378,7 @@ public class GraphService : IGraphService
                     await _database.ReportActions.AddAsync(dbAction, clt);
                     saveCount++;
                 }
-                else if (true || dbAction.LastUpdated != action.LastUpdated)// Always update while debugging
+                else if (true || dbAction.LastUpdated != action.LastUpdated) // Always update while debugging
                 {
                     dbAction.UpdateDbReportAction(action, customerId);
                     _database.ReportActions.Update(dbAction);
@@ -390,7 +390,37 @@ public class GraphService : IGraphService
                 saveCount = 0;
             }
         }
-        
+
+        if (fromSharePoint.Trainings is not null)
+        {
+            var dbTrainings = await _database.ReportTrainings
+                .Where(x => x.CustomerId == customerId)
+                .Include(x => x.Users)
+                .ToListAsync(clt);
+            foreach (var training in fromSharePoint.Trainings)
+            {
+                if (clt.IsCancellationRequested)
+                    return response;
+                var dbTraining = dbTrainings.FirstOrDefault(x => x.Id == training.Id);
+                if (dbTraining is null)
+                {
+                    dbTraining = training.ToDbReportTraining(customerId);
+                    await _database.ReportTrainings.AddAsync(dbTraining, clt);
+                    saveCount++;
+                }
+                else if (true || dbTraining.LastUpdated != training.LastUpdated) // Always update while debugging
+                {
+                    dbTraining.UpdateDbReportTraining(training, customerId);
+                    _database.ReportTrainings.Update(dbTraining);
+                    saveCount++;
+                }
+
+                if (saveCount < 10) continue;
+                changeCount += await _database.SaveChangesAsync(clt);
+                saveCount = 0;
+            }
+        }
+
         changeCount += await _database.SaveChangesAsync(clt);
         _logger.LogInformation("SharePoint historical synced (count {changeCount})", changeCount);
         sw.Start();
