@@ -144,7 +144,7 @@ public class GraphService : IGraphService
                 saveCount++;
             }
 
-            if (saveCount < 10) continue;
+            if (saveCount < 50) continue;
             changeCount += await _database.SaveChangesAsync(clt);
             saveCount = 0;
         }
@@ -199,7 +199,7 @@ public class GraphService : IGraphService
                 saveCount++;
             }
 
-            if (saveCount < 10) continue;
+            if (saveCount < 50) continue;
             changeCount += await _database.SaveChangesAsync(clt);
             saveCount = 0;
         }
@@ -209,7 +209,7 @@ public class GraphService : IGraphService
         return changeCount > 0;
     }
 
-    public async Task<MultipleSharePointActionsResponse> GetListActionsUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
+    public async Task<MultipleSharePointActionsResponse> GetListActionsUser(List<Guid?> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var keyActions = string.Format(SP_ACTIONS, customerId);
@@ -269,7 +269,7 @@ public class GraphService : IGraphService
         return sharePointActions;
     }
 
-    public async Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
+    public async Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(List<Guid?> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var keyTrainings = string.Format(SP_TRAININGS, customerId);
@@ -413,6 +413,7 @@ public class GraphService : IGraphService
 
             if (_database.ChangeTracker.HasChanges())
                 changeCount += await _database.SaveChangesAsync(clt);
+            _logger.LogInformation("SharePoint historical `{listId}` synced (count {changeCount})", listId, changeCount);
         }
 
         _logger.LogInformation("SharePoint historical synced (count {changeCount})", changeCount);
@@ -433,8 +434,6 @@ public class GraphService : IGraphService
         foreach (var action in actions)
         {
             if (clt.IsCancellationRequested) return changeCount;
-
-
             var dbAction = dbActions.FirstOrDefault(x => x.Id == action.Id);
             if (dbAction is null)
             {
@@ -460,7 +459,7 @@ public class GraphService : IGraphService
                 saveCount++;
             }
 
-            if (saveCount < 10) continue;
+            if (saveCount < 50) continue;
             if (_database.ChangeTracker.HasChanges())
                 changeCount += await _database.SaveChangesAsync(clt);
             saveCount = 0;
@@ -480,7 +479,6 @@ public class GraphService : IGraphService
         foreach (var training in trainings)
         {
             if (clt.IsCancellationRequested) return changeCount;
-
             var dbTraining = dbTrainings.FirstOrDefault(x => x.Id == training.Id);
             if (dbTraining is null)
             {
@@ -506,7 +504,7 @@ public class GraphService : IGraphService
                 saveCount++;
             }
 
-            if (saveCount < 10) continue;
+            if (saveCount < 50) continue;
             if (_database.ChangeTracker.HasChanges())
                 changeCount += await _database.SaveChangesAsync(clt);
             saveCount = 0;

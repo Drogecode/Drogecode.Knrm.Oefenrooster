@@ -43,7 +43,7 @@ public class ReportTrainingController : ControllerBase
             var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var users = new List<Guid>() { userId };
+            var users = new List<Guid?>() { userId };
 
             var result = await _reportTrainingService.GetListTrainingUser(users, userId, count, skip, customerId, clt);
             return result;
@@ -65,7 +65,7 @@ public class ReportTrainingController : ControllerBase
             var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var usersAsList = System.Text.Json.JsonSerializer.Deserialize<List<Guid>>(users);
+            var usersAsList = System.Text.Json.JsonSerializer.Deserialize<List<Guid?>>(users);
             if (usersAsList is null)
                 return BadRequest("users is null");
 

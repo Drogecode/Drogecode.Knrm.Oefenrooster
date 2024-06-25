@@ -39,7 +39,7 @@ public class ReportActionRepository
         {
             var request = new AnalyzeActionRequest()
             {
-                Users = users.Select(x => x.Id).ToList(),
+                Users = users.Select(x => (Guid?)x.Id).ToList(),
                 Prio = prio
             };
             var result = await _reportActionClient.AnalyzeYearChartsAllAsync(request, clt);

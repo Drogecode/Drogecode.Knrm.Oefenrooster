@@ -201,6 +201,36 @@
           }
         }
       }
+    },
+    "/api/ReportAction/kill": {
+      "get": {
+        "tags": [
+          "ReportAction"
+        ],
+        "operationId": "KillDb",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/KillDbResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KillDbResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KillDbResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -480,6 +510,26 @@
         },
         "additionalProperties": false
       },
+      "KillDbResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "killCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "MultipleReportActionsResponse": {
         "type": "object",
         "properties": {
@@ -525,7 +575,8 @@
           },
           "drogeCodeId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
           },
           "name": {
             "type": "string",

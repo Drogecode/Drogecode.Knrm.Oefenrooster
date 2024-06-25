@@ -585,7 +585,7 @@ public static class GraphHelper
     private static void InternalGetHistoricalUser(List<SharePointUser> users, ListItem det, string key, SharePointRole role, SharePointListBase listBase, int order)
     {
         var sharePointName = det.Fields?.AdditionalData.ContainsKey(key) == true ? det.Fields.AdditionalData[key]?.ToString() : "";
-        if (string.IsNullOrEmpty(sharePointName)) return;
+        if (string.IsNullOrEmpty(sharePointName) || sharePointName.Equals("n.v.t.") || sharePointName.Equals("nvt")) return;
         var user = (SharePointUser?)users.FirstOrDefault(x => x.Name == sharePointName)?.Clone() ?? new SharePointUser() { Name = "* " + sharePointName };
         user.Role = role;
         user.Order = order;

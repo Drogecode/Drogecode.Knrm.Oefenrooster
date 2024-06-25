@@ -233,9 +233,14 @@ public static class ReportActionMapper
         {
             foreach (var dbUser in dbAction.Users)
             {
-                if (spAction.Users.Any(x => x.DrogeCodeId == dbUser.DrogeCodeId))
+                if (spAction.Users.Any(x => (x.DrogeCodeId is not null && x.DrogeCodeId == dbUser.DrogeCodeId)
+                                            || (x.SharePointID is not null && x.SharePointID == dbUser.SharePointID)
+                                            || (x.SharePointID == null && x.Name == dbUser.Name)))
                 {
-                    var user = spAction.Users.FirstOrDefault(x => x.DrogeCodeId == dbUser.DrogeCodeId);
+                    var user = spAction.Users.FirstOrDefault(x =>
+                        (x.DrogeCodeId is not null && x.DrogeCodeId == dbUser.DrogeCodeId)
+                        || (x.SharePointID is not null && x.SharePointID == dbUser.SharePointID)
+                        || (x.SharePointID == null && x.Name == dbUser.Name));
                     if (!Equals(dbUser.IsDeleted, false)) dbUser.IsDeleted = false;
                     if (!Equals(dbUser.Role, user!.Role)) dbUser.Role = user.Role;
                     if (!Equals(dbUser.Name, user.Name)) dbUser.Name = user.Name;
@@ -249,7 +254,9 @@ public static class ReportActionMapper
 
             foreach (var user in spAction.Users)
             {
-                if (dbAction.Users.Any(x => x.DrogeCodeId == user.DrogeCodeId))
+                if (dbAction.Users.Any(x => (x.DrogeCodeId is not null && x.DrogeCodeId == user.DrogeCodeId)
+                                            || (x.SharePointID is not null && x.SharePointID == user.SharePointID)
+                                            || (x.SharePointID == null && x.Name == user.Name)))
                     continue;
                 dbAction.Users.Add(new()
                 {
@@ -290,9 +297,10 @@ public static class ReportActionMapper
         {
             foreach (var dbUser in dbTraining.Users)
             {
-                if (spTraining.Users.Any(x => x.DrogeCodeId == dbUser.DrogeCodeId))
+                if (spTraining.Users.Any(x => x.DrogeCodeId == dbUser.DrogeCodeId || x.SharePointID == dbUser.SharePointID || (x.SharePointID == null && x.Name?.Equals(dbUser.Name) == true)))
                 {
-                    var user = spTraining.Users.FirstOrDefault(x => x.DrogeCodeId == dbUser.DrogeCodeId);
+                    var user = spTraining.Users.FirstOrDefault(x =>
+                        x.DrogeCodeId == dbUser.DrogeCodeId || x.SharePointID == dbUser.SharePointID || (x.SharePointID == null && x.Name?.Equals(dbUser.Name) == true));
                     if (!Equals(dbUser.IsDeleted, false)) dbUser.IsDeleted = false;
                     if (!Equals(dbUser.Role, user!.Role)) dbUser.Role = user.Role;
                     if (!Equals(dbUser.Name, user.Name)) dbUser.Name = user.Name;
@@ -306,7 +314,9 @@ public static class ReportActionMapper
 
             foreach (var user in spTraining.Users)
             {
-                if (dbTraining.Users.Any(x => x.DrogeCodeId == user.DrogeCodeId))
+                if (dbTraining.Users.Any(x => (x.DrogeCodeId is not null && x.DrogeCodeId == user.DrogeCodeId)
+                                              || (x.SharePointID is not null && x.SharePointID == user.SharePointID)
+                                              || (x.SharePointID == null && x.Name == user.Name)))
                     continue;
                 dbTraining.Users.Add(new()
                 {

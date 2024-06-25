@@ -73,7 +73,7 @@ public class ReportActionControllerTests : BaseTest
     {
         var request = new AnalyzeActionRequest()
         {
-            Users = new List<Guid> {  },
+            Users = new List<Guid?> {  },
         };
         var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
@@ -91,7 +91,7 @@ public class ReportActionControllerTests : BaseTest
     {
         var request = new AnalyzeActionRequest()
         {
-            Users = new List<Guid> { DefaultSettingsHelper.IdTaco },
+            Users = new List<Guid?> { DefaultSettingsHelper.IdTaco },
         };
         var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
@@ -109,7 +109,7 @@ public class ReportActionControllerTests : BaseTest
     {
         var request = new AnalyzeActionRequest()
         {
-            Users = new List<Guid> { Guid.NewGuid() },
+            Users = new List<Guid?> { Guid.NewGuid() },
         };
         var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
@@ -141,7 +141,7 @@ public class ReportActionControllerTests : BaseTest
         await DataContext.SaveChangesAsync();
         var request = new AnalyzeActionRequest()
         {
-            Users = new List<Guid> { otherUser, DefaultSettingsHelper.IdTaco },
+            Users = new List<Guid?> { otherUser, DefaultSettingsHelper.IdTaco },
         };
         var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);

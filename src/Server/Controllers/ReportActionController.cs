@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
@@ -39,7 +40,7 @@ public class ReportActionController : ControllerBase
             var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var users = new List<Guid>() { userId };
+            var users = new List<Guid?>() { userId };
 
             var result = await _reportActionService.GetListActionsUser(users, userId, count, skip, customerId, clt);
             return result;
@@ -60,7 +61,7 @@ public class ReportActionController : ControllerBase
             if (count > 30) return Forbid();
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var usersAsList = JsonSerializer.Deserialize<List<Guid>>(users);
+            var usersAsList = JsonSerializer.Deserialize<List<Guid?>>(users);
             if (usersAsList is null)
                 return BadRequest("users is null");
 
@@ -118,6 +119,28 @@ public class ReportActionController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in AnalyzeYearChartsAll");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("kill")]
+    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    public async Task<ActionResult<KillDbResponse>> KillDb(CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+
+            KillDbResponse result = await _reportActionService.KillDb(customerId, clt);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in KillDb");
             return BadRequest();
         }
     }

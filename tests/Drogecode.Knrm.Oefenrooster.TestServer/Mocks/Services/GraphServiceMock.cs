@@ -12,6 +12,11 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services
 {
     public class GraphServiceMock : IGraphService
     {
+        public Task<MultipleSharePointActionsResponse> GetListActionsUser(List<Guid?> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<Event> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
         {
             throw new NotImplementedException();
@@ -43,6 +48,11 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services
         }
 
         public Task GetLists()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(List<Guid?> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
         {
             throw new NotImplementedException();
         }

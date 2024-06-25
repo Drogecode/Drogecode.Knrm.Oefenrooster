@@ -55,14 +55,21 @@ public class PreComController : ControllerBase
                         var client = _clientFactory.CreateClient();
                         foreach (var forward in forwards.PreComForwards)
                         {
-                            if (Uri.IsWellFormedUriString(forward.ForwardUrl, UriKind.Absolute))
+                            try
                             {
-                                await client.PostAsJsonAsync(forward.ForwardUrl, body, clt);
-                                _logger.LogInformation("Forwarded request to `{Uri}`", forward.ForwardUrl.Replace(Environment.NewLine, ""));
+                                if (Uri.IsWellFormedUriString(forward.ForwardUrl, UriKind.Absolute))
+                                {
+                                    await client.PostAsJsonAsync(forward.ForwardUrl, body, clt);
+                                    _logger.LogInformation("Forwarded request to `{Uri}`", forward.ForwardUrl.Replace(Environment.NewLine, ""));
+                                }
+                                else
+                                {
+                                    _logger.LogWarning("Forward uri `{Uri}` not correct formatted", forward.ForwardUrl?.Replace(Environment.NewLine, ""));
+                                }
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                _logger.LogWarning("Forward uri `{Uri}` not correct formatted", forward.ForwardUrl?.Replace(Environment.NewLine, ""));
+                                _logger.LogError(ex, "Error in PreComController WebHook forward `{sendToHub}`", sendToHub);
                             }
                         }
                     }
@@ -70,6 +77,7 @@ public class PreComController : ControllerBase
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in PreComController WebHook `{sendToHub}`", sendToHub);
                 _preComService.WriteAlertToDb(userId, customerId, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body), ip);
                 if (sendToHub)
                     await _preComHub.SendMessage(userId, "PreCom", "piep piep");

@@ -15,7 +15,7 @@ public class ReportTrainingService : IReportTrainingService
         _database = database;
     }
 
-    public async Task<MultipleReportTrainingsResponse> GetListTrainingUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
+    public async Task<MultipleReportTrainingsResponse> GetListTrainingUser(List<Guid?> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var listWhere = _database.ReportTrainings.Include(x => x.Users).Where(x => x.CustomerId == customerId && x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count);
@@ -31,7 +31,7 @@ public class ReportTrainingService : IReportTrainingService
     }
 
 
-    public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(List<Guid> users, Guid customerId, string timeZone, CancellationToken clt)
+    public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(List<Guid?> users, Guid customerId, string timeZone, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var allReports = _database.ReportTrainings

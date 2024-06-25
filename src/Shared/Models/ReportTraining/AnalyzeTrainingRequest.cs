@@ -2,5 +2,5 @@
 
 public class AnalyzeTrainingRequest
 {
-    public List<Guid>? Users { get; set; }
+    public List<Guid?>? Users { get; set; }
 }

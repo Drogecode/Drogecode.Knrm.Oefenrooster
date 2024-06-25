@@ -50,6 +50,19 @@ else if (_syncHistorical?.Success == false)
 {
     <MudText Typo="Typo.body1">Failed: _syncHistorical</MudText>
 }
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="KillDb">Kill db</MudButton>
+@if (_killDb?.Success == true)
+{
+    <MudText Typo="Typo.body1">
+        Done: KillDb @_killDb.KillCount
+    </MudText>
+}
+else if (_killDb?.Success == false)
+{
+    <MudText Typo="Typo.body1">
+        Failed: KillDb @_killDb.KillCount
+    </MudText>
+}
 
 @if (_settingTrainingToCalendar is not null)
 {
