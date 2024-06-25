@@ -41,7 +41,8 @@ public class ReportActionService : IReportActionService
         var result = new AnalyzeYearChartAllResponse { TotalCount = allReports.Count() };
         foreach (var report in allReports)
         {
-            var start = report.Start.ToDateTimeTimeZone(timeZone).ToDateTime();
+            var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
+            var start = TimeZoneInfo.ConvertTimeFromUtc(report.Start, zone);
             if (result.Years.All(x => x.Year != start.Year))
             {
                 result.Years.Add(new AnalyzeYearDetails() { Year = start.Year });
