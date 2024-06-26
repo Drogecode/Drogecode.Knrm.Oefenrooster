@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:15.7
+    image: postgres:16.3
     restart: always
     environment:
       - POSTGRES_USER=postgresUser
@@ -9,7 +9,7 @@ services:
     ports:
       - 5432:5432
     volumes: 
-      - D:/programming/dockerData/postgres-data:/var/lib/postgresql/data
+      - D:/programming/dockerData/postgres-data_16:/var/lib/postgresql/data
   drogecode.knrm.oefenrooster.server:
     image: kanman/drogecode.knrm.oefenrooster:latest
     restart: always
