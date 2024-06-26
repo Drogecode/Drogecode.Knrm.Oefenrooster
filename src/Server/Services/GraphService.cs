@@ -398,7 +398,7 @@ public class GraphService : IGraphService
 
         var response = new GetHistoricalResponse();
         var changeCount = 0;
-        foreach (var listId in new List<Guid> { l2006, l2007, l2008, l2009, l2010, l2011, l2012, l2013, l2014, l2015, l2016, l2017, l2018, l2019, l2020, l2021 })
+        foreach (var listId in new List<Guid> { l2021, l2020, l2019, l2018, l2017, l2016, l2015, l2014, l2013, l2012, l2011, l2010, l2009, l2008, l2007, l2006 })
         {
             var fromSharePoint = await GraphHelper.GetHistorical(customerId, spUsers, listId, clt);
             if (fromSharePoint.Actions is not null && !clt.IsCancellationRequested)

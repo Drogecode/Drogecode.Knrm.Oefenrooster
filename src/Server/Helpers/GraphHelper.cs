@@ -9,6 +9,7 @@ using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Graph.Sites.Item.Lists.Item.Items;
 using Microsoft.Graph.Users;
+using Microsoft.Kiota.Abstractions.Serialization;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Helpers;
 
@@ -308,6 +309,39 @@ public static class GraphHelper
         return det.Fields!.AdditionalData.ContainsKey(key) ? det.Fields.AdditionalData[key]!.ToString() : "";
     }
 
+    private static async Task<string?> AdditionalDataArrayOrStringToString(ListItem det, string key)
+    {
+        var opt = det.Fields!.AdditionalData.ContainsKey(key) ? det.Fields.AdditionalData[key] : null;
+        switch (opt)
+        {
+            case UntypedArray untypedArray:
+                var result = string.Empty;
+                var first = true;
+                foreach (var value in untypedArray.GetValue())
+                {
+                    string innerValue = (await KiotaJsonSerializer.SerializeAsStringAsync(value)).Trim('"');
+                    if (first)
+                        first = false;
+                    else
+                        result += ", ";
+                    result += innerValue.ToString();
+                }
+
+                return result;
+            case string isString:
+                return isString;
+            case null:
+                return null;
+            default:
+#if DEBUG
+                Debugger.Break();
+#endif
+                break;
+        }
+
+        return null;
+    }
+
     private static DateTime AdditionalDataToDateTime(ListItem det, string key)
     {
         var dateTime = det.Fields!.AdditionalData.ContainsKey(key) ? (DateTime)det.Fields.AdditionalData[key] : DateTime.MinValue;
@@ -509,7 +543,7 @@ public static class GraphHelper
                         break;
                     case "KNRM Hulpverlening":
                     case "HRB Actie":
-                        response.Actions.Add(InternalGetHistoricalAction(det, users));
+                        response.Actions.Add(await InternalGetHistoricalAction(det, users));
                         break;
                     default:
 #if DEBUG
@@ -537,7 +571,7 @@ public static class GraphHelper
         return training;
     }
 
-    private static SharePointAction InternalGetHistoricalAction(ListItem det, List<SharePointUser> users)
+    private static async Task<SharePointAction> InternalGetHistoricalAction(ListItem det, List<SharePointUser> users)
     {
         var action = new SharePointAction { Users = new List<SharePointUser>() };
         if (det.Fields?.AdditionalData is null || det.ETag is null) return action;
@@ -547,6 +581,13 @@ public static class GraphHelper
         action.ShortDescription = AdditionalDataToString(det, "LinkTitle");
         action.Prio = AdditionalDataToString(det, "Prioriteit");
         action.Departure = InternalGetHistoricalDate(date, det, "Vertrek_x0020__x0028_uren_x0029_", "Ter_x0020_plaatse_x0020__x0028_m");
+
+        action.CallMadeBy = await AdditionalDataArrayOrStringToString(det, "Oproep_x0020_gedaan_x0020_door");
+        action.Causes = AdditionalDataToString(det, "Oorzaken");
+        if (string.IsNullOrEmpty(action.Causes))
+            action.Causes = AdditionalDataToString(det, "Aard_x0020_Oproep");
+        action.Implications = AdditionalDataToString(det, "Gevolgen");
+        action.ProblemsWithWeed = AdditionalDataToString(det, "Problemen_x0020_met_x0020_fontei");
 
         return action;
     }

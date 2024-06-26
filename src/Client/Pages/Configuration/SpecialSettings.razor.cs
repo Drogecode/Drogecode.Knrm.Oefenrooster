@@ -31,6 +31,7 @@ public sealed partial class SpecialSettings : IDisposable
     private bool? _usersSynced;
     private bool? _specialDatesUpdated;
     private bool? _settingTrainingToCalendar;
+    private bool _clickedSyncHistorica;
     private GetHistoricalResponse? _syncHistorical;
     private DbCorrectionResponse? _dbCorrection;
     private KillDbResponse? _killDb;
@@ -88,7 +89,10 @@ public sealed partial class SpecialSettings : IDisposable
     }
     private async Task RunSyncHistorical()
     {
+        _clickedSyncHistorica = true;
+        StateHasChanged();
         _syncHistorical = await SharePointClient.SyncHistoricalAsync(_cls.Token);
+        _clickedSyncHistorica = false;
         StateHasChanged();
     }
     private async Task KillDb()
