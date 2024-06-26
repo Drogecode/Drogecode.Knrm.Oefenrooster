@@ -14,26 +14,26 @@
                   Dense="true"
                   Bordered="true">
             <HeaderContent>
-                <MudTh>@L["Buddy"]</MudTh>
-                <MudTh>@L["Nr"]</MudTh>
-                <MudTh>@L["Name"]</MudTh>
+                <MudTh Class="!z-20">@L["Buddy"]</MudTh>
+                <MudTh Class="!z-20">@L["Nr"]</MudTh>
+                <MudTh Class="!z-20">@L["Name"]</MudTh>
                 @foreach (var item in _events)
                 {
-                    <MudTh Class="@($"trainingType-{item.RoosterTrainingTypeId}")">
+                    <MudTh Class="@($"trainingType-{item.RoosterTrainingTypeId} !z-20")">
                         @item.DateStart.ToString("dddd")
                         <DateToString ShowDate="true" ShowTime="@item.ShowTime" DateTimeUtc="item.DateStart" /> @item.Name
                     </MudTh>
                 }
             </HeaderContent>
             <GroupHeaderTemplate>
-                <MudTh Class="mud-table-cell-custom-group DrogeCode-sticky-column" colspan="5">
+                <MudTh Class="mud-table-cell-custom-group DrogeCode-sticky-column z-10" colspan="5">
                     @($"{Functions?.FirstOrDefault(y => y.Id == (Guid)context.Key)?.Name ?? L["Unknown"]}")
                 </MudTh>
             </GroupHeaderTemplate>
             <RowTemplate>
                 <MudTd DataLabel="@L["Buddy"]">@context.Buddy</MudTd>
                 <MudTd DataLabel="@L["Nr"]">@context.Nr</MudTd>
-                <MudTd Class="DrogeCode-sticky-column" DataLabel="@L["Name"]">@context.Name</MudTd>
+                <MudTd Class="DrogeCode-sticky-column z-10" DataLabel="@L["Name"]">@context.Name</MudTd>
                 @foreach (var item in _events)
                 {
                     var user = item.PlanUsers?.FirstOrDefault(x => x.UserId == @context.Id);
