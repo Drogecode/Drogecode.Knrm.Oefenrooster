@@ -27,6 +27,8 @@ public class DbReportTraining
     public string? ProblemsWithWeed { get; set; }
     public string? TypeTraining { get; set; }
     public string? Type { get; set; }
+    public double TotalMinutes { get; set; }
+    public int TotalFullHours { get; set; }
 
     public DbCustomers Customer { get; set; }
     public ICollection<DbReportUser>? Users { get; set; }

@@ -28,5 +28,7 @@ public class SharePointListBase
     public DateTime Start { get; set; }
     public DateTime Commencement { get; set; }
     public DateTime End { get; set; }
+    public double TotalMinutes { get; set; }
+    public int TotalFullHours { get; set; }
     public List<SharePointUser>? Users { get; set; }
 }

@@ -324,6 +324,14 @@
             "type": "string",
             "format": "date-time"
           },
+          "totalMinutes": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalFullHours": {
+            "type": "integer",
+            "format": "int32"
+          },
           "users": {
             "type": "array",
             "items": {

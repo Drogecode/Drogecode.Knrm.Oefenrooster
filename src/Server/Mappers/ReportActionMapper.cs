@@ -37,6 +37,8 @@ public static class ReportActionMapper
             FunctioningMaterial = spAction.FunctioningMaterial,
             ProblemsWithWeed = spAction.ProblemsWithWeed,
             Completedby = spAction.Completedby,
+            TotalMinutes = spAction.TotalMinutes,
+            TotalFullHours = spAction.TotalFullHours,
 
             LastUpdated = spAction.LastUpdated,
             Start = spAction.Start,
@@ -90,6 +92,8 @@ public static class ReportActionMapper
             Commencement = spTraining.Commencement,
             End = spTraining.End,
             Boat = spTraining.Boat,
+            TotalMinutes = spTraining.TotalMinutes,
+            TotalFullHours = spTraining.TotalFullHours,
 
             Users = new List<DbReportUser>()
         };
@@ -148,7 +152,9 @@ public static class ReportActionMapper
             Start = dbAction.Start,
             Commencement = dbAction.Commencement,
             End = dbAction.End,
-            Users = dbAction.Users?.Select(x => x.ToSharePointUser()).ToList()
+            Users = dbAction.Users?.Select(x => x.ToSharePointUser()).ToList(),
+            TotalMinutes = dbAction.TotalMinutes,
+            TotalFullHours = dbAction.TotalFullHours,
         };
     }
 
@@ -177,7 +183,9 @@ public static class ReportActionMapper
             Start = dbTraining.Start,
             Commencement = dbTraining.Commencement,
             End = dbTraining.End,
-            Users = dbTraining.Users?.Select(x => x.ToSharePointUser()).ToList()
+            Users = dbTraining.Users?.Select(x => x.ToSharePointUser()).ToList(),
+            TotalMinutes = dbTraining.TotalMinutes,
+            TotalFullHours = dbTraining.TotalFullHours,
         };
     }
 
@@ -228,6 +236,8 @@ public static class ReportActionMapper
         if (!Equals(dbAction.Date, spAction.Date)) dbAction.Date = spAction.Date;
         if (!Equals(dbAction.Commencement, spAction.Commencement)) dbAction.Commencement = spAction.Commencement;
         if (!Equals(dbAction.Departure, spAction.Departure)) dbAction.Departure = spAction.Departure;
+        if (!Equals(dbAction.TotalMinutes, spAction.TotalMinutes)) dbAction.TotalMinutes = spAction.TotalMinutes;
+        if (!Equals(dbAction.TotalFullHours, spAction.TotalFullHours)) dbAction.TotalFullHours = spAction.TotalFullHours;
 
         if (dbAction.Users is not null)
         {
@@ -292,6 +302,8 @@ public static class ReportActionMapper
         if (!Equals(dbTraining.Commencement, spTraining.Commencement)) dbTraining.Commencement = spTraining.Commencement;
         if (!Equals(dbTraining.End, spTraining.End)) dbTraining.End = spTraining.End;
         if (!Equals(dbTraining.Boat, spTraining.Boat)) dbTraining.Boat = spTraining.Boat;
+        if (!Equals(dbTraining.TotalMinutes, spTraining.TotalMinutes)) dbTraining.TotalMinutes = spTraining.TotalMinutes;
+        if (!Equals(dbTraining.TotalFullHours, spTraining.TotalFullHours)) dbTraining.TotalFullHours = spTraining.TotalFullHours;
 
         if (dbTraining.Users is not null)
         {

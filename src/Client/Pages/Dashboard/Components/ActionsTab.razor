@@ -60,6 +60,11 @@
                             <MudListItem>@L["CallMadeBy"]: @context.Item.CallMadeBy</MudListItem>
                             <MudListItem>@L["Causes"]: @context.Item.Causes</MudListItem>
                             <MudListItem>@L["Implications"]: @context.Item.Implications</MudListItem>
+                            @if (_isTaco) /*Work in progress*/
+                            {
+                                <MudListItem>@L["Minutes"]: @context.Item.TotalMinutes</MudListItem>
+                                <MudListItem>@L["Hours"]: @context.Item.TotalFullHours</MudListItem>
+                            }
                         </MudList>
                     </MudCardContent>
                 </MudCard>

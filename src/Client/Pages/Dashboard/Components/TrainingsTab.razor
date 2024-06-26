@@ -64,6 +64,11 @@
                         <MudList>
                             <MudListItem>@L["Boat"]: @context.Item.Boat</MudListItem>
                             <MudListItem>@L["Type"]: @context.Item.Type</MudListItem>
+                            @if (_isTaco) /*Work in progress*/
+                            {
+                                <MudListItem>@L["Minutes"]: @context.Item.TotalMinutes</MudListItem>
+                                <MudListItem>@L["Hours"]: @context.Item.TotalFullHours</MudListItem>
+                            }
                         </MudList>
                     </MudCardContent>
                 </MudCard>

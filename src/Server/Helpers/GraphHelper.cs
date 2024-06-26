@@ -222,6 +222,8 @@ public static class GraphHelper
                 training.Type = AdditionalDataToString(det, "Soort");
                 training.FunctioningMaterial = AdditionalDataToString(det, "Functioneren_x0020_materieel");
                 training.ProblemsWithWeed = AdditionalDataToString(det, "Problemen_x0020_met_x0020_fontei");
+                training.TotalMinutes = (training.End - training.Start).TotalMinutes;
+                training.TotalFullHours = Convert.ToInt32(Math.Ceiling(training.TotalMinutes / 60));
                 trainings.Add(training);
             }
 
@@ -293,6 +295,9 @@ public static class GraphHelper
                 action.FunctioningMaterial = AdditionalDataToString(det, "Functioneren_x0020_materieel");
                 action.ProblemsWithWeed = AdditionalDataToString(det, "Problemen_x0020_met_x0020_fontei");
                 action.Completedby = AdditionalDataToString(det, "afgehandeld");
+                var differentStart = ReportSettingsHelper.TrainingDifferentStart.Contains(action.Type ?? string.Empty);
+                action.TotalMinutes = differentStart ? (action.End - action.Commencement).TotalMinutes : (action.End - action.Start).TotalMinutes;
+                action.TotalFullHours = Convert.ToInt32(Math.Ceiling(action.TotalMinutes / 60));
                 actions.Add(action);
             }
 
@@ -567,6 +572,8 @@ public static class GraphHelper
         if (det.Fields?.AdditionalData is null || det.ETag is null) return training;
 
         InternalFlllBaseObject(training, det, users);
+        training.TotalMinutes = (training.End - training.Start).TotalMinutes;
+        training.TotalFullHours = Convert.ToInt32(Math.Ceiling(training.TotalMinutes / 60));
 
         return training;
     }
@@ -588,6 +595,9 @@ public static class GraphHelper
             action.Causes = AdditionalDataToString(det, "Aard_x0020_Oproep");
         action.Implications = AdditionalDataToString(det, "Gevolgen");
         action.ProblemsWithWeed = AdditionalDataToString(det, "Problemen_x0020_met_x0020_fontei");
+        var differentStart = ReportSettingsHelper.TrainingDifferentStart.Contains(action.Type ?? string.Empty);
+        action.TotalMinutes = differentStart ? (action.End - action.Commencement).TotalMinutes : (action.End - action.Start).TotalMinutes;
+        action.TotalFullHours = Convert.ToInt32(Math.Ceiling(action.TotalMinutes / 60));
 
         return action;
     }
