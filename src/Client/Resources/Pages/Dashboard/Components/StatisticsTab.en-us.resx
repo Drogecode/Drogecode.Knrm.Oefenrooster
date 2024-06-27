@@ -62,4 +62,13 @@
     <data name="Analyze all years" xml:space="preserve">
         <value>Analyze all years</value>
     </data>
+    <data name="Year charts" xml:space="preserve">
+        <value>Year charts</value>
+    </data>
+    <data name="Month charts" xml:space="preserve">
+        <value>Month charts</value>
+    </data>
+    <data name="User table" xml:space="preserve">
+        <value>User table</value>
+    </data>
 </root>
