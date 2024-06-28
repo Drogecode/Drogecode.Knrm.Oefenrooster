@@ -113,6 +113,29 @@
           }
         }
       }
+    },
+    "/api/Audit/log/{message}": {
+      "post": {
+        "tags": [
+          "Audit"
+        ],
+        "operationId": "PostLog",
+        "parameters": [
+          {
+            "name": "message",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {

@@ -41,7 +41,7 @@ public class GraphService : IGraphService
             settings = Settings.LoadSettings(_configuration);
         }
 
-        _logger.LogInformation($"Start ClientSecret: {settings.ClientSecret?[..3] ?? "Is null"}");
+        _logger.LogTrace("Start ClientSecret: {ClientSecret}", settings.ClientSecret?[..3] ?? "Is null");
         GraphHelper.InitializeGraphForAppOnlyAuth(settings);
     }
 
@@ -150,7 +150,10 @@ public class GraphService : IGraphService
         }
 
         changeCount += await _database.SaveChangesAsync(clt);
-        _logger.LogInformation("SharePoint actions synced (count {changeCount})", changeCount);
+        if (changeCount > 0)
+            _logger.LogInformation("SharePoint actions synced (count {changeCount})", changeCount);
+        else
+            _logger.LogTrace("SharePoint actions synced none");
         return changeCount > 0;
     }
 
@@ -205,7 +208,10 @@ public class GraphService : IGraphService
         }
 
         changeCount += await _database.SaveChangesAsync(clt);
-        _logger.LogInformation("SharePoint training synced (count {changeCount})", changeCount);
+        if (changeCount > 0)
+            _logger.LogInformation("SharePoint training synced (count {changeCount})", changeCount);
+        else
+            _logger.LogTrace("SharePoint training synced none");
         return changeCount > 0;
     }
 
@@ -245,7 +251,7 @@ public class GraphService : IGraphService
             {
                 _memoryCache.Remove(keyActions);
                 lastupdated.LastUpdated = newLastUpdated;
-                _logger.LogInformation("There are changes in the action list");
+                _logger.LogTrace("There are changes in the action list");
             }
 
             lastupdated.NextCheck = DateTime.UtcNow.AddMinutes(5);
@@ -305,7 +311,7 @@ public class GraphService : IGraphService
             {
                 _memoryCache.Remove(keyTrainings);
                 lastupdated.LastUpdated = newLastUpdated;
-                _logger.LogInformation("There are changes in the training list");
+                _logger.LogTrace("There are changes in the training list");
             }
 
             lastupdated.NextCheck = DateTime.UtcNow.AddMinutes(5);

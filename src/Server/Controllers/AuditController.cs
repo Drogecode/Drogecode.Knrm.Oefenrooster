@@ -84,4 +84,26 @@ public class AuditController : ControllerBase
             return BadRequest();
         }
     }
+
+    [HttpPost]
+    [Route("log/{message}")]
+    public async Task<ActionResult> PostLog(string message)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            _logger.LogInformation("Message from user `{userId}` `{customerId}` message: `{message}`",userId, customerId, message.Replace(Environment.NewLine, ""));
+            return Ok();
+        }
+        catch (OperationCanceledException) { return Ok(); }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in GetTrainingAudit");
+            return BadRequest();
+        }
+    }
 }
