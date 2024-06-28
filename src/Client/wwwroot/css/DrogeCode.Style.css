@@ -1,28 +1,4 @@
-﻿.DrogeCode-card-header-default {
-    background-color: var(--mud-palette-lines-inputs);
-}
-
-.DrogeCode-card-header-ehbo {
-    background-color: var(--mud-palette-warning-darken);
-}
-
-.DrogeCode-card-header-one_on_one {
-    background-color: var(--mud-palette-tertiary-darken);
-}
-
-.DrogeCode-card-header-fire-brigade {
-    background-color: var(--mud-palette-error-darken);
-}
-
-.DrogeCode-card-header-hrb {
-    background-color: var(--mud-palette-success-lighten);
-}
-
-.DrogeCode-card-content-not-created {
-    background-color: var(--mud-palette-grey-default);
-}
-
-table, tbody, tr, td {
+﻿table, tbody, tr, td {
     /* Fixes issue in FireFox */
     vertical-align: top;
 }

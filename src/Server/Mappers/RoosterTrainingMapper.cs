@@ -60,7 +60,7 @@ public static class RoosterTrainingMapper
                     Availability = ava.Available,
                     SetBy = ava.SetBy,
                     Name = ava.User?.Name ?? "Some dude",
-                    VehicleId = ava.VehicleId,
+                    VehicleId = roosterTraining.LinkVehicleTrainings?.Where(x=>x.IsSelected).Any(x=>x.VehicleId == ava.VehicleId) ?? false ? ava.VehicleId : null,
                     CalendarEventId = ava.CalendarEventId,
                     Buddy = ava.User?.LinkedUserAsA?.FirstOrDefault(x=>x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name
                 });

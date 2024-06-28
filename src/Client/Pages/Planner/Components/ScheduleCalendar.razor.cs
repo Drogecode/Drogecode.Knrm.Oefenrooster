@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Enums;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Enums;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
@@ -21,11 +22,13 @@ public sealed partial class ScheduleCalendar : IDisposable
     [Inject] private DayItemRepository DayItemRepository { get; set; } = default!;
     [Inject] private MonthItemRepository MonthItemRepository { get; set; } = default!;
     [Inject] private UserRepository UserRepository { get; set; } = default!;
+    [Inject, NotNull] private CustomerSettingRepository? CustomerSettingRepository { get; set; }
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
     [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter, EditorRequired] public List<PlannerTrainingType>? TrainingTypes { get; set; }
+    private static string _timeZone = "Europe/Amsterdam";
     private CancellationTokenSource _cls = new();
     private List<CalendarItem> _events = new();
     private List<UserTrainingCounter>? _userTrainingCounter;
@@ -47,6 +50,15 @@ public sealed partial class ScheduleCalendar : IDisposable
         _initialized = true;
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _timeZone = await CustomerSettingRepository.GetTimeZone(_cls.Token);
+            StateHasChanged();
+        }
+    }
+    
     private async Task SetMonth(DateTime? dateTime)
     {
         if (dateTime == null) return;
@@ -73,12 +85,15 @@ public sealed partial class ScheduleCalendar : IDisposable
         if (trainingsInRange != null && trainingsInRange.Count > 0)
         {
             scheduleForUser.From = DateOnly.FromDateTime(trainingsInRange[0].DateStart);
+            var zone = TimeZoneInfo.FindSystemTimeZoneById(_timeZone);
             foreach (var training in trainingsInRange)
             {
+                var dateStart = TimeZoneInfo.ConvertTimeFromUtc(training.DateStart, zone);
+                var dateEnd = TimeZoneInfo.ConvertTimeFromUtc(training.DateEnd, zone);
                 _events.Add(new ScheduleCalendarItem
                 {
-                    Start = training.DateStart,
-                    End = training.DateEnd,
+                    Start = dateStart,
+                    End = dateEnd,
                     Training = training,
                 });
             }
