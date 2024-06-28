@@ -46,6 +46,15 @@ public class RoosterTrainingMapperTests : BaseTest
                     UserId = DefaultSettingsHelper.IdTaco,
                     VehicleId = DefaultVehicle
                 }
+            },
+            LinkVehicleTrainings = new List<DbLinkVehicleTraining>
+            {
+                new()
+                {
+                    RoosterTrainingId = id,
+                    VehicleId = DefaultVehicle,
+                    IsSelected = true,
+                }
             }
         };
         var mapped = orignal.ToPlannedTraining();
