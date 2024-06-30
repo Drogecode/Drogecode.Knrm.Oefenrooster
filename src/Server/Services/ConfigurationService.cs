@@ -106,6 +106,7 @@ public class ConfigurationService : IConfigurationService
             }
         }
 
+        await _database.SaveChangesAsync(clt);
         result.Message += $" And `{linksFixed}` links fixed";
         _logger.LogInformation("Fixed `{count}` alerts And `{linksFixed}` links fixed", count, linksFixed);
 
