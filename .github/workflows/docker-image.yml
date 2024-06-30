@@ -15,7 +15,7 @@ jobs:
 
       - name: Get the version
         id: get_version
-        run: echo "VERSION=${$GITHUB_REF | cut -d / -f 3}" >> $GITHUB_OUTPUT
+        run: echo "VERSION=${($GITHUB_REF | cut -d / -f 3)}" >> $GITHUB_OUTPUT
 
       - name: Install dependencies
         run: dotnet restore ./Drogecode.Knrm.Oefenrooster.sln
