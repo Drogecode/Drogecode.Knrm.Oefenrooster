@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -76,7 +77,7 @@ public sealed partial class ScheduleTable : IDisposable
         if (!CanEdit || _working || user is null || training is null) return;
         _working = true;
         user.Assigned = !user.Assigned;
-        await ScheduleRepository.PatchAssignedUser(training.TrainingId, training, user);
+        await ScheduleRepository.PatchAssignedUser(training.TrainingId, training, user, AuditReason.Assigned);
         MainLayout.ShowSnackbarAssignmentChanged(user, training);
         StateHasChanged();
         _working = false;

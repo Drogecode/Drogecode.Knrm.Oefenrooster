@@ -141,4 +141,10 @@
   <data name="ChangeAvailability" xml:space="preserve">
     <value>Wijzig beschikbaarheid</value>
   </data>
+  <data name="ChangeVehicle" xml:space="preserve">
+    <value>Wijzig voertuig</value>
+  </data>
+  <data name="ChangedFunction" xml:space="preserve">
+    <value>Wijzig functie</value>
+  </data>
 </root>

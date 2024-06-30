@@ -283,7 +283,9 @@ public class ScheduleController : ControllerBase
                 JsonSerializer.Serialize(new AuditAssignedUser
                 {
                     UserId = body.User?.UserId, Assigned = body.User?.Assigned, Availability = result.Availability, SetBy = result.SetBy,
-                    AuditReason = AuditReason.Assigned
+                    AuditReason = body.AuditReason ?? AuditReason.Assigned, // body.AuditReason was added in v0.3.81
+                    VehicleId = body.AuditReason == AuditReason.ChangeVehicle ? body.User?.VehicleId : null,
+                    FunctionId = body.AuditReason == AuditReason.ChangedFunction ? body.User?.PlannedFunctionId : null
                 }),
                 body.TrainingId);
             await _userService.PatchLastOnline(userId, clt);

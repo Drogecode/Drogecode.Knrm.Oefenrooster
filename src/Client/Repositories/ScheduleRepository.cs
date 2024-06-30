@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using MudBlazor.Extensions;
@@ -45,13 +46,14 @@ public class ScheduleRepository
         return result.NewId;
     }
 
-    public async Task<PatchAssignedUserResponse> PatchAssignedUser(Guid? trainingId, TrainingAdvance? training, PlanUser user)
+    public async Task<PatchAssignedUserResponse> PatchAssignedUser(Guid? trainingId, TrainingAdvance? training, PlanUser user, AuditReason auditReason)
     {
         var body = new PatchAssignedUserRequest
         {
             TrainingId = trainingId,
             User = user,
-            Training = training
+            Training = training,
+            AuditReason = auditReason
         };
         return await _scheduleClient.PatchAssignedUserAsync(body);
     }

@@ -10,6 +10,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.Extensions.Localization;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
@@ -130,7 +131,7 @@ public sealed partial class ScheduleDialog : IDisposable
             user.PlannedFunctionId = functionId;
         else
             user.PlannedFunctionId = user.UserFunctionId;
-        var result = await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, Planner, user);
+        var result = await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, Planner, user, AuditReason.Assigned);
         if (Planner.TrainingId is null || Planner.TrainingId.Equals(Guid.Empty))
             Planner.TrainingId = result.IdPatched;
         MainLayout.ShowSnackbarAssignmentChanged(user, Planner);
@@ -191,7 +192,7 @@ public sealed partial class ScheduleDialog : IDisposable
     {
         if (!_canEdit) return;
         user.VehicleId = id;
-        await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, null, user);
+        await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, null, user, AuditReason.ChangeVehicle);
         await Refresh.CallRequestRefreshAsync();
     }
 
@@ -200,7 +201,7 @@ public sealed partial class ScheduleDialog : IDisposable
         if (!_canEdit) return;
         user.ClickedFunction = false;
         user.PlannedFunctionId = id;
-        await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, null, user);
+        await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, null, user, AuditReason.ChangedFunction);
         await Refresh.CallRequestRefreshAsync();
     }
 

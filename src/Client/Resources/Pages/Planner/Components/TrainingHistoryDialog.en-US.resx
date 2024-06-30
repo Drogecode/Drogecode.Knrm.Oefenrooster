@@ -141,4 +141,10 @@
   <data name="ChangeAvailability" xml:space="preserve">
     <value>Change availability</value>
   </data>
+  <data name="ChangeVehicle" xml:space="preserve">
+    <value>Change vehicle</value>
+  </data>
+  <data name="ChangedFunction" xml:space="preserve">
+    <value>Changed function</value>
+  </data>
 </root>
