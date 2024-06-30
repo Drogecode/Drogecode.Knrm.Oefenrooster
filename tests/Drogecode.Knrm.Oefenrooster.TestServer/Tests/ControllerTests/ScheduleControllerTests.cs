@@ -172,19 +172,20 @@ public class ScheduleControllerTests : BaseTest
         DateTimeServiceMock.SetMockDateTime(DateTime.Today.AddMonths(12));
         var dateStart = DateTime.Today.AddMonths(12).AddHours(21);
         var dateEnd = DateTime.Today.AddMonths(12).AddHours(15);
-        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
         var trainings = await ScheduleController.GetScheduledTrainingsForUser();
         Assert.NotNull(trainings?.Value?.Trainings);
         trainings.Value.Trainings.Should().Contain(x => x.TrainingId == trainingId);
         DateTimeServiceMock.SetMockDateTime(null);
     }
+
     [Fact]
     public async Task GetScheduledTrainingsForUserButNotInPastTest()
     {
         DateTimeServiceMock.SetMockDateTime(DateTime.Today.AddMonths(12).AddDays(2));
         var dateStart = DateTime.Today.AddMonths(12).AddHours(21);
         var dateEnd = DateTime.Today.AddMonths(12).AddHours(15);
-        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
         var trainings = await ScheduleController.GetScheduledTrainingsForUser();
         Assert.NotNull(trainings?.Value?.Trainings);
         trainings.Value.Trainings.Should().NotContain(x => x.TrainingId == trainingId);
@@ -240,7 +241,8 @@ public class ScheduleControllerTests : BaseTest
     public async Task DeleteTraining_NotInPinnedTest()
     {
         var trainingId = await AddTraining("DeleteTraining_NotInPinned", false, DateTime.Today.AddDays(1).AddHours(10), DateTime.Today.AddDays(1).AddHours(12), true);
-        var trainings = await ScheduleController.GetPinnedTrainingsForUser(); ;
+        var trainings = await ScheduleController.GetPinnedTrainingsForUser();
+        ;
         Assert.NotNull(trainings?.Value?.Trainings);
         trainings.Value.Trainings.Should().Contain(x => x.TrainingId == trainingId);
         var deleteResult = await ScheduleController.DeleteTraining(trainingId);
@@ -384,7 +386,7 @@ public class ScheduleControllerTests : BaseTest
     {
         var dateStart = DateTime.Today.AddMonths(12).AddHours(21);
         var dateEnd = DateTime.Today.AddMonths(12).AddHours(15);
-        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
         var trainings = await ScheduleController.ForAll(dateStart.Month, dateStart.Year, dateStart.Month, dateStart.Day, dateEnd.Year, dateEnd.Month, dateEnd.Day, false);
         Assert.NotNull(trainings?.Value?.Planners);
         trainings.Value.Planners.Should().Contain(x => x.TrainingId == trainingId);
@@ -402,7 +404,7 @@ public class ScheduleControllerTests : BaseTest
     {
         var dateStart = DateTime.Today.AddMonths(12).AddHours(21);
         var dateEnd = DateTime.Today.AddMonths(12).AddHours(15);
-        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
         var defVeh = await AddVehicle("TrainingsForAllDefaultVehicleNotLinked", "forall", true, true);
         var updateLinkResponse = await VehicleController.UpdateLinkVehicleTraining(new DrogeLinkVehicleTraining
         {
@@ -429,7 +431,7 @@ public class ScheduleControllerTests : BaseTest
     {
         var dateStart = DateTime.Today.AddMonths(12).AddHours(21);
         var dateEnd = DateTime.Today.AddMonths(12).AddHours(15);
-        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
         var defVeh = await AddVehicle("default vehicle", "forall", true, true);
         var updateLinkResponse = await VehicleController.UpdateLinkVehicleTraining(new DrogeLinkVehicleTraining
         {
@@ -455,7 +457,7 @@ public class ScheduleControllerTests : BaseTest
         var dateStart = DateTime.Today.AddMonths(12).AddHours(21);
         var dateEnd = DateTime.Today.AddMonths(12).AddHours(15);
         var user1 = await AddUser("user1_fortest");
-        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
         var plannedTraining = await ScheduleController.GetPlannedTrainingById(trainingId);
         Assert.NotNull(plannedTraining?.Value?.Training?.PlanUsers);
         plannedTraining.Value.Training.PlanUsers.Should().Contain(x => x.UserId == DefaultUserId);
@@ -516,7 +518,7 @@ public class ScheduleControllerTests : BaseTest
         MockAuthenticatedUser(ScheduleController, user1, DefaultCustomerId);
         MockAuthenticatedUser(VehicleController, user1, DefaultCustomerId);
         await AddHoliday("GetTrainingsForAllIncludeUnAssigned");
-        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
         var trainings = await ScheduleController.ForAll(dateStart.Month, dateStart.Year, dateStart.Month, dateStart.Day, dateEnd.Year, dateEnd.Month, dateEnd.Day, true);
         Assert.NotNull(trainings.Value?.Planners);
         Assert.NotEmpty(trainings.Value.Planners);
@@ -539,7 +541,7 @@ public class ScheduleControllerTests : BaseTest
         MockAuthenticatedUser(ScheduleController, user1, DefaultCustomerId);
         MockAuthenticatedUser(VehicleController, user1, DefaultCustomerId);
         await AddHoliday("GetTrainingsForAllNotIncludeUnAssigned");
-        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
         var trainings = await ScheduleController.ForAll(dateStart.Month, dateStart.Year, dateStart.Month, dateStart.Day, dateEnd.Year, dateEnd.Month, dateEnd.Day, false);
         Assert.NotNull(trainings.Value?.Planners);
         Assert.NotEmpty(trainings.Value.Planners);
@@ -555,7 +557,48 @@ public class ScheduleControllerTests : BaseTest
         MockAuthenticatedUser(VehicleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
     }
 
-    private async Task<Guid> PrepareAssignedTraining(DateTime dateStart, DateTime dateEnd)
+    [Fact]
+    public async Task GetPlannedTrainingByIdDefaultVehicleNotSelectedTest()
+    {
+        var dateStart = DateTime.Today.AddDays(1).AddHours(21);
+        var dateEnd = DateTime.Today.AddDays(1).AddHours(15);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, false);
+        var training = await ScheduleController.GetPlannedTrainingById(trainingId);
+        Assert.NotNull(training.Value?.Training);
+        training.Value.Training.PlanUsers.Should().HaveCount(1);
+        training.Value.Training.PlanUsers.Should().Contain(x => x.VehicleId == null);
+        MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+        MockAuthenticatedUser(VehicleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+    }
+
+    [Fact]
+    public async Task GetPlannedTrainingByIdDefaultVehicleNotSetTest()
+    {
+        var dateStart = DateTime.Today.AddDays(1).AddHours(21);
+        var dateEnd = DateTime.Today.AddDays(1).AddHours(15);
+        var defVehAdded = await VehicleController.PutVehicle(new DrogeVehicle() { Name = "GetPlannedTrainingByIdDefaultVehicleNotSetTest", Code = "xUnit", IsDefault = true, IsActive = true, Order = 69});
+        Assert.NotNull(defVehAdded.Value);
+        defVehAdded.Should().NotBe(Guid.Empty);
+        var trainingId = await AddTraining("TrainingsForAll", false, dateStart, dateEnd);
+        var training = (await ScheduleController.GetTrainingById(trainingId)).Value?.Training;
+        Assert.NotNull(training);
+        var body = new OtherScheduleUserRequest
+        {
+            TrainingId = trainingId,
+            UserId = DefaultUserId,
+            Assigned = true,
+            Training = training,
+        };
+        var putAssigned = await ScheduleController.PutAssignedUser(body);
+        Assert.NotNull(putAssigned.Value?.Success);
+        putAssigned.Value?.Success.Should().BeTrue();
+        var plannedTraining = (await ScheduleController.GetPlannedTrainingById(trainingId)).Value?.Training;
+        Assert.NotNull(plannedTraining);
+        plannedTraining.PlanUsers.Should().HaveCount(1);
+        plannedTraining.PlanUsers.Should().Contain(x => x.VehicleId == defVehAdded.Value);
+    }
+
+    private async Task<Guid> PrepareAssignedTraining(DateTime dateStart, DateTime dateEnd, bool defaultSelected)
     {
         MockAuthenticatedUser(ScheduleController, DefaultUserId, DefaultCustomerId);
         MockAuthenticatedUser(VehicleController, DefaultUserId, DefaultCustomerId);
@@ -569,13 +612,14 @@ public class ScheduleControllerTests : BaseTest
             Assigned = true,
             Training = training,
         };
-        var PutAssigned = await ScheduleController.PutAssignedUser(body);
-        PutAssigned?.Value?.Success.Should().BeTrue();
+        var putAssigned = await ScheduleController.PutAssignedUser(body);
+        Assert.NotNull(putAssigned?.Value?.Success);
+        putAssigned?.Value?.Success.Should().BeTrue();
         var updateLinkResponse = await VehicleController.UpdateLinkVehicleTraining(new DrogeLinkVehicleTraining
         {
             RoosterTrainingId = trainingId,
             VehicleId = DefaultVehicle,
-            IsSelected = true,
+            IsSelected = defaultSelected,
         });
         Assert.True(updateLinkResponse?.Value?.Success);
         return trainingId;

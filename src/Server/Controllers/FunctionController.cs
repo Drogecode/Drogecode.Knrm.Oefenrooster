@@ -55,7 +55,7 @@ public class FunctionController : ControllerBase
             var result = await _functionService.GetAllFunctions(customerId, clt);
             if (callHub)
             {
-                _logger.LogInformation("Calling hub AllFunctions");
+                _logger.LogTrace("Calling hub AllFunctions");
                 await _refreshHub.SendMessage(userId, ItemUpdated.AllFunctions);
             }
             return result;

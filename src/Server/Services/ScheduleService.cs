@@ -423,13 +423,13 @@ public class ScheduleService : IScheduleService
                             defVehicle ??= await GetDefaultVehicleForTraining(customerId, training, clt);
                             if (avaUser.VehicleId is null || (avaUser.VehicleId != defVehicle && !(await IsVehicleSelectedForTraining(customerId, training.Id, avaUser.VehicleId, clt))))
                             {
-                                if (avaUser.Assigned && avaUser.VehicleId is not null && avaUser.UserId != Guid.Empty && avaUser.VehicleId != defVehicle &&
+                                /*if (avaUser is { Assigned: true, VehicleId: not null } && avaUser.UserId != Guid.Empty && avaUser.VehicleId != defVehicle &&
                                     !await IsVehicleSelectedForTraining(customerId, training.Id, avaUser.VehicleId, clt))
                                 {
                                     // Fix on the run.
                                     avaUser.VehicleId = null;
                                     _database.RoosterAvailables.Update(avaUser);
-                                }
+                                }*/
 
                                 avaUser.VehicleId = defVehicle;
                             }
@@ -548,6 +548,10 @@ public class ScheduleService : IScheduleService
                 if (vehicle.IsDefault)
                     break;
             }
+            else if (vehicle.IsDefault)
+            {
+                vehiclePrev = vehicle;
+            }
         }
 
         var cacheOptions = new MemoryCacheEntryOptions();
@@ -614,7 +618,7 @@ public class ScheduleService : IScheduleService
             .ThenInclude(x => x.UserB)
             .Include(x => x.RoosterTrainingType)
             .Include(x => x.RoosterAvailables!.Where(y => y.User!.DeletedOn == null))
-            .Include(x=>x.LinkVehicleTrainings!.Where(y=>y.IsSelected))
+            .Include(x=>x.LinkVehicleTrainings!)
             .ThenInclude(x=>x.Vehicles)
             .AsSingleQuery()
             .FirstOrDefaultAsync(x => x.Id == trainingId && x.DeletedOn == null, clt);

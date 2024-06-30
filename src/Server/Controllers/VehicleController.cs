@@ -37,7 +37,7 @@ public class VehicleController : ControllerBase
 
             if (callHub)
             {
-                _logger.LogInformation("Calling hub AllVehicles");
+                _logger.LogTrace("Calling hub AllVehicles");
                 await _refreshHub.SendMessage(userId, ItemUpdated.AllVehicles);
             }
             return new MultipleVehicleResponse { DrogeVehicles = result };

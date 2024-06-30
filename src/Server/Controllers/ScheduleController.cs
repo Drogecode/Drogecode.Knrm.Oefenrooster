@@ -359,7 +359,7 @@ public class ScheduleController : ControllerBase
             var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, clt);
             if (callHub)
             {
-                _logger.LogInformation("Calling hub futureTrainings");
+                _logger.LogTrace("Calling hub futureTrainings");
                 await _refreshHub.SendMessage(userId, ItemUpdated.FutureTrainings);
             }
 
@@ -412,7 +412,7 @@ public class ScheduleController : ControllerBase
             var result = await _scheduleService.GetPinnedTrainingsForUser(userId, customerId, fromDate, clt);
             if (callHub)
             {
-                _logger.LogInformation("Calling hub PinnedDashboard");
+                _logger.LogTrace("Calling hub PinnedDashboard");
                 await _refreshHub.SendMessage(userId, ItemUpdated.PinnedDashboard);
             }
 

@@ -47,7 +47,7 @@ public class UserController : ControllerBase
 
             if (callHub)
             {
-                _logger.LogInformation("Calling hub AllUsers");
+                _logger.LogTrace("Calling hub AllUsers");
                 await _refreshHub.SendMessage(userId, ItemUpdated.AllUsers);
             }
             return result;
