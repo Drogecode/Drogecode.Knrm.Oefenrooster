@@ -551,12 +551,13 @@ public class ScheduleService : IScheduleService
             else if (vehicle.IsDefault)
             {
                 vehiclePrev = vehicle;
+                break;
             }
         }
 
         var cacheOptions = new MemoryCacheEntryOptions();
-        cacheOptions.SetSlidingExpiration(TimeSpan.FromSeconds(15));
-        cacheOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(45));
+        cacheOptions.SetSlidingExpiration(TimeSpan.FromSeconds(5));
+        cacheOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(15));
         _memoryCache.Set(cacheKey, vehiclePrev?.Id, cacheOptions);
         return vehiclePrev?.Id;
     }
