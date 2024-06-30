@@ -380,7 +380,9 @@ public class ScheduleService : IScheduleService
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
         var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
-        var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).Include(x=>x.LinkVehicleTrainings).OrderBy(x => x.DateStart)
+        var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
+            .Include(x=>x.LinkVehicleTrainings)
+            .OrderBy(x => x.DateStart)
             .AsSingleQuery().ToList();
         var availables = _database.RoosterAvailables.Where(x => x.CustomerId == customerId && (includeUnAssigned || x.Assigned) && x.Date >= startDate && x.Date <= tillDate)
             .AsSingleQuery().ToList();
@@ -421,7 +423,7 @@ public class ScheduleService : IScheduleService
                             if (avaUser is null && !includeUnAssigned) continue;
                             avaUser ??= new DbRoosterAvailable();
                             defVehicle ??= await GetDefaultVehicleForTraining(customerId, training, clt);
-                            if (avaUser.VehicleId is null || (avaUser.VehicleId != defVehicle && !(await IsVehicleSelectedForTraining(customerId, training.Id, avaUser.VehicleId, clt))))
+                            if (avaUser.VehicleId is null || (avaUser.VehicleId != defVehicle && !(training.LinkVehicleTrainings?.Any(x=>x.VehicleId == avaUser.VehicleId) ?? false)))
                             {
                                 /*if (avaUser is { Assigned: true, VehicleId: not null } && avaUser.UserId != Guid.Empty && avaUser.VehicleId != defVehicle &&
                                     !await IsVehicleSelectedForTraining(customerId, training.Id, avaUser.VehicleId, clt))
@@ -573,21 +575,6 @@ public class ScheduleService : IScheduleService
         cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
         _memoryCache.Set(cacheKey, result, cacheOptions);
         return result;
-    }
-
-    private async Task<bool> IsVehicleSelectedForTraining(Guid? customerId, Guid? trainingId, Guid? vehicleId, CancellationToken clt)
-    {
-        var cacheKey = $"IsVehSel-{customerId}{trainingId}{vehicleId}";
-        _memoryCache.TryGetValue(cacheKey, out bool? result);
-        if (result is not null)
-            return result.Value;
-        var links = await _database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.RoosterTrainingId == trainingId).Select(x => new { x.VehicleId, x.IsSelected }).ToListAsync(clt);
-        var isSelected = links.Any(x => x.VehicleId == vehicleId && x.IsSelected);
-        var cacheOptions = new MemoryCacheEntryOptions();
-        cacheOptions.SetSlidingExpiration(TimeSpan.FromSeconds(5));
-        cacheOptions.SetAbsoluteExpiration(TimeSpan.FromSeconds(15));
-        _memoryCache.Set(cacheKey, isSelected, cacheOptions);
-        return isSelected;
     }
 
     public async Task<GetTrainingByIdResponse> GetTrainingById(Guid userId, Guid customerId, Guid trainingId, CancellationToken clt)
@@ -961,7 +948,7 @@ public class ScheduleService : IScheduleService
                 GetAvailability(defaultAveUser, userHolidays, plan.DateStart, plan.DateEnd, plan.DefaultId, null, ref availabilty, ref setBy);
                 user.Availability = availabilty;
                 user.SetBy = setBy ?? user.SetBy;
-                if (user.VehicleId is null || (user.VehicleId != defaultVehicle && !(await IsVehicleSelectedForTraining(customerId, schedul.TrainingId, user.VehicleId, clt))))
+                if (user.VehicleId is null || (user.VehicleId != defaultVehicle && !(schedul.Training.LinkVehicleTrainings?.Any(x=>x.VehicleId == user.VehicleId) ?? false)))
                     user.VehicleId = defaultVehicle;
             }
 
