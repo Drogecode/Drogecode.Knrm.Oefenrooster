@@ -410,7 +410,6 @@ public class ScheduleController : ControllerBase
             var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var fromDate = DateTime.UtcNow;
-            _logger.LogInformation("Get all pinned trainings for {user}", userId);
             var result = await _scheduleService.GetPinnedTrainingsForUser(userId, customerId, fromDate, clt);
             if (callHub)
             {

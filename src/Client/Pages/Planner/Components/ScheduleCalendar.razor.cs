@@ -82,7 +82,7 @@ public sealed partial class ScheduleCalendar : IDisposable
         if (scheduleForAll == null) return;
         _userTrainingCounter = scheduleForAll.UserTrainingCounters;
         var trainingsInRange = scheduleForAll.Planners;
-        if (trainingsInRange != null && trainingsInRange.Count > 0)
+        if (trainingsInRange is { Count: > 0 })
         {
             scheduleForUser.From = DateOnly.FromDateTime(trainingsInRange[0].DateStart);
             var zone = TimeZoneInfo.FindSystemTimeZoneById(_timeZone);

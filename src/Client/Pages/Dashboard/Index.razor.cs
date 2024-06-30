@@ -41,7 +41,6 @@ public sealed partial class Index : IDisposable
     private string? _name;
     private Guid _userId;
     private bool _loading = true;
-    private bool _isTaco;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -50,8 +49,7 @@ public sealed partial class Index : IDisposable
             if (!await SetUser())
                 return;
             await ConfigureHub();
-            _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
-
+            
             _users = await UserRepository.GetAllUsersAsync(false, false, true, _cls.Token);
             _vehicles = await VehicleRepository.GetAllVehiclesAsync(true, _cls.Token);
             _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, true, _cls.Token);

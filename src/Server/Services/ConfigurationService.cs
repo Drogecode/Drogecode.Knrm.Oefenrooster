@@ -87,6 +87,28 @@ public class ConfigurationService : IConfigurationService
             result.Message = $"Fixed `{count}` alerts";
         }
 
+        var linksFixed = 0;
+        var dbLinks = await _database.LinkVehicleTraining.ToListAsync(clt);
+        foreach (var link in dbLinks)
+        {
+            var dbTr = await _database.RoosterTrainings.FindAsync(link.RoosterTrainingId, clt);
+            if (dbTr is null)
+            {
+                _database.LinkVehicleTraining.Remove(link);
+                linksFixed++;
+            }
+
+            var dbVeh = await _database.Vehicles.FindAsync(link.VehicleId, clt);
+            if (dbVeh is null)
+            {
+                _database.LinkVehicleTraining.Remove(link);
+                linksFixed++;
+            }
+        }
+
+        result.Message += $" And `{linksFixed}` links fixed";
+        _logger.LogInformation("Fixed `{count}` alerts And `{linksFixed}` links fixed", count, linksFixed);
+
         result.Success = success;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;

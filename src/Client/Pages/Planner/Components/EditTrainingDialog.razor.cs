@@ -5,7 +5,6 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.Extensions.Localization;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
@@ -34,12 +33,12 @@ public sealed partial class EditTrainingDialog : IDisposable
     private bool _editOld;
     private bool _isTaco;
 #if DEBUG
-    private const bool _isDebug = true;
+    private const bool IS_DEBUG = true;
 #else
-    private const bool _isDebug = false;
+    private const bool IS_DEBUG = false;
 #endif
     private string[] _errors = Array.Empty<string>();
-    [AllowNull] private MudForm _form;
+    [AllowNull] private MudForm _form = null!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -185,7 +184,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         return null;
     }
 
-    private async Task RoosterTrainingTypeChanged(Guid? newType)
+    private void RoosterTrainingTypeChanged(Guid? newType)
     {
         _training!.RoosterTrainingTypeId = newType;
         var trainingType = TrainingTypes!.FirstOrDefault(x => x.Id == newType);
@@ -197,8 +196,8 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private async Task OnSubmit()
     {
-        _form?.Validate();
-        if (!_form?.IsValid == true || _training == null || !_canEdit) return;
+        await _form.Validate();
+        if (!_form.IsValid == true || _training == null || !_canEdit || Planner is null) return;
         if (_training.TimeStart >= _training.TimeEnd) return;
 
         if (_training.IsNew || _training.IsNewFromDefault)
@@ -236,6 +235,7 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private void UpdatePlannerObject()
     {
+        if (_training is null) return;
         var dateStart = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeStart ?? throw new ArgumentNullException("TimeStart is null")),
             DateTimeKind.Local).ToUniversalTime();
         var dateEnd = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null")),
@@ -301,7 +301,7 @@ public sealed partial class EditTrainingDialog : IDisposable
 
         if (!toggled)
         {
-            var users = Planner?.PlanUsers?.Where(x => x.VehicleId == vehicle.Id);
+            var users = Planner?.PlanUsers.Where(x => x.VehicleId == vehicle.Id);
 
             if (users is not null)
             {
@@ -319,7 +319,7 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private async Task Delete()
     {
-        if (!_canEdit) return;
+        if (!_canEdit || Planner is null) return;
         if (_training?.IsNewFromDefault == true)
         {
             UpdatePlannerObject();

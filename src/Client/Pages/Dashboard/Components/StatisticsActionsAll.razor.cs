@@ -2,7 +2,6 @@
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Localization;
 
@@ -20,7 +19,7 @@ public sealed partial class StatisticsActionsAll : IDisposable
     private List<StatisticsTab.ChartYear>? _data;
     private readonly ApexChartOptions<StatisticsTab.ChartMonth> _options = new() { Theme = new Theme() { Mode = Mode.Dark } };
     private IEnumerable<string?>? _selectedPrio;
-    private List<string?>? Prios;
+    private List<string?>? _prios;
     private long _elapsedMilliseconds = -1;
     private ApexChart<StatisticsTab.ChartMonth>? _chart;
     private bool _renderChart;
@@ -46,7 +45,7 @@ public sealed partial class StatisticsActionsAll : IDisposable
         if (firstRender)
         {
             _options.Theme.Mode = Global.DarkMode ? Mode.Dark : Mode.Light;
-            Prios = (await ReportActionRepository.Distinct(DistinctReportAction.Prio, _cls.Token))?.Values;
+            _prios = (await ReportActionRepository.Distinct(DistinctReportAction.Prio, _cls.Token))?.Values;
             await UpdateAnalyzeYearChartAll();
         }
     }
@@ -59,13 +58,13 @@ public sealed partial class StatisticsActionsAll : IDisposable
         var analyzeData = await ReportActionRepository.AnalyzeYearChartsAll(SelectedUsers, _selectedPrio, _cls.Token);
         if (analyzeData is null) return;
         _elapsedMilliseconds = analyzeData.ElapsedMilliseconds;
-        _data = await StatisticsTab.DrawLineChartAll(analyzeData, AllYears);
+        _data = StatisticsTab.DrawLineChartAll(analyzeData, AllYears);
 
         _renderChart = true;
         StateHasChanged();
     }
 
-    public async Task PrioChanged(IEnumerable<string?> newPrio)
+    public async Task PrioChanged(IEnumerable<string?>? newPrio)
     {
         _selectedPrio = newPrio;
         await UpdateAnalyzeYearChartAll();

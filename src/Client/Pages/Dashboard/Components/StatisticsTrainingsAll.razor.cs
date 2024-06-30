@@ -24,7 +24,7 @@ public sealed partial class StatisticsTrainingsAll : IDisposable
     private ApexChart<StatisticsTab.ChartMonth> _chart = null!;
     private bool _renderChart;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         Global.DarkLightChangedAsync += DarkModeChanged;
     }
@@ -58,7 +58,7 @@ public sealed partial class StatisticsTrainingsAll : IDisposable
         var analyzeData = await ReportTrainingRepository.AnalyzeYearChartsAll(SelectedUsers, _cls.Token);
         if (analyzeData is null) return;
         _elapsedMilliseconds = analyzeData.ElapsedMilliseconds;
-        _data = await StatisticsTab.DrawLineChartAll(analyzeData, AllYears);
+        _data = StatisticsTab.DrawLineChartAll(analyzeData, AllYears);
         _renderChart = true;
         StateHasChanged();
     }

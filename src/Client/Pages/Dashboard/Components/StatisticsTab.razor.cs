@@ -18,7 +18,7 @@ public sealed partial class StatisticsTab
     private string[]? _xAxisLabels;
     private bool _allYears;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
@@ -42,7 +42,7 @@ public sealed partial class StatisticsTab
         StateHasChanged();
     }
 
-    public async Task<List<ChartYear>> DrawLineChartAll(AnalyzeYearChartAllResponse? analyzeData, bool allYears)
+    public List<ChartYear> DrawLineChartAll(AnalyzeYearChartAllResponse? analyzeData, bool allYears)
     {
         var data = new List<ChartYear>();
         if (analyzeData is null) return data;
@@ -85,14 +85,13 @@ public sealed partial class StatisticsTab
 
     public class ChartYear
     {
-        public List<ChartMonth> Months { get; set; }
-        public string Name { get; set; }
-        public string Color { get; set; }
+        public List<ChartMonth>? Months { get; set; }
+        public string? Name { get; set; }
     }
 
     public class ChartMonth
     {
-        public string Month { get; set; }
+        public string? Month { get; set; }
         public int Count { get; set; }
     }
 }
