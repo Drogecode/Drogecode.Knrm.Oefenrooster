@@ -298,6 +298,16 @@
             "format": "uuid",
             "nullable": true
           },
+          "vehicleId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "functionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "assigned": {
             "type": "boolean",
             "nullable": true

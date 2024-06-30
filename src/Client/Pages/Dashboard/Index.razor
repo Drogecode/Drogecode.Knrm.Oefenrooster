@@ -2,6 +2,7 @@
 @attribute [Authorize]
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
+@using ZXing
 <PageTitle>Dashboard</PageTitle>
 
 <MudPaper Elevation="0" Class="p-2">
@@ -84,6 +85,10 @@
                 <MudSkeleton/>
                 <MudSkeleton/>
             }
+            <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+                <MudText Typo="Typo.h5">@L["hui.nu QR code"]</MudText>
+                <MudBarcode Value="https://hui.nu" ForceHeight="1" BarcodeFormat="BarcodeFormat.QR_CODE"/>
+            </AuthorizeView>
         </MudTabPanel>
         <MudTabPanel Text="@L["Actions"]">
             <ActionsTab User="@_user" Users="@_users" Functions="@_functions"/>
