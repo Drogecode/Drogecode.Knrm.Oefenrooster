@@ -48,7 +48,11 @@ public class FunctionService : IFunctionService
     {
         var sw = Stopwatch.StartNew();
         var result = new MultipleFunctionsResponse { Functions = new List<DrogeFunction>() };
-        var functions = await _database.UserFunctions.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).ToListAsync(clt);
+        var functions = await _database.UserFunctions
+            .Where(x => x.CustomerId == customerId)
+            .OrderBy(x => x.Order)
+            .AsNoTracking()
+            .ToListAsync(clt);
         foreach (var function in functions)
         {
             result.Functions.Add(new DrogeFunction

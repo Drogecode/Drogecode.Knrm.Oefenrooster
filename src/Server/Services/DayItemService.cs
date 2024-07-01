@@ -28,6 +28,7 @@ public class DayItemService : IDayItemService
                 && (userId == Guid.Empty || x.LinkUserDayItems == null || x.LinkUserDayItems.Count == 0 || x.LinkUserDayItems.Any(x => x.UserId == userId)))
             .OrderBy(x => x.DateStart)
             .Select(x => x.ToRoosterItemDay())
+            .AsNoTracking()
             .ToListAsync(clt);
         var result = new GetMultipleDayItemResponse
         {
@@ -49,6 +50,7 @@ public class DayItemService : IDayItemService
                 && (forAllUsers || x.LinkUserDayItems!.Any(y => y.UserId == userId))
                 && (x.DateStart >= startDate || x.DateEnd >= startDate))
             .OrderBy(x => x.DateStart)
+            .AsNoTracking()
             .Select(x => x.ToRoosterItemDay());
         var result = new GetMultipleDayItemResponse
         {
@@ -73,6 +75,7 @@ public class DayItemService : IDayItemService
             && (x.DateStart >= todayUtc || (x.DateEnd != null && x.DateEnd >= todayUtc))
             && ((x.LinkUserDayItems!.Any() && x.LinkUserDayItems!.Any(y => y.UserId == userId)) || (!x.LinkUserDayItems!.Any() && x.DateStart <= todayUtc.AddDays(25))))
             .OrderBy(x=>x.DateStart)
+            .AsNoTracking()
             .ToListAsync();
         if (dayItem is null)
         {
@@ -97,7 +100,10 @@ public class DayItemService : IDayItemService
     {
         var sw = Stopwatch.StartNew();
         var result = new GetDayItemResponse();
-        var dayItem = await _database.RoosterItemDays.Include(x => x.LinkUserDayItems).FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null && x.CustomerId == customerId);
+        var dayItem = await _database.RoosterItemDays
+            .Include(x => x.LinkUserDayItems)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null && x.CustomerId == customerId);
         if (dayItem is null)
         {
             result.Success = false;

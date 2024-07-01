@@ -43,7 +43,10 @@ public class CustomerSettingService : ICustomerSettingService
 
     private async Task<string> GetCustomerSetting(Guid customerId, string setting, string def)
     {
-        var result = await _database.CustomerSettings.Where(x => x.CustomerId == customerId && x.Setting == setting).FirstOrDefaultAsync();
+        var result = await _database.CustomerSettings
+            .Where(x => x.CustomerId == customerId && x.Setting == setting)
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
         if (result?.Value is null) return def;
         return result.Value;
     }

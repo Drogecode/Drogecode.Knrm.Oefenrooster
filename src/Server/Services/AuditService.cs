@@ -1,5 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
-using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using System.Diagnostics;
 
@@ -37,7 +36,10 @@ public class AuditService : IAuditService
     {
         var response = new GetTrainingAuditResponse();
         var sw = Stopwatch.StartNew();
-        var audits = _database.Audits.Where(x => x.AuditType == AuditType.PatchAssignedUser && (trainingId.Equals(Guid.Empty) || x.ObjectKey == trainingId)).OrderByDescending(x => x.Created);
+        var audits = _database.Audits
+            .Where(x => x.AuditType == AuditType.PatchAssignedUser && (trainingId.Equals(Guid.Empty) || x.ObjectKey == trainingId))
+            .AsNoTracking()
+            .OrderByDescending(x => x.Created);
         if (audits.Any())
         {
             response.TrainingAudits = new List<TrainingAudit>();

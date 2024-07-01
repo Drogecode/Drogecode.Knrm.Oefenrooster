@@ -29,6 +29,7 @@ public class UserService : IUserService
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
             .Include(x=>x.UserOnVersions!.Where(y=> includeLastLogin && y.LastSeenOnThisVersion.CompareTo(DateTime.UtcNow.AddYears(-1)) >= 0))
             .OrderBy(x => x.Name)
+            .AsNoTracking()
             .ToListAsync(clt);
         foreach (var dbUser in dbUsers)
         {
@@ -46,7 +47,9 @@ public class UserService : IUserService
         var userObj = await _database.Users
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
             .Include(x => x.LinkedUserAsB!.Where(y => y.DeletedOn == null))
-            .Where(u => u.Id == userId && u.DeletedOn == null).FirstOrDefaultAsync();
+            .Where(u => u.Id == userId && u.DeletedOn == null)
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
         return userObj?.ToSharedUser(false);
     }
 
