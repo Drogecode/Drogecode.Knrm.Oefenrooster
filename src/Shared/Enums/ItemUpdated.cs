@@ -18,4 +18,5 @@ public enum ItemUpdated
     AllFutureDayItems = 6,
     DayItemDashboard = 7,
     PinnedDashboard = 8,
+    FutureHolidays = 9,
 }

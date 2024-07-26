@@ -25,6 +25,10 @@ public static partial class DateTimeExtension
         if (!string.IsNullOrEmpty(datePrefix))
             showDate = false;
         var dateString = SetDateStringFormat(dateTimeNotNull, showDayOfWeek, showDate, showtime);
+        if (string.IsNullOrEmpty(dateString) && !string.IsNullOrEmpty(datePrefix))
+        {
+            return datePrefix;
+        }
         var result = string.Empty;
         if (!string.IsNullOrEmpty(datePrefix))
         {

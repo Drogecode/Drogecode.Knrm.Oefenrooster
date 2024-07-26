@@ -254,13 +254,13 @@ public class BaseTest : IAsyncLifetime
         return result.Value.NewFunction.Id;
     }
 
-    protected async Task<Guid> AddHoliday(string description)
+    protected async Task<Guid> AddHoliday(string description, int from = 1, int until = 2)
     {
         var result = await HolidayController.PutHolidayForUser(new Holiday
         {
             Description = description,
-            ValidFrom = DateTime.Today.AddDays(1),
-            ValidUntil = DateTime.Today.AddDays(2),
+            ValidFrom = DateTime.Today.AddDays(from),
+            ValidUntil = DateTime.Today.AddDays(until),
         });
         Assert.NotNull(result?.Value?.Put?.Id);
         return result!.Value!.Put!.Id;

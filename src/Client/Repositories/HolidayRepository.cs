@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 
@@ -27,6 +28,15 @@ public class HolidayRepository
             async () => await _holidayClient.GetAllAsync(clt),
             clt: clt);
         return result.Holidays;
+    }
+
+    public async Task<MultipleHolidaysResponse?> GetAllFuture(Guid? userId, bool cachedAndReplace, CancellationToken clt)
+    {
+        if (userId is null) return null;
+        var schedule = await _offlineService.CachedRequestAsync(string.Format("AllFuHol_{0}", userId),
+            async () => { return await _holidayClient.GetAllFutureAsync(30, cachedAndReplace, clt); },
+            new ApiCachedRequest { CachedAndReplace = cachedAndReplace }, clt);
+        return schedule;
     }
 
     public async Task<PutHolidaysForUserResponse?> PutHolidayForUser(Holiday body, CancellationToken clt = default)
