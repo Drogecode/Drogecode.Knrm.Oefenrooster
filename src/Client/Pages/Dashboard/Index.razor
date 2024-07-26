@@ -86,29 +86,31 @@
                 <MudSkeleton />
                 <MudSkeleton />
             }
-            @if (_futureHolidays != null)
-            {
-                @if (_futureHolidays.Any())
+            <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_holidays">
+                @if (_futureHolidays != null)
                 {
-                    <MudText Typo="Typo.h5">@L["Future holidays"]</MudText>
-                    <MudList>
-                        @foreach (var holiday in _futureHolidays)
-                        {
-                            var holUser = _users?.FirstOrDefault(x => x.Id == holiday.UserId);
-
-                            @if (holUser is not null)
+                    @if (_futureHolidays.Any())
+                    {
+                        <MudText Typo="Typo.h5">@L["Future holidays"]</MudText>
+                        <MudList>
+                            @foreach (var holiday in _futureHolidays)
                             {
-                                <MudListItem>@holUser.Name : @holiday.Description <MudText Typo="Typo.subtitle2">(@LApp["from"]: @holiday.ValidFrom?.ToNiceString(LDateToString, showtime: false) @LApp["till"]: @holiday.ValidUntil?.ToNiceString(LDateToString, showtime: false))</MudText></MudListItem>
-                            }
-                        }
+                                var holUser = _users?.FirstOrDefault(x => x.Id == holiday.UserId);
 
-                    </MudList>
+                                @if (holUser is not null)
+                                {
+                                    <MudListItem>@holUser.Name : @holiday.Description <MudText Typo="Typo.subtitle2">(@LApp["from"]: @holiday.ValidFrom?.ToNiceString(LDateToString, showtime: false) @LApp["till"]: @holiday.ValidUntil?.ToNiceString(LDateToString, showtime: false))</MudText></MudListItem>
+                                }
+                            }
+
+                        </MudList>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h6">@L["No future trainings"]</MudText>
+                    }
                 }
-                else
-                {
-                    <MudText Typo="Typo.h6">@L["No future trainings"]</MudText>
-                }
-            }
+            </AuthorizeView>
             <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_qr">
                 <MudText Typo="Typo.h5">@L["hui.nu QR code"]</MudText>
                 <MudBarcode Value="https://hui.nu" ForceHeight="1" BarcodeFormat="BarcodeFormat.QR_CODE" />

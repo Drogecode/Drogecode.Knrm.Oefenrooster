@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,7 +55,9 @@ public class HolidayController : ControllerBase
             return BadRequest();
         }
     }
+
     [HttpGet]
+    [Authorize(Roles = AccessesNames.AUTH_dashboard_holidays)]
     [Route("all/future/{days:int}")]
     public async Task<ActionResult<MultipleHolidaysResponse>> GetAllFuture(int days, bool callHub, CancellationToken clt = default)
     {

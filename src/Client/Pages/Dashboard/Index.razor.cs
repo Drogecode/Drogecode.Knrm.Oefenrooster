@@ -57,13 +57,14 @@ public sealed partial class Index : IDisposable
             if (!await SetUser())
                 return;
             await ConfigureHub();
-            
+
             _users = await UserRepository.GetAllUsersAsync(false, false, true, _cls.Token);
             _vehicles = await VehicleRepository.GetAllVehiclesAsync(true, _cls.Token);
             _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, true, _cls.Token);
             _functions = await FunctionRepository.GetAllFunctionsAsync(true, _cls.Token);
             _dayItems = (await CalendarItemRepository.GetDayItemDashboardAsync(_userId, true, _cls.Token))?.DayItems;
-            _futureHolidays = (await _holidayRepository.GetAllFuture(_userId, true, _cls.Token))?.Holidays;
+            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
+                _futureHolidays = (await _holidayRepository.GetAllFuture(_userId, true, _cls.Token))?.Holidays;
             StateHasChanged();
             _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
             StateHasChanged();
@@ -134,7 +135,8 @@ public sealed partial class Index : IDisposable
                             _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
                             break;
                         case ItemUpdated.FutureHolidays:
-                            _futureHolidays = (await _holidayRepository.GetAllFuture(_userId, false, _cls.Token))?.Holidays;
+                            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
+                                _futureHolidays = (await _holidayRepository.GetAllFuture(_userId, false, _cls.Token))?.Holidays;
                             break;
                         default:
                             DebugHelper.WriteLine("Missing type, ignored");
