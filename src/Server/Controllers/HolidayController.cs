@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
@@ -17,19 +18,23 @@ public class HolidayController : ControllerBase
     private readonly ILogger<HolidayController> _logger;
     private readonly IHolidayService _holidayService;
     private readonly IAuditService _auditService;
+    private readonly RefreshHub _refreshHub;
 
     public HolidayController(
         ILogger<HolidayController> logger,
         IHolidayService holidayService,
-        IAuditService auditService)
+        IAuditService auditService,
+        RefreshHub refreshHub)
     {
         _logger = logger;
         _holidayService = holidayService;
         _auditService = auditService;
+        _refreshHub = refreshHub;
     }
 
     [HttpGet]
-    [Route("")]
+    [Route("all/user")]
+    [Route("")]// from version v0.3.82 and older
     public async Task<ActionResult<MultipleHolidaysResponse>> GetAll(CancellationToken clt = default)
     {
         try
@@ -38,7 +43,33 @@ public class HolidayController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var result = await _holidayService.GetAllHolidaysForUser(customerId, userId, clt);
 
-            return new MultipleHolidaysResponse { Holidays = result };
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in GetAll Holidays");
+            return BadRequest();
+        }
+    }
+    [HttpGet]
+    [Route("all/future/{days:int}")]
+    public async Task<ActionResult<MultipleHolidaysResponse>> GetAllFuture(int days, bool callHub, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            MultipleHolidaysResponse result = await _holidayService.GetAllHolidaysForFuture(customerId, userId, days, clt);
+
+            if (callHub)
+            {
+                _logger.LogTrace("Calling hub GetAllFuture holidays");
+                await _refreshHub.SendMessage(userId, ItemUpdated.FutureHolidays);
+            }
+            return result;
         }
         catch (Exception ex)
         {

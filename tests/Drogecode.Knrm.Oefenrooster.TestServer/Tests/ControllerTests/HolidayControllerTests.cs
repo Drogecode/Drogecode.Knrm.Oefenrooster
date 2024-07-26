@@ -100,6 +100,26 @@ public class HolidayControllerTests : BaseTest
     }
 
     [Fact]
+    public async Task GetAllFutureTest()
+    {
+        DateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-10));
+        var newHoliday1 = await AddHoliday("GetAllFutureTest1", 1, 10);
+        var newHoliday2 = await AddHoliday("GetAllFutureTest2", -3, 5);
+        var newHoliday3 = await AddHoliday("GetAllFutureTest3", -6, -2);
+        var newHoliday4 = await AddHoliday("GetAllFutureTest4", 40, 50);
+        var newHoliday5 = await AddHoliday("GetAllFutureTest5", 20, 40);
+        DateTimeServiceMock.SetMockDateTime(DateTime.Now);
+        var result = await HolidayController.GetAllFuture(30, false);
+        Assert.NotNull(result?.Value?.Holidays);
+        result.Value.Holidays.Should().Contain(x => x.Id == DefaultHoliday);
+        result.Value.Holidays.Should().Contain(x => x.Id == newHoliday1);
+        result.Value.Holidays.Should().Contain(x => x.Id == newHoliday2);
+        result.Value.Holidays.Should().NotContain(x => x.Id == newHoliday3);
+        result.Value.Holidays.Should().NotContain(x => x.Id == newHoliday4);
+        result.Value.Holidays.Should().Contain(x => x.Id == newHoliday5);
+    }
+
+    [Fact]
     public async Task DeleteTest()
     {
         var result = await HolidayController.Delete(DefaultHoliday);
