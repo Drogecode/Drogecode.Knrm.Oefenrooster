@@ -1,4 +1,7 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics;
+using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -6,18 +9,35 @@ public class UserRoleService : IUserRoleService
 {
     private readonly ILogger<UserRoleService> _logger;
     private readonly Database.DataContext _database;
+
     public UserRoleService(ILogger<UserRoleService> logger, Database.DataContext database)
     {
         _logger = logger;
         _database = database;
     }
 
-    public async Task<List<string>> GetAccessForUser(Guid customerId, IEnumerable<Claim> claims)
+    public async Task<NewUserRoleResponse> NewUserRole(DrogeUserRole userRole, Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new NewUserRoleResponse();
+        var newId = Guid.NewGuid();
+        userRole.Id = newId;
+        _database.UserRoles.Add(userRole.ToDb(customerId));
+        result.Success = await _database.SaveChangesAsync(clt) > 0;
+        if (result.Success)
+            result.NewId = userRole.Id;
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<List<string>> GetAccessForUser(Guid customerId, IEnumerable<Claim> claims, CancellationToken clt)
     {
         var result = new List<string>();
         try
         {
-            var roles = _database.UserRoles.Where(x => x.CustomerId == customerId).ToList();
+            var roles = await _database.UserRoles.Where(x => x.CustomerId == customerId).ToListAsync(clt);
             foreach (var claim in claims.Where(x => x.Type.Equals("groups")))
             {
                 var role = roles.FirstOrDefault(x => string.Compare(x.Id.ToString(), claim.Value, false) == 0);
@@ -36,6 +56,19 @@ public class UserRoleService : IUserRoleService
             _logger.LogError(ex, "Failed to get roles for user");
             return new List<string>();
         }
+
+        return result;
+    }
+
+    public async Task<MultipleDrogeUserRolesResponse> GetAll(Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new MultipleDrogeUserRolesResponse();
+
+        var roles = await _database.UserRoles.Where(x => x.CustomerId == customerId).Select(x => x.ToDrogeUserRole()).ToListAsync(clt);
+        result.Roles = roles;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
 }

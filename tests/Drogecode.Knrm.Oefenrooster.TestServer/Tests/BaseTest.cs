@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Server.Database.Migrations;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests;
 
@@ -26,6 +28,7 @@ public class BaseTest : IAsyncLifetime
 {
     protected readonly IDateTimeServiceMock DateTimeServiceMock;
     protected const string USER_NAME = "xUnit user";
+    protected const string USER_ROLE_NAME = "xUnit user role";
     protected const string FUNCTION_DEFAULT = "xUnit default function";
     protected const string HOLIDAY_DEFAULT = "xUnit default holiday";
     protected const string TRAINING_DEFAULT = "xUnit default training";
@@ -35,6 +38,7 @@ public class BaseTest : IAsyncLifetime
     protected const string VEHICLE_DEFAULT = "xUnit default vehicle";
     protected Guid DefaultCustomerId { get; private set; }
     protected Guid DefaultUserId { get; private set; }
+    protected Guid DefaultUserRoleId { get; private set; }
     protected Guid DefaultFunction { get; private set; }
     protected Guid DefaultHoliday { get; private set; }
     protected Guid DefaultTraining { get; private set; }
@@ -59,6 +63,7 @@ public class BaseTest : IAsyncLifetime
     protected readonly DefaultScheduleController DefaultScheduleController;
     protected readonly ReportActionController ReportActionController;
     protected readonly ReportTrainingController ReportTrainingController;
+    protected readonly UserRoleController UserRoleController;
 
     public BaseTest(
         DataContext dataContext,
@@ -74,7 +79,8 @@ public class BaseTest : IAsyncLifetime
         VehicleController vehicleController,
         DefaultScheduleController defaultScheduleController,
         ReportActionController reportActionController,
-        ReportTrainingController reportTrainingController)
+        ReportTrainingController reportTrainingController,
+        UserRoleController userRoleController)
     {
         DataContext = dataContext;
         DateTimeServiceMock = (IDateTimeServiceMock)dateTimeService;
@@ -91,6 +97,7 @@ public class BaseTest : IAsyncLifetime
         DefaultScheduleController = defaultScheduleController;
         ReportActionController = reportActionController;
         ReportTrainingController = reportTrainingController;
+        UserRoleController = userRoleController;
 
         DefaultCustomerId = Guid.NewGuid();
         SeedCustomer(dataContext);
@@ -113,11 +120,13 @@ public class BaseTest : IAsyncLifetime
         MockAuthenticatedUser(defaultScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(reportActionController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(reportTrainingController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(userRoleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
     }
 
     public async Task InitializeAsync()
     {
         DefaultFunction = await AddFunction(FUNCTION_DEFAULT, true);
+        DefaultUserRoleId = await AddUserRole(USER_ROLE_NAME);
         DefaultUserId = await AddUser(USER_NAME);
         DefaultHoliday = await AddHoliday(HOLIDAY_DEFAULT);
         DefaultTraining = await AddTraining(TRAINING_DEFAULT, false);
@@ -252,6 +261,16 @@ public class BaseTest : IAsyncLifetime
         });
         Assert.NotNull(result?.Value?.NewFunction);
         return result.Value.NewFunction.Id;
+    }
+    protected async Task<Guid> AddUserRole(string name)
+    {
+        var result = await UserRoleController.NewUserRole(new DrogeUserRole
+        {
+            Name = name,
+            AUTH_scheduler_other_user = true,
+        });
+        Assert.NotNull(result?.Value?.NewId);
+        return result.Value.NewId.Value;
     }
 
     protected async Task<Guid> AddHoliday(string description, int from = 1, int until = 2)

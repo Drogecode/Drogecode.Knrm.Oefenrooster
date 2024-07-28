@@ -129,6 +129,7 @@ var groupNames = new List<string>
     "Function",
     "Schedule",
     "User",
+    "UserRole",
     "Vehicle",
     "SharePoint",
     "ReportAction",

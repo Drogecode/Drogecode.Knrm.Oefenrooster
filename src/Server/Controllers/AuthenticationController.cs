@@ -267,7 +267,7 @@ public partial class AuthenticationController : ControllerBase
 
     private async Task SetUser(JwtSecurityToken jwtSecurityToken, string refresh_token, bool rememberMe, CancellationToken clt)
     {
-        var claims = await GetClaimsList(jwtSecurityToken, refresh_token);
+        var claims = await GetClaimsList(jwtSecurityToken, refresh_token, clt);
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -301,7 +301,7 @@ public partial class AuthenticationController : ControllerBase
             authProperties);
     }
 
-    private async Task<IEnumerable<Claim>> GetClaimsList(JwtSecurityToken jwtSecurityToken, string refresh_token)
+    private async Task<IEnumerable<Claim>> GetClaimsList(JwtSecurityToken jwtSecurityToken, string refresh_token, CancellationToken clt)
     {
         var email = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "email")?.Value ?? "";
         var fullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? "";
@@ -324,7 +324,7 @@ public partial class AuthenticationController : ControllerBase
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_Taco));
         }
 
-        var accesses = await _userRoleService.GetAccessForUser(customerId, jwtSecurityToken.Claims);
+        var accesses = await _userRoleService.GetAccessForUser(customerId, jwtSecurityToken.Claims, clt);
         if (accesses == null) return claims;
         foreach (var access in accesses)
         {

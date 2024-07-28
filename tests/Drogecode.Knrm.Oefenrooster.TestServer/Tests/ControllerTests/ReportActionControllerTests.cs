@@ -25,9 +25,10 @@ public class ReportActionControllerTests : BaseTest
         VehicleController vehicleController,
         DefaultScheduleController defaultScheduleController,
         ReportActionController reportActionController,
-        ReportTrainingController reportTrainingController) :
+        ReportTrainingController reportTrainingController,
+        UserRoleController userRoleController) :
         base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController)
+            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController)
     {
     }
 

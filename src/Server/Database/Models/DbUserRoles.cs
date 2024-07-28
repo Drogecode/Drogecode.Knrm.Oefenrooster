@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 
-[Table("UserRoles")]
+[Table("UserRoles")] // Should be without s :(
 public class DbUserRoles
 {
     [Key] public Guid Id { get; set; }
