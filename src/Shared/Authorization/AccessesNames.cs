@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
+// When adding a new role, the role should be added to the model, mapper and the UI
+// (Could be automated in the future)
 public static class AccessesNames
 {
     // Can not be set by configuration
@@ -14,6 +16,7 @@ public static class AccessesNames
 
     // Configuration
     public const string AUTH_configure_training_types = "configure_training-types";
+    public const string AUTH_configure_user_roles = "configure_user_roles";
 
     // Scheduler
     public const string AUTH_scheduler = "scheduler";

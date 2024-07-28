@@ -22,6 +22,9 @@ internal static class UserRoleMapper
                 case AccessesNames.AUTH_configure_training_types:
                     drogeUserRole.AUTH_configure_training_types = true;
                     break;
+                case AccessesNames.AUTH_configure_user_roles:
+                    drogeUserRole.AUTH_configure_user_roles = true;
+                    break;
                 case AccessesNames.AUTH_scheduler:
                     drogeUserRole.AUTH_scheduler = true;
                     break;
@@ -88,6 +91,11 @@ internal static class UserRoleMapper
         if (userRole.AUTH_configure_training_types)
         {
             sb.Append(AccessesNames.AUTH_configure_training_types);
+            sb.Append(',');
+        }
+        if (userRole.AUTH_configure_user_roles)
+        {
+            sb.Append(AccessesNames.AUTH_configure_user_roles);
             sb.Append(',');
         }
         if (userRole.AUTH_scheduler)

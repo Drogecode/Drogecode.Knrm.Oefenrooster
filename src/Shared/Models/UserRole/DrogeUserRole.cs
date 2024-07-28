@@ -6,6 +6,7 @@ public class DrogeUserRole
     public string? Name { get; set; }
     
     public bool AUTH_configure_training_types { get; set; }
+    public bool AUTH_configure_user_roles { get; set; }
     
     public bool AUTH_scheduler { get; set; }
     public bool AUTH_scheduler_in_table_view { get; set; }

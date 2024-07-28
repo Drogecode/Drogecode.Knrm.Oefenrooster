@@ -45,5 +45,6 @@ public class UserRoleControllerTests : BaseTest
         var role = getResponse.Value.Roles.FirstOrDefault();
         Assert.NotNull(role);
         role.AUTH_scheduler_other_user.Should().BeTrue();
+        role.AUTH_scheduler_dayitem.Should().BeFalse();
     }
 }

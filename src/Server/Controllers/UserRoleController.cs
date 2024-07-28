@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,7 @@ public class UserRoleController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = AccessesNames.AUTH_configure_user_roles)]
     [Route("")]
     public async Task<ActionResult<NewUserRoleResponse>> NewUserRole([FromBody] DrogeUserRole userRole, CancellationToken clt = default)
     {
@@ -44,6 +46,7 @@ public class UserRoleController : ControllerBase
     }
     
     [HttpGet]
+    [Authorize(Roles = AccessesNames.AUTH_configure_user_roles)]
     [Route("all")]
     public async Task<ActionResult<MultipleDrogeUserRolesResponse>> GetAll(CancellationToken clt = default)
     {
