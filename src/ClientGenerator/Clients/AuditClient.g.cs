@@ -46,12 +46,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task PostLogAsync(string message);
+        System.Threading.Tasks.Task PostLogAsync(PostLogRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task PostLogAsync(string message, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task PostLogAsync(PostLogRequest body, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -264,33 +264,32 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task PostLogAsync(string message)
+        public virtual System.Threading.Tasks.Task PostLogAsync(PostLogRequest body)
         {
-            return PostLogAsync(message, System.Threading.CancellationToken.None);
+            return PostLogAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task PostLogAsync(string message, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task PostLogAsync(PostLogRequest body, System.Threading.CancellationToken cancellationToken)
         {
-            if (message == null)
-                throw new System.ArgumentNullException("message");
-
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/Audit/log/{message}"
-                    urlBuilder_.Append("api/Audit/log/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(message, System.Globalization.CultureInfo.InvariantCulture)));
+                    // Operation Path: "api/Audit/log"
+                    urlBuilder_.Append("api/Audit/log");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 

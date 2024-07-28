@@ -34,7 +34,7 @@ public class HolidayService : IHolidayService
             list.Add(new Holiday
             {
                 Id = dbHoliday.Id,
-                UserId = userId,
+                UserId = dbHoliday.UserId,
                 Description = dbHoliday.Description,
                 Availability = dbHoliday.Available,
                 ValidFrom = dbHoliday.ValidFrom,
@@ -60,7 +60,7 @@ public class HolidayService : IHolidayService
             list.Add(new Holiday
             {
                 Id = dbHoliday.Id,
-                UserId = userId,
+                UserId = dbHoliday.UserId,
                 Description = dbHoliday.Description,
                 Availability = dbHoliday.Available,
                 ValidFrom = dbHoliday.ValidFrom,

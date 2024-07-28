@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages;
 
@@ -53,11 +54,11 @@ public sealed partial class Authentication
 
                     break;
                 case "logout":
-                    await AuditClient.PostLogAsync("Logout start");
+                    await AuditClient.PostLogAsync(new PostLogRequest { Message = "Logout start" });
                     var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                     var logoutHint = authState?.User?.FindFirst(c => c.Type == "login_hint")?.Value ?? "";
                     var redirectLogoutUrl = $"{Navigation.BaseUri}landing_page";
-                    await AuditClient.PostLogAsync($"Logout logoutHint: `{logoutHint}` redirectLogoutUrl: `{redirectLogoutUrl}`");
+                    await AuditClient.PostLogAsync(new PostLogRequest { Message = $"Logout logoutHint: `{logoutHint}` redirectLogoutUrl: `{redirectLogoutUrl}`" });
                     string urlLogout;
                     if (string.IsNullOrEmpty(logoutHint))
                         urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri={redirectLogoutUrl}";

@@ -114,22 +114,31 @@
         }
       }
     },
-    "/api/Audit/log/{message}": {
+    "/api/Audit/log": {
       "post": {
         "tags": [
           "Audit"
         ],
         "operationId": "PostLog",
-        "parameters": [
-          {
-            "name": "message",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostLogRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostLogRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostLogRequest"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -219,6 +228,16 @@
             "items": {
               "$ref": "#/components/schemas/TrainingAudit"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PostLogRequest": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
             "nullable": true
           }
         },
