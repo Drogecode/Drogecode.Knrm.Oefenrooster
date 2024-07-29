@@ -1,0 +1,14 @@
+﻿@page "/configuration/user-roles"
+@attribute [Authorize(Roles = AccessesNames.AUTH_configure_user_roles)]
+<h3>UserRoles</h3>
+@if (_userRoles?.Roles is not null && _userRoles.Roles.Any())
+{
+    <MudList>
+        @foreach (var role in _userRoles.Roles)
+        {
+            <MudListItem>
+                @role.Name
+            </MudListItem>
+        }
+    </MudList>
+}

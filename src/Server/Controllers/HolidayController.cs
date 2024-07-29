@@ -74,6 +74,10 @@ public class HolidayController : ControllerBase
             }
             return result;
         }
+        catch (OperationCanceledException)
+        {
+            return BadRequest();
+        }
         catch (Exception ex)
         {
 #if DEBUG
@@ -95,6 +99,10 @@ public class HolidayController : ControllerBase
             var result = await _holidayService.Get(id, customerId, userId, clt);
 
             return result;
+        }
+        catch (OperationCanceledException)
+        {
+            return BadRequest();
         }
         catch (Exception ex)
         {

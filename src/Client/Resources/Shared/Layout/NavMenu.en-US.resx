@@ -156,4 +156,7 @@
   <data name="Vacations" xml:space="preserve">
     <value>Vacations</value>
   </data>
+  <data name="User roles" xml:space="preserve">
+    <value>User roles</value>
+  </data>
 </root>

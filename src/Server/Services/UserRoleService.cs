@@ -65,7 +65,7 @@ public class UserRoleService : IUserRoleService
         var sw = Stopwatch.StartNew();
         var result = new MultipleDrogeUserRolesResponse();
 
-        var roles = await _database.UserRoles.Where(x => x.CustomerId == customerId).Select(x => x.ToDrogeUserRole()).ToListAsync(clt);
+        var roles = await _database.UserRoles.Where(x => x.CustomerId == customerId).OrderBy(x=>x.Order).Select(x => x.ToDrogeUserRole()).ToListAsync(clt);
         result.Roles = roles;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;

@@ -7,14 +7,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
 
 internal static class UserRoleMapper
 {
-    public static DrogeUserRole ToDrogeUserRole(this DbUserRoles dbUserRole)
+    public static DrogeUserRole ToDrogeUserRole(this DbUserRoles dbUserRoles)
     {
         var drogeUserRole = new DrogeUserRole()
         {
-            Id = dbUserRole.Id,
-            Name = dbUserRole.Name
+            Id = dbUserRoles.Id,
+            Name = dbUserRoles.Name
         };
-        var roles = dbUserRole.Accesses.Split(',');
+        var roles = dbUserRoles.Accesses.Split(',');
         foreach (var role in roles)
         {
             switch (role)
