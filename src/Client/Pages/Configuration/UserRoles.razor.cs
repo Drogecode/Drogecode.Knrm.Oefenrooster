@@ -5,7 +5,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
-public sealed partial class UserRoles : ComponentBase
+public sealed partial class UserRoles : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<UserRoles>? L { get; set; }
     [Inject, NotNull] private IUserRoleClient? UserRoleClient { get; set; }
@@ -19,5 +19,10 @@ public sealed partial class UserRoles : ComponentBase
             _userRoles = await UserRoleClient.GetAllAsync(_cls.Token);
             StateHasChanged();
         }
+    }
+
+    public void Dispose()
+    {
+        _cls.Cancel();
     }
 }
