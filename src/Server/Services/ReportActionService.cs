@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
-using Microsoft.Graph.Models;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -14,7 +13,7 @@ public class ReportActionService : IReportActionService
         _database = database;
     }
 
-    public async Task<MultipleReportActionsResponse> GetListActionsUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
+    public async Task<MultipleReportActionsResponse> GetListActionsUser(List<Guid?> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var listWhere = _database.ReportActions.Include(x => x.Users).Where(x => x.CustomerId == customerId && x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count);
@@ -41,7 +40,8 @@ public class ReportActionService : IReportActionService
         var result = new AnalyzeYearChartAllResponse { TotalCount = allReports.Count() };
         foreach (var report in allReports)
         {
-            var start = report.Start.ToDateTimeTimeZone(timeZone).ToDateTime();
+            var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
+            var start = TimeZoneInfo.ConvertTimeFromUtc(report.Start, zone);
             if (result.Years.All(x => x.Year != start.Year))
             {
                 result.Years.Add(new AnalyzeYearDetails() { Year = start.Year });
@@ -86,6 +86,19 @@ public class ReportActionService : IReportActionService
 
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<KillDbResponse> KillDb(Guid customerId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new KillDbResponse();
+        result.KillCount += await _database.ReportUsers.ExecuteDeleteAsync(clt);
+        result.KillCount += await _database.ReportActions.ExecuteDeleteAsync(clt);
+        result.KillCount += await _database.ReportTrainings.ExecuteDeleteAsync(clt);
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        result.Success = true;
         return result;
     }
 }

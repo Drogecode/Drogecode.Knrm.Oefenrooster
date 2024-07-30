@@ -47,6 +47,7 @@ builder.Services.TryAddScoped<IScheduleClient, ScheduleClient>();
 builder.Services.TryAddScoped<ISharePointClient, SharePointClient>();
 builder.Services.TryAddScoped<ITrainingTypesClient, TrainingTypesClient>();
 builder.Services.TryAddScoped<IUserClient, UserClient>();
+builder.Services.TryAddScoped<IUserRoleClient, UserRoleClient>();
 builder.Services.TryAddScoped<IUserSettingsClient, UserSettingsClient>();
 builder.Services.TryAddScoped<IVehicleClient, VehicleClient>();
 

@@ -781,6 +781,17 @@
         },
         "additionalProperties": false
       },
+      "AuditReason": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "Availability": {
         "enum": [
           0,
@@ -965,6 +976,9 @@
           },
           "training": {
             "$ref": "#/components/schemas/TrainingAdvance"
+          },
+          "auditReason": {
+            "$ref": "#/components/schemas/AuditReason"
           }
         },
         "additionalProperties": false

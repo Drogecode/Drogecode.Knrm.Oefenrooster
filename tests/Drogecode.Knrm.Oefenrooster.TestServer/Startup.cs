@@ -36,6 +36,7 @@ public class Startup
         services.AddScoped<ITrainingTypesService, TrainingTypesService>();
         services.AddScoped<IUserRoleService, UserRoleService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserRoleService, UserRoleService>();
         services.AddScoped<IVehicleService, VehicleService>();
         services.AddScoped<IUserSettingService, UserSettingService>();
         services.AddScoped<ICustomerSettingService, CustomerSettingService>();
@@ -52,6 +53,7 @@ public class Startup
         services.AddScoped<ScheduleController>();
         services.AddScoped<TrainingTypesController>();
         services.AddScoped<UserController>();
+        services.AddScoped<UserRoleController>();
         services.AddScoped<VehicleController>();
         services.AddScoped<DefaultScheduleController>();
 

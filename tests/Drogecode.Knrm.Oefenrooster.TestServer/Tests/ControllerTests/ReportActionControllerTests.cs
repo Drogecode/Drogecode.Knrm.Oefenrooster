@@ -25,9 +25,10 @@ public class ReportActionControllerTests : BaseTest
         VehicleController vehicleController,
         DefaultScheduleController defaultScheduleController,
         ReportActionController reportActionController,
-        ReportTrainingController reportTrainingController) :
+        ReportTrainingController reportTrainingController,
+        UserRoleController userRoleController) :
         base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController)
+            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController)
     {
     }
 
@@ -73,7 +74,7 @@ public class ReportActionControllerTests : BaseTest
     {
         var request = new AnalyzeActionRequest()
         {
-            Users = new List<Guid> {  },
+            Users = new List<Guid?> {  },
         };
         var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
@@ -91,7 +92,7 @@ public class ReportActionControllerTests : BaseTest
     {
         var request = new AnalyzeActionRequest()
         {
-            Users = new List<Guid> { DefaultSettingsHelper.IdTaco },
+            Users = new List<Guid?> { DefaultSettingsHelper.IdTaco },
         };
         var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
@@ -109,7 +110,7 @@ public class ReportActionControllerTests : BaseTest
     {
         var request = new AnalyzeActionRequest()
         {
-            Users = new List<Guid> { Guid.NewGuid() },
+            Users = new List<Guid?> { Guid.NewGuid() },
         };
         var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
@@ -141,7 +142,7 @@ public class ReportActionControllerTests : BaseTest
         await DataContext.SaveChangesAsync();
         var request = new AnalyzeActionRequest()
         {
-            Users = new List<Guid> { otherUser, DefaultSettingsHelper.IdTaco },
+            Users = new List<Guid?> { otherUser, DefaultSettingsHelper.IdTaco },
         };
         var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);

@@ -41,7 +41,7 @@ else if (_dbCorrection?.Success == false)
 {
     <MudText Typo="Typo.body1">Failed: @_dbCorrection.Message</MudText>
 }
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RunSyncHistorical">Run sync historical reports</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RunSyncHistorical" Disabled="_clickedSyncHistorical">Run sync historical reports</MudButton>
 @if (_syncHistorical?.Success == true)
 {
     <MudText Typo="Typo.body1">Done: _syncHistorical</MudText>
@@ -49,6 +49,19 @@ else if (_dbCorrection?.Success == false)
 else if (_syncHistorical?.Success == false)
 {
     <MudText Typo="Typo.body1">Failed: _syncHistorical</MudText>
+}
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="KillDb" Disabled="_clickedSyncHistorical">Kill db</MudButton>
+@if (_killDb?.Success == true)
+{
+    <MudText Typo="Typo.body1">
+        Done: KillDb @_killDb.KillCount
+    </MudText>
+}
+else if (_killDb?.Success == false)
+{
+    <MudText Typo="Typo.body1">
+        Failed: KillDb @_killDb.KillCount
+    </MudText>
 }
 
 @if (_settingTrainingToCalendar is not null)

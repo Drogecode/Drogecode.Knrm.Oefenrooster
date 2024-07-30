@@ -1,9 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
-using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Nager.Holiday;
 
@@ -37,7 +34,7 @@ public class ConfigurationService : IConfigurationService
         if (holiday.LocalName == null) return false;
         var date = DateTime.SpecifyKind(holiday.Date, DateTimeKind.Utc);
         var d = await _database.RoosterItemDays.FirstOrDefaultAsync(x =>
-            x.CustomerId == customerId && x.Type == CalendarItemType.SpecialDate && x.IsFullDay == true && x.DateStart == date && x.Text == holiday.LocalName);
+            x.CustomerId == customerId && x.Type == CalendarItemType.SpecialDate && x.IsFullDay == true && x.DateStart == date && x.Text == holiday.LocalName, cancellationToken: clt);
         if (d is not null) return false;
         await _database.RoosterItemDays.AddAsync(new DbRoosterItemDay
         {
@@ -47,7 +44,7 @@ public class ConfigurationService : IConfigurationService
             DateStart = date,
             Text = holiday.LocalName,
             IsFullDay = true
-        });
+        }, clt);
         return await _database.SaveChangesAsync(clt) > 0;
     }
 
@@ -86,6 +83,29 @@ public class ConfigurationService : IConfigurationService
         {
             result.Message = $"Fixed `{count}` alerts";
         }
+
+        var linksFixed = 0;
+        var dbLinks = await _database.LinkVehicleTraining.ToListAsync(clt);
+        foreach (var link in dbLinks)
+        {
+            var dbTr = await _database.RoosterTrainings.FindAsync(link.RoosterTrainingId, clt);
+            if (dbTr is null)
+            {
+                _database.LinkVehicleTraining.Remove(link);
+                linksFixed++;
+            }
+
+            var dbVeh = await _database.Vehicles.FindAsync(link.VehicleId, clt);
+            if (dbVeh is null)
+            {
+                _database.LinkVehicleTraining.Remove(link);
+                linksFixed++;
+            }
+        }
+
+        await _database.SaveChangesAsync(clt);
+        result.Message += $" And `{linksFixed}` links fixed";
+        _logger.LogInformation("Fixed `{count}` alerts And `{linksFixed}` links fixed", count, linksFixed);
 
         result.Success = success;
         sw.Stop();

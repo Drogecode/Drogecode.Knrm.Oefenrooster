@@ -11,18 +11,25 @@ using Microsoft.Extensions.Localization;
 using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
+using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard;
 
 public sealed partial class Index : IDisposable
 {
     [Inject] private IStringLocalizer<Index> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
+    [Inject] private IStringLocalizer<DateToString> LDateToString { get; set; } = default!;
     [Inject] private FunctionRepository FunctionRepository { get; set; } = default!;
     [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
     [Inject] private TrainingTypesRepository TrainingTypesRepository { get; set; } = default!;
     [Inject] private UserRepository UserRepository { get; set; } = default!;
     [Inject] private VehicleRepository VehicleRepository { get; set; } = default!;
     [Inject] private DayItemRepository CalendarItemRepository { get; set; } = default!;
+    [Inject] private HolidayRepository _holidayRepository { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
@@ -38,10 +45,10 @@ public sealed partial class Index : IDisposable
     private List<DrogeVehicle>? _vehicles;
     private List<PlannerTrainingType>? _trainingTypes;
     private List<RoosterItemDay>? _dayItems;
+    private List<Holiday>? _futureHolidays;
     private string? _name;
     private Guid _userId;
     private bool _loading = true;
-    private bool _isTaco;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -50,13 +57,14 @@ public sealed partial class Index : IDisposable
             if (!await SetUser())
                 return;
             await ConfigureHub();
-            _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
 
             _users = await UserRepository.GetAllUsersAsync(false, false, true, _cls.Token);
             _vehicles = await VehicleRepository.GetAllVehiclesAsync(true, _cls.Token);
             _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, true, _cls.Token);
             _functions = await FunctionRepository.GetAllFunctionsAsync(true, _cls.Token);
             _dayItems = (await CalendarItemRepository.GetDayItemDashboardAsync(_userId, true, _cls.Token))?.DayItems;
+            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
+                _futureHolidays = (await _holidayRepository.GetAllFuture(_userId, true, _cls.Token))?.Holidays;
             StateHasChanged();
             _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
             StateHasChanged();
@@ -125,6 +133,10 @@ public sealed partial class Index : IDisposable
                             break;
                         case ItemUpdated.PinnedDashboard:
                             _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
+                            break;
+                        case ItemUpdated.FutureHolidays:
+                            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
+                                _futureHolidays = (await _holidayRepository.GetAllFuture(_userId, false, _cls.Token))?.Holidays;
                             break;
                         default:
                             DebugHelper.WriteLine("Missing type, ignored");

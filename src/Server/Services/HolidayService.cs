@@ -4,6 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -21,24 +22,56 @@ public class HolidayService : IHolidayService
         _dateTimeService = dateTimeService;
     }
 
-    public async Task<List<Holiday>> GetAllHolidaysForUser(Guid customerId, Guid userId, CancellationToken clt)
+    public async Task<MultipleHolidaysResponse> GetAllHolidaysForUser(Guid customerId, Guid userId, CancellationToken clt)
     {
+        var sw = Stopwatch.StartNew();
+        var result = new MultipleHolidaysResponse();
         var list = new List<Holiday>();
-        var dbHolidays = _database.UserHolidays.Where(y => y.UserId == userId);
-        foreach (var dbHoliday in dbHolidays)
+        var dbHolidays = _database.UserHolidays.Where(y => y.CustomerId == customerId && y.UserId == userId);
+        foreach (var dbHoliday in await dbHolidays.ToListAsync(clt))
         {
             if (dbHoliday is null) continue;
             list.Add(new Holiday
             {
                 Id = dbHoliday.Id,
-                UserId = userId,
+                UserId = dbHoliday.UserId,
                 Description = dbHoliday.Description,
                 Availability = dbHoliday.Available,
                 ValidFrom = dbHoliday.ValidFrom,
                 ValidUntil = dbHoliday.ValidUntil,
             });
         }
-        return list;
+        result.Holidays = list;
+        result.Success = true;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<MultipleHolidaysResponse> GetAllHolidaysForFuture(Guid customerId, Guid userId, int days, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new MultipleHolidaysResponse();
+        var list = new List<Holiday>();
+        var dbHolidays = _database.UserHolidays.Where(y => y.CustomerId == customerId && y.ValidUntil >= _dateTimeService.UtcNow() && y.ValidFrom <= _dateTimeService.UtcNow().AddDays(days));
+        foreach (var dbHoliday in await dbHolidays.OrderBy(x => x.ValidFrom).ToListAsync(clt))
+        {
+            if (dbHoliday is null) continue;
+            list.Add(new Holiday
+            {
+                Id = dbHoliday.Id,
+                UserId = dbHoliday.UserId,
+                Description = dbHoliday.Description,
+                Availability = dbHoliday.Available,
+                ValidFrom = dbHoliday.ValidFrom,
+                ValidUntil = dbHoliday.ValidUntil,
+            });
+        }
+        result.Holidays = list;
+        result.Success = true;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
     }
 
     public async Task<GetResponse> Get(Guid id, Guid customerId, Guid userId, CancellationToken clt)
@@ -82,7 +115,7 @@ public class HolidayService : IHolidayService
 
     public async Task<PatchHolidaysForUserResponse> PatchHolidaysForUser(Holiday body, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var dbHoliday = _database.UserHolidays.FirstOrDefault(x => x.Id == body.Id);
+        var dbHoliday = _database.UserHolidays.FirstOrDefault(x => x.CustomerId == customerId && x.Id == body.Id);
         if (dbHoliday is null) return new PatchHolidaysForUserResponse { Success = false };
         if (dbHoliday.ValidUntil is not null && dbHoliday.ValidUntil.Value.CompareTo(_dateTimeService.UtcNow()) <= 0) return new PatchHolidaysForUserResponse { Success = false };
         if (dbHoliday.ValidFrom is not null && dbHoliday.ValidFrom.Value.CompareTo(_dateTimeService.UtcNow()) <= 0) body.ValidFrom = dbHoliday.ValidFrom;

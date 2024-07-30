@@ -31,7 +31,7 @@ public class CustomStateProvider : AuthenticationStateProvider
             }
             var now = DateTime.Now;
 #if DEBUG
-            //now = now.AddMinutes(59).AddSeconds(30);
+            now = now.AddMinutes(59).AddSeconds(30);
 #endif
             if (now.CompareTo(validFrom.AddMinutes(-15)) < 0 || now.CompareTo(validTo) > 0)
             {
@@ -49,7 +49,7 @@ public class CustomStateProvider : AuthenticationStateProvider
 
     private async Task<ClaimsIdentity> GetCurrentUser()
     {
-        if (_currentUser != null && _currentUser.IsAuthenticated) return _currentUser;
+        if (_currentUser is { IsAuthenticated: true }) return _currentUser;
         var user = await _authenticationClient.CurrentUserInfoAsync();
         if (!user.IsAuthenticated)
         {

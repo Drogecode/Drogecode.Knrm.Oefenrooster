@@ -3,7 +3,6 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Microsoft.Extensions.Localization;
-using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 
@@ -13,6 +12,7 @@ public sealed partial class CalendarBaseCard : IDisposable
     [Inject, NotNull] private CustomerSettingRepository? CustomerSettingRepository { get; set; }
     [Parameter, EditorRequired] public TrainingAdvance Training { get; set; } = default!;
     [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? ChipContent { get; set; }
     [Parameter] public EventCallback OnClickCallback { get; set; }
     [Parameter] public EventCallback OnClickSettings { get; set; }
     [Parameter] public EventCallback OnClickHistory { get; set; }

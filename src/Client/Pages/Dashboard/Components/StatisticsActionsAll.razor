@@ -15,7 +15,6 @@
                                  SeriesType="SeriesType.Line"
                                  XValue="e => e.Month"
                                  YValue="e => e.Count"
-                                 Color="@data.Color"
                 />
             }
         </ApexChart>
@@ -31,10 +30,10 @@
         <MudSkeleton/>
         <MudSkeleton/>
     }
-    @if (Prios is not null)
+    @if (_prios is not null)
     {
         <MudSelect T="string?" Label="@L["Prio"]" SelectedValues="_selectedPrio" SelectedValuesChanged="PrioChanged" Clearable="true" MultiSelection="true">
-            @foreach (var prio in Prios)
+            @foreach (var prio in _prios)
             {
                 <MudSelectItem T="string?" Value="@prio">@prio</MudSelectItem>
             }

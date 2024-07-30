@@ -37,6 +37,8 @@ public static class ReportActionMapper
             FunctioningMaterial = spAction.FunctioningMaterial,
             ProblemsWithWeed = spAction.ProblemsWithWeed,
             Completedby = spAction.Completedby,
+            TotalMinutes = spAction.TotalMinutes,
+            TotalFullHours = spAction.TotalFullHours,
 
             LastUpdated = spAction.LastUpdated,
             Start = spAction.Start,
@@ -90,6 +92,8 @@ public static class ReportActionMapper
             Commencement = spTraining.Commencement,
             End = spTraining.End,
             Boat = spTraining.Boat,
+            TotalMinutes = spTraining.TotalMinutes,
+            TotalFullHours = spTraining.TotalFullHours,
 
             Users = new List<DbReportUser>()
         };
@@ -148,7 +152,9 @@ public static class ReportActionMapper
             Start = dbAction.Start,
             Commencement = dbAction.Commencement,
             End = dbAction.End,
-            Users = dbAction.Users?.Select(x => x.ToSharePointUser()).ToList()
+            Users = dbAction.Users?.Select(x => x.ToSharePointUser()).ToList(),
+            TotalMinutes = dbAction.TotalMinutes,
+            TotalFullHours = dbAction.TotalFullHours,
         };
     }
 
@@ -177,7 +183,9 @@ public static class ReportActionMapper
             Start = dbTraining.Start,
             Commencement = dbTraining.Commencement,
             End = dbTraining.End,
-            Users = dbTraining.Users?.Select(x => x.ToSharePointUser()).ToList()
+            Users = dbTraining.Users?.Select(x => x.ToSharePointUser()).ToList(),
+            TotalMinutes = dbTraining.TotalMinutes,
+            TotalFullHours = dbTraining.TotalFullHours,
         };
     }
 
@@ -228,14 +236,21 @@ public static class ReportActionMapper
         if (!Equals(dbAction.Date, spAction.Date)) dbAction.Date = spAction.Date;
         if (!Equals(dbAction.Commencement, spAction.Commencement)) dbAction.Commencement = spAction.Commencement;
         if (!Equals(dbAction.Departure, spAction.Departure)) dbAction.Departure = spAction.Departure;
+        if (!Equals(dbAction.TotalMinutes, spAction.TotalMinutes)) dbAction.TotalMinutes = spAction.TotalMinutes;
+        if (!Equals(dbAction.TotalFullHours, spAction.TotalFullHours)) dbAction.TotalFullHours = spAction.TotalFullHours;
 
         if (dbAction.Users is not null)
         {
             foreach (var dbUser in dbAction.Users)
             {
-                if (spAction.Users.Any(x => x.DrogeCodeId == dbUser.DrogeCodeId))
+                if (spAction.Users.Any(x => (x.DrogeCodeId is not null && x.DrogeCodeId == dbUser.DrogeCodeId)
+                                            || (x.SharePointID is not null && x.SharePointID == dbUser.SharePointID)
+                                            || (x.SharePointID == null && x.Name == dbUser.Name)))
                 {
-                    var user = spAction.Users.FirstOrDefault(x => x.DrogeCodeId == dbUser.DrogeCodeId);
+                    var user = spAction.Users.FirstOrDefault(x =>
+                        (x.DrogeCodeId is not null && x.DrogeCodeId == dbUser.DrogeCodeId)
+                        || (x.SharePointID is not null && x.SharePointID == dbUser.SharePointID)
+                        || (x.SharePointID == null && x.Name == dbUser.Name));
                     if (!Equals(dbUser.IsDeleted, false)) dbUser.IsDeleted = false;
                     if (!Equals(dbUser.Role, user!.Role)) dbUser.Role = user.Role;
                     if (!Equals(dbUser.Name, user.Name)) dbUser.Name = user.Name;
@@ -249,7 +264,9 @@ public static class ReportActionMapper
 
             foreach (var user in spAction.Users)
             {
-                if (dbAction.Users.Any(x => x.DrogeCodeId == user.DrogeCodeId))
+                if (dbAction.Users.Any(x => (x.DrogeCodeId is not null && x.DrogeCodeId == user.DrogeCodeId)
+                                            || (x.SharePointID is not null && x.SharePointID == user.SharePointID)
+                                            || (x.SharePointID == null && x.Name == user.Name)))
                     continue;
                 dbAction.Users.Add(new()
                 {
@@ -285,14 +302,17 @@ public static class ReportActionMapper
         if (!Equals(dbTraining.Commencement, spTraining.Commencement)) dbTraining.Commencement = spTraining.Commencement;
         if (!Equals(dbTraining.End, spTraining.End)) dbTraining.End = spTraining.End;
         if (!Equals(dbTraining.Boat, spTraining.Boat)) dbTraining.Boat = spTraining.Boat;
+        if (!Equals(dbTraining.TotalMinutes, spTraining.TotalMinutes)) dbTraining.TotalMinutes = spTraining.TotalMinutes;
+        if (!Equals(dbTraining.TotalFullHours, spTraining.TotalFullHours)) dbTraining.TotalFullHours = spTraining.TotalFullHours;
 
         if (dbTraining.Users is not null)
         {
             foreach (var dbUser in dbTraining.Users)
             {
-                if (spTraining.Users.Any(x => x.DrogeCodeId == dbUser.DrogeCodeId))
+                if (spTraining.Users.Any(x => x.DrogeCodeId == dbUser.DrogeCodeId || x.SharePointID == dbUser.SharePointID || (x.SharePointID == null && x.Name?.Equals(dbUser.Name) == true)))
                 {
-                    var user = spTraining.Users.FirstOrDefault(x => x.DrogeCodeId == dbUser.DrogeCodeId);
+                    var user = spTraining.Users.FirstOrDefault(x =>
+                        x.DrogeCodeId == dbUser.DrogeCodeId || x.SharePointID == dbUser.SharePointID || (x.SharePointID == null && x.Name?.Equals(dbUser.Name) == true));
                     if (!Equals(dbUser.IsDeleted, false)) dbUser.IsDeleted = false;
                     if (!Equals(dbUser.Role, user!.Role)) dbUser.Role = user.Role;
                     if (!Equals(dbUser.Name, user.Name)) dbUser.Name = user.Name;
@@ -306,7 +326,9 @@ public static class ReportActionMapper
 
             foreach (var user in spTraining.Users)
             {
-                if (dbTraining.Users.Any(x => x.DrogeCodeId == user.DrogeCodeId))
+                if (dbTraining.Users.Any(x => (x.DrogeCodeId is not null && x.DrogeCodeId == user.DrogeCodeId)
+                                              || (x.SharePointID is not null && x.SharePointID == user.SharePointID)
+                                              || (x.SharePointID == null && x.Name == user.Name)))
                     continue;
                 dbTraining.Users.Add(new()
                 {

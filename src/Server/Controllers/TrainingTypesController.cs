@@ -62,7 +62,7 @@ public class TrainingTypesController : ControllerBase
             var result = await _trainingTypesService.GetTrainingTypes(customerId, clt);
             if (callHub)
             {
-                _logger.LogInformation("Calling hub AllTrainingTypes");
+                _logger.LogTrace("Calling hub AllTrainingTypes");
                 await _refreshHub.SendMessage(userId, ItemUpdated.AllTrainingTypes);
             }
             return result;

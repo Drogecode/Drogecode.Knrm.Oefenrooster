@@ -1,0 +1,135 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "UserRole",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/UserRole/all": {
+      "get": {
+        "tags": [
+          "UserRole"
+        ],
+        "operationId": "GetAll",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleDrogeUserRolesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleDrogeUserRolesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleDrogeUserRolesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DrogeUserRole": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "autH_configure_training_types": {
+            "type": "boolean"
+          },
+          "autH_scheduler": {
+            "type": "boolean"
+          },
+          "autH_scheduler_in_table_view": {
+            "type": "boolean"
+          },
+          "autH_scheduler_history": {
+            "type": "boolean"
+          },
+          "autH_scheduler_edit_past": {
+            "type": "boolean"
+          },
+          "autH_scheduler_dayitem": {
+            "type": "boolean"
+          },
+          "autH_scheduler_monthitem": {
+            "type": "boolean"
+          },
+          "autH_scheduler_other_user": {
+            "type": "boolean"
+          },
+          "autH_users_details": {
+            "type": "boolean"
+          },
+          "autH_users_counter": {
+            "type": "boolean"
+          },
+          "autH_users_settigns": {
+            "type": "boolean"
+          },
+          "autH_action_history_full": {
+            "type": "boolean"
+          },
+          "autH_training_history_full": {
+            "type": "boolean"
+          },
+          "autH_dashboard_Statistics": {
+            "type": "boolean"
+          },
+          "autH_dashboard_holidays": {
+            "type": "boolean"
+          },
+          "autH_dashboard_qr": {
+            "type": "boolean"
+          },
+          "autH_show_c_footer": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MultipleDrogeUserRolesResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrogeUserRole"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

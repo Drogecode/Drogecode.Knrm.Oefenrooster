@@ -60,6 +60,11 @@
                             <MudListItem>@L["CallMadeBy"]: @context.Item.CallMadeBy</MudListItem>
                             <MudListItem>@L["Causes"]: @context.Item.Causes</MudListItem>
                             <MudListItem>@L["Implications"]: @context.Item.Implications</MudListItem>
+                            @if (_isTaco) /*Work in progress*/
+                            {
+                                <MudListItem>@L["Minutes"]: @context.Item.TotalMinutes</MudListItem>
+                                <MudListItem>@L["Hours"]: @context.Item.TotalFullHours</MudListItem>
+                            }
                         </MudList>
                     </MudCardContent>
                 </MudCard>
@@ -67,7 +72,7 @@
         </MudDataGrid>
         @if (_reportActions.TotalCount > _count)
         {
-            <MudPagination Disabled="_busy" ShowFirstButton="true" ShowLastButton="true" MiddleCount="5" Count="@(Convert.ToInt32(Math.Ceiling((double)_reportActions.TotalCount / (double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4"/>
+            <MudPagination Disabled="_busy" ShowFirstButton="true" ShowLastButton="true" MiddleCount="5" Count="@(Convert.ToInt32(Math.Ceiling(_reportActions.TotalCount / (double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4"/>
         }
     }
 }

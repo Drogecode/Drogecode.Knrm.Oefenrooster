@@ -5,6 +5,36 @@
     "version": "v1"
   },
   "paths": {
+    "/api/Holiday/all/user": {
+      "get": {
+        "tags": [
+          "Holiday"
+        ],
+        "operationId": "GetAll",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleHolidaysResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleHolidaysResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleHolidaysResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Holiday": {
       "get": {
         "tags": [
@@ -122,6 +152,54 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PatchHolidaysForUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Holiday/all/future/{days}": {
+      "get": {
+        "tags": [
+          "Holiday"
+        ],
+        "operationId": "GetAllFuture",
+        "parameters": [
+          {
+            "name": "days",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "callHub",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleHolidaysResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleHolidaysResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleHolidaysResponse"
                 }
               }
             }

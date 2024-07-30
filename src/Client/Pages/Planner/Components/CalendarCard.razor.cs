@@ -1,21 +1,19 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Microsoft.Extensions.Localization;
-using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
 public sealed partial class CalendarCard : IDisposable
 {
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
+    [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
     [Parameter, EditorRequired] public Training Training { get; set; } = default!;
     [Parameter] public string Width { get; set; } = "100%";
     [Parameter] public string? MinWidth { get; set; }
     [Parameter] public string? MaxWidth { get; set; }
-    [Parameter] public bool ShowDate { get; set; } = false;
-    [Parameter] public bool ShowDayOfWeek { get; set; } = false;
+    [Parameter] public bool ShowDate { get; set; }
+    [Parameter] public bool ShowDayOfWeek { get; set; }
     private CancellationTokenSource _cls = new();
     private bool _updating;
 
@@ -30,8 +28,9 @@ public sealed partial class CalendarCard : IDisposable
         if (_updating) return;
         _updating = true;
         Training.SetBy = AvailabilitySetBy.User;
-        var updatedTraining = await _scheduleRepository.PatchScheduleForUser(Training, _cls.Token);
-        Training = updatedTraining;
+        var updatedTraining = await ScheduleRepository.PatchScheduleForUser(Training, _cls.Token);
+        if (updatedTraining is not null)
+            Training = updatedTraining;
         _updating = false;
     }
 

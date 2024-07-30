@@ -36,7 +36,7 @@ public class DefaultScheduleController : ControllerBase
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var result = await _defaultScheduleService.GetAlldefaultGroupsForUser(customerId, userId);
+            var result = await _defaultScheduleService.GetAllDefaultGroupsForUser(customerId, userId);
 
             return result;
         }
@@ -58,7 +58,7 @@ public class DefaultScheduleController : ControllerBase
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var result = await _defaultScheduleService.GetAlldefaultsForUser(customerId, userId, id);
+            var result = await _defaultScheduleService.GetAllDefaultsForUser(customerId, userId, id);
 
             return result;
         }

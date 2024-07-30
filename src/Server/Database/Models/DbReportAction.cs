@@ -39,6 +39,8 @@ public class DbReportAction
     public string? FunctioningMaterial { get; set; }
     public string? ProblemsWithWeed { get; set; }
     public string? Completedby { get; set; }
+    public double TotalMinutes { get; set; }
+    public int TotalFullHours { get; set; }
 
     public DbCustomers Customer { get; set; }
     public ICollection<DbReportUser>? Users { get; set; }

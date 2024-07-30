@@ -1,8 +1,4 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-@using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
-@using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
-@using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 <MudDialog>
     <TitleContent>
         @if (_showPadlock)
@@ -16,11 +12,11 @@
                 <MudIcon Icon="@Icons.Material.Outlined.Lock" Class="mr-3 mb-n1"/>
             }
         }
-        @if (_isDebug && _training?.IsNew == true)
+        @if (IS_DEBUG && _training?.IsNew == true)
         {
             <MudIcon Icon="@Icons.Material.Outlined.FiberNew" Class="mr-3 mb-n1"/>
         }
-        @if (_isDebug && _training?.IsNewFromDefault == true)
+        @if (IS_DEBUG && _training?.IsNewFromDefault == true)
         {
             <MudIcon Icon="@Icons.Material.Outlined.NewLabel" Class="mr-3 mb-n1"/>
         }
@@ -87,7 +83,7 @@
         }
     </DialogContent>
     <DialogActions>
-        <div style="flex-wrap: wrap;">
+        <div class="flex flex-wrap">
             @if (_training?.IsNew is not true)
             {
                 if (_showDelete)

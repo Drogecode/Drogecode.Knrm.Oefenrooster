@@ -85,6 +85,20 @@ public sealed partial class ScheduleCard : IDisposable
         DialogProvider.Show<EditTrainingDialog>(L["Configure training"], parameters, options);
     }
 
+    private void OpenMessageDialog()
+    {
+        var parameters = new DialogParameters<TrainingMessageDialog>
+        {
+        };
+        var options = new DialogOptions()
+        {
+            MaxWidth = MudBlazor.MaxWidth.Large,
+            CloseButton = true,
+            FullWidth = true
+        };
+        DialogProvider.Show<TrainingMessageDialog>(L["Training message"], parameters, options);
+    }
+
     private void OpenHistoryDialog()
     {
         var parameters = new DialogParameters<TrainingHistoryDialog>

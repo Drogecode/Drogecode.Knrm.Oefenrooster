@@ -71,6 +71,10 @@
 			<OutputPath>../Clients/UserClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.User</Options>
 		</OpenApiReference>
+		<OpenApiReference Include="OpenAPIs\UserRole.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="UserRoleClient">
+			<OutputPath>../Clients/UserRoleClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole</Options>
+		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\UserSettings.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="UserSettingsClient">
 			<OutputPath>../Clients/UserSettingsClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false</Options>

@@ -1,75 +1,79 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-@using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
-@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 <MudPaper MinWidth="@MinWidth" MaxWidth="@MaxWidth" Width="@Width" Elevation="0">
-    <MudCard @onclick="() => OnClickCallback.InvokeAsync()" Style="z-index:5;">
-        @{
-            var zone = TimeZoneInfo.FindSystemTimeZoneById(_timeZone);
-            var dateStart = TimeZoneInfo.ConvertTimeFromUtc(Training.DateStart, zone);
-            var dateEnd = TimeZoneInfo.ConvertTimeFromUtc(Training.DateEnd, zone);
-            var now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, zone);
-        }
-        <MudCardHeader Class="@($"trainingType-{Training.RoosterTrainingTypeId}")">
-            <CardHeaderContent>
-                @if (ReplaceEmptyName && string.IsNullOrEmpty(Training.Name))
-                {
-                    <MudText Typo="Typo.h6">@dateStart.ToString("dddd")</MudText>
-                }
-                else
-                {
-                    <MudText Typo="Typo.h6" Class="break-words">@Training.Name</MudText>
-                }
-            </CardHeaderContent>
-            <CardHeaderActions>
-                @if (_iconCount == 1 || _showAllIcons)
-                {
-                    @switch (SetBy)
+    <MudCard @onclick="() => OnClickCallback.InvokeAsync()">
+        <div>
+            @{
+                var zone = TimeZoneInfo.FindSystemTimeZoneById(_timeZone);
+                var dateStart = TimeZoneInfo.ConvertTimeFromUtc(Training.DateStart, zone);
+                var dateEnd = TimeZoneInfo.ConvertTimeFromUtc(Training.DateEnd, zone);
+                var now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, zone);
+            }
+            <MudCardHeader Class="@($"trainingType-{Training.RoosterTrainingTypeId}")">
+                <CardHeaderContent>
+                    @if (ReplaceEmptyName && string.IsNullOrEmpty(Training.Name))
                     {
-                        case AvailabilitySetBy.DefaultAvailable:
-                            <MudIcon Icon="@Icons.Material.Filled.AutoGraph"/>
-                            break;
-                        case AvailabilitySetBy.Holiday:
-                            <MudIcon Icon="@Icons.Material.Filled.WbSunny"/>
-                            break;
+                        <MudText Typo="Typo.h6">@dateStart.ToString("dddd")</MudText>
                     }
+                    else
+                    {
+                        <MudText Typo="Typo.h6" Class="break-words">@Training.Name</MudText>
+                    }
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    @if (_iconCount == 1 || _showAllIcons)
+                    {
+                        @switch (SetBy)
+                        {
+                            case AvailabilitySetBy.DefaultAvailable:
+                                <MudIcon Icon="@Icons.Material.Filled.AutoGraph"/>
+                                break;
+                            case AvailabilitySetBy.Holiday:
+                                <MudIcon Icon="@Icons.Material.Filled.WbSunny"/>
+                                break;
+                        }
 
-                    @if (OnClickHistory.HasDelegate)
-                    {
-                        <MudIconButton Class="DrogeCode-card-header-history" Icon="@Icons.Material.Filled.History" Color="Color.Default" OnClick="() => OnClickHistory.InvokeAsync()" Style="z-index:6;"/>
-                    }
+                        @if (OnClickHistory.HasDelegate)
+                        {
+                            <MudIconButton Class="DrogeCode-card-header-history" Icon="@Icons.Material.Filled.History" Color="Color.Default" OnClick="() => OnClickHistory.InvokeAsync()"/>
+                        }
 
-                    @if (OnClickSettings.HasDelegate)
-                    {
-                        <MudIconButton Class="DrogeCode-card-header-settings" Icon="@Icons.Material.Filled.Settings" Color="Color.Default" OnClick="() => OnClickSettings.InvokeAsync()" Style="z-index:6;"/>
+                        @if (OnClickSettings.HasDelegate)
+                        {
+                            <MudIconButton Class="DrogeCode-card-header-settings" Icon="@Icons.Material.Filled.Settings" Color="Color.Default" OnClick="() => OnClickSettings.InvokeAsync()"/>
+                        }
                     }
-                }
-                else if (_iconCount > 1)
+                    else if (_iconCount > 1)
+                    {
+                        <MudIconButton Class="DrogeCode-card-header-more-icons" Icon="@Icons.Material.Filled.MoreVert" Color="Color.Default" OnClick="() => _showAllIcons = true"/>
+                    }
+                </CardHeaderActions>
+            </MudCardHeader>
+            <MudCardContent Class="@ContentClass">
+                @if (ChipContent is not null)
                 {
-                    <MudIconButton Class="DrogeCode-card-header-more-icons" Icon="@Icons.Material.Filled.MoreVert" Color="Color.Default" OnClick="() => _showAllIcons = true" Style="z-index:6;"/>
+                    @ChipContent
                 }
-            </CardHeaderActions>
-        </MudCardHeader>
-        <MudCardContent Class="@ContentClass">
-            @if (ShowDayOfWeek)
-            {
-                <MudText Typo="Typo.subtitle2">@dateStart.ToString("dddd")</MudText>
-            }
-            @if (ShowDate)
-            {
-                <MudText Typo="Typo.subtitle2">@dateStart.ToString(DateTime.Today.Year == dateEnd.Year ? "MMM dd" : "yyyy MMM dd")</MudText>
-            }
-            @if (Training.ShowTime)
-            {
-                <MudText Typo="Typo.body2">@dateStart.ToString("HH:mm") @LApp["till"] @dateEnd.ToString("HH:mm")</MudText>
-            }
-            @if (ChildContent is not null && (ShowPastBody || dateEnd.CompareTo(now) >= 0))
-            {
-                @ChildContent
-            }
-            else if (ChildContent is not null && !ChildContent.Equals("") && !ShowPastBody)
-            {
-                <MudButton OnClick="() => ShowPastBody = true">@MoreMessage</MudButton>
-            }
-        </MudCardContent>
+                @if (ShowDayOfWeek)
+                {
+                    <MudText Typo="Typo.subtitle2">@dateStart.ToString("dddd")</MudText>
+                }
+                @if (ShowDate)
+                {
+                    <MudText Typo="Typo.subtitle2">@dateStart.ToString(DateTime.Today.Year == dateEnd.Year ? "MMM dd" : "yyyy MMM dd")</MudText>
+                }
+                @if (Training.ShowTime)
+                {
+                    <MudText Typo="Typo.body2">@dateStart.ToString("HH:mm") @LApp["till"] @dateEnd.ToString("HH:mm")</MudText>
+                }
+                @if (ChildContent is not null && (ShowPastBody || dateEnd.CompareTo(now) >= 0))
+                {
+                    @ChildContent
+                }
+                else if (ChildContent is not null && !ChildContent.Equals("") && !ShowPastBody)
+                {
+                    <MudButton OnClick="() => ShowPastBody = true">@MoreMessage</MudButton>
+                }
+            </MudCardContent>
+        </div>
     </MudCard>
 </MudPaper>

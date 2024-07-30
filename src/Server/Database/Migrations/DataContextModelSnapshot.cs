@@ -417,6 +417,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
+                    b.Property<int>("TotalFullHours")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("TotalMinutes")
+                        .HasColumnType("double precision");
+
                     b.Property<string>("Type")
                         .HasColumnType("text");
 
@@ -490,6 +496,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
+                    b.Property<int>("TotalFullHours")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("TotalMinutes")
+                        .HasColumnType("double precision");
+
                     b.Property<string>("Type")
                         .HasColumnType("text");
 
@@ -527,7 +539,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<Guid?>("DbReportTrainingId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("DrogeCodeId")
+                    b.Property<Guid?>("DrogeCodeId")
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsDeleted")
@@ -1623,6 +1635,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
@@ -1635,77 +1650,88 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Id = new Guid("287359b1-2035-435b-97b0-eb260dc497d6"),
                             Accesses = "configure_training-types,users_settings,scheduler_dayitem,scheduler_monthitem,scheduler_history",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Name = "Admin"
+                            Name = "Admin",
+                            Order = 10
                         },
                         new
                         {
                             Id = new Guid("f6b0c571-9050-40d6-bf58-807981e5ed6e"),
                             Accesses = "scheduler,scheduler_table,scheduler_past,scheduler_dayitem,scheduler_other,scheduler_monthitem",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Name = "Scheduler"
+                            Name = "Scheduler",
+                            Order = 20
                         },
                         new
                         {
                             Id = new Guid("90a40128-183f-408b-aa64-eb3b279a7042"),
                             Accesses = "scheduler_other",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Name = "Basic scheduler"
+                            Name = "Basic scheduler",
+                            Order = 30
                         },
                         new
                         {
                             Id = new Guid("d72ed2e9-911e-4ee5-b07e-cbd5917d432b"),
                             Accesses = "users_counter,users_details,full_training_history,full_action_history",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Name = "Users admin"
+                            Name = "Users admin",
+                            Order = 40
                         },
                         new
                         {
                             Id = new Guid("d526e5ed-e838-499d-a96c-62180db28bed"),
-                            Accesses = "full_dashboard_statistics1",
+                            Accesses = "full_dashboard_statistics2",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Name = "Beta user"
+                            Name = "Beta user",
+                            Order = 50
                         },
                         new
                         {
                             Id = new Guid("f5b0bab6-6fdf-457d-855d-bbea6ea57bd5"),
                             Accesses = "full_training_history,full_action_history,scheduler_other",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Name = "schipper"
+                            Name = "schipper",
+                            Order = 60
                         },
                         new
                         {
                             Id = new Guid("54aace50-0e1f-4c35-a1b3-87c9ff6bd743"),
                             Accesses = "full_training_history,full_action_history,scheduler_other",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Name = "schipper io"
+                            Name = "schipper io",
+                            Order = 70
                         },
                         new
                         {
                             Id = new Guid("afb45395-89ee-413d-9385-21962772dbda"),
                             Accesses = "full_training_history,full_action_history,scheduler_other",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Name = "opstapper"
+                            Name = "opstapper",
+                            Order = 80
                         },
                         new
                         {
                             Id = new Guid("2197a054-e81f-4720-9f08-321377398cb6"),
                             Accesses = "full_training_history,full_action_history,scheduler_other",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Name = "aankomend opstapper"
+                            Name = "aankomend opstapper",
+                            Order = 90
                         },
                         new
                         {
                             Id = new Guid("f06a00e3-62c9-4ba5-baea-84a5ba10f53a"),
                             Accesses = "full_training_history,full_action_history",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Name = "hrb aankomend opstapper"
+                            Name = "hrb aankomend opstapper",
+                            Order = 100
                         },
                         new
                         {
                             Id = new Guid("2956c6f9-6b83-46eb-8890-dbb640fd5023"),
                             Accesses = "",
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            Name = "opstapper op proef"
+                            Name = "opstapper op proef",
+                            Order = 110
                         });
                 });
 

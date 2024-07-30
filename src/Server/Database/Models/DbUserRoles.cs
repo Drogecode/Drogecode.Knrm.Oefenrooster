@@ -10,6 +10,7 @@ public class DbUserRoles
     public Guid CustomerId { get; set; }
     [StringLength(50)] public string? Name { get; set; }
     [StringLength(500)] public string? Accesses { get; set; }
+    public int Order { get; set; }
 
     public DbCustomers Customer { get; set; }
 }

@@ -646,35 +646,40 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = new Guid("287359b1-2035-435b-97b0-eb260dc497d6"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Admin",
-                Accesses = $"{AccessesNames.AUTH_configure_training_types},{AccessesNames.AUTH_users_settigns},{AccessesNames.AUTH_scheduler_dayitem},{AccessesNames.AUTH_scheduler_monthitem},{AccessesNames.AUTH_scheduler_history}"
+                Accesses = $"{AccessesNames.AUTH_configure_training_types},{AccessesNames.AUTH_users_settigns},{AccessesNames.AUTH_scheduler_dayitem},{AccessesNames.AUTH_scheduler_monthitem},{AccessesNames.AUTH_scheduler_history}",
+                Order = 10,
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {
                 Id = new Guid("f6b0c571-9050-40d6-bf58-807981e5ed6e"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Scheduler",
-                Accesses = $"{AccessesNames.AUTH_scheduler},{AccessesNames.AUTH_scheduler_in_table_view},{AccessesNames.AUTH_scheduler_edit_past},{AccessesNames.AUTH_scheduler_dayitem},{AccessesNames.AUTH_scheduler_other_user},{AccessesNames.AUTH_scheduler_monthitem}"
+                Accesses = $"{AccessesNames.AUTH_scheduler},{AccessesNames.AUTH_scheduler_in_table_view},{AccessesNames.AUTH_scheduler_edit_past},{AccessesNames.AUTH_scheduler_dayitem},{AccessesNames.AUTH_scheduler_other_user},{AccessesNames.AUTH_scheduler_monthitem}",
+                Order = 20,
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {
                 Id = new Guid("90a40128-183f-408b-aa64-eb3b279a7042"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Basic scheduler",
-                Accesses = $"{AccessesNames.AUTH_scheduler_other_user}"
+                Accesses = $"{AccessesNames.AUTH_scheduler_other_user}",
+                Order = 30,
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {
                 Id = new Guid("d72ed2e9-911e-4ee5-b07e-cbd5917d432b"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Users admin",
-                Accesses = $"{AccessesNames.AUTH_users_counter},{AccessesNames.AUTH_users_details},{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}"
+                Accesses = $"{AccessesNames.AUTH_users_counter},{AccessesNames.AUTH_users_details},{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}",
+                Order = 40,
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {
                 Id = new Guid("d526e5ed-e838-499d-a96c-62180db28bed"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Beta user",
-                Accesses = $"{AccessesNames.AUTH_dashboard_Statistics}"
+                Accesses = $"{AccessesNames.AUTH_dashboard_Statistics}",
+                Order = 50,
             }));
 
             //roles
@@ -683,42 +688,48 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = new Guid("f5b0bab6-6fdf-457d-855d-bbea6ea57bd5"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "schipper",
-                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full},{AccessesNames.AUTH_scheduler_other_user}"
+                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full},{AccessesNames.AUTH_scheduler_other_user}",
+                Order = 60,
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {
                 Id = new Guid("54aace50-0e1f-4c35-a1b3-87c9ff6bd743"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "schipper io",
-                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full},{AccessesNames.AUTH_scheduler_other_user}"
+                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full},{AccessesNames.AUTH_scheduler_other_user}",
+                Order = 70,
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {
                 Id = new Guid("afb45395-89ee-413d-9385-21962772dbda"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "opstapper",
-                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full},{AccessesNames.AUTH_scheduler_other_user}"
+                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full},{AccessesNames.AUTH_scheduler_other_user}",
+                Order = 80,
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {
                 Id = new Guid("2197a054-e81f-4720-9f08-321377398cb6"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "aankomend opstapper",
-                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full},{AccessesNames.AUTH_scheduler_other_user}"
+                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full},{AccessesNames.AUTH_scheduler_other_user}",
+                Order = 90,
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {
                 Id = new Guid("f06a00e3-62c9-4ba5-baea-84a5ba10f53a"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "hrb aankomend opstapper",
-                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}"
+                Accesses = $"{AccessesNames.AUTH_training_history_full},{AccessesNames.AUTH_action_history_full}",
+                Order = 100,
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
             {
                 Id = new Guid("2956c6f9-6b83-46eb-8890-dbb640fd5023"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "opstapper op proef",
-                Accesses = $""
+                Accesses = $"",
+                Order = 110,
             }));
         }
 

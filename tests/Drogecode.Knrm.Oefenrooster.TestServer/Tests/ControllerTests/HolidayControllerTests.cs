@@ -21,9 +21,10 @@ public class HolidayControllerTests : BaseTest
         VehicleController vehicleController,
         DefaultScheduleController defaultScheduleController,
         ReportActionController reportActionController,
-        ReportTrainingController reportTrainingController) :
+        ReportTrainingController reportTrainingController,
+        UserRoleController userRoleController) :
         base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController)
+            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController)
     {
     }
 
@@ -97,6 +98,26 @@ public class HolidayControllerTests : BaseTest
         Assert.NotNull(result?.Value?.Holidays);
         result.Value.Holidays.Should().Contain(x => x.Id == DefaultHoliday);
         result.Value.Holidays.Should().Contain(x => x.Id == newHoliday);
+    }
+
+    [Fact]
+    public async Task GetAllFutureTest()
+    {
+        DateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-10));
+        var newHoliday1 = await AddHoliday("GetAllFutureTest1", 1, 10);
+        var newHoliday2 = await AddHoliday("GetAllFutureTest2", -3, 5);
+        var newHoliday3 = await AddHoliday("GetAllFutureTest3", -6, -2);
+        var newHoliday4 = await AddHoliday("GetAllFutureTest4", 40, 50);
+        var newHoliday5 = await AddHoliday("GetAllFutureTest5", 20, 40);
+        DateTimeServiceMock.SetMockDateTime(DateTime.Now);
+        var result = await HolidayController.GetAllFuture(30, false);
+        Assert.NotNull(result?.Value?.Holidays);
+        result.Value.Holidays.Should().Contain(x => x.Id == DefaultHoliday);
+        result.Value.Holidays.Should().Contain(x => x.Id == newHoliday1);
+        result.Value.Holidays.Should().Contain(x => x.Id == newHoliday2);
+        result.Value.Holidays.Should().NotContain(x => x.Id == newHoliday3);
+        result.Value.Holidays.Should().NotContain(x => x.Id == newHoliday4);
+        result.Value.Holidays.Should().Contain(x => x.Id == newHoliday5);
     }
 
     [Fact]

@@ -69,4 +69,13 @@
     <data name="Analyze all years" xml:space="preserve">
         <value>Analyzer alle jaren</value>
     </data>
+    <data name="Year charts" xml:space="preserve">
+        <value>Jaar grafieken</value>
+    </data>
+    <data name="Month charts" xml:space="preserve">
+        <value>Maand grafieken</value>
+    </data>
+    <data name="User table" xml:space="preserve">
+        <value>Gebruikers tabel</value>
+    </data>
 </root>

@@ -22,13 +22,16 @@ public class DefaultScheduleService : IDefaultScheduleService
         _database = database;
     }
 
-    public async Task<GetAllDefaultGroupsResponse> GetAlldefaultGroupsForUser(Guid customerId, Guid userId)
+    public async Task<GetAllDefaultGroupsResponse> GetAllDefaultGroupsForUser(Guid customerId, Guid userId)
     {
         var sw = Stopwatch.StartNew();
         var response = new GetAllDefaultGroupsResponse();
         var list = new List<DefaultGroup>();
 
-        var dbGroups = await _database.UserDefaultGroups.Where(x => x.CustomerId == customerId && x.UserId == userId).ToListAsync();
+        var dbGroups = await _database.UserDefaultGroups
+            .Where(x => x.CustomerId == customerId && x.UserId == userId)
+            .AsNoTracking()
+            .ToListAsync();
         foreach (var dbGroup in dbGroups)
         {
             list.Add(dbGroup.ToDefaultGroups());
@@ -65,15 +68,18 @@ public class DefaultScheduleService : IDefaultScheduleService
         return response;
     }
 
-    public async Task<MultipleDefaultSchedulesResponse> GetAlldefaultsForUser(Guid customerId, Guid userId, Guid groupId)
+    public async Task<MultipleDefaultSchedulesResponse> GetAllDefaultsForUser(Guid customerId, Guid userId, Guid groupId)
     {
         var sw = Stopwatch.StartNew();
         var response = new MultipleDefaultSchedulesResponse();
         var list = new List<DefaultSchedule>();
         var group = await _database.UserDefaultGroups.FindAsync(groupId);
         var groupIsDefault = group?.IsDefault ?? false;
-        var dbDefaults = await _database.RoosterDefaults.Where(x => x.ValidFrom <= DateTime.UtcNow && x.ValidUntil >= DateTime.UtcNow)
-            .Include(x => x.UserDefaultAvailables!.Where(y => y.CustomerId == customerId && y.UserId == userId && y.DefaultGroupId == groupId)).ToListAsync();
+        var dbDefaults = await _database.RoosterDefaults
+            .Where(x => x.ValidFrom <= DateTime.UtcNow && x.ValidUntil >= DateTime.UtcNow)
+            .Include(x => x.UserDefaultAvailables!.Where(y => y.CustomerId == customerId && y.UserId == userId && y.DefaultGroupId == groupId))
+            .AsNoTracking()
+            .ToListAsync();
         foreach (var dbDefault in dbDefaults)
         {
             var userDefaults = dbDefault.UserDefaultAvailables?.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidUntil >= _dateTimeService.UtcNow() && x.DefaultGroupId == groupId)

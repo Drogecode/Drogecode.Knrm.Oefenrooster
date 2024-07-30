@@ -283,7 +283,9 @@ public class ScheduleController : ControllerBase
                 JsonSerializer.Serialize(new AuditAssignedUser
                 {
                     UserId = body.User?.UserId, Assigned = body.User?.Assigned, Availability = result.Availability, SetBy = result.SetBy,
-                    AuditReason = AuditReason.Assigned
+                    AuditReason = body.AuditReason ?? AuditReason.Assigned, // body.AuditReason was added in v0.3.81
+                    VehicleId = body.AuditReason == AuditReason.ChangeVehicle ? body.User?.VehicleId : null,
+                    FunctionId = body.AuditReason == AuditReason.ChangedFunction ? body.User?.PlannedFunctionId : null
                 }),
                 body.TrainingId);
             await _userService.PatchLastOnline(userId, clt);
@@ -359,7 +361,7 @@ public class ScheduleController : ControllerBase
             var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, clt);
             if (callHub)
             {
-                _logger.LogInformation("Calling hub futureTrainings");
+                _logger.LogTrace("Calling hub futureTrainings");
                 await _refreshHub.SendMessage(userId, ItemUpdated.FutureTrainings);
             }
 
@@ -408,11 +410,10 @@ public class ScheduleController : ControllerBase
             var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var fromDate = DateTime.UtcNow;
-            _logger.LogInformation("Get all pinned trainings for {user}", userId);
             var result = await _scheduleService.GetPinnedTrainingsForUser(userId, customerId, fromDate, clt);
             if (callHub)
             {
-                _logger.LogInformation("Calling hub PinnedDashboard");
+                _logger.LogTrace("Calling hub PinnedDashboard");
                 await _refreshHub.SendMessage(userId, ItemUpdated.PinnedDashboard);
             }
 

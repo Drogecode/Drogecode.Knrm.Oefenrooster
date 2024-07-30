@@ -1,14 +1,15 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages;
 
 public sealed partial class Authentication
 {
     [Inject] private NavigationManager Navigation { get; set; } = default!;
-    [Inject] private CustomStateProvider CustomStateProvider { get; set; } = default!;
     [Inject] private IAuthenticationClient AuthenticationClient { get; set; } = default!;
     [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
+    [Inject] private IAuditClient AuditClient { get; set; } = default!;
     [Parameter] public string? Action { get; set; }
     [Parameter] [SupplyParameterFromQuery] public string? code { get; set; }
     [Parameter] [SupplyParameterFromQuery] public string? state { get; set; }
@@ -43,7 +44,7 @@ public sealed partial class Authentication
                     var result = await AuthenticationClient.AuthenticateUserAsync(code, state, session_state, redirectUrl);
                     if (result)
                     {
-                        await CustomStateProvider.loginCallback();
+                        await AuthenticationStateProvider.loginCallback();
                         Navigation.NavigateTo("/");
                     }
                     else
@@ -53,15 +54,17 @@ public sealed partial class Authentication
 
                     break;
                 case "logout":
+                    await AuditClient.PostLogAsync(new PostLogRequest { Message = "Logout start" });
                     var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                     var logoutHint = authState?.User?.FindFirst(c => c.Type == "login_hint")?.Value ?? "";
-                    await CustomStateProvider.Logout();
                     var redirectLogoutUrl = $"{Navigation.BaseUri}landing_page";
+                    await AuditClient.PostLogAsync(new PostLogRequest { Message = $"Logout logoutHint: `{logoutHint}` redirectLogoutUrl: `{redirectLogoutUrl}`" });
                     string urlLogout;
                     if (string.IsNullOrEmpty(logoutHint))
                         urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri={redirectLogoutUrl}";
                     else
                         urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?logout_hint={logoutHint}&post_logout_redirect_uri={redirectLogoutUrl}";
+                    await AuthenticationStateProvider.Logout();
                     Navigation.NavigateTo(urlLogout);
                     break;
             }

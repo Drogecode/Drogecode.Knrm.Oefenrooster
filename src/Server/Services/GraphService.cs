@@ -41,7 +41,7 @@ public class GraphService : IGraphService
             settings = Settings.LoadSettings(_configuration);
         }
 
-        _logger.LogInformation($"Start ClientSecret: {settings.ClientSecret?[..3] ?? "Is null"}");
+        _logger.LogTrace("Start ClientSecret: {ClientSecret}", settings.ClientSecret?[..3] ?? "Is null");
         GraphHelper.InitializeGraphForAppOnlyAuth(settings);
     }
 
@@ -144,13 +144,16 @@ public class GraphService : IGraphService
                 saveCount++;
             }
 
-            if (saveCount < 10) continue;
+            if (saveCount < 50) continue;
             changeCount += await _database.SaveChangesAsync(clt);
             saveCount = 0;
         }
 
         changeCount += await _database.SaveChangesAsync(clt);
-        _logger.LogInformation("SharePoint actions synced (count {changeCount})", changeCount);
+        if (changeCount > 0)
+            _logger.LogInformation("SharePoint actions synced (count {changeCount})", changeCount);
+        else
+            _logger.LogTrace("SharePoint actions synced none");
         return changeCount > 0;
     }
 
@@ -199,17 +202,20 @@ public class GraphService : IGraphService
                 saveCount++;
             }
 
-            if (saveCount < 10) continue;
+            if (saveCount < 50) continue;
             changeCount += await _database.SaveChangesAsync(clt);
             saveCount = 0;
         }
 
         changeCount += await _database.SaveChangesAsync(clt);
-        _logger.LogInformation("SharePoint training synced (count {changeCount})", changeCount);
+        if (changeCount > 0)
+            _logger.LogInformation("SharePoint training synced (count {changeCount})", changeCount);
+        else
+            _logger.LogTrace("SharePoint training synced none");
         return changeCount > 0;
     }
 
-    public async Task<MultipleSharePointActionsResponse> GetListActionsUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
+    public async Task<MultipleSharePointActionsResponse> GetListActionsUser(List<Guid?> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var keyActions = string.Format(SP_ACTIONS, customerId);
@@ -245,7 +251,7 @@ public class GraphService : IGraphService
             {
                 _memoryCache.Remove(keyActions);
                 lastupdated.LastUpdated = newLastUpdated;
-                _logger.LogInformation("There are changes in the action list");
+                _logger.LogTrace("There are changes in the action list");
             }
 
             lastupdated.NextCheck = DateTime.UtcNow.AddMinutes(5);
@@ -269,7 +275,7 @@ public class GraphService : IGraphService
         return sharePointActions;
     }
 
-    public async Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
+    public async Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(List<Guid?> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var keyTrainings = string.Format(SP_TRAININGS, customerId);
@@ -305,7 +311,7 @@ public class GraphService : IGraphService
             {
                 _memoryCache.Remove(keyTrainings);
                 lastupdated.LastUpdated = newLastUpdated;
-                _logger.LogInformation("There are changes in the training list");
+                _logger.LogTrace("There are changes in the training list");
             }
 
             lastupdated.NextCheck = DateTime.UtcNow.AddMinutes(5);
@@ -398,7 +404,7 @@ public class GraphService : IGraphService
 
         var response = new GetHistoricalResponse();
         var changeCount = 0;
-        foreach (var listId in new List<Guid> { l2006, l2007, l2008, l2009, l2010, l2011, l2012, l2013, l2014, l2015, l2016, l2017, l2018, l2019, l2020, l2021 })
+        foreach (var listId in new List<Guid> { l2021, l2020, l2019, l2018, l2017, l2016, l2015, l2014, l2013, l2012, l2011, l2010, l2009, l2008, l2007, l2006 })
         {
             var fromSharePoint = await GraphHelper.GetHistorical(customerId, spUsers, listId, clt);
             if (fromSharePoint.Actions is not null && !clt.IsCancellationRequested)
@@ -413,6 +419,7 @@ public class GraphService : IGraphService
 
             if (_database.ChangeTracker.HasChanges())
                 changeCount += await _database.SaveChangesAsync(clt);
+            _logger.LogInformation("SharePoint historical `{listId}` synced (count {changeCount})", listId, changeCount);
         }
 
         _logger.LogInformation("SharePoint historical synced (count {changeCount})", changeCount);
@@ -433,8 +440,6 @@ public class GraphService : IGraphService
         foreach (var action in actions)
         {
             if (clt.IsCancellationRequested) return changeCount;
-
-
             var dbAction = dbActions.FirstOrDefault(x => x.Id == action.Id);
             if (dbAction is null)
             {
@@ -460,7 +465,7 @@ public class GraphService : IGraphService
                 saveCount++;
             }
 
-            if (saveCount < 10) continue;
+            if (saveCount < 50) continue;
             if (_database.ChangeTracker.HasChanges())
                 changeCount += await _database.SaveChangesAsync(clt);
             saveCount = 0;
@@ -480,7 +485,6 @@ public class GraphService : IGraphService
         foreach (var training in trainings)
         {
             if (clt.IsCancellationRequested) return changeCount;
-
             var dbTraining = dbTrainings.FirstOrDefault(x => x.Id == training.Id);
             if (dbTraining is null)
             {
@@ -506,7 +510,7 @@ public class GraphService : IGraphService
                 saveCount++;
             }
 
-            if (saveCount < 10) continue;
+            if (saveCount < 50) continue;
             if (_database.ChangeTracker.HasChanges())
                 changeCount += await _database.SaveChangesAsync(clt);
             saveCount = 0;

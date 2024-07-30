@@ -40,7 +40,7 @@ public class ReportTrainingRepository
             DebugHelper.WriteLine("dupe");
             var request = new AnalyzeTrainingRequest()
             {
-                Users = users.Select(x => x.Id).ToList(),
+                Users = users.Select(x => (Guid?)x.Id).ToList(),
             };
             var result = await _reportTrainingClient.AnalyzeYearChartsAllAsync(request, clt);
             return result;

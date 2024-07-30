@@ -113,6 +113,38 @@
           }
         }
       }
+    },
+    "/api/Audit/log": {
+      "post": {
+        "tags": [
+          "Audit"
+        ],
+        "operationId": "PostLog",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostLogRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostLogRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostLogRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -121,7 +153,9 @@
         "enum": [
           0,
           1,
-          2
+          2,
+          3,
+          4
         ],
         "type": "integer",
         "format": "int32"
@@ -199,6 +233,16 @@
         },
         "additionalProperties": false
       },
+      "PostLogRequest": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Training": {
         "type": "object",
         "properties": {
@@ -269,6 +313,16 @@
         "type": "object",
         "properties": {
           "userId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "vehicleId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "functionId": {
             "type": "string",
             "format": "uuid",
             "nullable": true
