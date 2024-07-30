@@ -11,7 +11,7 @@
             <ChipContent>
                 <AuthorizeView Roles="@AccessesNames.AUTH_Hide">
                     <div @onclick:stopPropagation="true" @onclick:preventDefault="true">
-                        <MudChip OnClick="@OpenMessageDialog" Icon="@Icons.Material.Filled.Person" Color="Color.Primary">Account</MudChip>
+                        <MudChip T="string" OnClick="@OpenMessageDialog" Icon="@Icons.Material.Filled.Person" Color="Color.Primary">Account</MudChip>
                     </div>
                 </AuthorizeView>
             </ChipContent>

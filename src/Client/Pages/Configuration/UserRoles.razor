@@ -3,10 +3,10 @@
 <h3>UserRoles</h3>
 @if (_userRoles?.Roles is not null && _userRoles.Roles.Any())
 {
-    <MudList>
+    <MudList T="string">
         @foreach (var role in _userRoles.Roles)
         {
-            <MudListItem>
+            <MudListItem T="string">
                 @role.Name
             </MudListItem>
         }
