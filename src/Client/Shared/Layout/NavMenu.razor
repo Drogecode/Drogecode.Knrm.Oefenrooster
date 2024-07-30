@@ -36,9 +36,16 @@
     @if (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriCalendar.Substring(1)) ||
          (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriSchedule.Substring(1)) && !Navigation.Uri.EndsWith("Table")))
     {
-        <MudList>
-            <MudListItem OnClick="AddTraining" Avatar="@Icons.Material.Filled.Add" Class="cursor-pointer">
-                @L["Training"]
+        <MudList T="string">
+            <MudListItem T="string" OnClick="AddTraining" Class="cursor-pointer">
+                <AvatarContent>
+                    <MudAvatar>
+                        <MudIcon Icon="@Icons.Material.Filled.Add" />
+                    </MudAvatar>
+                </AvatarContent>
+                <ChildContent>
+                    @L["Training"]
+                </ChildContent>
             </MudListItem>
         </MudList>
     }

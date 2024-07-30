@@ -3,6 +3,7 @@
 @inject CustomStateProvider AuthenticationStateProvider
 
 <MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" Theme="@_myCustomTheme"/>
+<MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
@@ -13,8 +14,7 @@
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => DrawerToggle())"/>
                 @L["Title"]
                 <MudSpacer/>
-                @* ReSharper disable once UnusedParameter.Local *@
-                <AuthorizeView Roles="@AccessesNames.AUTH_Hide" Context="inner">
+                <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
                     <MudBadge Color="Color.Secondary" Dot="true" Overlap="true" Visible="_newNotificationsAvailable">
                         <MudMenu Icon="@Icons.Material.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter"
                                  PopoverClass="docs-layout-menu-shadow" ListClass="pa-2 docs-menu-list" LockScroll="true">

@@ -11,7 +11,7 @@
             <ChipContent>
                 <AuthorizeView Roles="@AccessesNames.AUTH_Hide">
                     <div @onclick:stopPropagation="true" @onclick:preventDefault="true">
-                        <MudChip OnClick="@OpenMessageDialog" Icon="@Icons.Material.Filled.Person" Color="Color.Primary">Account</MudChip>
+                        <MudChip T="string" OnClick="@OpenMessageDialog" Icon="@Icons.Material.Filled.Person" Color="Color.Primary">Account</MudChip>
                     </div>
                 </AuthorizeView>
             </ChipContent>
@@ -20,7 +20,7 @@
                 {
                     @ChildContent
                 }
-                <MudList>
+                <MudList T="string">
                     @foreach (var vehicle in Vehicles.Where(x => Planner.PlanUsers.Any(y => y.VehicleId == x.Id) == true || (x.IsDefault && Planner.PlanUsers.Any(y => y.VehicleId == null) == true)))
                     {
                         @if (Functions.Any(f => f.Active) && (Planner.PlanUsers.Any(x => x.Assigned && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))) == true))
@@ -34,7 +34,7 @@
                             {
                                 @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))))
                                 {
-                                    <MudListItem OnClick="@OpenScheduleDialog">@assignedUser.Name@(assignedUser.PlannedFunctionId != assignedUser.UserFunctionId ? $" - {LApp["As"]} {function.Name}" : "")</MudListItem>
+                                    <MudListItem T="string" OnClick="@OpenScheduleDialog">@assignedUser.Name@(assignedUser.PlannedFunctionId != assignedUser.UserFunctionId ? $" - {LApp["As"]} {function.Name}" : "")</MudListItem>
                                 }
                             }
                         }

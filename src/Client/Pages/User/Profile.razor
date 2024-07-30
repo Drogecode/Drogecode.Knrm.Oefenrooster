@@ -9,7 +9,7 @@
     <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
         @if (_settingTrainingToCalendar is not null)
         {
-            <MudSwitch Label="@L["Setting training to calendar"]" Color="Color.Primary" T="bool" Checked="@_settingTrainingToCalendar.Value" CheckedChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))"/>
+            <MudSwitch Label="@L["Setting training to calendar"]" Color="Color.Primary" T="bool" Value="@_settingTrainingToCalendar.Value" ValueChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))"/>
         }
     </AuthorizeView>
     <MudText>

@@ -91,7 +91,7 @@ public sealed partial class NavMenu : IDisposable
             MaxWidth = MaxWidth.Medium,
             CloseButton = true,
             FullWidth = true,
-            DisableBackdropClick = true
+            BackdropClick = false
         };
         DialogProvider.Show<EditTrainingDialog>(L["Add training"], parameters, options);
     }

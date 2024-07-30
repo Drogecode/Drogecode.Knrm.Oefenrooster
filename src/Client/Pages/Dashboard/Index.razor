@@ -92,14 +92,14 @@
                     @if (_futureHolidays.Any())
                     {
                         <MudText Typo="Typo.h5">@L["Future holidays"]</MudText>
-                        <MudList>
+                        <MudList T="string">
                             @foreach (var holiday in _futureHolidays)
                             {
                                 var holUser = _users?.FirstOrDefault(x => x.Id == holiday.UserId);
 
                                 @if (holUser is not null)
                                 {
-                                    <MudListItem>@holUser.Name : @holiday.Description <MudText Typo="Typo.subtitle2">(@LApp["from"]: @holiday.ValidFrom?.ToNiceString(LDateToString, showtime: false) @LApp["till"]: @holiday.ValidUntil?.ToNiceString(LDateToString, showtime: false))</MudText></MudListItem>
+                                    <MudListItem T="string">@holUser.Name : @holiday.Description <MudText Typo="Typo.subtitle2">(@LApp["from"]: @holiday.ValidFrom?.ToNiceString(LDateToString, showtime: false) @LApp["till"]: @holiday.ValidUntil?.ToNiceString(LDateToString, showtime: false))</MudText></MudListItem>
                                 }
                             }
 

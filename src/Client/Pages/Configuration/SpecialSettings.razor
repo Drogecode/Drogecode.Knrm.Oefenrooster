@@ -73,11 +73,11 @@ else if (_killDb?.Success == false)
 {
     <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
         <MudPaper>
-            <MudList Clickable="false">
+            <MudList T="string" ReadOnly="true">
                 <MudText>zeven meest recente logins maximaal 7 dagen geleden</MudText>
                 @foreach (var user in _users.Where(x => x.LastLogin >= DateTime.Today.AddDays(-7)).OrderByDescending(x => x.LastLogin).Take(7))
                 {
-                    <MudListItem>
+                    <MudListItem T="string">
                         <div class="flex space-x-4">
                             <p>@user.Name</p>
                             <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin"/>
@@ -89,7 +89,7 @@ else if (_killDb?.Success == false)
         </MudPaper>
     </AuthorizeView>
     <MudPaper>
-        <MudList Clickable="false">
+        <MudList T="string" ReadOnly="true">
             @foreach (var function in _functions.OrderBy(x => x.Order))
             {
                 @if (_users.Any(x => x.UserFunctionId == function.Id))
@@ -97,7 +97,7 @@ else if (_killDb?.Success == false)
                     <MudText>@function.Name</MudText>
                     @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id).OrderBy(x => x.Name))
                     {
-                        <MudListItem OnClick="() => ChangeUser(user)">
+                        <MudListItem T="string" OnClick="() => ChangeUser(user)">
                             <div class="flex space-x-4">
                                 <p>@user.Name</p>
                                 <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin"/>

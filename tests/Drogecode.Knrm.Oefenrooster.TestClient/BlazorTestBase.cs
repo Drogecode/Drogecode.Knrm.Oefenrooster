@@ -29,6 +29,7 @@ public abstract class BlazorTestBase : TestContext
         {
             options.SnackbarConfiguration.ShowTransitionDuration = 0;
             options.SnackbarConfiguration.HideTransitionDuration = 0;
+            options.PopoverOptions.CheckForPopoverProvider = false;
         });
         Services.AddScoped(sp => new HttpClient());
         Services.AddOptions();
