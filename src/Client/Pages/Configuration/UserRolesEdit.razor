@@ -1,0 +1,6 @@
+﻿@page "/configuration/user-roles/edit/{Id:guid}"
+
+@if (_userRole?.Role is not null)
+{
+    <MudText>@_userRole.Role.Name</MudText>
+}

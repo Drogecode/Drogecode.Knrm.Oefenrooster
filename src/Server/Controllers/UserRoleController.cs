@@ -63,4 +63,23 @@ public class UserRoleController : ControllerBase
             return BadRequest();
         }
     }
+    
+    [HttpGet]
+    [Authorize(Roles = AccessesNames.AUTH_configure_user_roles)]
+    [Route("{id:guid}")]
+    public async Task<ActionResult<GetUserRoleResponse>> GetById(Guid id, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            GetUserRoleResponse result = await _userRoleService.GetById(id, userId, customerId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetAll");
+            return BadRequest();
+        }
+    }
 }

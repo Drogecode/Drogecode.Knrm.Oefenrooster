@@ -6,7 +6,7 @@
     <MudList T="string">
         @foreach (var role in _userRoles.Roles)
         {
-            <MudListItem T="string">
+            <MudListItem T="string" OnClick="() => ClickUserRole(role)">
                 @role.Name
             </MudListItem>
         }

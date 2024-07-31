@@ -71,4 +71,22 @@ public class UserRoleService : IUserRoleService
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
+
+    public async  Task<GetUserRoleResponse> GetById(Guid id, Guid userId, Guid customerId, CancellationToken clt)
+    {
+        
+        var sw = Stopwatch.StartNew();
+        var result = new GetUserRoleResponse();
+        
+        var role = await _database.UserRoles.Where(x => x.CustomerId == customerId && x.Id == id).Select(x => x.ToDrogeUserRole()).FirstOrDefaultAsync(clt);
+        if (role is not null)
+        {
+            result.Role = role;
+            result.Success = true;
+        }
+        
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
 }

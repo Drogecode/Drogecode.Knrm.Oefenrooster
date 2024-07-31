@@ -47,4 +47,13 @@ public class UserRoleControllerTests : BaseTest
         role.AUTH_scheduler_other_user.Should().BeTrue();
         role.AUTH_scheduler_dayitem.Should().BeFalse();
     }
+
+    [Fact]
+    public async Task GetByIdTest()
+    {
+        var getResponse = await UserRoleController.GetById(DefaultUserRoleId);
+        Assert.NotNull(getResponse?.Value?.Role);
+        getResponse.Value.Success.Should().BeTrue();
+        getResponse.Value.Role.Name.Should().Be(USER_ROLE_NAME);
+    }
 }
