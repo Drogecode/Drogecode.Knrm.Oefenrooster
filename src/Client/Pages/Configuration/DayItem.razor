@@ -28,7 +28,7 @@
                         @L[@context.Type.ToString()]
                     </div>
                 </MudTd>
-                <MudTd DataLabel="@L["Who"]">@(_users?.FirstOrDefault(x => x.Id == context?.LinkedUsers?.FirstOrDefault()?.UserId)?.Name ?? LApp["User not found or deleted"])</MudTd>
+                <MudTd DataLabel="@L["Who"]">@(context?.LinkedUsers is null || !context.LinkedUsers.Any() ? "" : _users?.FirstOrDefault(x => x.Id == context?.LinkedUsers?.FirstOrDefault()?.UserId)?.Name ?? LApp["User not found or deleted"])</MudTd>
                 <MudTd DataLabel="@LApp["From"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateStart" /></MudTd>
                 <MudTd DataLabel="@LApp["Till"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateEnd" /></MudTd>
                 <MudTd DataLabel="@LApp["Edit"]">

@@ -1,5 +1,6 @@
 ﻿@page "/configuration/user-roles/edit/{Id:guid}"
 
+<MudAlert Severity="Severity.Info" Variant="Variant.Filled">Nog niet af</MudAlert>
 @if (_userRole?.Role is not null)
 {
     <MudText Typo="Typo.h5">@_userRole.Role.Name</MudText>
@@ -31,4 +32,11 @@
     
     <MudText Typo="Typo.h6">@L["Global"]</MudText>
     <MudSwitch Label="@L[AccessesNames.AUTH_show_c_footer]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_show_c_footer" ValueChanged="@(isChecked => _userRole.Role.AUTH_show_c_footer = isChecked)"/>
+}
+else if (_userRole is null)
+{
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
+    <MudSkeleton />
 }
