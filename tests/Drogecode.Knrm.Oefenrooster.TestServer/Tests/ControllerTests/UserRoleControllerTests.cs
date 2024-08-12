@@ -56,4 +56,19 @@ public class UserRoleControllerTests : BaseTest
         getResponse.Value.Success.Should().BeTrue();
         getResponse.Value.Role.Name.Should().Be(USER_ROLE_NAME);
     }
+
+    [Fact]
+    public async Task PatchUserRoleTest()
+    {
+        var getResponse = await UserRoleController.GetById(DefaultUserRoleId);
+        Assert.NotNull(getResponse?.Value?.Role);
+        Assert.False(getResponse.Value.Role.AUTH_dashboard_holidays);
+        getResponse.Value.Role.AUTH_dashboard_holidays = true;
+        var patchResponse = await UserRoleController.PatchUserRole(getResponse.Value.Role);
+        Assert.NotNull(patchResponse?.Value?.Success);
+        Assert.True(patchResponse.Value.Success);
+        var getResponse2 = await UserRoleController.GetById(DefaultUserRoleId);
+        Assert.NotNull(getResponse2?.Value?.Role);
+        Assert.True(getResponse2.Value.Role.AUTH_dashboard_holidays);
+    }
 }

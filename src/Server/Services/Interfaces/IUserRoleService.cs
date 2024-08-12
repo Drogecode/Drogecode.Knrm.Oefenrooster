@@ -9,4 +9,5 @@ public interface IUserRoleService
     Task<List<string>> GetAccessForUser(Guid customerId, IEnumerable<Claim> claims, CancellationToken clt);
     Task<MultipleDrogeUserRolesResponse> GetAll(Guid userId, Guid customerId, CancellationToken clt);
     Task<GetUserRoleResponse> GetById(Guid id, Guid userId, Guid customerId, CancellationToken clt);
+    Task<UpdateUserRoleResponse> PatchUserRole(DrogeUserRole userRole, Guid userId, Guid customerId, CancellationToken clt);
 }

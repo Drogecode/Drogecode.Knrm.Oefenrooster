@@ -73,12 +73,32 @@ public class UserRoleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            GetUserRoleResponse result = await _userRoleService.GetById(id, userId, customerId, clt);
+            var result = await _userRoleService.GetById(id, userId, customerId, clt);
             return result;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in GetAll");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
+    [Authorize(Roles = AccessesNames.AUTH_configure_user_roles)]
+    [Route("")]
+    public async Task<ActionResult<UpdateUserRoleResponse>> PatchUserRole([FromBody] DrogeUserRole userRole, CancellationToken clt = default)
+    {
+        
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var result = await _userRoleService.PatchUserRole(userRole, userId, customerId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in PatchUserRole");
             return BadRequest();
         }
     }

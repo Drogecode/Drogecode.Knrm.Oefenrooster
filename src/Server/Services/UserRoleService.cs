@@ -65,26 +65,44 @@ public class UserRoleService : IUserRoleService
         var sw = Stopwatch.StartNew();
         var result = new MultipleDrogeUserRolesResponse();
 
-        var roles = await _database.UserRoles.Where(x => x.CustomerId == customerId).OrderBy(x=>x.Order).Select(x => x.ToDrogeUserRole()).ToListAsync(clt);
+        var roles = await _database.UserRoles.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x => x.ToDrogeUserRole()).ToListAsync(clt);
         result.Roles = roles;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
 
-    public async  Task<GetUserRoleResponse> GetById(Guid id, Guid userId, Guid customerId, CancellationToken clt)
+    public async Task<GetUserRoleResponse> GetById(Guid id, Guid userId, Guid customerId, CancellationToken clt)
     {
-        
         var sw = Stopwatch.StartNew();
         var result = new GetUserRoleResponse();
-        
+
         var role = await _database.UserRoles.Where(x => x.CustomerId == customerId && x.Id == id).Select(x => x.ToDrogeUserRole()).FirstOrDefaultAsync(clt);
         if (role is not null)
         {
             result.Role = role;
             result.Success = true;
         }
-        
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<UpdateUserRoleResponse> PatchUserRole(DrogeUserRole userRole, Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new UpdateUserRoleResponse();
+
+        var role = await _database.UserRoles.Where(x => x.CustomerId == customerId && x.Id == userRole.Id).FirstOrDefaultAsync(clt);
+        if (role is not null)
+        {
+            var updated = userRole.ToDb(customerId);
+            role.Accesses = updated.Accesses;
+            _database.UserRoles.Update(role);
+            result.Success = await _database.SaveChangesAsync(clt) > 0;
+        }
+
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
