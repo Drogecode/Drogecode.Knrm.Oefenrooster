@@ -94,6 +94,10 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>ChartsTab.nl-NL.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Pages\Configuration\UserRolesEdit.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>UserRolesEdit.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -126,6 +130,11 @@
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>StatisticsTab.nl-NL.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Pages\Configuration\UserRolesEdit.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>UserRolesEdit.nl-NL.resx</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 

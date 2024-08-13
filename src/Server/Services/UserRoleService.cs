@@ -40,7 +40,7 @@ public class UserRoleService : IUserRoleService
             var roles = await _database.UserRoles.Where(x => x.CustomerId == customerId).ToListAsync(clt);
             foreach (var claim in claims.Where(x => x.Type.Equals("groups")))
             {
-                var role = roles.FirstOrDefault(x => string.Compare(x.Id.ToString(), claim.Value, false) == 0);
+                var role = roles.FirstOrDefault(x => string.Compare(x.ExternalId.ToString(), claim.Value, false) == 0);
                 var accesses = role?.Accesses?.Split(',');
                 if (accesses is null) continue;
                 foreach (var acces in accesses)
@@ -99,6 +99,8 @@ public class UserRoleService : IUserRoleService
         {
             var updated = userRole.ToDb(customerId);
             role.Accesses = updated.Accesses;
+            role.Name = updated.Name;
+            role.ExternalId = updated.ExternalId;
             _database.UserRoles.Update(role);
             result.Success = await _database.SaveChangesAsync(clt) > 0;
         }

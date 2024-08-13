@@ -8,12 +8,13 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 public partial class UserRolesEdit : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<UserRolesEdit>? L { get; set; }
-    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
     [Inject, NotNull] private IUserRoleClient? UserRoleClient { get; set; }
     [Parameter] public Guid? Id { get; set; }
     private readonly CancellationTokenSource _cls = new();
     private GetUserRoleResponse? _userRole;
-    private bool? saved = null;
+    private bool? _saved = null;
+    private bool _editName = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -26,7 +27,9 @@ public partial class UserRolesEdit : IDisposable
 
     private async Task Submit()
     {
-       saved = (await UserRoleClient.PatchUserRoleAsync(_userRole?.Role, _cls.Token)).Success;
+        _editName = false;
+        _saved = (await UserRoleClient.PatchUserRoleAsync(_userRole?.Role, _cls.Token)).Success;
+        StateHasChanged();
     }
 
     public void Dispose()

@@ -12,6 +12,7 @@ internal static class UserRoleMapper
         var drogeUserRole = new DrogeUserRole()
         {
             Id = dbUserRoles.Id,
+            ExternalId = dbUserRoles.ExternalId,
             Name = dbUserRoles.Name
         };
         var roles = dbUserRoles.Accesses.Split(',');
@@ -84,6 +85,7 @@ internal static class UserRoleMapper
         var dbUserRole = new DbUserRoles()
         {
             Id = userRole.Id,
+            ExternalId = userRole.ExternalId,
             CustomerId = customerId,
             Name = userRole.Name,
         };

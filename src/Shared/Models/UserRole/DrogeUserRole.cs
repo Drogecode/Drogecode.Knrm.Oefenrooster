@@ -3,6 +3,7 @@
 public class DrogeUserRole
 {
     public Guid Id { get; set; }
+    public Guid? ExternalId { get; set; }
     public string? Name { get; set; }
     
     public bool AUTH_configure_training_types { get; set; }
