@@ -655,7 +655,7 @@ public class ScheduleService : IScheduleService
                         SetBy = setBy.Value,
                         Name = user.Name,
                         UserId = user.Id,
-                        Buddy = avaUser.User?.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name,
+                        Buddy = avaUser?.User?.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name,
                         UserFunctionId = user.UserFunctionId,
                         PlannedFunctionId = avaUser?.UserFunctionId ?? user.UserFunctionId,
                     });
