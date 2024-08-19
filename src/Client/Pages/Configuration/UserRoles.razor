@@ -1,6 +1,10 @@
 ﻿@page "/configuration/user-roles"
 @attribute [Authorize(Roles = AccessesNames.AUTH_configure_user_roles)]
 <h3>UserRoles</h3>
+@if (_userRoles is not null)
+{
+    <MudButton OnClick='() => Navigation.NavigateTo("/configuration/user-roles/add/")'>@L["Add new role"]</MudButton>
+}
 @if (_userRoles?.Roles is not null && _userRoles.Roles.Any())
 {
     <MudList T="string">
@@ -14,8 +18,8 @@
 }
 else if (_userRoles is null)
 {
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
-    <MudSkeleton />
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
 }

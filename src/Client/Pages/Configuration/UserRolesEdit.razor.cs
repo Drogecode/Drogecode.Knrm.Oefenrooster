@@ -15,20 +15,61 @@ public partial class UserRolesEdit : IDisposable
     private GetUserRoleResponse? _userRole;
     private bool? _saved = null;
     private bool _editName = false;
+    private bool _isNew;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && Id is not null)
+        if (firstRender)
         {
-            _userRole = await UserRoleClient.GetByIdAsync(Id.Value, _cls.Token);
+            if (Id is not null)
+            {
+                DebugHelper.WriteLine($"Loading user role: {Id}");
+                _userRole = await UserRoleClient.GetByIdAsync(Id.Value, _cls.Token);
+            }
+            else
+            {
+                DebugHelper.WriteLine("Creating new role");
+                _editName = true;
+                _isNew = true;
+                _userRole = new GetUserRoleResponse
+                {
+                    Role = new DrogeUserRole()
+                };
+            }
+
             StateHasChanged();
         }
     }
 
     private async Task Submit()
     {
+        if (string.IsNullOrWhiteSpace(_userRole?.Role?.Name))
+        {
+            _saved = false;
+            StateHasChanged();
+            return;
+        }
+
         _editName = false;
-        _saved = (await UserRoleClient.PatchUserRoleAsync(_userRole?.Role, _cls.Token)).Success;
+        StateHasChanged();
+        if (_isNew)
+        {
+           var newResult = await UserRoleClient.NewUserRoleAsync(_userRole?.Role, _cls.Token);
+           if (newResult.NewId is not null)
+           {
+               _saved = newResult.Success;
+               _userRole!.Role!.Id = newResult.NewId.Value;
+           }
+           else
+           {
+               _saved = false;
+           }
+        }
+        else
+        {
+            _saved = (await UserRoleClient.PatchUserRoleAsync(_userRole?.Role, _cls.Token)).Success;
+        }
+
         StateHasChanged();
     }
 

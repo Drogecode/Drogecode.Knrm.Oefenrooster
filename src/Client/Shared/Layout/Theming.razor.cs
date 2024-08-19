@@ -67,8 +67,6 @@ public sealed partial class Theming : IDisposable
                     IsDarkMode = true;
                     break;
             }
-
-            DebugHelper.WriteLine($"Start darkmode = {IsDarkMode}");
             
             await Global.CallDarkLightChangedAsync(IsDarkMode);
             await Global.CallRequestRefreshAsync();

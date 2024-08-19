@@ -1,8 +1,9 @@
 ﻿@page "/configuration/user-roles/edit/{Id:guid}"
+@page "/configuration/user-roles/add/"
 @if (_userRole?.Role is not null)
 {
     <MudPaper Class="pa-4" MaxWidth="800px">
-        @if (!_editName)
+        @if (!_editName && !string.IsNullOrWhiteSpace(_userRole.Role.Name))
         {
             <MudText Typo="Typo.h5" Class="cursor-pointer" @onclick="() => _editName = true">@_userRole.Role.Name</MudText>
         }
