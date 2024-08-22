@@ -71,4 +71,7 @@
     <data name="User table" xml:space="preserve">
         <value>User table</value>
     </data>
+    <data name="Total" xml:space="preserve">
+        <value>Total</value>
+    </data>
 </root>

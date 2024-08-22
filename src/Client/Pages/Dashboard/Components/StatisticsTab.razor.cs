@@ -17,6 +17,7 @@ public sealed partial class StatisticsTab
     private IEnumerable<DrogeUser> _selectedUsers = new List<DrogeUser>();
     private string[]? _xAxisLabels;
     private bool _allYears;
+    private bool _total;
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -42,6 +43,14 @@ public sealed partial class StatisticsTab
         StateHasChanged();
     }
 
+    private async Task TotalChanged(bool newValue)
+    {
+        _total = newValue;
+        await _statisticsActionsAll.UpdateAnalyzeYearChartAll();
+        await _statisticsTrainingsAll.UpdateAnalyzeYearChartAll();
+        StateHasChanged();
+    }
+
     public List<ChartYear> DrawLineChartAll(AnalyzeYearChartAllResponse? analyzeData, bool allYears)
     {
         var data = new List<ChartYear>();
@@ -50,14 +59,17 @@ public sealed partial class StatisticsTab
         foreach (var year in analyzeData.Years.OrderByDescending(x => x.Year))
         {
             var month = new List<ChartMonth>();
+            var count = 0;
             for (var i = 0; i < 12; i++)
             {
+                if(!_total) count = 0;
                 if (year.Months.Any(x => x.Month == i + 1))
                 {
+                    count +=year.Months.First(x => x.Month == i + 1).Count;
                     month.Add(new ChartMonth()
                     {
                         Month = _xAxisLabels![i],
-                        Count = year.Months.First(x => x.Month == i + 1).Count
+                        Count = count
                     });
                 }
                 else
@@ -65,7 +77,7 @@ public sealed partial class StatisticsTab
                     month.Add(new ChartMonth()
                     {
                         Month = _xAxisLabels![i],
-                        Count = 0
+                        Count = count
                     });
                 }
             }

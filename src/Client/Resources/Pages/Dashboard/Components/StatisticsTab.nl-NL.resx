@@ -78,4 +78,7 @@
     <data name="User table" xml:space="preserve">
         <value>Gebruikers tabel</value>
     </data>
+    <data name="Total" xml:space="preserve">
+        <value>Totaal</value>
+    </data>
 </root>
