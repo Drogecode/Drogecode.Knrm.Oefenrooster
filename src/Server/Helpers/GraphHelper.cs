@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using Azure.Core;
 using Azure.Identity;
 using Drogecode.Knrm.Oefenrooster.Server.Graph;
@@ -13,7 +15,7 @@ using Microsoft.Kiota.Abstractions.Serialization;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Helpers;
 
-public static class GraphHelper
+public static partial class GraphHelper
 {
     // Settings object
     private static Settings? _settings;
@@ -314,6 +316,38 @@ public static class GraphHelper
         return det.Fields!.AdditionalData.ContainsKey(key) ? det.Fields.AdditionalData[key]!.ToString() : "";
     }
 
+    public static double? FirstNumberFromString(string? description)
+    {
+        if (description is null) return null;
+        var numberString = FirstNumberFromStringRegex().Match(description).ToString().TrimEnd().ToLower();
+        if (numberString.EndsWith('a'))
+        {
+            if (numberString.Contains('.'))
+            {
+                numberString = numberString.TrimEnd('a');
+            }
+            else
+            {
+                numberString = numberString.TrimEnd('a') + ".1";
+            }
+        }
+        else if (numberString.EndsWith('b'))
+        {
+            
+            if (numberString.Contains('.'))
+            {
+                numberString = numberString.TrimEnd('b');
+            }
+            else
+            {
+                numberString = numberString.TrimEnd('b') + ".1";
+            }
+        }
+
+        double.TryParse(numberString, NumberStyles.Any, CultureInfo.InvariantCulture, out double number);
+        return number;
+    }
+
     private static async Task<string?> AdditionalDataArrayOrStringToString(ListItem det, string key)
     {
         var opt = det.Fields!.AdditionalData.ContainsKey(key) ? det.Fields.AdditionalData[key] : null;
@@ -586,6 +620,7 @@ public static class GraphHelper
 
         InternalFlllBaseObject(action, det, users);
         action.ShortDescription = AdditionalDataToString(det, "LinkTitle");
+        action.Number = FirstNumberFromString(action.ShortDescription);
         action.Prio = AdditionalDataToString(det, "Prioriteit");
         action.Departure = InternalGetHistoricalDate(date, det, "Vertrek_x0020__x0028_uren_x0029_", "Ter_x0020_plaatse_x0020__x0028_m");
 
@@ -642,4 +677,7 @@ public static class GraphHelper
         user.Order = order;
         listBase.Users!.Add(user);
     }
+
+    [GeneratedRegex(@"^-?\d+(?:\.\d+)?(?i)(([a]|[b])[ ])?")]
+    private static partial Regex FirstNumberFromStringRegex();
 }

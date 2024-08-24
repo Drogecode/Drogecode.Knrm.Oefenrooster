@@ -7,7 +7,7 @@
             <MudSwitch Label="@L["Total"]" Color="Color.Primary" T="bool" Value="@_total" ValueChanged="@(async (isChecked) => await TotalChanged(isChecked))"/>
             <MudPaper Elevation="0" Class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
                 <div class="flex-1">
-                    <StatisticsActionsAll @ref="_statisticsActionsAll" StatisticsTab="this" SelectedUsers="_selectedUsers" AllYears="@_allYears" Total="@_total"/>
+                    <StatisticsActionsAll @ref="_statisticsActionsAll" StatisticsTab="this" SelectedUsers="_selectedUsers" AllYears="@_allYears"/>
                 </div>
                 <div class="flex-1">
                     <StatisticsTrainingsAll @ref="_statisticsTrainingsAll" StatisticsTab="this" SelectedUsers="_selectedUsers" AllYears="@_allYears"/>

@@ -7,10 +7,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class ReportActionService : IReportActionService
 {
     private readonly Database.DataContext _database;
+    private readonly ILogger<ReportActionService> _logger;
 
-    public ReportActionService(Database.DataContext database)
+    public ReportActionService(Database.DataContext database, ILogger<ReportActionService> logger)
     {
         _database = database;
+        _logger = logger;
     }
 
     public async Task<MultipleReportActionsResponse> GetListActionsUser(List<Guid?> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
@@ -32,14 +34,22 @@ public class ReportActionService : IReportActionService
     public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(AnalyzeActionRequest actionRequest, Guid customerId, string timeZone, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var allReports = _database.ReportActions
+        var allReports = await _database.ReportActions
             .Where(x => x.CustomerId == customerId
                         && (actionRequest.Prio == null || !actionRequest.Prio.Any() || actionRequest.Prio.Contains(x.Prio))
                         && x.Users!.Count(y => actionRequest.Users!.Contains(y.DrogeCodeId)) == actionRequest.Users!.Count)
-            .Select(x => new { x.Start });
+            .Select(x => new { x.Start, x.Number })
+            .OrderBy(x => x.Start)
+            .ToListAsync(clt);
         var result = new AnalyzeYearChartAllResponse { TotalCount = allReports.Count() };
+        var skipped = 0;
         foreach (var report in allReports)
         {
+            if (report.Number is not null && report.Number % 1 != 0 && allReports.Select(x => x.Start.Year == report.Start.Year && x.Number == (int)report.Number).Any())
+            {
+                skipped++;
+                continue;
+            }
             var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
             var start = TimeZoneInfo.ConvertTimeFromUtc(report.Start, zone);
             if (result.Years.All(x => x.Year != start.Year))
@@ -57,6 +67,7 @@ public class ReportActionService : IReportActionService
             month.Count++;
         }
 
+        _logger.LogInformation("Skipped {skipped} reports in analyzes", skipped);
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         result.Success = true;

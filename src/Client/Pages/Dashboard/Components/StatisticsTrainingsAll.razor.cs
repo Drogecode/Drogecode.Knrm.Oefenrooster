@@ -15,7 +15,6 @@ public sealed partial class StatisticsTrainingsAll : IDisposable
     [Parameter] [EditorRequired] public StatisticsTab StatisticsTab { get; set; } = default!;
     [Parameter] [EditorRequired] public IEnumerable<DrogeUser> SelectedUsers { get; set; } = default!;
     [Parameter] [EditorRequired] public bool AllYears { get; set; }
-    [Parameter] [EditorRequired] public bool Total { get; set; }
     private CancellationTokenSource _cls = new();
     private List<StatisticsTab.ChartYear>? _data;
     private readonly ApexChartOptions<StatisticsTab.ChartMonth> _options = new() { Theme = new Theme() { Mode = Mode.Dark } };
