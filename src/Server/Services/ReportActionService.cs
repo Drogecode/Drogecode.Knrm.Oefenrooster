@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
+using Drogecode.Knrm.Oefenrooster.Server.Extensions;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -45,7 +46,7 @@ public class ReportActionService : IReportActionService
         var skipped = 0;
         foreach (var report in allReports)
         {
-            if (report.Number is not null && report.Number % 1 != 0 && allReports.Select(x => x.Start.Year == report.Start.Year && x.Number == (int)report.Number).Any())
+            if (report.Number is not null && (report.Number % 1) != 0 && allReports.Select(x => x.Start.Year == report.Start.Year && x.Number?.FloatingEquals((int)report.Number, 0.1) == true).Any())
             {
                 skipped++;
                 continue;

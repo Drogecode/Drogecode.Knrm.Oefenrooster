@@ -47,6 +47,9 @@ public class ReportActionController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in GetLastActionsForCurrentUser");
             return BadRequest();
         }
@@ -70,6 +73,9 @@ public class ReportActionController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in GetLastActions");
             return BadRequest();
         }
@@ -98,6 +104,9 @@ public class ReportActionController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in AnalyzeYearChartsAll");
             return BadRequest();
         }
@@ -118,6 +127,9 @@ public class ReportActionController : ControllerBase
         }
         catch (Exception ex)
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             _logger.LogError(ex, "Exception in AnalyzeYearChartsAll");
             return BadRequest();
         }
