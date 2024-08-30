@@ -319,7 +319,7 @@ public static partial class GraphHelper
     public static double? FirstNumberFromString(string? description)
     {
         if (description is null) return null;
-        var numberString = FirstNumberFromStringRegex().Match(description).ToString().TrimEnd().ToLower();
+        var numberString = FirstNumberFromStringRegex().Match(description).ToString().TrimEnd(' ', '-').ToLower();
         if (numberString.EndsWith('a'))
         {
             if (numberString.Contains('.'))
@@ -340,7 +340,7 @@ public static partial class GraphHelper
             }
             else
             {
-                numberString = numberString.TrimEnd('b') + ".1";
+                numberString = numberString.TrimEnd('b') + ".2";
             }
         }
 
@@ -678,6 +678,6 @@ public static partial class GraphHelper
         listBase.Users!.Add(user);
     }
 
-    [GeneratedRegex(@"^-?\d+(?:\.\d+)?(?i)(([a]|[b])[ ])?")]
+    [GeneratedRegex(@"^-?\d+(?:\.\d+)?(?i)(([a]|[b])([ ]|[-]))?")]
     private static partial Regex FirstNumberFromStringRegex();
 }

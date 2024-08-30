@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
 // When adding a new role, the role should be added to the model, mapper and the UI
 // (Could be automated in the future)
-public static class AccessesNames
+public struct AccessesNames
 {
     // Can not be set by configuration
     public const string AUTH_Taco = "isSuperGlobalAdmin";
@@ -43,7 +37,7 @@ public static class AccessesNames
     public const string AUTH_show_c_footer = "showCfooter";
 }
 
-public static class AccessesSettings
+public struct AccessesSettings
 {
     public const int AUTH_scheduler_edit_past_days = -3;
 }
