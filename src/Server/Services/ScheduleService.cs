@@ -429,7 +429,7 @@ public class ScheduleService : IScheduleService
                             if (avaUser is null && !includeUnAssigned) continue;
                             avaUser ??= new DbRoosterAvailable();
                             defVehicle ??= await GetDefaultVehicleForTraining(customerId, training, clt);
-                            if (avaUser.VehicleId is null || (avaUser.VehicleId != defVehicle && !(training.LinkVehicleTrainings?.Any(x => x.VehicleId == avaUser.VehicleId) ?? false)))
+                            if (avaUser.VehicleId is null || (avaUser.VehicleId != defVehicle && !(training.LinkVehicleTrainings?.Any(x => x.IsSelected && x.VehicleId == avaUser.VehicleId ) ?? false)))
                             {
                                 /*if (avaUser is { Assigned: true, VehicleId: not null } && avaUser.UserId != Guid.Empty && avaUser.VehicleId != defVehicle &&
                                     !await IsVehicleSelectedForTraining(customerId, training.Id, avaUser.VehicleId, clt))
