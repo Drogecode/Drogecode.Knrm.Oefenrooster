@@ -348,7 +348,7 @@ public static partial class GraphHelper
         return number;
     }
 
-    private static async Task<string?> AdditionalDataArrayOrStringToString(ListItem det, string key)
+    private static async Task<string?> AdditionalDataArrayOrStringToString(ListItem det, string key, CancellationToken clt)
     {
         var opt = det.Fields!.AdditionalData.ContainsKey(key) ? det.Fields.AdditionalData[key] : null;
         switch (opt)
@@ -358,7 +358,7 @@ public static partial class GraphHelper
                 var first = true;
                 foreach (var value in untypedArray.GetValue())
                 {
-                    string innerValue = (await KiotaJsonSerializer.SerializeAsStringAsync(value)).Trim('"');
+                    string innerValue = (await KiotaJsonSerializer.SerializeAsStringAsync(value, clt)).Trim('"');
                     if (first)
                         first = false;
                     else
@@ -582,7 +582,7 @@ public static partial class GraphHelper
                         break;
                     case "KNRM Hulpverlening":
                     case "HRB Actie":
-                        response.Actions.Add(await InternalGetHistoricalAction(det, users));
+                        response.Actions.Add(await InternalGetHistoricalAction(det, users, clt));
                         break;
                     default:
 #if DEBUG
@@ -612,7 +612,7 @@ public static partial class GraphHelper
         return training;
     }
 
-    private static async Task<SharePointAction> InternalGetHistoricalAction(ListItem det, List<SharePointUser> users)
+    private static async Task<SharePointAction> InternalGetHistoricalAction(ListItem det, List<SharePointUser> users, CancellationToken clt)
     {
         var action = new SharePointAction { Users = new List<SharePointUser>() };
         if (det.Fields?.AdditionalData is null || det.ETag is null) return action;
@@ -624,7 +624,7 @@ public static partial class GraphHelper
         action.Prio = AdditionalDataToString(det, "Prioriteit");
         action.Departure = InternalGetHistoricalDate(date, det, "Vertrek_x0020__x0028_uren_x0029_", "Ter_x0020_plaatse_x0020__x0028_m");
 
-        action.CallMadeBy = await AdditionalDataArrayOrStringToString(det, "Oproep_x0020_gedaan_x0020_door");
+        action.CallMadeBy = await AdditionalDataArrayOrStringToString(det, "Oproep_x0020_gedaan_x0020_door", clt);
         action.Causes = AdditionalDataToString(det, "Oorzaken");
         if (string.IsNullOrEmpty(action.Causes))
             action.Causes = AdditionalDataToString(det, "Aard_x0020_Oproep");
