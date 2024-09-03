@@ -12,7 +12,7 @@ public struct AccessesNames
     public const string AUTH_Hide = "do_not_show";
 
 
-    public const string GROUP_CONFIGURATION= "configuration";
+    public const string GROUP_CONFIGURATION= "Configuration";
     public const string AUTH_configure_training_types = "configure_training-types";
     public const string AUTH_configure_user_roles = "configure_user_roles";
 
