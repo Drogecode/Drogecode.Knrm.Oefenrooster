@@ -350,15 +350,16 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("me/scheduled-trainings/{callHub:bool}")]
-    public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> GetScheduledTrainingsForUser(bool callHub = false, CancellationToken clt = default)
+    [Route("me/scheduled-trainings/{callHub:bool}/{take:int}/{skip:int}", Order = 0)]
+    [Route("me/scheduled-trainings/{callHub:bool}", Order = 1)] //ToDo Remove when all users on v0.4.5 or above
+    public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> GetScheduledTrainingsForUser(bool callHub = false, int take = 10, int skip = 0, CancellationToken clt = default)
     {
         try
         {
             var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var fromDate = _dateTimeService.Today().ToUniversalTime();
-            var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, clt);
+            var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, take, skip, clt);
             if (callHub)
             {
                 _logger.LogTrace("Calling hub futureTrainings");
@@ -379,14 +380,15 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("training/user/all/{id:guid}")]
+    [Route("training/user/all/{id:guid}/{take:int}/{skip:int}", Order = 0)]
+    [Route("training/user/all/{id:guid}", Order = 1)] //ToDo Remove when all users on v0.4.5 or above
     [Authorize(Roles = AccessesNames.AUTH_users_details)]
-    public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> AllTrainingsForUser(Guid id, CancellationToken clt = default)
+    public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> AllTrainingsForUser(Guid id, int take = 10, int skip = 0, CancellationToken clt = default)
     {
         try
         {
             var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var result = await _scheduleService.GetScheduledTrainingsForUser(id, customerId, null, clt);
+            var result = await _scheduleService.GetScheduledTrainingsForUser(id, customerId, null, take, skip, clt);
             return result;
         }
         catch (OperationCanceledException)

@@ -605,6 +605,67 @@
         }
       }
     },
+    "/api/Schedule/me/scheduled-trainings/{callHub}/{take}/{skip}": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "GetScheduledTrainingsForUser",
+        "parameters": [
+          {
+            "name": "callHub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "take",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "skip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Schedule/me/scheduled-trainings/{callHub}": {
       "get": {
         "tags": [
@@ -619,6 +680,67 @@
             "schema": {
               "type": "boolean",
               "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Schedule/training/user/all/{id}/{take}/{skip}": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "operationId": "AllTrainingsForUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "take",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "skip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
             }
           }
         ],
@@ -876,6 +998,10 @@
           "elapsedMilliseconds": {
             "type": "integer",
             "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
           },
           "trainings": {
             "type": "array",

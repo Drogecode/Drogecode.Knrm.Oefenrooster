@@ -384,7 +384,7 @@ public class ScheduleService : IScheduleService
         var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
-            .Include(x => x.LinkVehicleTrainings)
+            .Include(x => x.LinkVehicleTrainings!.Where(y=>y.IsSelected))
             .OrderBy(x => x.DateStart)
             .AsSingleQuery().ToList();
         var availables = _database.RoosterAvailables
@@ -429,7 +429,7 @@ public class ScheduleService : IScheduleService
                             if (avaUser is null && !includeUnAssigned) continue;
                             avaUser ??= new DbRoosterAvailable();
                             defVehicle ??= await GetDefaultVehicleForTraining(customerId, training, clt);
-                            if (avaUser.VehicleId is null || (avaUser.VehicleId != defVehicle && !(training.LinkVehicleTrainings?.Any(x => x.IsSelected && x.VehicleId == avaUser.VehicleId ) ?? false)))
+                            if (avaUser.VehicleId is null || (avaUser.VehicleId != defVehicle && !(training.LinkVehicleTrainings?.Any(x => x.IsSelected && x.VehicleId == avaUser.VehicleId) ?? false)))
                             {
                                 /*if (avaUser is { Assigned: true, VehicleId: not null } && avaUser.UserId != Guid.Empty && avaUser.VehicleId != defVehicle &&
                                     !await IsVehicleSelectedForTraining(customerId, training.Id, avaUser.VehicleId, clt))
@@ -899,23 +899,23 @@ public class ScheduleService : IScheduleService
         return result;
     }
 
-    public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime? fromDate, CancellationToken clt)
+    public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime? fromDate, int take, int skip, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new GetScheduledTrainingsForUserResponse();
         var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= fromDate).ToListAsync(cancellationToken: clt);
         var defaultAveUser = await _database.UserDefaultAvailables.Include(x => x.DefaultGroup).Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= fromDate)
             .ToListAsync(cancellationToken: clt);
-        var scheduled = await _database.RoosterAvailables
+        var scheduled = _database.RoosterAvailables
             .Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Training.DeletedOn == null && (fromDate == null || x.Date >= fromDate))
             .Include(i => i.Training)
             .ThenInclude(i => i.RoosterAvailables!.Where(y => y.User!.DeletedOn == null))
             .Include(i => i.Training)
-            .ThenInclude(i => i.LinkVehicleTrainings)
-            .OrderBy(x => x.Date)
-            .ToListAsync(cancellationToken: clt);
+            .ThenInclude(i => i.LinkVehicleTrainings);
         var users = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
-        foreach (var schedul in scheduled)
+        result.TotalCount = scheduled.Count();
+        var scheduls = await scheduled.OrderByDescending(x => x.Date).Skip(skip).Take(take).ToListAsync(clt);
+        foreach (var schedul in scheduls)
         {
             if (schedul.Training == null)
             {
