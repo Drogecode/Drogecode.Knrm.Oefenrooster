@@ -37,12 +37,18 @@ public sealed partial class ScheduleCard : IDisposable
     private bool _updating;
     private bool _isDeleted;
     private bool _showHistory;
+    private bool _showPastBody = true;
 
     protected override async Task OnParametersSetAsync()
     {
         _refreshModel.RefreshRequested += RefreshMe;
         Global.TrainingDeletedAsync += TrainingDeleted;
         _showHistory = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_history);
+    }
+
+    protected override void OnInitialized()
+    {
+        _showPastBody = ShowPastBody;
     }
 
     private void OpenScheduleDialog()

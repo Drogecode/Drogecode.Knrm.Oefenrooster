@@ -24,12 +24,27 @@ public sealed partial class CalendarBaseCard : IDisposable
     [Parameter] public bool ReplaceEmptyName { get; set; }
     [Parameter] public bool ShowDate { get; set; } = true;
     [Parameter] public bool ShowDayOfWeek { get; set; } = false;
-    [Parameter] public bool ShowPastBody { get; set; } = true;
     [Parameter] public string MoreMessage { get; set; } = "Show more";
     private CancellationTokenSource _cls = new();
     private int _iconCount;
     private bool _showAllIcons = false;
     private static string _timeZone = "Europe/Amsterdam";
+    [Parameter] public EventCallback<bool> ShowPastBodyChanged { get; set; }
+    private bool _showPastBody { get; set; } = true;
+    
+    [Parameter] public bool ShowPastBody
+    {
+        get { return _showPastBody; }
+        set
+        {
+            if (_showPastBody == value) return;
+            _showPastBody = value;
+            if (ShowPastBodyChanged.HasDelegate)
+            {
+                ShowPastBodyChanged.InvokeAsync(value);
+            }
+        }
+    }
 
     protected override void OnParametersSet()
     {

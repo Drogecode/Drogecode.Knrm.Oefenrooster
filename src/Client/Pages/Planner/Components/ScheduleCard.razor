@@ -6,7 +6,7 @@
 {
     @if (Functions is not null && Vehicles is not null && Planner.PlanUsers?.Any(x => x.Assigned) == true)
     {
-        <CalendarBaseCard ReplaceEmptyName="@ReplaceEmptyName" Width="@Width" MaxWidth="@MaxWidth" MinWidth="@MinWidth" Training="@Planner" OnClickCallback="@OpenScheduleDialog" OnClickSettings="@OpenConfigDialog" OnClickHistory="_showHistory ? OpenHistoryDialog : null!" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" ShowPastBody="@ShowPastBody" MoreMessage="@L["Show attendees"]">
+        <CalendarBaseCard ReplaceEmptyName="@ReplaceEmptyName" Width="@Width" MaxWidth="@MaxWidth" MinWidth="@MinWidth" Training="@Planner" OnClickCallback="@OpenScheduleDialog" OnClickSettings="@OpenConfigDialog" OnClickHistory="_showHistory ? OpenHistoryDialog : null!" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" @bind-ShowPastBody="@_showPastBody" MoreMessage="@L["Show attendees"]">
 
             <ChipContent>
                 <AuthorizeView Roles="@AccessesNames.AUTH_Hide">

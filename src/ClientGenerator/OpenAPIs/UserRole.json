@@ -182,6 +182,11 @@
             "type": "string",
             "format": "uuid"
           },
+          "externalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "name": {
             "type": "string",
             "nullable": true

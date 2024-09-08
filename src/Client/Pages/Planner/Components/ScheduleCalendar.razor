@@ -9,7 +9,7 @@
 <div class="d-none d-md-flex">
     @if (_initialized)
     {
-        <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" CurrentDay="_firstMonth" Outlined ButtonVariant="Variant.Text" ShowDay=false ShowWeek=false>
+        <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" CurrentDay="_firstMonth" Outlined ButtonVariant="Variant.Text" ShowDay="false" ShowWeek="false" ShowTodayButton="true">
             <CellTemplate>
                 @switch (context)
                 {
