@@ -61,18 +61,22 @@
                 <MudSkeleton />
             }
             <MudText Typo="Typo.h5">@L["Future trainings"]</MudText>
-            @if (_futureTrainings != null)
+            @if (_trainings?.Trainings != null)
             {
-                @if (_futureTrainings.Any())
+                @if (_trainings.Trainings.Any())
                 {
                     <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-                        @foreach (var training in _futureTrainings)
+                        @foreach (var training in _trainings.Trainings)
                         {
                             <div class="flex-1">
                                 <IndexCard MinWidth="300px" MaxWidth="600px" User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" ShowDayOfWeek="true" />
                             </div>
                         }
                     </MudPaper>
+                    @if (_trainings.TotalCount >= _total)
+                    {
+                        <MudButton OnClick="LoadMore">@LApp["Load more"]</MudButton>
+                    }
                 }
                 else
                 {

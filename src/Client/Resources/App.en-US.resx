@@ -201,4 +201,7 @@
   <data name="User not found or deleted" xml:space="preserve">
     <value>User not found or deleted</value>
   </data>
+  <data name="Load more" xml:space="preserve">
+    <value>Load more</value>
+  </data>
 </root>

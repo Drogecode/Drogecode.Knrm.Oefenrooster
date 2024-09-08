@@ -75,20 +75,20 @@ public class ScheduleRepository
         return schedule;
     }
 
-    public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(Guid? userId, bool cachedAndReplace, CancellationToken clt)
+    public async Task<GetScheduledTrainingsForUserResponse?> GetScheduledTrainingsForUser(Guid? userId, bool cachedAndReplace, int take, int skip, CancellationToken clt)
     {
         if (userId is null) return null;
         var schedule = await _offlineService.CachedRequestAsync(string.Format("trFoUse_{0}", userId),
-            async () => { return await _scheduleClient.GetScheduledTrainingsForUserAsync(cachedAndReplace, clt); },
+            async () => { return await _scheduleClient.GetScheduledTrainingsForUserAsync(cachedAndReplace, take, skip, clt); },
             new ApiCachedRequest { CachedAndReplace = cachedAndReplace }, clt);
         return schedule;
     }
 
-    public async Task<GetScheduledTrainingsForUserResponse?> AllTrainingsForUser(Guid? userId, CancellationToken clt)
+    public async Task<GetScheduledTrainingsForUserResponse?> AllTrainingsForUser(Guid? userId, int take, int skip, CancellationToken clt)
     {
         if (userId is null) return null;
         var schedule = await _offlineService.CachedRequestAsync(string.Format("AllTrFoUse_{0}", userId),
-            async () => { return await _scheduleClient.AllTrainingsForUserAsync(userId.Value, clt); },
+            async () => { return await _scheduleClient.AllTrainingsForUserAsync(userId.Value, take, skip, clt); },
             clt: clt);
         return schedule;
     }

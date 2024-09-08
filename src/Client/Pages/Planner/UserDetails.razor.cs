@@ -12,6 +12,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 public sealed partial class UserDetails : IDisposable
 {
     [Inject] private IStringLocalizer<UserDetails> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
@@ -28,7 +29,10 @@ public sealed partial class UserDetails : IDisposable
     private List<PlannerTrainingType>? _trainingTypes;
     private IEnumerable<DrogeUser> _selectedUsersAction;
     private bool _updatingSelection = false;
-    
+    private const int TAKE = 30;
+    private int _total = TAKE;
+    private int _skip = 0;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -55,9 +59,10 @@ public sealed partial class UserDetails : IDisposable
                 else
                     _selectedUsersAction = [];
 
-                _trainings = (await _scheduleRepository.AllTrainingsForUser(Id.Value, _cls.Token));
+                _trainings = (await _scheduleRepository.AllTrainingsForUser(Id.Value, TAKE, _skip * TAKE, _cls.Token));
                 _userFunction = _functions?.FirstOrDefault(x => x.Id == _user?.UserFunctionId);
             }
+
             StateHasChanged();
         }
     }
@@ -88,12 +93,14 @@ public sealed partial class UserDetails : IDisposable
                 body.Add = false;
                 await _userRepository.UpdateLinkUserUserForUserAsync(body, _cls.Token);
             }
+
             foreach (var newSelected in selection)
             {
                 body.UserBId = newSelected.Id;
                 body.Add = true;
                 await _userRepository.UpdateLinkUserUserForUserAsync(body, _cls.Token);
             }
+
             _selectedUsersAction = selection;
             _updatingSelection = false;
         }
@@ -111,7 +118,17 @@ public sealed partial class UserDetails : IDisposable
             return;
         _user.Nr = newNumber;
         await _userRepository.UpdateUserAsync(_user);
+    }
 
+    private async Task LoadMore()
+    {
+        _skip++;
+        var newTrainings = (await _scheduleRepository.AllTrainingsForUser(Id.Value, TAKE, _skip * TAKE, _cls.Token));
+        if (newTrainings is null || newTrainings.TotalCount != _trainings.TotalCount)
+            _trainings = newTrainings;
+        _trainings.Trainings.AddRange(newTrainings.Trainings);
+        _total += TAKE;
+        StateHasChanged();
     }
 
     public void Dispose()

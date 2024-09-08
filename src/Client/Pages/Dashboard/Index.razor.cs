@@ -11,8 +11,6 @@ using Microsoft.Extensions.Localization;
 using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
-using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 
@@ -39,7 +37,7 @@ public sealed partial class Index : IDisposable
     private HubConnection? _hubConnection;
     private DrogeUser? _user;
     private List<DrogeFunction>? _functions;
-    private List<PlannedTraining>? _futureTrainings;
+    private GetScheduledTrainingsForUserResponse? _trainings;
     private List<Training>? _pinnedTrainings;
     private List<DrogeUser>? _users;
     private List<DrogeVehicle>? _vehicles;
@@ -49,6 +47,9 @@ public sealed partial class Index : IDisposable
     private string? _name;
     private Guid _userId;
     private bool _loading = true;
+    private const int TAKE = 30;
+    private int _total = TAKE;
+    private int _skip = 0;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -68,7 +69,7 @@ public sealed partial class Index : IDisposable
             StateHasChanged();
             _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
             StateHasChanged();
-            _futureTrainings = (await ScheduleRepository.GetScheduledTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
+            _trainings = await ScheduleRepository.GetScheduledTrainingsForUser(_userId, true, TAKE, _skip * TAKE, _cls.Token);
 
             Global.VisibilityChangeAsync += VisibilityChanged;
             _loading = false;
@@ -108,13 +109,12 @@ public sealed partial class Index : IDisposable
             {
                 try
                 {
-
                     if (_cls.Token.IsCancellationRequested)
                         return;
                     switch (type)
                     {
                         case ItemUpdated.FutureTrainings:
-                            _futureTrainings = (await ScheduleRepository.GetScheduledTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
+                            _trainings = await ScheduleRepository.GetScheduledTrainingsForUser(_userId, false, TAKE, _skip * TAKE, _cls.Token);
                             break;
                         case ItemUpdated.AllUsers:
                             _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
@@ -142,6 +142,7 @@ public sealed partial class Index : IDisposable
                             DebugHelper.WriteLine("Missing type, ignored");
                             break;
                     }
+
                     StateHasChanged();
                 }
                 catch (HttpRequestException)
@@ -185,7 +186,7 @@ public sealed partial class Index : IDisposable
             _functions = await FunctionRepository.GetAllFunctionsAsync(true, _cls.Token);
             _dayItems = (await CalendarItemRepository.GetDayItemDashboardAsync(_userId, false, _cls.Token))?.DayItems;
             _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
-            _futureTrainings = (await ScheduleRepository.GetScheduledTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
+            _trainings = await ScheduleRepository.GetScheduledTrainingsForUser(_userId, false, TAKE, _skip * TAKE, _cls.Token);
             DebugHelper.WriteLine("Dashboard reloaded");
             StateHasChanged();
         }
@@ -194,6 +195,17 @@ public sealed partial class Index : IDisposable
             DebugHelper.WriteLine("Failed to recache everything on dashboard after VisibilityChanged");
             DebugHelper.WriteLine(e);
         }
+    }
+
+    private async Task LoadMore()
+    {
+        _skip++;
+        var newTrainings = (await ScheduleRepository.AllTrainingsForUser(_userId, TAKE, _skip * TAKE, _cls.Token));
+        if (newTrainings is null || newTrainings.TotalCount != _trainings.TotalCount)
+            _trainings = newTrainings;
+        _trainings.Trainings.AddRange(newTrainings.Trainings);
+        _total += TAKE;
+        StateHasChanged();
     }
 
     public void Dispose()

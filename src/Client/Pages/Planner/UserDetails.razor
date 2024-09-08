@@ -15,6 +15,10 @@
                         </div>
                     }
                 </MudPaper>
+                @if (_trainings.TotalCount >= _total)
+                {
+                    <MudButton OnClick="LoadMore">@LApp["Load more"]</MudButton>
+                }
             </DrogeCodeMudTabPanel>
             <DrogeCodeMudTabPanel Text="@L["For target"]">
                 @if (_userFunction is not null)
