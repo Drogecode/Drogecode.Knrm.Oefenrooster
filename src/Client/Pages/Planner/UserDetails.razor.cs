@@ -124,10 +124,17 @@ public sealed partial class UserDetails : IDisposable
     {
         _skip++;
         var newTrainings = (await _scheduleRepository.AllTrainingsForUser(Id.Value, TAKE, _skip * TAKE, _cls.Token));
-        if (newTrainings is null || newTrainings.TotalCount != _trainings.TotalCount)
+        if (_trainings is null || newTrainings is null || newTrainings.TotalCount != _trainings.TotalCount)
+        {
             _trainings = newTrainings;
-        _trainings.Trainings.AddRange(newTrainings.Trainings);
-        _total += TAKE;
+            _total = TAKE;
+            _skip = 0;
+        }
+        else
+        {
+            _trainings.Trainings.AddRange(newTrainings.Trainings);
+            _total += TAKE;
+        }
         StateHasChanged();
     }
 

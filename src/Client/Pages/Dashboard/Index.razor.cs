@@ -201,10 +201,18 @@ public sealed partial class Index : IDisposable
     {
         _skip++;
         var newTrainings = (await ScheduleRepository.AllTrainingsForUser(_userId, TAKE, _skip * TAKE, _cls.Token));
-        if (newTrainings is null || newTrainings.TotalCount != _trainings.TotalCount)
+        if (_trainings is null || newTrainings is null || newTrainings.TotalCount != _trainings.TotalCount)
+        {
             _trainings = newTrainings;
-        _trainings.Trainings.AddRange(newTrainings.Trainings);
-        _total += TAKE;
+            _total = TAKE;
+            _skip = 0;
+        }
+        else
+        {
+            _trainings.Trainings.AddRange(newTrainings.Trainings);
+            _total += TAKE;
+        }
+
         StateHasChanged();
     }
 
