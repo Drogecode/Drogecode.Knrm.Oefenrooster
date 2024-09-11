@@ -32,7 +32,7 @@
                         {
                             @if (Planner.PlanUsers.Any(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))) == true)
                             {
-                                @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))))
+                                @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))).OrderBy(x => x.Name))
                                 {
                                     <MudListItem T="string" OnClick="@OpenScheduleDialog">@assignedUser.Name@(assignedUser.PlannedFunctionId != assignedUser.UserFunctionId ? $" - {LApp["As"]} {function.Name}" : "")</MudListItem>
                                 }

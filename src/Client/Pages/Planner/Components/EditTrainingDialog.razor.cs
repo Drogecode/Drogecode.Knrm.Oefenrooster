@@ -75,7 +75,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     {
         var dateStartLocal = Planner!.DateStart.ToLocalTime();
         var dateEndLocal = Planner.DateEnd.ToLocalTime();
-        _startedWithShowNoTime = Planner.ShowTime;
+        _startedWithShowNoTime = !Planner.ShowTime;
         _training = new()
         {
             IsNewFromDefault = true,

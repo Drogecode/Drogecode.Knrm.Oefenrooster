@@ -231,9 +231,7 @@ public class ScheduleService : IScheduleService
         if (patchedTraining.Name?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)
             throw new DrogeCodeToLongException();
         if (!inRoleEditPast && oldTraining.DateEnd < DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days - 1))
-        {
             throw new UnauthorizedAccessException();
-        }
 
         oldTraining.RoosterTrainingTypeId = patchedTraining.RoosterTrainingTypeId;
         oldTraining.Name = patchedTraining.Name;

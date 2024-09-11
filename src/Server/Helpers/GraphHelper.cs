@@ -672,6 +672,8 @@ public static partial class GraphHelper
     {
         var sharePointName = det.Fields?.AdditionalData.ContainsKey(key) == true ? det.Fields.AdditionalData[key]?.ToString() : "";
         if (string.IsNullOrEmpty(sharePointName) || sharePointName.Equals("n.v.t.") || sharePointName.Equals("nvt")) return;
+        if (string.Compare(sharePointName, "Daniel Slagt", StringComparison.OrdinalIgnoreCase) == 0)
+            sharePointName = "Daniël Slagt";
         var user = (SharePointUser?)users.FirstOrDefault(x => x.Name == sharePointName)?.Clone() ?? new SharePointUser() { Name = "* " + sharePointName };
         user.Role = role;
         user.Order = order;

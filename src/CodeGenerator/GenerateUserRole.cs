@@ -4,7 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
 namespace Drogecode.Knrm.Oefenrooster.CodeGenerator;
 
-public class GenerateUserRole
+public static class GenerateUserRole
 {
     public static void Start()
     {
