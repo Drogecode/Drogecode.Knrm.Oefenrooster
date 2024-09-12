@@ -1,5 +1,3 @@
-using Drogecode.Knrm.Oefenrooster.Server.Database;
-using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -39,12 +37,17 @@ public class Worker : BackgroundService
                     await Task.Delay(1000, clt);
                 }
 
-                await SyncSharePoint();
+                var successfull = await SyncSharePoint();
 
-                if (_errorCount > 0)
+                if (successfull && _errorCount > 0)
                 {
-                    _logger.LogInformation("No error in worker, decreasing counter with one `{errorCount}`", _errorCount);
                     _errorCount--;
+                    _logger.LogInformation("No error in worker, decreasing counter with one `{errorCount}`", _errorCount);
+                }
+                else if (!successfull)
+                {
+                    _errorCount++;
+                    _logger.LogWarning("Error in worker, increasing counter with one `{errorCount}`", _errorCount);
                 }
             }
             catch (Exception ex)
@@ -52,48 +55,57 @@ public class Worker : BackgroundService
                 _errorCount++;
                 _logger.LogError(ex, "Error `{errorCount}` in worker", _errorCount);
             }
+
             if (_clt.IsCancellationRequested) return;
         }
     }
 
-    private async Task SyncSharePoint()
+    private async Task<bool> SyncSharePoint()
     {
         using var scope = _scopeFactory.CreateScope();
         var graphService = scope.ServiceProvider.GetRequiredService<IGraphService>();
         graphService.InitializeGraph();
 
-        await SyncSharePointActions(graphService);
-        await SyncSharePointUsers(graphService);
+        var result = true;
+        result = (result & await SyncSharePointActions(graphService));
+        result = (result & await SyncSharePointUsers(graphService));
+        return result;
     }
 
-    private async Task SyncSharePointActions(IGraphService graphService)
+    private async Task<bool> SyncSharePointActions(IGraphService graphService)
     {
-        await RunBackgroundTask(async () => await graphService.SyncSharePointActions(DefaultSettingsHelper.KnrmHuizenId, _clt), "SyncSharePointActions", _clt);
-        await RunBackgroundTask( async () => await graphService.SyncSharePointTrainings(DefaultSettingsHelper.KnrmHuizenId, _clt), "SyncSharePointTrainings", _clt);
+        var result = true;
+        result = (result & await RunBackgroundTask(async () => await graphService.SyncSharePointActions(DefaultSettingsHelper.KnrmHuizenId, _clt), "SyncSharePointActions", _clt));
+        result = (result & await RunBackgroundTask(async () => await graphService.SyncSharePointTrainings(DefaultSettingsHelper.KnrmHuizenId, _clt), "SyncSharePointTrainings", _clt));
+        return result;
     }
 
-    private async Task SyncSharePointUsers(IGraphService graphService)
+    private async Task<bool> SyncSharePointUsers(IGraphService graphService)
     {
         var nextSync = _memoryCache.Get<DateTime?>(NEXT_USER_SYNC);
         if (nextSync is not null && nextSync.Value.CompareTo(DateTime.UtcNow) > 0)
-            return;
+            return true;
         //ToDo sync
 
         _clt.ThrowIfCancellationRequested();
         _memoryCache.Set(NEXT_USER_SYNC, DateTime.SpecifyKind(DateTime.Today.AddDays(1).AddHours(1), DateTimeKind.Utc));
+        return true;
     }
 
-    private async Task RunBackgroundTask<TRet>(Func<Task<TRet>> function, string name, CancellationToken clt)
+    private async Task<bool> RunBackgroundTask<TRet>(Func<Task<TRet>> function, string name, CancellationToken clt)
     {
         try
         {
             await function();
+            clt.ThrowIfCancellationRequested();
+            return true;
         }
         catch (Exception ex)
         {
             _errorCount++;
             _logger.LogError(ex, "Error in background service `{name}` {errorCount}`", name, _errorCount);
+            clt.ThrowIfCancellationRequested();
+            return false;
         }
-        clt.ThrowIfCancellationRequested();
     }
 }

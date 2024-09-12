@@ -44,4 +44,10 @@ public class DefaultScheduleRepository
         var result = await _defaultScheduleClient.PutGroupAsync(body, clt);
         return result;
     }
+
+    public async Task<GetAllDefaultScheduleResponse> GetAllDefaultSchedule(CancellationToken clt)
+    {
+        var result = await _defaultScheduleClient.GetAllDefaultScheduleAsync(clt);
+        return result;
+    }
 }

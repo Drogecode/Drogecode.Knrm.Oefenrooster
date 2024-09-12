@@ -30,11 +30,13 @@ public static class DefaultScheduleMapper
         {
             Id = defaultSchedule.Id,
             RoosterTrainingTypeId = defaultSchedule.RoosterTrainingTypeId,
+            VehicleIds = defaultSchedule.VehicleIds,
             WeekDay = defaultSchedule.WeekDay,
             TimeStart = defaultSchedule.TimeStart,
             TimeEnd = defaultSchedule.TimeEnd,
             ValidFromDefault = defaultSchedule.ValidFrom,
             ValidUntilDefault = defaultSchedule.ValidUntil,
+            TimeZone = defaultSchedule.TimeZone,
             CountToTrainingTarget = defaultSchedule.CountToTrainingTarget,
             Order = defaultSchedule.Order,
             ShowTime = defaultSchedule.ShowTime ?? true,

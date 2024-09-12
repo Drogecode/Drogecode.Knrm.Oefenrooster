@@ -174,6 +174,36 @@
         }
       }
     },
+    "/api/DefaultSchedule/schedule/all": {
+      "get": {
+        "tags": [
+          "DefaultSchedule"
+        ],
+        "operationId": "GetAllDefaultSchedule",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllDefaultScheduleResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllDefaultScheduleResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllDefaultScheduleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/DefaultSchedule/user": {
       "patch": {
         "tags": [
@@ -298,6 +328,14 @@
             "format": "uuid",
             "nullable": true
           },
+          "vehicleIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
           "weekDay": {
             "$ref": "#/components/schemas/DayOfWeek"
           },
@@ -316,6 +354,10 @@
           "validUntilDefault": {
             "type": "string",
             "format": "date-time"
+          },
+          "timeZone": {
+            "type": "string",
+            "nullable": true
           },
           "name": {
             "type": "string",
@@ -397,6 +439,33 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DefaultGroup"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetAllDefaultScheduleResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "defaultSchedules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefaultSchedule"
             },
             "nullable": true
           }

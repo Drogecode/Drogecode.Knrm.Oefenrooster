@@ -36,6 +36,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_configure_user_roles:
                         drogeUserRole.AUTH_configure_user_roles = true;
                         break;
+                    case AccessesNames.AUTH_configure_default_schedule:
+                        drogeUserRole.AUTH_configure_default_schedule = true;
+                        break;
                     case AccessesNames.AUTH_scheduler:
                         drogeUserRole.AUTH_scheduler = true;
                         break;
@@ -105,6 +108,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_configure_training_types).Append(',');
             if (userRole.AUTH_configure_user_roles)
                 sb.Append(AccessesNames.AUTH_configure_user_roles).Append(',');
+            if (userRole.AUTH_configure_default_schedule)
+                sb.Append(AccessesNames.AUTH_configure_default_schedule).Append(',');
             if (userRole.AUTH_scheduler)
                 sb.Append(AccessesNames.AUTH_scheduler).Append(',');
             if (userRole.AUTH_scheduler_in_table_view)

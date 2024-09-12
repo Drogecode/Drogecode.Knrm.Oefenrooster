@@ -197,6 +197,9 @@
           "autH_configure_user_roles": {
             "type": "boolean"
           },
+          "autH_configure_default_schedule": {
+            "type": "boolean"
+          },
           "autH_scheduler": {
             "type": "boolean"
           },

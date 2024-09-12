@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Diagnostics;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -104,6 +105,30 @@ public class DefaultScheduleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var result = await _defaultScheduleService.PutDefaultSchedule(body, customerId, userId);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in PutDefaultSchedule");
+            return BadRequest();
+        }
+    }
+
+
+    [HttpGet]
+    [Authorize(Roles = AccessesNames.AUTH_configure_default_schedule)]
+    [Route("schedule/all")]
+    public async Task<ActionResult<GetAllDefaultScheduleResponse>> GetAllDefaultSchedule(CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var result = await _defaultScheduleService.GetAllDefaultSchedule(customerId, userId, clt);
 
             return result;
         }

@@ -167,6 +167,21 @@ public class DefaultScheduleService : IDefaultScheduleService
         return result;
     }
 
+    public async Task<GetAllDefaultScheduleResponse> GetAllDefaultSchedule(Guid customerId, Guid userId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new GetAllDefaultScheduleResponse
+        {
+            DefaultSchedules = await _database.RoosterDefaults.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x => x.ToDefaultSchedule(null)).ToListAsync(clt)
+        };
+        result.Success = result.DefaultSchedules is not null && result.DefaultSchedules.Any();
+        result.TotalCount = result.DefaultSchedules?.Count ?? -2;
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
     public async Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUser(PatchDefaultUserSchedule body, Guid customerId, Guid userId)
     {
         var sw = Stopwatch.StartNew();

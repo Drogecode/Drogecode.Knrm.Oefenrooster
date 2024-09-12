@@ -1,0 +1,26 @@
+﻿@page "/configuration/default-schedule"
+@attribute [Authorize(Roles = $"{AccessesNames.AUTH_configure_default_schedule}")]
+<PageTitle>@L["Configure default schedule"]</PageTitle>
+<MudPaper Elevation="0" Class="p-2">
+    @if (_defaults is not null)
+    {
+        if (_defaults.DefaultSchedules?.Any() == true)
+        {
+            <MudDataGrid Items="@_defaults.DefaultSchedules" ReadOnly="true" Filterable="false" SortMode="@SortMode.None">
+                <Columns>
+                    <PropertyColumn Property="x => x.Name" Title="@L["Description"]"/>
+                    <PropertyColumn Property="x => x.ValidFromDefault" Title="@L["ValidFromDefault"]"/>
+                    <PropertyColumn Property="x => x.ValidUntilDefault" Title="@L["ValidUntilDefault"]"/>
+                    <PropertyColumn Property="x => x.Order" Title="@L["Order"]"/>
+                </Columns>
+            </MudDataGrid>
+        }
+    }
+    else
+    {
+        <MudSkeleton/>
+        <MudSkeleton/>
+        <MudSkeleton/>
+        <MudSkeleton/>
+    }
+</MudPaper>
