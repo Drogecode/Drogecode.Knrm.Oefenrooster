@@ -5,6 +5,8 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.Extensions.Localization;
 using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
@@ -14,6 +16,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
     [Inject] private VehicleRepository VehicleRepository { get; set; } = default!;
+    [Inject] private IAuditClient AuditClient { get; set; } = default!;
     [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
@@ -129,7 +132,8 @@ public sealed partial class EditTrainingDialog : IDisposable
         }
         else
         {
-            var dateEnd = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException( "_training.Date", "Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException($"TimeEnd is null")),
+            var dateEnd = DateTime.SpecifyKind(
+                (_training.Date ?? throw new ArgumentNullException("_training.Date", "Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException($"TimeEnd is null")),
                 DateTimeKind.Local).ToUniversalTime();
             if (dateEnd >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
             {
@@ -197,14 +201,27 @@ public sealed partial class EditTrainingDialog : IDisposable
     private async Task OnSubmit()
     {
         await _form.Validate();
-        if (!_form.IsValid == true || _training == null || !_canEdit || Planner is null) return;
+        if (!_form.IsValid == true || _training == null || !_canEdit)
+        {
+            DebugHelper.WriteLine($"Failed to save {!_form.IsValid == true} || {_training == null} || {!_canEdit}");
+            await AuditClient.PostLogAsync(new PostLogRequest { Message = $"Failed to save {!_form.IsValid == true} || {_training == null} || {!_canEdit}" });
+            return;
+        }
+
         if (_training.TimeStart >= _training.TimeEnd) return;
 
         if (_training.IsNew || _training.IsNewFromDefault)
         {
-            UpdatePlannerObject();
+            await UpdatePlannerObject();
+            if (Planner is null)
+            {
+                DebugHelper.WriteLine("Planner should not be null");
+                await AuditClient.PostLogAsync(new PostLogRequest { Message = "Planner should not be null" });
+                return;
+            }
+
             var newId = await ScheduleRepository.AddTraining(Planner, _cls.Token);
-            if (_linkVehicleTraining is not null)
+            if (_linkVehicleTraining is not null && _linkVehicleTraining.Count != 0)
             {
                 foreach (var link in _linkVehicleTraining)
                 {
@@ -224,24 +241,37 @@ public sealed partial class EditTrainingDialog : IDisposable
         }
         else if (Planner is not null)
         {
-            UpdatePlannerObject();
+            await UpdatePlannerObject();
             await ScheduleRepository.PatchTraining(Planner, _cls.Token);
             if (Refresh is not null)
                 await Refresh.CallRequestRefreshAsync();
+        }
+        else
+        {
+            DebugHelper.WriteLine("Failed to save Planner is null");
+            await AuditClient.PostLogAsync(new PostLogRequest { Message = "Failed to save Planner is null" });
+            return;
         }
 
         MudDialog?.Close(DialogResult.Ok(true));
     }
 
-    private void UpdatePlannerObject()
+    private async Task UpdatePlannerObject()
     {
-        if (_training is null) return;
+        if (_training is null)
+        {
+            DebugHelper.WriteLine("_training is null");
+            await AuditClient.PostLogAsync(new PostLogRequest { Message = "_training is null" });
+            return;
+        }
+
         var dateStart = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeStart ?? throw new ArgumentNullException("TimeStart is null")),
             DateTimeKind.Local).ToUniversalTime();
         var dateEnd = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null")),
             DateTimeKind.Local).ToUniversalTime();
         if (Planner is null)
         {
+            DebugHelper.WriteLine("Planner is null, creating new planner object.");
             Planner = new PlannedTraining
             {
                 DefaultId = _training.DefaultId,
@@ -257,6 +287,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         }
         else
         {
+            DebugHelper.WriteLine("Updating planner object.");
             Planner.DefaultId = _training.DefaultId;
             Planner.RoosterTrainingTypeId = _training.RoosterTrainingTypeId;
             Planner.Name = _training.Name;
@@ -322,7 +353,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         if (!_canEdit || Planner is null) return;
         if (_training?.IsNewFromDefault == true)
         {
-            UpdatePlannerObject();
+            await UpdatePlannerObject();
             var newId = await ScheduleRepository.AddTraining(Planner, _cls.Token);
             Planner.TrainingId = newId;
             _training.Id = newId;

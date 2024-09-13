@@ -5,7 +5,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
-public partial class DefaultSchedule : ComponentBase
+public partial class DefaultSchedule : IDisposable
 {
     [Inject] private IStringLocalizer<DefaultSchedule> L { get; set; } = default!;
     [Inject] private DefaultScheduleRepository _defaultScheduleRepository { get; set; } = default!;
@@ -19,5 +19,10 @@ public partial class DefaultSchedule : ComponentBase
             _defaults = await _defaultScheduleRepository.GetAllDefaultSchedule(_cls.Token);
             StateHasChanged();
         }
+    }
+
+    public void Dispose()
+    {
+        _cls.Cancel();
     }
 }
