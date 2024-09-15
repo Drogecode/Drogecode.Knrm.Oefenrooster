@@ -3,7 +3,6 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Microsoft.Extensions.Localization;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components;
 
@@ -33,10 +32,22 @@ public sealed partial class DefaultPanel
         StateHasChanged();
     }
 
-    public void Dispose()
+    private void OpenGroupDialog(DefaultGroup? group, bool isNew)
     {
-        _cls.Cancel();
+        var parameters = new DialogParameters<GroupDialog> {
+            { x=>x.DefaultGroup, group},
+            { x=> x.IsNew, isNew},
+            { x=> x.Refresh, _refreshModel },
+        };
+        DialogOptions options = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.Medium,
+            CloseButton = true,
+            FullWidth = true
+        };
+        _dialogProvider.Show<GroupDialog>(L["Add group"], parameters, options);
     }
+    
     private async Task OnChange(Availability? value, DefaultUserSchedule? old, Guid defaultId, bool isNew)
     {
         if (_updating) return;
@@ -58,5 +69,10 @@ public sealed partial class DefaultPanel
             }
         }
         _updating = false;
+    }
+
+    public void Dispose()
+    {
+        _cls.Cancel();
     }
 }

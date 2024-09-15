@@ -150,4 +150,7 @@
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>
+  <data name="Edit group" xml:space="preserve">
+    <value>Edit group</value>
+  </data>
 </root>

@@ -1,12 +1,10 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-<MudDialog>
+﻿<MudDialog>
     <DialogContent>
         @if (DefaultGroup is not null)
         {
-            <MudAlert Severity="Severity.Warning">@L["Warning changing period is not possible yet"]</MudAlert>
             <MudTextField T="string" Label="@L["Name"]" @bind-Value="DefaultGroup.Name" Placeholder="@L["Give a name"]"></MudTextField>
-            <MudDatePicker Label="@LApp["ValidFrom"]" @bind-Date="DefaultGroup.ValidFrom" Required Disabled="@(DefaultGroup.ValidFrom?.InPast() ?? false)" />
-            <MudDatePicker Label="@LApp["ValidUntil"]" @bind-Date="DefaultGroup.ValidUntil" Required Disabled="@(DefaultGroup.ValidUntil?.InPast() ?? false)" />
+            <MudDatePicker Label="@LApp["ValidFrom"]" @bind-Date="DefaultGroup.ValidFrom" Required Disabled="@(IsNew != true && (DefaultGroup.ValidFrom?.InPast() ?? false))" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))" />
+            <MudDatePicker Label="@LApp["ValidUntil"]" @bind-Date="DefaultGroup.ValidUntil" Required Disabled="@(IsNew != true && (DefaultGroup.ValidUntil?.InPast() ?? false))" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" />
         }
     </DialogContent>
     <DialogActions>

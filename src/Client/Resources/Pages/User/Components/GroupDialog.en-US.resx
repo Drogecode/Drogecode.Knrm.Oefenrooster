@@ -123,7 +123,4 @@
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>
-  <data name="Warning changing period is not possible yet" xml:space="preserve">
-    <value>Warning changing period is not possible (yet)!!</value>
-  </data>
 </root>

@@ -19,6 +19,7 @@ public sealed partial class GroupDialog : IDisposable
 
     private CancellationTokenSource _cls = new();
     void Cancel() => MudDialog.Cancel();
+    private DefaultGroup? _originalDefaultGroup;
     protected override async Task OnParametersSetAsync()
     {
         if (IsNew == true || DefaultGroup is null)
@@ -29,12 +30,13 @@ public sealed partial class GroupDialog : IDisposable
             DefaultGroup.ValidFrom = null;
         if (DefaultGroup.ValidFrom == DateTime.MaxValue)
             DefaultGroup.ValidFrom = null;
+        _originalDefaultGroup = (DefaultGroup?)DefaultGroup?.Clone();
     }
     private async Task Submit()
     {
         if (DefaultGroup is null)
             throw new ArgumentNullException("DefaultGroup");
-        if (DefaultGroup.Name is null || DefaultGroup.ValidFrom is null || DefaultGroup.ValidUntil is null) return; 
+        if (string.IsNullOrWhiteSpace( DefaultGroup.Name) || DefaultGroup.ValidFrom is null || DefaultGroup.ValidUntil is null) return; 
         var body = new DefaultGroup
         {
             Name = DefaultGroup.Name,
@@ -46,6 +48,22 @@ public sealed partial class GroupDialog : IDisposable
         if (Refresh is not null)
             await Refresh.CallRequestRefreshAsync();
         MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    public string? ValidateStartDate(DateTime? newValue)
+    {
+        if (IsNew != true && _originalDefaultGroup?.ValidFrom.Equals(DefaultGroup?.ValidFrom) == true) return null;
+        if (newValue == null) return L["No value for start date"];
+        if (newValue.Value.CompareTo(DateTime.UtcNow.Date) < 0) return L["Should not be in the past"];
+        return null;
+    }
+    public string? ValidateTillDate(DateTime? newValue)
+    {
+        if (IsNew != true && _originalDefaultGroup?.ValidUntil.Equals(DefaultGroup?.ValidUntil) == true) return null;
+        if (newValue == null || DefaultGroup is null) return L["No value for till date"];
+        if (newValue.Value.CompareTo(DateTime.UtcNow.Date) < 0) return L["Should not be in the past"];
+        if (newValue.Value.CompareTo(DefaultGroup.ValidFrom) < 0) return L["Should not be before start date"];
+        return null;
     }
 
     public void Dispose()

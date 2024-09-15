@@ -2,10 +2,17 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 @if (_defaultSchedules is not null)
 {
+    @if (!Group.IsDefault)
+    {
+        <MudButtonGroup>
+            <MudButton StartIcon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenGroupDialog(Group, false);}">@L["Edit group"]</MudButton>
+        </MudButtonGroup>
+    }
+
     <MudDataGrid Items="@_defaultSchedules" Striped="true" Hover="true">
         <Columns>
             <HierarchyColumn T="DefaultSchedule"/>
-            <PropertyColumn Property="x => x.Name" Title="@L["Name"]" CellClassFunc="@(x=>$"trainingType-{x.RoosterTrainingTypeId}")" />
+            <PropertyColumn Property="x => x.Name" Title="@L["Name"]" CellClassFunc="@(x => $"trainingType-{x.RoosterTrainingTypeId}")"/>
             <PropertyColumn Property="x => x.WeekDay" Title="@L["Weekday"]">
                 <CellTemplate>
                     @LApp[context.Item.WeekDay.ToString() ?? "None"]
