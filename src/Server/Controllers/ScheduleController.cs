@@ -359,7 +359,7 @@ public class ScheduleController : ControllerBase
             var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var fromDate = _dateTimeService.Today().ToUniversalTime();
-            var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, take, skip, clt);
+            var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, take, skip, OrderAscDesc.Asc, clt);
             if (callHub)
             {
                 _logger.LogTrace("Calling hub futureTrainings");
@@ -388,7 +388,7 @@ public class ScheduleController : ControllerBase
         try
         {
             var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var result = await _scheduleService.GetScheduledTrainingsForUser(id, customerId, null, take, skip, clt);
+            var result = await _scheduleService.GetScheduledTrainingsForUser(id, customerId, null, take, skip, OrderAscDesc.Desc, clt);
             return result;
         }
         catch (OperationCanceledException)

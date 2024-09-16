@@ -13,7 +13,7 @@ public interface IScheduleService
     Task<PatchAssignedUserResponse> PatchAssignedUserAsync(Guid userId, Guid customerId, PatchAssignedUserRequest body, CancellationToken clt);
     Task<PatchTrainingResponse> PatchTraining(Guid customerId, PlannedTraining training, bool inRoleEditPast, CancellationToken clt);
     Task<AddTrainingResponse> AddTrainingAsync(Guid customerId, PlannedTraining training, Guid trainingId, CancellationToken clt);
-    Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime? fromDate, int take, int skip, CancellationToken clt);
+    Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime? fromDate, int take, int skip, OrderAscDesc order, CancellationToken clt);
     Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUser(Guid userId, Guid customerId, DateTime fromDate, CancellationToken clt);
     Task<PutAssignedUserResponse> PutAssignedUserAsync(Guid userId, Guid customerId, OtherScheduleUserRequest body, CancellationToken clt);
     Task<bool> PatchEventIdForUserAvailible(Guid userId, Guid customerId, Guid? availableId, string? calendarEventId, CancellationToken clt);

@@ -897,7 +897,7 @@ public class ScheduleService : IScheduleService
         return result;
     }
 
-    public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime? fromDate, int take, int skip, CancellationToken clt)
+    public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime? fromDate, int take, int skip, OrderAscDesc order, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new GetScheduledTrainingsForUserResponse();
@@ -912,30 +912,35 @@ public class ScheduleService : IScheduleService
             .ThenInclude(i => i.LinkVehicleTrainings);
         var users = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
         result.TotalCount = scheduled.Count();
-        var scheduls = await scheduled.OrderByDescending(x => x.Date).Skip(skip).Take(take).ToListAsync(clt);
-        foreach (var schedul in scheduls)
+        var schedules = order switch
         {
-            if (schedul.Training == null)
+            OrderAscDesc.Asc =>  scheduled.OrderBy(x => x.Date),
+            OrderAscDesc.Desc => scheduled.OrderByDescending(x => x.Date),
+            _ => throw new UnreachableException($"OrderAscDesc has unknown value {order}")
+        };
+        foreach (var schedule in await schedules.Skip(skip).Take(take).ToListAsync(clt))
+        {
+            if (schedule?.Training == null)
             {
-                _logger.LogWarning("No training found for schedule '{ScheduleId}'", schedul.Id);
+                _logger.LogWarning("No training found for schedule '{ScheduleId}'", schedule?.Id);
                 continue;
             }
 
-            var defaultVehicle = await GetDefaultVehicleForTraining(customerId, schedul.Training, clt);
+            var defaultVehicle = await GetDefaultVehicleForTraining(customerId, schedule.Training, clt);
             var plan = new PlannedTraining
             {
-                TrainingId = schedul.TrainingId,
-                DefaultId = schedul.Training.RoosterDefaultId,
-                Name = schedul.Training.Name,
-                DateStart = schedul.Training.DateStart,
-                DateEnd = schedul.Training.DateEnd,
-                RoosterTrainingTypeId = schedul.Training.RoosterTrainingTypeId,
-                PlannedFunctionId = schedul.UserFunctionId ?? users?.FirstOrDefault(x => x.Id == userId)?.UserFunctionId,
-                IsPinned = schedul.Training.IsPinned,
-                CountToTrainingTarget = schedul.Training.CountToTrainingTarget,
+                TrainingId = schedule.TrainingId,
+                DefaultId = schedule.Training.RoosterDefaultId,
+                Name = schedule.Training.Name,
+                DateStart = schedule.Training.DateStart,
+                DateEnd = schedule.Training.DateEnd,
+                RoosterTrainingTypeId = schedule.Training.RoosterTrainingTypeId,
+                PlannedFunctionId = schedule.UserFunctionId ?? users?.FirstOrDefault(x => x.Id == userId)?.UserFunctionId,
+                IsPinned = schedule.Training.IsPinned,
+                CountToTrainingTarget = schedule.Training.CountToTrainingTarget,
                 IsCreated = true,
-                ShowTime = schedul.Training.ShowTime ?? true,
-                PlanUsers = schedul.Training.RoosterAvailables!.Select(a =>
+                ShowTime = schedule.Training.ShowTime ?? true,
+                PlanUsers = schedule.Training.RoosterAvailables!.Select(a =>
                     new PlanUser
                     {
                         UserId = a.UserId,
@@ -956,27 +961,27 @@ public class ScheduleService : IScheduleService
                 GetAvailability(defaultAveUser, userHolidays, plan.DateStart, plan.DateEnd, plan.DefaultId, null, ref availabilty, ref setBy);
                 user.Availability = availabilty;
                 user.SetBy = setBy ?? user.SetBy;
-                if (user.VehicleId is null || (user.VehicleId != defaultVehicle && !(schedul.Training.LinkVehicleTrainings?.Any(x => x.VehicleId == user.VehicleId) ?? false)))
+                if (user.VehicleId is null || (user.VehicleId != defaultVehicle && !(schedule.Training.LinkVehicleTrainings?.Any(x => x.VehicleId == user.VehicleId) ?? false)))
                     user.VehicleId = defaultVehicle;
             }
 
             result.Trainings.Add(plan);
-            var userMonthInfo = result.UserMonthInfos.FirstOrDefault(x => x.Year == schedul.Training.DateStart.Year && x.Month == schedul.Training.DateStart.Month);
+            var userMonthInfo = result.UserMonthInfos.FirstOrDefault(x => x.Year == schedule.Training.DateStart.Year && x.Month == schedule.Training.DateStart.Month);
             if (userMonthInfo is null)
             {
                 userMonthInfo = new UserMonthInfo
                 {
-                    Year = schedul.Training.DateStart.Year,
-                    Month = schedul.Training.DateStart.Month,
+                    Year = schedule.Training.DateStart.Year,
+                    Month = schedule.Training.DateStart.Month,
                     All = 1,
-                    Valid = schedul.Training.CountToTrainingTarget ? 1 : 0,
+                    Valid = schedule.Training.CountToTrainingTarget ? 1 : 0,
                 };
                 result.UserMonthInfos.Add(userMonthInfo);
             }
             else
             {
                 userMonthInfo.All += 1;
-                if (schedul.Training.CountToTrainingTarget)
+                if (schedule.Training.CountToTrainingTarget)
                     userMonthInfo.Valid += 1;
             }
         }
