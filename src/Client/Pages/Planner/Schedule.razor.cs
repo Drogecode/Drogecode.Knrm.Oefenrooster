@@ -13,10 +13,10 @@ public sealed partial class Schedule : IDisposable
 {
     [Inject] private IStringLocalizer<Schedule> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
-    [Inject] private UserRepository _userRepository { get; set; } = default!;
-    [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
-    [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
+    [Inject] private TrainingTypesRepository TrainingTypesRepository { get; set; } = default!;
+    [Inject] private UserRepository UserRepository { get; set; } = default!;
+    [Inject] private FunctionRepository FunctionRepository { get; set; } = default!;
+    [Inject] private VehicleRepository VehicleRepository { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
@@ -37,10 +37,10 @@ public sealed partial class Schedule : IDisposable
             _view = ScheduleView.Table;
         else
             _view = ScheduleView.Calendar;
-        _users = await _userRepository.GetAllUsersAsync(false, false, false, _cls.Token);
-        _functions = await _functionRepository.GetAllFunctionsAsync(false, _cls.Token);
-        _vehicles = await _vehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
-        _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
+        _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
+        _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
+        _vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
+        _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
         if (AuthenticationState is not null)
         {
             var authState = await AuthenticationState;

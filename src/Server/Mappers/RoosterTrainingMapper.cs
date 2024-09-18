@@ -21,7 +21,7 @@ public static class RoosterTrainingMapper
         };
         if (roosterTraining?.RoosterAvailables is not null && userId is not null)
         {
-            var userAva = roosterTraining.RoosterAvailables.FirstOrDefault(x=> x.UserId == userId);
+            var userAva = roosterTraining.RoosterAvailables.FirstOrDefault(x => x.UserId == userId);
             if (userAva is not null)
             {
                 training.Assigned = userAva.Assigned;
@@ -29,8 +29,10 @@ public static class RoosterTrainingMapper
                 training.SetBy = userAva.SetBy;
             }
         }
+
         return training;
     }
+
     public static PlannedTraining ToPlannedTraining(this DbRoosterTraining roosterTraining)
     {
         var training = new PlannedTraining
@@ -49,7 +51,7 @@ public static class RoosterTrainingMapper
         };
         if (roosterTraining?.RoosterAvailables is not null)
         {
-            foreach(var ava in roosterTraining.RoosterAvailables)
+            foreach (var ava in roosterTraining.RoosterAvailables)
             {
                 training.PlanUsers.Add(new PlanUser
                 {
@@ -60,12 +62,13 @@ public static class RoosterTrainingMapper
                     Availability = ava.Available,
                     SetBy = ava.SetBy,
                     Name = ava.User?.Name ?? "Some dude",
-                    VehicleId = roosterTraining.LinkVehicleTrainings?.Where(x=>x.IsSelected).Any(x=>x.VehicleId == ava.VehicleId) ?? false ? ava.VehicleId : null,
+                    VehicleId = roosterTraining.LinkVehicleTrainings?.Where(x => x.IsSelected).Any(x => x.VehicleId == ava.VehicleId) ?? false ? ava.VehicleId : null,
                     CalendarEventId = ava.CalendarEventId,
-                    Buddy = ava.User?.LinkedUserAsA?.FirstOrDefault(x=>x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name
+                    Buddy = ava.User?.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name
                 });
             }
         }
+
         return training;
     }
 }

@@ -60,6 +60,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_scheduler_other_user:
                         drogeUserRole.AUTH_scheduler_other_user = true;
                         break;
+                    case AccessesNames.AUTH_scheduler_description_edit:
+                        drogeUserRole.AUTH_scheduler_description_edit = true;
+                        break;
+                    case AccessesNames.AUTH_scheduler_description_read:
+                        drogeUserRole.AUTH_scheduler_description_read = true;
+                        break;
                     case AccessesNames.AUTH_users_details:
                         drogeUserRole.AUTH_users_details = true;
                         break;
@@ -124,6 +130,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_scheduler_monthitem).Append(',');
             if (userRole.AUTH_scheduler_other_user)
                 sb.Append(AccessesNames.AUTH_scheduler_other_user).Append(',');
+            if (userRole.AUTH_scheduler_description_edit)
+                sb.Append(AccessesNames.AUTH_scheduler_description_edit).Append(',');
+            if (userRole.AUTH_scheduler_description_read)
+                sb.Append(AccessesNames.AUTH_scheduler_description_read).Append(',');
             if (userRole.AUTH_users_details)
                 sb.Append(AccessesNames.AUTH_users_details).Append(',');
             if (userRole.AUTH_users_counter)

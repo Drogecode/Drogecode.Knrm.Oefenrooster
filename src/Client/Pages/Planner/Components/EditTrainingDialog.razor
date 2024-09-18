@@ -33,12 +33,10 @@
         {
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors" Disabled="@(!_canEdit)">
                 <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" Counter="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" Immediate="true"/>
-                @if (_isTaco)
-                {
-                    @* Comming soon! But do not enable configuration untill it is visible on other places *@
+                <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_description_edit">
                     <MudTextField T="string" Label="@L["Description - Markdown"]" @bind-Value="_training.Description" Lines="5" Counter="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION" Immediate="true"/>
                     <MudMarkdown Value="@_training.Description" />
-                }
+                </AuthorizeView>
                 <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Validation="@(new Func<DateTime?, string?>(DateValidation))" Required Disabled="!_training.IsNew"/>
 
                 @if (!_training.ShowTime || _startedWithShowNoTime)

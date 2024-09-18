@@ -3,7 +3,7 @@
     @if (_renderChart && _data is not null && _data.Any())
     {
         <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
-            @_elapsedMilliseconds
+            <MudChip T="string">@_elapsedMilliseconds</MudChip>
         </AuthorizeView>
         <ApexChart @ref=_chart TItem="StatisticsTab.ChartMonth" Title="@L["actions"]" Options="_options">
 
@@ -14,8 +14,7 @@
                                  Name="@data.Name"
                                  SeriesType="SeriesType.Line"
                                  XValue="e => e.Month"
-                                 YValue="e => e.Count"
-                />
+                                 YValue="e => e.Count"/>
             }
         </ApexChart>
     }

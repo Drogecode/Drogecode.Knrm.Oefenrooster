@@ -18,6 +18,7 @@ public sealed partial class StatisticsTab
     private string[]? _xAxisLabels;
     private bool _allYears;
     private bool _total;
+    private bool _showHistoricalIncorrectWarning;
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -53,11 +54,24 @@ public sealed partial class StatisticsTab
 
     public List<ChartYear> DrawLineChartAll(AnalyzeYearChartAllResponse? analyzeData, bool allYears)
     {
+        if (_showHistoricalIncorrectWarning)
+        {
+            _showHistoricalIncorrectWarning = false;
+            StateHasChanged();
+        }
+
         var data = new List<ChartYear>();
         if (analyzeData is null) return data;
         var yearCount = 0;
         foreach (var year in analyzeData.Years.OrderByDescending(x => x.Year))
         {
+            if (!allYears && yearCount >= 5)
+                break;
+            if (year.Year <= 2021)
+            {
+                _showHistoricalIncorrectWarning = true;
+                StateHasChanged();
+            }
             var month = new List<ChartMonth>();
             var count = 0;
             for (var i = 0; i < 12; i++)
@@ -81,9 +95,6 @@ public sealed partial class StatisticsTab
                     });
                 }
             }
-
-            if (!allYears && yearCount >= 5)
-                break;
             data.Add(new ChartYear()
             {
                 Name = year.Year.ToString(),
@@ -91,7 +102,6 @@ public sealed partial class StatisticsTab
             });
             yearCount++;
         }
-
         return data;
     }
 

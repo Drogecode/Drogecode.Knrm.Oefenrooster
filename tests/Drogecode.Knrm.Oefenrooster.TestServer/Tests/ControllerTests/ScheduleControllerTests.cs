@@ -599,6 +599,29 @@ public class ScheduleControllerTests : BaseTest
         plannedTraining.PlanUsers.Should().Contain(x => x.VehicleId == defVehAdded.Value);
     }
 
+    [Fact]
+    public async Task GetDescriptionByTrainingIdNoDescriptionTest()
+    {
+        var dateStart = DateTime.Today.AddDays(1).AddHours(21);
+        var dateEnd = DateTime.Today.AddDays(1).AddHours(15);
+        var trainingId = await AddTraining("TrainingsForAll", false, dateStart, dateEnd);
+        var description = await ScheduleController.GetDescriptionByTrainingId(trainingId);
+        Assert.NotNull(description?.Value);
+        Assert.Null(description.Value.Description);
+    }
+
+    [Fact]
+    public async Task GetDescriptionByTrainingIdWithDescriptionTest()
+    {
+        const string DESCRIPTION = "description";
+        var dateStart = DateTime.Today.AddDays(1).AddHours(21);
+        var dateEnd = DateTime.Today.AddDays(1).AddHours(15);
+        var trainingId = await AddTraining("TrainingsForAll", false, dateStart, dateEnd, false, DESCRIPTION);
+        var description = await ScheduleController.GetDescriptionByTrainingId(trainingId);
+        Assert.NotNull(description.Value?.Description);
+        description.Value.Description.Should().Be(DESCRIPTION);
+    }
+
     private async Task<Guid> PrepareAssignedTraining(DateTime dateStart, DateTime dateEnd, bool defaultSelected)
     {
         MockAuthenticatedUser(ScheduleController, DefaultUserId, DefaultCustomerId);

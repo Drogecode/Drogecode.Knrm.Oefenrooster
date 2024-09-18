@@ -3,7 +3,7 @@
 @if (_reportActions?.Actions is not null)
 {
     <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
-        @_reportActions.ElapsedMilliseconds
+        <MudChip T="string">@_reportActions.ElapsedMilliseconds</MudChip>
     </AuthorizeView>
     <MudText Typo="Typo.h5">@L["Actions from SharePoint"]</MudText>
     <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection"/>

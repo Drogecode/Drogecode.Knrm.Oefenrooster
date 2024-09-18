@@ -26,6 +26,7 @@ public sealed partial class DefaultPanel
             StateHasChanged();
         }
     }
+    
     private async Task RefreshMeAsync()
     {
         _defaultSchedules = (await _defaultScheduleRepository.GetAllByGroupId(Group.Id, _cls.Token))?.OrderBy(x => x.Order).ThenBy(x => x.TimeStart).ToList();

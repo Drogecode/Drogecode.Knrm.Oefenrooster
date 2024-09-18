@@ -73,11 +73,11 @@ public sealed partial class ScheduleCard : IDisposable
     {
         var parameters = new DialogParameters<EditTrainingDialog>
         {
-            { x=>x.Planner, Planner },
-            { x=>x.Refresh, _refreshModel },
-            { x=>x.Vehicles, Vehicles },
-            { x=>x.Global, Global },
-            { x=>x.TrainingTypes, TrainingTypes }
+            { x => x.Planner, Planner },
+            { x => x.Refresh, _refreshModel },
+            { x => x.Vehicles, Vehicles },
+            { x => x.Global, Global },
+            { x => x.TrainingTypes, TrainingTypes }
         };
         var options = new DialogOptions()
         {
@@ -92,6 +92,7 @@ public sealed partial class ScheduleCard : IDisposable
     {
         var parameters = new DialogParameters<TrainingMessageDialog>
         {
+            { x => x.Planner, Planner },
         };
         var options = new DialogOptions()
         {
@@ -106,8 +107,8 @@ public sealed partial class ScheduleCard : IDisposable
     {
         var parameters = new DialogParameters<TrainingHistoryDialog>
         {
-            { x=>x.TrainingId, Planner.TrainingId},
-            { x=>x.Users, Users},
+            { x => x.TrainingId, Planner.TrainingId },
+            { x => x.Users, Users },
         };
         var options = new DialogOptions()
         {

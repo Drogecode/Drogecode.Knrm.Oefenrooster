@@ -6,3 +6,5 @@ global using Microsoft.AspNetCore.Components;
 global using Microsoft.AspNetCore.Components.Authorization;
 global using MudBlazor;
 global using System;
+global using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+global using Microsoft.Extensions.Localization;

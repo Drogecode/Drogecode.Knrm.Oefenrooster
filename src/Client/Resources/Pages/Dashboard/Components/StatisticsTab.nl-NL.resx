@@ -81,4 +81,7 @@
     <data name="Total" xml:space="preserve">
         <value>Totaal</value>
     </data>
+    <data name="Data from 2021 and before could be incorrect or incomplete" xml:space="preserve">
+        <value>Data van 2021 en eerder kan incorrect of incompleet zijn</value>
+    </data>
 </root>

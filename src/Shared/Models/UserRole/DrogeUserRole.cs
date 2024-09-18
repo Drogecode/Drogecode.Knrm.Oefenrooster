@@ -27,6 +27,8 @@ public class DrogeUserRole
     public bool AUTH_scheduler_dayitem { get; set; }
     public bool AUTH_scheduler_monthitem { get; set; }
     public bool AUTH_scheduler_other_user { get; set; }
+    public bool AUTH_scheduler_description_edit { get; set; }
+    public bool AUTH_scheduler_description_read { get; set; }
 
     // Group: GROUP_USER
     public bool AUTH_users_details { get; set; }

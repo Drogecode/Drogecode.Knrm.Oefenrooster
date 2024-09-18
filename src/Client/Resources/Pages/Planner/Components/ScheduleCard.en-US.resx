@@ -150,4 +150,10 @@
   <data name="till" xml:space="preserve">
     <value>till</value>
   </data>
+  <data name="Read more" xml:space="preserve">
+    <value>Read more</value>
+  </data>
+  <data name="Training message" xml:space="preserve">
+    <value>Description</value>
+  </data>
 </root>

@@ -290,7 +290,7 @@ public class ScheduleService : IScheduleService
             DateEnd = training.DateEnd,
             CountToTrainingTarget = training.CountToTrainingTarget,
             IsPinned = training.IsPinned,
-            ShowTime = training.ShowTime,
+            ShowTime = training.ShowTime
         }, clt);
         if (training.DefaultId is not null && training.DefaultId != Guid.Empty)
         {
@@ -382,7 +382,7 @@ public class ScheduleService : IScheduleService
         var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
         var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
-            .Include(x => x.LinkVehicleTrainings!.Where(y=>y.IsSelected))
+            .Include(x => x.LinkVehicleTrainings!.Where(y => y.IsSelected))
             .OrderBy(x => x.DateStart)
             .AsSingleQuery().ToList();
         var availables = _database.RoosterAvailables
@@ -419,6 +419,7 @@ public class ScheduleService : IScheduleService
                             CountToTrainingTarget = training.CountToTrainingTarget,
                             IsPinned = training.IsPinned,
                             ShowTime = training.ShowTime ?? true,
+                            HasDescription = !string.IsNullOrWhiteSpace(training.Description),
                         };
                         foreach (var user in users)
                         {
@@ -592,8 +593,25 @@ public class ScheduleService : IScheduleService
             .FirstOrDefaultAsync(x => x.Id == trainingId && x.DeletedOn == null, clt);
         if (dbTraining is not null)
         {
-            var training = dbTraining.ToTraining(userId);
-            result.Training = training;
+            result.Training = dbTraining.ToTraining(userId);
+        }
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<GetDescriptionByTrainingIdResponse> GetDescriptionByTrainingId(Guid userId, Guid customerId, Guid trainingId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new GetDescriptionByTrainingIdResponse();
+        var description = await _database.RoosterTrainings.Where(x => x.Id == trainingId && x.DeletedOn == null)
+            .Select(x => x.Description)
+            .FirstOrDefaultAsync(clt);
+        if (description is not null)
+        {
+            result.Description = description;
+            result.Success = true;
         }
 
         sw.Stop();
@@ -897,7 +915,8 @@ public class ScheduleService : IScheduleService
         return result;
     }
 
-    public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime? fromDate, int take, int skip, OrderAscDesc order, CancellationToken clt)
+    public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime? fromDate, int take, int skip, OrderAscDesc order,
+        CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new GetScheduledTrainingsForUserResponse();
@@ -914,7 +933,7 @@ public class ScheduleService : IScheduleService
         result.TotalCount = scheduled.Count();
         var schedules = order switch
         {
-            OrderAscDesc.Asc =>  scheduled.OrderBy(x => x.Date),
+            OrderAscDesc.Asc => scheduled.OrderBy(x => x.Date),
             OrderAscDesc.Desc => scheduled.OrderByDescending(x => x.Date),
             _ => throw new UnreachableException($"OrderAscDesc has unknown value {order}")
         };
@@ -940,6 +959,7 @@ public class ScheduleService : IScheduleService
                 CountToTrainingTarget = schedule.Training.CountToTrainingTarget,
                 IsCreated = true,
                 ShowTime = schedule.Training.ShowTime ?? true,
+                HasDescription = !string.IsNullOrWhiteSpace(schedule.Training.Description),
                 PlanUsers = schedule.Training.RoosterAvailables!.Select(a =>
                     new PlanUser
                     {

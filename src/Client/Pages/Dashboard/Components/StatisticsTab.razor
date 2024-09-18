@@ -5,6 +5,10 @@
             <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsers" SelectionChanged="OnSelectionChanged" MultiSelection="true"/>
             <MudSwitch Label="@L["Analyze all years"]" Color="Color.Primary" T="bool" Value="@_allYears" ValueChanged="@(async (isChecked) => await AllYearsChanged(isChecked))"/>
             <MudSwitch Label="@L["Total"]" Color="Color.Primary" T="bool" Value="@_total" ValueChanged="@(async (isChecked) => await TotalChanged(isChecked))"/>
+            @if (_showHistoricalIncorrectWarning)
+            {
+                <MudAlert Severity="Severity.Info">@L["Data from 2021 and before could be incorrect or incomplete"]</MudAlert>
+            }
             <MudPaper Elevation="0" Class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
                 <div class="flex-1">
                     <StatisticsActionsAll @ref="_statisticsActionsAll" StatisticsTab="this" SelectedUsers="_selectedUsers" AllYears="@_allYears"/>

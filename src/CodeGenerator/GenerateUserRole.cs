@@ -182,7 +182,7 @@ public static class GenerateUserRole
             else if (!group.Equals("GROUP_NO_READ"))
             {
                 sb.AppendLine(
-                    $"        <MudSwitch Label=\"@L[AccessesNames.{accessName}]\" Color=\"Color.Primary\" T=\"bool\" Value=\"@_userRole.Role.{accessName}\" ValueChanged=\"@(isChecked => {{ _userRole.Role.{accessName} = isChecked; _saved = null; }})\"/>");
+                    $"        <MudSwitch Label=\"@L[\"{fieldValue}\"]\" Color=\"Color.Primary\" T=\"bool\" Value=\"@_userRole.Role.{accessName}\" ValueChanged=\"@(isChecked => {{ _userRole.Role.{accessName} = isChecked; _saved = null; }})\"/>");
             }
         }
 

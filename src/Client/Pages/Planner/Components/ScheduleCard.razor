@@ -9,10 +9,13 @@
         <CalendarBaseCard ReplaceEmptyName="@ReplaceEmptyName" Width="@Width" MaxWidth="@MaxWidth" MinWidth="@MinWidth" Training="@Planner" OnClickCallback="@OpenScheduleDialog" OnClickSettings="@OpenConfigDialog" OnClickHistory="_showHistory ? OpenHistoryDialog : null!" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" @bind-ShowPastBody="@_showPastBody" MoreMessage="@L["Show attendees"]">
 
             <ChipContent>
-                <AuthorizeView Roles="@AccessesNames.AUTH_Hide">
-                    <div @onclick:stopPropagation="true" @onclick:preventDefault="true">
-                        <MudChip T="string" OnClick="@OpenMessageDialog" Icon="@Icons.Material.Filled.Person" Color="Color.Primary">Account</MudChip>
-                    </div>
+                <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_description_read">
+                    @if (Planner.HasDescription)
+                    {
+                        <div @onclick:stopPropagation="true" @onclick:preventDefault="true">
+                            <MudChip T="string" OnClick="@OpenMessageDialog" Icon="@Icons.Material.Filled.Description" Color="Color.Primary">@L["Read more"]</MudChip>
+                        </div>
+                    }
                 </AuthorizeView>
             </ChipContent>
             <ChildContent>

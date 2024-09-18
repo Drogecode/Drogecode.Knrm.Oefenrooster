@@ -109,6 +109,25 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = AccessesNames.AUTH_scheduler_description_read)]
+    [Route("{id:guid}/description")]
+    public async Task<ActionResult<GetDescriptionByTrainingIdResponse>> GetDescriptionByTrainingId(Guid id, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            GetDescriptionByTrainingIdResponse result = await _scheduleService.GetDescriptionByTrainingId(userId, customerId, id, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetDescriptionByTrainingId");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
     [Route("planned/{id:guid}")]
     public async Task<ActionResult<GetPlannedTrainingResponse>> GetPlannedTrainingById(Guid id, CancellationToken clt = default)
     {
