@@ -47,7 +47,7 @@ public sealed partial class Index : IDisposable
     private string? _name;
     private Guid _userId;
     private bool _loading = true;
-    private const int TAKE = 30;
+    private const int TAKE = 15;
     private int _total = TAKE;
     private int _skip = 0;
 

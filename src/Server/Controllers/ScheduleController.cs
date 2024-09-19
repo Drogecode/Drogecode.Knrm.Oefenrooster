@@ -470,6 +470,8 @@ public class ScheduleController : ControllerBase
                 return Unauthorized();
             foreach (var user in training.Training.PlanUsers)
             {
+                if (!user.Assigned)
+                    continue;
                 user.Assigned = false;
                 var body = new PatchAssignedUserRequest
                 {
@@ -482,6 +484,7 @@ public class ScheduleController : ControllerBase
             }
 
             var result = await _scheduleService.DeleteTraining(userId, customerId, id, clt);
+            await _auditService.Log(userId, AuditType.DeleteTraining, customerId, null, id);
             return result;
         }
         catch (Exception ex)

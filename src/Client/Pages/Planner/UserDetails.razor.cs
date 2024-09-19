@@ -29,7 +29,7 @@ public sealed partial class UserDetails : IDisposable
     private List<PlannerTrainingType>? _trainingTypes;
     private IEnumerable<DrogeUser> _selectedUsersAction;
     private bool _updatingSelection = false;
-    private const int TAKE = 30;
+    private const int TAKE = 15;
     private int _total = TAKE;
     private int _skip = 0;
 

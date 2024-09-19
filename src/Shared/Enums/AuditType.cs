@@ -12,4 +12,5 @@ public enum AuditType
     CatchAll = 7,
     PreComRaw = 8,
     UpdateLinkUserUserForUser = 9,
+    DeleteTraining = 10,
 }

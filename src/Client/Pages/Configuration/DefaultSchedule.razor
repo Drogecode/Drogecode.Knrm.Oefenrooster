@@ -5,15 +5,33 @@
     @if (_defaults is not null)
     {
         if (_defaults.DefaultSchedules?.Any() == true)
-        {
-            <MudDataGrid Items="@_defaults.DefaultSchedules" ReadOnly="true" Filterable="false" SortMode="@SortMode.None">
-                <Columns>
-                    <PropertyColumn Property="x => x.Name" Title="@L["Description"]"/>
-                    <PropertyColumn Property="x => x.ValidFromDefault" Title="@L["ValidFromDefault"]"/>
-                    <PropertyColumn Property="x => x.ValidUntilDefault" Title="@L["ValidUntilDefault"]"/>
-                    <PropertyColumn Property="x => x.Order" Title="@L["Order"]"/>
-                </Columns>
-            </MudDataGrid>
+        {<MudDataGrid Items="@_defaults.DefaultSchedules" Striped="true" Hover="true">
+        <Columns>
+            <HierarchyColumn T="DefaultSchedule"/>
+            <PropertyColumn Property="x => x.Name" Title="@L["Name"]" CellClassFunc="@(x => $"trainingType-{x.RoosterTrainingTypeId}")"/>
+            <PropertyColumn Property="x => x.WeekDay" Title="@L["Weekday"]">
+                <CellTemplate>
+                    @LApp[context.Item.WeekDay.ToString() ?? "None"]
+                </CellTemplate>
+            </PropertyColumn>
+            <TemplateColumn Title="@L["TimeStart"]">
+                <CellTemplate>
+                    @if (context.Item.ShowTime)
+                    {
+                        <p>@context.Item.TimeStart</p>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="@L["TimeEnd"]">
+                <CellTemplate>
+                    @if (context.Item.ShowTime)
+                    {
+                        <p>@context.Item.TimeEnd</p>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
         }
     }
     else
