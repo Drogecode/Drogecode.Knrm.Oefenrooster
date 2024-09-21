@@ -71,7 +71,7 @@ public class UserController : ControllerBase
             var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
             var userEmail = User?.FindFirstValue(ClaimTypes.Name) ?? throw new Exception("No userEmail found");
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var result = await _userService.GetOrSetUserFromDb(userId, userName, userEmail, customerId, true);
+            var result = await _userService.GetOrSetUserById(userId, userName, userEmail, customerId, true);
 
             return new GetDrogeUserResponse { DrogeUser = result };
         }
@@ -88,7 +88,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            var result = await _userService.GetUserFromDb(id);
+            var result = await _userService.GetUserById(id, clt);
             return new GetByIdResponse { User = result, Success = true };
         }
         catch (Exception ex)
@@ -190,7 +190,7 @@ public class UserController : ControllerBase
                             var index = existingUsers.FindIndex(x => x.Id == id);
                             if (index != -1)
                                 existingUsers.RemoveAt(index);
-                            var newUserResponse = await _userService.GetOrSetUserFromDb(id, user.DisplayName, user.Mail ?? "not set", customerId, false);
+                            var newUserResponse = await _userService.GetOrSetUserById(id, user.DisplayName, user.Mail ?? "not set", customerId, false);
                             if (newUserResponse is null)
                                 continue;
                             newUserResponse.SyncedFromSharePoint = true;

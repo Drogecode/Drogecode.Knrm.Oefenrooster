@@ -1,16 +1,37 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class FunctionService : IFunctionService
 {
+    private const string FUNC_BY_ID = "func_{0}";
+
     private readonly ILogger<FunctionService> _logger;
     private readonly Database.DataContext _database;
-    public FunctionService(ILogger<FunctionService> logger, Database.DataContext database)
+    private readonly IMemoryCache _memoryCache;
+
+    public FunctionService(ILogger<FunctionService> logger, Database.DataContext database, IMemoryCache memoryCache)
     {
         _logger = logger;
         _database = database;
+        _memoryCache = memoryCache;
+    }
+
+    public async Task<DrogeFunction?> GetById(Guid customerId, Guid functionId, CancellationToken clt)
+    {
+        var memoryKey = string.Format(FUNC_BY_ID, functionId);
+        var function = _memoryCache.Get<DrogeFunction>(memoryKey);
+        if (function is not null)
+            return function;
+        function = await _database.UserFunctions.Where(x => x.CustomerId == customerId && x.Id == functionId).Select(x => x.ToDrogeFunction()).FirstOrDefaultAsync(clt);
+        var cacheOptions = new MemoryCacheEntryOptions();
+        cacheOptions.SetSlidingExpiration(TimeSpan.FromSeconds(10));
+        cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
+        _memoryCache.Set(memoryKey, function, cacheOptions);
+        return function;
     }
 
     public async Task<AddFunctionResponse> AddFunction(DrogeFunction function, Guid customerId, CancellationToken clt)
@@ -25,6 +46,7 @@ public class FunctionService : IFunctionService
             if (dbFunction.Order > order)
                 order = dbFunction.Order;
         }
+
         order += 10;
         _database.UserFunctions.Add(new Database.Models.DbUserFunctions
         {
@@ -67,6 +89,7 @@ public class FunctionService : IFunctionService
                 Active = function.IsActive,
             });
         }
+
         result.Success = true;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;

@@ -43,18 +43,18 @@ public class UserService : IUserService
         return result;
     }
 
-    public async Task<DrogeUser?> GetUserFromDb(Guid userId)
+    public async Task<DrogeUser?> GetUserById(Guid userId, CancellationToken clt)
     {
         var userObj = await _database.Users
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
             .Include(x => x.LinkedUserAsB!.Where(y => y.DeletedOn == null))
             .Where(u => u.Id == userId && u.DeletedOn == null)
             .AsNoTracking()
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(clt);
         return userObj?.ToSharedUser(false);
     }
 
-    public async Task<DrogeUser?> GetOrSetUserFromDb(Guid userId, string userName, string userEmail, Guid customerId, bool setLastOnline)
+    public async Task<DrogeUser?> GetOrSetUserById(Guid userId, string userName, string userEmail, Guid customerId, bool setLastOnline)
     {
         var userObj = _database.Users.FirstOrDefault(u => u.Id == userId);
         if (userObj is null)

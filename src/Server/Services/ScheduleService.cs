@@ -777,10 +777,12 @@ public class ScheduleService : IScheduleService
         return result;
     }
 
-    public async Task<PatchAssignedUserResponse> PatchAssignedUserAsync(Guid userId, Guid customerId, PatchAssignedUserRequest body, CancellationToken clt)
+    public async Task<PatchAssignedUserResponse?> PatchAssignedUserAsync(Guid userId, Guid customerId, PatchAssignedUserRequest body, CancellationToken clt)
     {
-        var result = new PatchAssignedUserResponse();
-        result.IdPatched = body.TrainingId;
+        var result = new PatchAssignedUserResponse
+        {
+            IdPatched = body.TrainingId
+        };
         if (body.User == null)
         {
             _logger.LogWarning("user is null {UserIsNull}", body.User == null);
@@ -831,6 +833,8 @@ public class ScheduleService : IScheduleService
         ava.Assigned = body.User.Assigned;
         ava.UserFunctionId = body.User.PlannedFunctionId;
         ava.VehicleId = body.User.VehicleId;
+        clt.ThrowIfCancellationRequested();
+        clt = CancellationToken.None;
         _database.RoosterAvailables.Update(ava);
         await _database.SaveChangesAsync(clt);
         result.Success = true;

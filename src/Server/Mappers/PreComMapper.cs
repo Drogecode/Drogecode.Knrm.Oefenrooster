@@ -17,6 +17,7 @@ public static class PreComMapper
             CreatedBy = forward.CreatedBy,
         };
     }
+    
     public static PreComForward ToPreComForward(this DbPreComForward dbForward)
     {
         return new PreComForward
