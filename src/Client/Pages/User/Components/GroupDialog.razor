@@ -2,7 +2,7 @@
     <DialogContent>
         @if (DefaultGroup is not null)
         {
-            <MudTextField T="string" Label="@L["Name"]" @bind-Value="DefaultGroup.Name" Placeholder="@L["Give a name"]"></MudTextField>
+            <MudTextField T="string" Label="@L["Name"]" @bind-Value="DefaultGroup.Name" Placeholder="@L["Give a name"]" Counter="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_GROUP_NAME" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_GROUP_NAME"></MudTextField>
             <MudDatePicker Label="@LApp["ValidFrom"]" @bind-Date="DefaultGroup.ValidFrom" Required Disabled="@(IsNew != true && (DefaultGroup.ValidFrom?.InPast() ?? false))" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))" />
             <MudDatePicker Label="@LApp["ValidUntil"]" @bind-Date="DefaultGroup.ValidUntil" Required Disabled="@(IsNew != true && (DefaultGroup.ValidUntil?.InPast() ?? false))" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" />
         }

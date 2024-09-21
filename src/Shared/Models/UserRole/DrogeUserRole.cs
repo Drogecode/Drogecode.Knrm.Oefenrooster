@@ -42,6 +42,9 @@ public class DrogeUserRole
     public bool AUTH_dashboard_holidays { get; set; }
     public bool AUTH_dashboard_qr { get; set; }
 
+    // Group: GROUP_MAIL
+    public bool AUTH_mail_invite_external { get; set; }
+
     // Group: GROUP_GLOBAL
     public bool AUTH_show_c_footer { get; set; }
 }

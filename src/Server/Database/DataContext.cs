@@ -20,6 +20,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbUserHolidays> UserHolidays { get; set; }
         public DbSet<DbUserOnVersion> UserOnVersions { get; set; }
         public DbSet<DbUserSettings> UserSettings { get; set; }
+        public DbSet<DbUserLinkedMails> UserLinkedMails { get; set; }
         public DbSet<DbCustomers> Customers { get; set; }
         public DbSet<DbCustomerSettings> CustomerSettings { get; set; }
         public DbSet<DbRoosterDefault> RoosterDefaults { get; set; }
@@ -110,6 +111,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserSettings>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserSettings>().HasOne(p => p.Customer).WithMany(g => g.UserSettings).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserSettings>().HasOne(p => p.User).WithMany(g => g.UserSettings).HasForeignKey(s => s.UserId).IsRequired();
+            
+            //UserLinkedMails
+            modelBuilder.Entity<DbUserLinkedMails>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserLinkedMails>().HasOne(p => p.Customer).WithMany(g => g.UserLinkedMails).HasForeignKey(s => s.CustomerId).IsRequired();
+            modelBuilder.Entity<DbUserLinkedMails>().HasOne(p => p.User).WithMany(g => g.UserLinkedMails).HasForeignKey(s => s.UserId).IsRequired();
 
             // Rooster available
             modelBuilder.Entity<DbRoosterAvailable>(e => { e.Property(en => en.Id).IsRequired(); });

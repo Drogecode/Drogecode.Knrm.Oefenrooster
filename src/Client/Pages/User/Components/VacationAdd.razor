@@ -9,7 +9,7 @@
     {
         <MudAlert Severity="Severity.Warning">@_error</MudAlert>
     }
-    <MudTextField Label="@L["Description"]" @bind-Value="_holiday.Description" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE"/>
+    <MudTextField Label="@L["Description"]" @bind-Value="_holiday.Description" Counter="@DefaultSettingsHelper.MAX_LENGTH_HOLIDAY_NAME" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_HOLIDAY_NAME"/>
     <MudDatePicker Label="@L["Valid from"]" @bind-Date="_holiday.ValidFrom" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))" Disabled="@(_originalHoliday?.ValidFrom?.InPast() ?? false)" Required/>
     <MudDatePicker Label="@L["Valid till"]" @bind-Date="_holiday.ValidUntil" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" Disabled="@(_originalHoliday?.ValidUntil?.InPast() ?? false)" Required/>
 

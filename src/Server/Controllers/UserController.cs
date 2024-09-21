@@ -211,7 +211,7 @@ public class UserController : ControllerBase
                             var a = await _userService.UpdateUser(newUserResponse, userId, customerId);
                         }
                     }
-                    if (users.OdataNextLink != null)
+                    if (users.OdataNextLink is not null)
                         users = await _graphService.NextUsersPage(users);
                     else break;
                 }

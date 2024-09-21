@@ -171,7 +171,8 @@
           6,
           7,
           8,
-          9
+          9,
+          10
         ],
         "type": "integer",
         "format": "int32"

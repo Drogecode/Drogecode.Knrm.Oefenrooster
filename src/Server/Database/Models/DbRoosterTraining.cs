@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 
@@ -10,8 +11,8 @@ public class DbRoosterTraining
     public Guid CustomerId { get; set; }
     public Guid? RoosterDefaultId { get; set; }
     public Guid? RoosterTrainingTypeId { get; set; }
-    [StringLength(50)] public string? Name { get; set; }
-    [StringLength(1000)] public string? Description { get; set; }
+    [StringLength(DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)] public string? Name { get; set; }
+    [StringLength(DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION)] public string? Description { get; set; }
     public DateTime DateStart { get; set; }
     public DateTime DateEnd { get; set; }
     public DateTime? DeletedOn { get; set; }

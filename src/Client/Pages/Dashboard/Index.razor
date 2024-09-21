@@ -29,8 +29,13 @@
                             var color = DayItemHelper.DayItemTypeColor(item.Type);
                             <MudItem xs="12" sm="6" md="4" lg="3">
                                 <div class="d-flex gap-1">
-                                    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small" />
-                                    <DateToString DateTimeLocal="item.DateStart" @key="@(item.DateStart?.Ticks + DateTime.Today.Day)" />
+                                    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small"/>
+                                    <DateToString DateTimeLocal="item.DateStart" @key="@(item.DateStart?.Ticks + DateTime.Today.Day)"/>
+                                    @if (item.DateEnd is not null && !item.DateEnd.Equals(item.DateStart))
+                                    {
+                                        <div> - </div>
+                                        <DateToString DateTimeLocal="item.DateEnd" @key="@(item.DateEnd?.Ticks + DateTime.Today.Day)"/>
+                                    }
                                     @item.Text
                                 </div>
                             </MudItem>
@@ -47,7 +52,7 @@
                         @foreach (var training in _pinnedTrainings)
                         {
                             <div class="flex-1">
-                                <CalendarCard MinWidth="300px" MaxWidth="600px" Training="training" ShowDate="true" ShowDayOfWeek="true" />
+                                <CalendarCard MinWidth="300px" MaxWidth="600px" Training="training" ShowDate="true" ShowDayOfWeek="true"/>
                             </div>
                         }
                     </MudPaper>
@@ -55,10 +60,10 @@
             }
             else if (_loading)
             {
-                <MudSkeleton />
-                <MudSkeleton />
-                <MudSkeleton />
-                <MudSkeleton />
+                <MudSkeleton/>
+                <MudSkeleton/>
+                <MudSkeleton/>
+                <MudSkeleton/>
             }
             <MudText Typo="Typo.h5">@L["Future trainings"]</MudText>
             @if (_trainings?.Trainings != null)
@@ -69,7 +74,7 @@
                         @foreach (var training in _trainings.Trainings)
                         {
                             <div class="flex-1">
-                                <IndexCard MinWidth="300px" MaxWidth="600px" User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" ShowDayOfWeek="true" />
+                                <IndexCard MinWidth="300px" MaxWidth="600px" User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" ShowDayOfWeek="true"/>
                             </div>
                         }
                     </MudPaper>
@@ -85,10 +90,10 @@
             }
             else if (_loading)
             {
-                <MudSkeleton />
-                <MudSkeleton />
-                <MudSkeleton />
-                <MudSkeleton />
+                <MudSkeleton/>
+                <MudSkeleton/>
+                <MudSkeleton/>
+                <MudSkeleton/>
             }
             <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_holidays">
                 @if (_futureHolidays != null)
@@ -113,18 +118,18 @@
             </AuthorizeView>
             <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_qr">
                 <MudText Typo="Typo.h5">@L["hui.nu QR code"]</MudText>
-                <MudBarcode Value="https://hui.nu" ForceHeight="1" BarcodeFormat="BarcodeFormat.QR_CODE" />
+                <MudBarcode Value="https://hui.nu" ForceHeight="1" BarcodeFormat="BarcodeFormat.QR_CODE"/>
             </AuthorizeView>
         </MudTabPanel>
         <MudTabPanel Text="@L["Actions"]">
-            <ActionsTab User="@_user" Users="@_users" Functions="@_functions" />
+            <ActionsTab User="@_user" Users="@_users" Functions="@_functions"/>
         </MudTabPanel>
         <MudTabPanel Text="@L["Trainings"]">
-            <TrainingsTab User="@_user" Users="@_users" Functions="@_functions" />
+            <TrainingsTab User="@_user" Users="@_users" Functions="@_functions"/>
         </MudTabPanel>
         <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_Statistics">
             <MudTabPanel Text="@L["Statistics"]">
-                <StatisticsTab User="@_user" Users="@_users" Functions="@_functions" />
+                <StatisticsTab User="@_user" Users="@_users" Functions="@_functions"/>
             </MudTabPanel>
         </AuthorizeView>
     </MudTabs>

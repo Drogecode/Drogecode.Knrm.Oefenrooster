@@ -30,4 +30,7 @@
     <data name="Setting training to calendar" xml:space="preserve">
         <value>Instelling training naar calender</value>
     </data>
+    <data name="Mails to invite to your trainings" xml:space="preserve">
+        <value>Mails die worden uitgenodigd tot jouw oefeningen</value>
+    </data>
 </root>

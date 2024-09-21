@@ -30,6 +30,7 @@ public class DbCustomers
     public ICollection<DbUserHolidays>? UserHolidays { get; set; }
     public ICollection<DbUserOnVersion>? UserOnVersions { get; set; }
     public ICollection<DbUserSettings>? UserSettings { get; set; }
+    public ICollection<DbUserLinkedMails>? UserLinkedMails { get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
     public ICollection<DbRoosterDefault>? RoosterDefaults { get; set; }
     public ICollection<DbRoosterItemDay>? RoosterItemDays { get; set; }

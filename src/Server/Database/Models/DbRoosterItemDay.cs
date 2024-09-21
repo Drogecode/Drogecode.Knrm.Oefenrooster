@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 
@@ -11,7 +12,7 @@ public class DbRoosterItemDay
     public DateTime? DateEnd { get; set; }
     public bool IsFullDay { get; set; }
     public CalendarItemType Type { get; set; }
-    public string Text { get; set; } = string.Empty;
+    [StringLength(DefaultSettingsHelper.MAX_LENGTH_DAY_ITEM_TEXT)] public string Text { get; set; } = string.Empty;
     public Guid CustomerId { get; set; }
     public DateTime CreatedOn { get; set; }
     public Guid CreatedBy { get; set; }

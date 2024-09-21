@@ -5,12 +5,12 @@
 <p>
     <label>
         @L["Select your locale"]
-        <select @bind="Culture">
+        <MudSelect T="CultureInfo" @bind-Value="Culture">
             @foreach (var culture in supportedCultures)
             {
-                <option value="@culture">@culture.DisplayName</option>
+                <MudSelectItem T="CultureInfo" value="@culture">@culture.DisplayName</MudSelectItem>
             }
-        </select>
+        </MudSelect>
     </label>
 </p>
 

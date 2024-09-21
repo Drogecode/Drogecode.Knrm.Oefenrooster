@@ -2,7 +2,7 @@
     <DialogContent>
         @if (MonthItem is not null)
         {
-            <MudTextField @bind-Value="MonthItem.Text" Label="@L["Description"]"/>
+            <MudTextField @bind-Value="MonthItem.Text" Label="@L["Description"]" Counter="@DefaultSettingsHelper.MAX_LENGTH_MONTH_ITEM_TEXT" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_MONTH_ITEM_TEXT"/>
             <MudSelect T="Severity" Variant="Variant.Text" @bind-Value="MonthItem.Severity" Label="@L["Severity"]">
                 <MudSelectItem T="Severity" Value="Severity.Normal">@L["Normal"]</MudSelectItem>
                 <MudSelectItem T="Severity" Value="Severity.Info">@L["Info"]</MudSelectItem>

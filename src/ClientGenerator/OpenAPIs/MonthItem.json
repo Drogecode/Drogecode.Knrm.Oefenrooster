@@ -418,6 +418,8 @@
             "$ref": "#/components/schemas/Severity"
           },
           "text": {
+            "maxLength": 150,
+            "minLength": 0,
             "type": "string",
             "nullable": true
           },

@@ -497,6 +497,7 @@ public static partial class GraphHelper
                 ContentType = BodyType.Html,
                 Content = description,
             },
+            //Attendees = [new Attendee() { EmailAddress = new EmailAddress() { Address = "debug-oefenrooster@drogecode.nl" } }],
         };
         if (isAllDay)
         {

@@ -130,6 +130,7 @@ var groupNames = new List<string>
     "Schedule",
     "User",
     "UserRole",
+    "UserLinkedMails",
     "Vehicle",
     "SharePoint",
     "ReportAction",

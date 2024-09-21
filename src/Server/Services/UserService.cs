@@ -62,6 +62,7 @@ public class UserService : IUserService
             _database.Users.Add(new DbUsers
             {
                 Id = userId,
+                ExternalId = userId,
                 Name = userName,
                 Email = userEmail,
                 CreatedOn = DateTime.UtcNow,

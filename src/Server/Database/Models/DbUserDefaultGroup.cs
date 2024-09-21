@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 
@@ -9,7 +10,7 @@ public class DbUserDefaultGroup
     [Key] public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public Guid CustomerId { get; set; }
-    public string Name { get; set; } = "";
+    [StringLength(DefaultSettingsHelper.MAX_LENGTH_TRAINING_GROUP_NAME)] public string Name { get; set; } = "";
     public DateTime? ValidFrom { get; set; }
     public DateTime? ValidUntil { get; set; }
     public bool IsDefault { get; set; } = false;

@@ -11,13 +11,12 @@ public struct AccessesNames
     public const string AUTH_Taco = "isSuperGlobalAdmin";
     public const string AUTH_Hide = "do_not_show";
 
-
     public const string GROUP_CONFIGURATION= "Configuration";
     public const string AUTH_configure_training_types = "configure_training-types";
     public const string AUTH_configure_user_roles = "configure_user_roles";
     public const string AUTH_configure_default_schedule = "configure_default_schedule";
 
-    public const string GROUP_SCHEDULER = "scheduler";
+    public const string GROUP_SCHEDULER = "Scheduler";
     public const string AUTH_scheduler = "scheduler";
     public const string AUTH_scheduler_in_table_view = "scheduler_table";
     public const string AUTH_scheduler_history = "scheduler_history";
@@ -28,17 +27,20 @@ public struct AccessesNames
     public const string AUTH_scheduler_description_edit = "scheduler_description_edit";
     public const string AUTH_scheduler_description_read = "scheduler_description_read";
 
-    public const string GROUP_USER = "user";
+    public const string GROUP_USER = "User";
     public const string AUTH_users_details = "users_details";
     public const string AUTH_users_counter = "users_counter";
     public const string AUTH_users_settigns = "users_settings";
 
-    public const string GROUP_DASHBOARD = "dashboard";
+    public const string GROUP_DASHBOARD = "Dashboard";
     public const string AUTH_action_history_full = "full_action_history";
     public const string AUTH_training_history_full = "full_training_history";
     public const string AUTH_dashboard_Statistics = "full_dashboard_statistics2";
     public const string AUTH_dashboard_holidays = "dashboard_hol";
     public const string AUTH_dashboard_qr = "dashboard_qr";
+    
+    public const string GROUP_MAIL = "Mail";
+    public const string AUTH_mail_invite_external = "mail_invite_external";
 
     public const string GROUP_GLOBAL = "global";
     public const string AUTH_show_c_footer = "showCfooter";

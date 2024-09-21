@@ -13,10 +13,25 @@
         }
     </AuthorizeView>
     <MudText>
-        <p>@L["Client version:"] @DefaultSettingsHelper.CURRENT_VERSION</p>
-        @if (_updateDetails is not null)
-        {
-            <p>@L["Server version:"] @_updateDetails.CurrentVersion </p>
-        }
+        <table class="table-auto">
+            <tbody>
+            <tr>
+                <td>@L["Client version:"]</td>
+                <td>@DefaultSettingsHelper.CURRENT_VERSION</td>
+            </tr>
+            @if (_updateDetails is not null)
+            {
+                <tr>
+                    <td>@L["Server version:"]</td>
+                    <td>@_updateDetails.CurrentVersion</td>
+                </tr>
+            }
+            </tbody>
+        </table>
     </MudText>
+    <AuthorizeView Roles="@AccessesNames.AUTH_Taco"><!-- Remove when ready -->
+        <AuthorizeView Roles="@AccessesNames.AUTH_mail_invite_external" Context="inner">
+            <MudText>@L["Mails to invite to your trainings"]</MudText>
+        </AuthorizeView>
+    </AuthorizeView>
 </MudPaper>

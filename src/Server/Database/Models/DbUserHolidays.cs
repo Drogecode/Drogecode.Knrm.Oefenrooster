@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 
@@ -12,7 +13,7 @@ public class DbUserHolidays
     public Availability? Available { get; set; }
     public DateTime? ValidFrom { get; set; }
     public DateTime? ValidUntil { get; set; }
-    public string? Description { get; set; }
+    [StringLength(DefaultSettingsHelper.MAX_LENGTH_HOLIDAY_NAME)] public string? Description { get; set; }
 
     public DbCustomers Customer { get; set; }
     public DbUsers User { get; set; }

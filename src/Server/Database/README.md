@@ -7,8 +7,8 @@
 
 # Revert
 
-1. dotnet ef database update "20240619080546_AddBetaUserRole"
+1. dotnet ef database update "20240813190503_UserRoleExternalId"
 
 # Update tools:
 
-1. dotnet tool update --global dotnet-ef --version 8.0.7
+1. dotnet tool update --global dotnet-ef --version 8.0.8

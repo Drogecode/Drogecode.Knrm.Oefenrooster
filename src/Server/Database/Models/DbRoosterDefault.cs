@@ -10,7 +10,7 @@ public class DbRoosterDefault
     public Guid CustomerId { get; set; }
     public Guid? RoosterTrainingTypeId { get; set; }
     public List<Guid>? VehicleIds { get; set; }
-    public string? Name { get; set; }
+    [StringLength(50)] public string? Name { get; set; }
     public DayOfWeek WeekDay { get; set; }
     public TimeOnly TimeStart { get; set; }
     public TimeOnly TimeEnd { get; set; }

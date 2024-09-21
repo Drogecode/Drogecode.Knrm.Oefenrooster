@@ -8,6 +8,7 @@ public class DbUsers
 {
     [Key] public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
+    public Guid? ExternalId { get; set; }
     public Guid? UserFunctionId { get; set; }
     [StringLength(50)] public string Name { get; set; }
     [StringLength(150)] public string Email { get; set; }
@@ -16,7 +17,7 @@ public class DbUsers
     public DateTime LastLogin { get; set; }
     public DateTime? DeletedOn { get; set; }
     public Guid? DeletedBy { get; set; }
-    public string? SharePointID { get; set; }
+    [StringLength(10)] public string? SharePointID { get; set; }
     public bool SyncedFromSharePoint { get; set; }
     public bool RoleFromSharePoint { get; set; }
 
@@ -36,5 +37,6 @@ public class DbUsers
     public ICollection<DbUserHolidays>? UserHolidays { get; set; }
     public ICollection<DbUserOnVersion>? UserOnVersions { get; set; }
     public ICollection<DbUserSettings>? UserSettings { get; set; }
+    public ICollection<DbUserLinkedMails>? UserLinkedMails { get; set; }
     public ICollection<DbAudit>? Audits { get; set; }
 }

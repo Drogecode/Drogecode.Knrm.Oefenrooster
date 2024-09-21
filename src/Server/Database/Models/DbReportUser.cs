@@ -8,9 +8,9 @@ public class DbReportUser
     [Key] public Guid Id { get; set; }
     public Guid? DbReportActionId { get; set; }
     public Guid? DbReportTrainingId { get; set; }
-    public string? SharePointID { get; set; }
+    [StringLength(10)] public string? SharePointID { get; set; }
     public Guid? DrogeCodeId { get; set; }
-    public string? Name { get; set; }
+    [StringLength(50)] public string? Name { get; set; }
     public SharePointRole Role { get; set; }
     public bool IsDeleted { get; set; }
     public int Order { get; set; }

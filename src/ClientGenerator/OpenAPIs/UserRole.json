@@ -221,6 +221,12 @@
           "autH_scheduler_other_user": {
             "type": "boolean"
           },
+          "autH_scheduler_description_edit": {
+            "type": "boolean"
+          },
+          "autH_scheduler_description_read": {
+            "type": "boolean"
+          },
           "autH_users_details": {
             "type": "boolean"
           },
@@ -243,6 +249,9 @@
             "type": "boolean"
           },
           "autH_dashboard_qr": {
+            "type": "boolean"
+          },
+          "autH_mail_invite_external": {
             "type": "boolean"
           },
           "autH_show_c_footer": {

@@ -23,4 +23,7 @@
     <data name="Setting training to calendar" xml:space="preserve">
         <value>Setting training to calendar</value>
     </data>
+    <data name="Mails to invite to your trainings" xml:space="preserve">
+        <value>Mails to invite to your trainings</value>
+    </data>
 </root>

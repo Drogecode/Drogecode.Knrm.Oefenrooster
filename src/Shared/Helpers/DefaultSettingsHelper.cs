@@ -27,4 +27,8 @@ public static class DefaultSettingsHelper
 
     public const int MAX_LENGTH_TRAINING_TITLE = 50;
     public const int MAX_LENGTH_TRAINING_DESCRIPTION = 1000;
+    public const int MAX_LENGTH_TRAINING_GROUP_NAME = 30;
+    public const int MAX_LENGTH_MONTH_ITEM_TEXT = 150;
+    public const int MAX_LENGTH_DAY_ITEM_TEXT = 50;
+    public const int MAX_LENGTH_HOLIDAY_NAME = 50;
 }
