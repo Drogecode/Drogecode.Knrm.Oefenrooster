@@ -134,9 +134,9 @@ public class HolidayService : IHolidayService
         };
     }
 
-    public async Task<DeleteResonse> Delete(Guid id, Guid customerId, Guid userId, CancellationToken clt)
+    public async Task<DeleteResponse> Delete(Guid id, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var result = new DeleteResonse();
+        var result = new DeleteResponse();
         var dbHoliday = await _database.UserHolidays.FirstOrDefaultAsync(x => x.Id == id && x.CustomerId == customerId && x.UserId == userId, clt);
         if (dbHoliday?.ValidUntil is null || dbHoliday.ValidUntil.Value.CompareTo(_dateTimeService.UtcNow()) <= 0) return result;
         if (dbHoliday.ValidFrom is not null && dbHoliday.ValidFrom.Value.CompareTo(_dateTimeService.UtcNow()) <= 0)

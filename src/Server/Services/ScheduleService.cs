@@ -547,7 +547,7 @@ public class ScheduleService : IScheduleService
             return result.Value;
         var vehicles = await InternalGetVehiclesCached(customerId, clt);
         DbVehicles? vehiclePrev = null;
-        foreach (var vehicle in vehicles.OrderBy(x => x.Order))
+        foreach (var vehicle in vehicles)
         {
             if (training.LinkVehicleTrainings?.Any(x => x.VehicleId == vehicle.Id) == true)
             {
@@ -560,7 +560,7 @@ public class ScheduleService : IScheduleService
             else if (vehicle.IsDefault)
             {
                 vehiclePrev = vehicle;
-                break;
+                //break;
             }
         }
 
@@ -576,7 +576,7 @@ public class ScheduleService : IScheduleService
         var cacheKey = $"VehsFoCus-{customerId}";
         _memoryCache.TryGetValue(cacheKey, out List<DbVehicles>? result);
         if (result is not null) return result;
-        result = await _database.Vehicles.Where(x => x.CustomerId == customerId).ToListAsync(clt);
+        result = await _database.Vehicles.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).ToListAsync(clt);
         var cacheOptions = new MemoryCacheEntryOptions();
         cacheOptions.SetSlidingExpiration(TimeSpan.FromSeconds(30));
         cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(5));

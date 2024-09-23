@@ -7,7 +7,7 @@
         if (_defaults.DefaultSchedules?.Any() == true)
         {<MudDataGrid Items="@_defaults.DefaultSchedules" Striped="true" Hover="true">
         <Columns>
-            <HierarchyColumn T="DefaultSchedule"/>
+            <HierarchyColumn T="DefaultConfig"/>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]" CellClassFunc="@(x => $"trainingType-{x.RoosterTrainingTypeId}")"/>
             <PropertyColumn Property="x => x.WeekDay" Title="@L["Weekday"]">
                 <CellTemplate>
@@ -28,6 +28,12 @@
                     {
                         <p>@context.Item.TimeEnd</p>
                     }
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn>
+                <CellTemplate>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await Delete(context.Item); })"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => { OpenMonthItemDialog(context.Item, false); })"/>
                 </CellTemplate>
             </TemplateColumn>
         </Columns>

@@ -236,7 +236,7 @@ public class ScheduleController : ControllerBase
         if (!string.IsNullOrEmpty(trainingName))
             text.Append(trainingName);
         if (!string.IsNullOrEmpty(functionName))
-            text.Append(" - ").Append(functionName);
+            text.Append(" * ").Append(functionName);
         return text.ToString();
     }
 

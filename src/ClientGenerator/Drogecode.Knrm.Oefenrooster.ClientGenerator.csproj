@@ -33,7 +33,7 @@
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\DefaultSchedule.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="DefaultScheduleClient">
 			<OutputPath>../Clients/DefaultScheduleClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule,Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Function.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="FunctionClient">
 			<OutputPath>../Clients/FunctionClient.g.cs</OutputPath>
@@ -41,7 +41,7 @@
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Holiday.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="HolidayClient">
 			<OutputPath>../Clients/HolidayClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday,Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\PreCom.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="PreComClient">
 			<OutputPath>../Clients/PreComClient.g.cs</OutputPath>

@@ -10,5 +10,5 @@ public interface IHolidayService
     Task<GetResponse> Get(Guid id, Guid customerId, Guid userId, CancellationToken clt);
     Task<PutHolidaysForUserResponse> PutHolidaysForUser(Holiday body, Guid customerId, Guid userId, CancellationToken clt);
     Task<PatchHolidaysForUserResponse> PatchHolidaysForUser(Holiday body, Guid customerId, Guid userId, CancellationToken clt);
-    Task<DeleteResonse> Delete(Guid id, Guid customerId, Guid userId, CancellationToken clt);
+    Task<DeleteResponse> Delete(Guid id, Guid customerId, Guid userId, CancellationToken clt);
 }

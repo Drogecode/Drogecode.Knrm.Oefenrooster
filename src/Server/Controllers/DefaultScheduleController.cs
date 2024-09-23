@@ -5,6 +5,7 @@ using Microsoft.Identity.Web.Resource;
 using System.Diagnostics;
 using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -27,6 +28,13 @@ public class DefaultScheduleController : ControllerBase
         _logger = logger;
         _defaultScheduleService = defaultscheduleService;
         _auditService = auditService;
+    }
+
+    [HttpDelete]
+    [Route("config")]
+    public async Task<ActionResult<DeleteResponse>> DeleteDefaultSchedule(Guid id, CancellationToken token = default)
+    {
+        return new DeleteResponse();
     }
 
     [HttpGet]

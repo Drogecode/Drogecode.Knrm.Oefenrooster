@@ -160,7 +160,7 @@ public class HolidayController : ControllerBase
 
     [HttpDelete]
     [Route("{id:guid}")]
-    public async Task<ActionResult<DeleteResonse>> Delete(Guid id, CancellationToken clt = default)
+    public async Task<ActionResult<DeleteResponse>> Delete(Guid id, CancellationToken clt = default)
     {
         try
         {

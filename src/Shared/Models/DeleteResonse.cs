@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
+namespace Drogecode.Knrm.Oefenrooster.Shared.Models;
 
-public class DeleteResonse : BaseResponse
+public class DeleteResponse : BaseResponse
 {
 }

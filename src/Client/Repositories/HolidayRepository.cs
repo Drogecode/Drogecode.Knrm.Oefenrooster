@@ -51,7 +51,7 @@ public class HolidayRepository
         return result;
     }
 
-    public async Task<DeleteResonse> Delete(Guid id, CancellationToken clt)
+    public async Task<DeleteResponse> Delete(Guid id, CancellationToken clt)
     {
         var result = await _holidayClient.DeleteAsync(id, clt);
         return result;

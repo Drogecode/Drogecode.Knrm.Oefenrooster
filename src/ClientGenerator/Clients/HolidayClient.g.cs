@@ -5,6 +5,8 @@
 //----------------------
 
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
+using Drogecode.Knrm.Oefenrooster.Shared.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Models;
 
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
 #pragma warning disable 114 // Disable "CS0114 '{derivedDto}.RaisePropertyChanged(String)' hides inherited member 'dtoBase.RaisePropertyChanged(String)'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword."
@@ -83,12 +85,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<DeleteResonse> DeleteAsync(System.Guid id);
+        System.Threading.Tasks.Task<DeleteResponse> DeleteAsync(System.Guid id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<DeleteResonse> DeleteAsync(System.Guid id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<DeleteResponse> DeleteAsync(System.Guid id, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -616,7 +618,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<DeleteResonse> DeleteAsync(System.Guid id)
+        public virtual System.Threading.Tasks.Task<DeleteResponse> DeleteAsync(System.Guid id)
         {
             return DeleteAsync(id, System.Threading.CancellationToken.None);
         }
@@ -624,7 +626,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<DeleteResonse> DeleteAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<DeleteResponse> DeleteAsync(System.Guid id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -669,7 +671,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<DeleteResonse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<DeleteResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
