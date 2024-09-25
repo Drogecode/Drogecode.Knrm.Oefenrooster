@@ -24,11 +24,12 @@ public sealed partial class Theming : IDisposable
     [Parameter]
     public bool IsDarkMode
     {
-        get { return _isDarkMode; }
+        get => _isDarkMode;
         set
         {
             if (_isDarkMode == value) return;
             _isDarkMode = value;
+            Global.DarkMode = value;
             if (IsDarkModeChanged.HasDelegate)
             {
                 IsDarkModeChanged.InvokeAsync(value);
@@ -45,7 +46,7 @@ public sealed partial class Theming : IDisposable
     private bool _isDarkMode;
     private bool _watchStarted;
     private bool _isTaco;
-    private int counter = 0;
+    private int _counter = 0;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -66,8 +67,10 @@ public sealed partial class Theming : IDisposable
                 case DarkLightMode.Dark:
                     IsDarkMode = true;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            
+
             await Global.CallDarkLightChangedAsync(IsDarkMode);
             await Global.CallRequestRefreshAsync();
         }
@@ -75,12 +78,12 @@ public sealed partial class Theming : IDisposable
 
     private DarkLightMode DarkModeToggle
     {
-        get { return _darkModeToggle; }
+        get => _darkModeToggle;
         set
         {
             if (_darkModeToggle == value) return;
             _darkModeToggle = value;
-            counter++;
+            _counter++;
             RefreshMe();
             if (_localUserSettings == null)
             {
@@ -131,19 +134,19 @@ public sealed partial class Theming : IDisposable
     {
         if (string.Compare(newState, "visible", StringComparison.InvariantCulture) != 0)
             return;
-        if (DarkModeToggle != DarkLightMode.System) return;
+        await Task.Delay(50);
+        await OnSystemPreferenceChanged(await MudThemeProvider.GetSystemPreference()); // always check dark/light on reopen
         if (_lastVisibilityChange.AddMinutes(3).CompareTo(DateTime.UtcNow) > 0)
             return;
-        await Task.Delay(50);
         _lastVisibilityChange = DateTime.UtcNow;
-        if (isIos && await CustomerSettingsClient.GetIosDarkLightCheckAsync(_cls.Token))
+        if (false && isIos && await CustomerSettingsClient.GetIosDarkLightCheckAsync(_cls.Token) && DarkModeToggle == DarkLightMode.System)
         {
-            //https://forums.developer.apple.com/forums/thread/739154
+            // Disable, se if it works without on the latest ios version.
+            // https://forums.developer.apple.com/forums/thread/739154
             await JsRuntime.InvokeVoidAsync("ColorschemeFix");
         }
 
         await Global.CallVisibilityChangeAsync();
-        await OnSystemPreferenceChanged(await MudThemeProvider.GetSystemPreference());
     }
 
     public async Task OnSystemPreferenceChanged(bool newValue)

@@ -9,11 +9,7 @@ public class DrogeCodeGlobal : RefreshModel
     public event Func<bool, Task>? DarkLightChangedAsync;
     public event Func<Task>? VisibilityChangeAsync;
 
-    private bool _isDarkMode;
-    public bool DarkMode
-    {
-        get { return _isDarkMode; }
-    }
+    public bool DarkMode { get; set; }
 
     public async Task CallNewTrainingAddedAsync(EditTraining arg)
     {
@@ -29,8 +25,11 @@ public class DrogeCodeGlobal : RefreshModel
     }
     public async Task CallDarkLightChangedAsync(bool arg)
     {
-        if (_isDarkMode == arg) return;
-        _isDarkMode = arg;
+        if (!DarkMode.Equals(arg))
+        {
+            DebugHelper.WriteLine("DarkMode and arg should be equal");
+            DarkMode = arg;
+        }
         var task = DarkLightChangedAsync?.Invoke(arg);
         if (task != null)
             await task;
