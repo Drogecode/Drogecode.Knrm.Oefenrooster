@@ -65,8 +65,8 @@ public sealed partial class StatisticsTab
         var yearCount = 0;
         foreach (var year in analyzeData.Years.OrderByDescending(x => x.Year))
         {
-            if (!allYears && yearCount >= 5)
-                break;
+            /*if (!allYears && yearCount >= 5)
+                break;*/
             if (year.Year <= 2021)
             {
                 _showHistoricalIncorrectWarning = true;

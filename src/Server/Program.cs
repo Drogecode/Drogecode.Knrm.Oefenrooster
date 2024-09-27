@@ -86,7 +86,10 @@ builder.Services.AddResponseCompression(opts =>
         new[] { "application/octet-stream" });
 });
 
-builder.Services.AddDbContextPool<DataContext>(options => options.UseNpgsql(dbConnectionString));
+builder.Services.AddDbContextPool<DataContext>(options =>
+{
+    options.UseNpgsql(dbConnectionString);
+});
 builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
 {
     ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"],

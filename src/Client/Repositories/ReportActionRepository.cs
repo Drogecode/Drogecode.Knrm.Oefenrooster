@@ -33,14 +33,15 @@ public class ReportActionRepository
         return result;
     }
 
-    public async Task<AnalyzeYearChartAllResponse?> AnalyzeYearChartsAll(IEnumerable<DrogeUser> users, IEnumerable<string?> prio, CancellationToken clt)
+    public async Task<AnalyzeYearChartAllResponse?> AnalyzeYearChartsAll(IEnumerable<DrogeUser> users, IEnumerable<string?>? prio, int? years, CancellationToken clt)
     {
         try
         {
             var request = new AnalyzeActionRequest()
             {
                 Users = users.Select(x => (Guid?)x.Id).ToList(),
-                Prio = prio
+                Prio = prio,
+                Years = years
             };
             var result = await _reportActionClient.AnalyzeYearChartsAllAsync(request, clt);
             return result;

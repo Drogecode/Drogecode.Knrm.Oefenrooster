@@ -6,6 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.TestServer.Seeds;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
@@ -30,6 +31,7 @@ public class ReportActionControllerTests : BaseTest
         base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
             preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController)
     {
+        SeedReportAction.Seed(dataContext, DefaultCustomerId);
     }
 
     [Fact]
@@ -79,12 +81,31 @@ public class ReportActionControllerTests : BaseTest
         var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
         Assert.True(getResult.Value.Success);
-        getResult.Value.Years.Should().HaveCount(1);
-        getResult.Value.TotalCount.Should().Be(3);
+        getResult.Value.Years.Should().HaveCount(7);
+        getResult.Value.TotalCount.Should().Be(7*3);
         var y2022 = getResult.Value.Years.FirstOrDefault(x => x.Year == 2022);
         Assert.NotNull(y2022);
         y2022.Months.Should().Contain(x => x.Month == 3 && x.Count == 2);
         y2022.Months.Should().Contain(x => x.Month == 4 && x.Count == 1);
+    }
+
+    [Fact]
+    public async Task AnalyzeYearChartsAllForAllUsers3YearsTest()
+    {
+        var request = new AnalyzeActionRequest()
+        {
+            Users = new List<Guid?> {  },
+            Years = 3
+        };
+        var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
+        Assert.NotNull(getResult.Value?.Years);
+        Assert.True(getResult.Value.Success);
+        getResult.Value.Years.Should().HaveCount(3);
+        getResult.Value.TotalCount.Should().Be(7*3);
+        getResult.Value.Years.Should().Contain(x => x.Year == 2022);
+        getResult.Value.Years.Should().Contain(x => x.Year == 2020);
+        getResult.Value.Years.Should().Contain(x => x.Year == 2019);
+        getResult.Value.Years.Should().NotContain(x => x.Year == 2018);
     }
 
     [Fact]
@@ -97,8 +118,8 @@ public class ReportActionControllerTests : BaseTest
         var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
         Assert.True(getResult.Value.Success);
-        getResult.Value.Years.Should().HaveCount(1);
-        getResult.Value.TotalCount.Should().Be(3);
+        getResult.Value.Years.Should().HaveCount(7);
+        getResult.Value.TotalCount.Should().Be(7*3);
         var y2022 = getResult.Value.Years.FirstOrDefault(x => x.Year == 2022);
         Assert.NotNull(y2022);
         y2022.Months.Should().Contain(x => x.Month == 3 && x.Count == 2);

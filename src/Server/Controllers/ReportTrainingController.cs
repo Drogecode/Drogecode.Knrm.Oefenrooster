@@ -93,7 +93,7 @@ public class ReportTrainingController : ControllerBase
             if (request.Users.Count > 5)
                 return new AnalyzeYearChartAllResponse() { Message = "To many users" };
 
-            var result = await _reportTrainingService.AnalyzeYearChartsAll(request.Users, customerId, timeZone, clt);
+            var result = await _reportTrainingService.AnalyzeYearChartsAll(request, customerId, timeZone, clt);
             return result;
         }
         catch (Exception ex)

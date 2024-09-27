@@ -4,4 +4,5 @@ public class AnalyzeActionRequest
 {
     public List<Guid?>? Users { get; set; }
     public IEnumerable<string?>? Prio { get; set; }
+    public int? Years { get; set; }
 }

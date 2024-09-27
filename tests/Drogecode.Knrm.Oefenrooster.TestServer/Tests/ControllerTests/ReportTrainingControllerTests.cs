@@ -1,7 +1,9 @@
 ﻿using System.Text.Json;
 using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.TestServer.Seeds;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
@@ -26,6 +28,7 @@ public class ReportTrainingControllerTests : BaseTest
         base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
             preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController)
     {
+        SeedReportTraining.Seed(dataContext, DefaultCustomerId);
     }
 
     [Fact]
@@ -53,6 +56,25 @@ public class ReportTrainingControllerTests : BaseTest
         Assert.NotEmpty(getResult.Value.Trainings);
         Assert.True(getResult.Value.Success);
         getResult.Value.Trainings.Count.Should().BeGreaterOrEqualTo(2);
+    }
+
+    [Fact]
+    public async Task AnalyzeYearChartsAllForAllUsers3YearsTest()
+    {
+        var request = new AnalyzeTrainingRequest()
+        {
+            Users = new List<Guid?> {  },
+            Years = 3
+        };
+        var getResult = await ReportTrainingController.AnalyzeYearChartsAll(request);
+        Assert.NotNull(getResult.Value?.Years);
+        Assert.True(getResult.Value.Success);
+        getResult.Value.Years.Should().HaveCount(3);
+        getResult.Value.TotalCount.Should().Be(7*3);
+        getResult.Value.Years.Should().Contain(x => x.Year == 2022);
+        getResult.Value.Years.Should().Contain(x => x.Year == 2020);
+        getResult.Value.Years.Should().Contain(x => x.Year == 2019);
+        getResult.Value.Years.Should().NotContain(x => x.Year == 2018);
     }
 
     [Fact]

@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Migrations;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
+using Drogecode.Knrm.Oefenrooster.TestServer.Seeds;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests;
 
@@ -100,9 +101,7 @@ public class BaseTest : IAsyncLifetime
         UserRoleController = userRoleController;
 
         DefaultCustomerId = Guid.NewGuid();
-        SeedCustomer(dataContext);
-        SeedReportAction(dataContext);
-        SeedReportTraining(dataContext);
+        SeedCustomer.Seed(dataContext, DefaultCustomerId);
 
         var defaultRoles = new List<string>
         {
@@ -138,106 +137,6 @@ public class BaseTest : IAsyncLifetime
         DefaultDefaultSchedule = await AddDefaultSchedule();
     }
 
-    private void SeedCustomer(DataContext dataContext)
-    {
-        dataContext.Customers.Add(new DbCustomers
-        {
-            Id = DefaultCustomerId,
-            Name = "xUnit customer",
-            TimeZone = "Europe/Amsterdam",
-            Created = DateTime.UtcNow
-        });
-        dataContext.SaveChanges();
-    }
-
-    public void SeedReportAction(DataContext dataContext)
-    {
-        var start = new DateTime(2022, 3, 8, 8, 5, 41);
-        dataContext.ReportActions.Add(new DbReportAction
-        {
-            Id = Guid.NewGuid(),
-            CustomerId = DefaultCustomerId,
-            Description = "xUnit Description A",
-            Start = start,
-            Commencement = start.AddMinutes(5),
-            Departure = start.AddMinutes(15),
-            End = start.AddMinutes(121),
-            Boat = "xUnit boat",
-            Prio = "Prio 69",
-            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
-        });
-        start = start.AddDays(1);
-        dataContext.ReportActions.Add(new DbReportAction
-        {
-            Id = Guid.NewGuid(),
-            CustomerId = DefaultCustomerId,
-            Description = "xUnit Description B",
-            Start = start,
-            Commencement = start.AddMinutes(5),
-            Departure = start.AddMinutes(15),
-            End = start.AddMinutes(121),
-            Boat = "xUnit boat",
-            Prio = "Prio 1",
-            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
-        });
-        start = start.AddMonths(1);
-        dataContext.ReportActions.Add(new DbReportAction
-        {
-            Id = Guid.NewGuid(),
-            CustomerId = DefaultCustomerId,
-            Description = "xUnit Description C",
-            Start = start,
-            Commencement = start.AddMinutes(5),
-            Departure = start.AddMinutes(15),
-            End = start.AddMinutes(121),
-            Boat = "xUnit boat",
-            Prio = "Prio 1",
-            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
-        });
-        dataContext.SaveChanges();
-    }
-
-    public void SeedReportTraining(DataContext dataContext)
-    {
-        var start = new DateTime(2022, 3, 8, 8, 5, 41);
-        dataContext.ReportTrainings.Add(new DbReportTraining
-        {
-            Id = Guid.NewGuid(),
-            CustomerId = DefaultCustomerId,
-            Description = "xUnit Description A",
-            Start = start,
-            Commencement = start.AddMinutes(5),
-            End = start.AddMinutes(121),
-            Boat = "xUnit boat",
-            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
-        });
-        start = start.AddDays(1);
-        dataContext.ReportTrainings.Add(new DbReportTraining
-        {
-            Id = Guid.NewGuid(),
-            CustomerId = DefaultCustomerId,
-            Description = "xUnit Description B",
-            Start = start,
-            Commencement = start.AddMinutes(5),
-            End = start.AddMinutes(121),
-            Boat = "xUnit boat",
-            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
-        });
-        start = start.AddMonths(1);
-        dataContext.ReportTrainings.Add(new DbReportTraining
-        {
-            Id = Guid.NewGuid(),
-            CustomerId = DefaultCustomerId,
-            Description = "xUnit Description C",
-            Start = start,
-            Commencement = start.AddMinutes(5),
-            End = start.AddMinutes(121),
-            Boat = "xUnit boat",
-            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
-        });
-        dataContext.SaveChanges();
-    }
-
     protected async Task<Guid> AddUser(string name)
     {
         var result = await UserController.AddUser(new DrogeUser
@@ -262,6 +161,7 @@ public class BaseTest : IAsyncLifetime
         Assert.NotNull(result?.Value?.NewFunction);
         return result.Value.NewFunction.Id;
     }
+
     protected async Task<Guid> AddUserRole(string name)
     {
         var result = await UserRoleController.NewUserRole(new DrogeUserRole
@@ -388,6 +288,7 @@ public class BaseTest : IAsyncLifetime
             Code = code,
             IsDefault = isDefault,
             IsActive = isActive,
+            Order = 4,
         };
         var result = await VehicleController.PutVehicle(vehicle);
         Assert.NotNull(result?.Value);

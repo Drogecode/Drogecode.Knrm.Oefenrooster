@@ -31,16 +31,27 @@ public class ReportTrainingService : IReportTrainingService
     }
 
 
-    public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(List<Guid?> users, Guid customerId, string timeZone, CancellationToken clt)
+    public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(AnalyzeTrainingRequest trainingRequest, Guid customerId, string timeZone, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var allReports = _database.ReportTrainings
-            .Where(x => x.CustomerId == customerId && x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count)
+            .Where(x => x.CustomerId == customerId && x.Users!.Count(y => trainingRequest.Users!.Contains(y.DrogeCodeId)) == trainingRequest.Users!.Count)
             .Select(x => new { x.Start });
         var result = new AnalyzeYearChartAllResponse { TotalCount = allReports.Count() };
+        List<int> years = new();
         foreach (var report in allReports)
         {
             var start = report.Start.ToDateTimeTimeZone(timeZone).ToDateTime();
+
+            if (!years.Contains(start.Year)) // Could not find a way to check this in the db request.
+            {
+                if (years.Count >= trainingRequest.Years)
+                {
+                    break;
+                }
+
+                years.Add(start.Year);
+            }
             if (result.Years.All(x => x.Year != start.Year))
             {
                 result.Years.Add(new AnalyzeYearDetails() { Year = start.Year });

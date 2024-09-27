@@ -573,6 +573,38 @@ public class ScheduleControllerTests : BaseTest
     }
 
     [Fact]
+    public async Task GetPlannedTrainingsForAllDefaultVehicleNotInDbLinkdButLinkedToUserTest()
+    {
+        var dateStart = DateTime.Today.AddDays(1).AddHours(21);
+        var dateEnd = DateTime.Today.AddDays(1).AddHours(15);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
+        var vehicle = await VehicleController.PutVehicle(new DrogeVehicle()
+            { IsDefault = true, IsActive = true, Name = "GetPlannedTrainingByIdDefaultVehicleNotSelectedButLinkedToUserTest", Code = "xUnit2", Order = 1 });
+        var body = new PatchAssignedUserRequest
+        {
+            User = new PlanUser()
+            {
+                UserId = DefaultUserId,
+                VehicleId = vehicle.Value!.Value,
+                Assigned = true,
+            },
+            TrainingId = trainingId
+        };
+        var patchAssignedUserResult = await ScheduleController.PatchAssignedUser(body);
+        Assert.True(patchAssignedUserResult?.Value?.Success);
+        var trainingForAll = await ScheduleController.ForAll(dateStart.Month, dateStart.Year, dateStart.Month, dateStart.Day, dateEnd.Year, dateEnd.Month, dateEnd.Day, false);
+        Assert.NotNull(trainingForAll.Value?.Planners);
+        Assert.True(trainingForAll.Value.Success);
+        trainingForAll.Value.Planners.Where(x => x.TrainingId == trainingId).Should().HaveCount(1);
+        var training = trainingForAll.Value.Planners.FirstOrDefault(x => x.TrainingId == trainingId);
+        Assert.NotNull(training?.PlanUsers);
+        training.PlanUsers.Should().NotBeEmpty();
+        training.PlanUsers.Should().Contain(x => x.VehicleId == DefaultVehicle);
+        MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+        MockAuthenticatedUser(VehicleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+    }
+
+    [Fact]
     public async Task GetPlannedTrainingsForAllDefaultVehicleNotSelectedButLinkedToUserTest()
     {
         var dateStart = DateTime.Today.AddDays(1).AddHours(21);

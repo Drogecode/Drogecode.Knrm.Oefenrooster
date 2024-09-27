@@ -3,4 +3,5 @@
 public class AnalyzeTrainingRequest
 {
     public List<Guid?>? Users { get; set; }
+    public int? Years { get; set; }
 }

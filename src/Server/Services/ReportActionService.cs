@@ -40,19 +40,32 @@ public class ReportActionService : IReportActionService
                         && (actionRequest.Prio == null || !actionRequest.Prio.Any() || actionRequest.Prio.Contains(x.Prio))
                         && x.Users!.Count(y => actionRequest.Users!.Contains(y.DrogeCodeId)) == actionRequest.Users!.Count)
             .Select(x => new { x.Start, x.Number })
-            .OrderBy(x => x.Start)
+            .OrderByDescending(x => x.Start)
             .ToListAsync(clt);
         var result = new AnalyzeYearChartAllResponse { TotalCount = allReports.Count() };
         var skipped = 0;
+        List<int> years = new();
         foreach (var report in allReports)
         {
-            if (report.Number is not null && (report.Number % 1) != 0 && allReports.Select(x => x.Start.Year == report.Start.Year && x.Number?.FloatingEquals((int)report.Number, 0.1) == true).Any())
+            if (report.Number is not null && (report.Number % 1) != 0 && allReports.Count(x => x.Start.Year == report.Start.Year && x.Number?.FloatingEquals((int)report.Number, 0.1) == true) >= 2)
             {
                 skipped++;
                 continue;
             }
+
             var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
             var start = TimeZoneInfo.ConvertTimeFromUtc(report.Start, zone);
+
+            if (!years.Contains(start.Year)) // Could not find a way to check this in the db request.
+            {
+                if (years.Count >= actionRequest.Years)
+                {
+                    break;
+                }
+
+                years.Add(start.Year);
+            }
+
             if (result.Years.All(x => x.Year != start.Year))
             {
                 result.Years.Add(new AnalyzeYearDetails() { Year = start.Year });

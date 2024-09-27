@@ -6,7 +6,7 @@ using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database
 {
-    public class DataContext : DbContext, IDataProtectionKeyContext
+    public class DataContext(DbContextOptions<DataContext> context) : DbContext(context), IDataProtectionKeyContext
     {
         // To persist key's
         public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
@@ -42,10 +42,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbLinkUserUser> LinkUserUsers { get; set; }
         public DbSet<DbLinkExchange> LinkExchanges{ get; set; }
 
-
-        public DataContext(DbContextOptions<DataContext> context) : base(context)
-        {
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

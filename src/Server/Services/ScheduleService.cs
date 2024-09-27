@@ -560,7 +560,6 @@ public class ScheduleService : IScheduleService
             else if (vehicle.IsDefault)
             {
                 vehiclePrev = vehicle;
-                //break;
             }
         }
 
