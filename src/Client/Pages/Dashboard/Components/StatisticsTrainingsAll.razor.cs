@@ -55,7 +55,7 @@ public sealed partial class StatisticsTrainingsAll : IDisposable
         _renderChart = false;
         await Task.Delay(1); // Will not update without this delay
         StateHasChanged();
-        var analyzeData = await ReportTrainingRepository.AnalyzeYearChartsAll(SelectedUsers, _cls.Token);
+        var analyzeData = await ReportTrainingRepository.AnalyzeYearChartsAll(SelectedUsers, AllYears ? null : 5, _cls.Token);
         if (analyzeData is null) return;
         _elapsedMilliseconds = analyzeData.ElapsedMilliseconds;
         _data = StatisticsTab.DrawLineChartAll(analyzeData, AllYears);

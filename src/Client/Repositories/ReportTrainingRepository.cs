@@ -33,7 +33,7 @@ public class ReportTrainingRepository
         return result;
     }
     
-    public async Task<AnalyzeYearChartAllResponse?> AnalyzeYearChartsAll(IEnumerable<DrogeUser> users, CancellationToken clt)
+    public async Task<AnalyzeYearChartAllResponse?> AnalyzeYearChartsAll(IEnumerable<DrogeUser> users, int? years, CancellationToken clt)
     {
         try
         {
@@ -41,6 +41,7 @@ public class ReportTrainingRepository
             var request = new AnalyzeTrainingRequest()
             {
                 Users = users.Select(x => (Guid?)x.Id).ToList(),
+                Years = years
             };
             var result = await _reportTrainingClient.AnalyzeYearChartsAllAsync(request, clt);
             return result;
