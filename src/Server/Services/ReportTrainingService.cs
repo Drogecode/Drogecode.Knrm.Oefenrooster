@@ -34,9 +34,11 @@ public class ReportTrainingService : IReportTrainingService
     public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(AnalyzeTrainingRequest trainingRequest, Guid customerId, string timeZone, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var allReports = _database.ReportTrainings
+        var allReports  = await _database.ReportTrainings
             .Where(x => x.CustomerId == customerId && x.Users!.Count(y => trainingRequest.Users!.Contains(y.DrogeCodeId)) == trainingRequest.Users!.Count)
-            .Select(x => new { x.Start });
+            .Select(x => new { x.Start })
+            .OrderByDescending(x => x.Start)
+            .ToListAsync(clt);
         var result = new AnalyzeYearChartAllResponse { TotalCount = allReports.Count() };
         List<int> years = new();
         foreach (var report in allReports)

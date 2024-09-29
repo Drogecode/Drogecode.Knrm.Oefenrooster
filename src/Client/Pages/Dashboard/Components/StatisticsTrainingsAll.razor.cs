@@ -20,6 +20,7 @@ public sealed partial class StatisticsTrainingsAll : IDisposable
     private readonly ApexChartOptions<StatisticsTab.ChartMonth> _options = new() { Theme = new Theme() { Mode = Mode.Dark } };
     private string[]? _xAxisLabels;
     private long _elapsedMilliseconds = -1;
+    private int _totalCount;
     private AnalyzeYearChartAllResponse? _analyzeData;
     private ApexChart<StatisticsTab.ChartMonth> _chart = null!;
     private bool _renderChart;
@@ -58,7 +59,8 @@ public sealed partial class StatisticsTrainingsAll : IDisposable
         var analyzeData = await ReportTrainingRepository.AnalyzeYearChartsAll(SelectedUsers, AllYears ? null : 5, _cls.Token);
         if (analyzeData is null) return;
         _elapsedMilliseconds = analyzeData.ElapsedMilliseconds;
-        _data = StatisticsTab.DrawLineChartAll(analyzeData, AllYears);
+        _totalCount = analyzeData.TotalCount;
+        _data = StatisticsTab.DrawLineChartAll(analyzeData);
         _renderChart = true;
         StateHasChanged();
     }

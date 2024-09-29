@@ -18,7 +18,7 @@ public sealed partial class MainLayout : IDisposable
 
     private readonly DrogeCodeGlobal _global = new();
     private MudThemeProvider _mudThemeProvider = new();
-    private IDictionary<NotificationMessage, bool> _messages = null;
+    private IDictionary<NotificationMessage, bool>? _messages = null;
     private List<PlannerTrainingType>? _trainingTypes;
     private HubConnection? _hubConnection;
     private readonly CancellationTokenSource _cls = new();

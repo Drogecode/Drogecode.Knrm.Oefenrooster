@@ -21,12 +21,19 @@ public sealed partial class StatisticsActionsAll : IDisposable
     private IEnumerable<string?>? _selectedPrio;
     private List<string?>? _prios;
     private long _elapsedMilliseconds = -1;
+    private int _totalCount;
     private ApexChart<StatisticsTab.ChartMonth>? _chart;
     private bool _renderChart;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Global.DarkLightChangedAsync += DarkModeChanged;
+        if (firstRender)
+        {
+            Global.DarkLightChangedAsync += DarkModeChanged;
+            _options.Theme.Mode = Global.DarkMode ? Mode.Dark : Mode.Light;
+            _prios = (await ReportActionRepository.Distinct(DistinctReportAction.Prio, _cls.Token))?.Values;
+            await UpdateAnalyzeYearChartAll();
+        }
     }
 
     private async Task DarkModeChanged(bool newValue)
@@ -40,16 +47,6 @@ public sealed partial class StatisticsActionsAll : IDisposable
         StateHasChanged();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _options.Theme.Mode = Global.DarkMode ? Mode.Dark : Mode.Light;
-            _prios = (await ReportActionRepository.Distinct(DistinctReportAction.Prio, _cls.Token))?.Values;
-            await UpdateAnalyzeYearChartAll();
-        }
-    }
-
     public async Task UpdateAnalyzeYearChartAll()
     {
         _renderChart = false;
@@ -58,8 +55,8 @@ public sealed partial class StatisticsActionsAll : IDisposable
         var analyzeData = await ReportActionRepository.AnalyzeYearChartsAll(SelectedUsers, _selectedPrio, AllYears ? null : 5, _cls.Token);
         if (analyzeData is null) return;
         _elapsedMilliseconds = analyzeData.ElapsedMilliseconds;
-        _data = StatisticsTab.DrawLineChartAll(analyzeData, AllYears);
-
+        _totalCount = analyzeData.TotalCount;
+        _data = StatisticsTab.DrawLineChartAll(analyzeData);
         _renderChart = true;
         StateHasChanged();
     }

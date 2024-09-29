@@ -84,4 +84,10 @@
     <data name="Data from 2021 and before could be incorrect or incomplete" xml:space="preserve">
         <value>Data van 2021 en eerder kan incorrect of incompleet zijn</value>
     </data>
+    <data name="Total actions: {0}" xml:space="preserve">
+        <value>Aantal acties: {0}</value>
+    </data>
+    <data name="Total trainings: {0}" xml:space="preserve">
+        <value>Aantal trainingen: {0}</value>
+    </data>
 </root>

@@ -5,6 +5,7 @@
         <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
             <MudChip T="string">@_elapsedMilliseconds</MudChip>
         </AuthorizeView>
+        <MudText Typo="Typo.body1">@L["Total actions: {0}", _totalCount]</MudText>
         <ApexChart @ref=_chart TItem="StatisticsTab.ChartMonth" Title="@L["actions"]" Options="_options">
 
             @foreach (var data in _data)

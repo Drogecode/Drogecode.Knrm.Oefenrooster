@@ -77,4 +77,10 @@
     <data name="Data from 2021 and before could be incorrect or incomplete" xml:space="preserve">
         <value>Data from 2021 and before could be incorrect or incomplete</value>
     </data>
+    <data name="Total actions: {0}" xml:space="preserve">
+        <value>Total actions: {0}</value>
+    </data>
+    <data name="Total trainings: {0}" xml:space="preserve">
+        <value>Total trainings: {0}</value>
+    </data>
 </root>
