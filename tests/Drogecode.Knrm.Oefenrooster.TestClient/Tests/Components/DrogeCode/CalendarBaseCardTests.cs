@@ -31,7 +31,10 @@ public class CalendarBaseCardTests : BlazorTestBase
 
         var training = new TrainingAdvance { DateStart = DateTime.UtcNow };
         var cut = RenderComponent<CalendarBaseCard>(parameter => parameter.Add(p => p.Training, training).Add(p => p.ReplaceEmptyName, true));
-        cut.Markup.Should().Contain(training.DateStart.ToLocalTime().ToString("dddd"));
+        var timeZone = "Europe/Amsterdam";
+        var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
+        var dateStart = TimeZoneInfo.ConvertTimeFromUtc(training.DateStart, zone);
+        cut.Markup.Should().Contain(dateStart.ToString("dddd"));
     }
 
     [Theory]
@@ -96,6 +99,7 @@ public class CalendarBaseCardTests : BlazorTestBase
     }
 
     private bool Clicked = false;
+
     private void ClickButton()
     {
         Clicked = true;

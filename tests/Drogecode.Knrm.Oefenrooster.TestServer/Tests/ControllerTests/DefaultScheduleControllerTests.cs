@@ -201,6 +201,8 @@ public class DefaultScheduleControllerTests : BaseTest
         Assert.NotNull(patchResult.Value?.Patched?.UserDefaultAvailableId);
 
         var allForGroup = await DefaultScheduleController.GetAllByGroupId(newGroup.Id);
+        Assert.NotNull(allForGroup.Value?.DefaultSchedules);
+        Assert.NotEmpty(allForGroup.Value.DefaultSchedules);
         allForGroup.Value!.DefaultSchedules!.FirstOrDefault(x => x.Id == DefaultDefaultSchedule)!.UserSchedules.Should().Contain(x => x.UserDefaultAvailableId == patchResult.Value!.Patched!.UserDefaultAvailableId);
 
         var idDefaultGroup = (await DefaultScheduleController.GetAllGroups()).Value!.Groups!.FirstOrDefault(x => x.IsDefault)!.Id;

@@ -304,7 +304,7 @@ public class BaseTest : IAsyncLifetime
             TimeStart = new TimeOnly(11, 0),
             TimeEnd = new TimeOnly(14, 0),
             ValidFromDefault = DateTime.Today,
-            ValidUntilDefault = DateTime.Today.AddDays(7),
+            ValidUntilDefault = DateTime.Today.AddDays(14),
             CountToTrainingTarget = false,
             Order = 10
         };
