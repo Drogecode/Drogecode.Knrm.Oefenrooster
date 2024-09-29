@@ -22,6 +22,7 @@ public sealed partial class MainLayout : IDisposable
     private List<PlannerTrainingType>? _trainingTypes;
     private HubConnection? _hubConnection;
     private readonly CancellationTokenSource _cls = new();
+    private DarkLightMode _darkModeToggle;
     private bool _isDarkMode;
     private bool _isAuthenticated;
     private bool _drawerOpen = true;

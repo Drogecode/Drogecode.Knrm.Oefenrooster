@@ -1,8 +1,9 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Client.Services;
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums
 @inherits LayoutComponentBase
 @inject CustomStateProvider AuthenticationStateProvider
 
-<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" Theme="@_myCustomTheme"/>
+<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" Theme="@_myCustomTheme" ObserveSystemThemeChange="_darkModeToggle == DarkLightMode.System"/>
 <MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
@@ -49,7 +50,7 @@
                     <MudMenuItem Href="/user/profile">@L["Profile"]</MudMenuItem>
                     <MudMenuItem Href="/authentication/logout">@L["Logout"]</MudMenuItem>
                 </MudMenu>
-                <Theming Global="_global" MudThemeProvider="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode"/>
+                <Theming Global="_global" MudThemeProvider="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" @bind-DarkModeToggle="_darkModeToggle"/>
             </MudAppBar>
             <CascadingValue Value="_global">
                 <MudDrawer @bind-Open="@_drawerOpen">

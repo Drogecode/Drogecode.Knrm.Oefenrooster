@@ -179,7 +179,6 @@ public sealed partial class Index : IDisposable
     {
         try
         {
-            DebugHelper.WriteLine("VisibilityChanged dashboard");
             _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
             _vehicles = await VehicleRepository.GetAllVehiclesAsync(true, _cls.Token);
             _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
@@ -187,7 +186,6 @@ public sealed partial class Index : IDisposable
             _dayItems = (await CalendarItemRepository.GetDayItemDashboardAsync(_userId, false, _cls.Token))?.DayItems;
             _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
             _trainings = await ScheduleRepository.GetScheduledTrainingsForUser(_userId, false, TAKE, _skip * TAKE, _cls.Token);
-            DebugHelper.WriteLine("Dashboard reloaded");
             StateHasChanged();
         }
         catch (Exception e)

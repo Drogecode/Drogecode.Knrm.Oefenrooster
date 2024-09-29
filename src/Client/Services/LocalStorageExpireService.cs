@@ -35,7 +35,8 @@ public class LocalStorageExpireService : ILocalStorageExpireService
                 _accessorJsRef = new Lazy<IJSObjectReference>(await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/LocalStorageAccessor.js"));
             }
 
-            var packages = await _accessorJsRef.Value.InvokeAsync<Dictionary<string, string>>("getAll");
+            var packages = await _accessorJsRef.Value.InvokeAsync<Dictionary<string, string>?>("getAll");
+            if (packages is null) return;
             foreach (var package in packages)
             {
                 ExpiryStorageModel<object>? expiryStorageModel = null;
@@ -44,8 +45,14 @@ public class LocalStorageExpireService : ILocalStorageExpireService
                     expiryStorageModel = JsonSerializer.Deserialize<ExpiryStorageModel<object>>(package.Value);
                     if (expiryStorageModel == null || expiryStorageModel.Ttl == 0) continue;
                 }
+                catch (JsonException)
+                {
+                    // Ignore json exceptions
+                    continue;
+                }
                 catch (Exception ex)
                 {
+                    DebugHelper.WriteLine("Inner exception");
                     DebugHelper.WriteLine(ex);
                     continue;
                 }
@@ -57,6 +64,7 @@ public class LocalStorageExpireService : ILocalStorageExpireService
         }
         catch (Exception ex)
         {
+            DebugHelper.WriteLine("Outer exception");
             DebugHelper.WriteLine(ex);
         }
         finally

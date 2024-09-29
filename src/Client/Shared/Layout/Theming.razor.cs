@@ -19,7 +19,19 @@ public sealed partial class Theming : IDisposable
     [Parameter, EditorRequired] public DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter, EditorRequired] public MudThemeProvider MudThemeProvider { get; set; } = default!;
     [Parameter] public EventCallback<bool> IsDarkModeChanged { get; set; }
+    [Parameter] public EventCallback<DarkLightMode> DarkModeToggleChanged { get; set; }
     [Inject] ISnackbar Snackbar { get; set; } = default!;
+
+
+    private DarkLightMode _darkModeToggle;
+    private LocalUserSettings? _localUserSettings;
+    private DotNetObjectReference<Theming>? _dotNetHelper;
+    private CancellationTokenSource _cls = new();
+    private DateTime _lastVisibilityChange = DateTime.UtcNow;
+    private bool _isDarkMode;
+    private bool _watchStarted;
+    private bool _isTaco;
+    private int _counter = 0;
 
     [Parameter]
     public bool IsDarkMode
@@ -37,16 +49,29 @@ public sealed partial class Theming : IDisposable
         }
     }
 
+    [Parameter]
+    public DarkLightMode DarkModeToggle
+    {
+        get => _darkModeToggle;
+        set
+        {
+            if (_darkModeToggle == value) return;
+            _darkModeToggle = value;
+            _counter++;
+            RefreshMe();
+            if (_localUserSettings == null)
+            {
+                return;
+            }
 
-    private DarkLightMode _darkModeToggle;
-    private LocalUserSettings? _localUserSettings;
-    private DotNetObjectReference<Theming>? _dotNetHelper;
-    private CancellationTokenSource _cls = new();
-    private DateTime _lastVisibilityChange = DateTime.UtcNow;
-    private bool _isDarkMode;
-    private bool _watchStarted;
-    private bool _isTaco;
-    private int _counter = 0;
+            _localUserSettings.DarkLightMode = _darkModeToggle;
+            LocalStorage.SetItemAsync("localUserSettings", _localUserSettings);
+            if (DarkModeToggleChanged.HasDelegate)
+            {
+                DarkModeToggleChanged.InvokeAsync(value);
+            }
+        }
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -73,25 +98,6 @@ public sealed partial class Theming : IDisposable
 
             await Global.CallDarkLightChangedAsync(IsDarkMode);
             await Global.CallRequestRefreshAsync();
-        }
-    }
-
-    private DarkLightMode DarkModeToggle
-    {
-        get => _darkModeToggle;
-        set
-        {
-            if (_darkModeToggle == value) return;
-            _darkModeToggle = value;
-            _counter++;
-            RefreshMe();
-            if (_localUserSettings == null)
-            {
-                return;
-            }
-
-            _localUserSettings.DarkLightMode = _darkModeToggle;
-            LocalStorage.SetItemAsync("localUserSettings", _localUserSettings);
         }
     }
 
@@ -151,7 +157,7 @@ public sealed partial class Theming : IDisposable
 
     public async Task OnSystemPreferenceChanged(bool newValue)
     {
-        if (DarkModeToggle == DarkLightMode.System && IsDarkMode != newValue)
+        if (DarkModeToggle == DarkLightMode.System)
         {
             IsDarkMode = newValue;
             RefreshMe();

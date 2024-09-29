@@ -37,7 +37,6 @@ public class ReportTrainingRepository
     {
         try
         {
-            DebugHelper.WriteLine("dupe");
             var request = new AnalyzeTrainingRequest()
             {
                 Users = users.Select(x => (Guid?)x.Id).ToList(),
@@ -48,7 +47,6 @@ public class ReportTrainingRepository
         }
         catch (Exception ex)
         {
-            DebugHelper.WriteLine("dap");
             DebugHelper.WriteLine(ex);
         }
 
