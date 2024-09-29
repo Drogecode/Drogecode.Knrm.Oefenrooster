@@ -9,6 +9,7 @@ public class ReportActionService : IReportActionService
 {
     private readonly Database.DataContext _database;
     private readonly ILogger<ReportActionService> _logger;
+    private static readonly List<string> _typeInzetToIgnore = new() { "Boot uitgemeld" };
 
     public ReportActionService(Database.DataContext database, ILogger<ReportActionService> logger)
     {
@@ -38,16 +39,18 @@ public class ReportActionService : IReportActionService
         var allReports = await _database.ReportActions
             .Where(x => x.CustomerId == customerId
                         && (actionRequest.Prio == null || !actionRequest.Prio.Any() || actionRequest.Prio.Contains(x.Prio))
-                        && x.Users!.Count(y => actionRequest.Users!.Contains(y.DrogeCodeId)) == actionRequest.Users!.Count)
+                        && x.Users!.Count(y => actionRequest.Users!.Contains(y.DrogeCodeId)) == actionRequest.Users!.Count
+                        && (x.Type == null || !_typeInzetToIgnore.Contains(x.Type)))
             .Select(x => new { x.Start, x.Number })
             .OrderByDescending(x => x.Start)
             .ToListAsync(clt);
-        var result = new AnalyzeYearChartAllResponse { TotalCount = allReports.Count() };
+        var result = new AnalyzeYearChartAllResponse ();
         var skipped = 0;
+        var totalCount = 0;
         List<int> years = new();
         foreach (var report in allReports)
         {
-            if (report.Number is not null && (report.Number % 1) != 0 && allReports.Count(x => x.Start.Year == report.Start.Year && x.Number?.FloatingEquals((int)report.Number, 0.1) == true) >= 2)
+            if (report.Number is not null && report.Number?.FloatingEquals(0, 0.1) != true && (report.Number % 1) != 0 && allReports.Count(x => x.Start.Year == report.Start.Year && x.Number?.FloatingEquals((int)report.Number, 0.3) == true) >= 2)
             {
                 skipped++;
                 continue;
@@ -79,9 +82,11 @@ public class ReportActionService : IReportActionService
 
             var month = year.Months.First(x => x.Month == start.Month);
             month.Count++;
+            totalCount++;
         }
 
         _logger.LogInformation("Skipped {skipped} reports in analyzes", skipped);
+        result.TotalCount = totalCount;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         result.Success = true;
