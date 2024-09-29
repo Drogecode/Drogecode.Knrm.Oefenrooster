@@ -7,6 +7,7 @@ using Microsoft.Identity.Web.Resource;
 using Nager.Holiday;
 using System.Diagnostics;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -21,17 +22,20 @@ public class ConfigurationController : ControllerBase
     private readonly IConfigurationService _configurationService;
     private readonly IAuditService _auditService;
     private readonly IUserService _userService;
+    private readonly RefreshHub _refreshHub;
 
     public ConfigurationController(
         ILogger<ConfigurationController> logger,
         IConfigurationService configurationService,
         IAuditService auditService,
-        IUserService userService)
+        IUserService userService, 
+        RefreshHub refreshHub)
     {
         _logger = logger;
         _configurationService = configurationService;
         _auditService = auditService;
         _userService = userService;
+        _refreshHub = refreshHub;
     }
 
     [HttpPatch]
@@ -79,6 +83,7 @@ public class ConfigurationController : ControllerBase
                 ButtonVersion = DefaultSettingsHelper.BUTTON_VERSION,
             };
             await _userService.PatchLastOnline(userId, customerId, clientVersion, clt);
+            await _refreshHub.SendMessage(userId, ItemUpdated.UsersOnlineChanged);
             sw.Stop();
             response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
             return Ok(response);

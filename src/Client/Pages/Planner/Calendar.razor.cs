@@ -25,6 +25,7 @@ public sealed partial class Calendar : IDisposable
     private DrogeUser? _user;
     private bool _updating;
     private bool _initialized;
+    private bool _currentMonth;
     private DateTime? _month;
     private DateTime _firstMonth = DateTime.Today;
 
@@ -72,6 +73,7 @@ public sealed partial class Calendar : IDisposable
         if (_month is not null)
         {
             _firstMonth = _month.Value;
+            _currentMonth = DateTime.Today.Month == _month.Value.Month;
             var monthItems = await MonthItemRepository.GetMonthItemAsync(_month.Value.Year, _month.Value.Month, _cls.Token);
             _monthItems = monthItems?.MonthItems;
             _user ??= await UserRepository.GetCurrentUserAsync();

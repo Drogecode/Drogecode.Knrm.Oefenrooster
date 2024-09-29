@@ -204,4 +204,7 @@
   <data name="Load more" xml:space="preserve">
     <value>Meer laden</value>
   </data>
+  <data name="Today" xml:space="preserve">
+    <value>Vandaag</value>
+  </data>
 </root>

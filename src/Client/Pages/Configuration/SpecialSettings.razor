@@ -81,7 +81,13 @@ else if (_killDb?.Success == false)
                         <div class="flex space-x-4">
                             <p>@user.Name</p>
                             <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin"/>
-                            <p class="text-gray-400/25">@user.Versions</p>
+                            @if (user.Versions is not null)
+                            {
+                                @foreach (var version in user.Versions)
+                                {
+                                    <MudChip T="string" Size="Size.Small">@version</MudChip>
+                                }
+                            }
                         </div>
                     </MudListItem>
                 }
@@ -101,7 +107,13 @@ else if (_killDb?.Success == false)
                             <div class="flex space-x-4">
                                 <p>@user.Name</p>
                                 <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin"/>
-                                <p class="text-gray-400/25">@user.Versions</p>
+                                @if (user.Versions is not null)
+                                {
+                                    @foreach (var version in user.Versions)
+                                    {
+                                        <MudChip T="string" Size="Size.Small">@version</MudChip>
+                                    }
+                                }
                             </div>
                         </MudListItem>
                     }

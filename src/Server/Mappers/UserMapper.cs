@@ -48,11 +48,11 @@ internal static class UserMapper
 
         if (dbUsers.UserOnVersions?.Count > 0)
         {
-            user.Versions = string.Empty;
+            user.Versions = (List<string>) [];
             foreach (var version in dbUsers.UserOnVersions.OrderByDescending(x => x.LastSeenOnThisVersion))
             {
                 if (version.LastSeenOnThisVersion.AddDays(7).CompareTo(dbUsers.LastLogin) >= 0)
-                    user.Versions += version.Version + " ";
+                    user.Versions.Add(version.Version);
             }
         }
 

@@ -2,7 +2,9 @@
 
 public sealed partial class MonthSelector
 {
+    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Parameter] public EventCallback<DateTime?> MonthChanged { get; set; }
+    [Parameter] public bool CurrentMonth { get; set; }
     [Parameter]
     public DateTime? Month
     {

@@ -111,6 +111,7 @@ public sealed partial class Index : IDisposable
                 {
                     if (_cls.Token.IsCancellationRequested)
                         return;
+                    var stateHasChanged = true;
                     switch (type)
                     {
                         case ItemUpdated.FutureTrainings:
@@ -139,11 +140,13 @@ public sealed partial class Index : IDisposable
                                 _futureHolidays = (await _holidayRepository.GetAllFuture(_userId, false, _cls.Token))?.Holidays;
                             break;
                         default:
+                            stateHasChanged = false;
                             DebugHelper.WriteLine("Missing type, ignored");
                             break;
                     }
 
-                    StateHasChanged();
+                    if (stateHasChanged)
+                        StateHasChanged();
                 }
                 catch (HttpRequestException)
                 {

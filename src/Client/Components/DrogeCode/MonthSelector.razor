@@ -5,6 +5,10 @@
             <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIosNew" OnClick="()=>SetMonth(Month.Value.AddMonths(-1))" Disabled="_updating"></MudIconButton>
             <MudButton>@Month.Value.ToString(Month.Value.Year == DateTime.Today.Year ? "MMMM" : "MMMM yyyy")</MudButton>
             <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos" OnClick="()=>SetMonth(Month.Value.AddMonths(1))" Disabled="_updating"></MudIconButton>
+            @if (!CurrentMonth)
+            {
+                <MudButton  StartIcon="@Icons.Material.Filled.Today" OnClick="()=>SetMonth(DateTime.Today)" Disabled="_updating">@LApp["Today"]</MudButton>
+            }
         </MudButtonGroup>
     </div>
 }
