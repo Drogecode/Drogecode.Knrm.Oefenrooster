@@ -94,54 +94,35 @@ public sealed partial class SpecialSettings : IDisposable
                 .Build();
             _hubConnection.On<ConfigurationUpdatedHub>($"configuration", async (type) =>
             {
-                try
+                if (_cls.Token.IsCancellationRequested)
+                    return;
+                var stateHasChanged = true;
+                DebugHelper.WriteLine($"Got {type.ConfigurationUpdated} request");
+                switch (type.ConfigurationUpdated)
                 {
-                    if (_cls.Token.IsCancellationRequested)
-                        return;
-                    var stateHasChanged = true;
-                    DebugHelper.WriteLine($"Got {type.ConfigurationUpdated} request");
-                    switch (type.ConfigurationUpdated)
-                    {
-                        case ConfigurationUpdated.UsersOnlineChanged:
-                            if (type.ByUserId.Equals(_userId))
-                                break;
-                            _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
+                    case ConfigurationUpdated.UsersOnlineChanged:
+                        if (type.ByUserId.Equals(_userId))
                             break;
-                        default:
-                            stateHasChanged = false;
-                            DebugHelper.WriteLine("Missing type, ignored");
-                            break;
-                    }
+                        _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
+                        break;
+                    default:
+                        stateHasChanged = false;
+                        break;
+                }
 
-                    if (stateHasChanged)
-                        StateHasChanged();
-                }
-                catch (HttpRequestException)
-                {
-                    DebugHelper.WriteLine("c HttpRequestException");
-                }
-                catch (TaskCanceledException)
-                {
-                }
-                catch (Exception e)
-                {
-                    DebugHelper.WriteLine("On message received from hub");
-                    DebugHelper.WriteLine(e);
-                    throw;
-                }
+                if (stateHasChanged)
+                    StateHasChanged();
             });
             await _hubConnection.StartAsync(_cls.Token);
         }
         catch (HttpRequestException)
         {
-            DebugHelper.WriteLine("d HttpRequestException");
         }
         catch (TaskCanceledException)
         {
         }
         catch (Exception e)
         {
-            DebugHelper.WriteLine("Failed to setup hub");
             DebugHelper.WriteLine(e);
         }
     }

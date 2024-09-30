@@ -107,73 +107,54 @@ public sealed partial class Index : IDisposable
                 .Build();
             _hubConnection.On<ItemUpdated>($"Refresh_{_userId}", async (type) =>
             {
-                try
+                if (_cls.Token.IsCancellationRequested)
+                    return;
+                var stateHasChanged = true;
+                switch (type)
                 {
-                    if (_cls.Token.IsCancellationRequested)
-                        return;
-                    var stateHasChanged = true;
-                    switch (type)
-                    {
-                        case ItemUpdated.FutureTrainings:
-                            _trainings = await ScheduleRepository.GetScheduledTrainingsForUser(_userId, false, TAKE, _skip * TAKE, _cls.Token);
-                            break;
-                        case ItemUpdated.AllUsers:
-                            _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
-                            break;
-                        case ItemUpdated.AllVehicles:
-                            _vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
-                            break;
-                        case ItemUpdated.AllTrainingTypes:
-                            _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
-                            break;
-                        case ItemUpdated.AllFunctions:
-                            _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
-                            break;
-                        case ItemUpdated.DayItemDashboard:
-                            _dayItems = (await CalendarItemRepository.GetDayItemDashboardAsync(_userId, false, _cls.Token))?.DayItems;
-                            break;
-                        case ItemUpdated.PinnedDashboard:
-                            _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
-                            break;
-                        case ItemUpdated.FutureHolidays:
-                            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
-                                _futureHolidays = (await _holidayRepository.GetAllFuture(_userId, false, _cls.Token))?.Holidays;
-                            break;
-                        default:
-                            stateHasChanged = false;
-                            DebugHelper.WriteLine("Missing type, ignored");
-                            break;
-                    }
+                    case ItemUpdated.FutureTrainings:
+                        _trainings = await ScheduleRepository.GetScheduledTrainingsForUser(_userId, false, TAKE, _skip * TAKE, _cls.Token);
+                        break;
+                    case ItemUpdated.AllUsers:
+                        _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
+                        break;
+                    case ItemUpdated.AllVehicles:
+                        _vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
+                        break;
+                    case ItemUpdated.AllTrainingTypes:
+                        _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
+                        break;
+                    case ItemUpdated.AllFunctions:
+                        _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
+                        break;
+                    case ItemUpdated.DayItemDashboard:
+                        _dayItems = (await CalendarItemRepository.GetDayItemDashboardAsync(_userId, false, _cls.Token))?.DayItems;
+                        break;
+                    case ItemUpdated.PinnedDashboard:
+                        _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
+                        break;
+                    case ItemUpdated.FutureHolidays:
+                        if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
+                            _futureHolidays = (await _holidayRepository.GetAllFuture(_userId, false, _cls.Token))?.Holidays;
+                        break;
+                    default:
+                        stateHasChanged = false;
+                        break;
+                }
 
-                    if (stateHasChanged)
-                        StateHasChanged();
-                }
-                catch (HttpRequestException)
-                {
-                    DebugHelper.WriteLine("c HttpRequestException");
-                }
-                catch (TaskCanceledException)
-                {
-                }
-                catch (Exception e)
-                {
-                    DebugHelper.WriteLine("On message received from hub");
-                    DebugHelper.WriteLine(e);
-                    throw;
-                }
+                if (stateHasChanged)
+                    StateHasChanged();
             });
             await _hubConnection.StartAsync(_cls.Token);
         }
         catch (HttpRequestException)
         {
-            DebugHelper.WriteLine("d HttpRequestException");
         }
         catch (TaskCanceledException)
         {
         }
         catch (Exception e)
         {
-            DebugHelper.WriteLine("Failed to setup hub");
             DebugHelper.WriteLine(e);
         }
     }
