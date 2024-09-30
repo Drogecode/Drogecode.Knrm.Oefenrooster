@@ -1,43 +1,57 @@
 ﻿@page "/configuration/default-schedule"
+@using Drogecode.Knrm.Oefenrooster.Client.Extensions
 @attribute [Authorize(Roles = $"{AccessesNames.AUTH_configure_default_schedule}")]
 <PageTitle>@L["Configure default schedule"]</PageTitle>
 <MudPaper Elevation="0" Class="p-2">
     @if (_defaults is not null)
     {
         if (_defaults.DefaultSchedules?.Any() == true)
-        {<MudDataGrid Items="@_defaults.DefaultSchedules" Striped="true" Hover="true">
-        <Columns>
-            <HierarchyColumn T="DefaultConfig"/>
-            <PropertyColumn Property="x => x.Name" Title="@L["Name"]" CellClassFunc="@(x => $"trainingType-{x.RoosterTrainingTypeId}")"/>
-            <PropertyColumn Property="x => x.WeekDay" Title="@L["Weekday"]">
-                <CellTemplate>
-                    @LApp[context.Item.WeekDay.ToString() ?? "None"]
-                </CellTemplate>
-            </PropertyColumn>
-            <TemplateColumn Title="@L["TimeStart"]">
-                <CellTemplate>
-                    @if (context.Item.ShowTime)
-                    {
-                        <p>@context.Item.TimeStart</p>
-                    }
-                </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn Title="@L["TimeEnd"]">
-                <CellTemplate>
-                    @if (context.Item.ShowTime)
-                    {
-                        <p>@context.Item.TimeEnd</p>
-                    }
-                </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn>
-                <CellTemplate>
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await Delete(context.Item); })"/>
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => { OpenMonthItemDialog(context.Item, false); })"/>
-                </CellTemplate>
-            </TemplateColumn>
-        </Columns>
-    </MudDataGrid>
+        {
+            <MudDataGrid Items="@_defaults.DefaultSchedules.OrderBy(x => x.ValidUntilDefault.CompareTo(DateTime.UtcNow) < 0).ThenBy(x => x.Order)" Striped="true" Hover="true">
+                <Columns>
+                    <HierarchyColumn T="DefaultConfig"/>
+                    <PropertyColumn Property="x => x.Name" Title="@L["Name"]" CellClassFunc="@(x => $"trainingType-{x.RoosterTrainingTypeId}")"/>
+                    <PropertyColumn Property="x => x.WeekDay" Title="@L["Weekday"]">
+                        <CellTemplate>
+                            @LApp[context.Item.WeekDay.ToString() ?? "None"]
+                        </CellTemplate>
+                    </PropertyColumn>
+                    <TemplateColumn Title="@L["Valid from"]">
+                        <CellTemplate>
+                            <p>@context.Item.ValidFromDefault.ToNiceString(LDateToString, showtime: false)</p>
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn Title="@L["Valid untill"]">
+                        <CellTemplate>
+                            @if (!context.Item.ValidUntilDefault.Equals(DateTime.MaxValue))
+                            {
+                                <p>@context.Item.ValidUntilDefault.ToNiceString(LDateToString, showtime: false)</p>
+                            }
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn Title="@L["TimeStart"]">
+                        <CellTemplate>
+                            @if (context.Item.ShowTime)
+                            {
+                                <p>@context.Item.TimeStart</p>
+                            }
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn Title="@L["TimeEnd"]">
+                        <CellTemplate>
+                            @if (context.Item.ShowTime)
+                            {
+                                <p>@context.Item.TimeEnd</p>
+                            }
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn>
+                        <CellTemplate>
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => { OpenMonthItemDialog(context.Item, false); })"/>
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+            </MudDataGrid>
         }
     }
     else

@@ -94,4 +94,9 @@ public class LocalStorageExpireService : ILocalStorageExpireService
         };
         await _localStorageService.SetItemAsync(key, value, cancellationToken);
     }
+
+    public async Task DeleteItemAsync(string key, CancellationToken clt)
+    {
+        await _localStorageService.RemoveItemAsync(key, clt);
+    }
 }

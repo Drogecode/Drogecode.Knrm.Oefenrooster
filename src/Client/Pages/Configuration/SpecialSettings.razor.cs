@@ -89,20 +89,22 @@ public sealed partial class SpecialSettings : IDisposable
         try
         {
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl(Navigation.ToAbsoluteUri("/hub/refresh"))
+                .WithUrl(Navigation.ToAbsoluteUri("/hub/configuration"))
                 .WithAutomaticReconnect()
                 .Build();
-            _hubConnection.On<ItemUpdated>($"Refresh_{_userId}", async (type) =>
+            _hubConnection.On<ConfigurationUpdatedHub>($"configuration", async (type) =>
             {
                 try
                 {
                     if (_cls.Token.IsCancellationRequested)
                         return;
                     var stateHasChanged = true;
-                    DebugHelper.WriteLine($"Got {type} request");
-                    switch (type)
+                    DebugHelper.WriteLine($"Got {type.ConfigurationUpdated} request");
+                    switch (type.ConfigurationUpdated)
                     {
-                        case ItemUpdated.UsersOnlineChanged:
+                        case ConfigurationUpdated.UsersOnlineChanged:
+                            if (type.ByUserId.Equals(_userId))
+                                break;
                             _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
                             break;
                         default:

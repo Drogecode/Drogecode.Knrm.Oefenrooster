@@ -26,4 +26,9 @@ public class ApiCachedRequest
     /// Return cached, but also call for update
     /// </summary>
     public bool CachedAndReplace { get; set; } = false;
+
+    /// <summary>
+    /// Retry on JsonException.
+    /// </summary>
+    public bool RetryOnJsonException { get; set; } = true;
 }

@@ -22,20 +22,20 @@ public class ConfigurationController : ControllerBase
     private readonly IConfigurationService _configurationService;
     private readonly IAuditService _auditService;
     private readonly IUserService _userService;
-    private readonly RefreshHub _refreshHub;
+    private readonly ConfigurationHub _configurationHub;
 
     public ConfigurationController(
         ILogger<ConfigurationController> logger,
         IConfigurationService configurationService,
         IAuditService auditService,
-        IUserService userService, 
-        RefreshHub refreshHub)
+        IUserService userService,
+        ConfigurationHub configurationHub)
     {
         _logger = logger;
         _configurationService = configurationService;
         _auditService = auditService;
         _userService = userService;
-        _refreshHub = refreshHub;
+        _configurationHub = configurationHub;
     }
 
     [HttpPatch]
@@ -83,7 +83,7 @@ public class ConfigurationController : ControllerBase
                 ButtonVersion = DefaultSettingsHelper.BUTTON_VERSION,
             };
             await _userService.PatchLastOnline(userId, customerId, clientVersion, clt);
-            await _refreshHub.SendMessage(userId, ItemUpdated.UsersOnlineChanged);
+            await _configurationHub.SendMessage(new ConfigurationUpdatedHub { ConfigurationUpdated = ConfigurationUpdated.UsersOnlineChanged, ByUserId = userId});
             sw.Stop();
             response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
             return Ok(response);
@@ -141,7 +141,7 @@ public class ConfigurationController : ControllerBase
             return new UpdateSpecialDatesResponse { Success = false };
         }
     }
-    
+
 
     [HttpPatch]
     [Route("db-correction")]
@@ -158,6 +158,7 @@ public class ConfigurationController : ControllerBase
                     Message = "No active DbCorrection",
                 };
             }
+
             var response = await _configurationService.DbCorrection(clt);
             return response;
         }

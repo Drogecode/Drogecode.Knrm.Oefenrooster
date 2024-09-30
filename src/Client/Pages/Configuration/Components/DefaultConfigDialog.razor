@@ -1,0 +1,12 @@
+﻿<MudDialog>
+    <DialogContent>
+        @if (DefaultSchedule is not null)
+        {
+            <MudText>ToDo</MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">@LApp["Submit"]</MudButton>
+    </DialogActions>
+</MudDialog>

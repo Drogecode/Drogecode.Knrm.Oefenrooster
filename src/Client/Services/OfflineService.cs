@@ -1,4 +1,5 @@
-﻿using Blazored.LocalStorage;
+﻿using System.Text.Json;
+using Blazored.LocalStorage;
 using Blazored.SessionStorage;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
@@ -8,7 +9,6 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Services;
 
 public class OfflineService : IOfflineService
 {
-
     private readonly ILocalStorageExpireService _localStorageExpireService;
     private readonly ISessionExpireService _sessionStorageExpireService;
 
@@ -65,6 +65,7 @@ public class OfflineService : IOfflineService
             {
                 response.Offline = true;
             }
+
             return cacheResult;
         }
         catch (HttpRequestException)
@@ -74,10 +75,26 @@ public class OfflineService : IOfflineService
         catch (TaskCanceledException)
         {
         }
+        catch (JsonException)
+        {
+            // The object definition could be changed with an update. Deleting old version and retrying again to get latest version.
+            DebugHelper.WriteLine($"JsonException for {cacheKey}, Deleting");
+            await _localStorageExpireService.DeleteItemAsync(cacheKey, clt);
+            request ??= new ApiCachedRequest();
+            if (request.RetryOnJsonException) // Only retry once
+            {
+                DebugHelper.WriteLine($"Retry calling {cacheKey}");
+                request.RetryOnJsonException = false;
+                return await CachedRequestAsync<TRes>(cacheKey, function, request, clt);
+            }
+
+            DebugHelper.WriteLine($"Will not retry {cacheKey}");
+        }
         catch (Exception ex)
         {
             DebugHelper.WriteLine(ex);
         }
+
         return default(TRes);
     }
 }
