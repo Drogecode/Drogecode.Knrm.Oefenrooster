@@ -7,8 +7,8 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 public sealed partial class SelectMultipleUsers
 {
     [Inject] private IStringLocalizer<SelectMultipleUsers> L { get; set; } = default!;
-    [Parameter][EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
-    [Parameter][EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
+    [Parameter] [EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
+    [Parameter] [EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
     [Parameter] public EventCallback<IEnumerable<DrogeUser>> SelectionChanged { get; set; }
     [Parameter] public bool MultiSelection { get; set; } = true;
     [Parameter] public bool Clearable { get; set; } = true;
@@ -16,13 +16,12 @@ public sealed partial class SelectMultipleUsers
     [Parameter] public string Label { get; set; } = string.Empty;
 
     private IEnumerable<DrogeUser> _selectedUsers = new List<DrogeUser>();
+    private string _startsWith = string.Empty;
+
     [Parameter]
     public IEnumerable<DrogeUser> Selection
     {
-        get
-        {
-            return _selectedUsers;
-        }
+        get { return _selectedUsers; }
         set
         {
             if (_selectedUsers == value) return;
@@ -30,6 +29,7 @@ public sealed partial class SelectMultipleUsers
             SelectionChanged.InvokeAsync(value);
         }
     }
+
     protected override void OnParametersSet()
     {
         if (string.IsNullOrEmpty(Label))
@@ -50,5 +50,11 @@ public sealed partial class SelectMultipleUsers
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
     {
         Selection = selection;
+    }
+
+    private void SearchItems(string searchString)
+    {
+        _startsWith = searchString.ToLower();
+        StateHasChanged();
     }
 }

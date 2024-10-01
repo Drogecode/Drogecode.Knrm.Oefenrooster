@@ -10,10 +10,17 @@
                        SelectedValues="@Selection"
                        SelectedValuesChanged="OnSelectionChanged"
                        ReadOnly="@ReadOnly">
-        @foreach (var function in Functions.Where(function => Users.Any(x => x.UserFunctionId == function.Id)))
+        <MudListSubheaderExtended T="string" Style="position: sticky; top: -8px; padding-top: 8px; margin-top: -8px; background-color: var(--mud-palette-background); z-index: 10">
+
+            <div @onkeydown:stopPropagation class="mud-list-item-extended">
+                <MudTextField T="string" ValueChanged="SearchItems" Immediate="true" Variant="Variant.Outlined" Margin="Margin.Dense"
+                              Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" AutoFocus="false" Clearable="true"/>
+            </div>
+        </MudListSubheaderExtended>
+        @foreach (var function in Functions.Where(function => Users.Any(x => x.UserFunctionId == function.Id && x.Name.ToLower().StartsWith(_startsWith))))
         {
             <MudSelectItemGroupExtended T="DrogeUser" Text="@function.Name" Sticky="true">
-                @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
+                @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id && x.Name.ToLower().StartsWith(_startsWith)))
                 {
                     <MudSelectItemExtended T="DrogeUser" Value="@user">@user.Name</MudSelectItemExtended>
                 }
