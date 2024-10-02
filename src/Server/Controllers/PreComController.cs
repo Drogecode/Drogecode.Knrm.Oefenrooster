@@ -132,7 +132,7 @@ public class PreComController : ControllerBase
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in month PutItem");
+            _logger.LogError(ex, "Exception in PutItem");
             return BadRequest();
         }
     }
@@ -153,7 +153,7 @@ public class PreComController : ControllerBase
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in month PutItem");
+            _logger.LogError(ex, "Exception in PutItem");
             return BadRequest();
         }
     }

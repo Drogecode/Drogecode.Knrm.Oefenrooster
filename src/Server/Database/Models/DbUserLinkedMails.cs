@@ -10,6 +10,11 @@ public class DbUserLinkedMails
     public Guid CustomerId { get; set; }
     public Guid UserId { get; set; }
     [StringLength(150)] public string? Email { get; set; }
+    [StringLength(11)] public string? ActivateKey { get; set; }
+    public DateTime? ActivateRequestedOn { get; set; }
+    public int ActivationFailedAttempts { get; set; }
+    public bool IsActive { get; set; }
+    public bool IsEnabled { get; set; }
     public DateTime? DeletedOn { get; set; }
     public Guid? DeletedBy { get; set; }
     

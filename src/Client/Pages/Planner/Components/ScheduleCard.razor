@@ -23,7 +23,7 @@
                 {
                     @ChildContent
                 }
-                <MudList T="string">
+                <MudList T="string" ReadOnly="true">
                     @foreach (var vehicle in Vehicles.Where(x => Planner.PlanUsers.Any(y => y.VehicleId == x.Id) == true || (x.IsDefault && Planner.PlanUsers.Any(y => y.VehicleId == null) == true)))
                     {
                         @if (Functions.Any(f => f.Active) && (Planner.PlanUsers.Any(x => x.Assigned && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))) == true))

@@ -102,7 +102,7 @@ public sealed partial class ScheduleCalendar : IDisposable
         if (_month is not null)
         {
             _firstMonth = _month.Value;
-            _currentMonth = DateTime.Today.Month == _month.Value.Month;
+            _currentMonth = DateTime.Today.Month == _month.Value.Month && DateTime.Today.Year == _month.Value.Year;
             var monthItems = await MonthItemRepository.GetMonthItemAsync(_month.Value.Year, _month.Value.Month, _cls.Token);
             _monthItems = monthItems?.MonthItems;
             var dayItems = await DayItemRepository.GetDayItemsAsync(dateRange, Guid.Empty, _cls.Token);

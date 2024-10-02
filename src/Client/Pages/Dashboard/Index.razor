@@ -101,7 +101,7 @@
                     @if (_futureHolidays.Any())
                     {
                         <MudText Typo="Typo.h5">@L["Future holidays"]</MudText>
-                        <MudList T="string">
+                        <MudList T="string" ReadOnly="true">
                             @foreach (var holiday in _futureHolidays)
                             {
                                 var holUser = _users?.FirstOrDefault(x => x.Id == holiday.UserId);

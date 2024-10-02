@@ -114,6 +114,7 @@ builder.Services.AddScoped<IReportTrainingService, ReportTrainingService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserLinkedMailsService, UserLinkedMailsService>();
 builder.Services.AddScoped<ITrainingTypesService, TrainingTypesService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<IUserSettingService, UserSettingService>();
