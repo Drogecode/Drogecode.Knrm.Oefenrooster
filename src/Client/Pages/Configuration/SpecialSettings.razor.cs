@@ -28,6 +28,7 @@ public sealed partial class SpecialSettings : IDisposable
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
     [CascadingParameter] private DrogeCodeGlobal Global { get; set; } = default!;
+    private static DateTime _lastSyncDateTime = DateTime.UtcNow;
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
     private readonly RefreshModel _refreshModel = new();
@@ -103,7 +104,12 @@ public sealed partial class SpecialSettings : IDisposable
                     case ConfigurationUpdated.UsersOnlineChanged:
                         if (type.ByUserId.Equals(_userId))
                             break;
-                        _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
+                        if (_lastSyncDateTime.CompareTo(DateTime.UtcNow.AddSeconds(-50)) < 1 )
+                        {
+                            _lastSyncDateTime = DateTime.UtcNow;
+                            _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
+                        }
+
                         break;
                     default:
                         stateHasChanged = false;

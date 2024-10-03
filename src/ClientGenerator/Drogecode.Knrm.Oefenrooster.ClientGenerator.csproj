@@ -73,7 +73,7 @@
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\UserLinkedMails.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="UserLinkedMailsClient">
 			<OutputPath>../Clients/UserLinkedMailsClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\UserRole.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="UserRoleClient">
 			<OutputPath>../Clients/UserRoleClient.g.cs</OutputPath>
