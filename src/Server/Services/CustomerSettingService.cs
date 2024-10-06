@@ -67,6 +67,6 @@ public class CustomerSettingService : ICustomerSettingService
             _database.CustomerSettings.Update(result);
         }
 
-        _database.SaveChanges();
+        await _database.SaveChangesAsync();
     }
 }

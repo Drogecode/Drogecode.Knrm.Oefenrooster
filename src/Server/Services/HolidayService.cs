@@ -105,7 +105,7 @@ public class HolidayService : IHolidayService
         body.Id = dbHoliday.Id;
         body.ValidFrom = dbHoliday.ValidFrom;
         _database.UserHolidays.Add(dbHoliday);
-        _database.SaveChanges();
+        await _database.SaveChangesAsync(clt);
         return new PutHolidaysForUserResponse
         {
             Success = true,
@@ -115,7 +115,7 @@ public class HolidayService : IHolidayService
 
     public async Task<PatchHolidaysForUserResponse> PatchHolidaysForUser(Holiday body, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var dbHoliday = _database.UserHolidays.FirstOrDefault(x => x.CustomerId == customerId && x.Id == body.Id);
+        var dbHoliday = await _database.UserHolidays.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == body.Id, cancellationToken: clt);
         if (dbHoliday is null) return new PatchHolidaysForUserResponse { Success = false };
         if (dbHoliday.ValidUntil is not null && dbHoliday.ValidUntil.Value.CompareTo(_dateTimeService.UtcNow()) <= 0) return new PatchHolidaysForUserResponse { Success = false };
         if (dbHoliday.ValidFrom is not null && dbHoliday.ValidFrom.Value.CompareTo(_dateTimeService.UtcNow()) <= 0) body.ValidFrom = dbHoliday.ValidFrom;

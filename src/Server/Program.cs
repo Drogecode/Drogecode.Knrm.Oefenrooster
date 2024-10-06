@@ -86,10 +86,7 @@ builder.Services.AddResponseCompression(opts =>
         new[] { "application/octet-stream" });
 });
 
-builder.Services.AddDbContextPool<DataContext>(options =>
-{
-    options.UseNpgsql(dbConnectionString);
-});
+builder.Services.AddDbContextPool<DataContext>(options => { options.UseNpgsql(dbConnectionString); });
 builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
 {
     ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"],
@@ -172,6 +169,7 @@ if (potentialException is not null)
 {
     app.Logger.LogError(potentialException, "Found except: {messagePotentialException}", messagePotentialException);
 }
+
 app.UseResponseCompression();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -198,11 +196,9 @@ app.MapHealthChecks("/api/_health", new HealthCheckOptions
 
 try
 {
-    using (var scope = app.Services.CreateScope())
-    {
-        var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-        dbContext.Database.Migrate();
-    }
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+    await dbContext.Database.MigrateAsync();
 }
 catch (Exception ex)
 {
@@ -242,4 +238,4 @@ app.MapHub<PreComHub>("/hub/precomhub");
 app.MapHub<RefreshHub>("/hub/refresh");
 app.MapHub<ConfigurationHub>("/hub/configuration");
 app.MapFallbackToFile("index.html");
-app.Run();
+await app.RunAsync();

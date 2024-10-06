@@ -27,8 +27,8 @@ public class UserService : IUserService
         var dbUsers = await _database.Users
             .Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.IsActive))
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
-            .ThenInclude(x=>x.UserB)
-            .Include(x=>x.UserOnVersions!.Where(y=> includeLastLogin && y.LastSeenOnThisVersion.CompareTo(DateTime.UtcNow.AddYears(-1)) >= 0))
+            .ThenInclude(x => x.UserB)
+            .Include(x => x.UserOnVersions!.Where(y => includeLastLogin && y.LastSeenOnThisVersion.CompareTo(DateTime.UtcNow.AddYears(-1)) >= 0))
             .OrderBy(x => x.Name)
             .AsNoTracking()
             .ToListAsync(clt);
@@ -56,7 +56,7 @@ public class UserService : IUserService
 
     public async Task<DrogeUser?> GetOrSetUserById(Guid userId, string userName, string userEmail, Guid customerId, bool setLastOnline)
     {
-        var userObj = _database.Users.FirstOrDefault(u => u.Id == userId);
+        var userObj = await _database.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (userObj is null)
         {
             _database.Users.Add(new DbUsers
@@ -69,7 +69,7 @@ public class UserService : IUserService
                 CustomerId = customerId
             });
             await _database.SaveChangesAsync();
-            userObj = _database.Users.FirstOrDefault(u => u.Id == userId);
+            userObj = await _database.Users.FirstOrDefaultAsync(u => u.Id == userId);
         }
 
         if (userObj is not null)

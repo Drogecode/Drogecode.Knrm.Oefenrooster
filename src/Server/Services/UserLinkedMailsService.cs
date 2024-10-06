@@ -28,7 +28,7 @@ public class UserLinkedMailsService : IUserLinkedMailsService
             var dbOld = await _database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Email == userLinkedMail.Email, clt);
             if (dbOld is null)
             {
-                var dbCount = _database.UserLinkedMails.Count(x => x.CustomerId == customerId && x.UserId == userId);
+                var dbCount = await _database.UserLinkedMails.CountAsync(x => x.CustomerId == customerId && x.UserId == userId, cancellationToken: clt);
                 if (dbCount > 5)
                     result.Error = PutUserLinkedMailError.TooMany;
                 else

@@ -381,15 +381,15 @@ public class ScheduleService : IScheduleService
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
         var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
-        var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
+        var trainings = await _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
             .Include(x => x.LinkVehicleTrainings!.Where(y => y.IsSelected))
             .OrderBy(x => x.DateStart)
-            .AsSingleQuery().ToList();
-        var availables = _database.RoosterAvailables
+            .AsSingleQuery().ToListAsync(clt);
+        var availables = await _database.RoosterAvailables
             .Include(x => x.User)
             .ThenInclude(x => x.LinkedUserA).Include(dbRoosterAvailable => dbRoosterAvailable.User).ThenInclude(dbUsers => dbUsers.LinkedUserAsA)
             .Where(x => x.CustomerId == customerId && (includeUnAssigned || x.Assigned) && x.Date >= startDate && x.Date <= tillDate)
-            .AsSingleQuery().ToList();
+            .AsSingleQuery().ToListAsync(clt);
 
         var scheduleDate = DateOnly.FromDateTime(startDate);
         do
@@ -647,7 +647,7 @@ public class ScheduleService : IScheduleService
 
             foreach (var user in users)
             {
-                var avaUser = availables.FirstOrDefault(x => x.UserId == user.Id);
+                var avaUser = await availables.FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken: clt);
                 Availability? available = avaUser?.Available;
                 AvailabilitySetBy? setBy = avaUser?.SetBy;
                 GetAvailability(ava, userHolidays, dbTraining.DateStart, dbTraining.DateEnd, dbTraining.RoosterDefaultId, user.Id, ref available, ref setBy);
@@ -804,7 +804,7 @@ public class ScheduleService : IScheduleService
             }
         }
 
-        if (!_database.RoosterTrainings.Any(x => x.CustomerId == customerId && x.Id == body.TrainingId))
+        if (!await _database.RoosterTrainings.AnyAsync(x => x.CustomerId == customerId && x.Id == body.TrainingId, cancellationToken: clt))
         {
             _logger.LogWarning("No training with '{Id}' found", body.TrainingId);
             return result;
@@ -933,7 +933,7 @@ public class ScheduleService : IScheduleService
             .Include(i => i.Training)
             .ThenInclude(i => i.LinkVehicleTrainings);
         var users = _database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
-        result.TotalCount = scheduled.Count();
+        result.TotalCount = await scheduled.CountAsync(clt);
         var schedules = order switch
         {
             OrderAscDesc.Asc => scheduled.OrderBy(x => x.Date),
@@ -957,7 +957,7 @@ public class ScheduleService : IScheduleService
                 DateStart = schedule.Training.DateStart,
                 DateEnd = schedule.Training.DateEnd,
                 RoosterTrainingTypeId = schedule.Training.RoosterTrainingTypeId,
-                PlannedFunctionId = schedule.UserFunctionId ?? users?.FirstOrDefault(x => x.Id == userId)?.UserFunctionId,
+                PlannedFunctionId = schedule.UserFunctionId ?? (await users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken: clt))?.UserFunctionId,
                 IsPinned = schedule.Training.IsPinned,
                 CountToTrainingTarget = schedule.Training.CountToTrainingTarget,
                 IsCreated = true,
@@ -1076,7 +1076,7 @@ public class ScheduleService : IScheduleService
             training.DeletedOn = DateTime.UtcNow;
             training.DeletedBy = userId;
             _database.RoosterTrainings.Update(training);
-            return _database.SaveChanges() > 0;
+            return await _database.SaveChangesAsync(clt) > 0;
         }
 
         return false;

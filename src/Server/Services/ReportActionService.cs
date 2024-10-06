@@ -24,7 +24,7 @@ public class ReportActionService : IReportActionService
         var sharePointActionsUser = new MultipleReportActionsResponse
         {
             Actions = await listWhere.OrderByDescending(x => x.Commencement).Skip(skip).Take(count).Select(x => x.ToDrogeAction()).ToListAsync(clt),
-            TotalCount = listWhere.Count(),
+            TotalCount = await listWhere.CountAsync(clt),
             Success = true,
         };
         sw.Stop();
@@ -44,13 +44,14 @@ public class ReportActionService : IReportActionService
             .Select(x => new { x.Start, x.Number })
             .OrderByDescending(x => x.Start)
             .ToListAsync(clt);
-        var result = new AnalyzeYearChartAllResponse ();
+        var result = new AnalyzeYearChartAllResponse();
         var skipped = 0;
         var totalCount = 0;
         List<int> years = new();
         foreach (var report in allReports)
         {
-            if (report.Number is not null && report.Number?.FloatingEquals(0, 0.1) != true && (report.Number % 1) != 0 && allReports.Count(x => x.Start.Year == report.Start.Year && x.Number?.FloatingEquals((int)report.Number, 0.3) == true) >= 2)
+            if (report.Number is not null && report.Number?.FloatingEquals(0, 0.1) != true && (report.Number % 1) != 0 &&
+                allReports.Count(x => x.Start.Year == report.Start.Year && x.Number?.FloatingEquals((int)report.Number, 0.3) == true) >= 2)
             {
                 skipped++;
                 continue;
@@ -105,9 +106,9 @@ public class ReportActionService : IReportActionService
                 break;
             case DistinctReportAction.Prio:
                 var prio = _database.ReportActions.Select(x => x.Prio).Distinct();
-                if (prio.Any())
+                if (await prio.AnyAsync(clt))
                 {
-                    result.Values = prio.ToList();
+                    result.Values = await prio.ToListAsync(clt);
                     result.Success = true;
                 }
 

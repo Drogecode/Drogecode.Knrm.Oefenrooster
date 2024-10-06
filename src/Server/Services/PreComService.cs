@@ -36,7 +36,7 @@ public class PreComService : IPreComService
             });
         }
 
-        result.TotalCount = fromDb.Count();
+        result.TotalCount = await fromDb.CountAsync(clt);
         result.Success = true;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
@@ -98,7 +98,7 @@ public class PreComService : IPreComService
 
     public async Task<bool> PatchAlertToDb(DbPreComAlert alert)
     {
-        var dbPreComAlert = _database.PreComAlerts.FirstOrDefault(x => x.Id == alert.Id);
+        var dbPreComAlert = await _database.PreComAlerts.FirstOrDefaultAsync(x => x.Id == alert.Id);
         if (dbPreComAlert is null) return false;
         dbPreComAlert.Alert = alert.Alert;
         dbPreComAlert.Priority = alert.Priority;
@@ -111,12 +111,13 @@ public class PreComService : IPreComService
     {
         var sw = Stopwatch.StartNew();
         var result = new PutPreComForwardResponse();
-        if (_database.PreComForwards.Count(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null) > 5)
+        if (await _database.PreComForwards.CountAsync(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null, cancellationToken: clt) > 5)
         {
             sw.Stop();
             result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
             return result;
         }
+
         forward.Id = Guid.NewGuid();
         forward.CreatedOn = DateTime.UtcNow;
         forward.CreatedBy = userId;
@@ -162,8 +163,8 @@ public class PreComService : IPreComService
             PreComForwards = new List<PreComForward>()
         };
         var dbForwards = _database.PreComForwards.Where(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null);
-        result.TotalCount = dbForwards.Count();
-        foreach (var forward in await dbForwards.OrderBy(x=>x.CreatedOn).Skip(skip).Take(take).ToListAsync(clt))
+        result.TotalCount = await dbForwards.CountAsync(clt);
+        foreach (var forward in await dbForwards.OrderBy(x => x.CreatedOn).Skip(skip).Take(take).ToListAsync(clt))
         {
             result.PreComForwards.Add(forward.ToPreComForward());
         }

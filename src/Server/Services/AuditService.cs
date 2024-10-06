@@ -8,6 +8,7 @@ public class AuditService : IAuditService
 {
     private readonly ILogger<AuditService> _logger;
     private readonly Database.DataContext _database;
+
     public AuditService(ILogger<AuditService> logger, Database.DataContext database)
     {
         _logger = logger;
@@ -17,17 +18,17 @@ public class AuditService : IAuditService
     public async Task Log(Guid user, AuditType auditType, Guid customer, string? note = null, Guid? objectKey = null, string? objectName = null)
     {
         await _database.Audits.AddAsync(
-             new Database.Models.DbAudit()
-             {
-                 Id = Guid.NewGuid(),
-                 UserId = user,
-                 CustomerId = customer,
-                 AuditType = auditType,
-                 Note = note,
-                 ObjectKey = objectKey,
-                 ObjectName = objectName,
-                 Created = DateTime.UtcNow
-             }
+            new Database.Models.DbAudit()
+            {
+                Id = Guid.NewGuid(),
+                UserId = user,
+                CustomerId = customer,
+                AuditType = auditType,
+                Note = note,
+                ObjectKey = objectKey,
+                ObjectName = objectName,
+                Created = DateTime.UtcNow
+            }
         );
         await _database.SaveChangesAsync();
     }
@@ -40,7 +41,7 @@ public class AuditService : IAuditService
             .Where(x => x.AuditType == AuditType.PatchAssignedUser && (trainingId.Equals(Guid.Empty) || x.ObjectKey == trainingId))
             .AsNoTracking()
             .OrderByDescending(x => x.Created);
-        if (audits.Any())
+        if (await audits.AnyAsync(clt))
         {
             response.TrainingAudits = new List<TrainingAudit>();
             foreach (var auditDb in await audits.Skip(skip).Take(count).ToListAsync(clt))
@@ -49,19 +50,20 @@ public class AuditService : IAuditService
                 if (trainingId.Equals(Guid.Empty))
                 {
                     var dbTraining = await _database.RoosterTrainings
-                            .Include(x => x.RoosterAvailables)
-                            .FirstOrDefaultAsync(x => x.Id == audit.TrainingId, clt);
+                        .Include(x => x.RoosterAvailables)
+                        .FirstOrDefaultAsync(x => x.Id == audit.TrainingId, clt);
                     var training = dbTraining?.ToTraining();
                     audit.Training = training;
                     audit.IsDeleted = dbTraining?.DeletedOn is not null;
                 }
+
                 response.TrainingAudits.Add(audit);
             }
         }
+
         response.TotalCount = await audits.CountAsync(clt);
         sw.Stop();
         response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return response;
     }
-
 }

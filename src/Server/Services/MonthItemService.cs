@@ -11,11 +11,13 @@ public class MonthItemService : IMonthItemService
 {
     private readonly ILogger<MonthItemService> _logger;
     private readonly Database.DataContext _database;
+
     public MonthItemService(ILogger<MonthItemService> logger, Database.DataContext database)
     {
         _logger = logger;
         _database = database;
     }
+
     public async Task<GetMonthItemResponse> GetById(Guid customerId, Guid id, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
@@ -50,12 +52,13 @@ public class MonthItemService : IMonthItemService
     {
         var sw = Stopwatch.StartNew();
         var now = DateTime.UtcNow;
-        var dbCall = _database.RoosterItemMonths.Where(x => x.CustomerId == customerId && x.DeletedOn == null && (includeExpired || ((x.Year == null || x.Year == 0 || x.Year > now.Year || (x.Year == now.Year && x.Month >= now.Month)))));
+        var dbCall = _database.RoosterItemMonths.Where(x =>
+            x.CustomerId == customerId && x.DeletedOn == null && (includeExpired || ((x.Year == null || x.Year == 0 || x.Year > now.Year || (x.Year == now.Year && x.Month >= now.Month)))));
         var monthItems = await dbCall.Select(DbSelectItem()).OrderByDescending(x => x.Year).ThenBy(x => x.Month).ThenBy(x => x.Order).Skip(skip).Take(take).ToListAsync(clt);
         var result = new GetMultipleMonthItemResponse
         {
             MonthItems = monthItems,
-            TotalCount = dbCall.Count()
+            TotalCount = await dbCall.CountAsync(clt)
         };
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
@@ -87,23 +90,23 @@ public class MonthItemService : IMonthItemService
 
         if (roosterItemMonth is not null)
         {
-            if (false)// Does not work for xUnit in memory db
+            if (false) // Does not work for xUnit in memory db
             {
                 var dbResult = await _database.RoosterItemMonths
-                     .Where(x => x.CustomerId == customerId && x.Id == roosterItemMonth.Id && x.DeletedOn == null)
-                     .ExecuteUpdateAsync(b => b
-                        .SetProperty(p => p.Severity, roosterItemMonth.Severity)
-                        .SetProperty(p => p.Month, roosterItemMonth.Month)
-                        .SetProperty(p => p.Year, roosterItemMonth.Year)
-                        .SetProperty(p => p.Order, roosterItemMonth.Order)
-                        .SetProperty(p => p.Text, roosterItemMonth.Text)
-                        .SetProperty(p => p.Type, roosterItemMonth.Type)
-                     , clt);
+                    .Where(x => x.CustomerId == customerId && x.Id == roosterItemMonth.Id && x.DeletedOn == null)
+                    .ExecuteUpdateAsync(b => b
+                            .SetProperty(p => p.Severity, roosterItemMonth.Severity)
+                            .SetProperty(p => p.Month, roosterItemMonth.Month)
+                            .SetProperty(p => p.Year, roosterItemMonth.Year)
+                            .SetProperty(p => p.Order, roosterItemMonth.Order)
+                            .SetProperty(p => p.Text, roosterItemMonth.Text)
+                            .SetProperty(p => p.Type, roosterItemMonth.Type)
+                        , clt);
             }
             else
             {
                 var monthItem = await _database.RoosterItemMonths.Where(x => x.CustomerId == customerId && x.Id == roosterItemMonth.Id && x.DeletedOn == null).FirstOrDefaultAsync(clt);
-                if ( monthItem is not null)
+                if (monthItem is not null)
                 {
                     monthItem.Severity = roosterItemMonth.Severity;
                     monthItem.Month = roosterItemMonth.Month;

@@ -22,7 +22,7 @@ public class ReportTrainingService : IReportTrainingService
         var sharePointActionsUser = new MultipleReportTrainingsResponse
         {
             Trainings = await listWhere.OrderByDescending(x => x.Start).Skip(skip).Take(count).Select(x => x.ToDrogeTraining()).ToListAsync(clt),
-            TotalCount = listWhere.Count(),
+            TotalCount = await listWhere.CountAsync(clt),
             Success = true,
         };
         sw.Stop();
@@ -34,7 +34,7 @@ public class ReportTrainingService : IReportTrainingService
     public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(AnalyzeTrainingRequest trainingRequest, Guid customerId, string timeZone, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var allReports  = await _database.ReportTrainings
+        var allReports = await _database.ReportTrainings
             .Where(x => x.CustomerId == customerId && x.Users!.Count(y => trainingRequest.Users!.Contains(y.DrogeCodeId)) == trainingRequest.Users!.Count)
             .Select(x => new { x.Start })
             .OrderByDescending(x => x.Start)
@@ -54,6 +54,7 @@ public class ReportTrainingService : IReportTrainingService
 
                 years.Add(start.Year);
             }
+
             if (result.Years.All(x => x.Year != start.Year))
             {
                 result.Years.Add(new AnalyzeYearDetails() { Year = start.Year });

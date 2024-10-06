@@ -7,6 +7,7 @@ public class UserSettingService : IUserSettingService
     private readonly ILogger<UserSettingService> _logger;
     private readonly Database.DataContext _database;
     private readonly ICustomerSettingService _customerSettingService;
+
     public UserSettingService(ILogger<UserSettingService> logger, Database.DataContext database, ICustomerSettingService customerSettingService)
     {
         _logger = logger;
@@ -50,6 +51,7 @@ public class UserSettingService : IUserSettingService
             result.Value = value;
             _database.UserSettings.Update(result);
         }
-        _database.SaveChanges();
+
+        await _database.SaveChangesAsync();
     }
 }

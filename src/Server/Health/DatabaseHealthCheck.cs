@@ -9,16 +9,18 @@ public class DatabaseHealthCheck : IHealthCheck
     //Using NuGet instead of this
     private readonly ILogger<DefaultScheduleService> _logger;
     private readonly Database.DataContext _database;
+
     public DatabaseHealthCheck(ILogger<DefaultScheduleService> logger, Database.DataContext database)
     {
         _logger = logger;
         _database = database;
     }
-    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+
+    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken clt = default)
     {
         try
         {
-            _database.Users.Count();
+            await _database.Users.CountAsync(clt);
             return HealthCheckResult.Healthy();
         }
         catch (Exception ex)
