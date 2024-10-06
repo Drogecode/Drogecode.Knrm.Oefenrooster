@@ -33,4 +33,22 @@
     <data name="Mails to invite to your trainings" xml:space="preserve">
         <value>Mails die worden uitgenodigd tot jouw oefeningen</value>
     </data>
+    <data name="Activate email" xml:space="preserve">
+        <value>Activeer email</value>
+    </data>
+    <data name="Email" xml:space="preserve">
+        <value>Email</value>
+    </data>
+    <data name="Is enabled" xml:space="preserve">
+        <value>Is actief</value>
+    </data>
+    <data name="Is active" xml:space="preserve">
+        <value>Is gevalideerd</value>
+    </data>
+    <data name="Activate" xml:space="preserve">
+        <value>Activeer</value>
+    </data>
+    <data name="Add link mail" xml:space="preserve">
+        <value>Voeg kalender email toe</value>
+    </data>
 </root>

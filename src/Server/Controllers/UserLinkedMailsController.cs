@@ -1,12 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
-[Authorize]
+[Authorize(Roles = AccessesNames.AUTH_mail_invite_external)]
 [ApiController]
 [Route("api/[controller]")]
 [ApiExplorerSettings(GroupName = "UserLinkedMails")]
@@ -15,23 +16,42 @@ public class UserLinkedMailsController : ControllerBase
     private readonly ILogger<UserController> _logger;
     private readonly IUserLinkedMailsService _userLinkedMailsService;
     private readonly IAuditService _auditService;
+    private readonly IGraphService _graphService;
 
-    public UserLinkedMailsController(ILogger<UserController> logger, IUserLinkedMailsService userLinkedMailsService, IAuditService auditService)
+    public UserLinkedMailsController(ILogger<UserController> logger, IUserLinkedMailsService userLinkedMailsService, IAuditService auditService, IGraphService graphService)
     {
         _logger = logger;
         _userLinkedMailsService = userLinkedMailsService;
         _auditService = auditService;
+        _graphService = graphService;
     }
 
     [HttpPut]
     [Route("")]
-    public async Task<ActionResult<PutUserLinkedMailResponse>> PutUserLinkedMail([FromBody] UserLinkedMail userLinkedMail, CancellationToken clt = default)
+    public async Task<ActionResult<PutUserLinkedMailResponse>> PutUserLinkedMail([FromBody] PutUserLinkedMailRequest body, CancellationToken clt = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            PutUserLinkedMailResponse result = await _userLinkedMailsService.PutUserLinkedMail(userLinkedMail, customerId, userId, clt);
+            if (body.UserLinkedMail?.Email is null)
+                return BadRequest();
+            body.UserLinkedMail.Email = body.UserLinkedMail.Email.ToLower();
+            var result = await _userLinkedMailsService.PutUserLinkedMail(body.UserLinkedMail, customerId, userId, clt);
+
+            if (result.Success && body.SendMail)
+            {
+                clt = CancellationToken.None;
+                _graphService.InitializeGraph();
+                var mailBody = $"""
+                                Om kalender updates te ontvangen voor je oefeningen moet je onderstaande code invullen op hui.nu
+
+                                {result.ActivateKey}
+                                """;
+                await _graphService.SendMail(userId, body.UserLinkedMail!.Email!, "Bevestig linking met hui.nu", mailBody, clt);
+            }
+
+            result.ActivateKey = null;
             return result;
         }
         catch (Exception ex)
@@ -45,6 +65,48 @@ public class UserLinkedMailsController : ControllerBase
     }
 
     [HttpPatch]
+    [Route("validate")]
+    public async Task<ActionResult<ValidateUserLinkedActivateKeyResponse>> ValidateUserLinkedActivateKey([FromBody] ValidateUserLinkedActivateKeyRequest body, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            ValidateUserLinkedActivateKeyResponse result = await _userLinkedMailsService.ValidateUserLinkedActivateKey(body, customerId, userId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in ValidateUserLinkedActivateKey");
+            return BadRequest();
+        }
+    }
+    
+    [HttpPatch]
+    [Route("is-enabled")]
+    public async Task<ActionResult<IsEnabledChangedResponse>> IsEnabledChanged([FromBody] IsEnabledChangedRequest body, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var result = await _userLinkedMailsService.IsEnabledChanged(body, customerId, userId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in IsEnabledChanged");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
     [Route("")]
     public async Task<ActionResult<PatchUserLinkedMailResponse>> PatchUserLinkedMail([FromBody] UserLinkedMail userLinkedMail, CancellationToken clt = default)
     {
@@ -52,7 +114,7 @@ public class UserLinkedMailsController : ControllerBase
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            PatchUserLinkedMailResponse result = await _userLinkedMailsService.PatchUserLinkedMail(userLinkedMail, customerId, userId, clt);
+            var result = await _userLinkedMailsService.PatchUserLinkedMail(userLinkedMail, customerId, userId, clt);
             return result;
         }
         catch (Exception ex)
@@ -73,7 +135,7 @@ public class UserLinkedMailsController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            AllUserLinkedMailResponse result = await _userLinkedMailsService.AllUserLinkedMail(take, skip, userId, customerId, clt);
+            var result = await _userLinkedMailsService.AllUserLinkedMail(take, skip, userId, customerId, clt);
             return result;
         }
         catch (Exception ex)

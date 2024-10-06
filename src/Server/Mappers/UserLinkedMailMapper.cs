@@ -11,7 +11,6 @@ public static class UserLinkedMailMapper
         {
             Id = linkedMail.Id,
             Email = linkedMail.Email,
-            ActivateKey = linkedMail.ActivateKey,
             ActivateRequestedOn = linkedMail.ActivateRequestedOn,
             ActivationFailedAttempts = linkedMail.ActivationFailedAttempts,
             IsActive = linkedMail.IsActive,
@@ -24,7 +23,6 @@ public static class UserLinkedMailMapper
         {
             Id = linkedMail.Id,
             Email = linkedMail.Email,
-            ActivateKey = linkedMail.ActivateKey,
             ActivateRequestedOn = linkedMail.ActivateRequestedOn,
             ActivationFailedAttempts = linkedMail.ActivationFailedAttempts,
             IsActive = linkedMail.IsActive,

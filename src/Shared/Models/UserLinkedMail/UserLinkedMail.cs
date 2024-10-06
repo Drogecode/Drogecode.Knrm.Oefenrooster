@@ -4,7 +4,6 @@ public class UserLinkedMail
 {
     public Guid Id { get; set; }
     public string? Email { get; set; }
-    public string? ActivateKey { get; set; }
     public DateTime? ActivateRequestedOn { get; set; }
     public int ActivationFailedAttempts { get; set; }
     public bool IsActive { get; set; }

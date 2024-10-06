@@ -32,17 +32,17 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services
             throw new NotImplementedException();
         }
 
-        public Task<string?> GetAccessTokenAsync()
+        public Task SendMail(Guid? userId, string emailAddress, string subject, string body, CancellationToken clt)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SendMail(Guid? userId, CancellationToken clt)
         {
             throw new NotImplementedException();
         }
 
         public Task<DirectoryObjectCollectionResponse?> GetGroupForUser(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<MultipleSharePointActionsResponse> GetListActionsUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
         {
             throw new NotImplementedException();
         }
@@ -53,11 +53,6 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services
         }
 
         public Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(List<Guid?> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(List<Guid> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
         {
             throw new NotImplementedException();
         }

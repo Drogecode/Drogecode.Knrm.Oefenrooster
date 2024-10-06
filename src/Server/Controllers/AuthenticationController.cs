@@ -51,13 +51,13 @@ public partial class AuthenticationController : ControllerBase
     {
         try
         {
-            var codeVerifier = CreateSecret(120);
+            var codeVerifier = SecretHelper.CreateSecret(120);
             var tenantId = new Guid(_configuration.GetValue<string>("AzureAd:TenantId") ?? throw new DrogeCodeNullException("no tenant id found for azure login"));
             var clientId = new Guid(_configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new DrogeCodeNullException("no client id found for azure login"));
             var response = new CacheLoginSecrets
             {
-                LoginSecret = CreateSecret(64),
-                LoginNonce = CreateSecret(64),
+                LoginSecret = SecretHelper.CreateSecret(64),
+                LoginNonce = SecretHelper.CreateSecret(64),
                 CodeChallenge = GenerateCodeChallenge(codeVerifier),
                 CodeVerifier = codeVerifier,
                 TenantId = tenantId,
@@ -332,28 +332,6 @@ public partial class AuthenticationController : ControllerBase
         }
 
         return claims;
-    }
-
-    private string CreateSecret(int length)
-    {
-        StringBuilder res = new StringBuilder();
-        byte[] random = new byte[1];
-        using (var cryptoProvider = new RNGCryptoServiceProvider())
-        {
-            while (0 < length--)
-            {
-                char rndChar = '\0';
-                do
-                {
-                    cryptoProvider.GetBytes(random);
-                    rndChar = (char)((random[0] % 92) + 33);
-                } while (!char.IsLetterOrDigit(rndChar));
-
-                res.Append(rndChar);
-            }
-        }
-
-        return res.ToString();
     }
 
     [GeneratedRegex("\\+")]

@@ -19,4 +19,5 @@ public interface IGraphService
     Task PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay);
     Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt);
     Task<GetHistoricalResponse> SyncHistorical(Guid customerId, CancellationToken clt);
+    Task SendMail(Guid? userId, string emailAddress, string subject, string body, CancellationToken clt);
 }

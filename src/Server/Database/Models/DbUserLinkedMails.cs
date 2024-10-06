@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 
@@ -10,7 +11,7 @@ public class DbUserLinkedMails
     public Guid CustomerId { get; set; }
     public Guid UserId { get; set; }
     [StringLength(150)] public string? Email { get; set; }
-    [StringLength(11)] public string? ActivateKey { get; set; }
+    [StringLength(DefaultSettingsHelper.LENGTH_MAIL_ACTIVATION)] public string? ActivateKey { get; set; }
     public DateTime? ActivateRequestedOn { get; set; }
     public int ActivationFailedAttempts { get; set; }
     public bool IsActive { get; set; }

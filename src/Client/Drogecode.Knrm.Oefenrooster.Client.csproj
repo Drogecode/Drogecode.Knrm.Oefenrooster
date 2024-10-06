@@ -102,6 +102,14 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>TrainingMessageDialog.nl-NL.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Pages\User\AddEditLinkMail.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>AddEditLinkMail.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Pages\User\Components\ActivateEmailDialog.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ActivateEmailDialog.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -144,6 +152,16 @@
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>TrainingMessageDialog.nl-NL.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Pages\User\AddEditLinkMail.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>AddEditLinkMail.nl-NL.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Pages\User\Components\ActivateEmailDialog.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ActivateEmailDialog.nl-NL.resx</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 

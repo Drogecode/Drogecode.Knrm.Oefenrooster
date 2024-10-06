@@ -26,4 +26,22 @@
     <data name="Mails to invite to your trainings" xml:space="preserve">
         <value>Mails to invite to your trainings</value>
     </data>
+    <data name="Activate email" xml:space="preserve">
+        <value>Activate email</value>
+    </data>
+    <data name="Email" xml:space="preserve">
+        <value>Email</value>
+    </data>
+    <data name="Is enabled" xml:space="preserve">
+        <value>Is enabled</value>
+    </data>
+    <data name="Is active" xml:space="preserve">
+        <value>Is validated</value>
+    </data>
+    <data name="Activate" xml:space="preserve">
+        <value>Activate</value>
+    </data>
+    <data name="Add link mail" xml:space="preserve">
+        <value>Add link mail</value>
+    </data>
 </root>

@@ -31,4 +31,5 @@ public static class DefaultSettingsHelper
     public const int MAX_LENGTH_MONTH_ITEM_TEXT = 150;
     public const int MAX_LENGTH_DAY_ITEM_TEXT = 50;
     public const int MAX_LENGTH_HOLIDAY_NAME = 50;
+    public const int LENGTH_MAIL_ACTIVATION = 11;
 }

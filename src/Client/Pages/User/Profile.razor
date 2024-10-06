@@ -32,6 +32,32 @@
     <AuthorizeView Roles="@AccessesNames.AUTH_Taco"><!-- Remove when ready -->
         <AuthorizeView Roles="@AccessesNames.AUTH_mail_invite_external" Context="inner">
             <MudText>@L["Mails to invite to your trainings"]</MudText>
+            <MudButton OnClick='(() => Navigation.NavigateTo("/user/profile/link-mail/add"))'>@L["Add link mail"]</MudButton>
+            @if (_allUserLinkedMailResponse?.UserLinkedMails is not null && _allUserLinkedMailResponse.UserLinkedMails.Any())
+            {
+                <MudDataGrid Items="@_allUserLinkedMailResponse.UserLinkedMails!.OrderBy(x => x.ActivateRequestedOn)" Striped="true" Hover="true">
+                    <Columns>
+                        <PropertyColumn Property="x => x.Email" Title="@L["Email"]"/>
+                        <PropertyColumn Property="x => x.IsEnabled" Title="@L["Is enabled"]">
+                            <CellTemplate Context="templateContext">
+                                <MudCheckBox T="bool" Disabled="!templateContext.Item.IsActive" Value="templateContext.Item.IsEnabled" ValueChanged="(newValue)=>IsEnabledChanged(newValue, templateContext.Item.Id)" />
+                            </CellTemplate>
+                        </PropertyColumn>
+                        <PropertyColumn Property="x => x.IsActive" Title="@L["Is active"]">
+                            <CellTemplate Context="templateContext">
+                               @if (templateContext.Item.IsActive)
+                               {
+                                   <MudIcon Icon="@Icons.Material.Filled.ThumbUp"/>
+                               }
+                               else
+                               {
+                                   <MudButton OnClick="()=>OpenActivationDialog(templateContext.Item.Id)">@L["Activate"]</MudButton>
+                               }
+                            </CellTemplate>
+                        </PropertyColumn>
+                    </Columns>
+                </MudDataGrid>
+            }
         </AuthorizeView>
     </AuthorizeView>
 </MudPaper>

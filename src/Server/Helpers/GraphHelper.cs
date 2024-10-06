@@ -11,6 +11,7 @@ using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Graph.Sites.Item.Lists.Item.Items;
 using Microsoft.Graph.Users;
+using Microsoft.Graph.Users.Item.SendMail;
 using Microsoft.Kiota.Abstractions.Serialization;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Helpers;
@@ -333,7 +334,6 @@ public static partial class GraphHelper
         }
         else if (numberString.EndsWith('b'))
         {
-            
             if (numberString.Contains('.'))
             {
                 numberString = numberString.TrimEnd('b');
@@ -545,6 +545,35 @@ public static partial class GraphHelper
             if (ex.ResponseStatusCode != 404)
                 throw;
         }
+    }
+
+    public static async Task SendMail(Guid userId, string emailAddress, string subject, string body, CancellationToken clt)
+    {
+        if (_appClient is null) return;
+        var requestBody = new SendMailPostRequestBody
+        {
+            Message = new Message
+            {
+                Subject = subject,
+                Body = new ItemBody
+                {
+                    ContentType = BodyType.Text,
+                    Content = body,
+                },
+                ToRecipients = new List<Recipient>
+                {
+                    new Recipient
+                    {
+                        EmailAddress = new EmailAddress
+                        {
+                            Address = emailAddress,
+                        },
+                    },
+                }
+            },
+            SaveToSentItems = false,
+        };
+        await _appClient.Users[userId.ToString()].SendMail.PostAsync(requestBody, cancellationToken: clt);
     }
 
     public static async Task<ActionsAndTrainings> GetHistorical(Guid customerId, List<SharePointUser> users, Guid listId, CancellationToken clt)

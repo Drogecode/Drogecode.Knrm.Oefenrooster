@@ -1,0 +1,28 @@
+﻿@using System.ComponentModel.DataAnnotations
+
+@page "/user/profile/link-mail/add"
+@page "/user/profile/link-mail/edit/{Id:guid}"
+@attribute [Authorize(Roles = AccessesNames.AUTH_mail_invite_external)]
+
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
+                    <MudTextField T="string" Label="@L["Email"]" Required="true" RequiredError="@L["Email is required!"]" @bind-Value="_email"
+                              Validation="@(new EmailAddressAttribute() {ErrorMessage = L["The email address is invalid"]})" />
+            </MudForm>   
+        </MudPaper>
+        <MudPaper Class="pa-4 mt-4">
+            <MudButton Color="Color.Primary" OnClick="Submit">@LApp["save"]</MudButton>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="5">
+        <MudPaper Class="pa-4 mud-height-full">
+            <MudText Typo="Typo.subtitle2">@($"Errors ({_errors.Length})")</MudText>
+                @foreach (var error in _errors)
+                {
+                    <MudText Color="@Color.Error">@error</MudText>
+                }
+        </MudPaper>
+    </MudItem>
+</MudGrid>

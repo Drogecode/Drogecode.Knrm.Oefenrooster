@@ -423,10 +423,16 @@ public class GraphService : IGraphService
         }
 
         _logger.LogInformation("SharePoint historical synced (count {changeCount})", changeCount);
-        sw.Start();
+        sw.Stop();
         response.Success = changeCount > 0;
         response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return response;
+    }
+
+    public async Task SendMail(Guid? userId, string emailAddress, string subject, string body, CancellationToken clt)
+    {
+        if (userId is null) return;
+        await GraphHelper.SendMail(userId.Value, emailAddress, subject, body, clt);
     }
 
     private async Task<int> SyncHistoricalActions(Guid customerId, CancellationToken clt, List<SharePointAction> actions)

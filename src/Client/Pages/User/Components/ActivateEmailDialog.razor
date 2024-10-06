@@ -1,0 +1,20 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudText>@L["Enter key from validation email"]</MudText>
+        <MudTextField Label="@L["Activation key"]" @bind-Value="_activationKey" Counter="@DefaultSettingsHelper.LENGTH_MAIL_ACTIVATION" MaxLength="@DefaultSettingsHelper.LENGTH_MAIL_ACTIVATION"/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Validate">
+            @L["Validate"]
+            @switch (_validated)
+            {
+                case true:
+                    <MudIcon Icon="@Icons.Material.Filled.Check"/>
+                    break;
+                case false:
+                    <MudIcon Icon="@Icons.Material.Filled.Close"/>
+                    break;
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>

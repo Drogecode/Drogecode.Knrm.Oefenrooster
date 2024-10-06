@@ -21,9 +21,10 @@ public class FunctionControllerTests : BaseTest
         DefaultScheduleController defaultScheduleController,
         ReportActionController reportActionController,
         ReportTrainingController reportTrainingController,
-        UserRoleController userRoleController) :
+        UserRoleController userRoleController,
+        UserLinkedMailsController userLinkedMailsController) :
         base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController)
+            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController)
     {
     }
 

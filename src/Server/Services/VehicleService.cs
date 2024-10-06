@@ -56,7 +56,7 @@ public class VehicleService : IVehicleService
             });
         }
 
-        sw.Start();
+        sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
@@ -90,7 +90,7 @@ public class VehicleService : IVehicleService
             });
         }
 
-        sw.Start();
+        sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
