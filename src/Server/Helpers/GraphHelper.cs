@@ -7,6 +7,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Drogecode.Knrm.Oefenrooster.Server.Models.SharePoint;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using Microsoft.Graph.Sites.Item.Lists.Item.Items;
@@ -442,11 +443,11 @@ public static partial class GraphHelper
         listBase.Users!.Add(user);
     }
 
-    public static async Task<Event?> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, ILogger logger)
+    public static async Task<Event?> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, ILogger logger, List<UserLinkedMail> attendees)
     {
         try
         {
-            Event body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay);
+            var body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay, attendees);
             var result = await _appClient.Users[userId.ToString()].Events
                 .PostAsync(body, (requestConfiguration) => { requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Pacific Standard Time\""); });
 
@@ -461,24 +462,25 @@ public static partial class GraphHelper
         return null;
     }
 
-    public static async Task PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
+    public static async Task PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
     {
         try
         {
             var fromGet = await _appClient.Users[userId.ToString()].Events[eventId].GetAsync();
             if (fromGet is not null)
             {
-                Event body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay);
+                var body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay, attendees);
                 fromGet.Subject = body.Subject;
                 fromGet.Body = body.Body;
                 fromGet.Start = body.Start;
                 fromGet.End = body.End;
                 fromGet.IsAllDay = isAllDay;
                 fromGet.AdditionalData = new Dictionary<string, object>(); // https://github.com/microsoftgraph/msgraph-sdk-dotnet/issues/2471
+                fromGet.Attendees = body.Attendees;
+                fromGet.Organizer = body.Organizer;
                 var patch = await _appClient.Users[userId.ToString()].Events[eventId].PatchAsync(fromGet);
+                //var patch = await _appClient.Users["262eda7d-9b9b-4b7b-a79f-fe57b34b054d"].Events[eventId].PatchAsync(fromGet);
             }
-
-            return;
         }
         catch (Microsoft.Graph.Models.ODataErrors.ODataError ex)
         {
@@ -487,8 +489,31 @@ public static partial class GraphHelper
         }
     }
 
-    private static Event GenerateCalendarBody(string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
+    private static Event GenerateCalendarBody(string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
     {
+        var attendeesEvent = new List<Attendee>();
+        var organizer = new Recipient();
+        foreach (var attendee in attendees.Where(x => x is { IsActive: true, IsEnabled: true }))
+        {
+            var asAttendee = new Attendee()
+            {
+                EmailAddress = new EmailAddress()
+                {
+                    Address = attendee.Email
+                }
+            };
+            if (attendee.IsDrogeCodeUser)
+            {
+                asAttendee.Type = AttendeeType.Required;
+                organizer = asAttendee;
+            }
+            else
+            {
+                asAttendee.Type = AttendeeType.Optional;
+                attendeesEvent.Add(asAttendee);
+            }
+        }
+
         var even = new Event()
         {
             Subject = description,
@@ -497,7 +522,8 @@ public static partial class GraphHelper
                 ContentType = BodyType.Html,
                 Content = description,
             },
-            //Attendees = [new Attendee() { EmailAddress = new EmailAddress() { Address = "debug-oefenrooster@drogecode.nl" } }],
+            Attendees = attendeesEvent,
+            Organizer = organizer,
         };
         if (isAllDay)
         {

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services
 {
@@ -17,7 +18,12 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services
             throw new NotImplementedException();
         }
 
-        public Task<Event> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
+        public Task<Event?> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
         {
             throw new NotImplementedException();
         }

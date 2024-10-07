@@ -54,7 +54,7 @@ public class UserService : IUserService
         return userObj?.ToSharedUser(false);
     }
 
-    public async Task<DrogeUser?> GetOrSetUserById(Guid userId, string userName, string userEmail, Guid customerId, bool setLastOnline)
+    public async Task<DrogeUser?> GetOrSetUserById(Guid userId, Guid externalId, string userName, string userEmail, Guid customerId, bool setLastOnline)
     {
         var userObj = await _database.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (userObj is null)
@@ -62,7 +62,7 @@ public class UserService : IUserService
             _database.Users.Add(new DbUsers
             {
                 Id = userId,
-                ExternalId = userId,
+                ExternalId = externalId,
                 Name = userName,
                 Email = userEmail,
                 CreatedOn = DateTime.UtcNow,
@@ -76,6 +76,7 @@ public class UserService : IUserService
         {
             if (setLastOnline)
                 userObj.LastLogin = DateTime.UtcNow;
+            userObj.ExternalId ??= externalId;
             userObj.Name = userName;
             userObj.Email = userEmail;
             userObj.DeletedOn = null;

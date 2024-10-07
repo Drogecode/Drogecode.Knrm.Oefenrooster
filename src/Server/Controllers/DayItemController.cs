@@ -23,6 +23,7 @@ public class DayItemController : ControllerBase
     private readonly IUserSettingService _userSettingService;
     private readonly IGraphService _graphService;
     private readonly RefreshHub _refreshHub;
+    private readonly IUserLinkedMailsService _userLinkedMailsService;
 
     public DayItemController(
         ILogger<DayItemController> logger,
@@ -31,7 +32,8 @@ public class DayItemController : ControllerBase
         IAuditService auditService,
         IUserSettingService userSettingService,
         IGraphService graphService, 
-        RefreshHub refreshHub)
+        RefreshHub refreshHub, 
+        IUserLinkedMailsService userLinkedMailsService)
     {
         _logger = logger;
         _configuration = configuration;
@@ -40,6 +42,7 @@ public class DayItemController : ControllerBase
         _userSettingService = userSettingService;
         _graphService = graphService;
         _refreshHub = refreshHub;
+        _userLinkedMailsService = userLinkedMailsService;
     }
 
     [HttpGet]
@@ -259,15 +262,16 @@ public class DayItemController : ControllerBase
             roosterItemDay.DateEnd = roosterItemDay.DateStart;
         if (assigned && await _userSettingService.TrainingToCalendar(customerId, user.UserId))
         {
+            var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(10, 0, user.UserId, customerId, clt)).UserLinkedMails ?? [];
             _graphService.InitializeGraph();
             if (string.IsNullOrEmpty(user.CalendarEventId))
             {
-                var eventResult = await _graphService.AddToCalendar(user.UserId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true);
+                var eventResult = await _graphService.AddToCalendar(user.UserId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true, allUserLinkedMail);
                 await _dayItemService.PatchCalendarEventId(roosterItemDay.Id, user.UserId, customerId, eventResult.Id, clt);
             }
             else
             {
-                await _graphService.PatchCalender(user.UserId, user.CalendarEventId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true);
+                await _graphService.PatchCalender(user.UserId, user.CalendarEventId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true, allUserLinkedMail);
             }
         }
         else if (!string.IsNullOrEmpty(user.CalendarEventId))

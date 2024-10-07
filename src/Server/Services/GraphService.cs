@@ -6,6 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph.Models;
 using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -363,15 +364,15 @@ public class GraphService : IGraphService
         return sharePointUsers;
     }
 
-    public async Task<Event?> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
+    public async Task<Event?> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
     {
-        var result = await GraphHelper.AddToCalendar(userId, description, dateStart, dateEnd, isAllDay, _logger);
+        var result = await GraphHelper.AddToCalendar(userId, description, dateStart, dateEnd, isAllDay, _logger, attendees);
         return result;
     }
 
-    public async Task PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
+    public async Task PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
     {
-        await GraphHelper.PatchCalender(userId, eventId, description, dateStart, dateEnd, isAllDay);
+        await GraphHelper.PatchCalender(userId, eventId, description, dateStart, dateEnd, isAllDay, attendees);
     }
 
     public async Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt)

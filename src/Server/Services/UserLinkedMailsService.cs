@@ -150,8 +150,11 @@ public class UserLinkedMailsService : IUserLinkedMailsService
         var result = new AllUserLinkedMailResponse();
 
         var linksRequest = _database.UserLinkedMails.Where(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null);
+        var userMail = _database.Users.FirstOrDefault(x => x.CustomerId == customerId && x.Id == userId && x.DeletedBy == null);
         result.TotalCount = await linksRequest.CountAsync(clt);
         result.UserLinkedMails = await linksRequest.Skip(skip).Take(take).Select(x => x.ToDrogecode()).ToListAsync(clt);
+        if (userMail is not null)
+            result.UserLinkedMails.Add(new UserLinkedMail() { Email = userMail.Email, IsActive = true, IsEnabled = true, IsDrogeCodeUser = true });
         result.Success = result.UserLinkedMails.Count != 0;
 
         sw.Stop();

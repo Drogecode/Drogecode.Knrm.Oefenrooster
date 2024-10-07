@@ -8,4 +8,5 @@ public class UserLinkedMail
     public int ActivationFailedAttempts { get; set; }
     public bool IsActive { get; set; }
     public bool IsEnabled { get; set; }
+    public bool IsDrogeCodeUser { get; set; }
 }

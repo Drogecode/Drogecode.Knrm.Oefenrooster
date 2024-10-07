@@ -32,6 +32,7 @@ public class ScheduleController : ControllerBase
     private readonly IDateTimeService _dateTimeService;
     private readonly IUserService _userService;
     private readonly IFunctionService _functionService;
+    private readonly IUserLinkedMailsService _userLinkedMailsService;
 
     public ScheduleController(
         RefreshHub refreshHub,
@@ -43,7 +44,8 @@ public class ScheduleController : ControllerBase
         IUserSettingService userSettingService,
         IDateTimeService dateTimeService,
         IUserService userService,
-        IFunctionService functionService)
+        IFunctionService functionService,
+        IUserLinkedMailsService userLinkedMailsService)
     {
         _refreshHub = refreshHub;
         _logger = logger;
@@ -55,6 +57,7 @@ public class ScheduleController : ControllerBase
         _dateTimeService = dateTimeService;
         _userService = userService;
         _functionService = functionService;
+        _userLinkedMailsService = userLinkedMailsService;
     }
 
     [HttpGet]
@@ -220,7 +223,8 @@ public class ScheduleController : ControllerBase
                     if (user.PlannedFunctionId is not null && user.UserFunctionId is not null && user.UserFunctionId != user.PlannedFunctionId)
                         function = await _functionService.GetById(customerId, user.PlannedFunctionId.Value, clt);
                     var text = GetTrainingCalenderText(training.Training.TrainingTypeName, training.Training.Name, function?.Name);
-                    await _graphService.PatchCalender(user.UserId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime);
+                    var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(10, 0, user.UserId, customerId, clt)).UserLinkedMails ?? [];
+                    await _graphService.PatchCalender(user.UserId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime, allUserLinkedMail);
                 }
             }
         }
@@ -534,12 +538,13 @@ public class ScheduleController : ControllerBase
                     return;
                 }
 
+                var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(10, 0, planUserId, customerId, clt)).UserLinkedMails ?? [];
                 _graphService.InitializeGraph();
                 if (string.IsNullOrEmpty(calendarEventId))
                 {
                     if (!string.IsNullOrEmpty(text))
                     {
-                        var eventResult = await _graphService.AddToCalendar(planUserId, text, training.DateStart, training.DateEnd, !training.ShowTime);
+                        var eventResult = await _graphService.AddToCalendar(planUserId, text, training.DateStart, training.DateEnd, !training.ShowTime,allUserLinkedMail);
                         if (eventResult is not null)
                             await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, eventResult.Id, clt);
                     }
@@ -550,7 +555,7 @@ public class ScheduleController : ControllerBase
                 }
                 else
                 {
-                    await _graphService.PatchCalender(planUserId, calendarEventId, text, training.DateStart, training.DateEnd, !training.ShowTime);
+                    await _graphService.PatchCalender(planUserId, calendarEventId, text, training.DateStart, training.DateEnd, !training.ShowTime,allUserLinkedMail);
                 }
             }
             else if (!string.IsNullOrEmpty(calendarEventId))
