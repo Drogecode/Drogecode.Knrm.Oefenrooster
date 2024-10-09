@@ -32,11 +32,12 @@ public sealed partial class StatisticsTrainingsAll : IDisposable
 
     private async Task DarkModeChanged(bool newValue)
     {
-        DebugHelper.WriteLine($"rerender with darkmode {newValue}");
+        var newMode = newValue ? Mode.Dark : Mode.Light;
+        DebugHelper.WriteLine($"rerender with darkmode {newMode}");
         _renderChart = false;
         StateHasChanged();
         await Task.Delay(1); // Will not update without this delay
-        _options.Theme.Mode = newValue ? Mode.Dark : Mode.Light;
+        _options.Theme.Mode = newMode;
         _renderChart = true;
         StateHasChanged();
     }
