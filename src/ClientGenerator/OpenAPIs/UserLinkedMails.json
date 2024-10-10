@@ -398,6 +398,9 @@
           },
           "isEnabled": {
             "type": "boolean"
+          },
+          "isDrogeCodeUser": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

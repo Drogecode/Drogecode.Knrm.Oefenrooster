@@ -25,7 +25,7 @@ public class UserService : IUserService
         var sw = Stopwatch.StartNew();
         var result = new MultipleDrogeUsersResponse { DrogeUsers = new List<DrogeUser>() };
         var dbUsers = await _database.Users
-            .Where(u => u.CustomerId == customerId && u.DeletedOn == null && (includeHidden || u.UserFunction == null || u.UserFunction.IsActive))
+            .Where(u => u.CustomerId == customerId && u.DeletedOn == null && !u.IsSystemUser && (includeHidden || u.UserFunction == null || u.UserFunction.IsActive))
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
             .ThenInclude(x => x.UserB)
             .Include(x => x.UserOnVersions!.Where(y => includeLastLogin && y.LastSeenOnThisVersion.CompareTo(DateTime.UtcNow.AddYears(-1)) >= 0))
@@ -102,7 +102,7 @@ public class UserService : IUserService
 
     public async Task<bool> UpdateUser(DrogeUser user, Guid userId, Guid customerId)
     {
-        var oldVersion = await _database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null);
+        var oldVersion = await _database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null && !u.IsSystemUser);
         if (oldVersion is not null)
         {
             oldVersion.UserFunctionId = user.UserFunctionId;
@@ -243,7 +243,7 @@ public class UserService : IUserService
     {
         foreach (var user in existingUsers)
         {
-            var dbUser = await _database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null);
+            var dbUser = await _database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null && !u.IsSystemUser);
             if (dbUser is not null)
             {
                 dbUser.DeletedOn = DateTime.UtcNow;

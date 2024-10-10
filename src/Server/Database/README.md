@@ -7,7 +7,7 @@
 
 # Revert
 
-1. dotnet ef database update "20240813190503_UserRoleExternalId"
+1. dotnet ef database update "20241002202511_UserLinkedMails-activation"
 
 # Update tools:
 

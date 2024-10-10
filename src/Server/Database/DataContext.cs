@@ -200,6 +200,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             SetUserRoles(modelBuilder);
             SetVehicles(modelBuilder);
             SetRoosterTrainingTypes(modelBuilder);
+            SetSystemUsers(modelBuilder);
         }
 
         #region Default data
@@ -900,6 +901,19 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CreatedBy = DefaultSettingsHelper.IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
                 IsActive = true,
+            }));
+        }
+
+        private void SetSystemUsers(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DbUsers>(e => e.HasData(new DbUsers
+            {
+                Id = DefaultSettingsHelper.SystemUser,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Name = "System",
+                Email = "system@drogecode.nl",
+                IsSystemUser = true,
+                CreatedOn = new DateTime(2024, 10, 11, 19, 46, 12, DateTimeKind.Utc),
             }));
         }
         #endregion

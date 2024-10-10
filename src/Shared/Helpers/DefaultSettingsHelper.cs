@@ -21,6 +21,7 @@ public static class DefaultSettingsHelper
     public static Guid KompasLeiderId { get; } = new Guid("d23de705-d950-4833-8b94-aa531022d450");
     public static Guid Oefening1op1Id { get; } = new Guid("52260d46-c748-4ffc-b94c-2baecacbfaf4");
     public static Guid IdTaco { get; } = new Guid("04093c7a-11e5-4887-af51-319ecc59efe0"); // "04093c7a-11e5-4887-af51-319ecc59efe0"
+    public static Guid SystemUser { get; } =new Guid("b4bcc37b-321a-4027-b02b-30630ad8f75e");
     public static Guid DefaultRoosterTuesday { get; } = new Guid("7b4693a8-ae9c-430f-9119-49a6ecbfeb54");
     public static Guid DefaultRoosterSaturdayMorning { get; } = new Guid("2bdaccc0-e9f7-40c1-ae76-d9ed66e4a978");
     public static Guid NwiId { get; } =new Guid("4589535c-9064-4448-bc01-3b5a00e9410d");

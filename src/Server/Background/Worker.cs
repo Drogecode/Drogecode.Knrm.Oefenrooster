@@ -1,3 +1,5 @@
+using Drogecode.Knrm.Oefenrooster.Server.Controllers;
+using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -25,15 +27,15 @@ public class Worker : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken clt)
     {
         _clt = clt;
-        _memoryCache.Set(NEXT_USER_SYNC, DateTime.UtcNow); // do not run on startup
+        _memoryCache.Set(NEXT_USER_SYNC, DateTime.SpecifyKind(DateTime.Today.AddDays(1).AddHours(1), DateTimeKind.Utc)); // do not run on startup
         while (!_clt.IsCancellationRequested && _configuration.GetValue<bool>("Drogecode:RunBackgroundService"))
         {
             try
             {
                 var sleep = 60 * (_errorCount * 3 + 1);
-                for (int i = 0; i < sleep; i++) // run once every second.
+                for (int i = 0; i < sleep; i++)
                 {
-                    if (_clt.IsCancellationRequested) return;
+                    if (_clt.IsCancellationRequested) return; // run once every second.
                     await Task.Delay(1000, clt);
                 }
 
@@ -68,7 +70,7 @@ public class Worker : BackgroundService
 
         var result = true;
         result = (result & await SyncSharePointActions(graphService));
-        result = (result & await SyncSharePointUsers(graphService));
+        result = (result & await SyncSharePointUsers(scope, graphService));
         return result;
     }
 
@@ -80,12 +82,19 @@ public class Worker : BackgroundService
         return result;
     }
 
-    private async Task<bool> SyncSharePointUsers(IGraphService graphService)
+    private async Task<bool> SyncSharePointUsers(IServiceScope scope, IGraphService graphService)
     {
         var nextSync = _memoryCache.Get<DateTime?>(NEXT_USER_SYNC);
         if (nextSync is not null && nextSync.Value.CompareTo(DateTime.UtcNow) > 0)
             return true;
-        //ToDo sync
+
+        var userControllerLogger = scope.ServiceProvider.GetRequiredService<ILogger<UserController>>();
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+        var auditService = scope.ServiceProvider.GetRequiredService<IAuditService>();
+        var functionService = scope.ServiceProvider.GetRequiredService<IFunctionService>();
+        var refreshHub = scope.ServiceProvider.GetRequiredService<RefreshHub>();
+        var userController = new UserController(userControllerLogger, userService, auditService, graphService, functionService, refreshHub);
+        await userController.InternalSyncAllUsers(DefaultSettingsHelper.SystemUser, DefaultSettingsHelper.KnrmHuizenId, _clt);
 
         _clt.ThrowIfCancellationRequested();
         _memoryCache.Set(NEXT_USER_SYNC, DateTime.SpecifyKind(DateTime.Today.AddDays(1).AddHours(1), DateTimeKind.Utc));

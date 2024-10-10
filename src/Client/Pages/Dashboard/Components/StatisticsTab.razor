@@ -10,12 +10,14 @@
                 <MudAlert Severity="Severity.Info">@L["Data from 2021 and before could be incorrect or incomplete"]</MudAlert>
             }
             <MudPaper Elevation="0" Class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-                <div class="flex-1">
-                    <StatisticsActionsAll @ref="_statisticsActionsAll" StatisticsTab="this" SelectedUsers="_selectedUsers" AllYears="@_allYears"/>
-                </div>
-                <div class="flex-1">
-                    <StatisticsTrainingsAll @ref="_statisticsTrainingsAll" StatisticsTab="this" SelectedUsers="_selectedUsers" AllYears="@_allYears"/>
-                </div>
+                <MudGrid>
+                    <MudItem xs="12" md="6">
+                        <StatisticsActionsAll @ref="_statisticsActionsAll" StatisticsTab="this" SelectedUsers="_selectedUsers" AllYears="@_allYears"/>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <StatisticsTrainingsAll @ref="_statisticsTrainingsAll" StatisticsTab="this" SelectedUsers="_selectedUsers" AllYears="@_allYears"/>
+                    </MudItem>
+                </MudGrid>
             </MudPaper>
         </MudTabPanel>
         <AuthorizeView Roles="@AccessesNames.AUTH_Taco">

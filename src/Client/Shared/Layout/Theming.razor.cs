@@ -140,18 +140,10 @@ public sealed partial class Theming : IDisposable
     {
         if (string.Compare(newState, "visible", StringComparison.InvariantCulture) != 0)
             return;
-        await Task.Delay(50);
         await OnSystemPreferenceChanged(await MudThemeProvider.GetSystemPreference()); // always check dark/light on reopen
         if (_lastVisibilityChange.AddMinutes(3).CompareTo(DateTime.UtcNow) > 0)
             return;
         _lastVisibilityChange = DateTime.UtcNow;
-        if (false && isIos && await CustomerSettingsClient.GetIosDarkLightCheckAsync(_cls.Token) && DarkModeToggle == DarkLightMode.System)
-        {
-            // Disable, se if it works without on the latest ios version.
-            // https://forums.developer.apple.com/forums/thread/739154
-            await JsRuntime.InvokeVoidAsync("ColorschemeFix");
-        }
-
         await Global.CallVisibilityChangeAsync();
     }
 

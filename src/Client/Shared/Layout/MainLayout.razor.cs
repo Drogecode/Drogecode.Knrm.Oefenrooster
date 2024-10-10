@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Models.Palettes;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
@@ -31,8 +32,8 @@ public sealed partial class MainLayout : IDisposable
 
     private MudTheme _myCustomTheme = new()
     {
-        PaletteLight = new PaletteLight(),
-        PaletteDark = new PaletteDark(),
+        PaletteLight = new KnrmPaletteLight(),
+        PaletteDark = new KnrmPaletteDark(),
     };
 
     private Action<SnackbarOptions> _snackbarConfig = (SnackbarOptions options) =>

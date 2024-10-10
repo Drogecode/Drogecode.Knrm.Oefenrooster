@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
+
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
@@ -35,7 +36,7 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Route("all/{includeHidden:bool}/{callHub:bool}", Order = 0)]
-    [Route("all/{includeHidden:bool}", Order = 10)]// v0.3.36
+    [Route("all/{includeHidden:bool}", Order = 10)] // v0.3.36
     public async Task<ActionResult<MultipleDrogeUsersResponse>> GetAll(bool includeHidden, bool callHub = false, CancellationToken clt = default)
     {
         try
@@ -52,6 +53,7 @@ public class UserController : ControllerBase
                 _logger.LogTrace("Calling hub AllUsers");
                 await _refreshHub.SendMessage(userId, ItemUpdated.AllUsers);
             }
+
             return result;
         }
         catch (Exception ex)
@@ -153,7 +155,9 @@ public class UserController : ControllerBase
                 result = await _userService.UpdateLinkUserUserForUser(body, userId, customerId, clt);
             else
                 result = await _userService.RemoveLinkUserUserForUser(body, userId, customerId, clt);
-            await _auditService.Log(userId, AuditType.UpdateLinkUserUserForUser, customerId, JsonSerializer.Serialize(new AuditLinkUserUser { UserA = body.UserAId, UserB = body.UserBId, Add = body.Add, LinkType = body.LinkType, Success = result.Success, ElapsedMilliseconds = result.ElapsedMilliseconds }));
+            await _auditService.Log(userId, AuditType.UpdateLinkUserUserForUser, customerId,
+                JsonSerializer.Serialize(new AuditLinkUserUser
+                    { UserA = body.UserAId, UserB = body.UserBId, Add = body.Add, LinkType = body.LinkType, Success = result.Success, ElapsedMilliseconds = result.ElapsedMilliseconds }));
             return result;
         }
         catch (Exception ex)
@@ -173,61 +177,70 @@ public class UserController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            _graphService.InitializeGraph();
-            var existingUsers = (await _userService.GetAllUsers(customerId, true, false, clt)).DrogeUsers;
-            var functions = (await _functionService.GetAllFunctions(customerId, clt)).Functions;
-            var users = await _graphService.ListUsersAsync();
-            if (users?.Value != null)
-            {
-                await _auditService.Log(userId, AuditType.SyncAllUsers, customerId);
-                while (true)
-                {
-                    foreach (var user in users!.Value!)
-                    {
-                        if (!string.IsNullOrEmpty(user.Id) && !string.IsNullOrEmpty(user.DisplayName))
-                        {
-                            var id = new Guid(user.Id);
-                            var index = existingUsers.FindIndex(x => x.Id == id);
-                            if (index != -1)
-                                existingUsers.RemoveAt(index);
-                            var newUserResponse = await _userService.GetOrSetUserById(id, id, user.DisplayName, user.Mail ?? "not set", customerId, false);
-                            if (newUserResponse is null)
-                                continue;
-                            newUserResponse.SyncedFromSharePoint = true;
-                            var groups = await _graphService.GetGroupForUser(user.Id);
-                            if (groups?.Value != null && functions.Any(x => groups.Value.Any(y => y.Id == x.RoleId.ToString())))
-                            {
-                                newUserResponse.RoleFromSharePoint = true;
-                                var newFunction = functions.FirstOrDefault(x => groups.Value.Any(y => y.Id == x.RoleId.ToString()));
-                                if (newFunction is not null && newUserResponse.UserFunctionId != newFunction.Id)
-                                {
-                                    newUserResponse.UserFunctionId = newFunction.Id;
-                                }
-                            }
-                            else
-                            {
-                                newUserResponse.RoleFromSharePoint = false;
-                            }
-                            var a = await _userService.UpdateUser(newUserResponse, userId, customerId);
-                        }
-                    }
-                    if (users.OdataNextLink is not null)
-                        users = await _graphService.NextUsersPage(users);
-                    else break;
-                }
-                if (existingUsers?.Count > 0)
-                {
-                    await _userService.MarkUsersDeleted(existingUsers, userId, customerId);
-                }
-            }
-            else
-                return Ok(new SyncAllUsersResponse { Success = false });
-            return Ok(new SyncAllUsersResponse { Success = true });
+            await _auditService.Log(userId, AuditType.SyncAllUsers, customerId);
+            return Ok(await InternalSyncAllUsers(userId, customerId, clt));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in SyncAllUsers");
             return Ok(new SyncAllUsersResponse { Success = false });
         }
+    }
+
+    internal async Task<SyncAllUsersResponse> InternalSyncAllUsers(Guid userId, Guid customerId, CancellationToken clt = default)
+    {
+        _graphService.InitializeGraph();
+        var existingUsers = (await _userService.GetAllUsers(customerId, true, false, clt)).DrogeUsers ?? [];
+        var functions = (await _functionService.GetAllFunctions(customerId, clt)).Functions ?? [];
+        var users = await _graphService.ListUsersAsync();
+        if (users?.Value is not null)
+        {
+            while (true)
+            {
+                foreach (var user in users!.Value!)
+                {
+                    if (!string.IsNullOrEmpty(user.Id) && !string.IsNullOrEmpty(user.DisplayName))
+                    {
+                        var id = new Guid(user.Id);
+                        var index = existingUsers.FindIndex(x => x.Id == id);
+                        if (index != -1)
+                            existingUsers.RemoveAt(index);
+                        var newUserResponse = await _userService.GetOrSetUserById(id, id, user.DisplayName, user.Mail ?? "not set", customerId, false);
+                        if (newUserResponse is null)
+                            continue;
+                        newUserResponse.SyncedFromSharePoint = true;
+                        var groups = await _graphService.GetGroupForUser(user.Id);
+                        if (groups?.Value != null && functions.Any(x => groups.Value.Any(y => y.Id == x.RoleId.ToString())))
+                        {
+                            newUserResponse.RoleFromSharePoint = true;
+                            var newFunction = functions.FirstOrDefault(x => groups.Value.Any(y => y.Id == x.RoleId.ToString()));
+                            if (newFunction is not null && newUserResponse.UserFunctionId != newFunction.Id)
+                            {
+                                newUserResponse.UserFunctionId = newFunction.Id;
+                            }
+                        }
+                        else
+                        {
+                            newUserResponse.RoleFromSharePoint = false;
+                        }
+
+                        var a = await _userService.UpdateUser(newUserResponse, userId, customerId);
+                    }
+                }
+
+                if (users.OdataNextLink is not null)
+                    users = await _graphService.NextUsersPage(users);
+                else break;
+            }
+
+            if (existingUsers?.Count > 0)
+            {
+                await _userService.MarkUsersDeleted(existingUsers, userId, customerId);
+            }
+        }
+        else
+            return new SyncAllUsersResponse { Success = false };
+
+        return new SyncAllUsersResponse { Success = true };
     }
 }
