@@ -15,7 +15,7 @@
 	<ItemGroup>
 		<PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.2" />
 		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
-		<PackageReference Include="Azure.Identity" Version="1.12.1" />
+		<PackageReference Include="Azure.Identity" Version="1.13.0" />
 		<PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.6.0" />
 		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.10" />
@@ -41,7 +41,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.10" />
 		<PackageReference Include="Microsoft.Identity.Web" Version="3.2.2" />
 		<PackageReference Include="Microsoft.Identity.Web.UI" Version="3.2.2" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.8.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.9.0" />
 	</ItemGroup>
 
 	<ItemGroup>
