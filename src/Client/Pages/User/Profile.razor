@@ -40,7 +40,7 @@
                         <PropertyColumn Property="x => x.Email" Title="@L["Email"]"/>
                         <PropertyColumn Property="x => x.IsEnabled" Title="@L["Is enabled"]">
                             <CellTemplate Context="templateContext">
-                                <MudCheckBox T="bool" Disabled="!templateContext.Item.IsActive" Value="templateContext.Item.IsEnabled" ValueChanged="(newValue)=>IsEnabledChanged(newValue, templateContext.Item.Id)" />
+                                <MudCheckBox T="bool" Disabled="!templateContext.Item.IsActive || templateContext.Item.IsDrogeCodeUser" Value="templateContext.Item.IsEnabled" ValueChanged="(newValue)=>IsEnabledChanged(newValue, templateContext.Item.Id)" />
                             </CellTemplate>
                         </PropertyColumn>
                         <PropertyColumn Property="x => x.IsActive" Title="@L["Is active"]">

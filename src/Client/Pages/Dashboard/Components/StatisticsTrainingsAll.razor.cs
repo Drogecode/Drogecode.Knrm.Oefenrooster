@@ -25,14 +25,20 @@ public sealed partial class StatisticsTrainingsAll : IDisposable
     private ApexChart<StatisticsTab.ChartMonth> _chart = null!;
     private bool _renderChart;
 
-    protected override void OnInitialized()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Global.DarkLightChangedAsync += DarkModeChanged;
+        if (firstRender)
+        {
+            Global.DarkLightChangedAsync += DarkModeChanged;
+            _options.Theme.Mode = Global.DarkMode ? Mode.Dark : Mode.Light;
+            await UpdateAnalyzeYearChartAll();
+        }
     }
-
+    
     private async Task DarkModeChanged(bool newValue)
     {
         var newMode = newValue ? Mode.Dark : Mode.Light;
+        if (newMode == _options.Theme.Mode) return;
         DebugHelper.WriteLine($"rerender with darkmode {newMode}");
         _renderChart = false;
         StateHasChanged();
@@ -40,16 +46,6 @@ public sealed partial class StatisticsTrainingsAll : IDisposable
         _options.Theme.Mode = newMode;
         _renderChart = true;
         StateHasChanged();
-    }
-    
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _xAxisLabels = [L["Jan"], L["Feb"], L["Mar"], L["Apr"], L["May"], L["Jun"], L["Jul"], L["Aug"], L["Sep"], L["Oct"], L["Nov"], L["Dec"]];
-            _options.Theme.Mode = Global.DarkMode ? Mode.Dark : Mode.Light;
-            await UpdateAnalyzeYearChartAll();
-        }
     }
 
     public async Task UpdateAnalyzeYearChartAll()
