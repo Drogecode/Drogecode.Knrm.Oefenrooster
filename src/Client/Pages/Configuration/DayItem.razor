@@ -1,7 +1,7 @@
 ﻿@page "/configuration/day-item"
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums
 @attribute [Authorize(Roles = AccessesNames.AUTH_scheduler_dayitem)]
-<MudAlert Severity="Severity.Info" Variant="Variant.Filled">Werkt (nog) niet op mobiel</MudAlert>
+<MudAlert Severity="Severity.Info" Variant="Variant.Filled">@LApp["Does not work on mobile"]</MudAlert>
 <PageTitle>@L["Special day"]</PageTitle>
 <MudPaper Elevation="0" Class="p-2">
     <MudText Typo="Typo.h4">@L["Add or change special day"]</MudText>

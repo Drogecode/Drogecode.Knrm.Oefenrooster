@@ -127,6 +127,29 @@ public class DefaultScheduleController : ControllerBase
     }
 
 
+    [HttpPatch]
+    [Route("schedule")]
+    public async Task<ActionResult<PatchDefaultScheduleResponse>> PatchDefaultSchedule([FromBody] DefaultSchedule body)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var result = await _defaultScheduleService.PatchDefaultSchedule(body, customerId, userId);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in PutDefaultSchedule");
+            return BadRequest();
+        }
+    }
+
+
     [HttpGet]
     [Authorize(Roles = AccessesNames.AUTH_configure_default_schedule)]
     [Route("schedule/all")]

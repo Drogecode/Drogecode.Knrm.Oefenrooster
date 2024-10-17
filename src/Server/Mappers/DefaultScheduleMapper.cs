@@ -12,10 +12,10 @@ public static class DefaultScheduleMapper
             Id = defaultSchedule.Id,
             RoosterTrainingTypeId = defaultSchedule.RoosterTrainingTypeId,
             WeekDay = defaultSchedule.WeekDay,
-            TimeStart = defaultSchedule.TimeStart,
-            TimeEnd = defaultSchedule.TimeEnd,
-            ValidFrom = defaultSchedule.ValidFromDefault,
-            ValidUntil = defaultSchedule.ValidUntilDefault,
+            TimeStart = TimeOnly.FromTimeSpan(defaultSchedule.TimeStart?? throw new ArgumentNullException("TimeStart is null")),
+            TimeEnd = TimeOnly.FromTimeSpan(defaultSchedule.TimeEnd?? throw new ArgumentNullException("TimeEnd is null")),
+            ValidFrom = defaultSchedule.ValidFromDefault ?? throw new ArgumentNullException("ValidFromDefault is null"),
+            ValidUntil = defaultSchedule.ValidUntilDefault ?? throw new ArgumentNullException("ValidUntilDefault is null"),
             CountToTrainingTarget = defaultSchedule.CountToTrainingTarget,
             Order = defaultSchedule.Order,
             CustomerId = customerId,
@@ -24,6 +24,7 @@ public static class DefaultScheduleMapper
             Name = defaultSchedule.Name
         };
     }
+
     public static DefaultSchedule ToDefaultSchedule(this DbRoosterDefault defaultSchedule, List<DefaultUserSchedule>? userSchedules)
     {
         return new DefaultSchedule
@@ -32,8 +33,8 @@ public static class DefaultScheduleMapper
             RoosterTrainingTypeId = defaultSchedule.RoosterTrainingTypeId,
             VehicleIds = defaultSchedule.VehicleIds,
             WeekDay = defaultSchedule.WeekDay,
-            TimeStart = defaultSchedule.TimeStart,
-            TimeEnd = defaultSchedule.TimeEnd,
+            TimeStart = defaultSchedule.TimeStart.ToTimeSpan(),
+            TimeEnd = defaultSchedule.TimeEnd.ToTimeSpan(),
             ValidFromDefault = defaultSchedule.ValidFrom,
             ValidUntilDefault = defaultSchedule.ValidUntil,
             TimeZone = defaultSchedule.TimeZone,

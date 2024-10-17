@@ -22,7 +22,7 @@
                 <CellTemplate>
                     @if (context.Item.ShowTime)
                     {
-                        <p>@context.Item.TimeStart</p>
+                        <p>@context.Item.TimeStart!.Value.ToString("hh\\:mm")</p>
                     }
                 </CellTemplate>
             </TemplateColumn>
@@ -30,7 +30,7 @@
                 <CellTemplate>
                     @if (context.Item.ShowTime)
                     {
-                        <p>@context.Item.TimeEnd</p>
+                        <p>@context.Item.TimeEnd!.Value.ToString("hh\\:mm")</p>
                     }
                 </CellTemplate>
             </TemplateColumn>

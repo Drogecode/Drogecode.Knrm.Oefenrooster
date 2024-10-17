@@ -1,8 +1,46 @@
-﻿<MudDialog>
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes
+<MudDialog>
     <DialogContent>
-        @if (DefaultSchedule is not null)
+        <MudAlert Severity="Severity.Info" Variant="Variant.Filled">@LApp["Does not work on mobile"]</MudAlert>
+        @if (DefaultSchedule is not null && _trainingTypes is not null)
         {
-            <MudText>ToDo</MudText>
+            <MudNumericField Label="@L["Order"]" @bind-Value="DefaultSchedule.Order" Required/>
+            <MudTextField Label="@L["Name"]" @bind-Value="DefaultSchedule.Name" Counter="@DefaultSettingsHelper.MAX_LENGTH_MONTH_ITEM_TEXT" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_MONTH_ITEM_TEXT"/>
+
+            @if (_currentTrainingType is not null && !_currentTrainingType.IsActive)
+            {
+                <MudTextField Label="@L["Training type"]" Disabled="true" Value="_currentTrainingType.Name"/>
+            }
+            else
+            {
+                <MudSelect T="Guid?" Label="@L["Training type"]" AnchorOrigin="Origin.BottomCenter" @bind-Value="DefaultSchedule.RoosterTrainingTypeId" Required>
+                    @foreach (var trainingType in _trainingTypes.Where(x => x.IsActive).OrderBy(x => x.Order))
+                    {
+                        <MudSelectItem T="Guid?" Value="@trainingType.Id">@trainingType.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            }
+            <MudSelect Label="@L["Severity"]" T="DayOfWeek" Variant="Variant.Text" @bind-Value="DefaultSchedule.WeekDay">
+                <MudSelectItem T="DayOfWeek" Value="DayOfWeek.Monday">@LApp["Monday"]</MudSelectItem>
+                <MudSelectItem T="DayOfWeek" Value="DayOfWeek.Tuesday">@LApp["Tuesday"]</MudSelectItem>
+                <MudSelectItem T="DayOfWeek" Value="DayOfWeek.Wednesday">@LApp["Wednesday"]</MudSelectItem>
+                <MudSelectItem T="DayOfWeek" Value="DayOfWeek.Thursday">@LApp["Thursday"]</MudSelectItem>
+                <MudSelectItem T="DayOfWeek" Value="DayOfWeek.Friday">@LApp["Friday"]</MudSelectItem>
+                <MudSelectItem T="DayOfWeek" Value="DayOfWeek.Saturday">@LApp["Saturday"]</MudSelectItem>
+                <MudSelectItem T="DayOfWeek" Value="DayOfWeek.Sunday">@LApp["Sunday"]</MudSelectItem>
+            </MudSelect>
+            <MudDatePicker Label="@L["Valid from"]" @bind-Date="DefaultSchedule.ValidFromDefault" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))" Disabled="@(DefaultSchedule.ValidFromDefault?.InPast() ?? false)" Required/>
+            <MudDatePicker Label="@L["Valid till"]" @bind-Date="DefaultSchedule.ValidUntilDefault" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" Disabled="@(DefaultSchedule.ValidUntilDefault?.InPast() ?? false)" Required/>
+            <MudTimePicker Label="@L["Start time"]" @bind-Time="DefaultSchedule.TimeStart" Required/>
+            <MudTimePicker Label="@L["End time"]" @bind-Time="DefaultSchedule.TimeEnd" Required/>
+            <MudToggle Label="@L["Show time"]" @bind-Time="DefaultSchedule.ShowTime"/>
+        }
+        else
+        {
+            <MudSkeleton/>
+            <MudSkeleton/>
+            <MudSkeleton/>
+            <MudSkeleton/>
         }
     </DialogContent>
     <DialogActions>

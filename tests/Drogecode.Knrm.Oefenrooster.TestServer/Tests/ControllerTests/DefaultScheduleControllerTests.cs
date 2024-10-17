@@ -39,15 +39,40 @@ public class DefaultScheduleControllerTests : BaseTest
         {
             RoosterTrainingTypeId = DefaultTrainingType,
             WeekDay = DayOfWeek.Tuesday,
-            TimeStart = new TimeOnly(11, 0),
-            TimeEnd = new TimeOnly(14, 0),
+            TimeStart = new TimeOnly(11, 0).ToTimeSpan(),
+            TimeEnd = new TimeOnly(14, 0).ToTimeSpan(),
             ValidFromDefault = DateTime.Today,
             ValidUntilDefault = DateTime.Today.AddDays(7),
             CountToTrainingTarget = false,
             Order = 55
         };
         var result = await DefaultScheduleController.PutDefaultSchedule(body);
-        Assert.NotNull(result?.Value?.DefaultSchedule?.Id);
+        Assert.NotNull(result?.Value?.NewId);
+    }
+
+    [Fact]
+    public async Task PatchTest()
+    {
+        var allDefaultScheduleResponse = await DefaultScheduleController.GetAllDefaultSchedule();
+        Assert.NotNull(allDefaultScheduleResponse.Value?.DefaultSchedules);
+        Assert.NotEmpty(allDefaultScheduleResponse.Value.DefaultSchedules);
+        allDefaultScheduleResponse.Value.DefaultSchedules.Should().Contain(x => x.Id == DefaultDefaultSchedule);
+        var defaultSchedule = allDefaultScheduleResponse.Value.DefaultSchedules.First(x => x.Id == DefaultDefaultSchedule);
+        Assert.NotNull(defaultSchedule);
+        defaultSchedule.Order.Should().Be(10);
+        defaultSchedule.WeekDay.Should().Be(DayOfWeek.Monday);
+        defaultSchedule.Order = 20;
+        defaultSchedule.WeekDay = DayOfWeek.Tuesday;
+
+        var patchResult = await DefaultScheduleController.PatchDefaultSchedule(defaultSchedule);
+        allDefaultScheduleResponse = await DefaultScheduleController.GetAllDefaultSchedule();
+        Assert.NotNull(allDefaultScheduleResponse.Value?.DefaultSchedules);
+        Assert.NotEmpty(allDefaultScheduleResponse.Value.DefaultSchedules);
+        allDefaultScheduleResponse.Value.DefaultSchedules.Should().Contain(x => x.Id == DefaultDefaultSchedule);
+        var defaultSchedulePatched = allDefaultScheduleResponse.Value.DefaultSchedules.First(x => x.Id == DefaultDefaultSchedule);
+        Assert.NotNull(defaultSchedule);
+        defaultSchedule.Order.Should().Be(20);
+        defaultSchedule.WeekDay.Should().Be(DayOfWeek.Tuesday);
     }
 
     [Fact]
@@ -58,8 +83,8 @@ public class DefaultScheduleControllerTests : BaseTest
             Id = DefaultDefaultSchedule,
             RoosterTrainingTypeId = DefaultTrainingType,
             WeekDay = DayOfWeek.Tuesday,
-            TimeStart = new TimeOnly(11, 0),
-            TimeEnd = new TimeOnly(14, 0),
+            TimeStart = new TimeOnly(11, 0).ToTimeSpan(),
+            TimeEnd = new TimeOnly(14, 0).ToTimeSpan(),
             ValidFromDefault = DateTime.Today,
             ValidUntilDefault = DateTime.Today.AddDays(7),
             CountToTrainingTarget = false,
@@ -204,11 +229,13 @@ public class DefaultScheduleControllerTests : BaseTest
         var allForGroup = await DefaultScheduleController.GetAllByGroupId(newGroup.Id);
         Assert.NotNull(allForGroup.Value?.DefaultSchedules);
         Assert.NotEmpty(allForGroup.Value.DefaultSchedules);
-        allForGroup.Value!.DefaultSchedules!.FirstOrDefault(x => x.Id == DefaultDefaultSchedule)!.UserSchedules.Should().Contain(x => x.UserDefaultAvailableId == patchResult.Value!.Patched!.UserDefaultAvailableId);
+        allForGroup.Value!.DefaultSchedules!.FirstOrDefault(x => x.Id == DefaultDefaultSchedule)!.UserSchedules.Should()
+            .Contain(x => x.UserDefaultAvailableId == patchResult.Value!.Patched!.UserDefaultAvailableId);
 
         var idDefaultGroup = (await DefaultScheduleController.GetAllGroups()).Value!.Groups!.FirstOrDefault(x => x.IsDefault)!.Id;
         var allForDefaultGroup = await DefaultScheduleController.GetAllByGroupId(idDefaultGroup);
-        allForDefaultGroup.Value!.DefaultSchedules!.FirstOrDefault(x => x.Id == DefaultDefaultSchedule)!.UserSchedules.Should().NotContain(x => x.UserDefaultAvailableId == patchResult.Value!.Patched!.UserDefaultAvailableId);
+        allForDefaultGroup.Value!.DefaultSchedules!.FirstOrDefault(x => x.Id == DefaultDefaultSchedule)!.UserSchedules.Should()
+            .NotContain(x => x.UserDefaultAvailableId == patchResult.Value!.Patched!.UserDefaultAvailableId);
     }
 
     [Fact]

@@ -24,10 +24,10 @@
     <DialogContent>
         @if (_training == null || TrainingTypes == null)
         {
-            <MudSkeleton />
-            <MudSkeleton />
-            <MudSkeleton />
-            <MudSkeleton />
+            <MudSkeleton/>
+            <MudSkeleton/>
+            <MudSkeleton/>
+            <MudSkeleton/>
         }
         else
         {
@@ -55,7 +55,7 @@
                 else
                 {
                     <MudSelect T="Guid?" Label="@L["Training type"]" AnchorOrigin="Origin.BottomCenter" Value="_training.RoosterTrainingTypeId" ValueChanged="RoosterTrainingTypeChanged" Required>
-                        @foreach (PlannerTrainingType trainingType in TrainingTypes.Where(x => x.IsActive).OrderBy(x => x.Order))
+                        @foreach (var trainingType in TrainingTypes.Where(x => x.IsActive).OrderBy(x => x.Order))
                         {
                             <MudSelectItem T="Guid?" Value="@trainingType.Id">@trainingType.Name</MudSelectItem>
                         }

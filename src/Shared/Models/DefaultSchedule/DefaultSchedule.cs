@@ -13,10 +13,10 @@ public class DefaultSchedule
     public Guid? RoosterTrainingTypeId { get; set; }
     public List<Guid>? VehicleIds { get; set; }
     public DayOfWeek WeekDay { get; set; }
-    public TimeOnly TimeStart { get; set; }
-    public TimeOnly TimeEnd { get; set; }
-    public DateTime ValidFromDefault { get; set; }
-    public DateTime ValidUntilDefault { get; set; }
+    public TimeSpan? TimeStart { get; set; }
+    public TimeSpan? TimeEnd { get; set; }
+    public DateTime? ValidFromDefault { get; set; }
+    public DateTime? ValidUntilDefault { get; set; }
     public string TimeZone { get; set; } = string.Empty;
     public string? Name { get; set; }
     public bool CountToTrainingTarget { get; set; } = true;

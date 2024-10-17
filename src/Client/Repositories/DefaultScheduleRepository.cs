@@ -38,10 +38,21 @@ public class DefaultScheduleRepository
         var result = await _defaultScheduleClient.PatchDefaultScheduleForUserAsync(body, clt);
         return result.Patched;
     }
+    public async Task<PatchDefaultScheduleResponse?> PatchDefaultScheduleAsync(DefaultSchedule? body, CancellationToken clt)
+    {
+        var result = await _defaultScheduleClient.PatchDefaultScheduleAsync(body, clt);
+        return result;
+    }
 
     public async Task<PutGroupResponse> PutGroup(DefaultGroup body, CancellationToken clt)
     {
         var result = await _defaultScheduleClient.PutGroupAsync(body, clt);
+        return result;
+    }
+
+    public async Task<PutDefaultScheduleResponse> PutDefaultScheduleAsync(DefaultSchedule body, CancellationToken clt)
+    {
+        var result = await _defaultScheduleClient.PutDefaultScheduleAsync(body, clt);
         return result;
     }
 

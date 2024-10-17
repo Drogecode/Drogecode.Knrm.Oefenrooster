@@ -212,6 +212,53 @@
             }
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "DefaultSchedule"
+        ],
+        "operationId": "PatchDefaultSchedule",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefaultSchedule"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefaultSchedule"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefaultSchedule"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchDefaultScheduleResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchDefaultScheduleResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchDefaultScheduleResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/DefaultSchedule/schedule/all": {
@@ -381,19 +428,23 @@
           },
           "timeStart": {
             "type": "string",
-            "format": "time"
+            "format": "date-span",
+            "nullable": true
           },
           "timeEnd": {
             "type": "string",
-            "format": "time"
+            "format": "date-span",
+            "nullable": true
           },
           "validFromDefault": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "validUntilDefault": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "timeZone": {
             "type": "string",
@@ -574,6 +625,25 @@
         },
         "additionalProperties": false
       },
+      "PatchDefaultScheduleResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "patched": {
+            "$ref": "#/components/schemas/DefaultSchedule"
+          }
+        },
+        "additionalProperties": false
+      },
       "PatchDefaultUserSchedule": {
         "type": "object",
         "properties": {
@@ -626,8 +696,10 @@
             "type": "integer",
             "format": "int64"
           },
-          "defaultSchedule": {
-            "$ref": "#/components/schemas/DefaultSchedule"
+          "newId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           },
           "error": {
             "$ref": "#/components/schemas/PutError"

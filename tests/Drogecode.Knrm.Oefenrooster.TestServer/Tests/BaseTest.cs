@@ -305,16 +305,16 @@ public class BaseTest : IAsyncLifetime
         {
             RoosterTrainingTypeId = DefaultTrainingType,
             WeekDay = DayOfWeek.Monday,
-            TimeStart = new TimeOnly(11, 0),
-            TimeEnd = new TimeOnly(14, 0),
+            TimeStart =  new TimeOnly(11, 0).ToTimeSpan(),
+            TimeEnd = new TimeOnly(14, 0).ToTimeSpan(),
             ValidFromDefault = DateTime.Today,
             ValidUntilDefault = DateTime.Today.AddDays(14),
             CountToTrainingTarget = false,
             Order = 10
         };
         var result = await DefaultScheduleController.PutDefaultSchedule(body);
-        Assert.NotNull(result?.Value?.DefaultSchedule?.Id);
-        return result!.Value!.DefaultSchedule!.Id;
+        Assert.NotNull(result?.Value?.NewId);
+        return result.Value!.NewId.Value;
     }
 
     public Task DisposeAsync()

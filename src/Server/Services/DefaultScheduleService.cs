@@ -161,7 +161,38 @@ public class DefaultScheduleService : IDefaultScheduleService
         dbDefault.Id = Guid.NewGuid();
         await _database.RoosterDefaults.AddAsync(dbDefault);
         result.Success = (await _database.SaveChangesAsync()) >= 1;
-        result.DefaultSchedule = dbDefault.ToDefaultSchedule(null);
+        result.NewId = dbDefault.Id;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<PatchDefaultScheduleResponse> PatchDefaultSchedule(DefaultSchedule body, Guid customerId, Guid userId)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new PatchDefaultScheduleResponse();
+
+        var dbDefault = await _database.RoosterDefaults.FirstOrDefaultAsync(x => x.Id == body.Id);
+        if (dbDefault is null)
+        {
+            sw.Stop();
+            result.Success = false;
+            result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+            return result;
+        }
+
+        var dbCustomer = await _database.Customers.FindAsync(customerId) ?? throw new DrogeCodeNullException($"Customer {customerId} not found");
+        dbDefault.Name = body.Name;
+        dbDefault.TimeStart = TimeOnly.FromTimeSpan(body.TimeStart ?? throw new ArgumentNullException("TimeStart is null"));
+        dbDefault.TimeEnd = TimeOnly.FromTimeSpan(body.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"));
+        dbDefault.ValidFrom = (body.ValidFromDefault ?? throw new ArgumentNullException("ValidFromDefault is null")).ToUniversalTime();
+        dbDefault.ValidUntil = (body.ValidUntilDefault ?? throw new ArgumentNullException("ValidUntil is null")).ToUniversalTime();
+        dbDefault.WeekDay = body.WeekDay;
+        dbDefault.Order = body.Order;
+        dbDefault.RoosterTrainingTypeId = body.RoosterTrainingTypeId;
+        dbDefault.CountToTrainingTarget = body.CountToTrainingTarget;
+        _database.RoosterDefaults.Update(dbDefault);
+        result.Success = (await _database.SaveChangesAsync()) >= 1;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;

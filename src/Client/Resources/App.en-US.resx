@@ -207,4 +207,7 @@
   <data name="Today" xml:space="preserve">
     <value>Today</value>
   </data>
+  <data name="Does not work on mobile" xml:space="preserve">
+    <value>Does not (yet) work on mobile</value>
+  </data>
 </root>

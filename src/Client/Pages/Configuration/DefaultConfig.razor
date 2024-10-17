@@ -7,7 +7,7 @@
     {
         if (_defaults.DefaultSchedules?.Any() == true)
         {
-            <MudDataGrid Items="@_defaults.DefaultSchedules.OrderBy(x => x.ValidUntilDefault.CompareTo(DateTime.UtcNow) < 0).ThenBy(x => x.Order)" Striped="true" Hover="true">
+            <MudDataGrid Items="@_defaults.DefaultSchedules.OrderBy(x => x.ValidUntilDefault!.Value.CompareTo(DateTime.UtcNow) < 0).ThenBy(x => x.Order)" Striped="true" Hover="true">
                 <Columns>
                     <HierarchyColumn T="DefaultConfig"/>
                     <PropertyColumn Property="x => x.Name" Title="@L["Name"]" CellClassFunc="@(x => $"trainingType-{x.RoosterTrainingTypeId}")"/>
@@ -18,14 +18,14 @@
                     </PropertyColumn>
                     <TemplateColumn Title="@L["Valid from"]">
                         <CellTemplate>
-                            <p>@context.Item.ValidFromDefault.ToNiceString(LDateToString, showtime: false)</p>
+                            <p>@context.Item.ValidFromDefault!.Value.ToNiceString(LDateToString, showtime: false)</p>
                         </CellTemplate>
                     </TemplateColumn>
                     <TemplateColumn Title="@L["Valid untill"]">
                         <CellTemplate>
                             @if (!context.Item.ValidUntilDefault.Equals(DateTime.MaxValue))
                             {
-                                <p>@context.Item.ValidUntilDefault.ToNiceString(LDateToString, showtime: false)</p>
+                                <p>@context.Item.ValidUntilDefault!.Value.ToNiceString(LDateToString, showtime: false)</p>
                             }
                         </CellTemplate>
                     </TemplateColumn>
@@ -33,7 +33,7 @@
                         <CellTemplate>
                             @if (context.Item.ShowTime)
                             {
-                                <p>@context.Item.TimeStart</p>
+                                <p>@context.Item.TimeStart!.Value.ToString("hh\\:mm")</p>
                             }
                         </CellTemplate>
                     </TemplateColumn>
@@ -41,7 +41,7 @@
                         <CellTemplate>
                             @if (context.Item.ShowTime)
                             {
-                                <p>@context.Item.TimeEnd</p>
+                                <p>@context.Item.TimeEnd!.Value.ToString("hh\\:mm")</p>
                             }
                         </CellTemplate>
                     </TemplateColumn>
