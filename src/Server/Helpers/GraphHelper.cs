@@ -479,7 +479,6 @@ public static partial class GraphHelper
                 fromGet.Attendees = body.Attendees;
                 fromGet.Organizer = body.Organizer;
                 var patch = await _appClient.Users[userId.ToString()].Events[eventId].PatchAsync(fromGet);
-                //var patch = await _appClient.Users["262eda7d-9b9b-4b7b-a79f-fe57b34b054d"].Events[eventId].PatchAsync(fromGet);
             }
         }
         catch (Microsoft.Graph.Models.ODataErrors.ODataError ex)
@@ -502,16 +501,9 @@ public static partial class GraphHelper
                     Address = attendee.Email
                 }
             };
-            if (attendee.IsDrogeCodeUser)
-            {
-                asAttendee.Type = AttendeeType.Required;
-                organizer = asAttendee;
-            }
-            else
-            {
-                asAttendee.Type = AttendeeType.Optional;
-                attendeesEvent.Add(asAttendee);
-            }
+            if (attendee.IsDrogeCodeUser) continue;
+            asAttendee.Type = AttendeeType.Optional;
+            attendeesEvent.Add(asAttendee);
         }
 
         var even = new Event()

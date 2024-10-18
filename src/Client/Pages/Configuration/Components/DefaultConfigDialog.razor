@@ -33,7 +33,7 @@
             <MudDatePicker Label="@L["Valid till"]" @bind-Date="DefaultSchedule.ValidUntilDefault" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" Disabled="@(DefaultSchedule.ValidUntilDefault?.InPast() ?? false)" Required/>
             <MudTimePicker Label="@L["Start time"]" @bind-Time="DefaultSchedule.TimeStart" Required/>
             <MudTimePicker Label="@L["End time"]" @bind-Time="DefaultSchedule.TimeEnd" Required/>
-            <MudToggle Label="@L["Show time"]" @bind-Time="DefaultSchedule.ShowTime"/>
+            <MudSwitch Label="@L["Show time"]" @bind-Value="DefaultSchedule.ShowTime" Color="Color.Primary" T="bool"/>
         }
         else
         {
