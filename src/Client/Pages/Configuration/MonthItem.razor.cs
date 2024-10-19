@@ -55,7 +55,7 @@ public sealed partial class MonthItem : IDisposable
         if (monthItem is null)
             return;
         var deleteResult = await MonthItemClient.DeleteMonthItemAsync(monthItem.Id, _cls.Token);
-        if (deleteResult is true)
+        if (deleteResult)
         {
             _monthItems!.MonthItems!.Remove(monthItem);
         }

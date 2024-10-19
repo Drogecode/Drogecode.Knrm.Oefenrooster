@@ -24,7 +24,7 @@ public sealed partial class TrainingTypeDialog : IDisposable
     void Cancel() => MudDialog.Cancel();
     protected override void OnParametersSet()
     {
-        if (IsNew == true)
+        if (IsNew)
         {
             TrainingType = new PlannerTrainingType();
         }

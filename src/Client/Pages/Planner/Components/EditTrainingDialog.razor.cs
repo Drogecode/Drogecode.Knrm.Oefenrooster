@@ -201,10 +201,10 @@ public sealed partial class EditTrainingDialog : IDisposable
     private async Task OnSubmit()
     {
         await _form.Validate();
-        if (!_form.IsValid == true || _training == null || !_canEdit)
+        if (!_form.IsValid || _training == null || !_canEdit)
         {
-            DebugHelper.WriteLine($"Failed to save {!_form.IsValid == true} || {_training == null} || {!_canEdit}");
-            await AuditClient.PostLogAsync(new PostLogRequest { Message = $"Failed to save {!_form.IsValid == true} || {_training == null} || {!_canEdit}" });
+            DebugHelper.WriteLine($"Failed to save {!_form.IsValid} || {_training == null} || {!_canEdit}");
+            await AuditClient.PostLogAsync(new PostLogRequest { Message = $"Failed to save {!_form.IsValid} || {_training == null} || {!_canEdit}" });
             return;
         }
 

@@ -9,10 +9,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class UserLinkedMailsService : IUserLinkedMailsService
 {
-    private readonly ILogger<TrainingTypesService> _logger;
+    private readonly ILogger<UserLinkedMailsService> _logger;
     private readonly Database.DataContext _database;
 
-    public UserLinkedMailsService(ILogger<TrainingTypesService> logger, Database.DataContext database)
+    public UserLinkedMailsService(ILogger<UserLinkedMailsService> logger, Database.DataContext database)
     {
         _logger = logger;
         _database = database;
@@ -150,7 +150,7 @@ public class UserLinkedMailsService : IUserLinkedMailsService
         var result = new AllUserLinkedMailResponse();
 
         var linksRequest = _database.UserLinkedMails.Where(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null);
-        var userMail = _database.Users.FirstOrDefault(x => x.CustomerId == customerId && x.Id == userId && x.DeletedBy == null);
+        var userMail = await _database.Users.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == userId && x.DeletedBy == null, cancellationToken: clt);
         result.TotalCount = await linksRequest.CountAsync(clt);
         result.UserLinkedMails = await linksRequest.Skip(skip).Take(take).Select(x => x.ToDrogecode()).ToListAsync(clt);
         if (userMail is not null)

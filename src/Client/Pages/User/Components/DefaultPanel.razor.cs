@@ -6,7 +6,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components;
 
-public sealed partial class DefaultPanel
+public sealed partial class DefaultPanel : IDisposable
 {
     [Inject] private IStringLocalizer<Defaults> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;

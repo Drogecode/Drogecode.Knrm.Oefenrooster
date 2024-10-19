@@ -1,10 +1,6 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
-@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-@using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule
-@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-@if (!_isDeleted)
+﻿@if (!_isDeleted)
 {
-    @if (Functions is not null && Vehicles is not null && Planner.PlanUsers?.Any(x => x.Assigned) == true)
+    @if (Functions is not null && Vehicles is not null && Planner.PlanUsers.Any(x => x.Assigned))
     {
         <CalendarBaseCard ReplaceEmptyName="@ReplaceEmptyName" Width="@Width" MaxWidth="@MaxWidth" MinWidth="@MinWidth" Training="@Planner" OnClickCallback="@OpenScheduleDialog" OnClickSettings="@OpenConfigDialog" OnClickHistory="_showHistory ? OpenHistoryDialog : null!" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" @bind-ShowPastBody="@_showPastBody" MoreMessage="@L["Show attendees"]">
 
@@ -24,16 +20,16 @@
                     @ChildContent
                 }
                 <MudList T="string" ReadOnly="true">
-                    @foreach (var vehicle in Vehicles.Where(x => Planner.PlanUsers.Any(y => y.VehicleId == x.Id) == true || (x.IsDefault && Planner.PlanUsers.Any(y => y.VehicleId == null) == true)))
+                    @foreach (var vehicle in Vehicles.Where(x => Planner.PlanUsers.Any(y => y.VehicleId == x.Id) || (x.IsDefault && Planner.PlanUsers.Any(y => y.VehicleId == null))))
                     {
-                        @if (Functions.Any(f => f.Active) && (Planner.PlanUsers.Any(x => x.Assigned && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))) == true))
+                        @if (Functions.Any(f => f.Active) && Planner.PlanUsers.Any(x => x.Assigned && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))))
                         {
                             <MudText Typo="Typo.subtitle2">@vehicle.Name</MudText>
                         }
 
                         @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
                         {
-                            @if (Planner.PlanUsers.Any(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))) == true)
+                            @if (Planner.PlanUsers.Any(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))))
                             {
                                 @foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))).OrderBy(x => x.Name))
                                 {

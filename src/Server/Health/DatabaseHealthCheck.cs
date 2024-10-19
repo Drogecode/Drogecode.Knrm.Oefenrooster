@@ -16,11 +16,11 @@ public class DatabaseHealthCheck : IHealthCheck
         _database = database;
     }
 
-    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken clt = default)
+    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         try
         {
-            await _database.Users.CountAsync(clt);
+            await _database.Users.CountAsync(cancellationToken);
             return HealthCheckResult.Healthy();
         }
         catch (Exception ex)
