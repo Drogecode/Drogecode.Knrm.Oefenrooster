@@ -29,3 +29,8 @@ public class LinkedDrogeUser
     public Guid LinkedUserId { get; set; }
     public UserUserLinkType LinkType { get; set; }
 }
+
+public class GetOrSetDrogeUser : DrogeUser
+{
+    public bool IsNew { get; set; }
+}

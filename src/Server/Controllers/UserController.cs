@@ -73,7 +73,7 @@ public class UserController : ControllerBase
             var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
             var userEmail = User?.FindFirstValue(ClaimTypes.Name) ?? throw new Exception("No userEmail found");
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var result = await _userService.GetOrSetUserById(userId, userId, userName, userEmail, customerId, true);
+            var result = await _userService.GetOrSetUserById(userId, null, userName, userEmail, customerId, true, clt);
 
             return new GetDrogeUserResponse { DrogeUser = result };
         }
@@ -201,13 +201,15 @@ public class UserController : ControllerBase
                 {
                     if (!string.IsNullOrEmpty(user.Id) && !string.IsNullOrEmpty(user.DisplayName))
                     {
-                        var id = new Guid(user.Id);
-                        var index = existingUsers.FindIndex(x => x.Id == id);
-                        if (index != -1)
-                            existingUsers.RemoveAt(index);
-                        var newUserResponse = await _userService.GetOrSetUserById(id, id, user.DisplayName, user.Mail ?? "not set", customerId, false);
+                        var newUserResponse = await _userService.GetOrSetUserById(null, user.Id, user.DisplayName, user.Mail ?? "not set", customerId, false, clt);
                         if (newUserResponse is null)
                             continue;
+                        if (!newUserResponse.IsNew)
+                        {
+                            var index = existingUsers.FindIndex(x => x.Id == newUserResponse.Id);
+                            if (index != -1)
+                                existingUsers.RemoveAt(index);
+                        }
                         newUserResponse.SyncedFromSharePoint = true;
                         var groups = await _graphService.GetGroupForUser(user.Id);
                         if (groups?.Value != null && functions.Any(x => groups.Value.Any(y => y.Id == x.RoleId.ToString())))

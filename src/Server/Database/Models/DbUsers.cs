@@ -8,7 +8,7 @@ public class DbUsers
 {
     [Key] public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
-    public Guid? ExternalId { get; set; }
+    public string? ExternalId { get; set; }
     public Guid? UserFunctionId { get; set; }
     [StringLength(50)] public string Name { get; set; }
     [StringLength(150)] public string Email { get; set; }
