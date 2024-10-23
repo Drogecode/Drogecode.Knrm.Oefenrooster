@@ -9,6 +9,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 public sealed partial class CalendarBaseCard : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
+    [Inject, NotNull] private IStringLocalizer<DateToString>? LDateToString { get; set; }
     [Inject, NotNull] private CustomerSettingRepository? CustomerSettingRepository { get; set; }
     [Parameter, EditorRequired] public TrainingAdvance Training { get; set; } = default!;
     [Parameter] public RenderFragment? ChildContent { get; set; }
@@ -23,7 +24,7 @@ public sealed partial class CalendarBaseCard : IDisposable
     [Parameter] public string? MaxWidth { get; set; }
     [Parameter] public bool ReplaceEmptyName { get; set; }
     [Parameter] public bool ShowDate { get; set; } = true;
-    [Parameter] public bool ShowDayOfWeek { get; set; } = false;
+    [Parameter] public bool ShowDayOfWeek { get; set; }
     [Parameter] public string MoreMessage { get; set; } = "Show more";
     private CancellationTokenSource _cls = new();
     private int _iconCount;

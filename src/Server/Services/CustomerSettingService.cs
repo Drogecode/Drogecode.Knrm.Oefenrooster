@@ -36,6 +36,12 @@ public class CustomerSettingService : ICustomerSettingService
        return string.Empty;
     }
 
+   public async Task<string> TrainingCalenderPrefix(Guid customerId)
+    {
+        var result = await GetCustomerSetting(customerId, SettingNames.TRAINING_CALENDER_PREFIX, string.Empty);
+        return result;
+    }
+
     public async Task Patch_TrainingToCalendar(Guid customerId, bool value)
     {
         await PatchCustomerSetting(customerId, SettingNames.TRAINING_TO_CALENDAR, value ? "true" : "false");

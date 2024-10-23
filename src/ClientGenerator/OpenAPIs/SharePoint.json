@@ -52,7 +52,8 @@
               }
             }
           }
-        }
+        },
+        "deprecated": true
       }
     },
     "/api/SharePoint/training/{users}/{count}/{skip}": {
@@ -110,7 +111,8 @@
               }
             }
           }
-        }
+        },
+        "deprecated": true
       }
     },
     "/api/SharePoint/action/user/{count}/{skip}": {
@@ -160,7 +162,8 @@
               }
             }
           }
-        }
+        },
+        "deprecated": true
       }
     },
     "/api/SharePoint/action/{users}/{count}/{skip}": {
@@ -218,7 +221,8 @@
               }
             }
           }
-        }
+        },
+        "deprecated": true
       }
     },
     "/api/SharePoint/historical": {

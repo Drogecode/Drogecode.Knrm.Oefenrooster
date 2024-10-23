@@ -372,7 +372,7 @@ public class ScheduleService : IScheduleService
             .Include(x => x.UserDefaultAvailables)
             .Include(x => x.UserFunction)
             .Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.UserFunction!.IsActive)
-            .Select(x => new { x.Id, x.UserDefaultAvailables, x.UserFunctionId, x.Name, x.LinkedUserAsA })
+            .Select(x => new { x.Id, x.UserDefaultAvailables, x.UserFunctionId, x.Name, x.LinkedUserAsA, x.ExternalId })
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
         var defaults = await _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).Select(x =>
                 new { x.Id, x.WeekDay, x.ValidFrom, x.ValidUntil, x.TimeZone, x.TimeStart, x.TimeEnd, x.Name, x.ShowTime, x.RoosterTrainingTypeId, x.CountToTrainingTarget })

@@ -225,8 +225,7 @@ public class UserController : ControllerBase
                         {
                             newUserResponse.RoleFromSharePoint = false;
                         }
-
-                        var a = await _userService.UpdateUser(newUserResponse, userId, customerId);
+                        await _userService.UpdateUser(newUserResponse, userId, customerId);
                     }
                 }
 

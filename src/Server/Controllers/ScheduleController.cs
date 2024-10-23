@@ -219,20 +219,25 @@ public class ScheduleController : ControllerBase
                 await _refreshHub.SendMessage(user.UserId, ItemUpdated.FutureTrainings);
                 if (!string.IsNullOrEmpty(user.CalendarEventId))
                 {
+                    var drogeUser = await _userService.GetUserById(user.UserId, clt);
+                    if (drogeUser is null) throw new DrogeCodeNullException("No user found");
+                    var preText = await _userSettingService.TrainingCalenderPrefix(customerId, drogeUser.Id);
                     DrogeFunction? function = null;
                     if (user.PlannedFunctionId is not null && user.UserFunctionId is not null && user.UserFunctionId != user.PlannedFunctionId)
                         function = await _functionService.GetById(customerId, user.PlannedFunctionId.Value, clt);
-                    var text = GetTrainingCalenderText(training.Training.TrainingTypeName, training.Training.Name, function?.Name);
+                    var text = GetTrainingCalenderText(training.Training.TrainingTypeName, training.Training.Name, function?.Name, preText);
                     var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(10, 0, user.UserId, customerId, clt)).UserLinkedMails ?? [];
-                    await _graphService.PatchCalender(user.UserId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime, allUserLinkedMail);
+                    await _graphService.PatchCalender(drogeUser.ExternalId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime,
+                        allUserLinkedMail);
                 }
             }
         }
     }
 
-    private static string GetTrainingCalenderText(string? trainingTypeName, string? trainingName, string? functionName)
+    private static string GetTrainingCalenderText(string? trainingTypeName, string? trainingName, string? functionName, string preText)
     {
         var text = new StringBuilder();
+        text.Append(preText);
         if (!string.IsNullOrEmpty(trainingTypeName))
             text.Append(trainingTypeName);
         if (!string.IsNullOrEmpty(trainingTypeName) && !string.IsNullOrEmpty(trainingName))
@@ -328,7 +333,10 @@ public class ScheduleController : ControllerBase
                 DrogeFunction? function = null;
                 if (body.User.PlannedFunctionId is not null && body.User.UserFunctionId is not null && body.User.UserFunctionId != body.User.PlannedFunctionId)
                     function = await _functionService.GetById(customerId, body.User.PlannedFunctionId.Value, clt);
-                await ToOutlookCalendar(body.User.UserId, body.TrainingId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, function?.Name, clt);
+                var user = await _userService.GetUserById(body.User.UserId, clt);
+                if (user is null) throw new DrogeCodeNullException("No user found");
+                await ToOutlookCalendar(body.User.UserId, user.ExternalId, body.TrainingId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId,
+                    function?.Name, clt);
                 await _refreshHub.SendMessage(body.User.UserId, ItemUpdated.FutureTrainings);
             }
 
@@ -371,10 +379,12 @@ public class ScheduleController : ControllerBase
             {
                 clt = CancellationToken.None;
                 var user = await _userService.GetUserById(body.UserId.Value, clt);
+                if (user is null) throw new DrogeCodeNullException("No user found");
                 DrogeFunction? function = null;
-                if (body.Training?.PlannedFunctionId is not null && user?.UserFunctionId is not null && user.UserFunctionId != body.Training.PlannedFunctionId)
+                if (body.Training?.PlannedFunctionId is not null && user.UserFunctionId is not null && user.UserFunctionId != body.Training.PlannedFunctionId)
                     function = await _functionService.GetById(customerId, body.Training.PlannedFunctionId.Value, clt);
-                await ToOutlookCalendar(body.UserId.Value, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId, function?.Name, clt);
+                await ToOutlookCalendar(body.UserId.Value, user.ExternalId, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId,
+                    function?.Name, clt);
                 await _refreshHub.SendMessage(body.UserId.Value, ItemUpdated.FutureTrainings);
             }
 
@@ -517,7 +527,8 @@ public class ScheduleController : ControllerBase
         }
     }
 
-    private async Task ToOutlookCalendar(Guid planUserId, Guid? trainingId, bool assigned, TrainingAdvance? training, Guid currentUserId, Guid customerId, Guid? availableId, string? calendarEventId,
+    private async Task ToOutlookCalendar(Guid planUserId, string? externalUserId, Guid? trainingId, bool assigned, TrainingAdvance? training, Guid currentUserId, Guid customerId, Guid? availableId,
+        string? calendarEventId,
         string? functionName, CancellationToken clt)
     {
         try
@@ -531,7 +542,8 @@ public class ScheduleController : ControllerBase
                 if (training is null && trainingId is not null)
                     training = (await _scheduleService.GetTrainingById(planUserId, customerId, trainingId.Value, clt)).Training;
                 var type = await _trainingTypesService.GetById(training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
-                var text = GetTrainingCalenderText(type.TrainingType?.Name, training?.Name, functionName);
+                var preText = await _userSettingService.TrainingCalenderPrefix(customerId, planUserId);
+                var text = GetTrainingCalenderText(type.TrainingType?.Name, training?.Name, functionName, preText);
                 if (training is null)
                 {
                     _logger.LogWarning("Failed to set a training for trainingId {trainingId}", trainingId);
@@ -544,7 +556,7 @@ public class ScheduleController : ControllerBase
                 {
                     if (!string.IsNullOrEmpty(text))
                     {
-                        var eventResult = await _graphService.AddToCalendar(planUserId, text, training.DateStart, training.DateEnd, !training.ShowTime,allUserLinkedMail);
+                        var eventResult = await _graphService.AddToCalendar(externalUserId, text, training.DateStart, training.DateEnd, !training.ShowTime, allUserLinkedMail);
                         if (eventResult is not null)
                             await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, eventResult.Id, clt);
                     }
@@ -555,13 +567,13 @@ public class ScheduleController : ControllerBase
                 }
                 else
                 {
-                    await _graphService.PatchCalender(planUserId, calendarEventId, text, training.DateStart, training.DateEnd, !training.ShowTime,allUserLinkedMail);
+                    await _graphService.PatchCalender(externalUserId, calendarEventId, text, training.DateStart, training.DateEnd, !training.ShowTime, allUserLinkedMail);
                 }
             }
             else if (!string.IsNullOrEmpty(calendarEventId))
             {
                 _graphService.InitializeGraph();
-                await _graphService.DeleteCalendarEvent(planUserId, calendarEventId, clt);
+                await _graphService.DeleteCalendarEvent(externalUserId, calendarEventId, clt);
                 await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, null, clt);
             }
         }

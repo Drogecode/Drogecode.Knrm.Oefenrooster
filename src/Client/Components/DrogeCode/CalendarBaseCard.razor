@@ -1,4 +1,5 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Extensions
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 <MudPaper MinWidth="@MinWidth" MaxWidth="@MaxWidth" Width="@Width" Elevation="0">
     <MudCard @onclick="() => OnClickCallback.InvokeAsync()">
         <div>
@@ -59,7 +60,7 @@
                 }
                 @if (ShowDate)
                 {
-                    <MudText Typo="Typo.subtitle2">@dateStart.ToString(DateTime.Today.Year == dateEnd.Year ? "MMM dd" : "yyyy MMM dd")</MudText>
+                    <MudText Typo="Typo.subtitle2">@dateStart.ToNiceString(LDateToString, false, false, true, false)</MudText>
                 }
                 @if (Training.ShowTime)
                 {

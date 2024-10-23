@@ -10,6 +10,7 @@ internal static class UserMapper
         var user = new GetOrSetDrogeUser
         {
             Id = dbUsers.Id,
+            ExternalId = dbUsers.ExternalId,
             Name = dbUsers.Name,
             Nr = dbUsers.Nr,
             Created = dbUsers.CreatedOn,

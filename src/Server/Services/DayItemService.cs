@@ -23,6 +23,7 @@ public class DayItemService : IDayItemService
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
         var dayItems = await _database.RoosterItemDays
             .Include(x => x.LinkUserDayItems)
+            !.ThenInclude(x=>x.User)
             .Where(x => x.CustomerId == customerId && x.DeletedOn == null
                 && ((x.DateStart >= startDate && x.DateStart <= tillDate) || (x.DateEnd >= startDate && x.DateEnd <= tillDate))
                 && (userId == Guid.Empty || x.LinkUserDayItems == null || x.LinkUserDayItems.Count == 0 || x.LinkUserDayItems.Any(x => x.UserId == userId)))
@@ -46,6 +47,7 @@ public class DayItemService : IDayItemService
         var startDate = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
         var dayItems = _database.RoosterItemDays
             .Include(x => x.LinkUserDayItems)
+            !.ThenInclude(x=>x.User)
             .Where(x => x.CustomerId == customerId && x.DeletedOn == null
                 && (forAllUsers || x.LinkUserDayItems!.Any(y => y.UserId == userId))
                 && (x.DateStart >= startDate || x.DateEnd >= startDate))
@@ -70,7 +72,9 @@ public class DayItemService : IDayItemService
 
         var todayUtc = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
 
-        var dayItem = await _database.RoosterItemDays.Include(x => x.LinkUserDayItems)
+        var dayItem = await _database.RoosterItemDays
+            .Include(x => x.LinkUserDayItems)
+            !.ThenInclude(x=>x.User)
             .Where(x => x.DeletedOn == null && x.CustomerId == customerId
             && (x.DateStart >= todayUtc || (x.DateEnd != null && x.DateEnd >= todayUtc))
             && ((x.LinkUserDayItems!.Any() && x.LinkUserDayItems!.Any(y => y.UserId == userId)) || (!x.LinkUserDayItems!.Any() && x.DateStart <= todayUtc.AddDays(25))))
@@ -102,6 +106,7 @@ public class DayItemService : IDayItemService
         var result = new GetDayItemResponse();
         var dayItem = await _database.RoosterItemDays
             .Include(x => x.LinkUserDayItems)
+            !.ThenInclude(x=>x.User)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null && x.CustomerId == customerId);
         if (dayItem is null)

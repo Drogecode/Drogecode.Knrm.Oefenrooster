@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client;
+using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
@@ -10,9 +11,9 @@ public class ScheduleCardTests : BlazorTestBase
 {
     [Theory]
     [AutoFakeItEasyData]
-    public void HasNameTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<ScheduleCard> L2)
+    public void HasNameTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3)
     {
-        Localize(L1, L2);
+        Localize(L1, L2, L3);
 
         var training = new PlannedTraining
         {
@@ -28,9 +29,9 @@ public class ScheduleCardTests : BlazorTestBase
 
     [Theory]
     [AutoFakeItEasyData]
-    public void ListTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<ScheduleCard> L2)
+    public void ListTest([Frozen] IStringLocalizer<App> L1, IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3)
     {
-        Localize(L1, L2);
+        Localize(L1, L2, L3);
 
         var cut = RenderComponent<ScheduleCard>(parameter => parameter
         .Add(p => p.Planner, Training)
@@ -49,10 +50,11 @@ public class ScheduleCardTests : BlazorTestBase
         cut.Markup.Should().NotContain("Vehicle 3 not selected");
     }
 
-    private void Localize(IStringLocalizer<App> L1, IStringLocalizer<ScheduleCard> L2)
+    private void Localize(IStringLocalizer<App> L1, IStringLocalizer<ScheduleCard> L2, IStringLocalizer<DateToString> L3)
     {
         Services.AddSingleton(L1);
         Services.AddSingleton(L2);
+        Services.AddSingleton(L3);
 
         A.CallTo(() => L1["till"]).Returns(new LocalizedString("till", "till with some more text to ensure it is replaced"));
     }

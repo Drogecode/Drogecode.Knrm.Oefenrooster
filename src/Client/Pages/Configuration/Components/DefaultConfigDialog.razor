@@ -30,7 +30,7 @@
                 <MudSelectItem T="DayOfWeek" Value="DayOfWeek.Sunday">@LApp["Sunday"]</MudSelectItem>
             </MudSelect>
             <MudDatePicker Label="@L["Valid from"]" @bind-Date="DefaultSchedule.ValidFromDefault" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))" Disabled="@(DefaultSchedule.ValidFromDefault?.InPast() ?? false)" Required/>
-            <MudDatePicker Label="@L["Valid till"]" @bind-Date="DefaultSchedule.ValidUntilDefault" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" Disabled="@(DefaultSchedule.ValidUntilDefault?.InPast() ?? false)" Required/>
+            <MudDatePicker Label="@L["Valid till"]" @bind-Date="DefaultSchedule.ValidUntilDefault" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" Required/>
             <MudTimePicker Label="@L["Start time"]" @bind-Time="DefaultSchedule.TimeStart" Required/>
             <MudTimePicker Label="@L["End time"]" @bind-Time="DefaultSchedule.TimeEnd" Required/>
             <MudSwitch Label="@L["Show time"]" @bind-Value="DefaultSchedule.ShowTime" Color="Color.Primary" T="bool"/>

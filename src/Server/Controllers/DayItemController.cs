@@ -266,18 +266,18 @@ public class DayItemController : ControllerBase
             _graphService.InitializeGraph();
             if (string.IsNullOrEmpty(user.CalendarEventId))
             {
-                var eventResult = await _graphService.AddToCalendar(user.UserId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true, allUserLinkedMail);
+                var eventResult = await _graphService.AddToCalendar(user.ExternalId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true, allUserLinkedMail);
                 await _dayItemService.PatchCalendarEventId(roosterItemDay.Id, user.UserId, customerId, eventResult.Id, clt);
             }
             else
             {
-                await _graphService.PatchCalender(user.UserId, user.CalendarEventId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true, allUserLinkedMail);
+                await _graphService.PatchCalender(user.ExternalId, user.CalendarEventId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true, allUserLinkedMail);
             }
         }
         else if (!string.IsNullOrEmpty(user.CalendarEventId))
         {
             _graphService.InitializeGraph();
-            await _graphService.DeleteCalendarEvent(user.UserId, user.CalendarEventId, clt);
+            await _graphService.DeleteCalendarEvent(user.ExternalId, user.CalendarEventId, clt);
             await _dayItemService.PatchCalendarEventId(roosterItemDay.Id, user.UserId, customerId, null, clt);
         }
     }

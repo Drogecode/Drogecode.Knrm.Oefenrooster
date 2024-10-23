@@ -326,6 +326,7 @@ public partial class AuthenticationController : ControllerBase
         if (userId == DefaultSettingsHelper.IdTaco)
         {
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_Taco));
+            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_user_roles));
         }
 
         var accesses = await _userRoleService.GetAccessForUser(customerId, jwtSecurityToken.Claims, clt);
@@ -337,7 +338,7 @@ public partial class AuthenticationController : ControllerBase
         return claims;
     }
 
-    public async Task<Guid> GetUserIdByExternalId(string externalUserId, string userName, string userEmail, Guid customerId, CancellationToken clt)
+    internal async Task<Guid> GetUserIdByExternalId(string externalUserId, string userName, string userEmail, Guid customerId, CancellationToken clt)
     {
         var user = await _userService.GetOrSetUserById(null, externalUserId, userName, userEmail, customerId, true, clt);
         if (user is null)

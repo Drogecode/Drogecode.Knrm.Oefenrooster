@@ -29,6 +29,14 @@ public class UserSettingService : IUserSettingService
         await PatchUserSetting(customerId, userId, SettingNames.TRAINING_TO_CALENDAR, value ? "true" : "false");
     }
 
+    public async Task<string> TrainingCalenderPrefix(Guid customerId, Guid userId)
+    {
+        var result = await GetUserSetting(customerId, userId, SettingNames.TRAINING_CALENDER_PREFIX);
+        if (result is null)
+            return await _customerSettingService.TrainingCalenderPrefix(customerId);
+        return result;
+    }
+
     private async Task<string?> GetUserSetting(Guid customerId, Guid userId, string setting)
     {
         var result = await _database.UserSettings.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Setting == setting).FirstOrDefaultAsync();

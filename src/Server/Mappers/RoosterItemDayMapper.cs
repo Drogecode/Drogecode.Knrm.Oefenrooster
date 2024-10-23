@@ -37,6 +37,7 @@ public static class RoosterItemDayMapper
                 {
                     UserId = user.UserId,
                     CalendarEventId = user.CalendarEventId,
+                    ExternalId = user.User.ExternalId
                 });
             }
         }

@@ -364,20 +364,20 @@ public class GraphService : IGraphService
         return sharePointUsers;
     }
 
-    public async Task<Event?> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
+    public async Task<Event?> AddToCalendar(string? externalUserId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
     {
-        var result = await GraphHelper.AddToCalendar(userId, description, dateStart, dateEnd, isAllDay, _logger, attendees);
+        var result = await GraphHelper.AddToCalendar(externalUserId, description, dateStart, dateEnd, isAllDay, _logger, attendees);
         return result;
     }
 
-    public async Task PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
+    public async Task PatchCalender(string? externalUserId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
     {
-        await GraphHelper.PatchCalender(userId, eventId, description, dateStart, dateEnd, isAllDay, attendees);
+        await GraphHelper.PatchCalender(externalUserId, eventId, description, dateStart, dateEnd, isAllDay, attendees);
     }
 
-    public async Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt)
+    public async Task DeleteCalendarEvent(string? externalUserId, string calendarEventId, CancellationToken clt)
     {
-        await GraphHelper.DeleteCalendarEvent(userId, calendarEventId, clt);
+        await GraphHelper.DeleteCalendarEvent(externalUserId, calendarEventId, clt);
     }
 
     public async Task<GetHistoricalResponse> SyncHistorical(Guid customerId, CancellationToken clt)
