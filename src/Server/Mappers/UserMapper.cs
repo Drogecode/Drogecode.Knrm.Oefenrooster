@@ -5,11 +5,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
 
 internal static class UserMapper
 {
-    public static DrogeUser ToSharedUser(this DbUsers dbUsers, bool includeLastLogin)
+    public static GetOrSetDrogeUser ToSharedUser(this DbUsers dbUsers, bool includeLastLogin)
     {
-        var user = new DrogeUser
+        var user = new GetOrSetDrogeUser
         {
             Id = dbUsers.Id,
+            ExternalId = dbUsers.ExternalId,
             Name = dbUsers.Name,
             Nr = dbUsers.Nr,
             Created = dbUsers.CreatedOn,

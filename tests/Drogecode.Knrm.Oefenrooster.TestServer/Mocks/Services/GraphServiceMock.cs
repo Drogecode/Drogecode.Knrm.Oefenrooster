@@ -18,7 +18,17 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services
             throw new NotImplementedException();
         }
 
-        public Task<Event?> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
+        public Task<Event?> AddToCalendar(string? externalUserId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task PatchCalender(string? externalUserId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteCalendarEvent(string? externalUserId, string calendarEventId, CancellationToken clt)
         {
             throw new NotImplementedException();
         }
@@ -39,11 +49,6 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services
         }
 
         public Task SendMail(Guid? userId, string emailAddress, string subject, string body, CancellationToken clt)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task SendMail(Guid? userId, CancellationToken clt)
         {
             throw new NotImplementedException();
         }
@@ -75,11 +80,6 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services
         }
 
         public Task<UserCollectionResponse> NextUsersPage(UserCollectionResponse users)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay)
         {
             throw new NotImplementedException();
         }

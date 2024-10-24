@@ -10,6 +10,7 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 public class DrogeUser
 {
     public Guid Id { get; set; }
+    public string? ExternalId { get; set; }
     public Guid CustomerId { get; set; }
     public string? Buddy { get; set; }
     public string Name { get; set; }
@@ -28,4 +29,9 @@ public class LinkedDrogeUser
 {
     public Guid LinkedUserId { get; set; }
     public UserUserLinkType LinkType { get; set; }
+}
+
+public class GetOrSetDrogeUser : DrogeUser
+{
+    public bool IsNew { get; set; }
 }

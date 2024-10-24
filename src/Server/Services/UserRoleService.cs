@@ -40,7 +40,7 @@ public class UserRoleService : IUserRoleService
             var roles = await _database.UserRoles.Where(x => x.CustomerId == customerId).ToListAsync(clt);
             foreach (var claim in claims.Where(x => x.Type.Equals("groups")))
             {
-                var role = roles.FirstOrDefault(x => string.Compare(x.ExternalId.ToString(), claim.Value, false) == 0);
+                var role = roles.FirstOrDefault(x => string.CompareOrdinal(x.ExternalId.ToString(), claim.Value) == 0);
                 var accesses = role?.Accesses?.Split(',');
                 if (accesses is null) continue;
                 foreach (var acces in accesses)

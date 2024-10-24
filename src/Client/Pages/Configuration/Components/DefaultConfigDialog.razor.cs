@@ -57,7 +57,6 @@ public sealed partial class DefaultConfigDialog : IDisposable
     {
         if (newValue == DefaultSchedule?.ValidUntilDefault) return null;
         if (newValue == null || DefaultSchedule is null) return L["No value for till date"];
-        if (newValue.Value.CompareTo(DateTime.UtcNow.Date) < 0) return L["Should not be in the past"];
         if (newValue.Value.CompareTo(DefaultSchedule.ValidFromDefault) < 0) return L["Should not be before start date"];
         return null;
     }

@@ -443,15 +443,15 @@ public static partial class GraphHelper
         listBase.Users!.Add(user);
     }
 
-    public static async Task<Event?> AddToCalendar(Guid userId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, ILogger logger, List<UserLinkedMail> attendees)
+    public static async Task<Event?> AddToCalendar(string? externalUserId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, ILogger logger, List<UserLinkedMail> attendees)
     {
         try
         {
             var body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay, attendees);
-            var result = await _appClient.Users[userId.ToString()].Events
+            var result = await _appClient.Users[externalUserId].Events
                 .PostAsync(body, (requestConfiguration) => { requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Pacific Standard Time\""); });
 
-            var fromGet = await _appClient.Users[userId.ToString()].Events[result?.Id].GetAsync();
+            var fromGet = await _appClient.Users[externalUserId].Events[result?.Id].GetAsync();
             return result;
         }
         catch (Exception ex)
@@ -462,11 +462,11 @@ public static partial class GraphHelper
         return null;
     }
 
-    public static async Task PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
+    public static async Task PatchCalender(string? externalUserId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
     {
         try
         {
-            var fromGet = await _appClient.Users[userId.ToString()].Events[eventId].GetAsync();
+            var fromGet = await _appClient.Users[externalUserId].Events[eventId].GetAsync();
             if (fromGet is not null)
             {
                 var body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay, attendees);
@@ -478,7 +478,7 @@ public static partial class GraphHelper
                 fromGet.AdditionalData = new Dictionary<string, object>(); // https://github.com/microsoftgraph/msgraph-sdk-dotnet/issues/2471
                 fromGet.Attendees = body.Attendees;
                 fromGet.Organizer = body.Organizer;
-                var patch = await _appClient.Users[userId.ToString()].Events[eventId].PatchAsync(fromGet);
+                var patch = await _appClient.Users[externalUserId].Events[eventId].PatchAsync(fromGet);
             }
         }
         catch (Microsoft.Graph.Models.ODataErrors.ODataError ex)
@@ -548,14 +548,14 @@ public static partial class GraphHelper
         return even;
     }
 
-    internal static async Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt)
+    internal static async Task DeleteCalendarEvent(string? externalUserId, string calendarEventId, CancellationToken clt)
     {
         try
         {
-            var eve = await _appClient.Users[userId.ToString()].Events[calendarEventId].GetAsync();
+            var eve = await _appClient.Users[externalUserId].Events[calendarEventId].GetAsync();
             if (eve is not null)
             {
-                await _appClient.Users[userId.ToString()].Events[calendarEventId].DeleteAsync();
+                await _appClient.Users[externalUserId].Events[calendarEventId].DeleteAsync();
             }
         }
         catch (Microsoft.Graph.Models.ODataErrors.ODataError ex)

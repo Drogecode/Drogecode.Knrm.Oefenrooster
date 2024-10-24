@@ -54,35 +54,47 @@ public class UserService : IUserService
         return userObj?.ToSharedUser(false);
     }
 
-    public async Task<DrogeUser?> GetOrSetUserById(Guid userId, Guid externalId, string userName, string userEmail, Guid customerId, bool setLastOnline)
+    public async Task<GetOrSetDrogeUser?> GetOrSetUserById(Guid? userId, string? externalId, string userName, string userEmail, Guid customerId, bool setLastOnline, CancellationToken clt)
     {
-        var userObj = await _database.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        var isNew = false;
+        if (userId is null && externalId is null)
+            throw new ArgumentException("Both userId and externalId are null");
+        DbUsers? userObj;
+        if (userId is null)
+            userObj = await _database.Users.FirstOrDefaultAsync(u => u.ExternalId == externalId, cancellationToken: clt);
+        else
+            userObj = await _database.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken: clt);
         if (userObj is null)
         {
-            _database.Users.Add(new DbUsers
+            isNew = true;
+            userId ??= Guid.NewGuid();
+            var newUser = new DbUsers
             {
-                Id = userId,
-                ExternalId = externalId,
+                Id = userId.Value,
                 Name = userName,
                 Email = userEmail,
                 CreatedOn = DateTime.UtcNow,
                 CustomerId = customerId
-            });
-            await _database.SaveChangesAsync();
-            userObj = await _database.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            };
+            if (externalId is not null)
+                newUser.ExternalId = externalId;
+            _database.Users.Add(newUser);
+            await _database.SaveChangesAsync(clt);
+            userObj = await _database.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken: clt);
         }
 
         if (userObj is not null)
         {
             if (setLastOnline)
                 userObj.LastLogin = DateTime.UtcNow;
-            userObj.ExternalId ??= externalId;
+            if (externalId is not null)
+                userObj.ExternalId ??= externalId;
             userObj.Name = userName;
             userObj.Email = userEmail;
             userObj.DeletedOn = null;
             if (userObj.UserFunctionId is null || userObj.UserFunctionId == Guid.Empty)
             {
-                var defaultFunction = await _database.UserFunctions.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.IsDefault);
+                var defaultFunction = await _database.UserFunctions.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.IsDefault, cancellationToken: clt);
                 if (defaultFunction is not null)
                 {
                     userObj.UserFunctionId = defaultFunction.Id;
@@ -94,10 +106,14 @@ public class UserService : IUserService
             }
 
             _database.Users.Update(userObj);
-            await _database.SaveChangesAsync();
+            await _database.SaveChangesAsync(clt);
         }
 
-        return userObj?.ToSharedUser(false);
+        var sharedUser = userObj?.ToSharedUser(false);
+        if (sharedUser is null)
+            return null;
+        sharedUser.IsNew = isNew;
+        return sharedUser;
     }
 
     public async Task<bool> UpdateUser(DrogeUser user, Guid userId, Guid customerId)

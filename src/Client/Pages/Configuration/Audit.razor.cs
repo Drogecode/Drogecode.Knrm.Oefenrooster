@@ -24,7 +24,7 @@ public sealed partial class Audit : IDisposable
     private bool _busy;
     private int _currentPage = 1;
     private readonly int _count = 30;
-    private int _skip = 0;
+    private int _skip;
     protected override async Task OnParametersSetAsync()
     {
         _trainingAudits = await AuditClient.GetAllTrainingsAuditAsync(_count, _skip, _cls.Token);

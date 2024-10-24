@@ -9,9 +9,9 @@ public class CalendarBaseCardTests : BlazorTestBase
 {
     [Theory]
     [AutoFakeItEasyData]
-    public void HasNameTest([Frozen] IStringLocalizer<App> L)
+    public void HasNameTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<DateToString> L2)
     {
-        Localize(L);
+        Localize(L1, L2);
 
         var training = new TrainingAdvance
         {
@@ -25,9 +25,9 @@ public class CalendarBaseCardTests : BlazorTestBase
 
     [Theory]
     [AutoFakeItEasyData]
-    public void NoNameButDayTest([Frozen] IStringLocalizer<App> L)
+    public void NoNameButDayTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<DateToString> L2)
     {
-        Localize(L);
+        Localize(L1, L2);
 
         var training = new TrainingAdvance { DateStart = DateTime.UtcNow };
         var cut = RenderComponent<CalendarBaseCard>(parameter => parameter.Add(p => p.Training, training).Add(p => p.ReplaceEmptyName, true));
@@ -39,9 +39,9 @@ public class CalendarBaseCardTests : BlazorTestBase
 
     [Theory]
     [AutoFakeItEasyData]
-    public void NoNameNoReplaceTest([Frozen] IStringLocalizer<App> L)
+    public void NoNameNoReplaceTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<DateToString> L2)
     {
-        Localize(L);
+        Localize(L1, L2);
 
         var training = new TrainingAdvance { DateStart = DateTime.UtcNow };
         var cut = RenderComponent<CalendarBaseCard>(parameter => parameter.Add(p => p.Training, training));
@@ -50,9 +50,9 @@ public class CalendarBaseCardTests : BlazorTestBase
 
     [Theory]
     [AutoFakeItEasyData]
-    public void OnClickHistoryTest([Frozen] IStringLocalizer<App> L)
+    public void OnClickHistoryTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<DateToString> L2)
     {
-        Localize(L);
+        Localize(L1, L2);
 
         Assert.False(Clicked);
         var training = new TrainingAdvance { DateStart = DateTime.UtcNow };
@@ -66,9 +66,9 @@ public class CalendarBaseCardTests : BlazorTestBase
 
     [Theory]
     [AutoFakeItEasyData]
-    public void OnClickSettingsTest([Frozen] IStringLocalizer<App> L)
+    public void OnClickSettingsTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<DateToString> L2)
     {
-        Localize(L);
+        Localize(L1, L2);
 
         Assert.False(Clicked);
         var training = new TrainingAdvance { DateStart = DateTime.UtcNow };
@@ -82,9 +82,9 @@ public class CalendarBaseCardTests : BlazorTestBase
 
     [Theory]
     [AutoFakeItEasyData]
-    public void OnClickHistoryAndSettingsTest([Frozen] IStringLocalizer<App> L)
+    public void OnClickHistoryAndSettingsTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<DateToString> L2)
     {
-        Localize(L);
+        Localize(L1, L2);
 
         var training = new TrainingAdvance { DateStart = DateTime.UtcNow };
         var cut = RenderComponent<CalendarBaseCard>(parameter => parameter.Add(p => p.Training, training).Add(p => p.OnClickSettings, ClickButton).Add(p => p.OnClickHistory, ClickButton));
@@ -105,9 +105,10 @@ public class CalendarBaseCardTests : BlazorTestBase
         Clicked = true;
     }
 
-    private void Localize(IStringLocalizer<App> L1)
+    private void Localize(IStringLocalizer<App> L1, IStringLocalizer<DateToString> L2)
     {
         Services.AddSingleton(L1);
+        Services.AddSingleton(L2);
         A.CallTo(() => L1["till"]).Returns(new LocalizedString("till", "till with some more text to ensure it is replaced"));
     }
 }

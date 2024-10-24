@@ -26,6 +26,7 @@ public partial class AuthenticationController : ControllerBase
     private readonly ILogger<AuthenticationController> _logger;
     private readonly IMemoryCache _memoryCache;
     private readonly IUserRoleService _userRoleService;
+    private readonly IUserService _userService;
     private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
 
@@ -35,12 +36,14 @@ public partial class AuthenticationController : ControllerBase
         ILogger<AuthenticationController> logger,
         IMemoryCache memoryCache,
         IUserRoleService userRoleService,
+        IUserService userService,
         IConfiguration configuration,
         HttpClient httpClient)
     {
         _logger = logger;
         _memoryCache = memoryCache;
         _userRoleService = userRoleService;
+        _userService = userService;
         _configuration = configuration;
         _httpClient = httpClient;
     }
@@ -89,8 +92,7 @@ public partial class AuthenticationController : ControllerBase
     }
 
     [HttpGet]
-    [Route("authenticate-user", Order = 0)]
-    [Route("authenticat-user", Order = 1)] //ToDo Remove when all users on v0.3.52 or above
+    [Route("authenticate-user")]
     public async Task<ActionResult<bool>> AuthenticateUser(string code, string state, string sessionState, string redirectUrl, CancellationToken clt = default)
     {
         try
@@ -98,7 +100,7 @@ public partial class AuthenticationController : ControllerBase
             var idToken = "";
             var refreshToken = "";
             var found = _memoryCache.Get<CacheLoginSecrets>(state);
-            if (found?.Success is not true || found?.CodeVerifier is null)
+            if (found?.Success is not true || found.CodeVerifier is null)
             {
                 _logger.LogWarning("found?.success = `{false}` || found?.CodeVerifier = `{null}`", found?.Success is not true, found?.CodeVerifier is null);
                 return false;
@@ -177,7 +179,7 @@ public partial class AuthenticationController : ControllerBase
     {
         try
         {
-            if (User?.Identity?.IsAuthenticated != true)
+            if (User.Identity?.IsAuthenticated != true)
                 return new CurrentUser
                 {
                     IsAuthenticated = false
@@ -305,33 +307,47 @@ public partial class AuthenticationController : ControllerBase
     {
         var email = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "email")?.Value ?? "";
         var fullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? "";
-        var userId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "oid")?.Value ?? "";
+        var externalUserId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "oid")?.Value ?? "";
         var loginHint = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "login_hint")?.Value ?? "";
         var customerId = new Guid(jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "tid")?.Value ?? throw new Exception("customerId not found"));
+        var userId = await GetUserIdByExternalId(externalUserId, fullName, email, customerId, clt);
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, email),
             new("FullName", fullName),
+            new("ExternalUserId", externalUserId),
             new("login_hint", loginHint),
             new(REFRESHTOKEN, refresh_token),
             new("ValidFrom", jwtSecurityToken.ValidFrom.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             new("ValidTo", jwtSecurityToken.ValidTo.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
-            new("http://schemas.microsoft.com/identity/claims/objectidentifier", userId),
+            new("http://schemas.microsoft.com/identity/claims/objectidentifier", userId.ToString()),
             new("http://schemas.microsoft.com/identity/claims/tenantid", customerId.ToString())
         };
-        if (string.Compare(userId, DefaultSettingsHelper.IdTaco.ToString(), true) == 0)
+        if (userId == DefaultSettingsHelper.IdTaco)
         {
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_Taco));
+            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_user_roles));
         }
 
         var accesses = await _userRoleService.GetAccessForUser(customerId, jwtSecurityToken.Claims, clt);
-        if (accesses == null) return claims;
         foreach (var access in accesses)
         {
             claims.Add(new Claim(ClaimTypes.Role, access));
         }
 
         return claims;
+    }
+
+    internal async Task<Guid> GetUserIdByExternalId(string externalUserId, string userName, string userEmail, Guid customerId, CancellationToken clt)
+    {
+        var user = await _userService.GetOrSetUserById(null, externalUserId, userName, userEmail, customerId, true, clt);
+        if (user is null)
+        {
+            _logger.LogWarning("Failed to get or set user by external id");
+            throw new UnauthorizedAccessException();
+        }
+
+        return user.Id;
     }
 
     [GeneratedRegex("\\+")]

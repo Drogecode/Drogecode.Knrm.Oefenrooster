@@ -29,38 +29,46 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     {
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsForCurrentUserAsync(int count, int skip);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsForCurrentUserAsync(int count, int skip, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsAsync(string users, int count, int skip);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsAsync(string users, int count, int skip, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsForCurrentUserAsync(int count, int skip);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsForCurrentUserAsync(int count, int skip, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsAsync(string users, int count, int skip);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsAsync(string users, int count, int skip, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
@@ -108,6 +116,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsForCurrentUserAsync(int count, int skip)
         {
             return GetLastTrainingsForCurrentUserAsync(count, skip, System.Threading.CancellationToken.None);
@@ -116,6 +125,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual async System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsForCurrentUserAsync(int count, int skip, System.Threading.CancellationToken cancellationToken)
         {
             if (count == null)
@@ -195,6 +205,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsAsync(string users, int count, int skip)
         {
             return GetLastTrainingsAsync(users, count, skip, System.Threading.CancellationToken.None);
@@ -203,6 +214,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual async System.Threading.Tasks.Task<MultipleSharePointTrainingsResponse> GetLastTrainingsAsync(string users, int count, int skip, System.Threading.CancellationToken cancellationToken)
         {
             if (users == null)
@@ -287,6 +299,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsForCurrentUserAsync(int count, int skip)
         {
             return GetLastActionsForCurrentUserAsync(count, skip, System.Threading.CancellationToken.None);
@@ -295,6 +308,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual async System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsForCurrentUserAsync(int count, int skip, System.Threading.CancellationToken cancellationToken)
         {
             if (count == null)
@@ -374,6 +388,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsAsync(string users, int count, int skip)
         {
             return GetLastActionsAsync(users, count, skip, System.Threading.CancellationToken.None);
@@ -382,6 +397,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        [System.Obsolete]
         public virtual async System.Threading.Tasks.Task<MultipleSharePointActionsResponse> GetLastActionsAsync(string users, int count, int skip, System.Threading.CancellationToken cancellationToken)
         {
             if (users == null)
