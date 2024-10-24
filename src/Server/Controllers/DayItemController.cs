@@ -24,6 +24,7 @@ public class DayItemController : ControllerBase
     private readonly IGraphService _graphService;
     private readonly RefreshHub _refreshHub;
     private readonly IUserLinkedMailsService _userLinkedMailsService;
+    private readonly IUserService _userService;
 
     public DayItemController(
         ILogger<DayItemController> logger,
@@ -33,7 +34,8 @@ public class DayItemController : ControllerBase
         IUserSettingService userSettingService,
         IGraphService graphService, 
         RefreshHub refreshHub, 
-        IUserLinkedMailsService userLinkedMailsService)
+        IUserLinkedMailsService userLinkedMailsService,
+        IUserService userService)
     {
         _logger = logger;
         _configuration = configuration;
@@ -43,6 +45,7 @@ public class DayItemController : ControllerBase
         _graphService = graphService;
         _refreshHub = refreshHub;
         _userLinkedMailsService = userLinkedMailsService;
+        _userService = userService;
     }
 
     [HttpGet]
@@ -165,7 +168,11 @@ public class DayItemController : ControllerBase
                 var newd = await _dayItemService.GetDayItemById(customerId, result.NewId, clt);
                 if (newd.DayItem?.LinkedUsers is not null)
                     foreach (var user in newd.DayItem.LinkedUsers)
-                        await ToOutlookCalendar(user, true, newd.DayItem, customerId, clt);
+                    {
+                        var drogeUser = await _userService.GetUserById(user.UserId, clt);
+                        if (drogeUser is null) throw new DrogeCodeNullException("No user found");
+                        await ToOutlookCalendar(user, drogeUser.ExternalId, true, newd.DayItem, customerId, clt);
+                    }
             }
             return result;
         }
@@ -201,7 +208,9 @@ public class DayItemController : ControllerBase
                 {
                     if (roosterItemDay.LinkedUsers?.Any(x => x.UserId == user.UserId) is true)
                         continue;
-                    await ToOutlookCalendar(user, false, old.DayItem, customerId, clt);
+                    var drogeUser = await _userService.GetUserById(user.UserId, clt);
+                    if (drogeUser is null) throw new DrogeCodeNullException("No user found");
+                    await ToOutlookCalendar(user, drogeUser.ExternalId, false, old.DayItem, customerId, clt);
 
                 }
             }
@@ -210,7 +219,11 @@ public class DayItemController : ControllerBase
                 var newd = await _dayItemService.GetDayItemById(customerId, roosterItemDay.Id, clt);
                 if (newd.DayItem?.LinkedUsers is not null)
                     foreach (var user in newd.DayItem.LinkedUsers)
-                        await ToOutlookCalendar(user, true, newd.DayItem, customerId, clt);
+                    {
+                        var drogeUser = await _userService.GetUserById(user.UserId, clt);
+                        if (drogeUser is null) throw new DrogeCodeNullException("No user found");
+                        await ToOutlookCalendar(user, drogeUser.ExternalId, true, newd.DayItem, customerId, clt);
+                    }
             }
             return result;
         }
@@ -240,7 +253,11 @@ public class DayItemController : ControllerBase
             if (old.DayItem?.LinkedUsers is not null)
             {
                 foreach (var user in old.DayItem.LinkedUsers)
-                    await ToOutlookCalendar(user, false, old.DayItem, customerId, clt);
+                {
+                    var drogeUser = await _userService.GetUserById(user.UserId, clt);
+                    if (drogeUser is null) throw new DrogeCodeNullException("No user found");
+                    await ToOutlookCalendar(user, drogeUser.ExternalId, false, old.DayItem, customerId, clt);
+                }
             }
             return result;
         }
@@ -254,7 +271,7 @@ public class DayItemController : ControllerBase
         }
     }
 
-    private async Task ToOutlookCalendar(RoosterItemDayLinkedUsers user, bool assigned, RoosterItemDay roosterItemDay, Guid customerId, CancellationToken clt)
+    private async Task ToOutlookCalendar(RoosterItemDayLinkedUsers user, string? externalUserId, bool assigned, RoosterItemDay roosterItemDay, Guid customerId, CancellationToken clt)
     {
         if (roosterItemDay.DateStart is null)
             return;
@@ -263,21 +280,23 @@ public class DayItemController : ControllerBase
         if (assigned && await _userSettingService.TrainingToCalendar(customerId, user.UserId))
         {
             var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(10, 0, user.UserId, customerId, clt)).UserLinkedMails ?? [];
+            var preText = await _userSettingService.TrainingCalenderPrefix(customerId, user.UserId);
+            var text = preText + roosterItemDay.Text;
             _graphService.InitializeGraph();
             if (string.IsNullOrEmpty(user.CalendarEventId))
             {
-                var eventResult = await _graphService.AddToCalendar(user.ExternalId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true, allUserLinkedMail);
+                var eventResult = await _graphService.AddToCalendar(externalUserId, text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true, allUserLinkedMail);
                 await _dayItemService.PatchCalendarEventId(roosterItemDay.Id, user.UserId, customerId, eventResult.Id, clt);
             }
             else
             {
-                await _graphService.PatchCalender(user.ExternalId, user.CalendarEventId, roosterItemDay.Text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true, allUserLinkedMail);
+                await _graphService.PatchCalender(externalUserId, user.CalendarEventId, text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true, allUserLinkedMail);
             }
         }
         else if (!string.IsNullOrEmpty(user.CalendarEventId))
         {
             _graphService.InitializeGraph();
-            await _graphService.DeleteCalendarEvent(user.ExternalId, user.CalendarEventId, clt);
+            await _graphService.DeleteCalendarEvent(externalUserId, user.CalendarEventId, clt);
             await _dayItemService.PatchCalendarEventId(roosterItemDay.Id, user.UserId, customerId, null, clt);
         }
     }

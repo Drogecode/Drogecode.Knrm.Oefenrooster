@@ -17,6 +17,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using System.Diagnostics;
 using System.Text;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 Console.WriteLine("Start oefenrooster");
@@ -73,6 +74,12 @@ else
         dbConnectionString = builder.Configuration.GetConnectionString("postgresDB");
     }
 }
+builder.Services.Configure<ForwardedHeadersOptions> (options => 
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -182,7 +189,7 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
