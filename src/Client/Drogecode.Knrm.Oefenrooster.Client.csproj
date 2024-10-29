@@ -110,6 +110,10 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>ActivateEmailDialog.nl-NL.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Pages\Configuration\DefaultConfig.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>DefaultConfig.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -162,6 +166,11 @@
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>ActivateEmailDialog.nl-NL.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Pages\Configuration\DefaultConfig.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>DefaultConfig.nl-NL.resx</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 

@@ -10,7 +10,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 
 public sealed partial class DefaultConfigDialog : IDisposable
 {
-    [Inject] private IStringLocalizer<MonthItemDialog> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<DefaultConfig> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private DefaultScheduleRepository DefaultScheduleRepository { get; set; } = default!;
     [Inject] private ITrainingTypesClient TrainingTypesClient { get; set; } = default!;

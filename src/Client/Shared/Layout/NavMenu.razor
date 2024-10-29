@@ -8,7 +8,7 @@
     <AuthorizeView Roles="@AccessesNames.AUTH_users_details">
         <MudNavLink Icon="@Icons.Material.Filled.ManageAccounts" Href="@_uriPlannerUser" Match="NavLinkMatch.Prefix">@L["User details"]</MudNavLink>
     </AuthorizeView>
-    <AuthorizeView Roles="@(AccessesNames.AUTH_configure_training_types + ", " + AccessesNames.AUTH_Taco + ", " + AccessesNames.AUTH_scheduler_monthitem)">
+    <AuthorizeView Roles="@(AccessesNames.AUTH_configure_training_types + ", " + AccessesNames.AUTH_Taco + ", " + AccessesNames.AUTH_scheduler_monthitem + ", " + AccessesNames.AUTH_configure_default_schedule + ", " + AccessesNames.AUTH_scheduler_dayitem)">
         <MudNavGroup Title="@L["Configuration"]" Expanded="@_configurationExpanded" ExpandedChanged="ConfigurationExpandedChanged">
             <AuthorizeView Roles="@AccessesNames.AUTH_configure_training_types" Context="inner">
                 <MudNavLink Icon="@Icons.Material.Filled.DirectionsRun" Href="/configuration/training-types" Match="NavLinkMatch.Prefix">@L["Training types"]</MudNavLink>
@@ -43,7 +43,7 @@
             <MudListItem T="string" OnClick="AddTraining" Class="cursor-pointer">
                 <AvatarContent>
                     <MudAvatar>
-                        <MudIcon Icon="@Icons.Material.Filled.Add" />
+                        <MudIcon Icon="@Icons.Material.Filled.Add"/>
                     </MudAvatar>
                 </AvatarContent>
                 <ChildContent>

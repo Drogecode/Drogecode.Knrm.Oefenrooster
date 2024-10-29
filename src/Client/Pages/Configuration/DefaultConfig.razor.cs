@@ -1,10 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
-using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
@@ -19,7 +16,7 @@ public sealed partial class DefaultConfig : IDisposable
     private GetAllDefaultScheduleResponse? _defaults;
     private RefreshModel _refreshModel = new();
     private bool _bussy;
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -30,15 +27,16 @@ public sealed partial class DefaultConfig : IDisposable
         }
     }
 
-    private void OpenMonthItemDialog(DefaultSchedule? defaultSchedule, bool isNew)
+    private void OpenDefaultConfigDialog(DefaultSchedule? defaultSchedule, bool isNew)
     {
-        var parameters = new DialogParameters<DefaultConfigDialog> {
-            { x=> x.DefaultSchedule, defaultSchedule},
-            { x=> x.IsNew, isNew},
-            { x=> x.Refresh, _refreshModel },
+        var parameters = new DialogParameters<DefaultConfigDialog>
+        {
+            { x => x.DefaultSchedule, defaultSchedule },
+            { x => x.IsNew, isNew },
+            { x => x.Refresh, _refreshModel },
         };
         DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-        DialogProvider.Show<DefaultConfigDialog>(isNew ? L["Patch default schedule"] : L["Edit default schedule"], parameters, options);
+        DialogProvider.Show<DefaultConfigDialog>(isNew ? L["Put default schedule"] : L["Edit default schedule"], parameters, options);
     }
 
     private async Task RefreshMeAsync()

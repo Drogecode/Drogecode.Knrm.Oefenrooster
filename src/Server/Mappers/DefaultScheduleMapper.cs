@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
@@ -7,7 +8,7 @@ public static class DefaultScheduleMapper
 {
     public static DbRoosterDefault ToDbRoosterDefault(this DefaultSchedule defaultSchedule, Guid customerId, string timeZone = "")
     {
-        return new DbRoosterDefault
+        var dbRoosterDefault = new DbRoosterDefault
         {
             Id = defaultSchedule.Id,
             RoosterTrainingTypeId = defaultSchedule.RoosterTrainingTypeId,
@@ -23,6 +24,11 @@ public static class DefaultScheduleMapper
             ShowTime = defaultSchedule.ShowTime,
             Name = defaultSchedule.Name
         };
+        if (dbRoosterDefault.ValidFrom.Kind == DateTimeKind.Unspecified)
+            dbRoosterDefault.ValidFrom = dbRoosterDefault.ValidFrom.DateTimeWithZone(timeZone).ToUniversalTime();
+        if (dbRoosterDefault.ValidUntil.Kind == DateTimeKind.Unspecified)
+            dbRoosterDefault.ValidUntil = dbRoosterDefault.ValidUntil.DateTimeWithZone(timeZone).ToUniversalTime();
+        return dbRoosterDefault;
     }
 
     public static DefaultSchedule ToDefaultSchedule(this DbRoosterDefault defaultSchedule, List<DefaultUserSchedule>? userSchedules)
