@@ -39,8 +39,8 @@
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.10" />
-		<PackageReference Include="Microsoft.Identity.Web" Version="3.2.2" />
-		<PackageReference Include="Microsoft.Identity.Web.UI" Version="3.2.2" />
+		<PackageReference Include="Microsoft.Identity.Web" Version="3.3.0" />
+		<PackageReference Include="Microsoft.Identity.Web.UI" Version="3.3.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.9.0" />
 	</ItemGroup>
 
