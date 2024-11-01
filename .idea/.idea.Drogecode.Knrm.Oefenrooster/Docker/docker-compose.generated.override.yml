@@ -23,15 +23,15 @@ services:
       RESHARPER_LOG_CONF: "/etc/opt/rider-debugger/backend-log.xml"
     image: "kanman/drogecode.knrm.oefenrooster:dev"
     ports:
-    - "127.0.0.1:57011:57100"
-    - "127.0.0.1:57211:57300"
+    - "127.0.0.1:57007:57100"
+    - "127.0.0.1:57207:57300"
     volumes:
     - "C:\\Users\\Taco\\.nuget\\packages:/root/.nuget/packages"
     - "C:\\Users\\Taco\\source\\repos\\Drogecode.Knrm.Oefenrooster\\src\\Server:/app:rw"
     - "C:\\Users\\Taco\\source\\repos\\Drogecode.Knrm.Oefenrooster:/src:rw"
     - "C:\\Users\\Taco\\AppData\\Local\\JetBrains\\RiderRemoteDebugger\\2024.1.4\\\
       Linux64:/opt/rider-debugger"
-    - "C:\\Users\\Taco\\AppData\\Local\\JetBrains\\Installations\\Rider233\\bin:/etc/opt/rider-debugger/backend-log.xml"
-    - "C:\\Users\\Taco\\AppData\\Local\\JetBrains\\Rider2024.1\\log\\DebuggerWorker\\\
-      JetBrains.Debugger.Worker.2024_6_25_11_45_30:/var/opt/rider-debugger:rw"
+    - "C:\\Users\\Taco\\AppData\\Local\\Programs\\Rider\\bin:/etc/opt/rider-debugger/backend-log.xml"
+    - "C:\\Users\\Taco\\AppData\\Local\\JetBrains\\Rider2024.2\\log\\DebuggerWorker\\\
+      JetBrains.Debugger.Worker.2024_11_01_22_18_01:/var/opt/rider-debugger:rw"
     working_dir: "/app"

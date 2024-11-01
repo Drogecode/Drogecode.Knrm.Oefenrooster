@@ -42,6 +42,33 @@ public class VehicleControllerTests : BaseTest
         var result = await VehicleController.PutVehicle(vehicle);
         Assert.NotNull(result?.Value);
     }
+    
+    [Fact]
+    public async Task GetVehicleTest()
+    {
+        var result = await VehicleController.GetAll(false);
+        Assert.NotNull(result.Value?.DrogeVehicles);
+        Assert.NotEmpty(result.Value.DrogeVehicles);
+        result.Value.DrogeVehicles.Should().Contain(x => x.Id == DefaultVehicle);
+    }
+
+    [Fact]
+    public async Task PatchVehicleTest()
+    {
+        var NEW_NAME = "Patched";
+        var result = await VehicleController.GetAll(false);
+        result.Value!.DrogeVehicles.Should().Contain(x => x.Id == DefaultVehicle);
+        var vehicle = result.Value!.DrogeVehicles!.FirstOrDefault(x => x.Id == DefaultVehicle);
+        vehicle!.Name.Should().NotBe(NEW_NAME);
+        vehicle!.Name = NEW_NAME;
+        var patchResult = await VehicleController.PatchVehicle(vehicle);
+        Assert.NotNull(patchResult.Value?.Success);
+        Assert.True(patchResult.Value.Success);result = await VehicleController.GetAll(false);
+        result.Value!.DrogeVehicles.Should().Contain(x => x.Id == DefaultVehicle);
+        vehicle = result.Value!.DrogeVehicles!.FirstOrDefault(x => x.Id == DefaultVehicle);
+        Assert.NotNull(vehicle);
+        vehicle!.Name.Should().Be(NEW_NAME);
+    }
 
     [Fact]
     public async Task LinkVehicle()

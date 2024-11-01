@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 
@@ -9,8 +10,8 @@ public class DbVehicles
     [Key] public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
     public Guid? ExchangeId { get; set; }
-    [StringLength(30)] public string Name { get; set; }
-    [StringLength(10)] public string Code { get; set; }
+    [StringLength(DefaultSettingsHelper.MAX_LENGTH_VEHICLE_NAME)] public string Name { get; set; }
+    [StringLength(DefaultSettingsHelper.MAX_LENGTH_VEHICLE_CODE)] public string Code { get; set; }
     public int Order { get; set; }
     public bool IsDefault { get; set; }
     public bool IsActive { get; set; }

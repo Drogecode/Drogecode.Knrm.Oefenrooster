@@ -15,6 +15,7 @@ public struct AccessesNames
     public const string AUTH_configure_training_types = "configure_training-types";
     public const string AUTH_configure_user_roles = "configure_user_roles";
     public const string AUTH_configure_default_schedule = "configure_default_schedule";
+    public const string AUTH_configure_vehicles = "configure_vehicles";
 
     public const string GROUP_SCHEDULER = "Scheduler";
     public const string AUTH_scheduler = "scheduler";
@@ -35,7 +36,8 @@ public struct AccessesNames
     public const string GROUP_DASHBOARD = "Dashboard";
     public const string AUTH_action_history_full = "full_action_history";
     public const string AUTH_training_history_full = "full_training_history";
-    public const string AUTH_dashboard_Statistics = "full_dashboard_statistics2";
+    public const string AUTH_dashboard_Statistics = "full_dashboard_statistics";
+    public const string AUTH_dashboard_Statistics2 = "full_dashboard_statistics2";// ToDo remove
     public const string AUTH_dashboard_holidays = "dashboard_hol";
     public const string AUTH_dashboard_qr = "dashboard_qr";
     

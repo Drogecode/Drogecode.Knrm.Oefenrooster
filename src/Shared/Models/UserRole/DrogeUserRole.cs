@@ -18,6 +18,7 @@ public class DrogeUserRole
     public bool AUTH_configure_training_types { get; set; }
     public bool AUTH_configure_user_roles { get; set; }
     public bool AUTH_configure_default_schedule { get; set; }
+    public bool AUTH_configure_vehicles { get; set; }
 
     // Group: GROUP_SCHEDULER
     public bool AUTH_scheduler { get; set; }
@@ -39,6 +40,7 @@ public class DrogeUserRole
     public bool AUTH_action_history_full { get; set; }
     public bool AUTH_training_history_full { get; set; }
     public bool AUTH_dashboard_Statistics { get; set; }
+    public bool AUTH_dashboard_Statistics2 { get; set; }
     public bool AUTH_dashboard_holidays { get; set; }
     public bool AUTH_dashboard_qr { get; set; }
 

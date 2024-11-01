@@ -45,6 +45,10 @@ public class ReportActionController : ControllerBase
             var result = await _reportActionService.GetListActionsUser(users, userId, count, skip, customerId, clt);
             return result;
         }
+        catch (OperationCanceledException)
+        {
+            return Ok();
+        }
         catch (Exception ex)
         {
 #if DEBUG
@@ -70,6 +74,10 @@ public class ReportActionController : ControllerBase
 
             var result = await _reportActionService.GetListActionsUser(usersAsList, userId, count, skip, customerId, clt);
             return result;
+        }
+        catch (OperationCanceledException)
+        {
+            return Ok();
         }
         catch (Exception ex)
         {
@@ -102,6 +110,10 @@ public class ReportActionController : ControllerBase
             var result = await _reportActionService.AnalyzeYearChartsAll(request, customerId, timeZone, clt);
             return result;
         }
+        catch (OperationCanceledException)
+        {
+            return Ok();
+        }
         catch (Exception ex)
         {
 #if DEBUG
@@ -122,8 +134,12 @@ public class ReportActionController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
 
-            DistinctResponse result = await _reportActionService.Distinct(column, customerId, clt);
+            var result = await _reportActionService.Distinct(column, customerId, clt);
             return result;
+        }
+        catch (OperationCanceledException)
+        {
+            return Ok();
         }
         catch (Exception ex)
         {
@@ -144,8 +160,12 @@ public class ReportActionController : ControllerBase
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
 
-            KillDbResponse result = await _reportActionService.KillDb(customerId, clt);
+            var result = await _reportActionService.KillDb(customerId, clt);
             return Ok(result);
+        }
+        catch (OperationCanceledException)
+        {
+            return Ok();
         }
         catch (Exception ex)
         {

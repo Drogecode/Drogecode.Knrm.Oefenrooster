@@ -1,9 +1,13 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
+﻿using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Shared;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -85,20 +89,43 @@ public class VehicleController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = AccessesNames.AUTH_configure_vehicles)]
     [Route("")]
-    public async Task<ActionResult<Guid?>> PutVehicle(DrogeVehicle vehicle, CancellationToken clt = default)
+    public async Task<ActionResult<PutResponse>> PutVehicle(DrogeVehicle vehicle, CancellationToken clt = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            Guid? result = await _vehicleService.PutVehicle(vehicle, customerId, userId, clt);
+            var result = await _vehicleService.PutVehicle(vehicle, customerId, userId, clt);
 
             return result;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in PutVehicle");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
+    [Authorize(Roles = AccessesNames.AUTH_configure_vehicles)]
+    [Route("")]
+    public async Task<ActionResult<PatchResponse>> PatchVehicle([FromBody] DrogeVehicle vehicle, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            PatchResponse result = await _vehicleService.PatchVehicle(vehicle, customerId, userId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in PatchVehicle");
             return BadRequest();
         }
     }

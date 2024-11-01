@@ -25,6 +25,7 @@ Changes to this file may cause incorrect behavior and will be lost if the code i
         <MudSwitch Label="@L["configure_training-types"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_configure_training_types" ValueChanged="@(isChecked => { _userRole.Role.AUTH_configure_training_types = isChecked; _saved = null; })"/>
         <MudSwitch Label="@L["configure_user_roles"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_configure_user_roles" ValueChanged="@(isChecked => { _userRole.Role.AUTH_configure_user_roles = isChecked; _saved = null; })"/>
         <MudSwitch Label="@L["configure_default_schedule"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_configure_default_schedule" ValueChanged="@(isChecked => { _userRole.Role.AUTH_configure_default_schedule = isChecked; _saved = null; })"/>
+        <MudSwitch Label="@L["configure_vehicles"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_configure_vehicles" ValueChanged="@(isChecked => { _userRole.Role.AUTH_configure_vehicles = isChecked; _saved = null; })"/>
         <MudText Typo="Typo.h6">@L["Scheduler"]</MudText>
         <MudSwitch Label="@L["scheduler"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_scheduler" ValueChanged="@(isChecked => { _userRole.Role.AUTH_scheduler = isChecked; _saved = null; })"/>
         <MudSwitch Label="@L["scheduler_table"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_scheduler_in_table_view" ValueChanged="@(isChecked => { _userRole.Role.AUTH_scheduler_in_table_view = isChecked; _saved = null; })"/>
@@ -42,7 +43,8 @@ Changes to this file may cause incorrect behavior and will be lost if the code i
         <MudText Typo="Typo.h6">@L["Dashboard"]</MudText>
         <MudSwitch Label="@L["full_action_history"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_action_history_full" ValueChanged="@(isChecked => { _userRole.Role.AUTH_action_history_full = isChecked; _saved = null; })"/>
         <MudSwitch Label="@L["full_training_history"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_training_history_full" ValueChanged="@(isChecked => { _userRole.Role.AUTH_training_history_full = isChecked; _saved = null; })"/>
-        <MudSwitch Label="@L["full_dashboard_statistics2"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_dashboard_Statistics" ValueChanged="@(isChecked => { _userRole.Role.AUTH_dashboard_Statistics = isChecked; _saved = null; })"/>
+        <MudSwitch Label="@L["full_dashboard_statistics"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_dashboard_Statistics" ValueChanged="@(isChecked => { _userRole.Role.AUTH_dashboard_Statistics = isChecked; _saved = null; })"/>
+        <MudSwitch Label="@L["full_dashboard_statistics2"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_dashboard_Statistics2" ValueChanged="@(isChecked => { _userRole.Role.AUTH_dashboard_Statistics2 = isChecked; _saved = null; })"/>
         <MudSwitch Label="@L["dashboard_hol"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_dashboard_holidays" ValueChanged="@(isChecked => { _userRole.Role.AUTH_dashboard_holidays = isChecked; _saved = null; })"/>
         <MudSwitch Label="@L["dashboard_qr"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_dashboard_qr" ValueChanged="@(isChecked => { _userRole.Role.AUTH_dashboard_qr = isChecked; _saved = null; })"/>
         <MudText Typo="Typo.h6">@L["Mail"]</MudText>

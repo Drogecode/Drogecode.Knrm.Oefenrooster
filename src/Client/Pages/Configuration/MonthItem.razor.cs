@@ -25,10 +25,14 @@ public sealed partial class MonthItem : IDisposable
     private bool _bussy;
     private bool _includeExpired;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _monthItems = await MonthItemClient.GetAllItemsAsync(_count, 0, _includeExpired, _cls.Token);
-        _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
+        if (firstRender)
+        {
+            _monthItems = await MonthItemClient.GetAllItemsAsync(_count, 0, _includeExpired, _cls.Token);
+            _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
+            StateHasChanged();
+        }
     }
 
     private async Task Next(int nextPage)

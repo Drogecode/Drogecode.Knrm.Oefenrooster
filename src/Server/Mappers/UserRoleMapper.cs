@@ -39,6 +39,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_configure_default_schedule:
                         drogeUserRole.AUTH_configure_default_schedule = true;
                         break;
+                    case AccessesNames.AUTH_configure_vehicles:
+                        drogeUserRole.AUTH_configure_vehicles = true;
+                        break;
                     case AccessesNames.AUTH_scheduler:
                         drogeUserRole.AUTH_scheduler = true;
                         break;
@@ -84,6 +87,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_dashboard_Statistics:
                         drogeUserRole.AUTH_dashboard_Statistics = true;
                         break;
+                    case AccessesNames.AUTH_dashboard_Statistics2:
+                        drogeUserRole.AUTH_dashboard_Statistics2 = true;
+                        break;
                     case AccessesNames.AUTH_dashboard_holidays:
                         drogeUserRole.AUTH_dashboard_holidays = true;
                         break;
@@ -119,6 +125,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_configure_user_roles).Append(',');
             if (userRole.AUTH_configure_default_schedule)
                 sb.Append(AccessesNames.AUTH_configure_default_schedule).Append(',');
+            if (userRole.AUTH_configure_vehicles)
+                sb.Append(AccessesNames.AUTH_configure_vehicles).Append(',');
             if (userRole.AUTH_scheduler)
                 sb.Append(AccessesNames.AUTH_scheduler).Append(',');
             if (userRole.AUTH_scheduler_in_table_view)
@@ -149,6 +157,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_training_history_full).Append(',');
             if (userRole.AUTH_dashboard_Statistics)
                 sb.Append(AccessesNames.AUTH_dashboard_Statistics).Append(',');
+            if (userRole.AUTH_dashboard_Statistics2)
+                sb.Append(AccessesNames.AUTH_dashboard_Statistics2).Append(',');
             if (userRole.AUTH_dashboard_holidays)
                 sb.Append(AccessesNames.AUTH_dashboard_holidays).Append(',');
             if (userRole.AUTH_dashboard_qr)

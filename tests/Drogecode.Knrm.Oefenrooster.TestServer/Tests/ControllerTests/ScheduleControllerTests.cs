@@ -586,7 +586,7 @@ public class ScheduleControllerTests : BaseTest
             User = new PlanUser()
             {
                 UserId = DefaultUserId,
-                VehicleId = vehicle.Value!.Value,
+                VehicleId = vehicle.Value!.NewId!.Value,
                 Assigned = true,
             },
             TrainingId = trainingId
@@ -613,13 +613,13 @@ public class ScheduleControllerTests : BaseTest
         var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
         var vehicle = await VehicleController.PutVehicle(new DrogeVehicle()
             { IsDefault = true, IsActive = true, Name = "GetPlannedTrainingByIdDefaultVehicleNotSelectedButLinkedToUserTest", Code = "xUnit2", Order = 1 });
-        var linkResponse = await VehicleController.UpdateLinkVehicleTraining(new DrogeLinkVehicleTraining { VehicleId = vehicle.Value!.Value, RoosterTrainingId = trainingId, IsSelected = false });
+        var linkResponse = await VehicleController.UpdateLinkVehicleTraining(new DrogeLinkVehicleTraining { VehicleId = vehicle.Value!.NewId!.Value, RoosterTrainingId = trainingId, IsSelected = false });
         var body = new PatchAssignedUserRequest
         {
             User = new PlanUser()
             {
                 UserId = DefaultUserId,
-                VehicleId = vehicle.Value!.Value,
+                VehicleId = vehicle.Value!.NewId!.Value,
                 Assigned = true,
             },
             TrainingId = trainingId
@@ -645,8 +645,8 @@ public class ScheduleControllerTests : BaseTest
         var dateEnd = DateTime.Today.AddDays(1).AddHours(15);
         var defVehAdded = await VehicleController.PutVehicle(new DrogeVehicle()
             { Name = "GetPlannedTrainingByIdDefaultVehicleNotSetTest", Code = "xUnit", IsDefault = true, IsActive = true, Order = 69 });
-        Assert.NotNull(defVehAdded.Value);
-        defVehAdded.Should().NotBe(Guid.Empty);
+        Assert.NotNull(defVehAdded.Value?.NewId);
+        defVehAdded.Value.NewId.Should().NotBe(Guid.Empty);
         var trainingId = await AddTraining("TrainingsForAll", false, dateStart, dateEnd);
         var training = (await ScheduleController.GetTrainingById(trainingId)).Value?.Training;
         Assert.NotNull(training);
@@ -663,7 +663,7 @@ public class ScheduleControllerTests : BaseTest
         var plannedTraining = (await ScheduleController.GetPlannedTrainingById(trainingId)).Value?.Training;
         Assert.NotNull(plannedTraining);
         plannedTraining.PlanUsers.Should().HaveCount(1);
-        plannedTraining.PlanUsers.Should().Contain(x => x.VehicleId == defVehAdded.Value);
+        plannedTraining.PlanUsers.Should().Contain(x => x.VehicleId == defVehAdded.Value.NewId);
     }
 
     [Fact]

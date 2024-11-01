@@ -592,10 +592,6 @@
             "type": "string",
             "format": "uuid"
           },
-          "externalId": {
-            "type": "string",
-            "nullable": true
-          },
           "calendarEventId": {
             "type": "string",
             "nullable": true

@@ -1,0 +1,16 @@
+﻿<MudDialog>
+    <DialogContent>
+        @if (DrogeVehicle is not null)
+        {
+            <MudTextField @bind-Value="DrogeVehicle.Name" Label="@L["Name"]" Counter="@DefaultSettingsHelper.MAX_LENGTH_VEHICLE_NAME" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_VEHICLE_NAME"/>
+            <MudTextField @bind-Value="DrogeVehicle.Code" Label="@L["Code"]" Counter="@DefaultSettingsHelper.MAX_LENGTH_VEHICLE_CODE" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_VEHICLE_CODE"/>
+            <MudNumericField T="int" @bind-Value="DrogeVehicle.Order" Label="@L["Order"]"/>
+            <MudSwitch @bind-Value="DrogeVehicle.IsDefault"  Label="@L["Default"]" Color="Color.Primary" />
+            <MudSwitch @bind-Value="DrogeVehicle.IsActive"  Label="@L["Active"]" Color="Color.Primary" />
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">@LApp["Submit"]</MudButton>
+    </DialogActions>
+</MudDialog>

@@ -200,6 +200,9 @@
           "autH_configure_default_schedule": {
             "type": "boolean"
           },
+          "autH_configure_vehicles": {
+            "type": "boolean"
+          },
           "autH_scheduler": {
             "type": "boolean"
           },
@@ -243,6 +246,9 @@
             "type": "boolean"
           },
           "autH_dashboard_Statistics": {
+            "type": "boolean"
+          },
+          "autH_dashboard_Statistics2": {
             "type": "boolean"
           },
           "autH_dashboard_holidays": {

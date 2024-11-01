@@ -1,0 +1,39 @@
+﻿@page "/configuration/vehicle"
+@attribute [Authorize(Roles = AccessesNames.AUTH_configure_vehicles)]
+
+
+<PageTitle>@L["Vehicles"]</PageTitle>
+<MudPaper Elevation="0" Class="p-2">
+    @if (_vehicles is not null)
+    {
+        <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="() => { OpenMonthItemDialog(null, true); }">@L["Add new vehicle"]</MudButton>
+        <MudDataGrid Items="@_vehicles.DrogeVehicles?.OrderBy(x=>x.Order)" ReadOnly="true" Filterable="false" SortMode="@SortMode.None">
+            <Columns>
+                <PropertyColumn Property="x => x.Name" Title="@L["Description"]"/>
+                <PropertyColumn Property="x => x.Code" Title="@L["Year"]"/>
+                <PropertyColumn Property="x => x.IsDefault" Title="@LApp["Default"]">
+                    <CellTemplate>
+                        <MudCheckBox Disabled="true" Value="context.Item.IsDefault" />
+                    </CellTemplate>
+                </PropertyColumn>
+                <PropertyColumn Property="x => x.IsActive" Title="@LApp["Active"]">
+                    <CellTemplate>
+                        <MudCheckBox Disabled="true" Value="context.Item.IsActive" />
+                    </CellTemplate>
+                </PropertyColumn>
+                <TemplateColumn>
+                    <CellTemplate>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => { OpenMonthItemDialog(context.Item, false); })"/>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+        </MudDataGrid>
+    }
+    else
+    {
+        <MudSkeleton/>
+        <MudSkeleton/>
+        <MudSkeleton/>
+        <MudSkeleton/>
+    }
+</MudPaper>

@@ -295,8 +295,8 @@ public class BaseTest : IAsyncLifetime
             Order = 4,
         };
         var result = await VehicleController.PutVehicle(vehicle);
-        Assert.NotNull(result?.Value);
-        return result!.Value!.Value;
+        Assert.NotNull(result.Value?.NewId);
+        return result.Value.NewId.Value;
     }
 
     protected async Task<Guid> AddDefaultSchedule()

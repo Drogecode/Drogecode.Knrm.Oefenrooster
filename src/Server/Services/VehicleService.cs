@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.Graph.Models;
 using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Shared;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -95,17 +96,47 @@ public class VehicleService : IVehicleService
         return result;
     }
 
-    public async Task<Guid?> PutVehicle(DrogeVehicle vehicle, Guid customerId, Guid userId, CancellationToken clt)
+    public async Task<PutResponse> PutVehicle(DrogeVehicle vehicle, Guid customerId, Guid userId, CancellationToken clt)
     {
+        var sw = Stopwatch.StartNew();
+        var result = new PutResponse();
         vehicle.Id = Guid.NewGuid();
         var dbVehicle = vehicle.ToDb();
         dbVehicle.CreatedOn = DateTime.Now;
         dbVehicle.Createdby = userId;
         dbVehicle.CustomerId = customerId;
         _database.Vehicles.Add(dbVehicle);
-        if ((await _database.SaveChangesAsync()) > 0)
-            return vehicle.Id;
-        return null;
+        if ((await _database.SaveChangesAsync(clt)) > 0)
+        {
+            result.NewId = vehicle.Id;
+            result.Success = true;
+        }
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<PatchResponse> PatchVehicle(DrogeVehicle vehicle, Guid customerId, Guid userId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new PatchResponse();
+
+        var oldVehicle = await _database.Vehicles.Where(x => x.CustomerId == customerId && x.Id == vehicle.Id && x.DeletedOn == null).FirstOrDefaultAsync(clt);
+        if (oldVehicle is not null)
+        {
+            oldVehicle.Name = vehicle.Name;
+            oldVehicle.Code = vehicle.Code;
+            oldVehicle.Order = vehicle.Order;
+            oldVehicle.IsDefault = vehicle.IsDefault;
+            oldVehicle.IsActive = vehicle.IsActive;
+            _database.Vehicles.Update(oldVehicle);
+            result.Success = (await _database.SaveChangesAsync(clt)) > 0;
+        }
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
     }
 
     public async Task<DrogeLinkVehicleTrainingResponse> UpdateLinkVehicleTraining(Guid customerId, DrogeLinkVehicleTraining link)
