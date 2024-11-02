@@ -102,7 +102,7 @@ public class VehicleService : IVehicleService
         var result = new PutResponse();
         vehicle.Id = Guid.NewGuid();
         var dbVehicle = vehicle.ToDb();
-        dbVehicle.CreatedOn = DateTime.Now;
+        dbVehicle.CreatedOn = DateTime.UtcNow;
         dbVehicle.Createdby = userId;
         dbVehicle.CustomerId = customerId;
         _database.Vehicles.Add(dbVehicle);
