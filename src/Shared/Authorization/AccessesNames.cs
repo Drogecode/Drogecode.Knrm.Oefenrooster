@@ -14,6 +14,7 @@ public struct AccessesNames
     public const string GROUP_CONFIGURATION= "Configuration";
     public const string AUTH_configure_training_types = "configure_training-types";
     public const string AUTH_configure_user_roles = "configure_user_roles";
+    public const string AUTH_configure_user_functions = "configure_user_functions";
     public const string AUTH_configure_default_schedule = "configure_default_schedule";
     public const string AUTH_configure_vehicles = "configure_vehicles";
 

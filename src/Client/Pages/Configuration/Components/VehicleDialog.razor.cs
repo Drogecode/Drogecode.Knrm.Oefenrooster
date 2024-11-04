@@ -6,7 +6,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 
 public partial class VehicleDialog : IDisposable
 {
-    [Inject] private IStringLocalizer<Vehicle> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<Vehicles> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private IVehicleClient VehicleClient { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;

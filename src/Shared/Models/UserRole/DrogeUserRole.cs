@@ -17,6 +17,7 @@ public class DrogeUserRole
     // Group: GROUP_CONFIGURATION
     public bool AUTH_configure_training_types { get; set; }
     public bool AUTH_configure_user_roles { get; set; }
+    public bool AUTH_configure_user_functions { get; set; }
     public bool AUTH_configure_default_schedule { get; set; }
     public bool AUTH_configure_vehicles { get; set; }
 

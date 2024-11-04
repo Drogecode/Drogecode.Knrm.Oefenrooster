@@ -159,4 +159,7 @@
   <data name="User roles" xml:space="preserve">
     <value>Gebruikers rollen</value>
   </data>
+  <data name="Vehicles" xml:space="preserve">
+    <value>Voertuigen</value>
+  </data>
 </root>

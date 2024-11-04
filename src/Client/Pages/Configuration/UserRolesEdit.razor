@@ -24,6 +24,7 @@ Changes to this file may cause incorrect behavior and will be lost if the code i
         <MudText Typo="Typo.h6">@L["Configuration"]</MudText>
         <MudSwitch Label="@L["configure_training-types"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_configure_training_types" ValueChanged="@(isChecked => { _userRole.Role.AUTH_configure_training_types = isChecked; _saved = null; })"/>
         <MudSwitch Label="@L["configure_user_roles"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_configure_user_roles" ValueChanged="@(isChecked => { _userRole.Role.AUTH_configure_user_roles = isChecked; _saved = null; })"/>
+        <MudSwitch Label="@L["configure_user_functions"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_configure_user_functions" ValueChanged="@(isChecked => { _userRole.Role.AUTH_configure_user_functions = isChecked; _saved = null; })"/>
         <MudSwitch Label="@L["configure_default_schedule"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_configure_default_schedule" ValueChanged="@(isChecked => { _userRole.Role.AUTH_configure_default_schedule = isChecked; _saved = null; })"/>
         <MudSwitch Label="@L["configure_vehicles"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_configure_vehicles" ValueChanged="@(isChecked => { _userRole.Role.AUTH_configure_vehicles = isChecked; _saved = null; })"/>
         <MudText Typo="Typo.h6">@L["Scheduler"]</MudText>
