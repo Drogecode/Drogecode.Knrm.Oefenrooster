@@ -1,10 +1,9 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components;
-using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
-using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User;
 
@@ -16,6 +15,7 @@ public sealed partial class Profile : IDisposable
     [Inject] private ConfigurationRepository ConfigurationRepository { get; set; } = default!;
     [Inject] private IUserSettingsClient UserSettingsClient { get; set; } = default!;
     [Inject] private IUserLinkedMailsClient UserLinkedMailsClient { get; set; } = default!;
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     private VersionDetailResponse? _updateDetails;
     private AllUserLinkedMailResponse? _allUserLinkedMailResponse;
@@ -33,7 +33,11 @@ public sealed partial class Profile : IDisposable
     {
         if (firstRender)
         {
-            _allUserLinkedMailResponse = await UserLinkedMailsClient.AllUserLinkedMailAsync(10, 0);
+            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_mail_invite_external))
+            {
+                _allUserLinkedMailResponse = await UserLinkedMailsClient.AllUserLinkedMailAsync(10, 0);
+            }
+
             _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
             StateHasChanged();
         }
@@ -63,7 +67,7 @@ public sealed partial class Profile : IDisposable
 
     private async Task IsEnabledChanged(bool newValue, Guid emailId)
     {
-        var changeResponse = await UserLinkedMailsClient.IsEnabledChangedAsync(new IsEnabledChangedRequest() { IsEnabled = newValue, UserLinkedMailId = emailId});
+        var changeResponse = await UserLinkedMailsClient.IsEnabledChangedAsync(new IsEnabledChangedRequest() { IsEnabled = newValue, UserLinkedMailId = emailId });
         if (changeResponse.Success)
         {
             await RefreshMeAsync();
@@ -72,7 +76,11 @@ public sealed partial class Profile : IDisposable
 
     private async Task RefreshMeAsync()
     {
-        _allUserLinkedMailResponse = await UserLinkedMailsClient.AllUserLinkedMailAsync(10, 0);
+        if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_mail_invite_external))
+        {
+            _allUserLinkedMailResponse = await UserLinkedMailsClient.AllUserLinkedMailAsync(10, 0);
+        }
+
         StateHasChanged();
     }
 
