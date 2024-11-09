@@ -19,15 +19,20 @@ public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
     private readonly IUserService _userService;
+    private readonly IUserRoleService _userRoleService;
+    private readonly ILinkUserRoleService _linkUserRoleService;
     private readonly IAuditService _auditService;
     private readonly IGraphService _graphService;
     private readonly IFunctionService _functionService;
     private readonly RefreshHub _refreshHub;
 
-    public UserController(ILogger<UserController> logger, IUserService userService, IAuditService auditService, IGraphService graphService, IFunctionService functionService, RefreshHub refreshHub)
+    public UserController(ILogger<UserController> logger, IUserService userService, IUserRoleService userRoleService, ILinkUserRoleService linkUserRoleService, IAuditService auditService,
+        IGraphService graphService, IFunctionService functionService, RefreshHub refreshHub)
     {
         _logger = logger;
         _userService = userService;
+        _userRoleService = userRoleService;
+        _linkUserRoleService = linkUserRoleService;
         _auditService = auditService;
         _graphService = graphService;
         _functionService = functionService;
@@ -35,8 +40,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    [Route("all/{includeHidden:bool}/{callHub:bool}", Order = 0)]
-    [Route("all/{includeHidden:bool}", Order = 10)] // v0.3.36
+    [Route("all/{includeHidden:bool}/{callHub:bool}")]
     public async Task<ActionResult<MultipleDrogeUsersResponse>> GetAll(bool includeHidden, bool callHub = false, CancellationToken clt = default)
     {
         try
@@ -178,6 +182,7 @@ public class UserController : ControllerBase
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             await _auditService.Log(userId, AuditType.SyncAllUsers, customerId);
+            clt = CancellationToken.None;
             return Ok(await InternalSyncAllUsers(userId, customerId, clt));
         }
         catch (Exception ex)
@@ -210,9 +215,10 @@ public class UserController : ControllerBase
                             if (index != -1)
                                 existingUsers.RemoveAt(index);
                         }
+
                         newUserResponse.SyncedFromSharePoint = true;
                         var groups = await _graphService.GetGroupForUser(user.Id);
-                        if (groups?.Value != null && functions.Any(x => groups.Value.Any(y => y.Id == x.RoleId.ToString())))
+                        if (groups?.Value is not null && functions.Any(x => groups.Value.Any(y => y.Id == x.RoleId.ToString())))
                         {
                             newUserResponse.RoleFromSharePoint = true;
                             var newFunction = functions.FirstOrDefault(x => groups.Value.Any(y => y.Id == x.RoleId.ToString()));
@@ -225,6 +231,26 @@ public class UserController : ControllerBase
                         {
                             newUserResponse.RoleFromSharePoint = false;
                         }
+
+                        var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(newUserResponse.Id, clt);
+                        var roles = await _userRoleService.GetAll(customerId, clt);
+                        if (groups?.Value is not null && roles.Roles is not null)
+                        {
+                            foreach (var group in groups.Value.Where(x => roles.Roles.Any(y => y.ExternalId?.ToString().Equals(x.Id) == true)))
+                            {
+                                if (group.Id is null) continue;
+                                var roleId = new Guid(group.Id);
+                                linkedRoles.Remove(roleId);
+                                await _linkUserRoleService.LinkUserToRoleAsync(newUserResponse.Id, roleId, true, true, clt);
+                            }
+                        }
+
+                        foreach (var linkedRole in linkedRoles)
+                        {
+                            await _linkUserRoleService.LinkUserToRoleAsync(newUserResponse.Id, linkedRole, false, true, clt);
+                        }
+
+
                         await _userService.UpdateUser(newUserResponse, userId, customerId);
                     }
                 }

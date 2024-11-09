@@ -90,10 +90,12 @@ public class Worker : BackgroundService
 
         var userControllerLogger = scope.ServiceProvider.GetRequiredService<ILogger<UserController>>();
         var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+        var userRoleService = scope.ServiceProvider.GetRequiredService<IUserRoleService>();
+        var linkUserRoleService = scope.ServiceProvider.GetRequiredService<ILinkUserRoleService>();
         var auditService = scope.ServiceProvider.GetRequiredService<IAuditService>();
         var functionService = scope.ServiceProvider.GetRequiredService<IFunctionService>();
         var refreshHub = scope.ServiceProvider.GetRequiredService<RefreshHub>();
-        var userController = new UserController(userControllerLogger, userService, auditService, graphService, functionService, refreshHub);
+        var userController = new UserController(userControllerLogger, userService, userRoleService, linkUserRoleService, auditService, graphService, functionService, refreshHub);
         await userController.InternalSyncAllUsers(DefaultSettingsHelper.SystemUser, DefaultSettingsHelper.KnrmHuizenId, _clt);
 
         _clt.ThrowIfCancellationRequested();

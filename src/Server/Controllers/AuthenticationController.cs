@@ -329,7 +329,7 @@ public partial class AuthenticationController : ControllerBase
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_user_roles));
         }
 
-        var accesses = await _userRoleService.GetAccessForUser(customerId, jwtSecurityToken.Claims, clt);
+        var accesses = await _userRoleService.GetAccessForUser(userId, customerId, jwtSecurityToken.Claims, clt);
         foreach (var access in accesses)
         {
             claims.Add(new Claim(ClaimTypes.Role, access));

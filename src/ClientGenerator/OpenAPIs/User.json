@@ -54,46 +54,6 @@
         }
       }
     },
-    "/api/User/all/{includeHidden}": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "operationId": "GetAll",
-        "parameters": [
-          {
-            "name": "includeHidden",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleDrogeUsersResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleDrogeUsersResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleDrogeUsersResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/User/me": {
       "get": {
         "tags": [

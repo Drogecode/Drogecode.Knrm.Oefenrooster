@@ -14,4 +14,5 @@ public class DbUserRoles
     public int Order { get; set; }
 
     public DbCustomers Customer { get; set; }
+    public ICollection<DbLinkUserRole>? LinkUserRoles { get; set; }
 }

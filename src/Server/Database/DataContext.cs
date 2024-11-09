@@ -39,6 +39,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
 
         public DbSet<DbLinkVehicleTraining> LinkVehicleTraining { get; set; }
         public DbSet<DbLinkUserDayItem> LinkUserDayItems { get; set; }
+        public DbSet<DbLinkUserRole> LinkUserRoles { get; set; }
         public DbSet<DbLinkUserUser> LinkUserUsers { get; set; }
         public DbSet<DbLinkExchange> LinkExchanges{ get; set; }
 
@@ -190,7 +191,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbLinkVehicleTraining>().HasOne(p => p.Vehicles).WithMany(g => g.LinkVehicleTrainings).HasForeignKey(s => s.VehicleId).IsRequired();
 
             // Vehicle with training with outlook exchange calendar
+            modelBuilder.Entity<DbLinkExchange>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbLinkExchange>().HasOne(p => p.Customer).WithMany(g => g.LinkExchanges).HasForeignKey(s => s.CustomerId).IsRequired();
+            
+            // User <--> UserRole
+            modelBuilder.Entity<DbLinkUserRole>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbLinkUserRole>().HasOne(p => p.User).WithMany(g => g.LinkUserRoles).HasForeignKey(s => s.UserId).IsRequired();
+            modelBuilder.Entity<DbLinkUserRole>().HasOne(p => p.Role).WithMany(g => g.LinkUserRoles).HasForeignKey(s => s.RoleId).IsRequired();
 
             // Required data
             SetCustomer(modelBuilder);

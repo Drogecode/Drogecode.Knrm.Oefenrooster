@@ -44,7 +44,7 @@ public class UserRoleController : ControllerBase
             return BadRequest();
         }
     }
-    
+
     [HttpGet]
     [Authorize(Roles = AccessesNames.AUTH_configure_user_roles)]
     [Route("all")]
@@ -54,7 +54,7 @@ public class UserRoleController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var result = await _userRoleService.GetAll(userId, customerId, clt);
+            var result = await _userRoleService.GetAll(customerId, clt);
             return result;
         }
         catch (Exception ex)
@@ -63,7 +63,7 @@ public class UserRoleController : ControllerBase
             return BadRequest();
         }
     }
-    
+
     [HttpGet]
     [Authorize(Roles = AccessesNames.AUTH_configure_user_roles)]
     [Route("{id:guid}")]
@@ -88,7 +88,6 @@ public class UserRoleController : ControllerBase
     [Route("")]
     public async Task<ActionResult<UpdateUserRoleResponse>> PatchUserRole([FromBody] DrogeUserRole userRole, CancellationToken clt = default)
     {
-        
         try
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));

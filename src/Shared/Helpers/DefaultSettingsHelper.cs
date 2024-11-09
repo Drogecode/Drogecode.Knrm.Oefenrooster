@@ -33,6 +33,6 @@ public static class DefaultSettingsHelper
     public const int MAX_LENGTH_DAY_ITEM_TEXT = 50;
     public const int MAX_LENGTH_HOLIDAY_NAME = 50;
     public const int MAX_LENGTH_VEHICLE_NAME = 30;
-    public const int MAX_LENGTH_VEHICLE_CODE = 30;
+    public const int MAX_LENGTH_VEHICLE_CODE = 10;
     public const int LENGTH_MAIL_ACTIVATION = 11;
 }

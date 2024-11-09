@@ -112,6 +112,7 @@ builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 builder.Services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
 builder.Services.AddScoped<IHolidayService, HolidayService>();
+builder.Services.AddScoped<ILinkUserRoleService, LinkUserRoleService>();
 builder.Services.AddScoped<IPreComService, PreComService>();
 builder.Services.AddScoped<IReportActionService, ReportActionService>();
 builder.Services.AddScoped<IReportTrainingService, ReportTrainingService>();

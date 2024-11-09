@@ -9,11 +9,13 @@ public class UserRoleService : IUserRoleService
 {
     private readonly ILogger<UserRoleService> _logger;
     private readonly Database.DataContext _database;
+    private readonly ILinkUserRoleService _linkUserRoleService;
 
-    public UserRoleService(ILogger<UserRoleService> logger, Database.DataContext database)
+    public UserRoleService(ILogger<UserRoleService> logger, Database.DataContext database, ILinkUserRoleService linkUserRoleService)
     {
         _logger = logger;
         _database = database;
+        _linkUserRoleService = linkUserRoleService;
     }
 
     public async Task<NewUserRoleResponse> NewUserRole(DrogeUserRole userRole, Guid userId, Guid customerId, CancellationToken clt)
@@ -32,22 +34,31 @@ public class UserRoleService : IUserRoleService
         return result;
     }
 
-    public async Task<List<string>> GetAccessForUser(Guid customerId, IEnumerable<Claim> claims, CancellationToken clt)
+    public async Task<List<string>> GetAccessForUser(Guid userId, Guid customerId, IEnumerable<Claim> claims, CancellationToken clt)
     {
         var result = new List<string>();
         try
         {
             var roles = await _database.UserRoles.Where(x => x.CustomerId == customerId).ToListAsync(clt);
+            var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(userId, clt);
             foreach (var claim in claims.Where(x => x.Type.Equals("groups")))
             {
                 var role = roles.FirstOrDefault(x => string.CompareOrdinal(x.ExternalId.ToString(), claim.Value) == 0);
-                var accesses = role?.Accesses?.Split(',');
+                if (role is null)continue;
+                await _linkUserRoleService.LinkUserToRoleAsync(userId, role.Id, true, true, clt);
+                linkedRoles.Remove(role.Id);
+                var accesses = role.Accesses?.Split(',');
                 if (accesses is null) continue;
-                foreach (var acces in accesses)
+                foreach (var access in accesses)
                 {
-                    if (!result.Contains(acces))
-                        result.Add(acces);
+                    if (!result.Contains(access))
+                        result.Add(access);
                 }
+            }
+
+            foreach (var linkedRole in linkedRoles)
+            {
+                await _linkUserRoleService.LinkUserToRoleAsync(userId, linkedRole, false, true, clt);
             }
         }
         catch (Exception ex)
@@ -60,7 +71,7 @@ public class UserRoleService : IUserRoleService
         return result;
     }
 
-    public async Task<MultipleDrogeUserRolesResponse> GetAll(Guid userId, Guid customerId, CancellationToken clt)
+    public async Task<MultipleDrogeUserRolesResponse> GetAll(Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new MultipleDrogeUserRolesResponse();
