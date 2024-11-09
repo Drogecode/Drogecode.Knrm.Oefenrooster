@@ -28,6 +28,7 @@ public class Startup
         services.AddScoped<IConfigurationService, ConfigurationService>();
         services.AddScoped<IFunctionService, FunctionService>();
         services.AddScoped<IHolidayService, HolidayService>();
+        services.AddScoped<ILinkUserRoleService, LinkUserRoleService>();
         services.AddScoped<IPreComService, PreComService>();
         services.AddScoped<IReportActionService, ReportActionService>();
         services.AddScoped<IReportTrainingService, ReportTrainingService>();
