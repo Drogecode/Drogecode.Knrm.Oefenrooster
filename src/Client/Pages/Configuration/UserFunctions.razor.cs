@@ -7,7 +7,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
 public partial class UserFunctions : IDisposable
 {
-    [Inject, NotNull] private IStringLocalizer<UserRoles>? L { get; set; }
+    [Inject, NotNull] private IStringLocalizer<UserFunctions>? L { get; set; }
     [Inject, NotNull] private IFunctionClient? FunctionClient { get; set; }
     [Inject, NotNull] private NavigationManager? Navigation { get; set; }
     private readonly CancellationTokenSource _cls = new();
@@ -17,7 +17,7 @@ public partial class UserFunctions : IDisposable
     {
         if (firstRender)
         {
-            _functions = await FunctionClient.GetAllAsync(_cls.Token);
+            _functions = await FunctionClient.GetAll2Async(false, _cls.Token);
             StateHasChanged();
         }
     }

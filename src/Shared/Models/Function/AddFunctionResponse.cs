@@ -8,5 +8,5 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 
 public class AddFunctionResponse : BaseResponse
 {
-    public DrogeFunction? NewFunction { get; set; }
+    public Guid? NewId { get; set; }
 }

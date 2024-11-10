@@ -53,6 +53,53 @@
           }
         }
       },
+      "patch": {
+        "tags": [
+          "Function"
+        ],
+        "operationId": "PatchFunction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeFunction"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeFunction"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeFunction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchResponse"
+                }
+              }
+            }
+          }
+        }
+      },
       "get": {
         "tags": [
           "Function"
@@ -122,6 +169,47 @@
           }
         }
       }
+    },
+    "/api/Function/{id}": {
+      "get": {
+        "tags": [
+          "Function"
+        ],
+        "operationId": "GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFunctionResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFunctionResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFunctionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -139,8 +227,10 @@
             "type": "integer",
             "format": "int64"
           },
-          "newFunction": {
-            "$ref": "#/components/schemas/DrogeFunction"
+          "newId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -181,6 +271,25 @@
         },
         "additionalProperties": false
       },
+      "GetFunctionResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "function": {
+            "$ref": "#/components/schemas/DrogeFunction"
+          }
+        },
+        "additionalProperties": false
+      },
       "MultipleFunctionsResponse": {
         "type": "object",
         "properties": {
@@ -200,6 +309,22 @@
               "$ref": "#/components/schemas/DrogeFunction"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PatchResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           }
         },
         "additionalProperties": false

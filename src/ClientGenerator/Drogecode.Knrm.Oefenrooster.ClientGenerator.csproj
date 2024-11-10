@@ -37,7 +37,7 @@
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Function.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="FunctionClient">
 			<OutputPath>../Clients/FunctionClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Function</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Function,Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Holiday.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="HolidayClient">
 			<OutputPath>../Clients/HolidayClient.g.cs</OutputPath>

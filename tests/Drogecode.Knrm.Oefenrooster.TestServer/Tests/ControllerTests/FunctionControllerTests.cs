@@ -38,12 +38,15 @@ public class FunctionControllerTests : BaseTest
             TrainingTarget = 2,
             Active = true,
         });
-        Assert.NotNull(result?.Value?.NewFunction);
+        Assert.NotNull(result?.Value?.NewId);
         result.Value.Success.Should().Be(true);
-        result.Value.NewFunction.Name.Should().Be(NAME);
-        result.Value.NewFunction.TrainingTarget.Should().Be(2);
-        result.Value.NewFunction.TrainingOnly.Should().Be(false);
-        result.Value.NewFunction.Active.Should().Be(true);
+        var functionGet = await FunctionController.GetById(result.Value.NewId.Value);
+        Assert.NotNull(functionGet?.Value?.Function);
+        functionGet.Value.Success.Should().Be(true);
+        functionGet.Value.Function.Name.Should().Be(NAME);
+        functionGet.Value.Function.TrainingTarget.Should().Be(2);
+        functionGet.Value.Function.TrainingOnly.Should().Be(false);
+        functionGet.Value.Function.Active.Should().Be(true);
         result.Value.ElapsedMilliseconds.Should().NotBe(-1);
     }
 

@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -39,16 +40,8 @@ public class FunctionService : IFunctionService
         var sw = Stopwatch.StartNew();
         var result = new AddFunctionResponse();
         function.Id = Guid.NewGuid();
-        var functions = await _database.UserFunctions.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).ToListAsync(clt);
-        var order = -1;
-        foreach (var dbFunction in functions)
-        {
-            if (dbFunction.Order > order)
-                order = dbFunction.Order;
-        }
-
-        order += 10;
-        _database.UserFunctions.Add(new Database.Models.DbUserFunctions
+        var order = await _database.UserFunctions.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x=>x.Order).MaxAsync(clt) + 10;
+        _database.UserFunctions.Add(new DbUserFunctions
         {
             Id = function.Id,
             CustomerId = customerId,
@@ -60,7 +53,31 @@ public class FunctionService : IFunctionService
             IsActive = function.Active,
         });
         result.Success = (await _database.SaveChangesAsync(clt) > 0);
-        result.NewFunction = function;
+        result.NewId = function.Id;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<PatchResponse> PatchFunction(Guid customerId, DrogeFunction function, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new PatchResponse();
+
+        var oldFunction = await _database.UserFunctions.FirstOrDefaultAsync(x => x.Id == function.Id && x.CustomerId == customerId, clt);
+        if (oldFunction is not null)
+        {
+            oldFunction.Name = function.Name;
+            oldFunction.Order = function.Order;
+            oldFunction.RoleId = function.RoleId;
+            oldFunction.TrainingTarget = function.TrainingTarget;
+            oldFunction.TrainingOnly = function.TrainingOnly;
+            oldFunction.IsActive = function.Active;
+            oldFunction.IsDefault = function.Default;
+            _database.UserFunctions.Update(oldFunction);
+            result.Success = await _database.SaveChangesAsync(clt) > 0;
+        }
+
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;

@@ -10,9 +10,21 @@
 
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
+            <PropertyColumn Property="x => x.Order" Title="@L["Order"]"/>
+            <PropertyColumn Property="x => x.TrainingTarget" Title="@L["TrainingTarget"]"/>
+            <PropertyColumn Property="x => x.TrainingOnly" Title="@L["TrainingOnly"]">
+                <CellTemplate>
+                    <MudCheckBox Disabled="true" Value="context.Item.TrainingOnly" />
+                </CellTemplate>
+            </PropertyColumn>
             <PropertyColumn Property="x => x.Active" Title="@L["Active"]">
                 <CellTemplate>
                     <MudCheckBox Disabled="true" Value="context.Item.Active" />
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Default" Title="@L["Default"]">
+                <CellTemplate>
+                    <MudCheckBox Disabled="true" Value="context.Item.Default" />
                 </CellTemplate>
             </PropertyColumn>
             <TemplateColumn>

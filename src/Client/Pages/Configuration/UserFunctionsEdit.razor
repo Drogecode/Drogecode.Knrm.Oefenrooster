@@ -2,3 +2,35 @@
 @page "/configuration/user-functions/add/"
 @attribute [Authorize(Roles = AccessesNames.AUTH_configure_user_functions)]
 
+@if (_function?.Function is not null)
+{
+    <MudPaper Class="pa-4" MaxWidth="800px">
+        <MudText Typo="Typo.h5" Class="cursor-pointer" @onclick="() => _editName = true">@_function.Function.Name</MudText>
+        <MudTextField T="string" Value="_function.Function.Name" Label="@L["Name"]" ValueChanged="@(value => { _function.Function.Name = value; _saved = null; })"/>
+        <MudTextField T="Guid?" Value="_function.Function.RoleId" Label="@L["RoleId"]" ValueChanged="@(value => { _function.Function.RoleId = value; _saved = null; })"/>
+        <MudNumericField T="int" Value="_function.Function.Order" Label="@L["Order"]" ReadOnly="_isNew" ValueChanged="@(value => { _function.Function.Order = value; _saved = null; })"/>
+        <MudNumericField T="int" Value="_function.Function.TrainingTarget" Label="@L["TrainingTarget"]" ValueChanged="@(value => { _function.Function.TrainingTarget = value; _saved = null; })"/>
+        <MudCheckBox T="bool" Value="_function.Function.TrainingOnly" Label="@L["TrainingOnly"]" ValueChanged="@(value => { _function.Function.TrainingOnly = value; _saved = null; })"/>
+        <MudCheckBox T="bool" Value="_function.Function.Active" Label="@L["Active"]" ValueChanged="@(value => { _function.Function.Active = value; _saved = null; })"/>
+        <MudCheckBox T="bool" Value="_function.Function.Default" Label="@L["Default"]" ValueChanged="@(value => { _function.Function.Default = value; _saved = null; })"/>
+        <MudButton Color="Color.Primary" OnClick="Submit">
+            @LApp["Submit"]
+            @switch (_saved)
+            {
+                case true:
+                    <MudIcon Icon="@Icons.Material.Filled.Check"/>
+                    break;
+                case false:
+                    <MudIcon Icon="@Icons.Material.Filled.Close"/>
+                    break;
+            }
+        </MudButton>
+    </MudPaper>
+}
+else if (_function is null)
+{
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+}

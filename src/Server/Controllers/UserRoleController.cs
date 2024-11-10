@@ -98,7 +98,7 @@ public class UserRoleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in GetAll");
+            _logger.LogError(ex, "Exception in GetLinkedUsersById");
             return BadRequest();
         }
     }

@@ -162,8 +162,8 @@ public class BaseTest : IAsyncLifetime
             Active = true,
             Default = isDefault
         });
-        Assert.NotNull(result?.Value?.NewFunction);
-        return result.Value.NewFunction.Id;
+        Assert.NotNull(result?.Value?.NewId);
+        return result.Value.NewId.Value;
     }
 
     protected async Task<Guid> AddUserRole(string name)
