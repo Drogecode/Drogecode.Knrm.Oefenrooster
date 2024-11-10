@@ -65,6 +65,19 @@ Changes to this file may cause incorrect behavior and will be lost if the code i
             }
         </MudButton>
     </MudPaper>
+    if (_linkedUsers?.LinkedUsers is not null && _users is not null)
+    {
+        <MudPaper>
+            <MudList T="string" ReadOnly="true">
+                <MudText Typo="Typo.h5">@L["Users in this role"]</MudText>
+                @foreach (var userId in _linkedUsers.LinkedUsers)
+                {
+                    var userName = _users.FirstOrDefault(x => x.Id == userId)?.Name ?? @LApp["User not found or deleted"];
+                    <MudListItem T="string">@userName</MudListItem>
+                }
+            </MudList>
+        </MudPaper>
+    }
 }
 else if (_userRole is null)
 {

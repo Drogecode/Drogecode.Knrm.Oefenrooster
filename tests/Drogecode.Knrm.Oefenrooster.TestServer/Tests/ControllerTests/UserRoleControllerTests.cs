@@ -59,6 +59,15 @@ public class UserRoleControllerTests : BaseTest
     }
 
     [Fact]
+    public async Task GetLinkedUsersByIdTest()
+    {
+        var getResponse = await UserRoleController.GetLinkedUsersById(DefaultUserRoleId);
+        Assert.NotNull(getResponse?.Value?.LinkedUsers);
+        getResponse.Value.Success.Should().BeTrue();
+        getResponse.Value.LinkedUsers.Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task PatchUserRoleTest()
     {
         var getResponse = await UserRoleController.GetById(DefaultUserRoleId);

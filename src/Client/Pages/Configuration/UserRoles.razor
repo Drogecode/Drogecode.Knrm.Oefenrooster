@@ -1,6 +1,5 @@
 ﻿@page "/configuration/user-roles"
 @attribute [Authorize(Roles = AccessesNames.AUTH_configure_user_roles)]
-<h3>UserRoles</h3>
 @if (_userRoles is not null)
 {
     <MudButton OnClick='() => Navigation.NavigateTo("/configuration/user-roles/add/")'>@L["Add new role"]</MudButton>

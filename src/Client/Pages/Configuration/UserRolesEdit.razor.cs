@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 using Microsoft.Extensions.Localization;
 
@@ -10,9 +11,12 @@ public partial class UserRolesEdit : IDisposable
     [Inject, NotNull] private IStringLocalizer<UserRolesEdit>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
     [Inject, NotNull] private IUserRoleClient? UserRoleClient { get; set; }
+    [Inject, NotNull] private UserRepository? UserRepository { get; set; }
     [Parameter] public Guid? Id { get; set; }
     private readonly CancellationTokenSource _cls = new();
     private GetUserRoleResponse? _userRole;
+    private GetLinkedUsersByIdResponse? _linkedUsers;
+    private List<DrogeUser>? _users;
     private bool? _saved = null;
     private bool _editName = false;
     private bool _isNew;
@@ -25,6 +29,8 @@ public partial class UserRolesEdit : IDisposable
             {
                 DebugHelper.WriteLine($"Loading user role: {Id}");
                 _userRole = await UserRoleClient.GetByIdAsync(Id.Value, _cls.Token);
+                _linkedUsers = await UserRoleClient.GetLinkedUsersByIdAsync(Id.Value, _cls.Token);
+                _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
             }
             else
             {

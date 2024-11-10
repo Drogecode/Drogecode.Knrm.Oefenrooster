@@ -27,4 +27,7 @@
     <data name="configure_training-types" xml:space="preserve">
         <value>Configureer training types</value>
     </data>
+    <data name="Users in this role" xml:space="preserve">
+        <value>Gebruikers met deze rol</value>
+    </data>
 </root>

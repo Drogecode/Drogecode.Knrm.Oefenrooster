@@ -17,12 +17,14 @@ public class UserRoleController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
     private readonly IUserRoleService _userRoleService;
+    private readonly ILinkUserRoleService _linkUserRoleService;
     private readonly RefreshHub _refreshHub;
 
-    public UserRoleController(ILogger<UserController> logger, IUserRoleService userRoleService, RefreshHub refreshHub)
+    public UserRoleController(ILogger<UserController> logger, IUserRoleService userRoleService, ILinkUserRoleService linkUserRoleService, RefreshHub refreshHub)
     {
         _logger = logger;
         _userRoleService = userRoleService;
+        _linkUserRoleService = linkUserRoleService;
         _refreshHub = refreshHub;
     }
 
@@ -82,6 +84,25 @@ public class UserRoleController : ControllerBase
             return BadRequest();
         }
     }
+    
+    [HttpGet]
+    [Authorize(Roles = AccessesNames.AUTH_configure_user_roles)]
+    [Route("{id:guid}/users")]
+    public async Task<ActionResult<GetLinkedUsersByIdResponse>> GetLinkedUsersById(Guid id, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            GetLinkedUsersByIdResponse result = await _linkUserRoleService.GetLinkedUsersById(id, customerId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetAll");
+            return BadRequest();
+        }
+    }
+    
 
     [HttpPatch]
     [Authorize(Roles = AccessesNames.AUTH_configure_user_roles)]

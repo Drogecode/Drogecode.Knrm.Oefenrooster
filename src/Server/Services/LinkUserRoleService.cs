@@ -1,4 +1,6 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+﻿using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -17,6 +19,19 @@ public class LinkUserRoleService : ILinkUserRoleService
     {
         var links = await _database.LinkUserRoles.Where(x => x.UserId == userId).Select(x => x.RoleId).ToListAsync(clt);
         return links;
+    }
+
+    public async Task<GetLinkedUsersByIdResponse> GetLinkedUsersById(Guid roleId, Guid customerId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new GetLinkedUsersByIdResponse();
+        var query = _database.LinkUserRoles.Where(x => x.RoleId == roleId).Select(x => x.UserId);
+        result.LinkedUsers = await query.ToListAsync(clt);
+        result.TotalCount = await query.CountAsync(clt);
+        result.Success = true;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
     }
 
     public async Task<bool> LinkUserToRoleAsync(Guid userId, Guid roleId, bool isSet, bool setExternal, CancellationToken clt)
