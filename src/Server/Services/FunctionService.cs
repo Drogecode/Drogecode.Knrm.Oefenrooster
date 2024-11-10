@@ -40,7 +40,8 @@ public class FunctionService : IFunctionService
         var sw = Stopwatch.StartNew();
         var result = new AddFunctionResponse();
         function.Id = Guid.NewGuid();
-        var order = await _database.UserFunctions.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x=>x.Order).MaxAsync(clt) + 10;
+        var functions = await _database.UserFunctions.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x=>x.Order).ToListAsync(clt);
+        var order = functions.Prepend(-1).Max() + 10;
         _database.UserFunctions.Add(new DbUserFunctions
         {
             Id = function.Id,
