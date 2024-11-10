@@ -26,8 +26,6 @@ public sealed partial class UserRoles : IDisposable
     {
         Navigation.NavigateTo($"/configuration/user-roles/edit/{userRole.Id}");
     }
-    
-    
 
     public void Dispose()
     {

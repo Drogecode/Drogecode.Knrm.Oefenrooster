@@ -1,3 +1,32 @@
 ﻿@page "/configuration/user-functions"
 @attribute [Authorize(Roles = AccessesNames.AUTH_configure_user_functions)]
-<h3>UserFunctions</h3>
+@if (_functions is not null)
+{
+    <MudButton OnClick='() => Navigation.NavigateTo("/configuration/user-functions/add/")'>@L["Add new function"]</MudButton>
+}
+@if (_functions?.Functions is not null && _functions.Functions.Any())
+{
+    <MudDataGrid Items="_functions.Functions.OrderBy(x=>x.Order)">
+
+        <Columns>
+            <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
+            <PropertyColumn Property="x => x.Active" Title="@L["Active"]">
+                <CellTemplate>
+                    <MudCheckBox Disabled="true" Value="context.Item.Active" />
+                </CellTemplate>
+            </PropertyColumn>
+            <TemplateColumn>
+                <CellTemplate>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick='() => Navigation.NavigateTo($"/configuration/user-functions/edit/{context.Item.Id}")'/>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+}
+else if (_functions is null)
+{
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+}
