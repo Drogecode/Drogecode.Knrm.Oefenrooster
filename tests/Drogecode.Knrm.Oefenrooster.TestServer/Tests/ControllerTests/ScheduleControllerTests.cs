@@ -600,7 +600,7 @@ public class ScheduleControllerTests : BaseTest
         var training = trainingForAll.Value.Planners.FirstOrDefault(x => x.TrainingId == trainingId);
         Assert.NotNull(training?.PlanUsers);
         training.PlanUsers.Should().NotBeEmpty();
-        training.PlanUsers.Should().Contain(x => x.VehicleId == DefaultVehicle);
+        training.PlanUsers.Should().Contain(x => x.VehicleId == vehicle.Value.NewId);
         MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
         MockAuthenticatedUser(VehicleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
     }

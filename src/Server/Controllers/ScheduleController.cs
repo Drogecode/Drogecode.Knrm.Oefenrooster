@@ -12,6 +12,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -31,6 +32,7 @@ public class ScheduleController : ControllerBase
     private readonly IUserSettingService _userSettingService;
     private readonly IDateTimeService _dateTimeService;
     private readonly IUserService _userService;
+    private readonly IVehicleService _vehicleService;
     private readonly IFunctionService _functionService;
     private readonly IUserLinkedMailsService _userLinkedMailsService;
 
@@ -44,6 +46,7 @@ public class ScheduleController : ControllerBase
         IUserSettingService userSettingService,
         IDateTimeService dateTimeService,
         IUserService userService,
+        IVehicleService vehicleService,
         IFunctionService functionService,
         IUserLinkedMailsService userLinkedMailsService)
     {
@@ -56,6 +59,7 @@ public class ScheduleController : ControllerBase
         _userSettingService = userSettingService;
         _dateTimeService = dateTimeService;
         _userService = userService;
+        _vehicleService = vehicleService;
         _functionService = functionService;
         _userLinkedMailsService = userLinkedMailsService;
     }
@@ -259,6 +263,18 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var trainingId = Guid.NewGuid();
             var result = await _scheduleService.AddTrainingAsync(customerId, newTraining, trainingId, clt);
+            if (false && result.Success) // Not sure if required
+            {
+               var vehicles = await _vehicleService.GetAllVehicles(customerId);
+               if (vehicles.DrogeVehicles is not null)
+               {
+                   foreach (var vehicle in vehicles.DrogeVehicles.Where(x => x.IsDefault))
+                   {
+                       await _vehicleService.UpdateLinkVehicleTraining(customerId, new DrogeLinkVehicleTraining { IsSelected = true, RoosterTrainingId = trainingId, VehicleId = vehicle.Id });
+                   }
+               }
+            }
+
             await _userService.PatchLastOnline(userId, clt);
             if (result.Success)
                 await _auditService.Log(userId, AuditType.AddTraining, customerId, objectKey: trainingId, objectName: newTraining.Name);

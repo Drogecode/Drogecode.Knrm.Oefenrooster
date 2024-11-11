@@ -44,11 +44,11 @@ public class VehicleController : ControllerBase
                 _logger.LogTrace("Calling hub AllVehicles");
                 await _refreshHub.SendMessage(userId, ItemUpdated.AllVehicles);
             }
-            return new MultipleVehicleResponse { DrogeVehicles = result };
+            return  result ;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in GetAll");
+            _logger.LogError(ex, "Exception in GetAll vehicles");
             return BadRequest();
         }
     }
@@ -78,7 +78,7 @@ public class VehicleController : ControllerBase
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            MultipleVehicleTrainingLinkResponse result = await _vehicleService.GetForDefault(customerId, defaultId, clt);
+            var result = await _vehicleService.GetForDefault(customerId, defaultId, clt);
             return result;
         }
         catch (Exception ex)
@@ -117,7 +117,7 @@ public class VehicleController : ControllerBase
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            PatchResponse result = await _vehicleService.PatchVehicle(vehicle, customerId, userId, clt);
+            var result = await _vehicleService.PatchVehicle(vehicle, customerId, userId, clt);
             return result;
         }
         catch (Exception ex)

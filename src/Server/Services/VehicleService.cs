@@ -18,13 +18,17 @@ public class VehicleService : IVehicleService
         _database = database;
     }
 
-    public async Task<List<DrogeVehicle>> GetAllVehicles(Guid customerId)
+    public async Task<MultipleVehicleResponse> GetAllVehicles(Guid customerId)
     {
-        var result = new List<DrogeVehicle>();
+        var sw = Stopwatch.StartNew();
+        var result = new MultipleVehicleResponse()
+        {
+            DrogeVehicles = []
+        };
         var dbVehicles = _database.Vehicles.Where(u => u.CustomerId == customerId && u.DeletedOn == null).OrderBy(x => x.Order);
         foreach (var dbVehicle in dbVehicles)
         {
-            result.Add(new DrogeVehicle
+            result.DrogeVehicles.Add(new DrogeVehicle
             {
                 Id = dbVehicle.Id,
                 Name = dbVehicle.Name,
@@ -34,6 +38,11 @@ public class VehicleService : IVehicleService
                 IsActive = dbVehicle.IsActive,
             });
         }
+
+        result.Success = true;
+        result.TotalCount = result.DrogeVehicles.Count;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
 
         return result;
     }
@@ -143,7 +152,8 @@ public class VehicleService : IVehicleService
     {
         var sw = Stopwatch.StartNew();
         var result = new DrogeLinkVehicleTrainingResponse();
-        if (link.Id is null)
+        var foundLinks = await _database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.VehicleId == link.VehicleId && x.RoosterTrainingId == link.RoosterTrainingId).ToListAsync();
+        if (foundLinks.Count == 0)
         {
             var newId = Guid.NewGuid();
             _database.LinkVehicleTraining.Add(new DbLinkVehicleTraining
@@ -154,26 +164,28 @@ public class VehicleService : IVehicleService
                 CustomerId = customerId,
                 VehicleId = link.VehicleId,
             });
-            result.Success = (await _database.SaveChangesAsync()) > 0;
             link.Id = newId;
-            result.DrogeLinkVehicleTraining = link;
         }
         else
         {
-            var foundLink = await _database.LinkVehicleTraining.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == link.Id);
-            if (foundLink is null)
+            var first = true;
+            foreach (var foundLink in foundLinks)
             {
-                _logger.LogWarning("Link {LinkId} was not found", link.Id);
-                result.DrogeLinkVehicleTraining = link;
-            }
-            else
-            {
-                foundLink.IsSelected = link.IsSelected;
-                _database.LinkVehicleTraining.Update(foundLink);
-                result.Success = (await _database.SaveChangesAsync()) > 0;
-                result.DrogeLinkVehicleTraining = link;
+                if (first)
+                {
+                    first = false;
+                    link.Id = foundLink.Id;
+                    foundLink.IsSelected = link.IsSelected;
+                    _database.LinkVehicleTraining.Update(foundLink);
+                }
+                else
+                {
+                    _database.LinkVehicleTraining.Remove(foundLink);
+                }
             }
         }
+        result.DrogeLinkVehicleTraining = link;
+        result.Success = (await _database.SaveChangesAsync()) > 0;
 
         if (!link.IsSelected)
         {

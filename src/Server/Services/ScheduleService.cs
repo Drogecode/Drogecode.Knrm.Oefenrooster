@@ -454,7 +454,7 @@ public class ScheduleService : IScheduleService
                                 Name = user.Name ?? "Name not found",
                                 PlannedFunctionId = avaUser.UserFunctionId ?? user.UserFunctionId,
                                 UserFunctionId = user.UserFunctionId,
-                                VehicleId = training.LinkVehicleTrainings?.Where(x => x.IsSelected).Any(x => x.VehicleId == avaUser.VehicleId) ?? false ? avaUser.VehicleId : null,
+                                VehicleId = avaUser.VehicleId,
                                 Buddy = avaUser.User?.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name,
                             });
                             if (countPerUser && training.CountToTrainingTarget && scheduleDate.Month == forMonth && avaUser.Assigned == true)
@@ -553,13 +553,18 @@ public class ScheduleService : IScheduleService
             {
                 var veh = training.LinkVehicleTrainings.FirstOrDefault(x => x.VehicleId == vehicle.Id);
                 if (!veh!.IsSelected) continue;
-                vehiclePrev = vehicle;
                 if (vehicle.IsDefault)
+                {
+                    vehiclePrev = vehicle;
                     break;
+                }
+
+                vehiclePrev ??= vehicle;
             }
             else if (vehicle.IsDefault)
             {
                 vehiclePrev = vehicle;
+                break;
             }
         }
 
