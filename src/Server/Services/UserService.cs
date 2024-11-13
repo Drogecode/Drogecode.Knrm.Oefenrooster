@@ -259,7 +259,7 @@ public class UserService : IUserService
     {
         foreach (var user in existingUsers)
         {
-            var dbUser = await _database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null && !u.IsSystemUser);
+            var dbUser = await _database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null && !u.IsSystemUser && u.SyncedFromSharePoint);
             if (dbUser is not null)
             {
                 dbUser.DeletedOn = DateTime.UtcNow;
