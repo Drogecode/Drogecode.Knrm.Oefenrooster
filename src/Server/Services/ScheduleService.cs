@@ -382,7 +382,7 @@ public class ScheduleService : IScheduleService
         var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
         var trainings = await _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
-            .Include(x => x.LinkVehicleTrainings!.Where(y => y.IsSelected))
+            .Include(x => x.LinkVehicleTrainings)
             .OrderBy(x => x.DateStart)
             .AsSingleQuery().ToListAsync(clt);
         var availables = await _database.RoosterAvailables
