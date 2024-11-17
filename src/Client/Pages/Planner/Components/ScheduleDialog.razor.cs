@@ -31,13 +31,14 @@ public sealed partial class ScheduleDialog : IDisposable
     [Parameter] public MainLayout MainLayout { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
-    private List<DrogeVehicle>? _vehicleInfoForThisTraining;
+    private List<DrogeVehicle> _vehicleInfoForThisTraining = [];
     private Guid? _currentUserId = null;
     private bool _plannerIsUpdated;
     private bool _showWoeps;
     private bool _canEdit;
     private bool _authEditOtherUser;
     private bool _showPadlock;
+    private bool _isLoading = true;
     private int _vehicleCount;
     private int _colmn1 = 2;
     private int _colmn2 = 3;
@@ -50,6 +51,7 @@ public sealed partial class ScheduleDialog : IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
+        _isLoading = true;
         Task<GetPlannedTrainingResponse?>? latestVersionTask = null;
         if (Planner.TrainingId is not null && !Planner.TrainingId.Equals(Guid.Empty))
             latestVersionTask = _scheduleRepository.GetPlannedTrainingById(Planner.TrainingId, _cls.Token);
@@ -61,7 +63,7 @@ public sealed partial class ScheduleDialog : IDisposable
             _linkVehicleTraining = await _vehicleRepository.GetForDefaultAsync(Planner.DefaultId ?? throw new ArgumentNullException("Planner.DefaultId"));
         if (Vehicles != null && _linkVehicleTraining != null)
         {
-            _vehicleInfoForThisTraining = new();
+            _vehicleInfoForThisTraining = [];
             var count = 0;
             foreach (var vehicle in Vehicles)
             {
@@ -110,6 +112,8 @@ public sealed partial class ScheduleDialog : IDisposable
         {
             _showPadlock = true;
         }
+
+        _isLoading = false;
         MudDialog.StateHasChanged();
     }
 

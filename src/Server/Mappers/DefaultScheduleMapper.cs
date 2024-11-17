@@ -12,6 +12,7 @@ public static class DefaultScheduleMapper
         {
             Id = defaultSchedule.Id,
             RoosterTrainingTypeId = defaultSchedule.RoosterTrainingTypeId,
+            VehicleIds = defaultSchedule.VehicleIds,
             WeekDay = defaultSchedule.WeekDay,
             TimeStart = TimeOnly.FromTimeSpan(defaultSchedule.TimeStart?? throw new ArgumentNullException("TimeStart is null")),
             TimeEnd = TimeOnly.FromTimeSpan(defaultSchedule.TimeEnd?? throw new ArgumentNullException("TimeEnd is null")),
@@ -22,7 +23,7 @@ public static class DefaultScheduleMapper
             CustomerId = customerId,
             TimeZone = timeZone,
             ShowTime = defaultSchedule.ShowTime,
-            Name = defaultSchedule.Name
+            Name = defaultSchedule.Name,
         };
         if (dbRoosterDefault.ValidFrom.Kind == DateTimeKind.Unspecified)
             dbRoosterDefault.ValidFrom = dbRoosterDefault.ValidFrom.DateTimeWithZone(timeZone).ToUniversalTime();

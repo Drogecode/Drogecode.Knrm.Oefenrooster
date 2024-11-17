@@ -74,7 +74,8 @@ public class UserService : IUserService
                 Name = userName,
                 Email = userEmail,
                 CreatedOn = DateTime.UtcNow,
-                CustomerId = customerId
+                CustomerId = customerId,
+                SyncedFromSharePoint = true,
             };
             if (externalId is not null)
                 newUser.ExternalId = externalId;
