@@ -161,6 +161,46 @@
           }
         }
       }
+    },
+    "/api/ReportTraining/distinct/{column}": {
+      "get": {
+        "tags": [
+          "ReportTraining"
+        ],
+        "operationId": "Distinct",
+        "parameters": [
+          {
+            "name": "column",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DistinctReport"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DistinctResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DistinctResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DistinctResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -241,6 +281,46 @@
             "items": {
               "$ref": "#/components/schemas/AnalyzeMonthDetails"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DistinctReport": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "DistinctResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
             "nullable": true
           }
         },

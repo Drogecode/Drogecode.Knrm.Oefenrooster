@@ -58,12 +58,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<DistinctResponse> DistinctAsync(DistinctReportAction column);
+        System.Threading.Tasks.Task<DistinctResponse> DistinctAsync(DistinctReport column);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<DistinctResponse> DistinctAsync(DistinctReportAction column, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<DistinctResponse> DistinctAsync(DistinctReport column, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -371,7 +371,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<DistinctResponse> DistinctAsync(DistinctReportAction column)
+        public virtual System.Threading.Tasks.Task<DistinctResponse> DistinctAsync(DistinctReport column)
         {
             return DistinctAsync(column, System.Threading.CancellationToken.None);
         }
@@ -379,7 +379,7 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<DistinctResponse> DistinctAsync(DistinctReportAction column, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<DistinctResponse> DistinctAsync(DistinctReport column, System.Threading.CancellationToken cancellationToken)
         {
             if (column == null)
                 throw new System.ArgumentNullException("column");

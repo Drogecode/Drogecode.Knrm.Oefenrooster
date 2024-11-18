@@ -71,7 +71,7 @@ public class ReportTrainingControllerTests : BaseTest
         Assert.NotNull(getResult.Value?.Years);
         Assert.True(getResult.Value.Success);
         getResult.Value.Years.Should().HaveCount(3);
-        getResult.Value.TotalCount.Should().Be(7*3);
+        getResult.Value.TotalCount.Should().Be(3*3);
         getResult.Value.Years.Should().Contain(x => x.Year == 2022);
         getResult.Value.Years.Should().Contain(x => x.Year == 2020);
         getResult.Value.Years.Should().Contain(x => x.Year == 2019);

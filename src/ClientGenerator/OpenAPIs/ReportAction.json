@@ -174,7 +174,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/DistinctReportAction"
+              "$ref": "#/components/schemas/DistinctReport"
             }
           }
         ],
@@ -323,10 +323,11 @@
         },
         "additionalProperties": false
       },
-      "DistinctReportAction": {
+      "DistinctReport": {
         "enum": [
           0,
-          1
+          1,
+          2
         ],
         "type": "integer",
         "format": "int32"

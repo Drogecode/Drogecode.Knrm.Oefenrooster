@@ -21,10 +21,12 @@
             </MudPaper>
         </MudTabPanel>
         <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
-            <MudTabPanel Text="@L["Month charts"]">
-                <MudText Typo="Typo.h3">Komt er nog aan</MudText>
-            </MudTabPanel>
             <MudTabPanel Text="@L["User table"]">
+                <MudSelect T="string">
+                    
+                </MudSelect>
+            </MudTabPanel>
+            <MudTabPanel Text="@L["Month charts"]">
                 <MudText Typo="Typo.h3">Komt er nog aan</MudText>
             </MudTabPanel>
         </AuthorizeView>
