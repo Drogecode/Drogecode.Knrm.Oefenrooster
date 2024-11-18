@@ -6,10 +6,11 @@
         <MudAlert Severity="@item.Severity" Variant="Variant.Filled">@item.Text</MudAlert>
     }
 }
-<div class="d-none d-md-flex">
-    @if (_initialized)
-    {
-        <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" CurrentDay="_firstMonth" Outlined ButtonVariant="Variant.Text" ShowDay="false" ShowWeek="false" ShowTodayButton="true">
+@if (_initialized)
+{
+    <div class="d-none d-md-flex">
+        <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" CurrentDay="_firstMonth" Outlined ButtonVariant="Variant.Text" ShowDay="false" ShowWeek="false"
+                     ShowTodayButton="true">
             <CellTemplate>
                 @switch (context)
                 {
@@ -35,54 +36,62 @@
                 }
             </CellTemplate>
         </MudCalendar>
-    }
-</div>
-<div class="d-md-none">
-    <MonthSelector Month="_month" MonthChanged="SetMonth" CurrentMonth="_currentMonth"/>
-    <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-        @if (_month == null)
-        {
-            <MudSkeleton/>
-            <MudSkeleton/>
-            <MudSkeleton/>
-            <MudSkeleton/>
-        }
-        else
-        {
-            @foreach (var ev in _events.Where(x =>
-                              x.Start.Month == _month.Value.Month &&
-                              x.Start.Year == _month.Value.Year &&
-                              ((x.End.Equals(DateTime.MinValue) && x.Start >= DateTime.Today) || x.End >= DateTime.Today))
-                          .OrderBy(x => x.Start))
+    </div>
+    <div class="d-md-none">
+        <MonthSelector Month="_month" MonthChanged="SetMonth" CurrentMonth="_currentMonth"/>
+        <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+            @if (_month == null)
             {
-                <div class="flex-1">
-                    @switch (ev)
-                    {
-                        case ScheduleCalendarItem item:
-                        {
-                            var training = item.Training;
-                            if (training is not null)
-                            {
-                                <ScheduleCard MinWidth="300px" MaxWidth="600px" Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowDate="true" ShowDayOfWeek="true" ShowPastBody="!_currentMonth"/>
-                            }
-
-                            break;
-                        }
-                        case RoosterItemDayCalendarItem { ItemDay: not null } dayItem:
-                        {
-                            var color = DayItemHelper.DayItemTypeColor(dayItem.ItemDay.Type);
-                            <div class="flex gap-1" style="min-width:300px;max-width:600px;">
-                                <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@color" Size="Size.Small"/>
-                                <div class="@(dayItem.UserDeleted ? "text-red-600" : "")">@dayItem.ItemDay.Text - @dayItem.ItemDay.DateStart!.Value.ToString("dddd dd MMM")</div>
-                            </div>
-                            break;
-                        }
-                    }
-                </div>
+                <MudSkeleton/>
+                <MudSkeleton/>
+                <MudSkeleton/>
+                <MudSkeleton/>
             }
-        }
-    </MudPaper>
-</div>
-<AuthorizeView Roles="@AccessesNames.AUTH_users_counter" Context="inner">
-    <ScheduleCounter Users="Users" Functions="Functions" UserTrainingCounter="_userTrainingCounter"/>
-</AuthorizeView>
+            else
+            {
+                @foreach (var ev in _events.Where(x =>
+                                      x.Start.Month == _month.Value.Month &&
+                                      x.Start.Year == _month.Value.Year &&
+                                      ((x.End.Equals(DateTime.MinValue) && x.Start >= DateTime.Today) || x.End >= DateTime.Today))
+                                  .OrderBy(x => x.Start))
+                {
+                    <div class="flex-1">
+                        @switch (ev)
+                        {
+                            case ScheduleCalendarItem item:
+                            {
+                                var training = item.Training;
+                                if (training is not null)
+                                {
+                                    <ScheduleCard MinWidth="300px" MaxWidth="600px" Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes"
+                                                  ShowDate="true" ShowDayOfWeek="true" ShowPastBody="!_currentMonth"/>
+                                }
+
+                                break;
+                            }
+                            case RoosterItemDayCalendarItem { ItemDay: not null } dayItem:
+                            {
+                                var color = DayItemHelper.DayItemTypeColor(dayItem.ItemDay.Type);
+                                <div class="flex gap-1" style="min-width:300px;max-width:600px;">
+                                    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@color" Size="Size.Small"/>
+                                    <div class="@(dayItem.UserDeleted ? "text-red-600" : "")">@dayItem.ItemDay.Text - @dayItem.ItemDay.DateStart!.Value.ToString("dddd dd MMM")</div>
+                                </div>
+                                break;
+                            }
+                        }
+                    </div>
+                }
+            }
+        </MudPaper>
+    </div>
+    <AuthorizeView Roles="@AccessesNames.AUTH_users_counter" Context="inner">
+        <ScheduleCounter Users="Users" Functions="Functions" UserTrainingCounter="_userTrainingCounter"/>
+    </AuthorizeView>
+}
+else
+{
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+}

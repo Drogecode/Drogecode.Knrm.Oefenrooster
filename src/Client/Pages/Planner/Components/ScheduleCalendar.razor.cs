@@ -41,19 +41,15 @@ public sealed partial class ScheduleCalendar : IDisposable
     private DateTime? _month;
     private DateTime _firstMonth = DateTime.Today;
 
-    protected override async Task OnInitializedAsync()
-    {
-        _firstMonth = await SessionExpireService.GetSelectedMonth(_cls.Token);
-        Global.NewTrainingAddedAsync += HandleNewTraining;
-        _user = await UserRepository.GetCurrentUserAsync();
-        await SetMonth(_firstMonth);
-        _initialized = true;
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            _firstMonth = await SessionExpireService.GetSelectedMonth(_cls.Token);
+            Global.NewTrainingAddedAsync += HandleNewTraining;
+            _user = await UserRepository.GetCurrentUserAsync();
+            await SetMonth(_firstMonth);
+            _initialized = true;
             _timeZone = await CustomerSettingRepository.GetTimeZone(_cls.Token);
             StateHasChanged();
         }

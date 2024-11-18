@@ -39,8 +39,9 @@ public class ReportTrainingService : IReportTrainingService
             .Select(x => new { x.Start })
             .OrderByDescending(x => x.Start)
             .ToListAsync(clt);
-        var result = new AnalyzeYearChartAllResponse { TotalCount = allReports.Count() };
+        var result = new AnalyzeYearChartAllResponse();
         List<int> years = new();
+        var count = 0;
         foreach (var report in allReports)
         {
             var start = report.Start.ToDateTimeTimeZone(timeZone).ToDateTime();
@@ -68,11 +69,13 @@ public class ReportTrainingService : IReportTrainingService
 
             var month = year.Months.First(x => x.Month == start.Month);
             month.Count++;
+            count++;
         }
 
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         result.Success = true;
+        result.TotalCount = count;
         return result;
     }
 }
