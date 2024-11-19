@@ -162,4 +162,13 @@
   <data name="Vehicles" xml:space="preserve">
     <value>Vehicles</value>
   </data>
+  <data name="Default schedule" xml:space="preserve">
+    <value>Default schedule</value>
+  </data>
+  <data name="User functions" xml:space="preserve">
+    <value>User functions</value>
+  </data>
+  <data name="Training types" xml:space="preserve">
+    <value>Training types</value>
+  </data>
 </root>

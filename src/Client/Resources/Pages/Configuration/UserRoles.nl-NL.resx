@@ -18,28 +18,7 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="Name" xml:space="preserve">
-        <value>Naam</value>
-    </data>
-    <data name="Order" xml:space="preserve">
-        <value>Volgorde</value>
-    </data>
-    <data name="TrainingOnly" xml:space="preserve">
-        <value>Alleen oefeningen</value>
-    </data>
-    <data name="Active" xml:space="preserve">
-        <value>Actief</value>
-    </data>
-    <data name="Default" xml:space="preserve">
-        <value>Standaard</value>
-    </data>
-    <data name="RoleId" xml:space="preserve">
-        <value>Rol id</value>
-    </data>
-    <data name="TrainingTarget" xml:space="preserve">
-        <value>Verplichte oefeningen per maand</value>
-    </data>
-    <data name="Add new function" xml:space="preserve">
-        <value>Voeg nieuwe functie toe</value>
+    <data name="Add new role" xml:space="preserve">
+        <value>Voeg nieuwe rol toe</value>
     </data>
 </root>

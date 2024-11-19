@@ -114,13 +114,17 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>DefaultConfig.nl-NL.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Configuration\Vehicle.nl-NL.resx">
+	  <EmbeddedResource Update="Resources\Pages\Configuration\Vehicles.nl-NL.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>Vehicle.nl-NL.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Resources\Pages\Configuration\UserFunctions.nl-NL.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>UserFunctions.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Pages\Configuration\UserRoles.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>UserRoles.nl-NL.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>
 	
@@ -180,15 +184,20 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>DefaultConfig.nl-NL.resx</DependentUpon>
 	  </Compile>
-	  <Compile Update="Resources\Pages\Configuration\Vehicle.nl-NL.Designer.cs">
+	  <Compile Update="Resources\Pages\Configuration\Vehicles.nl-NL.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Vehicle.nl-NL.resx</DependentUpon>
+	    <DependentUpon>Vehicles.nl-NL.resx</DependentUpon>
 	  </Compile>
 	  <Compile Update="Resources\Pages\Configuration\UserFunctions.nl-NL.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>UserFunctions.nl-NL.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Pages\Configuration\UserRoles.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>UserRoles.nl-NL.resx</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
