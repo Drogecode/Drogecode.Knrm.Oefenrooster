@@ -16,6 +16,6 @@
 }
 @if (_selectedForward is not null)
 {
-    <MudTextField Label="@L["Message"]" @bind-value="@_message" />
+    <MudTextField T="string?" Label="@L["Message"]" @bind-value="@_message" />
     <MudButton OnClick="SendMessage" Disabled="_isSending">@L["Send"]</MudButton>
 }
