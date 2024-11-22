@@ -39,6 +39,9 @@
 
     <hr/>
     <MudButton OnClick="@(() => Navigation.NavigateTo("/precom/forward-list"))">@L["Forward webhooks"]</MudButton>
+    <AuthorizeView Roles="@AccessesNames.AUTH_precom_manual" Context="inner">
+        <MudButton OnClick="@(() => Navigation.NavigateTo("/precom/send/forward"))">@L["Send message to forward"]</MudButton>
+    </AuthorizeView>
 
     if (!_showHowTo)
     {

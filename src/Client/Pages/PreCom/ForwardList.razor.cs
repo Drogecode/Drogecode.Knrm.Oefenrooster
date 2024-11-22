@@ -14,6 +14,13 @@ public sealed partial class ForwardList : IDisposable
     [Inject, NotNull] private IPreComClient? PreComClient { get; set; }
     private CancellationTokenSource _cls = new();
     private MultiplePreComForwardsResponse? _forwards;
+
+    private readonly DialogOptions _editOptions = new()
+    {
+        MaxWidth = MaxWidth.Large,
+        FullWidth = true
+    };
+
     private bool _busy;
     private int _currentPage = 1;
     private readonly int _count = 30;
@@ -71,6 +78,7 @@ public sealed partial class ForwardList : IDisposable
         {
             _forwards = await PreComRepository.GetAllForwards(_count, _skip, _cls.Token);
         }
+
         DebugHelper.WriteLine($"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 

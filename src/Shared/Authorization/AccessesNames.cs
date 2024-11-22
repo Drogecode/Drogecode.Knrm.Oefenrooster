@@ -44,6 +44,9 @@ public struct AccessesNames
     
     public const string GROUP_MAIL = "Mail";
     public const string AUTH_mail_invite_external = "mail_invite_external";
+    
+    public const string GROUP_PRECOM = "PreCom";
+    public const string AUTH_precom_manual = "precom_manual";
 
     public const string GROUP_GLOBAL = "global";
     public const string AUTH_show_c_footer = "showCfooter";

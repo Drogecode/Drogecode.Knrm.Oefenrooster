@@ -13,4 +13,5 @@ public interface IPreComService
     Task<PutPreComForwardResponse> PutForward(PreComForward forward, Guid customerId, Guid userId, CancellationToken clt);
     Task<PatchPreComForwardResponse> PatchForward(PreComForward forward, Guid customerId, Guid userId, CancellationToken clt);
     Task<MultiplePreComForwardsResponse> GetAllForwards(int take, int skip, Guid userId, Guid customerId, CancellationToken clt);
+    Task<PreComForward?> GetForward(Guid forwardId, Guid customerId, CancellationToken clt);
 }

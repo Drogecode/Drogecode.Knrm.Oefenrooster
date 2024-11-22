@@ -23,4 +23,15 @@ public class PreComRepository
         var result = (await _preComClient.AllForwardsAsync(take, skip, clt));
         return result;
     }
+
+    public async Task<MultiplePreComForwardsResponse?> AllForwardsForUserAsync(Guid userId, int take, int skip, CancellationToken clt)
+    {
+        var result = (await _preComClient.AllForwardsForUserAsync(userId, take, skip, clt));
+        return result;
+    }
+    public async Task<bool> PostForwardAsync(PostForwardRequest body, CancellationToken clt)
+    {
+        var result = (await _preComClient.PostForwardAsync(body, clt));
+        return result;
+    }
 }

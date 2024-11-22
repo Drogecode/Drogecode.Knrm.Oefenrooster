@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Text.Json;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -168,6 +170,69 @@ public class PreComController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var result = await _preComService.GetAllForwards(take, skip, userId, customerId, clt);
             return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in AllForwards");
+            return BadRequest();
+        }
+    }
+
+
+    [HttpGet]
+    [Authorize(Roles = AccessesNames.AUTH_precom_manual)]
+    [Route("forwards/{userId:guid}/{take:int}/{skip:int}")]
+    public async Task<ActionResult<MultiplePreComForwardsResponse>> AllForwardsForUser(Guid userId, int take, int skip, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var result = await _preComService.GetAllForwards(take, skip, userId, customerId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in AllForwards");
+            return BadRequest();
+        }
+    }
+
+    [HttpPost]
+    [Authorize(Roles = AccessesNames.AUTH_precom_manual)]
+    [Route("forward")]
+    public async Task<ActionResult<bool>> PostForward([FromBody] PostForwardRequest body, CancellationToken clt = default)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(body.Message))
+            {
+                return false;
+            }
+
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var client = _clientFactory.CreateClient();
+            var forward = await _preComService.GetForward(body.ForwardId, customerId, clt);
+            if (forward == null)
+            {
+                return false;
+            }
+
+            var now = DateTime.UtcNow;
+            var baseMessage =
+                "{\"android_channel_id\":\"chirp\",\"content- available\":\"1\",\"message\":\"{message}\",\"messageData\":{\"MsgOutID\":\"135615552\",\"ControlID\":\"f\",\"Timestamp\":\"{datetime}\",\"notId\":\"135615552\",\"soundname\":\"chirp\",\"vibrationPattern\":\"[150,545]\",\"from\":\"788942585741\",\"messageId\":\"0:1694527951397184%af1e7638f9fd7ecd\",\"sentTime\":\"{sendtime}\",\"ttl\":2419200}}";
+            var message = baseMessage
+                .Replace("{message}", body.Message)
+                .Replace("{datetime}", now.ToString("o")) // 2024-03-01T20:46:08.2 
+                .Replace("{sendtime}", now.ConvertToTimestamp().ToString()); // 1709322368215
+            var asObject = JsonSerializer.Deserialize<object>(message);
+            await client.PostAsJsonAsync(forward.ForwardUrl, asObject, clt);
+            return true;
         }
         catch (Exception ex)
         {

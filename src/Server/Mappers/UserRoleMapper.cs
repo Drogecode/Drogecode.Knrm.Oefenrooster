@@ -102,6 +102,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_mail_invite_external:
                         drogeUserRole.AUTH_mail_invite_external = true;
                         break;
+                    case AccessesNames.AUTH_precom_manual:
+                        drogeUserRole.AUTH_precom_manual = true;
+                        break;
                     case AccessesNames.AUTH_show_c_footer:
                         drogeUserRole.AUTH_show_c_footer = true;
                         break;
@@ -170,6 +173,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_dashboard_qr).Append(',');
             if (userRole.AUTH_mail_invite_external)
                 sb.Append(AccessesNames.AUTH_mail_invite_external).Append(',');
+            if (userRole.AUTH_precom_manual)
+                sb.Append(AccessesNames.AUTH_precom_manual).Append(',');
             if (userRole.AUTH_show_c_footer)
                 sb.Append(AccessesNames.AUTH_show_c_footer).Append(',');
 
