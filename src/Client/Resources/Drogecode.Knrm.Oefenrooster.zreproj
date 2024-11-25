@@ -20,9 +20,27 @@
     </description>
   </configuration>
   <fileGroups>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="55e3adfb-b420-459f-8d7e-3f21b9bd3f02">
+      <file filePath="Pages\Dashboard\Components\ActionsTab.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Dashboard\Components\ActionsTab.en-US.resx" uniqueID="7cc15389-34a4-4769-b7f8-945d2f7f8b42" />
+      <file filePath="Pages\Dashboard\Components\ActionsTab.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Dashboard\Components\ActionsTab.nl-NL.resx" uniqueID="4e816d95-0eb0-472d-9468-24d9f467d889" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="2977ccbf-0082-4c75-a08b-5845baf2611f">
+      <file filePath="Pages\PreCom\Alerts.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\PreCom\Alerts.en-US.resx" uniqueID="9372e87a-571d-489e-9086-9174f9595a13" />
+      <file filePath="Pages\PreCom\Alerts.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\PreCom\Alerts.nl-NL.resx" uniqueID="fdfc69cd-7599-405b-93bb-b4dc184b29b7" />
+      <remarks>
+      </remarks>
+    </fileGroup>
     <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="6dfd39aa-ceee-415f-9a51-e68f2d624cd8">
       <file filePath="App.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\App.en-US.resx" uniqueID="52653914-6e55-47c7-b3db-a302ba3568cd" />
       <file filePath="App.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\App.nl-NL.resx" uniqueID="2556f0e4-46d5-4f8c-83ba-7decfe7ad334" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="5858796c-da6f-45fc-806b-388fda3d96c9">
+      <file filePath="Pages\Planner\Components\CalendarCard.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\CalendarCard.en-US.resx" uniqueID="2463715c-dc53-496b-8f3a-69d2694f3290" />
+      <file filePath="Pages\Planner\Components\CalendarCard.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\CalendarCard.nl-NL.resx" uniqueID="de8f43ca-78ea-45ca-a8e1-cca450eec32b" />
       <remarks>
       </remarks>
     </fileGroup>
@@ -32,9 +50,51 @@
       <remarks>
       </remarks>
     </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="ce83b6e0-7fc9-4905-85a2-04ff6be1c2f7">
+      <file filePath="Components\DrogeCode\DateToString.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Components\DrogeCode\DateToString.en-US.resx" uniqueID="433ecdc5-c346-4b05-ac88-6693d52e4bf4" />
+      <file filePath="Components\DrogeCode\DateToString.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Components\DrogeCode\DateToString.nl-NL.resx" uniqueID="73bc7784-811d-4df6-9c9a-966218e6c08a" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="241615d0-db84-44d1-9e99-939ac44c5ddb">
+      <file filePath="Pages\Configuration\DayItem.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\DayItem.en-US.resx" uniqueID="aebadb39-6207-43ae-b838-2658c5f331c3" />
+      <file filePath="Pages\Configuration\DayItem.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\DayItem.nl-NL.resx" uniqueID="25b027d9-9a74-4418-ab70-ee99f363c9a1" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="8fde0e6d-6ed8-4159-bc01-a426751fd1d1">
+      <file filePath="Pages\Configuration\Components\DayItemDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Components\DayItemDialog.en-US.resx" uniqueID="7513f6e2-dd9b-43bc-ad2f-4ba128764776" />
+      <file filePath="Pages\Configuration\Components\DayItemDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Components\DayItemDialog.nl-NL.resx" uniqueID="d1b78653-71b4-4b8e-a349-987f060051a4" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="c65b79bd-bdaa-4836-a828-a327b9c3e95d">
+      <file filePath="Pages\User\Defaults.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Defaults.en-US.resx" uniqueID="ac2d53ad-f281-480d-af2e-ef37577f360d" />
+      <file filePath="Pages\User\Defaults.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Defaults.nl-NL.resx" uniqueID="99a7f85d-4d1d-4c07-a627-faa40138cd0f" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="f2736b2c-ba86-4f1d-b4b4-24dc5fee8c37">
+      <file filePath="Pages\Planner\Components\EditTrainingDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\EditTrainingDialog.en-US.resx" uniqueID="f559f2a0-dd6d-4ccd-9b7f-4c34fc493581" />
+      <file filePath="Pages\Planner\Components\EditTrainingDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\EditTrainingDialog.nl-NL.resx" uniqueID="459983bc-c778-4b26-a3f0-016dbfe3d07e" />
+      <remarks>
+      </remarks>
+    </fileGroup>
     <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="c4ed6992-7562-40fb-8110-307074877061">
       <file filePath="Pages\Configuration\Components\EditUserDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Components\EditUserDialog.en-US.resx" uniqueID="f5371e38-60c4-47b5-b7fc-6330d97bf129" />
       <file filePath="Pages\Configuration\Components\EditUserDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Components\EditUserDialog.nl-NL.resx" uniqueID="fc11dab1-44ee-4799-b2e9-8d850c7c356e" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="9748c361-5629-4e79-bb3c-e6d4ef8433a8">
+      <file filePath="Pages\User\Components\GroupDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Components\GroupDialog.en-US.resx" uniqueID="398ac435-e76f-416b-9dfd-2a2434a02b42" />
+      <file filePath="Pages\User\Components\GroupDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Components\GroupDialog.nl-NL.resx" uniqueID="9fb98a76-8bd9-42d0-8b70-f7a7ebd00527" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="da4c4fb6-50fc-454b-aaa8-c020f60d8936">
+      <file filePath="Pages\Dashboard\Index.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Dashboard\Index.en-US.resx" uniqueID="7f55dc5b-aad9-4e1f-94de-1e0c297069fb" />
+      <file filePath="Pages\Dashboard\Index.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Dashboard\Index.nl-NL.resx" uniqueID="0ce8ffc7-c52e-433a-a6d1-fad9a4069319" />
       <remarks>
       </remarks>
     </fileGroup>
@@ -56,9 +116,69 @@
       <remarks>
       </remarks>
     </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="ad84449f-edc1-4814-86de-0085935c5fe8">
+      <file filePath="Pages\Planner\Schedule.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Schedule.en-US.resx" uniqueID="cb6b55f4-a806-4795-b8a4-740fb6bb1a9b" />
+      <file filePath="Pages\Planner\Schedule.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Schedule.nl-NL.resx" uniqueID="e3cf03c5-4452-4761-9caa-662cb8eccf98" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="824135fc-462b-44ad-9a5b-4ad7f6d6b222">
+      <file filePath="Pages\Planner\Components\ScheduleCard.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleCard.en-US.resx" uniqueID="9a0352a0-6daa-47fd-a967-a9fb8592d822" />
+      <file filePath="Pages\Planner\Components\ScheduleCard.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleCard.nl-NL.resx" uniqueID="acd972c6-aacb-4c89-89f0-62d57eef2db9" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="88a66a0d-8aad-47b9-b593-24d144035dda">
+      <file filePath="Pages\Planner\Components\ScheduleCounter.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleCounter.en-US.resx" uniqueID="3f4bf486-8656-49d7-9fb0-69a5997f35c1" />
+      <file filePath="Pages\Planner\Components\ScheduleCounter.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleCounter.nl-NL.resx" uniqueID="5b3b4be7-aa2a-4980-a43f-3c3f02eb8a9d" />
+      <remarks>
+      </remarks>
+    </fileGroup>
     <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="8ece9a15-512f-4023-b1ef-b559b1eb8e47">
       <file filePath="Pages\Planner\Components\ScheduleDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleDialog.en-US.resx" uniqueID="edc8971f-c4c0-4073-8ed6-74a200e8755a" />
       <file filePath="Pages\Planner\Components\ScheduleDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleDialog.nl-NL.resx" uniqueID="9507753d-0463-4d40-82f2-f15f6546e04b" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="47d942c2-6752-4fb0-98ad-433b60654cac">
+      <file filePath="Pages\Planner\Components\ScheduleTable.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleTable.en-US.resx" uniqueID="42c315f7-281b-401b-b523-2bb49a0a412f" />
+      <file filePath="Pages\Planner\Components\ScheduleTable.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleTable.nl-NL.resx" uniqueID="f5418a5a-282f-4c49-aec5-7346f20dc866" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="cde09e71-e717-411a-96ca-93daae4fe785">
+      <file filePath="Components\DrogeCode\SelectMultipleUsers.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Components\DrogeCode\SelectMultipleUsers.en-US.resx" uniqueID="043497da-6975-4aba-b7df-a560a1772209" />
+      <file filePath="Components\DrogeCode\SelectMultipleUsers.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Components\DrogeCode\SelectMultipleUsers.nl-NL.resx" uniqueID="955fef8e-298a-4f90-b4bb-9771e729baa3" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="14a88c67-7dca-4914-a56c-f41a0968381f">
+      <file filePath="Shared\Layout\Theming.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Shared\Layout\Theming.en-US.resx" uniqueID="879dc116-4d4c-4c66-88a2-fa179969eafe" />
+      <file filePath="Shared\Layout\Theming.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Shared\Layout\Theming.nl-NL.resx" uniqueID="0b54140d-54e5-430d-ac2d-8c7735c2ec92" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="bf0b0626-0e32-48ff-b250-33007d222c32">
+      <file filePath="Pages\Planner\Components\TrainingHistoryDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\TrainingHistoryDialog.en-US.resx" uniqueID="8dfdf159-1638-4520-8456-1a038eed689f" />
+      <file filePath="Pages\Planner\Components\TrainingHistoryDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\TrainingHistoryDialog.nl-NL.resx" uniqueID="fd9126c9-6ede-47a7-ac36-7172984cd953" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="d42af36f-55f2-4de5-9848-9423dba56145">
+      <file filePath="Pages\Configuration\Components\TrainingTypeDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Components\TrainingTypeDialog.en-US.resx" uniqueID="54f1426b-df09-4e93-9e42-2f1ce3b7a228" />
+      <file filePath="Pages\Configuration\Components\TrainingTypeDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Components\TrainingTypeDialog.nl-NL.resx" uniqueID="1f446ee4-234e-4c0a-aa1e-3d70c2ecd564" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="65f3a95b-e04b-4813-b669-5bc2c15590ab">
+      <file filePath="Pages\Configuration\TrainingTypes.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\TrainingTypes.en-US.resx" uniqueID="15d3d774-e36d-4349-925a-0868d851a92c" />
+      <file filePath="Pages\Configuration\TrainingTypes.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\TrainingTypes.nl-NL.resx" uniqueID="28fdcb9a-cb40-4420-9b7e-bf9a967ba3ed" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="a94b00d8-503c-41d3-8ae0-237a84fdabe7">
+      <file filePath="Pages\Dashboard\Components\TrainingsTab.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Dashboard\Components\TrainingsTab.en-US.resx" uniqueID="60733b08-6db3-4cd0-acdd-9d9be3a7c6a4" />
+      <file filePath="Pages\Dashboard\Components\TrainingsTab.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Dashboard\Components\TrainingsTab.nl-NL.resx" uniqueID="f5b8d4e4-7941-41d2-ae50-8058d19d1031" />
       <remarks>
       </remarks>
     </fileGroup>
@@ -68,147 +188,117 @@
       <remarks>
       </remarks>
     </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="ce83b6e0-7fc9-4905-85a2-04ff6be1c2f7">
-      <file filePath="Components\DrogeCode\DateToString.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Components\DrogeCode\DateToString.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Components\DrogeCode\DateToString.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Components\DrogeCode\DateToString.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="cde09e71-e717-411a-96ca-93daae4fe785">
-      <file filePath="Components\DrogeCode\SelectMultipleUsers.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Components\DrogeCode\SelectMultipleUsers.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Components\DrogeCode\SelectMultipleUsers.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Components\DrogeCode\SelectMultipleUsers.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="241615d0-db84-44d1-9e99-939ac44c5ddb">
-      <file filePath="Pages\Configuration\DayItem.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\DayItem.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Configuration\DayItem.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\DayItem.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="65f3a95b-e04b-4813-b669-5bc2c15590ab">
-      <file filePath="Pages\Configuration\TrainingTypes.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\TrainingTypes.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Configuration\TrainingTypes.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\TrainingTypes.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="8fde0e6d-6ed8-4159-bc01-a426751fd1d1">
-      <file filePath="Pages\Configuration\Components\DayItemDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Components\DayItemDialog.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Configuration\Components\DayItemDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Components\DayItemDialog.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="d42af36f-55f2-4de5-9848-9423dba56145">
-      <file filePath="Pages\Configuration\Components\TrainingTypeDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Components\TrainingTypeDialog.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Configuration\Components\TrainingTypeDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Components\TrainingTypeDialog.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="da4c4fb6-50fc-454b-aaa8-c020f60d8936">
-      <file filePath="Pages\Dashboard\Index.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Dashboard\Index.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Dashboard\Index.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Dashboard\Index.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="55e3adfb-b420-459f-8d7e-3f21b9bd3f02">
-      <file filePath="Pages\Dashboard\Components\ActionsTab.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Dashboard\Components\ActionsTab.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Dashboard\Components\ActionsTab.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Dashboard\Components\ActionsTab.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="a94b00d8-503c-41d3-8ae0-237a84fdabe7">
-      <file filePath="Pages\Dashboard\Components\TrainingsTab.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Dashboard\Components\TrainingsTab.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Dashboard\Components\TrainingsTab.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Dashboard\Components\TrainingsTab.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="ad84449f-edc1-4814-86de-0085935c5fe8">
-      <file filePath="Pages\Planner\Schedule.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Schedule.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Planner\Schedule.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Schedule.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
     <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="d8715d86-8af9-4ed3-987b-86d09bcaa836">
-      <file filePath="Pages\Planner\User.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\User.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Planner\User.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\User.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\Planner\User.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\User.en-US.resx" uniqueID="bb9983e3-9fc6-4d4f-af9e-d06244620d6a" />
+      <file filePath="Pages\Planner\User.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\User.nl-NL.resx" uniqueID="41f2d171-9370-4317-be98-773707900e56" />
       <remarks>
       </remarks>
     </fileGroup>
     <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="5d327a6b-3855-43a7-b377-f847ecc305e8">
-      <file filePath="Pages\Planner\UserDetails.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\UserDetails.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Planner\UserDetails.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\UserDetails.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="5858796c-da6f-45fc-806b-388fda3d96c9">
-      <file filePath="Pages\Planner\Components\CalendarCard.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\CalendarCard.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Planner\Components\CalendarCard.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\CalendarCard.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="f2736b2c-ba86-4f1d-b4b4-24dc5fee8c37">
-      <file filePath="Pages\Planner\Components\EditTrainingDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\EditTrainingDialog.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Planner\Components\EditTrainingDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\EditTrainingDialog.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="824135fc-462b-44ad-9a5b-4ad7f6d6b222">
-      <file filePath="Pages\Planner\Components\ScheduleCard.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleCard.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Planner\Components\ScheduleCard.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleCard.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="88a66a0d-8aad-47b9-b593-24d144035dda">
-      <file filePath="Pages\Planner\Components\ScheduleCounter.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleCounter.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Planner\Components\ScheduleCounter.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleCounter.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="47d942c2-6752-4fb0-98ad-433b60654cac">
-      <file filePath="Pages\Planner\Components\ScheduleTable.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleTable.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Planner\Components\ScheduleTable.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleTable.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="bf0b0626-0e32-48ff-b250-33007d222c32">
-      <file filePath="Pages\Planner\Components\TrainingHistoryDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\TrainingHistoryDialog.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\Planner\Components\TrainingHistoryDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\TrainingHistoryDialog.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="2977ccbf-0082-4c75-a08b-5845baf2611f">
-      <file filePath="Pages\PreCom\Alerts.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\PreCom\Alerts.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\PreCom\Alerts.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\PreCom\Alerts.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <remarks>
-      </remarks>
-    </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="c65b79bd-bdaa-4836-a828-a327b9c3e95d">
-      <file filePath="Pages\User\Defaults.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Defaults.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\User\Defaults.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Defaults.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\Planner\UserDetails.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\UserDetails.en-US.resx" uniqueID="e4d6920e-6f68-4c0c-ac89-ee5ad24f2fa0" />
+      <file filePath="Pages\Planner\UserDetails.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\UserDetails.nl-NL.resx" uniqueID="942a5760-00bd-40d4-9d71-8343b68b82bb" />
       <remarks>
       </remarks>
     </fileGroup>
     <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="8d7de3f6-2b1c-4567-94f8-09b88e3c0a44">
-      <file filePath="Pages\User\Vacations.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Vacations.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\User\Vacations.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Vacations.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\User\Vacations.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Vacations.en-US.resx" uniqueID="1365b9bb-24c1-4a1f-8487-b87ebdcd30f9" />
+      <file filePath="Pages\User\Vacations.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Vacations.nl-NL.resx" uniqueID="66f6c00f-660f-48a7-9808-072abe2d9f36" />
       <remarks>
       </remarks>
     </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="9748c361-5629-4e79-bb3c-e6d4ef8433a8">
-      <file filePath="Pages\User\Components\GroupDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Components\GroupDialog.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\User\Components\GroupDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Components\GroupDialog.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Components\DrogeCode\CopyToClipboard.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Components\DrogeCode\CopyToClipboard.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Components\DrogeCode\CopyToClipboard.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Components\DrogeCode\CopyToClipboard.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
       <remarks>
       </remarks>
     </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="b2f89f9b-73aa-4540-a04c-ca8659160ef8">
-      <file filePath="Pages\User\Components\VacationDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Components\VacationDialog.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Pages\User\Components\VacationDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Components\VacationDialog.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\Configuration\DefaultConfig.en-us.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\DefaultConfig.en-us.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\Configuration\DefaultConfig.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\DefaultConfig.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
       <remarks>
       </remarks>
     </fileGroup>
-    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="14a88c67-7dca-4914-a56c-f41a0968381f">
-      <file filePath="Shared\Layout\Theming.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Shared\Layout\Theming.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
-      <file filePath="Shared\Layout\Theming.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Shared\Layout\Theming.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\Configuration\MonthItem.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\MonthItem.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\Configuration\MonthItem.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\MonthItem.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\Configuration\UserFunctions.en-us.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\UserFunctions.en-us.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\Configuration\UserFunctions.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\UserFunctions.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\Configuration\UserRoles.en-us.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\UserRoles.en-us.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\Configuration\UserRoles.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\UserRoles.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\Configuration\UserRolesEdit.en-us.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\UserRolesEdit.en-us.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\Configuration\UserRolesEdit.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\UserRolesEdit.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\Configuration\Vehicles.en-us.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Vehicles.en-us.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\Configuration\Vehicles.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Vehicles.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\Configuration\Components\MonthItemDialog.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Components\MonthItemDialog.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\Configuration\Components\MonthItemDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Configuration\Components\MonthItemDialog.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\Dashboard\Components\StatisticsTab.en-us.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Dashboard\Components\StatisticsTab.en-us.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\Dashboard\Components\StatisticsTab.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Dashboard\Components\StatisticsTab.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\Planner\Components\ScheduleCalendar.en-us.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleCalendar.en-us.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\Planner\Components\ScheduleCalendar.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\ScheduleCalendar.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\Planner\Components\TrainingMessageDialog.en-us.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\TrainingMessageDialog.en-us.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\Planner\Components\TrainingMessageDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\Planner\Components\TrainingMessageDialog.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\PreCom\ForwardList.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\PreCom\ForwardList.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\PreCom\ForwardList.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\PreCom\ForwardList.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\User\AddEditLinkMail.en-us.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\AddEditLinkMail.en-us.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\User\AddEditLinkMail.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\AddEditLinkMail.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\User\Profile.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Profile.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\User\Profile.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Profile.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\User\Components\ActivateEmailDialog.en-us.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Components\ActivateEmailDialog.en-us.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\User\Components\ActivateEmailDialog.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Components\ActivateEmailDialog.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <remarks>
+      </remarks>
+    </fileGroup>
+    <fileGroup name="" projectFolderUniqueID="00000000-0000-0000-0000-000000000000" orderPosition="0" ignoreDuringExportAndImport="False" uniqueID="00000000-0000-0000-0000-000000000000">
+      <file filePath="Pages\User\Components\VacationAdd.en-US.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Components\VacationAdd.en-US.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
+      <file filePath="Pages\User\Components\VacationAdd.nl-NL.resx" absoluteFilePath="C:\Users\Taco\source\repos\Drogecode.Knrm.Oefenrooster\src\Client\Resources\Pages\User\Components\VacationAdd.nl-NL.resx" uniqueID="00000000-0000-0000-0000-000000000000" />
       <remarks>
       </remarks>
     </fileGroup>

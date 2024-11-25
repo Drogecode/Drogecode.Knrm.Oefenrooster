@@ -6,6 +6,7 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 
 public static class DateTimeExtension
 {
+    private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     public static DateTime DateTimeWithZone(this DateTime dateTime, string timeZoneString)
     {
         var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneString);
@@ -22,5 +23,11 @@ public static class DateTimeExtension
         }
 
         return dateTime.CompareTo(DateTime.Now.Date) <= 0;
+    }
+    
+    public static long ConvertToTimestamp(this DateTime value)
+    {
+        TimeSpan elapsedTime = value - Epoch;
+        return (long) elapsedTime.TotalSeconds * 1000;
     }
 }

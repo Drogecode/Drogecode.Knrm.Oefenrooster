@@ -32,4 +32,7 @@
     <data name="TrainingTarget" xml:space="preserve">
         <value>Training target per month</value>
     </data>
+    <data name="Add new function" xml:space="preserve">
+        <value>Add new function</value>
+    </data>
 </root>

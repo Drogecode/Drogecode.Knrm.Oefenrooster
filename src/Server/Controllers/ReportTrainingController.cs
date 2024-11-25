@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics;
+using System.Security.Claims;
 using System.Text.Json;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
@@ -99,6 +100,33 @@ public class ReportTrainingController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in AnalyzeYearChartsAll");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("distinct/{column}")]
+    [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics)]
+    public async Task<ActionResult<DistinctResponse>> Distinct(DistinctReport column, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+
+            var result = await _reportTrainingService.Distinct(column, customerId, userId, clt);
+            return result;
+        }
+        catch (OperationCanceledException)
+        {
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in Distinct Training");
             return BadRequest();
         }
     }

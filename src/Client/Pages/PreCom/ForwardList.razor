@@ -3,7 +3,8 @@
 @if (_forwards is not null)
 {
     <MudDataGrid T="PreComForward" Items="_forwards.PreComForwards" Striped="true" Hover="true" ReadOnly="false" EditTrigger="@DataGridEditTrigger.Manual"
-                 StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges">
+                 StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges"
+                 EditDialogOptions="@_editOptions">
         <Columns>
             <PropertyColumn Property="x => x.CreatedOn" Title="@L["Date"]" IsEditable="false">
                 <CellTemplate>

@@ -162,4 +162,13 @@
   <data name="Vehicles" xml:space="preserve">
     <value>Voertuigen</value>
   </data>
+  <data name="Default schedule" xml:space="preserve">
+    <value>Standaard rooster</value>
+  </data>
+  <data name="User functions" xml:space="preserve">
+    <value>Gebruikers functies</value>
+  </data>
+  <data name="Training types" xml:space="preserve">
+    <value>Oefen types</value>
+  </data>
 </root>

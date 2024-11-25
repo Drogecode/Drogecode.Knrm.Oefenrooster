@@ -1,7 +1,8 @@
 ﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Enums;
 
-public enum DistinctReportAction
+public enum DistinctReport
 {
     None = 0,
     Prio = 1,
+    Type = 2,
 }

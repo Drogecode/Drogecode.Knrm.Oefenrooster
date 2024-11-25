@@ -179,7 +179,7 @@ public class ReportActionControllerTests : BaseTest
     [Fact]
     public async Task GetDistinctNoneTest()
     {
-        var prioResponse = await ReportActionController.Distinct(DistinctReportAction.None);
+        var prioResponse = await ReportActionController.Distinct(DistinctReport.None);
         Assert.Null(prioResponse.Value?.Values);
         Assert.NotNull(prioResponse.Value?.Message);
         prioResponse.Value.Message.Should().Be("None is not valid");
@@ -188,7 +188,7 @@ public class ReportActionControllerTests : BaseTest
     [Fact]
     public async Task GetDistinctPrioTest()
     {
-        var prioResponse = await ReportActionController.Distinct(DistinctReportAction.Prio);
+        var prioResponse = await ReportActionController.Distinct(DistinctReport.Prio);
         Assert.NotNull(prioResponse.Value?.Values);
         Assert.NotEmpty(prioResponse.Value.Values);
         prioResponse.Value.Values.Should().HaveCount(2);

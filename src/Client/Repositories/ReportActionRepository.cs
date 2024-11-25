@@ -54,7 +54,7 @@ public class ReportActionRepository
         return new AnalyzeYearChartAllResponse();
     }
 
-    public async Task<DistinctResponse?> Distinct(DistinctReportAction column, CancellationToken clt)
+    public async Task<DistinctResponse?> Distinct(DistinctReport column, CancellationToken clt)
     {
         var result = await _reportActionClient.DistinctAsync(column, clt);
         return result;

@@ -74,7 +74,8 @@ public class UserService : IUserService
                 Name = userName,
                 Email = userEmail,
                 CreatedOn = DateTime.UtcNow,
-                CustomerId = customerId
+                CustomerId = customerId,
+                SyncedFromSharePoint = true,
             };
             if (externalId is not null)
                 newUser.ExternalId = externalId;
@@ -259,7 +260,7 @@ public class UserService : IUserService
     {
         foreach (var user in existingUsers)
         {
-            var dbUser = await _database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null && !u.IsSystemUser);
+            var dbUser = await _database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null && !u.IsSystemUser && u.SyncedFromSharePoint);
             if (dbUser is not null)
             {
                 dbUser.DeletedOn = DateTime.UtcNow;

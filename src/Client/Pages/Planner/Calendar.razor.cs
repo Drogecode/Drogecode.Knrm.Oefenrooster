@@ -29,13 +29,17 @@ public sealed partial class Calendar : IDisposable
     private DateTime? _month;
     private DateTime _firstMonth = DateTime.Today;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _firstMonth = await SessionExpireService.GetSelectedMonth(_cls.Token);
-        Global.NewTrainingAddedAsync += HandleNewTraining;
-        _user = await UserRepository.GetCurrentUserAsync();
-        await SetMonth(_firstMonth);
-        _initialized = true;
+        if (firstRender)
+        {
+            _firstMonth = await SessionExpireService.GetSelectedMonth(_cls.Token);
+            Global.NewTrainingAddedAsync += HandleNewTraining;
+            _user = await UserRepository.GetCurrentUserAsync();
+            await SetMonth(_firstMonth);
+            _initialized = true;
+            StateHasChanged();
+        }
     }
     private async Task SetMonth(DateTime? dateTime)
     {

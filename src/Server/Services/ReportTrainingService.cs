@@ -3,15 +3,18 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
 using Microsoft.Graph.Models;
+using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class ReportTrainingService : IReportTrainingService
 {
     private readonly Database.DataContext _database;
+    private readonly ILogger<ReportTrainingService> _logger;
 
-    public ReportTrainingService(Database.DataContext database)
+    public ReportTrainingService(ILogger<ReportTrainingService> logger, Database.DataContext database)
     {
+        _logger = logger;
         _database = database;
     }
 
@@ -39,8 +42,9 @@ public class ReportTrainingService : IReportTrainingService
             .Select(x => new { x.Start })
             .OrderByDescending(x => x.Start)
             .ToListAsync(clt);
-        var result = new AnalyzeYearChartAllResponse { TotalCount = allReports.Count() };
+        var result = new AnalyzeYearChartAllResponse();
         List<int> years = new();
+        var count = 0;
         foreach (var report in allReports)
         {
             var start = report.Start.ToDateTimeTimeZone(timeZone).ToDateTime();
@@ -68,11 +72,42 @@ public class ReportTrainingService : IReportTrainingService
 
             var month = year.Months.First(x => x.Month == start.Month);
             month.Count++;
+            count++;
         }
 
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         result.Success = true;
+        result.TotalCount = count;
+        return result;
+    }
+
+    public async Task<DistinctResponse> Distinct(DistinctReport column, Guid customerId, Guid userId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new DistinctResponse();
+
+        switch (column)
+        {
+            case DistinctReport.Type:
+                var type = _database.ReportTrainings.Select(x => x.Type).Distinct();
+                if (await type.AnyAsync(clt))
+                {
+                    result.Values = await type.ToListAsync(clt);
+                    result.Success = true;
+                }
+
+                break;
+            case DistinctReport.None:
+            case DistinctReport.Prio:
+            default:
+                result.Message = $"`{column}` is not valid for report trainings";
+                _logger.LogInformation("`{column}` is not valid for report trainings by user `{userId}`", column, userId);
+                break;
+        }
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
 }

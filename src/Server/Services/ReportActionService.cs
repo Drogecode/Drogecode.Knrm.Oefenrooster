@@ -94,21 +94,30 @@ public class ReportActionService : IReportActionService
         return result;
     }
 
-    public async Task<DistinctResponse> Distinct(DistinctReportAction column, Guid customerId, CancellationToken clt)
+    public async Task<DistinctResponse> Distinct(DistinctReport column, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new DistinctResponse();
 
         switch (column)
         {
-            case DistinctReportAction.None:
+            case DistinctReport.None:
                 result.Message = "None is not valid";
                 break;
-            case DistinctReportAction.Prio:
+            case DistinctReport.Prio:
                 var prio = _database.ReportActions.Select(x => x.Prio).Distinct();
                 if (await prio.AnyAsync(clt))
                 {
                     result.Values = await prio.ToListAsync(clt);
+                    result.Success = true;
+                }
+
+                break;
+            case DistinctReport.Type:
+                var type = _database.ReportActions.Select(x => x.Type).Distinct();
+                if (await type.AnyAsync(clt))
+                {
+                    result.Values = await type.ToListAsync(clt);
                     result.Success = true;
                 }
 

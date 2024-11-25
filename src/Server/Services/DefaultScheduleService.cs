@@ -191,6 +191,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         dbDefault.Order = body.Order;
         dbDefault.RoosterTrainingTypeId = body.RoosterTrainingTypeId;
         dbDefault.CountToTrainingTarget = body.CountToTrainingTarget;
+        dbDefault.VehicleIds = body.VehicleIds;
         _database.RoosterDefaults.Update(dbDefault);
         result.Success = (await _database.SaveChangesAsync()) >= 1;
         sw.Stop();

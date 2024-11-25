@@ -31,10 +31,14 @@ public sealed partial class ScheduleTable : IDisposable
     private List<UserTrainingCounter>? _userTrainingCounter;
     private DateTime? _month;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var month = await SessionExpireService.GetSelectedMonth(_cls.Token);
-        await SetMonth(month);
+        if (firstRender)
+        {
+            var month = await SessionExpireService.GetSelectedMonth(_cls.Token);
+            await SetMonth(month);
+            StateHasChanged();
+        }
     }
 
     private async Task SetMonth(DateTime? dateTime)

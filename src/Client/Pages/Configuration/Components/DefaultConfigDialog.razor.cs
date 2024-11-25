@@ -1,9 +1,11 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
@@ -14,12 +16,15 @@ public sealed partial class DefaultConfigDialog : IDisposable
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private DefaultScheduleRepository DefaultScheduleRepository { get; set; } = default!;
     [Inject] private ITrainingTypesClient TrainingTypesClient { get; set; } = default!;
+    [Inject, NotNull] private VehicleRepository? VehicleRepository { get; set; }
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public DefaultSchedule? DefaultSchedule { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool? IsNew { get; set; }
 
     private List<PlannerTrainingType>? _trainingTypes { get; set; }
+    private List<DrogeVehicle>? _vehicles { get; set; }
+    private IEnumerable<Guid> _selectedVehicleIds { get; set; }
     private PlannerTrainingType? _currentTrainingType;
     private CancellationTokenSource _cls = new();
     void Cancel() => MudDialog.Cancel();
@@ -29,6 +34,7 @@ public sealed partial class DefaultConfigDialog : IDisposable
         if (firstRender)
         {
             _trainingTypes = (await TrainingTypesClient.GetTrainingTypesAsync(false, _cls.Token)).PlannerTrainingTypes;
+            _vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
             if (IsNew == true || DefaultSchedule is null)
             {
                 DefaultSchedule = new DefaultSchedule
@@ -40,6 +46,8 @@ public sealed partial class DefaultConfigDialog : IDisposable
             {
                 _currentTrainingType = (await TrainingTypesClient.GetByIdAsync(DefaultSchedule.RoosterTrainingTypeId.Value, _cls.Token)).TrainingType;
             }
+
+            _selectedVehicleIds = DefaultSchedule?.VehicleIds ?? [];
 
             StateHasChanged();
         }
@@ -63,7 +71,9 @@ public sealed partial class DefaultConfigDialog : IDisposable
 
     private async Task Submit()
     {
-        if (IsNew == true && DefaultSchedule is not null)
+        if (DefaultSchedule is null) return;
+        DefaultSchedule.VehicleIds = _selectedVehicleIds.ToList();
+        if (IsNew == true)
         {
             var newResult = await DefaultScheduleRepository.PutDefaultScheduleAsync(DefaultSchedule, _cls.Token);
             if (newResult.NewId is not null)
@@ -87,5 +97,13 @@ public sealed partial class DefaultConfigDialog : IDisposable
     public void Dispose()
     {
         _cls.Cancel();
+    }
+
+    private string? VehicleIdToString(Guid vehicleId)
+    {
+        var vehicle = _vehicles?.FirstOrDefault(v => v.Id == vehicleId);
+        if (vehicle is null)
+            return L["Vehicle found"];
+        return vehicle.Name;
     }
 }

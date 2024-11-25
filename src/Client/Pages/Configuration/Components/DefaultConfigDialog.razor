@@ -2,10 +2,11 @@
 <MudDialog>
     <DialogContent>
         <MudAlert Severity="Severity.Info" Variant="Variant.Filled">@LApp["Does not work on mobile"]</MudAlert>
-        @if (DefaultSchedule is not null && _trainingTypes is not null)
+        @if (DefaultSchedule is not null && _trainingTypes is not null && _vehicles is not null)
         {
             <MudNumericField Label="@L["Order"]" @bind-Value="DefaultSchedule.Order" Required/>
-            <MudTextField Label="@L["Name"]" @bind-Value="DefaultSchedule.Name" Counter="@DefaultSettingsHelper.MAX_LENGTH_MONTH_ITEM_TEXT" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_MONTH_ITEM_TEXT"/>
+            <MudTextField Label="@L["Name"]" @bind-Value="DefaultSchedule.Name" Counter="@DefaultSettingsHelper.MAX_LENGTH_MONTH_ITEM_TEXT"
+                          MaxLength="@DefaultSettingsHelper.MAX_LENGTH_MONTH_ITEM_TEXT"/>
 
             @if (_currentTrainingType is not null && !_currentTrainingType.IsActive)
             {
@@ -20,6 +21,7 @@
                     }
                 </MudSelect>
             }
+
             <MudSelect Label="@L["Weekdag"]" T="DayOfWeek" Variant="Variant.Text" @bind-Value="DefaultSchedule.WeekDay">
                 <MudSelectItem T="DayOfWeek" Value="DayOfWeek.Monday">@LApp["Monday"]</MudSelectItem>
                 <MudSelectItem T="DayOfWeek" Value="DayOfWeek.Tuesday">@LApp["Tuesday"]</MudSelectItem>
@@ -29,10 +31,20 @@
                 <MudSelectItem T="DayOfWeek" Value="DayOfWeek.Saturday">@LApp["Saturday"]</MudSelectItem>
                 <MudSelectItem T="DayOfWeek" Value="DayOfWeek.Sunday">@LApp["Sunday"]</MudSelectItem>
             </MudSelect>
-            <MudDatePicker Label="@L["Valid from"]" @bind-Date="DefaultSchedule.ValidFromDefault" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))" Disabled="@(DefaultSchedule.ValidFromDefault?.InPast() ?? false)" Required/>
+            <MudDatePicker Label="@L["Valid from"]" @bind-Date="DefaultSchedule.ValidFromDefault" Validation="@(new Func<DateTime?, string?>(ValidateStartDate))"
+                           Disabled="@(DefaultSchedule.ValidFromDefault?.InPast() ?? false)" Required/>
             <MudDatePicker Label="@L["Valid till"]" @bind-Date="DefaultSchedule.ValidUntilDefault" Validation="@(new Func<DateTime?, string?>(ValidateTillDate))" Required/>
             <MudTimePicker Label="@L["Start time"]" @bind-Time="DefaultSchedule.TimeStart" Required/>
             <MudTimePicker Label="@L["End time"]" @bind-Time="DefaultSchedule.TimeEnd" Required/>
+            <MudSelect T="Guid" Label="@L["Vehicles"]" MultiSelection="true" @bind-SelectedValues="_selectedVehicleIds" ToStringFunc="VehicleIdToString">
+                @foreach (var vehicle in _vehicles)
+                {
+                    @if (vehicle.IsActive || _selectedVehicleIds.Contains(vehicle.Id))
+                    {
+                        <MudSelectItem T="Guid" Value="@vehicle.Id">@vehicle.Name</MudSelectItem>
+                    }
+                }
+            </MudSelect>
             <MudSwitch Label="@L["Show time"]" @bind-Value="DefaultSchedule.ShowTime" Color="Color.Primary" T="bool"/>
         }
         else

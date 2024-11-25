@@ -127,7 +127,7 @@ public class ReportActionController : ControllerBase
     [HttpGet]
     [Route("distinct/{column}")]
     [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics)]
-    public async Task<ActionResult<DistinctResponse>> Distinct(DistinctReportAction column, CancellationToken clt = default)
+    public async Task<ActionResult<DistinctResponse>> Distinct(DistinctReport column, CancellationToken clt = default)
     {
         try
         {
@@ -146,7 +146,7 @@ public class ReportActionController : ControllerBase
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in AnalyzeYearChartsAll");
+            _logger.LogError(ex, "Exception in Distinct Action");
             return BadRequest();
         }
     }

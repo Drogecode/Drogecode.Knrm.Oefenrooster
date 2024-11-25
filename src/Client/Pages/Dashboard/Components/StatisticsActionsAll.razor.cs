@@ -31,7 +31,7 @@ public sealed partial class StatisticsActionsAll : IDisposable
         {
             Global.DarkLightChangedAsync += DarkModeChanged;
             _options.Theme.Mode = Global.DarkMode ? Mode.Dark : Mode.Light;
-            _prios = (await ReportActionRepository.Distinct(DistinctReportAction.Prio, _cls.Token))?.Values;
+            _prios = (await ReportActionRepository.Distinct(DistinctReport.Prio, _cls.Token))?.Values;
             await UpdateAnalyzeYearChartAll();
         }
     }

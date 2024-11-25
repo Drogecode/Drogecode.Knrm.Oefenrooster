@@ -304,6 +304,9 @@
           "autH_mail_invite_external": {
             "type": "boolean"
           },
+          "autH_precom_manual": {
+            "type": "boolean"
+          },
           "autH_show_c_footer": {
             "type": "boolean"
           }

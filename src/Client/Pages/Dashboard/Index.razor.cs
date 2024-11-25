@@ -66,9 +66,7 @@ public sealed partial class Index : IDisposable
             _dayItems = (await CalendarItemRepository.GetDayItemDashboardAsync(_userId, true, _cls.Token))?.DayItems;
             if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
                 _futureHolidays = (await _holidayRepository.GetAllFuture(_userId, true, _cls.Token))?.Holidays;
-            StateHasChanged();
             _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
-            StateHasChanged();
             _trainings = await ScheduleRepository.GetScheduledTrainingsForUser(_userId, true, TAKE, _skip * TAKE, _cls.Token);
 
             Global.VisibilityChangeAsync += VisibilityChanged;

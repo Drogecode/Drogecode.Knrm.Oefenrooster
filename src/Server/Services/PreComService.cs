@@ -174,4 +174,10 @@ public class PreComService : IPreComService
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
     }
+
+    public async Task<PreComForward?> GetForward(Guid forwardId, Guid customerId, CancellationToken clt)
+    {
+        var dbForward = await _database.PreComForwards.FirstOrDefaultAsync(x => x.Id == forwardId && x.CustomerId == customerId, clt);
+        return dbForward?.ToPreComForward();
+    }
 }

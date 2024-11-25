@@ -21,14 +21,14 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class UserFunctions_nl_NL {
+    internal class UserRoles_nl_NL {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal UserFunctions_nl_NL() {
+        internal UserRoles_nl_NL() {
         }
         
         /// <summary>
@@ -38,8 +38,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.UserFunctions.nl" +
-                            "-NL", typeof(UserFunctions_nl_NL).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.UserRoles.nl-NL", typeof(UserRoles_nl_NL).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,74 +60,11 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Actief.
+        ///   Looks up a localized string similar to Voeg nieuwe rol toe.
         /// </summary>
-        internal static string Active {
+        internal static string Add_new_role {
             get {
-                return ResourceManager.GetString("Active", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Voeg nieuwe functie toe.
-        /// </summary>
-        internal static string Add_new_function {
-            get {
-                return ResourceManager.GetString("Add new function", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Standaard.
-        /// </summary>
-        internal static string Default {
-            get {
-                return ResourceManager.GetString("Default", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Naam.
-        /// </summary>
-        internal static string Name {
-            get {
-                return ResourceManager.GetString("Name", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Volgorde.
-        /// </summary>
-        internal static string Order {
-            get {
-                return ResourceManager.GetString("Order", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Rol id.
-        /// </summary>
-        internal static string RoleId {
-            get {
-                return ResourceManager.GetString("RoleId", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Alleen oefeningen.
-        /// </summary>
-        internal static string TrainingOnly {
-            get {
-                return ResourceManager.GetString("TrainingOnly", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Verplichte oefeningen per maand.
-        /// </summary>
-        internal static string TrainingTarget {
-            get {
-                return ResourceManager.GetString("TrainingTarget", resourceCulture);
+                return ResourceManager.GetString("Add new role", resourceCulture);
             }
         }
     }
