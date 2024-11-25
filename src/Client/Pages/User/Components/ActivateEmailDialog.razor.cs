@@ -10,7 +10,7 @@ public partial class ActivateEmailDialog : IDisposable
 {
     [Inject] private IStringLocalizer<ActivateEmailDialog> L { get; set; } = default!;
     [Inject] private IUserLinkedMailsClient UserLinkedMailsClient { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public Guid EmailId { get; set; }
 

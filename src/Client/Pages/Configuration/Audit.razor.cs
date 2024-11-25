@@ -16,7 +16,7 @@ public sealed partial class Audit : IDisposable
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public List<DrogeUser>? _users { get; set; }
 
     private GetTrainingAuditResponse? _trainingAudits = null;

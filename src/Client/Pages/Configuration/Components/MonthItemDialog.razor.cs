@@ -11,7 +11,7 @@ public sealed partial class MonthItemDialog : IDisposable
     [Inject] private IStringLocalizer<MonthItemDialog> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private IMonthItemClient MonthItemClient { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public RoosterItemMonth? MonthItem { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool? IsNew { get; set; }

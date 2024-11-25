@@ -17,7 +17,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
     [Inject] private VehicleRepository VehicleRepository { get; set; } = default!;
     [Inject] private IAuditClient AuditClient { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [CascadingParameter] IMudDialogInstance? MudDialog { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter] public List<PlannerTrainingType>? TrainingTypes { get; set; }

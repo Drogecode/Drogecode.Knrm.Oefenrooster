@@ -21,7 +21,7 @@ public sealed partial class ScheduleDialog : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public PlannedTraining Planner { get; set; } = default!;
     [Parameter] public List<DrogeUser>? Users { get; set; }

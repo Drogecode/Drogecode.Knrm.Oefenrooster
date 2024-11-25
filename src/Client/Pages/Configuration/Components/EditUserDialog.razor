@@ -28,7 +28,7 @@
     [Inject] private IStringLocalizer<EditUserDialog> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private UserRepository UserRepository { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public DrogeUser User { get; set; } = default!;
     [Parameter] public List<DrogeFunction>? Functions { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }

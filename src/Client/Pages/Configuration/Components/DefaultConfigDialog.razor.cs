@@ -17,7 +17,7 @@ public sealed partial class DefaultConfigDialog : IDisposable
     [Inject] private DefaultScheduleRepository DefaultScheduleRepository { get; set; } = default!;
     [Inject] private ITrainingTypesClient TrainingTypesClient { get; set; } = default!;
     [Inject, NotNull] private VehicleRepository? VehicleRepository { get; set; }
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public DefaultSchedule? DefaultSchedule { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool? IsNew { get; set; }

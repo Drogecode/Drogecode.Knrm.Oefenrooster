@@ -18,15 +18,15 @@ services:
     - "--roslyn-worker-port=57400"
     - "--timeout=60"
     environment:
-      ASPNETCORE_STATICWEBASSETS: "/app/bin/Debug/net8.0/Drogecode.Knrm.Oefenrooster.Server.staticwebassets.runtime.CT.json"
+      ASPNETCORE_STATICWEBASSETS: "/app/bin/Debug/net9.0/Drogecode.Knrm.Oefenrooster.Server.staticwebassets.runtime.CT.json"
       DOTNET_USE_POLLING_FILE_WATCHER: "true"
       RIDER_DEBUGGER_LOG_DIR: "/var/opt/JetBrains/RiderDebuggerTools"
       RESHARPER_LOG_CONF: "/etc/opt/JetBrains/RiderDebuggerTools/backend-log.xml"
     image: "kanman/drogecode.knrm.oefenrooster:dev"
     ports:
-    - "127.0.0.1:57000:57000"
-    - "127.0.0.1:57200:57200"
-    - "127.0.0.1:57400:57400"
+    - "127.0.0.1:57001:57000"
+    - "127.0.0.1:57201:57200"
+    - "127.0.0.1:57401:57400"
     volumes:
     - "C:\\Users\\Taco\\source\\repos\\Drogecode.Knrm.Oefenrooster\\src\\Server:/app:rw"
     - "C:\\Users\\Taco\\source\\repos\\Drogecode.Knrm.Oefenrooster:/src:rw"
@@ -34,5 +34,5 @@ services:
     - "C:\\Users\\Taco\\AppData\\Local\\JetBrains\\RiderRemoteDebugger\\2024.3\\Linux64:/opt/JetBrains/RiderDebuggerTools"
     - "C:\\Users\\Taco\\AppData\\Local\\Programs\\Rider\\bin\\backend-log.xml:/etc/opt/JetBrains/RiderDebuggerTools/backend-log.xml"
     - "C:\\Users\\Taco\\AppData\\Local\\JetBrains\\Rider2024.3\\log\\DebuggerWorker\\\
-      JetBrains.Debugger.Worker.2024_11_13_18_37_04:/var/opt/JetBrains/RiderDebuggerTools:rw"
+      JetBrains.Debugger.Worker.2024_11_25_21_47_39:/var/opt/JetBrains/RiderDebuggerTools:rw"
     working_dir: "/app"
