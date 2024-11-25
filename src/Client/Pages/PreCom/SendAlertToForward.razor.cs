@@ -1,11 +1,10 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-using Microsoft.AspNetCore.Components;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.PreCom;
 
-public partial class SendAlertToForward : ComponentBase
+public partial class SendAlertToForward : IDisposable
 {
     [Inject] private IStringLocalizer<SendAlertToForward> L { get; set; } = default!;
     [Inject] private PreComRepository PreComRepository { get; set; } = default!;
@@ -59,11 +58,16 @@ public partial class SendAlertToForward : ComponentBase
             ForwardId = _selectedForward.Id,
             Message = _message,
         };
-        var send = await PreComRepository.PostForwardAsync(body, _cls.Token);
+        await PreComRepository.PostForwardAsync(body, _cls.Token);
         _forwards = null;
         _selectedForward = null;
         _selectedUsers = [];
         _isSending = false;
         StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _cls.Cancel();
     }
 }

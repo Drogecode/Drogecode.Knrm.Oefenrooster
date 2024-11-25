@@ -31,7 +31,7 @@ public class PreComRepository
     }
     public async Task<bool> PostForwardAsync(PostForwardRequest body, CancellationToken clt)
     {
-        var result = (await _preComClient.PostForwardAsync(body, clt));
+        var result = await _preComClient.PostForwardAsync(body, clt);
         return result;
     }
 }
