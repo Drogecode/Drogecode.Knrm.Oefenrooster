@@ -35,21 +35,27 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Strict;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Events.OnRedirectToLogin = context =>
-    {
-        context.Response.StatusCode = 401;
-        return Task.CompletedTask;
-    };
 });
 
 
-string dbConnectionString;
+string? dbConnectionString;
 var keyVaultUri = builder.Configuration.GetValue<string>("KEYVAULTURI");
 KeyVaultHelper.KeyVaultUri = keyVaultUri;
 Exception? potentialException = null;
 string? messagePotentialException = null;
-if (string.IsNullOrEmpty(keyVaultUri))
+if (string.IsNullOrWhiteSpace(keyVaultUri))
+{
     dbConnectionString = builder.Configuration.GetConnectionString("postgresDB");
+    if (string.IsNullOrWhiteSpace(dbConnectionString))
+    {
+        var dbUserName = builder.Configuration.GetValue<string>("database:username");
+        var dbPassword = builder.Configuration.GetValue<string>("database:password");
+        var dbUri = builder.Configuration.GetValue<string>("database:FQDN");
+        var dbName = builder.Configuration.GetValue<string>("database:name");
+        var dbPort = builder.Configuration.GetValue<string>("database:port");
+        dbConnectionString = $"host={dbUri};port={dbPort};database={dbName};username={dbUserName};password={dbPassword}";
+    }
+}
 else
 {
     try
@@ -74,7 +80,8 @@ else
         dbConnectionString = builder.Configuration.GetConnectionString("postgresDB");
     }
 }
-builder.Services.Configure<ForwardedHeadersOptions> (options => 
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
     options.KnownNetworks.Clear();
@@ -190,6 +197,7 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 

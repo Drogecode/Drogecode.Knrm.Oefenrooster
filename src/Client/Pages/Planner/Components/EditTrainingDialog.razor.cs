@@ -1,9 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
-using Microsoft.Extensions.Localization;
 using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
@@ -103,8 +101,6 @@ public sealed partial class EditTrainingDialog : IDisposable
         var dateStartLocal = Planner.DateStart.ToLocalTime();
         var dateEndLocal = Planner.DateEnd.ToLocalTime();
         _startedWithShowNoTime = !Planner.ShowTime;
-        DebugHelper.WriteLine("ShowTime " + (Planner.ShowTime ? "true" : "false"));
-        DebugHelper.WriteLine("_startedWithShowNoTime " + (_startedWithShowNoTime ? "true" : "false"));
         _training = new()
         {
             Id = Planner.TrainingId,
