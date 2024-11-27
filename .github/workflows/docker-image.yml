@@ -9,9 +9,17 @@ jobs:
   build:
     name: Test, build and publish
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '9.0.x' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
 
       - name: Get the version
         id: get_version
