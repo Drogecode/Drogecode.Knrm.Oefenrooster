@@ -14,7 +14,11 @@ services:
     image: kanman/drogecode.knrm.oefenrooster:latest
     restart: always
     environment:
-      - ConnectionStrings__postgresDB=host=host.docker.internal;port=5432;database=BackupProd;username=postgresUser;password=postgresPW
+      - database__username=postgresUser
+      - database__password=postgresPW
+      - database__FQDN=host.docker.internal
+      - database__name=BackupProd
+      - database__port:5432
     build:
       context: .
       dockerfile: src/Server/Dockerfile
