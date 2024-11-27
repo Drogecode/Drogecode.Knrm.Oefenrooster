@@ -65,16 +65,16 @@ public sealed partial class MonthItem : IDisposable
         }
     }
 
-    private void OpenMonthItemDialog(RoosterItemMonth? monthItem, bool isNew)
+    private Task OpenMonthItemDialog(RoosterItemMonth? monthItem, bool isNew)
     {
-        //DayItemDialog
-        var parameters = new DialogParameters<MonthItemDialog> {
-            { x=> x.MonthItem, monthItem},
-            { x=> x.IsNew, isNew},
-            { x=> x.Refresh, _refreshModel },
+        var parameters = new DialogParameters<MonthItemDialog>
+        {
+            { x => x.MonthItem, monthItem },
+            { x => x.IsNew, isNew },
+            { x => x.Refresh, _refreshModel },
         };
-        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-        DialogProvider.Show<MonthItemDialog>(isNew ? L["Patch month item"] : L["Edit month item"], parameters, options);
+        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        return DialogProvider.ShowAsync<MonthItemDialog>(isNew ? L["Patch month item"] : L["Edit month item"], parameters, options);
     }
 
     private async Task RefreshMeAsync()

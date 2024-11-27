@@ -4,7 +4,7 @@
 <MudPaper Elevation="0" Class="p-2">
     @if (_monthItems is not null)
     {
-        <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="() => { OpenMonthItemDialog(null, true); }">@L["Add new month item"]</MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="() => {return OpenMonthItemDialog(null, true); }">@L["Add new month item"]</MudButton>
         <MudSwitchM3 T="bool" Value="@_includeExpired" ValueChanged="@(async (isChecked) => await IncludeExpiredChanged(isChecked))">@L["Include expired"]</MudSwitchM3>
         <MudDataGrid Items="@_monthItems.MonthItems" ReadOnly="true" Filterable="false" SortMode="@SortMode.None">
             <Columns>
@@ -28,14 +28,15 @@
                 <TemplateColumn>
                     <CellTemplate>
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await Delete(context.Item); })"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => { OpenMonthItemDialog(context.Item, false); })"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => {return OpenMonthItemDialog(context.Item, false); })"/>
                     </CellTemplate>
                 </TemplateColumn>
             </Columns>
         </MudDataGrid>
         @if (_monthItems.TotalCount > _count)
         {
-            <MudPagination Disabled="@_bussy" ShowFirstButton="true" ShowLastButton="true" Count="@(Convert.ToInt32(Math.Ceiling((double)_monthItems.TotalCount / (double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4"/>
+            <MudPagination Disabled="@_bussy" ShowFirstButton="true" ShowLastButton="true" Count="@(Convert.ToInt32(Math.Ceiling((double)_monthItems.TotalCount / (double)_count)))"
+                           Selected="_currentPage" SelectedChanged="Next" Class="mt-4"/>
         }
     }
     else

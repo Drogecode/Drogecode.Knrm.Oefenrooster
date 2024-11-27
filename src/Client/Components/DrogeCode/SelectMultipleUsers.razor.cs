@@ -19,13 +19,10 @@ public sealed partial class SelectMultipleUsers
     [Parameter]
     public IEnumerable<DrogeUser> Selection
     {
-        get
-        {
-            return _selectedUsers;
-        }
+        get => _selectedUsers;
         set
         {
-            if (_selectedUsers == value) return;
+            if (Equals(_selectedUsers, value)) return;
             _selectedUsers = value;
             SelectionChanged.InvokeAsync(value);
         }

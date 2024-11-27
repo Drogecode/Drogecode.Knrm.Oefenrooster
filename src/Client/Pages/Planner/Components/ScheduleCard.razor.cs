@@ -5,7 +5,6 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
-using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
@@ -48,7 +47,7 @@ public sealed partial class ScheduleCard : IDisposable
         _showPastBody = ShowPastBody;
     }
 
-    private void OpenScheduleDialog()
+    private Task OpenScheduleDialog()
     {
         var parameters = new DialogParameters<ScheduleDialog>
         {
@@ -60,16 +59,16 @@ public sealed partial class ScheduleCard : IDisposable
             { x => x.MainLayout, MainLayout },
         };
 
-        DialogOptions options = new DialogOptions()
+        var options = new DialogOptions()
         {
             MaxWidth = MudBlazor.MaxWidth.Medium,
             CloseButton = true,
             FullWidth = true
         };
-        DialogProvider.Show<ScheduleDialog>(L["Schedule people for this training"], parameters, options);
+        return DialogProvider.ShowAsync<ScheduleDialog>(L["Schedule people for this training"], parameters, options);
     }
 
-    private void OpenConfigDialog()
+    private Task OpenConfigDialog()
     {
         var parameters = new DialogParameters<EditTrainingDialog>
         {
@@ -85,10 +84,10 @@ public sealed partial class ScheduleCard : IDisposable
             CloseButton = true,
             FullWidth = true
         };
-        DialogProvider.Show<EditTrainingDialog>(L["Configure training"], parameters, options);
+        return DialogProvider.ShowAsync<EditTrainingDialog>(L["Configure training"], parameters, options);
     }
 
-    private void OpenMessageDialog()
+    private Task OpenMessageDialog()
     {
         var parameters = new DialogParameters<TrainingMessageDialog>
         {
@@ -100,10 +99,10 @@ public sealed partial class ScheduleCard : IDisposable
             CloseButton = true,
             FullWidth = true
         };
-        DialogProvider.Show<TrainingMessageDialog>(L["Training message"], parameters, options);
+        return DialogProvider.ShowAsync<TrainingMessageDialog>(L["Training message"], parameters, options);
     }
 
-    private void OpenHistoryDialog()
+    private Task OpenHistoryDialog()
     {
         var parameters = new DialogParameters<TrainingHistoryDialog>
         {
@@ -116,7 +115,7 @@ public sealed partial class ScheduleCard : IDisposable
             CloseButton = true,
             FullWidth = true
         };
-        DialogProvider.Show<TrainingHistoryDialog>(L["Edit history"], parameters, options);
+        return DialogProvider.ShowAsync<TrainingHistoryDialog>(L["Edit history"], parameters, options);
     }
 
     private async Task TrainingDeleted(Guid id)

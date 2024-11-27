@@ -36,18 +36,19 @@ public sealed partial class DayItem : IDisposable
         _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
     }
 
-    private void OpenDayItemDialog(RoosterItemDay? dayItem, bool isNew)
+    private Task OpenDayItemDialog(RoosterItemDay? dayItem, bool isNew)
     {
         //DayItemDialog
-        var parameters = new DialogParameters<DayItemDialog> {
-            { x=> x.DayItem, dayItem},
-            { x=> x.IsNew, isNew},
-            { x=> x.Users, _users },
-            { x=> x.Functions, _functions },
-            { x=> x.Refresh, _refreshModel },
+        var parameters = new DialogParameters<DayItemDialog>
+        {
+            { x => x.DayItem, dayItem },
+            { x => x.IsNew, isNew },
+            { x => x.Users, _users },
+            { x => x.Functions, _functions },
+            { x => x.Refresh, _refreshModel },
         };
-        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-        DialogProvider.Show<DayItemDialog>(L["Edit day item"], parameters, options);
+        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        return DialogProvider.ShowAsync<DayItemDialog>(L["Edit day item"], parameters, options);
     }
 
     private async Task Next(int nextPage)

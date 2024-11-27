@@ -5,7 +5,7 @@
 <MudPaper Elevation="0" Class="p-2">
     @if (_vehicles is not null)
     {
-        <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="() => { OpenMonthItemDialog(null, true); }">@L["Add new vehicle"]</MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="() => {return OpenVehicleDialog(null, true); }">@L["Add new vehicle"]</MudButton>
         <MudDataGrid Items="@_vehicles.DrogeVehicles?.OrderBy(x=>x.Order)" ReadOnly="true" Filterable="false" SortMode="@SortMode.None">
             <Columns>
                 <PropertyColumn Property="x => x.Order" Title="@L["Order"]"/>
@@ -23,7 +23,7 @@
                 </PropertyColumn>
                 <TemplateColumn>
                     <CellTemplate>
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => { OpenMonthItemDialog(context.Item, false); })"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => {return OpenVehicleDialog(context.Item, false); })"/>
                     </CellTemplate>
                 </TemplateColumn>
             </Columns>

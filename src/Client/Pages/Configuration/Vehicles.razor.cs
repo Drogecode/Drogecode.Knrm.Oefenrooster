@@ -25,15 +25,16 @@ public partial class Vehicles : IDisposable
         }
     }
 
-    private void OpenMonthItemDialog(DrogeVehicle? vehicle, bool isNew)
+    private Task OpenVehicleDialog(DrogeVehicle? vehicle, bool isNew)
     {
-        var parameters = new DialogParameters<VehicleDialog> {
-            { x=> x.DrogeVehicle, vehicle},
-            { x=> x.IsNew, isNew},
-            { x=> x.Refresh, _refreshModel },
+        var parameters = new DialogParameters<VehicleDialog>
+        {
+            { x => x.DrogeVehicle, vehicle },
+            { x => x.IsNew, isNew },
+            { x => x.Refresh, _refreshModel },
         };
-        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-        DialogProvider.Show<VehicleDialog>(isNew ? L["Put vehicle"] : L["Edit vehicle"], parameters, options);
+        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        return DialogProvider.ShowAsync<VehicleDialog>(isNew ? L["Put vehicle"] : L["Edit vehicle"], parameters, options);
     }
 
     private async Task RefreshMeAsync()

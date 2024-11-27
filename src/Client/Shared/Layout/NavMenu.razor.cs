@@ -93,7 +93,7 @@ public sealed partial class NavMenu : IDisposable
             FullWidth = true,
             BackdropClick = false
         };
-        DialogProvider.Show<EditTrainingDialog>(L["Add training"], parameters, options);
+        await DialogProvider.ShowAsync<EditTrainingDialog>(L["Add training"], parameters, options);
     }
 
     private async Task UseFullLinksExpandedChanged(bool newValue)

@@ -7,7 +7,7 @@
     {
         if (_defaults.DefaultSchedules?.Any() == true)
         {
-            <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="() => { OpenDefaultConfigDialog(null, true); }">@L["Add new default schedule"]</MudButton>
+            <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="() => {return OpenDefaultConfigDialog(null, true); }">@L["Add new default schedule"]</MudButton>
             <MudDataGrid Items="@_defaults.DefaultSchedules.OrderBy(x => x.ValidUntilDefault!.Value.CompareTo(DateTime.UtcNow) < 0).ThenBy(x => x.Order)" Striped="true" Hover="true">
                 <Columns>
                     <HierarchyColumn T="DefaultConfig"/>
@@ -48,7 +48,7 @@
                     </TemplateColumn>
                     <TemplateColumn>
                         <CellTemplate>
-                            <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => { OpenDefaultConfigDialog(context.Item, false); })"/>
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => {return OpenDefaultConfigDialog(context.Item, false); })"/>
                         </CellTemplate>
                     </TemplateColumn>
                 </Columns>
