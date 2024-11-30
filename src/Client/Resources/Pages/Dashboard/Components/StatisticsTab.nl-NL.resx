@@ -88,6 +88,15 @@
         <value>Aantal acties: {0}</value>
     </data>
     <data name="Total trainings: {0}" xml:space="preserve">
-        <value>Aantal trainingen: {0}</value>
+        <value>Aantal oefeningen: {0}</value>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Naam</value>
+    </data>
+    <data name="year" xml:space="preserve">
+        <value>Jaar</value>
+    </data>
+    <data name="type" xml:space="preserve">
+        <value>type</value>
     </data>
 </root>

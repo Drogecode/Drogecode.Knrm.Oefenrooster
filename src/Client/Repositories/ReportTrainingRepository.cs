@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -51,5 +52,17 @@ public class ReportTrainingRepository
         }
 
         return new AnalyzeYearChartAllResponse();
+    }
+
+    public async Task<DistinctResponse?> Distinct(DistinctReport column, CancellationToken clt)
+    {
+        var result = await _reportTrainingClient.DistinctAsync(column, clt);
+        return result;
+    }
+
+    public async Task<AnalyzeHoursResult?> AnalyzeHoursAsync(int year, string type, CancellationToken clt)
+    {
+        var result = await _reportTrainingClient.AnalyzeHoursAsync(year, type, clt);
+        return result;
     }
 }

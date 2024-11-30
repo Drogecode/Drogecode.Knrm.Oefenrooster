@@ -74,19 +74,17 @@
             @if (_trainingTypes != null)
             {
                 <style>
-                @foreach (var trainingType in _trainingTypes)
-                {
-                    @($".trainingType-{trainingType.Id}")
-                    @("{")
-                    @($"background-color: {(_isDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)}  !important;")
-                    if (!string.IsNullOrEmpty(trainingType.TextColorLight))
+                    @foreach (var trainingType in _trainingTypes)
                     {
-                        @($"color: {(_isDarkMode ? string.IsNullOrEmpty(trainingType.TextColorDark) ? trainingType.TextColorLight : trainingType.TextColorDark : trainingType.TextColorLight)}  !important;")
+                        @($".trainingType-{trainingType.Id}{{")
+                        @($"background-color:{(_isDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)} !important;")
+                        if (!string.IsNullOrEmpty(trainingType.TextColorLight))
+                        {
+                            @($"color:{(_isDarkMode ? string.IsNullOrEmpty(trainingType.TextColorDark) ? trainingType.TextColorLight : trainingType.TextColorDark : trainingType.TextColorLight)} !important;")
+                        }
+                        @("}")
                     }
-
-                    @("}")
-                }
-            </style>
+                </style>
             }
         </Authorized>
         <Authorizing>

@@ -201,6 +201,21 @@ public static class GenerateUserRole
         sb.AppendLine("        </MudButton>");
 
         sb.AppendLine("    </MudPaper>");
+        sb.AppendLine("""
+                          if (_linkedUsers?.LinkedUsers is not null && _users is not null)
+                          {
+                              <MudPaper>
+                                  <MudList T="string" ReadOnly="true">
+                                      <MudText Typo="Typo.h5">@L["Users in this role"]</MudText>
+                                      @foreach (var userId in _linkedUsers.LinkedUsers)
+                                      {
+                                          var userName = _users.FirstOrDefault(x => x.Id == userId)?.Name ?? @LApp["User not found or deleted"];
+                                          <MudListItem T="string">@userName</MudListItem>
+                                      }
+                                  </MudList>
+                              </MudPaper>
+                          }
+                      """);
         sb.AppendLine("}");
         sb.AppendLine("else if (_userRole is null)");
         sb.AppendLine("{");

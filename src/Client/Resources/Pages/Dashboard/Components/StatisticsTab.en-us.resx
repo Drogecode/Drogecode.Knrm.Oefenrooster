@@ -83,4 +83,13 @@
     <data name="Total trainings: {0}" xml:space="preserve">
         <value>Total trainings: {0}</value>
     </data>
+    <data name="Name" xml:space="preserve">
+        <value>Name</value>
+    </data>
+    <data name="year" xml:space="preserve">
+        <value>year</value>
+    </data>
+    <data name="type" xml:space="preserve">
+        <value>type</value>
+    </data>
 </root>

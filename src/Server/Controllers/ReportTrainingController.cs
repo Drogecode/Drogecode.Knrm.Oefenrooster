@@ -130,4 +130,32 @@ public class ReportTrainingController : ControllerBase
             return BadRequest();
         }
     }
+
+    [HttpGet]
+    [Route("analyze/hours/{year:int}/{type}")]
+    [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics_user_tabel)]
+    public async Task<ActionResult<AnalyzeHoursResult>> AnalyzeHours(int year, string type, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var timeZone = await _customerSettingService.GetTimeZone(customerId);
+
+            var result = await _reportTrainingService.AnalyzeHours(year, type, timeZone, customerId, clt);
+            return result;
+        }
+        catch (OperationCanceledException)
+        {
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in AnalyzeHours Training");
+            return BadRequest();
+        }
+    }
 }

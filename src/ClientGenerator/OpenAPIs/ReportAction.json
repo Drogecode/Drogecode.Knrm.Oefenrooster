@@ -202,6 +202,55 @@
         }
       }
     },
+    "/api/ReportAction/analyze/hours/{year}/{type}": {
+      "get": {
+        "tags": [
+          "ReportAction"
+        ],
+        "operationId": "AnalyzeHours",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyzeHoursResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyzeHoursResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyzeHoursResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/ReportAction/kill": {
       "get": {
         "tags": [
@@ -256,6 +305,33 @@
           "years": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AnalyzeHoursResult": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userCounters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserCounters"
+            },
             "nullable": true
           }
         },
@@ -602,6 +678,28 @@
           "order": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserCounters": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullHours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minutes": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
 using Microsoft.Graph.Models;
@@ -45,9 +46,10 @@ public class ReportTrainingService : IReportTrainingService
         var result = new AnalyzeYearChartAllResponse();
         List<int> years = new();
         var count = 0;
+        var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
         foreach (var report in allReports)
         {
-            var start = report.Start.ToDateTimeTimeZone(timeZone).ToDateTime();
+            var start = TimeZoneInfo.ConvertTimeFromUtc(report.Start, zone);
 
             if (!years.Contains(start.Year)) // Could not find a way to check this in the db request.
             {
@@ -104,6 +106,53 @@ public class ReportTrainingService : IReportTrainingService
                 result.Message = $"`{column}` is not valid for report trainings";
                 _logger.LogInformation("`{column}` is not valid for report trainings by user `{userId}`", column, userId);
                 break;
+        }
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<AnalyzeHoursResult> AnalyzeHours(int year, string type, string timeZone, Guid customerId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new AnalyzeHoursResult
+        {
+            UserCounters = []
+        };
+        var y = new List<int>() { year, year + 1, year - 1 };
+        var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
+        var dbTrainings = await _database.ReportTrainings.Where(x => x.CustomerId == customerId && x.Type == type && y.Contains(x.Start.Year))
+            .Select(x => new { x.Start, x.Commencement, x.End, x.Users })
+            .ToListAsync(clt);
+
+        foreach (var training in dbTrainings.Where(x => x.Users is not null))
+        {
+            var start = TimeZoneInfo.ConvertTimeFromUtc(training.Start, zone);
+            if (start.Year != year) continue;
+            var differentStart = ReportSettingsHelper.TrainingDifferentStart.Contains(type ?? string.Empty);
+            var minutes = differentStart ? (training.End - training.Commencement).TotalMinutes : (training.End - training.Start).TotalMinutes;
+            var fullHours = Convert.ToInt32(Math.Ceiling(minutes / 60));
+            foreach (var user in training.Users!)
+            {
+                var userCounter = result.UserCounters.FirstOrDefault(x => x.UserId == user.DrogeCodeId && x.Type == type);
+                if (userCounter is null)
+                {
+                    userCounter = new UserCounters()
+                    {
+                        UserId = user.DrogeCodeId ?? Guid.Empty,
+                        Minutes = minutes,
+                        FullHours = fullHours,
+                        Type = type,
+                    };
+                    result.UserCounters.Add(userCounter);
+                }
+                else
+                {
+                    userCounter.Minutes += minutes;
+                    userCounter.FullHours += fullHours;
+                }
+            }
         }
 
         sw.Stop();

@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Server.Extensions;
+using Microsoft.Graph.Models;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -48,6 +49,7 @@ public class ReportActionService : IReportActionService
         var skipped = 0;
         var totalCount = 0;
         List<int> years = new();
+        var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
         foreach (var report in allReports)
         {
             if (report.Number is not null && report.Number?.FloatingEquals(0, 0.1) != true && (report.Number % 1) != 0 &&
@@ -57,9 +59,7 @@ public class ReportActionService : IReportActionService
                 continue;
             }
 
-            var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
             var start = TimeZoneInfo.ConvertTimeFromUtc(report.Start, zone);
-
             if (!years.Contains(start.Year)) // Could not find a way to check this in the db request.
             {
                 if (years.Count >= actionRequest.Years)
@@ -110,6 +110,7 @@ public class ReportActionService : IReportActionService
                 {
                     result.Values = await prio.ToListAsync(clt);
                     result.Success = true;
+                    result.TotalCount = await prio.CountAsync(clt);
                 }
 
                 break;
@@ -119,9 +120,75 @@ public class ReportActionService : IReportActionService
                 {
                     result.Values = await type.ToListAsync(clt);
                     result.Success = true;
+                    result.TotalCount = await type.CountAsync(clt);
                 }
 
                 break;
+            case DistinctReport.Year:
+                var years = _database.ReportActions.Select(x => x.Start.Year).Distinct();
+                if (await years.AnyAsync(clt))
+                {
+                    result.Values = [];
+                    foreach (var year in await years.ToListAsync(clt))
+                    {
+                        result.Values.Add(year.ToString());
+                    }
+
+                    result.Success = true;
+                    result.TotalCount = await years.CountAsync(clt);
+                }
+
+                break;
+            default:
+                result.Message = $"Invalid column type: `{column}`";
+                break;
+        }
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<AnalyzeHoursResult> AnalyzeHours(int year, string type, string timeZone, Guid customerId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new AnalyzeHoursResult
+        {
+            UserCounters = []
+        };
+        var y = new List<int>() { year, year + 1, year - 1 };
+        var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
+
+        var dbActions = await _database.ReportActions.Where(x => x.CustomerId == customerId && x.Type == type && y.Contains(x.Start.Year))
+            .Select(x => new { x.Start, x.Commencement, x.Departure, x.End, x.Users })
+            .ToListAsync(clt);
+
+        foreach (var action in dbActions.Where(x => x.Users is not null))
+        {
+            var start = TimeZoneInfo.ConvertTimeFromUtc(action.Start, zone);
+            if (start.Year != year) continue;
+            var minutes = (action.End - action.Start).TotalMinutes;
+            var fullHours = Convert.ToInt32(Math.Ceiling(minutes / 60));
+            foreach (var user in action.Users!)
+            {
+                var userCounter = result.UserCounters.FirstOrDefault(x => x.UserId == user.DrogeCodeId && x.Type == type);
+                if (userCounter is null)
+                {
+                    userCounter = new UserCounters()
+                    {
+                        UserId = user.DrogeCodeId ?? Guid.Empty,
+                        Minutes = minutes,
+                        FullHours = fullHours,
+                        Type = type,
+                    };
+                    result.UserCounters.Add(userCounter);
+                }
+                else
+                {
+                    userCounter.Minutes += minutes;
+                    userCounter.FullHours += fullHours;
+                }
+            }
         }
 
         sw.Stop();

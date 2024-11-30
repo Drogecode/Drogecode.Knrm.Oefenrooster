@@ -1,0 +1,89 @@
+﻿@if (_distinctTypes is not null && _years is not null)
+{
+    <MudSelect T="int" Label="@L["year"]" SelectedValues="_selectedYear" SelectedValuesChanged="YearChanged" Clearable="true" MultiSelection="false">
+        @foreach (var year in _years)
+        {
+            <MudSelectItem T="int" Value="@year">@year</MudSelectItem>
+        }
+    </MudSelect>
+    <MudSelect T="DistinctType?" Label="@L["type"]" SelectedValues="_selectedTypes" SelectedValuesChanged="TypeChanged" Clearable="true" MultiSelection="true"
+               ToStringFunc="(x) => { return x?.Type; }">
+        @foreach (var type in _distinctTypes.OrderBy(x=>x.Type))
+        {
+            <MudSelectItem T="DistinctType?" Value="@type">@type.Type</MudSelectItem>
+        }
+    </MudSelect>
+    @if (_users is not null && _selectedTypes?.Any() == true)
+    {
+        <MudTable Hover="true" Breakpoint="Breakpoint.None"
+                  Items="@_users.OrderBy(x => _functions?.FirstOrDefault(y => y.Id == x.UserFunctionId)?.Order).ThenBy(x => x.Name)"
+                  GroupBy="@_groupBy"
+                  GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
+                  GroupFooterClass="mb-4"
+                  FixedHeader="true"
+                  Height=" calc(100vh - 300px)"
+                  Dense="true"
+                  Bordered="true">
+            <HeaderContent>
+                <MudTh Class="!z-20">@L["Name"]</MudTh>
+                <MudTh Class="!z-20">@L["Total"]</MudTh>
+                @foreach (var type in _selectedTypes.Where(x => x?.Type is not null))
+                {
+                    <MudTh>
+                        @type!.Type
+                    </MudTh>
+                }
+            </HeaderContent>
+            <GroupHeaderTemplate>
+                <MudTh Class="mud-table-cell-custom-group DrogeCode-sticky-column z-10" colspan="5">
+                    @($"{_functions?.FirstOrDefault(y => y.Id == (Guid)(context.Key ?? Guid.Empty))?.Name ?? L["Unknown"]}")
+                </MudTh>
+            </GroupHeaderTemplate>
+            <RowTemplate>
+                @{ var userCounters = _analyzeHours?.Where(x => x.UserId == context.Id).ToList(); }
+                <MudTd Class="DrogeCode-sticky-column z-10" DataLabel="@L["Name"]">@context.Name</MudTd>
+                <MudTd DataLabel="@L["Total"]">
+                    <div class="d-flex gap-1">
+                        @if (userCounters?.Any() == true)
+                        {
+                            var fullHours = 0;
+                            var minutes = 0.0;
+                            foreach (var counter in userCounters)
+                            {
+                                {
+                                    fullHours += counter.FullHours;
+                                    minutes += counter.Minutes;
+                                }
+                            }
+
+                            @fullHours
+                            <p>/</p>
+                            @(Math.Round(minutes / 60, 1))
+                        }
+                    </div>
+                </MudTd>
+                @foreach (var type in _selectedTypes.Where(x => x?.Type is not null))
+                {
+                    var userCounter = userCounters?.FirstOrDefault(x => x.Type == type!.Type && x.UserId == context.Id);
+                    <MudTd>
+                        <div class="d-flex gap-1">
+                            @if (userCounter is not null)
+                            {
+                                @userCounter.FullHours
+                                <p>/</p>
+                                @(Math.Round(userCounter.Minutes / 60, 1))
+                            }
+                        </div>
+                    </MudTd>
+                }
+            </RowTemplate>
+        </MudTable>
+    }
+}
+else
+{
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+}

@@ -27,7 +27,7 @@
             </HeaderContent>
             <GroupHeaderTemplate>
                 <MudTh Class="mud-table-cell-custom-group DrogeCode-sticky-column z-10" colspan="5">
-                    @($"{Functions?.FirstOrDefault(y => y.Id == (Guid)context.Key)?.Name ?? L["Unknown"]}")
+                    @($"{Functions?.FirstOrDefault(y => y.Id == (Guid)(context.Key ?? Guid.Empty))?.Name ?? L["Unknown"]}")
                 </MudTh>
             </GroupHeaderTemplate>
             <RowTemplate>
@@ -61,13 +61,3 @@
         </MudTable>
     }
 </div>
-@code {
-    TableGroupDefinition<DrogeUser> _groupBy = new()
-        {
-            GroupName = "Group",
-            Indentation = false,
-            Expandable = true,
-            IsInitiallyExpanded = true,
-            Selector = (e) => e.UserFunctionId
-        };
-}

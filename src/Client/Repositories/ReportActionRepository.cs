@@ -59,4 +59,10 @@ public class ReportActionRepository
         var result = await _reportActionClient.DistinctAsync(column, clt);
         return result;
     }
+
+    public async Task<AnalyzeHoursResult?> AnalyzeHoursAsync(int year, string type, CancellationToken clt)
+    {
+        var result = await _reportActionClient.AnalyzeHoursAsync(year, type, clt);
+        return result;
+    }
 }

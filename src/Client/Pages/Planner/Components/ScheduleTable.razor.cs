@@ -30,6 +30,14 @@ public sealed partial class ScheduleTable : IDisposable
     private List<PlannedTraining> _events = new();
     private List<UserTrainingCounter>? _userTrainingCounter;
     private DateTime? _month;
+    private TableGroupDefinition<DrogeUser> _groupBy = new()
+    {
+        GroupName = "Group",
+        Indentation = false,
+        Expandable = true,
+        IsInitiallyExpanded = true,
+        Selector = (e) => e.UserFunctionId
+    };
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -72,6 +80,7 @@ public sealed partial class ScheduleTable : IDisposable
                 _events.Add(training);
             }
         }
+
         _updating = false;
         StateHasChanged();
     }
