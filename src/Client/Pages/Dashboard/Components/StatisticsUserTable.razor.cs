@@ -1,4 +1,7 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Enums;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components.Dialogs;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
@@ -11,6 +14,7 @@ public partial class StatisticsUserTable : IDisposable
     [Inject] private ReportTrainingRepository ReportTrainingRepository { get; set; } = default!;
     [Inject] private UserRepository UserRepository { get; set; } = default!;
     [Inject] private FunctionRepository FunctionRepository { get; set; } = default!;
+    [Inject] private IDialogService DialogProvider { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
@@ -19,6 +23,7 @@ public partial class StatisticsUserTable : IDisposable
     private List<UserCounters>? _analyzeHours;
     private List<int>? _years;
     private List<int> _selectedYear = [];
+    private decimal _compensation = 1.25m; 
 
     private TableGroupDefinition<DrogeUser> _groupBy = new()
     {
@@ -72,16 +77,41 @@ public partial class StatisticsUserTable : IDisposable
         }
     }
 
-    private async Task YearChanged(IEnumerable<int> arg)
+    private async Task OpenConfigureDialog()
     {
-        _selectedYear = arg.ToList();
-        await TypeChanged(_selectedTypes);
+        var parameters = new DialogParameters<UserTableConfigureDialog>
+        {
+            { x => x.DistinctTypes, _distinctTypes },
+            { x => x.Years, _years },
+            { x => x.SelectedTypes, _selectedTypes },
+            { x => x.SelectedYear, _selectedYear },
+            { x => x.Compensation, _compensation },
+        };
+
+        var options = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.Medium,
+            CloseButton = true,
+            FullWidth = true
+        };
+        var dialog = await DialogProvider.ShowAsync<UserTableConfigureDialog>("", parameters, options);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            if (result.Data is StatisticsUserTableConfigureSettings data)
+            {
+                _selectedTypes = data.SelectedTypes.ToList();
+                _selectedYear = data.SelectedYear.ToList();
+                _compensation = data.Compensation;
+                await TypeChanged();
+                StateHasChanged();
+            }
+        }
     }
 
-    private async Task TypeChanged(IEnumerable<DistinctType?>? arg)
+    private async Task TypeChanged()
     {
-        if (arg is null) return;
-        _selectedTypes = arg.ToList();
+        if(_selectedTypes is null) return;
         _analyzeHours = [];
         var year = _selectedYear.FirstOrDefault();
         foreach (var types in _selectedTypes.Where(x => x?.Type is not null))
@@ -106,25 +136,10 @@ public partial class StatisticsUserTable : IDisposable
                     break;
             }
         }
-
-        StateHasChanged();
     }
 
     public void Dispose()
     {
         _cls.Cancel();
-    }
-
-    private class DistinctType
-    {
-        public string? Type { get; set; }
-        public DistinctFromWhere From { get; set; }
-    }
-
-    private enum DistinctFromWhere
-    {
-        None = 0,
-        Action = 1,
-        Training = 2,
     }
 }

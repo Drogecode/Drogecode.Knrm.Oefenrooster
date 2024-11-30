@@ -20,12 +20,12 @@
                 </MudGrid>
             </MudPaper>
         </MudTabPanel>
+        <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_Statistics_user_tabel">
+            <MudTabPanel Text="@L["User table"]">
+                <StatisticsUserTable/>
+            </MudTabPanel>
+        </AuthorizeView>
         <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
-            <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_Statistics_user_tabel" Context="inner">
-                <MudTabPanel Text="@L["User table"]">
-                    <StatisticsUserTable/>
-                </MudTabPanel>
-            </AuthorizeView>
             <MudTabPanel Text="@L["Month charts"]">
                 <MudText Typo="Typo.h3">Komt er nog aan</MudText>
             </MudTabPanel>

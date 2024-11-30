@@ -92,4 +92,16 @@
     <data name="type" xml:space="preserve">
         <value>type</value>
     </data>
+    <data name="Compensation" xml:space="preserve">
+        <value>Compensation</value>
+    </data>
+    <data name="Select what information to show" xml:space="preserve">
+        <value>Select what information to show!</value>
+    </data>
+    <data name="Selection" xml:space="preserve">
+        <value>Selection</value>
+    </data>
+    <data name="You need to make a selection" xml:space="preserve">
+        <value>You need to make a selection</value>
+    </data>
 </root>

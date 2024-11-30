@@ -31,7 +31,7 @@
                                 <div class="d-flex gap-1">
                                     <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small"/>
                                     <DateToString DateTimeLocal="item.DateStart" @key="@(item.DateStart?.Ticks + DateTime.Today.Day)"/>
-                                    @if (item.DateEnd is not null && !item.DateEnd.Equals(item.DateStart))
+                                    @if (item.DateEnd is not null && !item.DateEnd.Equals(item.DateStart) && item.DateEnd.Value.CompareTo(DateTime.MinValue) != 0 && item.DateEnd.Value.Year >= 5)
                                     {
                                         <div> - </div>
                                         <DateToString DateTimeLocal="item.DateEnd" @key="@(item.DateEnd?.Ticks + DateTime.Today.Day)"/>
