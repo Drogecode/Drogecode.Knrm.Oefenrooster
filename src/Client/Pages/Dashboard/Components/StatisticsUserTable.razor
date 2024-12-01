@@ -3,13 +3,14 @@
     <MudButton Color="Color.Primary" StartIcon="@Icons.Material.Filled.DisplaySettings" OnClick="OpenConfigureDialog">@L["Selection"]</MudButton>
     @if (_users is not null && _selectedTypes?.Any() == true)
     {
+        <MudText>@L["Count / full hours / exact time (d:hh:mm)"]</MudText>
         <MudTable Hover="true" Breakpoint="Breakpoint.None"
                   Items="@_users.OrderBy(x => _functions?.FirstOrDefault(y => y.Id == x.UserFunctionId)?.Order).ThenBy(x => x.Name)"
                   GroupBy="@_groupBy"
                   GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
                   GroupFooterClass="mb-4"
                   FixedHeader="true"
-                  Height=" calc(100vh - 235px)"
+                  Height=" calc(100vh - 255px)"
                   Dense="true"
                   Bordered="true">
             <HeaderContent>
@@ -31,6 +32,7 @@
             <RowTemplate>
                 @{
                     var userCounters = _analyzeHours?.Where(x => x.UserId == context.Id).ToList();
+                    var count = 0;
                     var fullHours = 0;
                     var minutes = 0.0;
                     if (userCounters?.Any() == true)
@@ -38,6 +40,7 @@
                         foreach (var counter in userCounters)
                         {
                             {
+                                count += counter.Count;
                                 fullHours += counter.FullHours;
                                 minutes += counter.Minutes;
                             }
@@ -55,6 +58,8 @@
                         @if (userCounters?.Any() == true && minutes > 0)
                         {
                             var timeSpanMinutes = TimeSpan.FromMinutes(minutes);
+                            @count
+                            <p>/</p>
                             @fullHours
                             <p>/</p>
                             @timeSpanMinutes.ToString(timeSpanMinutes.Days > 0 ? @"d\:hh\:mm" : @"hh\:mm")
@@ -69,6 +74,8 @@
                             @if (userCounter is not null && userCounter.Minutes > 0)
                             {
                                 var timeSpanMinutes = TimeSpan.FromMinutes(userCounter.Minutes);
+                                @userCounter.Count
+                                <p>/</p>
                                 @userCounter.FullHours
                                 <p>/</p>
                                 @timeSpanMinutes.ToString(timeSpanMinutes.Days > 0 ? @"d\:hh\:mm" : @"hh\:mm")

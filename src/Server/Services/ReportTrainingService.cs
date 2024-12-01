@@ -141,6 +141,7 @@ public class ReportTrainingService : IReportTrainingService
                     userCounter = new UserCounters()
                     {
                         UserId = user.DrogeCodeId ?? Guid.Empty,
+                        Count = 1,
                         Minutes = minutes,
                         FullHours = fullHours,
                         Type = type,
@@ -149,6 +150,7 @@ public class ReportTrainingService : IReportTrainingService
                 }
                 else
                 {
+                    userCounter.Count++;
                     userCounter.Minutes += minutes;
                     userCounter.FullHours += fullHours;
                 }

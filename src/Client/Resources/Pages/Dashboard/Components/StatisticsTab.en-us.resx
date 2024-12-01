@@ -104,4 +104,7 @@
     <data name="You need to make a selection" xml:space="preserve">
         <value>You need to make a selection</value>
     </data>
+    <data name="Count / full hours / exact time (d:hh:mm)" xml:space="preserve">
+        <value>Count / full hours / exact time (d:hh:mm)</value>
+    </data>
 </root>
