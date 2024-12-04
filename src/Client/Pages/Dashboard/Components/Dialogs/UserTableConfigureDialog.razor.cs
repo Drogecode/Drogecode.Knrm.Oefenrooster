@@ -7,7 +7,7 @@ public sealed partial class UserTableConfigureDialog
 {
     [Inject] private IStringLocalizer<StatisticsTab> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter, EditorRequired] public List<DistinctType>? DistinctTypes {get; set;}
     [Parameter, EditorRequired] public List<int>? Years {get; set;}
     [Parameter, EditorRequired] public IEnumerable<DistinctType?> SelectedTypes { get; set; } = [];
