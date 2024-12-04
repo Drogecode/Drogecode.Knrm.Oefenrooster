@@ -90,8 +90,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_dashboard_Statistics:
                         drogeUserRole.AUTH_dashboard_Statistics = true;
                         break;
-                    case AccessesNames.AUTH_dashboard_Statistics2:
-                        drogeUserRole.AUTH_dashboard_Statistics2 = true;
+                    case AccessesNames.AUTH_dashboard_Statistics_user_tabel:
+                        drogeUserRole.AUTH_dashboard_Statistics_user_tabel = true;
                         break;
                     case AccessesNames.AUTH_dashboard_holidays:
                         drogeUserRole.AUTH_dashboard_holidays = true;
@@ -165,8 +165,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_training_history_full).Append(',');
             if (userRole.AUTH_dashboard_Statistics)
                 sb.Append(AccessesNames.AUTH_dashboard_Statistics).Append(',');
-            if (userRole.AUTH_dashboard_Statistics2)
-                sb.Append(AccessesNames.AUTH_dashboard_Statistics2).Append(',');
+            if (userRole.AUTH_dashboard_Statistics_user_tabel)
+                sb.Append(AccessesNames.AUTH_dashboard_Statistics_user_tabel).Append(',');
             if (userRole.AUTH_dashboard_holidays)
                 sb.Append(AccessesNames.AUTH_dashboard_holidays).Append(',');
             if (userRole.AUTH_dashboard_qr)

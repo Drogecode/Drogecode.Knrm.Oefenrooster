@@ -1,0 +1,35 @@
+﻿<MudDialog>
+    <TitleContent>
+        @L["Select what information to show"]
+    </TitleContent>
+    <DialogContent>
+        @if (DistinctTypes is not null && Years is not null)
+        {
+            <MudSelect T="int" Label="@L["year"]" @bind-SelectedValues="SelectedYear" Clearable="false" MultiSelection="false">
+                @foreach (var year in Years)
+                {
+                    <MudSelectItem T="int" Value="@year">@year</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect T="DistinctType?" Label="@L["type"]" @bind-SelectedValues="SelectedTypes" Clearable="true" MultiSelection="true"
+                       ToStringFunc="(x) => { return x?.Type; }">
+                @foreach (var type in DistinctTypes.OrderBy(x => x.Type))
+                {
+                    <MudSelectItem T="DistinctType?" Value="@type">@type.Type</MudSelectItem>
+                }
+            </MudSelect>
+            <MudNumericField T="decimal" @bind-Value="@Compensation" Label="@L["Compensation"]"/>
+        }
+        else
+        {
+            <MudSkeleton/>
+            <MudSkeleton/>
+            <MudSkeleton/>
+            <MudSkeleton/>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="()=>MudDialog.Cancel()">@LApp["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">@LApp["Ok"]</MudButton>
+    </DialogActions>
+</MudDialog>

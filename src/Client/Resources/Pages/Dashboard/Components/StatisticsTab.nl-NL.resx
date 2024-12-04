@@ -88,6 +88,30 @@
         <value>Aantal acties: {0}</value>
     </data>
     <data name="Total trainings: {0}" xml:space="preserve">
-        <value>Aantal trainingen: {0}</value>
+        <value>Aantal oefeningen: {0}</value>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Naam</value>
+    </data>
+    <data name="year" xml:space="preserve">
+        <value>Jaar</value>
+    </data>
+    <data name="type" xml:space="preserve">
+        <value>type</value>
+    </data>
+    <data name="Compensation" xml:space="preserve">
+        <value>Vergoeding</value>
+    </data>
+    <data name="Select what information to show" xml:space="preserve">
+        <value>Selecteer welke informatie wordt geladen!</value>
+    </data>
+    <data name="Selection" xml:space="preserve">
+        <value>Selectie</value>
+    </data>
+    <data name="You need to make a selection" xml:space="preserve">
+        <value>Je moet eerst een selectie maken</value>
+    </data>
+    <data name="Count / full hours / exact time (d:hh:mm)" xml:space="preserve">
+        <value>Aantal / hele uren / exacte tijd (d:hh:mm)</value>
     </data>
 </root>

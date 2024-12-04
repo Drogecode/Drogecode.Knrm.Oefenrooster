@@ -35,7 +35,6 @@ public class HolidayController : ControllerBase
 
     [HttpGet]
     [Route("all/user")]
-    [Route("")]// from version v0.3.82 and older
     public async Task<ActionResult<MultipleHolidaysResponse>> GetAll(CancellationToken clt = default)
     {
         try

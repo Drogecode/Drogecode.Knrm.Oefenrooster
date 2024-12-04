@@ -55,6 +55,72 @@
         }
       }
     },
+    "/api/ReportTraining/{users}/{count}/{skip}/{types}": {
+      "get": {
+        "tags": [
+          "ReportTraining"
+        ],
+        "operationId": "GetLastTrainings",
+        "parameters": [
+          {
+            "name": "users",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "count",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "types",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleReportTrainingsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleReportTrainingsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleReportTrainingsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/ReportTraining/{users}/{count}/{skip}": {
       "get": {
         "tags": [
@@ -201,10 +267,86 @@
           }
         }
       }
+    },
+    "/api/ReportTraining/analyze/hours/{year}/{type}": {
+      "get": {
+        "tags": [
+          "ReportTraining"
+        ],
+        "operationId": "AnalyzeHours",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyzeHoursResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyzeHoursResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyzeHoursResult"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AnalyzeHoursResult": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userCounters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserCounters"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AnalyzeMonthDetails": {
         "type": "object",
         "properties": {
@@ -290,7 +432,8 @@
         "enum": [
           0,
           1,
-          2
+          2,
+          3
         ],
         "type": "integer",
         "format": "int32"
@@ -493,6 +636,32 @@
           "order": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserCounters": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fullHours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minutes": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false

@@ -226,7 +226,8 @@ public static partial class GraphHelper
                 training.Type = AdditionalDataToString(det, "Soort");
                 training.FunctioningMaterial = AdditionalDataToString(det, "Functioneren_x0020_materieel");
                 training.ProblemsWithWeed = AdditionalDataToString(det, "Problemen_x0020_met_x0020_fontei");
-                training.TotalMinutes = (training.End - training.Start).TotalMinutes;
+                var differentStart = ReportSettingsHelper.TrainingDifferentStart.Contains(training.Type ?? string.Empty);
+                training.TotalMinutes = differentStart ? (training.End - training.Commencement).TotalMinutes : (training.End - training.Start).TotalMinutes;
                 training.TotalFullHours = Convert.ToInt32(Math.Ceiling(training.TotalMinutes / 60));
                 trainings.Add(training);
             }
@@ -299,8 +300,7 @@ public static partial class GraphHelper
                 action.FunctioningMaterial = AdditionalDataToString(det, "Functioneren_x0020_materieel");
                 action.ProblemsWithWeed = AdditionalDataToString(det, "Problemen_x0020_met_x0020_fontei");
                 action.Completedby = AdditionalDataToString(det, "afgehandeld");
-                var differentStart = ReportSettingsHelper.TrainingDifferentStart.Contains(action.Type ?? string.Empty);
-                action.TotalMinutes = differentStart ? (action.End - action.Commencement).TotalMinutes : (action.End - action.Start).TotalMinutes;
+                action.TotalMinutes = (action.End - action.Start).TotalMinutes;
                 action.TotalFullHours = Convert.ToInt32(Math.Ceiling(action.TotalMinutes / 60));
                 actions.Add(action);
             }

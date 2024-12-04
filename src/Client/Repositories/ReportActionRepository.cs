@@ -20,16 +20,17 @@ public class ReportActionRepository
         return result;
     }
 
-    public async Task<MultipleReportActionsResponse> GetLastActions(IEnumerable<DrogeUser> users, int count, int skip, CancellationToken clt)
+    public async Task<MultipleReportActionsResponse> GetLastActions(IEnumerable<DrogeUser> users, IEnumerable<string> types, int count, int skip, CancellationToken clt)
     {
-        var workingList = new List<Guid>();
+        var workingUserList = new List<Guid>();
         foreach (var user in users)
         {
-            workingList.Add(user.Id);
+            workingUserList.Add(user.Id);
         }
 
-        var usersAsString = System.Text.Json.JsonSerializer.Serialize(workingList);
-        var result = await _reportActionClient.GetLastActionsAsync(usersAsString, count, skip, clt);
+        var usersAsString = System.Text.Json.JsonSerializer.Serialize(workingUserList);
+        var typesAsString = System.Text.Json.JsonSerializer.Serialize(types);
+        var result = await _reportActionClient.GetLastActionsAsync(usersAsString, count, skip, typesAsString, clt);
         return result;
     }
 
@@ -57,6 +58,12 @@ public class ReportActionRepository
     public async Task<DistinctResponse?> Distinct(DistinctReport column, CancellationToken clt)
     {
         var result = await _reportActionClient.DistinctAsync(column, clt);
+        return result;
+    }
+
+    public async Task<AnalyzeHoursResult?> AnalyzeHoursAsync(int year, string type, CancellationToken clt)
+    {
+        var result = await _reportActionClient.AnalyzeHoursAsync(year, type, clt);
         return result;
     }
 }

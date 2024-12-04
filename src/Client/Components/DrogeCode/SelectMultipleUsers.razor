@@ -3,6 +3,7 @@
 {
     <MudSelectExtended Clearable="@Clearable"
                        T="DrogeUser"
+                       Disabled="Disabled"
                        MultiSelectionTextFunc="@(new Func<List<DrogeUser>, string>(GetMultiSelectionText))"
                        ToStringFunc="@(new Func<DrogeUser, string>(GetSelectedText))"
                        Label="@Label"

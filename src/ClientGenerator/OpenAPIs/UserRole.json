@@ -292,7 +292,7 @@
           "autH_dashboard_Statistics": {
             "type": "boolean"
           },
-          "autH_dashboard_Statistics2": {
+          "autH_dashboard_Statistics_user_tabel": {
             "type": "boolean"
           },
           "autH_dashboard_holidays": {

@@ -41,7 +41,7 @@ public class DrogeUserRole
     public bool AUTH_action_history_full { get; set; }
     public bool AUTH_training_history_full { get; set; }
     public bool AUTH_dashboard_Statistics { get; set; }
-    public bool AUTH_dashboard_Statistics2 { get; set; }
+    public bool AUTH_dashboard_Statistics_user_tabel { get; set; }
     public bool AUTH_dashboard_holidays { get; set; }
     public bool AUTH_dashboard_qr { get; set; }
 

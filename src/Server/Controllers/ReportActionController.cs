@@ -36,13 +36,14 @@ public class ReportActionController : ControllerBase
     {
         try
         {
-            if (count > 30) return Forbid();
+            if (count > 50) return Forbid();
             var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var users = new List<Guid?>() { userId };
 
-            var result = await _reportActionService.GetListActionsUser(users, userId, count, skip, customerId, clt);
+            var result = await _reportActionService.GetListActionsUser(users, null, userId, count, skip, customerId, clt);
+            _logger.LogInformation("Loading actions {count} skipping {skip} for user {userName}", count, skip, userName);
             return result;
         }
         catch (OperationCanceledException)
@@ -60,19 +61,23 @@ public class ReportActionController : ControllerBase
     }
 
     [HttpGet]
-    [Route("{users}/{count:int}/{skip:int}")]
-    public async Task<ActionResult<MultipleReportActionsResponse>> GetLastActions(string users, int count, int skip, CancellationToken clt = default)
+    [Route("{users}/{count:int}/{skip:int}/{types}", Order = 0)]
+    [Route("{users}/{count:int}/{skip:int}", Order = 1)]// ToDo Remove when all users on v0.4.22 or above
+    public async Task<ActionResult<MultipleReportActionsResponse>> GetLastActions(string users, int count, int skip, string? types = null, CancellationToken clt = default)
     {
         try
         {
-            if (count > 30) return Forbid();
+            if (count > 50) return Forbid();
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var usersAsList = JsonSerializer.Deserialize<List<Guid?>>(users);
             if (usersAsList is null)
                 return BadRequest("users is null");
+            List<string>? typesAsList = null;
+            if(types is not null) typesAsList = JsonSerializer.Deserialize<List<string>>(types);
 
-            var result = await _reportActionService.GetListActionsUser(usersAsList, userId, count, skip, customerId, clt);
+            var result = await _reportActionService.GetListActionsUser(usersAsList, typesAsList, userId, count, skip, customerId, clt);
+            _logger.LogInformation("Loading actions {count} skipping {skip} for user {users} ({userId})", count, skip, users, userId);
             return result;
         }
         catch (OperationCanceledException)
@@ -151,6 +156,34 @@ public class ReportActionController : ControllerBase
         }
     }
 
+    [HttpGet]
+    [Route("analyze/hours/{year:int}/{type}")]
+    [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics_user_tabel)]
+    public async Task<ActionResult<AnalyzeHoursResult>> AnalyzeHours(int year, string type, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var timeZone = await _customerSettingService.GetTimeZone(customerId);
+
+            var result = await _reportActionService.AnalyzeHours(year, type, timeZone, customerId, clt);
+            return result;
+        }
+        catch (OperationCanceledException)
+        {
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in AnalyzeHours Action");
+            return BadRequest();
+        }
+    }
+    
     [HttpGet]
     [Route("kill")]
     [Authorize(Roles = AccessesNames.AUTH_Taco)]

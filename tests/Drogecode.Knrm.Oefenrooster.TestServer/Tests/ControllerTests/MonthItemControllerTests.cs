@@ -107,8 +107,8 @@ public class MonthItemControllerTests : BaseTest
         var new1 = await AddCalendarMonthItem("GetFutureMonthItems_1");
         var new2 = await AddCalendarMonthItem("GetFutureMonthItems_2", short.Parse(compareDate.AddMonths(1).Month.ToString()));
         var new3 = await AddCalendarMonthItem("GetFutureMonthItems_3", short.Parse(compareDate.AddMonths(-1).Month.ToString()));
-        var new4 = await AddCalendarMonthItem("GetFutureMonthItems_4", short.Parse(compareDate.AddMonths(1).Month.ToString()), short.Parse(compareDate.Year.ToString()));
-        var new5 = await AddCalendarMonthItem("GetFutureMonthItems_5", short.Parse(compareDate.AddMonths(-1).Month.ToString()), short.Parse(compareDate.Year.ToString()));
+        var new4 = await AddCalendarMonthItem("GetFutureMonthItems_4", short.Parse(compareDate.AddMonths(1).Month.ToString()), short.Parse(compareDate.AddMonths(1).Year.ToString()));
+        var new5 = await AddCalendarMonthItem("GetFutureMonthItems_5", short.Parse(compareDate.AddMonths(-1).Month.ToString()), short.Parse(compareDate.AddMonths(-1).Year.ToString()));
         var new6 = await AddCalendarMonthItem("GetFutureMonthItems_6", short.Parse(compareDate.Month.ToString()), short.Parse(compareDate.AddYears(1).Year.ToString()));
         var new7 = await AddCalendarMonthItem("GetFutureMonthItems_7", (short.Parse((compareDate.AddMonths(-1).Month).ToString())), short.Parse(compareDate.AddMonths(-1).AddYears(1).Year.ToString()));
         var result = await MonthItemController.GetAllItems(100, 0, false);

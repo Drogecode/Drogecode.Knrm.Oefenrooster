@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -21,7 +22,7 @@ public class ReportTrainingRepository
         return result;
     }
 
-    public async Task<MultipleReportTrainingsResponse> GetLastTraining(IEnumerable<DrogeUser> users, int count, int skip, CancellationToken clt)
+    public async Task<MultipleReportTrainingsResponse> GetLastTraining(IEnumerable<DrogeUser> users, IEnumerable<string> types, int count, int skip, CancellationToken clt)
     {
         var workingList = new List<Guid>();
         foreach(var user in users)
@@ -29,7 +30,8 @@ public class ReportTrainingRepository
             workingList.Add(user.Id);
         }
         var usersAsString = System.Text.Json.JsonSerializer.Serialize(workingList);
-        var result = await _reportTrainingClient.GetLastTrainingsAsync(usersAsString, count, skip, clt);
+        var typesAsString = System.Text.Json.JsonSerializer.Serialize(types);
+        var result = await _reportTrainingClient.GetLastTrainingsAsync(usersAsString, count, skip, typesAsString, clt);
         return result;
     }
     
@@ -51,5 +53,17 @@ public class ReportTrainingRepository
         }
 
         return new AnalyzeYearChartAllResponse();
+    }
+
+    public async Task<DistinctResponse?> Distinct(DistinctReport column, CancellationToken clt)
+    {
+        var result = await _reportTrainingClient.DistinctAsync(column, clt);
+        return result;
+    }
+
+    public async Task<AnalyzeHoursResult?> AnalyzeHoursAsync(int year, string type, CancellationToken clt)
+    {
+        var result = await _reportTrainingClient.AnalyzeHoursAsync(year, type, clt);
+        return result;
     }
 }

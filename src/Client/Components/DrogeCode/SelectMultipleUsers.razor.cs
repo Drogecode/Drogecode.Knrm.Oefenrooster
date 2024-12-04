@@ -14,6 +14,7 @@ public sealed partial class SelectMultipleUsers
     [Parameter] public bool Clearable { get; set; } = true;
     [Parameter] public bool ReadOnly { get; set; } = false;
     [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public bool Disabled { get; set; } = false;
 
     private IEnumerable<DrogeUser> _selectedUsers = new List<DrogeUser>();
     [Parameter]
