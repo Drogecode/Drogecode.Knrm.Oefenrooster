@@ -47,6 +47,7 @@ public class ReportTrainingController : ControllerBase
             var users = new List<Guid?>() { userId };
 
             var result = await _reportTrainingService.GetListTrainingUser(users, null, userId, count, skip, customerId, clt);
+            _logger.LogInformation("Loading trainings {count} skipping {skip} for user {userName}", count, skip, userName);
             return result;
         }
         catch (Exception ex)
@@ -74,6 +75,7 @@ public class ReportTrainingController : ControllerBase
             if(types is not null) typesAsList = JsonSerializer.Deserialize<List<string>>(types);
 
             var result = await _reportTrainingService.GetListTrainingUser(usersAsList, typesAsList, userId, count, skip, customerId, clt);
+            _logger.LogInformation("Loading trainings {count} skipping {skip} for user {users} ({userId})", count, skip, users, userId);
             return result;
         }
         catch (Exception ex)

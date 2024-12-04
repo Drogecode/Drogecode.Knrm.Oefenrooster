@@ -43,7 +43,7 @@ public class ReportActionController : ControllerBase
             var users = new List<Guid?>() { userId };
 
             var result = await _reportActionService.GetListActionsUser(users, null, userId, count, skip, customerId, clt);
-            _logger.LogInformation("Loading actions {count} skipping {}", count);
+            _logger.LogInformation("Loading actions {count} skipping {skip} for user {userName}", count, skip, userName);
             return result;
         }
         catch (OperationCanceledException)
@@ -77,6 +77,7 @@ public class ReportActionController : ControllerBase
             if(types is not null) typesAsList = JsonSerializer.Deserialize<List<string>>(types);
 
             var result = await _reportActionService.GetListActionsUser(usersAsList, typesAsList, userId, count, skip, customerId, clt);
+            _logger.LogInformation("Loading actions {count} skipping {skip} for user {users} ({userId})", count, skip, users, userId);
             return result;
         }
         catch (OperationCanceledException)
