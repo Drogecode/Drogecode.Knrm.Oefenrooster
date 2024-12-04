@@ -23,7 +23,8 @@ public partial class StatisticsUserTable : IDisposable
     private List<UserCounters>? _analyzeHours;
     private List<int>? _years;
     private List<int> _selectedYear = [];
-    private decimal _compensation = 1.25m; 
+    private decimal _compensation = 1.25m;
+    private bool _showHistoricalIncorrectWarning = false;
 
     private TableGroupDefinition<DrogeUser> _groupBy = new()
     {
@@ -103,6 +104,7 @@ public partial class StatisticsUserTable : IDisposable
                 _selectedTypes = data.SelectedTypes.ToList();
                 _selectedYear = data.SelectedYear.ToList();
                 _compensation = data.Compensation;
+                _showHistoricalIncorrectWarning = _selectedYear.FirstOrDefault() <= 2021;
                 await TypeChanged();
                 StateHasChanged();
             }

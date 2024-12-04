@@ -18,10 +18,13 @@ public class ReportActionService : IReportActionService
         _logger = logger;
     }
 
-    public async Task<MultipleReportActionsResponse> GetListActionsUser(List<Guid?> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
+    public async Task<MultipleReportActionsResponse> GetListActionsUser(List<Guid?> users, List<string>? types, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var listWhere = _database.ReportActions.Include(x => x.Users).Where(x => x.CustomerId == customerId && x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count);
+        var listWhere = _database.ReportActions.Include(x => x.Users)
+            .Where(x => x.CustomerId == customerId 
+                        && x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count
+                        && (types == null || !types.Any() || types.Contains(x.Type)));
         var sharePointActionsUser = new MultipleReportActionsResponse
         {
             Actions = await listWhere.OrderByDescending(x => x.Commencement).Skip(skip).Take(count).Select(x => x.ToDrogeAction()).ToListAsync(clt),

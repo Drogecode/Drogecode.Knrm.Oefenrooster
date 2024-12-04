@@ -40,13 +40,13 @@ public class ReportTrainingController : ControllerBase
     {
         try
         {
-            if (count > 30) return Forbid();
+            if (count > 50) return Forbid();
             var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var users = new List<Guid?>() { userId };
 
-            var result = await _reportTrainingService.GetListTrainingUser(users, userId, count, skip, customerId, clt);
+            var result = await _reportTrainingService.GetListTrainingUser(users, null, userId, count, skip, customerId, clt);
             return result;
         }
         catch (Exception ex)
@@ -57,20 +57,23 @@ public class ReportTrainingController : ControllerBase
     }
 
     [HttpGet]
-    [Route("{users}/{count:int}/{skip:int}")]
-    public async Task<ActionResult<MultipleReportTrainingsResponse>> GetLastTrainings(string users, int count, int skip, CancellationToken clt = default)
+    [Route("{users}/{count:int}/{skip:int}/{types}", Order = 0)]
+    [Route("{users}/{count:int}/{skip:int}", Order = 1)]// ToDo Remove when all users on v0.4.22 or above
+    public async Task<ActionResult<MultipleReportTrainingsResponse>> GetLastTrainings(string users, int count, int skip, string? types = null, CancellationToken clt = default)
     {
         try
         {
-            if (count > 30) return Forbid();
+            if (count > 50) return Forbid();
             var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var usersAsList = System.Text.Json.JsonSerializer.Deserialize<List<Guid?>>(users);
             if (usersAsList is null)
                 return BadRequest("users is null");
+            List<string>? typesAsList = null;
+            if(types is not null) typesAsList = JsonSerializer.Deserialize<List<string>>(types);
 
-            var result = await _reportTrainingService.GetListTrainingUser(usersAsList, userId, count, skip, customerId, clt);
+            var result = await _reportTrainingService.GetListTrainingUser(usersAsList, typesAsList, userId, count, skip, customerId, clt);
             return result;
         }
         catch (Exception ex)

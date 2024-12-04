@@ -112,6 +112,6 @@
         <value>Je moet eerst een selectie maken</value>
     </data>
     <data name="Count / full hours / exact time (d:hh:mm)" xml:space="preserve">
-        <value>Aantal / totaal uren / exacte tijd (d:hh:mm)</value>
+        <value>Aantal / hele uren / exacte tijd (d:hh:mm)</value>
     </data>
 </root>

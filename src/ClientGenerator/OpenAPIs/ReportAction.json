@@ -55,6 +55,72 @@
         }
       }
     },
+    "/api/ReportAction/{users}/{count}/{skip}/{types}": {
+      "get": {
+        "tags": [
+          "ReportAction"
+        ],
+        "operationId": "GetLastActions",
+        "parameters": [
+          {
+            "name": "users",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "count",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "types",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleReportActionsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleReportActionsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleReportActionsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/ReportAction/{users}/{count}/{skip}": {
       "get": {
         "tags": [
@@ -403,7 +469,8 @@
         "enum": [
           0,
           1,
-          2
+          2,
+          3
         ],
         "type": "integer",
         "format": "int32"
@@ -692,6 +759,10 @@
           "type": {
             "type": "string",
             "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
           },
           "fullHours": {
             "type": "integer",

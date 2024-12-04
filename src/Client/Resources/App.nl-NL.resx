@@ -210,4 +210,7 @@
   <data name="Does not work on mobile" xml:space="preserve">
     <value>Werkt (nog) niet op mobiel</value>
   </data>
+  <data name="Rows per page" xml:space="preserve">
+    <value>Rijen per pagina</value>
+  </data>
 </root>

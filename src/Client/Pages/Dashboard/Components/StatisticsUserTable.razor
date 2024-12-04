@@ -3,6 +3,11 @@
     <MudButton Color="Color.Primary" StartIcon="@Icons.Material.Filled.DisplaySettings" OnClick="OpenConfigureDialog">@L["Selection"]</MudButton>
     @if (_users is not null && _selectedTypes?.Any() == true)
     {
+        @if (_showHistoricalIncorrectWarning)
+        {
+            <MudAlert Severity="Severity.Info">@L["Data from 2021 and before could be incorrect or incomplete"]</MudAlert>
+        }
+
         <MudText>@L["Count / full hours / exact time (d:hh:mm)"]</MudText>
         <MudTable Hover="true" Breakpoint="Breakpoint.None"
                   Items="@_users.OrderBy(x => _functions?.FirstOrDefault(y => y.Id == x.UserFunctionId)?.Order).ThenBy(x => x.Name)"
@@ -10,7 +15,7 @@
                   GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
                   GroupFooterClass="mb-4"
                   FixedHeader="true"
-                  Height=" calc(100vh - 255px)"
+                  Height="@(_showHistoricalIncorrectWarning ? "calc(100vh - 305px )" : "calc(100vh - 255px )")"
                   Dense="true"
                   Bordered="true">
             <HeaderContent>
