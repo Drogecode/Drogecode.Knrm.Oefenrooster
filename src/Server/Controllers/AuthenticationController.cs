@@ -11,17 +11,16 @@ using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
+using Drogecode.Knrm.Oefenrooster.Server.Services;
+using IAuthenticationService = Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces.IAuthenticationService;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 [ApiExplorerSettings(GroupName = "Authentication")]
-public partial class AuthenticationController : ControllerBase
+public class AuthenticationController : ControllerBase
 {
     private readonly ILogger<AuthenticationController> _logger;
     private readonly IMemoryCache _memoryCache;
@@ -50,45 +49,31 @@ public partial class AuthenticationController : ControllerBase
 
     [HttpGet]
     [Route("login-secrets")]
-    public ActionResult<GetLoginSecretsResponse> GetLoginSecrets()
+    public async Task<ActionResult<GetLoginSecretsResponse>> GetLoginSecrets()
     {
         try
         {
-            var codeVerifier = SecretHelper.CreateSecret(120);
-            var tenantId = new Guid(_configuration.GetValue<string>("AzureAd:TenantId") ?? throw new DrogeCodeNullException("no tenant id found for azure login"));
-            var clientId = new Guid(_configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new DrogeCodeNullException("no client id found for azure login"));
-            var response = new CacheLoginSecrets
+            var identityProvider =_configuration.GetValue<IdentityProvider>("IdentityProvider");
+            IAuthenticationService authService;  
+            switch (identityProvider)
             {
-                LoginSecret = SecretHelper.CreateSecret(64),
-                LoginNonce = SecretHelper.CreateSecret(64),
-                CodeChallenge = GenerateCodeChallenge(codeVerifier),
-                CodeVerifier = codeVerifier,
-                TenantId = tenantId,
-                ClientId = clientId,
-                Success = true
-            };
-
-            var cacheOptions = new MemoryCacheEntryOptions();
-            cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
-            _memoryCache.Set(response.LoginSecret, response, cacheOptions);
-            return response;
+                case IdentityProvider.Azure:
+                    authService = new AuthenticationAzureService(_memoryCache, _configuration);
+                    break;
+                case  IdentityProvider.KeyCloak:
+                    authService = new AuthenticationKeyCloakService(_memoryCache, _configuration);
+                    break;
+                case IdentityProvider.None:
+                default:
+                    throw new ArgumentOutOfRangeException($"identityProvider: `{identityProvider}` is not supported");
+            }
+            return await authService.GetLoginSecrets();
         }
         catch (Exception e)
         {
             _logger.LogError(e, "GetLoginSecrets");
             return BadRequest();
         }
-    }
-
-    private static string GenerateCodeChallenge(string codeVerifier)
-    {
-        using var sha256 = SHA256.Create();
-        var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
-        var b64Hash = Convert.ToBase64String(hash);
-        var code = MyRegex().Replace(b64Hash, "-");
-        code = MyRegex1().Replace(code, "_");
-        code = MyRegex2().Replace(code, "");
-        return code;
     }
 
     [HttpGet]
@@ -349,13 +334,4 @@ public partial class AuthenticationController : ControllerBase
 
         return user.Id;
     }
-
-    [GeneratedRegex("\\+")]
-    private static partial Regex MyRegex();
-
-    [GeneratedRegex("\\/")]
-    private static partial Regex MyRegex1();
-
-    [GeneratedRegex("=+$")]
-    private static partial Regex MyRegex2();
 }

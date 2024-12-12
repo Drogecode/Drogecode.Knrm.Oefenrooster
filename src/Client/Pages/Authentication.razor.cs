@@ -1,6 +1,8 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages;
 
@@ -11,9 +13,9 @@ public sealed partial class Authentication
     [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
     [Inject] private IAuditClient AuditClient { get; set; } = default!;
     [Parameter] public string? Action { get; set; }
-    [Parameter] [SupplyParameterFromQuery] public string? code { get; set; }
-    [Parameter] [SupplyParameterFromQuery] public string? state { get; set; }
-    [Parameter] [SupplyParameterFromQuery] public string? session_state { get; set; }
+    [Parameter, SupplyParameterFromQuery] public string? code { get; set; }
+    [Parameter, SupplyParameterFromQuery] public string? state { get; set; }
+    [Parameter, SupplyParameterFromQuery] public string? session_state { get; set; }
 
     //https://learn.microsoft.com/nl-nl/azure/active-directory/develop/v2-protocols-oidc
     //https://codewithmukesh.com/blog/authentication-in-blazor-webassembly/
@@ -26,15 +28,16 @@ public sealed partial class Authentication
             {
                 case "login":
                     var secrets = await AuthenticationClient.GetLoginSecretsAsync();
-                    var tenant = secrets.TenantId;
-                    var clientId = secrets.ClientId;
-                    var responseType = "code";
-                    var responseMode = "query";
-                    var scope = "openid+profile+email";
-                    var code_challenge_method = "S256";
-                    var url =
-                        $"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize?client_id={clientId}&response_type={responseType}&redirect_uri={redirectUrl}&response_mode={responseMode}&scope={scope}&state={secrets.LoginSecret}&nonce={secrets.LoginNonce}&code_challenge={secrets.CodeChallenge}&code_challenge_method={code_challenge_method}";
-                    Navigation.NavigateTo(url);
+                    switch (secrets.IdentityProvider)
+                    {
+                        case IdentityProvider.Azure:
+                            await LoginAzure(secrets, redirectUrl);
+                            break;
+                        case IdentityProvider.KeyCloak:
+                            await LoginKeyCloak(secrets, redirectUrl);
+                            break;
+                    }
+
                     break;
                 case "login-callback":
                     //https://localhost:44327/authentication/login-callback?
@@ -69,5 +72,32 @@ public sealed partial class Authentication
                     break;
             }
         }
+    }
+
+    private async Task LoginAzure(GetLoginSecretsResponse secrets, string redirectUrl)
+    {
+        var tenant = secrets.TenantId;
+        var clientId = secrets.ClientId;
+        var responseType = "code";
+        var responseMode = "query";
+        var scope = "openid+profile+email";
+        var code_challenge_method = "S256";
+        var url =
+            $"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize?client_id={clientId}&response_type={responseType}&redirect_uri={redirectUrl}&response_mode={responseMode}&scope={scope}&state={secrets.LoginSecret}&nonce={secrets.LoginNonce}&code_challenge={secrets.CodeChallenge}&code_challenge_method={code_challenge_method}";
+        Navigation.NavigateTo(url);
+    }
+
+    private async Task LoginKeyCloak(GetLoginSecretsResponse secrets, string redirectUrl)
+    {
+        var instance = secrets.Instance;
+        var tenant = secrets.TenantId;
+        var clientId = secrets.ClientId;
+        var responseType = "code";
+        var responseMode = "query";
+        var scope = "openid+profile+email";
+        var code_challenge_method = "S256";
+        var url =
+            $"{instance}realms/{tenant}/openid-connect/auth";
+        Navigation.NavigateTo(url);
     }
 }

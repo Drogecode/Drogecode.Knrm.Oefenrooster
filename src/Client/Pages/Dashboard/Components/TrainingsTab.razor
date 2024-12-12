@@ -41,15 +41,13 @@
                     </MudCardHeader>
                     <MudCardContent>
                         <MudMarkdown Value="@context.Item.Description"/>
-                        @if (context.Item.Users is not null)
-                        {
-                            <MudList T="string" ReadOnly="true">
-                                @foreach (var user in context.Item.Users)
-                                {
-                                    <MudListItem>@user.Name - @user.Role</MudListItem>
-                                }
-                            </MudList>
-                        }
+                        <MudList T="string" ReadOnly="true">
+                            @{ var users = context.Item.Users?.OrderBy(x => x.Order).ToList() ?? new List<SharePointUser>(); }
+                            @foreach (var user in users)
+                            {
+                                <MudListItem>@user.Name - @user.Role</MudListItem>
+                            }
+                        </MudList>
                         @{
                             var differentStart = ReportSettingsHelper.TrainingDifferentStart.Contains(context.Item?.Type ?? string.Empty);
                             var start = differentStart ? context.Item.Commencement : context.Item.Start;
