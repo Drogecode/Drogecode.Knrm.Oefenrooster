@@ -37,6 +37,7 @@ public struct AccessesNames
     public const string GROUP_DASHBOARD = "Dashboard";
     public const string AUTH_action_history_full = "full_action_history";
     public const string AUTH_training_history_full = "full_training_history";
+    public const string AUTH_action_search = "action_search";
     public const string AUTH_dashboard_Statistics = "full_dashboard_statistics";
     public const string AUTH_dashboard_Statistics_user_tabel = "full_dashboard_statistics_ut";
     public const string AUTH_dashboard_holidays = "dashboard_hol";

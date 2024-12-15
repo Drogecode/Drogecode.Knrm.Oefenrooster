@@ -7,6 +7,9 @@
     </AuthorizeView>
     <MudText Typo="Typo.h5">@L["Actions from SharePoint"]</MudText>
     <SelectMultipleUsers Disabled="_busy" Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection"/>
+    <AuthorizeView Roles="@AccessesNames.AUTH_action_search">
+        <MudTextField T="string?" Label="@LApp["Search"]" Value="@_search" ValueChanged="@SearchChanged" />
+    </AuthorizeView>
     <MudSelect T="string" Disabled="_busy" Label="@L["Type"]" SelectedValues="_selectedActionTypes" SelectedValuesChanged="SelectedActionChanged" Clearable="true" MultiSelection="true">
         @foreach (var type in _actionTypes.OrderBy(x => x))
         {
