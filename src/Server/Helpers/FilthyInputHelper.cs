@@ -2,36 +2,42 @@
 
 internal static class FilthyInputHelper
 {
-    internal static List<string>? CleanList(List<string>? input, ILogger logger)
+    internal static List<string>? CleanList(List<string>? input, int maxLength, ILogger logger)
     {
-        List<string>? cleanedInput =  null;
-        if (input is not null)
+        if (input is null) return null;
+        List<string>? cleanedInput = [];
+        var count = 0;
+        foreach (var value in input.Select(value => value.Trim().Replace(Environment.NewLine, "")))
         {
-            cleanedInput = [];
-            foreach (var value in input.Select(value => value.Trim()))
+            count++;
+            if (count > maxLength)
             {
-                if (string.IsNullOrEmpty(value) || value.Any(ch =>
-                    {
-                        var isWrong = !char.IsLetterOrDigit(ch);
-                        if (isWrong)
-                        {
-                            // Allow white space
-                            isWrong = !char.IsWhiteSpace(ch);
-                        }
-                        return isWrong;
-                    }))
-                {
-                    logger.LogWarning("Removed unclean value from body.Search `{filthy}`", value.Replace(Environment.NewLine, ""));
-                }
-                else
-                {
-                    cleanedInput.Add(value);
-                }
+                logger.LogWarning("Exceeded maximum length of filthy input. {count} > {maxlength}", input.Count, maxLength);
+                break;
             }
 
-            if (cleanedInput!.Count == 0)
-                cleanedInput = null;
+            if (string.IsNullOrEmpty(value) || value.Any(ch =>
+                {
+                    var isWrong = !char.IsLetterOrDigit(ch);
+                    if (isWrong)
+                    {
+                        // Allow white space
+                        isWrong = !char.IsWhiteSpace(ch);
+                    }
+
+                    return isWrong;
+                }))
+            {
+                logger.LogWarning("Removed unclean value from body.Search `{filthy}`", value);
+            }
+            else
+            {
+                cleanedInput.Add(value);
+            }
         }
+
+        if (cleanedInput.Count == 0)
+            cleanedInput = null;
 
         return cleanedInput;
     }
