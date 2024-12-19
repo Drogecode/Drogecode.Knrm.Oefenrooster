@@ -87,6 +87,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_training_history_full:
                         drogeUserRole.AUTH_training_history_full = true;
                         break;
+                    case AccessesNames.AUTH_action_search:
+                        drogeUserRole.AUTH_action_search = true;
+                        break;
                     case AccessesNames.AUTH_dashboard_Statistics:
                         drogeUserRole.AUTH_dashboard_Statistics = true;
                         break;
@@ -163,6 +166,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_action_history_full).Append(',');
             if (userRole.AUTH_training_history_full)
                 sb.Append(AccessesNames.AUTH_training_history_full).Append(',');
+            if (userRole.AUTH_action_search)
+                sb.Append(AccessesNames.AUTH_action_search).Append(',');
             if (userRole.AUTH_dashboard_Statistics)
                 sb.Append(AccessesNames.AUTH_dashboard_Statistics).Append(',');
             if (userRole.AUTH_dashboard_Statistics_user_tabel)

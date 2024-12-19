@@ -55,6 +55,55 @@
         }
       }
     },
+    "/api/ReportAction/get": {
+      "post": {
+        "tags": [
+          "ReportAction"
+        ],
+        "operationId": "GetLastActions",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetLastActionsRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetLastActionsRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetLastActionsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleReportActionsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleReportActionsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleReportActionsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/ReportAction/{users}/{count}/{skip}/{types}": {
       "get": {
         "tags": [
@@ -118,7 +167,8 @@
               }
             }
           }
-        }
+        },
+        "deprecated": true
       }
     },
     "/api/ReportAction/{users}/{count}/{skip}": {
@@ -176,7 +226,8 @@
               }
             }
           }
-        }
+        },
+        "deprecated": true
       }
     },
     "/api/ReportAction/analyze/years": {
@@ -663,6 +714,42 @@
           "departure": {
             "type": "string",
             "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetLastActionsRequest": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "search": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skip": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

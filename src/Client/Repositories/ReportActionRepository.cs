@@ -20,7 +20,7 @@ public class ReportActionRepository
         return result;
     }
 
-    public async Task<MultipleReportActionsResponse> GetLastActions(IEnumerable<DrogeUser> users, IEnumerable<string> types, int count, int skip, CancellationToken clt)
+    public async Task<MultipleReportActionsResponse> GetLastActions(IEnumerable<DrogeUser> users, IEnumerable<string> types, string? search, int count, int skip, CancellationToken clt)
     {
         var workingUserList = new List<Guid>();
         foreach (var user in users)
@@ -28,9 +28,15 @@ public class ReportActionRepository
             workingUserList.Add(user.Id);
         }
 
-        var usersAsString = System.Text.Json.JsonSerializer.Serialize(workingUserList);
-        var typesAsString = System.Text.Json.JsonSerializer.Serialize(types);
-        var result = await _reportActionClient.GetLastActionsAsync(usersAsString, count, skip, typesAsString, clt);
+        var body = new GetLastActionsRequest
+        {
+            Users = workingUserList,
+            Types = types.ToList(),
+            Skip = skip,
+            Count = count,
+            Search = string.IsNullOrWhiteSpace(search) ? null : search.Split(',').ToList(),
+        };
+        var result = await _reportActionClient.GetLastActionsPOSTAsync(body, clt);
         return result;
     }
 

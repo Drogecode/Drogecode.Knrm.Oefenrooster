@@ -213,4 +213,7 @@
   <data name="Rows per page" xml:space="preserve">
     <value>Rijen per pagina</value>
   </data>
+  <data name="Search" xml:space="preserve">
+    <value>Zoeken</value>
+  </data>
 </root>

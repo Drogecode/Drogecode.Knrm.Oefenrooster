@@ -1,0 +1,16 @@
+﻿@if (_years is not null)
+{
+    <MudSelect T="int" Label="@L["year"]" SelectedValues="_selectedYear" SelectedValuesChanged="SelectedYearChanged" Clearable="false" MultiSelection="false">
+        @foreach (var year in _years)
+        {
+            <MudSelectItem T="int" Value="@year">@year</MudSelectItem>
+        }
+    </MudSelect>
+}
+else
+{
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+}
