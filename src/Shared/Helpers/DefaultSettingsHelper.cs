@@ -20,7 +20,8 @@ public static class DefaultSettingsHelper
     public static Guid KompasOefeningId { get; } = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0");
     public static Guid KompasLeiderId { get; } = new Guid("d23de705-d950-4833-8b94-aa531022d450");
     public static Guid Oefening1op1Id { get; } = new Guid("52260d46-c748-4ffc-b94c-2baecacbfaf4");
-    public static Guid IdTaco { get; } = new Guid("04093c7a-11e5-4887-af51-319ecc59efe0"); // "04093c7a-11e5-4887-af51-319ecc59efe0"
+    [Obsolete("Use appsetting DrogeCode:SuperAdmin")]
+    public static Guid IdTaco { get; } = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461"); // "04093c7a-11e5-4887-af51-319ecc59efe0"
     public static Guid SystemUser { get; } =new Guid("b4bcc37b-321a-4027-b02b-30630ad8f75e");
     public static Guid DefaultRoosterTuesday { get; } = new Guid("7b4693a8-ae9c-430f-9119-49a6ecbfeb54");
     public static Guid DefaultRoosterSaturdayMorning { get; } = new Guid("2bdaccc0-e9f7-40c1-ae76-d9ed66e4a978");
