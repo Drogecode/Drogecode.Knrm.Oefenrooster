@@ -56,10 +56,13 @@ public class UserRoleService : IUserRoleService
                 }
             }
 
-            foreach (var linkedRole in linkedRoles)
+            /*
+             // Disabled for performance, is done by the background service every night.
+             
+             foreach (var linkedRole in linkedRoles)
             {
                 await _linkUserRoleService.LinkUserToRoleAsync(userId, linkedRole, false, true, clt);
-            }
+            }*/
         }
         catch (Exception ex)
         {

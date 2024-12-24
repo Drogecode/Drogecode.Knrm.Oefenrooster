@@ -97,7 +97,7 @@ public sealed partial class Authentication
         var scope = "openid+profile+email";
         var code_challenge_method = "S256";
         var url =
-            $"{instance}realms/{tenant}/openid-connect/auth";
+            $"{instance}/realms/{tenant}/protocol/openid-connect/auth?client_id={clientId}&response_type={responseType}&redirect_uri={redirectUrl}&response_mode={responseMode}&scope={scope}&state={secrets.LoginSecret}&nonce={secrets.LoginNonce}&code_challenge={secrets.CodeChallenge}&code_challenge_method={code_challenge_method}";
         Navigation.NavigateTo(url);
     }
 }
