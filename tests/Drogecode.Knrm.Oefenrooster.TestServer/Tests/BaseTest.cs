@@ -1,8 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using Drogecode.Knrm.Oefenrooster.Server.Database;
-using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
@@ -12,15 +8,13 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Drogecode.Knrm.Oefenrooster.Server.Database.Migrations;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Drogecode.Knrm.Oefenrooster.TestServer.Seeds;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests;
@@ -110,20 +104,20 @@ public class BaseTest : IAsyncLifetime
         {
             AccessesNames.AUTH_scheduler_other_user,
         };
-        MockAuthenticatedUser(scheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(userController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(functionController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(holidayController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(trainingTypesController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(dayItemController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(monthItemController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(preComController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(vehicleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(defaultScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(reportActionController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(reportTrainingController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(userRoleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(userLinkedMailsController, DefaultSettingsHelper.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(scheduleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(userController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(functionController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(holidayController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(trainingTypesController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(dayItemController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(monthItemController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(preComController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(vehicleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(defaultScheduleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(reportActionController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(reportTrainingController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(userRoleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(userLinkedMailsController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
     }
 
     public async Task InitializeAsync()

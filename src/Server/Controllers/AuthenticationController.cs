@@ -326,7 +326,7 @@ public partial class AuthenticationController : ControllerBase
         var superUsers = _configuration.GetSection("DrogeCode:SuperAdmin").Get<List<Guid>>();
         if (superUsers is not null && superUsers.Contains(userId))
         {
-            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_Taco));
+            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_super_user));
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_user_roles));
         }
 

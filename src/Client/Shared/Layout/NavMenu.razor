@@ -9,7 +9,7 @@
         <MudNavLink Icon="@Icons.Material.Filled.ManageAccounts" Href="@_uriPlannerUser" Match="NavLinkMatch.Prefix">@L["User details"]</MudNavLink>
     </AuthorizeView>
     <AuthorizeView
-        Roles="@(AccessesNames.AUTH_configure_training_types + ", " + AccessesNames.AUTH_Taco + ", " + AccessesNames.AUTH_scheduler_monthitem + ", " + AccessesNames.AUTH_configure_default_schedule + ", " +
+        Roles="@(AccessesNames.AUTH_configure_training_types + ", " + AccessesNames.AUTH_super_user + ", " + AccessesNames.AUTH_scheduler_monthitem + ", " + AccessesNames.AUTH_configure_default_schedule + ", " +
                  AccessesNames.AUTH_scheduler_dayitem + ", " + AccessesNames.AUTH_configure_vehicles + ", " + AccessesNames.AUTH_configure_user_functions + ", " + AccessesNames.AUTH_configure_user_roles)">
         <MudNavGroup Title="@L["Configuration"]" Expanded="@_configurationExpanded" ExpandedChanged="ConfigurationExpandedChanged">
             <AuthorizeView Roles="@AccessesNames.AUTH_configure_training_types" Context="inner">
@@ -33,7 +33,7 @@
             <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_dayitem" Context="inner">
                 <MudNavLink Icon="@Icons.Material.Filled.Curtains" Href="/configuration/day-item" Match="NavLinkMatch.Prefix">@L["Special days"]</MudNavLink>
             </AuthorizeView>
-            <AuthorizeView Roles="@AccessesNames.AUTH_Taco" Context="inner">
+            <AuthorizeView Roles="@AccessesNames.AUTH_super_user" Context="inner">
                 <MudNavLink Icon="@Icons.Material.Filled.Settings" Href="/configuration/global" Match="NavLinkMatch.Prefix">@L["Configuration"]</MudNavLink>
                 <MudNavLink Icon="@Icons.Material.Filled.History" Href="/configuration/audit" Match="NavLinkMatch.Prefix">@L["Audit"]</MudNavLink>
             </AuthorizeView>

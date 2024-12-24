@@ -31,7 +31,7 @@ public sealed partial class TrainingsTab : IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
+        _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user);
         _multiSelection = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_training_history_full);
     }
 

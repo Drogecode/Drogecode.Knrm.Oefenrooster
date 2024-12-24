@@ -35,7 +35,7 @@ public sealed partial class ActionsTab : IDisposable
         if (firstRender)
         {
             _multiSelection = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_action_history_full);
-            _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
+            _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user);
             _reportActions = await ReportActionRepository.GetLastActionsForCurrentUser(_count, 0, _cls.Token);
             var actionTypes = await ReportActionRepository.Distinct(DistinctReport.Type, _cls.Token);
             if (actionTypes?.Values is not null)

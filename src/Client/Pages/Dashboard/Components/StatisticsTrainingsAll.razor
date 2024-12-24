@@ -2,7 +2,7 @@
 <MudPaper>
     @if (_renderChart && _data is not null && _data.Any())
     {
-        <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+        <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
             <MudChip T="string">@_elapsedMilliseconds</MudChip>
         </AuthorizeView>
         <MudText Typo="Typo.body1">@L["Total trainings: {0}", _totalCount]</MudText>

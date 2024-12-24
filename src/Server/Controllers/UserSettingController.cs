@@ -47,7 +47,7 @@ public class UserSettingController : ControllerBase
 
     [HttpPatch]
     [Route("training-to-calendar")]
-    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    [Authorize(Roles = AccessesNames.AUTH_super_user)]
     public async Task<ActionResult> PatchTrainingToCalendar(bool newValue, CancellationToken token = default)
     {
         try

@@ -1,8 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using Drogecode.Knrm.Oefenrooster.Server.Database;
-using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
@@ -121,6 +118,6 @@ public class UserControllerTests : BaseTest
     {
         var user = await UserController.GetCurrentUser();
         Assert.NotNull(user?.Value?.DrogeUser);
-        user.Value.DrogeUser.Id.Should().Be(DefaultSettingsHelper.IdTaco);
+        user.Value.DrogeUser.Id.Should().Be(DefaultSettingsHelperMock.IdTaco);
     }
 }

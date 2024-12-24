@@ -1,11 +1,8 @@
 ﻿using System.Text.Json;
-using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.TestServer.Seeds;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
@@ -114,7 +111,7 @@ public class ReportActionControllerTests : BaseTest
     {
         var request = new AnalyzeActionRequest()
         {
-            Users = new List<Guid?> { DefaultSettingsHelper.IdTaco },
+            Users = new List<Guid?> { DefaultSettingsHelperMock.IdTaco },
         };
         var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
@@ -159,12 +156,12 @@ public class ReportActionControllerTests : BaseTest
             End = start.AddMinutes(121),
             Boat = "xUnit boat",
             Prio = "Prio 1",
-            Users = new List<DbReportUser> { new() { DrogeCodeId = DefaultSettingsHelper.IdTaco }, new() { DrogeCodeId = otherUser } },
+            Users = new List<DbReportUser> { new() { DrogeCodeId = DefaultSettingsHelperMock.IdTaco }, new() { DrogeCodeId = otherUser } },
         });
         await DataContext.SaveChangesAsync();
         var request = new AnalyzeActionRequest()
         {
-            Users = new List<Guid?> { otherUser, DefaultSettingsHelper.IdTaco },
+            Users = new List<Guid?> { otherUser, DefaultSettingsHelperMock.IdTaco },
         };
         var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);

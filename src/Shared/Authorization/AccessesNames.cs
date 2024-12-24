@@ -8,7 +8,7 @@ public struct AccessesNames
 
 
     public const string GROUP_NO_READ = "ignore";
-    public const string AUTH_Taco = "isSuperGlobalAdmin";
+    public const string AUTH_super_user = "isSuperGlobalAdmin";
     public const string AUTH_Hide = "do_not_show";
 
     public const string GROUP_CONFIGURATION= "Configuration";

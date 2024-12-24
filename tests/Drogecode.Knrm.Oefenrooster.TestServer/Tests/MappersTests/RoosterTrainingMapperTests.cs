@@ -1,9 +1,6 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using Drogecode.Knrm.Oefenrooster.Server.Database;
-using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.MappersTests;
 
@@ -45,7 +42,7 @@ public class RoosterTrainingMapperTests : BaseTest
                 new()
                 {
                     Id = Guid.NewGuid(),
-                    UserId = DefaultSettingsHelper.IdTaco,
+                    UserId = DefaultSettingsHelperMock.IdTaco,
                     VehicleId = DefaultVehicle
                 }
             },
@@ -63,7 +60,7 @@ public class RoosterTrainingMapperTests : BaseTest
         mapped.Should().NotBeNull();
         mapped.Name.Should().Be(name);
         mapped.PlanUsers.Should().HaveCount(1);
-        var taco = mapped.PlanUsers.FirstOrDefault(x => x.UserId == DefaultSettingsHelper.IdTaco);
+        var taco = mapped.PlanUsers.FirstOrDefault(x => x.UserId == DefaultSettingsHelperMock.IdTaco);
         taco.Should().NotBeNull();
         taco!.VehicleId.Should().Be(DefaultVehicle);
         taco.Name.Should().Be("Some dude");

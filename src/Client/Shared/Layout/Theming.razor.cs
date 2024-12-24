@@ -79,7 +79,7 @@ public sealed partial class Theming : IDisposable
         {
             _localUserSettings = (await LocalStorage.GetItemAsync<LocalUserSettings>("localUserSettings")) ?? new LocalUserSettings();
             DarkModeToggle = _localUserSettings.DarkLightMode;
-            _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
+            _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user);
             switch (DarkModeToggle)
             {
                 case DarkLightMode.System:
