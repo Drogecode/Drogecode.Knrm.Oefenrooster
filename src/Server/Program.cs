@@ -63,13 +63,18 @@ else
         var dbUserName = KeyVaultHelper.GetSecret("administratorLogin");
         var dbPassword = KeyVaultHelper.GetSecret("administratorLoginPassword");
         var dbUri = KeyVaultHelper.GetSecret("databaseFQDN");
-        Console.WriteLine($"dbUserName = {dbUserName?.Value}");
+        var dbName = KeyVaultHelper.GetSecret("databaseName");
+        var dbNameValue = dbName?.Value;
+        if (string.IsNullOrWhiteSpace(dbNameValue))
+        {
+            Console.WriteLine($"dbUserName = {dbUserName?.Value}");
 #if DEBUG
-        var dbName = "OefenroosterDev";
+            dbNameValue = "OefenroosterDev";
 #else
-        var dbName = "OefenroosterAcc";
+            dbNameValue = "OefenroosterAcc";
 #endif
-        dbConnectionString = $"host={dbUri?.Value};port=5432;database={dbName};username={dbUserName?.Value};password={dbPassword?.Value}";
+        }
+        dbConnectionString = $"host={dbUri?.Value};port=5432;database={dbNameValue};username={dbUserName?.Value};password={dbPassword?.Value}";
     }
     catch (Exception ex)
     {

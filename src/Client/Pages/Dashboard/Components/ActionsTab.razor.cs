@@ -28,13 +28,14 @@ public sealed partial class ActionsTab : IDisposable
     private bool _busy;
     private bool _multiSelection;
     private bool _isTaco;
+    private string? _search;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             _multiSelection = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_action_history_full);
-            _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
+            _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user);
             _reportActions = await ReportActionRepository.GetLastActionsForCurrentUser(_count, 0, _cls.Token);
             var actionTypes = await ReportActionRepository.Distinct(DistinctReport.Type, _cls.Token);
             if (actionTypes?.Values is not null)
@@ -60,7 +61,7 @@ public sealed partial class ActionsTab : IDisposable
         StateHasChanged();
         _selectedUsersAction = selection;
         _count = DEFAULT_COUNT;
-        _reportActions = await ReportActionRepository.GetLastActions(selection, _selectedActionTypes, _count, 0, _cls.Token);
+        _reportActions = await ReportActionRepository.GetLastActions(selection, _selectedActionTypes, _search, _count, 0, _cls.Token);
         _currentPage = 1;
         _busy = false;
         StateHasChanged();
@@ -73,7 +74,7 @@ public sealed partial class ActionsTab : IDisposable
         StateHasChanged();
         _selectedActionTypes = selection;
         _count = DEFAULT_COUNT;
-        _reportActions = await ReportActionRepository.GetLastActions(_selectedUsersAction, _selectedActionTypes, _count, 0, _cls.Token);
+        _reportActions = await ReportActionRepository.GetLastActions(_selectedUsersAction, _selectedActionTypes, _search, _count, 0, _cls.Token);
         _currentPage = 1;
         _busy = false;
         StateHasChanged();
@@ -85,8 +86,27 @@ public sealed partial class ActionsTab : IDisposable
         _busy = true;
         StateHasChanged();
         _count = arg;
-        _reportActions = await ReportActionRepository.GetLastActions(_selectedUsersAction, _selectedActionTypes, _count, 0, _cls.Token);
+        _reportActions = await ReportActionRepository.GetLastActions(_selectedUsersAction, _selectedActionTypes, _search, _count, 0, _cls.Token);
         _currentPage = 1;
+        _busy = false;
+        StateHasChanged();
+    }
+
+    private async Task SearchChanged(string? search)
+    {
+        if (_busy) return;
+        _busy = true;
+        try
+        {
+            StateHasChanged();
+            _search = search;
+            _reportActions = await ReportActionRepository.GetLastActions(_selectedUsersAction, _selectedActionTypes, _search, _count, 0, _cls.Token);
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.WriteLine(ex);
+        }
+
         _busy = false;
         StateHasChanged();
     }
@@ -99,7 +119,7 @@ public sealed partial class ActionsTab : IDisposable
         if (nextPage <= 0) return;
         _currentPage = nextPage;
         var skip = (nextPage - 1) * _count;
-        _reportActions = await ReportActionRepository.GetLastActions(_selectedUsersAction, _selectedActionTypes, _count, skip, _cls.Token);
+        _reportActions = await ReportActionRepository.GetLastActions(_selectedUsersAction, _selectedActionTypes, _search, _count, skip, _cls.Token);
         _busy = false;
         StateHasChanged();
     }

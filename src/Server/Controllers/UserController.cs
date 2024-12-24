@@ -47,7 +47,7 @@ public class UserController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var includeLastLogin = User.IsInRole(AccessesNames.AUTH_Taco);
+            var includeLastLogin = User.IsInRole(AccessesNames.AUTH_super_user);
             if (includeHidden && includeLastLogin)
                 await _userService.PatchLastOnline(userId, clt);
             var result = await _userService.GetAllUsers(customerId, includeHidden, includeLastLogin, clt);
@@ -106,7 +106,7 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Route("")]
-    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    [Authorize(Roles = AccessesNames.AUTH_super_user)]
     public async Task<ActionResult<AddUserResponse>> AddUser([FromBody] DrogeUser user, CancellationToken clt = default)
     {
         try

@@ -1,5 +1,4 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Seeds;
 
@@ -32,7 +31,7 @@ public static class SeedReportAction
             Boat = "xUnit boat",
             Prio = "Prio 69",
             Type = "KNRM Hulpverlening",
-            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelperMock.IdTaco}},
         });
         start = start.AddDays(1);
         dataContext.ReportActions.Add(new DbReportAction
@@ -47,7 +46,7 @@ public static class SeedReportAction
             Boat = "xUnit boat",
             Prio = "Prio 1",
             Type = "HRB Hulpverlening",
-            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelperMock.IdTaco}},
         });
         start = start.AddMonths(1);
         dataContext.ReportActions.Add(new DbReportAction
@@ -62,7 +61,7 @@ public static class SeedReportAction
             Boat = "xUnit boat",
             Prio = "Prio 1",
             Type = "",// empty
-            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelperMock.IdTaco}},
         });
         start = start.AddMonths(1);
         dataContext.ReportActions.Add(new DbReportAction
@@ -77,7 +76,7 @@ public static class SeedReportAction
             Boat = "Nicolaas",
             Prio = "Prio 1",
             Type = "Boot uitgemeld",
-            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelper.IdTaco}},
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelperMock.IdTaco}},
         });
     }
 }

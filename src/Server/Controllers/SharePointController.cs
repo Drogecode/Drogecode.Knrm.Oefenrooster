@@ -130,7 +130,7 @@ public class SharePointController : ControllerBase
 
     [HttpPatch]
     [Route("historical")]
-    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    [Authorize(Roles = AccessesNames.AUTH_super_user)]
     public async Task<ActionResult<GetHistoricalResponse>> SyncHistorical(CancellationToken clt = default)
     {
         try

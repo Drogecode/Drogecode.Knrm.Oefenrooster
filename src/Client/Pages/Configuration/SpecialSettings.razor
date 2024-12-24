@@ -1,5 +1,5 @@
 ﻿@page "/configuration/global"
-@attribute [Authorize(Roles = AccessesNames.AUTH_Taco)]
+@attribute [Authorize(Roles = AccessesNames.AUTH_super_user)]
 <h3>Global configuration</h3>
 
 <MudText>Alleen Taco mag op deze knop klikken</MudText>
@@ -71,7 +71,7 @@ else if (_killDb?.Success == false)
 
 @if (_users != null && _functions != null)
 {
-    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+    <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
         <MudPaper>
             <MudList T="string" ReadOnly="true">
                 <MudText>zeven meest recente logins maximaal 7 dagen geleden</MudText>
