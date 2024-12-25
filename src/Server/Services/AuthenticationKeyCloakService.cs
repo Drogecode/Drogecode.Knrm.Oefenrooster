@@ -10,8 +10,11 @@ using Newtonsoft.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
+//https://keycloaktest.droogers.cloud/realms/master/.well-known/openid-configuration
 public class AuthenticationKeyCloakService : AuthenticationService, IAuthenticationService
 {
+    public IdentityProvider IdentityProvider => IdentityProvider.KeyCloak;
+    
     public AuthenticationKeyCloakService(
         ILogger logger,
         IMemoryCache memoryCache,
@@ -77,9 +80,45 @@ public class AuthenticationKeyCloakService : AuthenticationService, IAuthenticat
         return result;
     }
 
-    public Task<AuthenticateUserResult> Refresh(string oldRefreshToken, CancellationToken clt)
+    public async Task<AuthenticateUserResult> Refresh(string oldRefreshToken, CancellationToken clt)
     {
-        throw new NotImplementedException();
+        var result = new AuthenticateUserResult
+        {
+            Success = false,
+        };
+        var tenantId = _configuration.GetValue<string>("KeyCloak:TenantId") ?? throw new DrogeCodeConfigurationException("no tenant id found for KeyCloak refresh");
+        var secret = InternalGetLoginClientSecret();
+        var clientId = _configuration.GetValue<string>("KeyCloak:ClientId") ?? throw new DrogeCodeConfigurationException("no client id found for KeyCloak refresh");
+        var scope = _configuration.GetValue<string>("KeyCloak:Scopes") ?? throw new DrogeCodeConfigurationException("no scope found for KeyCloak refresh");
+        var instance = _configuration.GetValue<string>("KeyCloak:Instance") ?? throw new DrogeCodeNullException("no instance found for KeyCloak refresh");
+        var formContent = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("client_id", clientId),
+            new KeyValuePair<string, string>("scope", scope),
+            new KeyValuePair<string, string>("refresh_token", oldRefreshToken),
+            new KeyValuePair<string, string>("grant_type", "refresh_token"),
+            new KeyValuePair<string, string>("client_secret", secret),
+        });
+        using (var response = await _httpClient.PostAsync($"{instance}/realms/{tenantId}/protocol/openid-connect/token", formContent))
+        {
+            string responseString = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var resObj = JsonConvert.DeserializeObject<LoginResponse>(responseString);
+                result.IdToken = resObj?.id_token ?? "";
+                result.RefreshToken = resObj?.refresh_token ?? "";
+            }
+            else
+            {
+                _logger.LogWarning("Failed refresh: {jsonstring}", responseString);
+                return result;
+            }
+        }
+
+        var handler = new JwtSecurityTokenHandler();
+        result.JwtSecurityToken = handler.ReadJwtToken(result.IdToken);
+        result.Success = true;
+        return result;
     }
 
     public DrogeClaims GetClaims(JwtSecurityToken jwtSecurityToken)

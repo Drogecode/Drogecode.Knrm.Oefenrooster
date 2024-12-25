@@ -65,7 +65,6 @@ public class AuthenticationController : ControllerBase
 
     private IAuthenticationService GetAuthenticationService()
     {
-        
         var identityProvider =_configuration.GetValue<IdentityProvider>("IdentityProvider");
         IAuthenticationService authService;  
         switch (identityProvider)
@@ -229,6 +228,7 @@ public class AuthenticationController : ControllerBase
             new(REFRESHTOKEN, refresh_token),
             new("ValidFrom", jwtSecurityToken.ValidFrom.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             new("ValidTo", jwtSecurityToken.ValidTo.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+            new("IdentityProvider", authService.IdentityProvider.ToString() ),
             new("http://schemas.microsoft.com/identity/claims/objectidentifier", userId.ToString()),
             new("http://schemas.microsoft.com/identity/claims/tenantid", drogeClaims.CustomerId.ToString())
         };

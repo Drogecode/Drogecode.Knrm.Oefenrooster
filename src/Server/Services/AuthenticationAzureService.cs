@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
@@ -13,6 +12,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class AuthenticationAzureService : AuthenticationService, IAuthenticationService
 {
+    public IdentityProvider IdentityProvider => IdentityProvider.Azure;
+    
     public AuthenticationAzureService(
         ILogger logger,
         IMemoryCache memoryCache,

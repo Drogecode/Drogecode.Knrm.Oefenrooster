@@ -60,13 +60,31 @@ public sealed partial class Authentication
                     await AuditClient.PostLogAsync(new PostLogRequest { Message = "Logout start" });
                     var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                     var logoutHint = authState?.User?.FindFirst(c => c.Type == "login_hint")?.Value ?? "";
+                    if(!Enum.TryParse(authState?.User?.FindFirst(c => c.Type == "IdentityProvider")?.Value, out IdentityProvider identityProvider))
+                        identityProvider = IdentityProvider.Azure;
+                    
                     var redirectLogoutUrl = $"{Navigation.BaseUri}landing_page";
                     await AuditClient.PostLogAsync(new PostLogRequest { Message = $"Logout logoutHint: `{logoutHint}` redirectLogoutUrl: `{redirectLogoutUrl}`" });
-                    string urlLogout;
-                    if (string.IsNullOrEmpty(logoutHint))
-                        urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri={redirectLogoutUrl}";
-                    else
-                        urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?logout_hint={logoutHint}&post_logout_redirect_uri={redirectLogoutUrl}";
+                    string urlLogout = string.Empty;
+                    switch (identityProvider)
+                    {
+                        case IdentityProvider.Azure:
+                            if (string.IsNullOrEmpty(logoutHint))
+                                urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri={redirectLogoutUrl}";
+                            else
+                                urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?logout_hint={logoutHint}&post_logout_redirect_uri={redirectLogoutUrl}";
+                            break;
+                        case IdentityProvider.KeyCloak:
+                            // ToDo: Missing parameters: id_token_hint
+                            if (string.IsNullOrEmpty(logoutHint))
+                                urlLogout = $"https://keycloaktest.droogers.cloud/realms/master/protocol/openid-connect/logout?post_logout_redirect_uri={redirectLogoutUrl}";
+                            else
+                                urlLogout = $"https://keycloaktest.droogers.cloud/realms/master/protocol/openid-connect/logout?logout_hint={logoutHint}&post_logout_redirect_uri={redirectLogoutUrl}";
+                            break;
+                        default: 
+                            await AuditClient.PostLogAsync(new PostLogRequest { Message = $"Unknown identity provider: '{identityProvider}' while logging out" });
+                            return;
+                    }
                     await AuthenticationStateProvider.Logout();
                     Navigation.NavigateTo(urlLogout);
                     break;

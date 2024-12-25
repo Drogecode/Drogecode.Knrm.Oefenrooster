@@ -6,6 +6,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 
 public interface IAuthenticationService
 {
+     IdentityProvider IdentityProvider { get;}
      Task<GetLoginSecretsResponse> GetLoginSecrets();
      Task<AuthenticateUserResult> AuthenticateUser(CacheLoginSecrets found, string code, string state, string sessionState, string redirectUrl, CancellationToken clt);
      Task<AuthenticateUserResult> Refresh(string oldRefreshToken, CancellationToken clt);
