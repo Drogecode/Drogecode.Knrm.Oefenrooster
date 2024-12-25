@@ -6,5 +6,5 @@ public class DrogeClaims
     internal string FullName { get; set; }
     internal string ExternalUserId { get; set; }
     internal string LoginHint { get; set; }
-    internal Guid CustomerId { get; set; }
+    internal string ExternalCustomerId { get; set; }
 }

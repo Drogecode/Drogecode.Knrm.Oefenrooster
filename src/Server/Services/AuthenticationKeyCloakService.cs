@@ -129,8 +129,7 @@ public class AuthenticationKeyCloakService : AuthenticationService, IAuthenticat
             FullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "preferred_username")?.Value ?? "",
             ExternalUserId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "sub")?.Value ?? "",
             LoginHint = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "login_hint")?.Value ?? "",
-            CustomerId = new Guid("118a24f6-8114-4b86-850a-971e75f7178e") // ToDo: hardcoded for now, Keycloak does not have a guid as id
-            //CustomerId = new Guid(jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "iss")?.Value ?? throw new Exception("customerId not found"))
+            ExternalCustomerId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "iss")?.Value ?? ""
         };
     }
 

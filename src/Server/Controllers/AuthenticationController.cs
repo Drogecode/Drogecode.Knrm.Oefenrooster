@@ -1,17 +1,12 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
 using IAuthenticationService = Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces.IAuthenticationService;
 
@@ -26,6 +21,7 @@ public class AuthenticationController : ControllerBase
     private readonly IMemoryCache _memoryCache;
     private readonly IUserRoleService _userRoleService;
     private readonly IUserService _userService;
+    private readonly ICustomerSettingService _customerSettingService;
     private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
 
@@ -36,6 +32,7 @@ public class AuthenticationController : ControllerBase
         IMemoryCache memoryCache,
         IUserRoleService userRoleService,
         IUserService userService,
+        ICustomerSettingService customerSettingService,
         IConfiguration configuration,
         HttpClient httpClient)
     {
@@ -43,6 +40,7 @@ public class AuthenticationController : ControllerBase
         _memoryCache = memoryCache;
         _userRoleService = userRoleService;
         _userService = userService;
+        _customerSettingService = customerSettingService;
         _configuration = configuration;
         _httpClient = httpClient;
     }
@@ -218,7 +216,8 @@ public class AuthenticationController : ControllerBase
     {
         var authService = GetAuthenticationService();
         var drogeClaims =  authService.GetClaims(jwtSecurityToken);
-        var userId = await GetUserIdByExternalId(drogeClaims.ExternalUserId, drogeClaims.FullName, drogeClaims.Email, drogeClaims.CustomerId, clt);
+        var customerId = await GetCustomerIdByExternalId(drogeClaims.ExternalCustomerId, clt);
+        var userId = await GetUserIdByExternalId(drogeClaims.ExternalUserId, drogeClaims.FullName, drogeClaims.Email, customerId, clt);
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, drogeClaims.Email),
@@ -230,7 +229,7 @@ public class AuthenticationController : ControllerBase
             new("ValidTo", jwtSecurityToken.ValidTo.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             new("IdentityProvider", authService.IdentityProvider.ToString() ),
             new("http://schemas.microsoft.com/identity/claims/objectidentifier", userId.ToString()),
-            new("http://schemas.microsoft.com/identity/claims/tenantid", drogeClaims.CustomerId.ToString())
+            new("http://schemas.microsoft.com/identity/claims/tenantid", customerId.ToString())
         };
         var superUsers = _configuration.GetSection("DrogeCode:SuperAdmin").Get<List<Guid>>();
         if (superUsers is not null && superUsers.Contains(userId))
@@ -239,7 +238,7 @@ public class AuthenticationController : ControllerBase
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_user_roles));
         }
 
-        var accesses = await _userRoleService.GetAccessForUser(userId, drogeClaims.CustomerId, jwtSecurityToken.Claims, clt);
+        var accesses = await _userRoleService.GetAccessForUser(userId, customerId, jwtSecurityToken.Claims, clt);
         foreach (var access in accesses)
         {
             claims.Add(new Claim(ClaimTypes.Role, access));
@@ -248,7 +247,19 @@ public class AuthenticationController : ControllerBase
         return claims;
     }
 
-    internal async Task<Guid> GetUserIdByExternalId(string externalUserId, string userName, string userEmail, Guid customerId, CancellationToken clt)
+    private async Task<Guid> GetCustomerIdByExternalId(string externalCustomerId,  CancellationToken clt)
+    {
+        var user = await _customerSettingService.GetByExternalCustomerId(externalCustomerId, clt);
+        if (user is null)
+        {
+            _logger.LogWarning("Failed to get or set user by external id");
+            throw new UnauthorizedAccessException();
+        }
+
+        return user.Id;
+    }
+
+    private async Task<Guid> GetUserIdByExternalId(string externalUserId, string userName, string userEmail, Guid customerId, CancellationToken clt)
     {
         var user = await _userService.GetOrSetUserById(null, externalUserId, userName, userEmail, customerId, true, clt);
         if (user is null)

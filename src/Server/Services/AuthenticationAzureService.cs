@@ -126,7 +126,7 @@ public class AuthenticationAzureService : AuthenticationService, IAuthentication
             FullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? "",
             ExternalUserId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "oid")?.Value ?? "",
             LoginHint = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "login_hint")?.Value ?? "",
-            CustomerId = new Guid(jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "tid")?.Value ?? throw new Exception("customerId not found"))
+            ExternalCustomerId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "tid")?.Value ?? ""
         };
     }
 

@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Helpers;
+using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -11,6 +12,12 @@ public class CustomerSettingService : ICustomerSettingService
     {
         _logger = logger;
         _database = database;
+    }
+
+    public async Task<Customer> GetByExternalCustomerId(string externalCustomerId, CancellationToken clt)
+    {
+        var customer = await _database.Customers.FirstOrDefaultAsync(x => x.ExternalId == externalCustomerId);
+        return new Customer { Id = customer?.Id ?? Guid.Empty };
     }
 
     public async Task<bool> IosDarkLightCheck(Guid customerId)
@@ -27,16 +34,16 @@ public class CustomerSettingService : ICustomerSettingService
 
     public async Task<string> GetTimeZone(Guid customerId)
     {
-       var customer = await _database.Customers.FindAsync(customerId);
-       if (customer is not null)
-       {
-           return customer.TimeZone;
-       }
+        var customer = await _database.Customers.FindAsync(customerId);
+        if (customer is not null)
+        {
+            return customer.TimeZone;
+        }
 
-       return string.Empty;
+        return string.Empty;
     }
 
-   public async Task<string> TrainingCalenderPrefix(Guid customerId)
+    public async Task<string> TrainingCalenderPrefix(Guid customerId)
     {
         var result = await GetCustomerSetting(customerId, SettingNames.TRAINING_CALENDER_PREFIX, string.Empty);
         return result;

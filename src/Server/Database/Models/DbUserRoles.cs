@@ -8,7 +8,7 @@ public class DbUserRoles
 {
     [Key] public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
-    public Guid? ExternalId { get; set; }
+    public string? ExternalId { get; set; }
     [StringLength(50)] public string? Name { get; set; }
     [StringLength(500)] public string? Accesses { get; set; }
     public int Order { get; set; }

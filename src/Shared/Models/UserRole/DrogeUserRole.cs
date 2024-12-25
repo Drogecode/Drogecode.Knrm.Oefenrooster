@@ -10,7 +10,7 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 public class DrogeUserRole
 {
     public Guid Id { get; set; }
-    public Guid? ExternalId { get; set; }
+    public string? ExternalId { get; set; }
     public string? Name { get; set; }
 
 
