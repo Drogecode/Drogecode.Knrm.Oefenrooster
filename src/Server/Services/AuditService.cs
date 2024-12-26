@@ -38,7 +38,7 @@ public class AuditService : IAuditService
         var response = new GetTrainingAuditResponse();
         var sw = Stopwatch.StartNew();
         var audits = _database.Audits
-            .Where(x => x.AuditType == AuditType.PatchAssignedUser && (trainingId.Equals(Guid.Empty) || x.ObjectKey == trainingId))
+            .Where(x => x.CustomerId == customerId && x.AuditType == AuditType.PatchAssignedUser && (trainingId.Equals(Guid.Empty) || x.ObjectKey == trainingId))
             .AsNoTracking()
             .OrderByDescending(x => x.Created);
         if (await audits.AnyAsync(clt))

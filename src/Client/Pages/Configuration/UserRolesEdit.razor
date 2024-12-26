@@ -20,7 +20,7 @@ Changes to this file may cause incorrect behavior and will be lost if the code i
         {
             <MudTextField T="string?" @bind-Value="_userRole.Role.Name" Label="@L["Name"]"/>
         }
-        <MudTextField T="Guid?" @bind-Value="_userRole.Role.ExternalId" Label="@L["ExternalId"]"/>
+        <MudTextField T="string?" @bind-Value="_userRole.Role.ExternalId" Label="@L["ExternalId"]"/>
         <MudText Typo="Typo.h6">@L["Configuration"]</MudText>
         <MudSwitch Label="@L["configure_training-types"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_configure_training_types" ValueChanged="@(isChecked => { _userRole.Role.AUTH_configure_training_types = isChecked; _saved = null; })"/>
         <MudSwitch Label="@L["configure_user_roles"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_configure_user_roles" ValueChanged="@(isChecked => { _userRole.Role.AUTH_configure_user_roles = isChecked; _saved = null; })"/>

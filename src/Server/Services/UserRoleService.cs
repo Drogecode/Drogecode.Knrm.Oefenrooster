@@ -40,13 +40,13 @@ public class UserRoleService : IUserRoleService
         try
         {
             var roles = await _database.UserRoles.Where(x => x.CustomerId == customerId).ToListAsync(clt);
-            var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(userId, clt);
+            /*var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(userId, clt);*/
             foreach (var claim in claims.Where(x => x.Type.Equals("groups")))
             {
-                var role = roles.FirstOrDefault(x => string.CompareOrdinal(x.ExternalId.ToString(), claim.Value) == 0);
+                var role = roles.FirstOrDefault(x => string.CompareOrdinal(x.ExternalId, claim.Value) == 0);
                 if (role is null)continue;
-                await _linkUserRoleService.LinkUserToRoleAsync(userId, role.Id, true, true, clt);
-                linkedRoles.Remove(role.Id);
+                /*await _linkUserRoleService.LinkUserToRoleAsync(userId, role.Id, true, true, clt);
+                linkedRoles.Remove(role.Id);*/
                 var accesses = role.Accesses?.Split(',');
                 if (accesses is null) continue;
                 foreach (var access in accesses)
@@ -56,10 +56,13 @@ public class UserRoleService : IUserRoleService
                 }
             }
 
-            foreach (var linkedRole in linkedRoles)
+            /*
+             // Disabled for performance, is done by the background service every night.
+             
+             foreach (var linkedRole in linkedRoles)
             {
                 await _linkUserRoleService.LinkUserToRoleAsync(userId, linkedRole, false, true, clt);
-            }
+            }*/
         }
         catch (Exception ex)
         {
