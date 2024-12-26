@@ -30,7 +30,7 @@ public class AuditController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    [Authorize(Roles = AccessesNames.AUTH_scheduler_history)]
     [Route("training/{id:guid}/{count:int}/{skip:int}")]
     public async Task<ActionResult<GetTrainingAuditResponse>> GetTrainingAudit(Guid id, int count, int skip, CancellationToken clt = default)
     {
@@ -58,7 +58,7 @@ public class AuditController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    [Authorize(Roles = AccessesNames.AUTH_super_user)]
     [Route("training/{count:int}/{skip:int}")]
     public async Task<ActionResult<GetTrainingAuditResponse>> GetAllTrainingsAudit(int count, int skip, CancellationToken clt = default)
     {

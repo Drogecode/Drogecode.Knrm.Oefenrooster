@@ -32,7 +32,7 @@ public sealed partial class Alerts : IDisposable
         {
             _alerts = await PreComRepository.GetAllAlerts(_count, 0, _cls.Token);
             _user = await UserRepository.GetCurrentUserAsync(_cls.Token);
-            _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
+            _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user);
             StateHasChanged();
         }
     }

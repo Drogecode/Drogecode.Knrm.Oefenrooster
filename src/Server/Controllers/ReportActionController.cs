@@ -231,7 +231,7 @@ public class ReportActionController : ControllerBase
 
     [HttpGet]
     [Route("kill")]
-    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    [Authorize(Roles = AccessesNames.AUTH_super_user)]
     public async Task<ActionResult<KillDbResponse>> KillDb(CancellationToken clt = default)
     {
         try

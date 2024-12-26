@@ -40,7 +40,7 @@ public class ConfigurationController : ControllerBase
 
     [HttpPatch]
     [Route("upgrade-database")]
-    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    [Authorize(Roles = AccessesNames.AUTH_super_user)]
     public async Task<ActionResult<UpgradeDatabaseResponse>> UpgradeDatabase(CancellationToken clt = default)
     {
         try
@@ -113,7 +113,7 @@ public class ConfigurationController : ControllerBase
 
     [HttpPatch]
     [Route("update-special-dates")]
-    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    [Authorize(Roles = AccessesNames.AUTH_super_user)]
     public async Task<ActionResult<UpdateSpecialDatesResponse>> UpdateSpecialDates(CancellationToken clt = default)
     {
         try
@@ -145,7 +145,7 @@ public class ConfigurationController : ControllerBase
 
     [HttpPatch]
     [Route("db-correction")]
-    [Authorize(Roles = AccessesNames.AUTH_Taco)]
+    [Authorize(Roles = AccessesNames.AUTH_super_user)]
     public async Task<ActionResult<DbCorrectionResponse>> DbCorrection(CancellationToken clt = default)
     {
         try

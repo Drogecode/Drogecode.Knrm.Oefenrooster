@@ -1,10 +1,7 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using Drogecode.Knrm.Oefenrooster.Server.Database;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Errors;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
@@ -281,7 +278,7 @@ public class DefaultScheduleControllerTests : BaseTest
         user = scheduledTraining.Value.Training.PlanUsers.FirstOrDefault(x => x.UserId == DefaultUserId);
         user.Should().NotBeNull();
         user!.Availability.Should().Be(Availability.Available);
-        MockAuthenticatedUser(DefaultScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
-        MockAuthenticatedUser(ScheduleController, DefaultSettingsHelper.IdTaco, DefaultCustomerId);
+        MockAuthenticatedUser(DefaultScheduleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId);
+        MockAuthenticatedUser(ScheduleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId);
     }
 }

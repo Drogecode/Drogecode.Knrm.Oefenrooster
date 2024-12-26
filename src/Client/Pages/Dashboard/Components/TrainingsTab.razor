@@ -2,7 +2,7 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Extensions
 @if (_reportTrainings != null)
 {
-    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+    <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
         <MudChip T="string">@_reportTrainings.ElapsedMilliseconds</MudChip>
     </AuthorizeView>
     <MudText Typo="Typo.h5">@L["Trainings from SharePoint"]</MudText>

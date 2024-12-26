@@ -120,7 +120,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private async Task SetRoleBasedVariables()
     {
         _editOld = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_edit_past);
-        _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_Taco);
+        _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user);
 
         if (_training?.IsNew ?? true)
         {

@@ -6,7 +6,7 @@
 
 <MudPaper Class="pa-4" MaxWidth="800px">
     <CultureSelector/>
-    <AuthorizeView Roles="@AccessesNames.AUTH_Taco">
+    <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
         @if (_settingTrainingToCalendar is not null)
         {
             <MudSwitch Label="@L["Setting training to calendar"]" Color="Color.Primary" T="bool" Value="@_settingTrainingToCalendar.Value" ValueChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))"/>
@@ -29,7 +29,7 @@
             </tbody>
         </table>
     </MudText>
-    <AuthorizeView Roles="@AccessesNames.AUTH_Taco"><!-- Remove when ready -->
+    <AuthorizeView Roles="@AccessesNames.AUTH_super_user"><!-- Remove when ready -->
         <AuthorizeView Roles="@AccessesNames.AUTH_mail_invite_external" Context="inner">
             <MudText>@L["Mails to invite to your trainings"]</MudText>
             <MudButton OnClick='(() => Navigation.NavigateTo("/user/profile/link-mail/add"))'>@L["Add link mail"]</MudButton>

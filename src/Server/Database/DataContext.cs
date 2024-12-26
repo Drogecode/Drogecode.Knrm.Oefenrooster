@@ -209,6 +209,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             SetRoosterTrainingTypes(modelBuilder);
             SetSystemUsers(modelBuilder);
         }
+        
+        private static Guid IdTaco { get; } = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461");
 
         #region Default data
         private void SetCustomer(ModelBuilder modelBuilder)
@@ -818,7 +820,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 10,
                 CountToTrainingTarget = true,
                 IsDefault = true,
-                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedBy = IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
                 IsActive = true,
             }));
@@ -830,7 +832,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 ColorLight = "rgb(214,129,0)",
                 ColorDark = "rgb(214,143,0)",
                 Order = 20,
-                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedBy = IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
                 IsActive = true,
             }));
@@ -842,7 +844,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 ColorLight = "rgb(25,169,140)",
                 ColorDark = "",
                 Order = 30,
-                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedBy = IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
                 IsActive = true,
             }));
@@ -856,7 +858,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 TextColorLight = "#FFFFFF",
                 TextColorDark = "#C0C0C0",
                 Order = 40,
-                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedBy = IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
                 IsActive = true,
             }));
@@ -868,7 +870,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 ColorLight = "rgb(0,235,98)",
                 ColorDark = "rgb(13,222,156)",
                 Order = 50,
-                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedBy = IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
                 IsActive = true,
             }));
@@ -880,7 +882,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 ColorLight = "#ADD8E6",
                 ColorDark = "#3BB9FF",
                 Order = 60,
-                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedBy = IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
                 IsActive = true,
             }));
@@ -892,7 +894,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 ColorLight = "#919454",
                 ColorDark = "#5f6138",
                 Order = 70,
-                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedBy = IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
                 IsActive = true,
             }));
@@ -905,7 +907,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 80,
                 TextColorLight = "#FFFFFF",
                 TextColorDark = "#C0C0C0",
-                CreatedBy = DefaultSettingsHelper.IdTaco,
+                CreatedBy = IdTaco,
                 CreatedDate = new DateTime(2023, 06, 26, 12, 12, 12, DateTimeKind.Utc),
                 IsActive = true,
             }));
