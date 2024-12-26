@@ -209,6 +209,13 @@
             "type": "integer",
             "format": "int64"
           },
+          "identityProvider": {
+            "$ref": "#/components/schemas/IdentityProvider"
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          },
           "loginSecret": {
             "type": "string",
             "nullable": true
@@ -231,6 +238,15 @@
           }
         },
         "additionalProperties": false
+      },
+      "IdentityProvider": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "StringStringKeyValuePair": {
         "type": "object",

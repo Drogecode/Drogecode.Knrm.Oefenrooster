@@ -1,9 +1,10 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Helpers;
 
-public static class SecretHelper
+public static partial class SecretHelper
 {
     internal static string CreateSecret(int length)
     {
@@ -26,4 +27,24 @@ public static class SecretHelper
 
         return res.ToString();
     }
+
+    internal static string GenerateCodeChallenge(string codeVerifier)
+    {
+        using var sha256 = SHA256.Create();
+        var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
+        var b64Hash = Convert.ToBase64String(hash);
+        var code = MyRegex().Replace(b64Hash, "-");
+        code = MyRegex1().Replace(code, "_");
+        code = MyRegex2().Replace(code, "");
+        return code;
+    }
+
+    [GeneratedRegex("\\+")]
+    private static partial Regex MyRegex();
+
+    [GeneratedRegex("\\/")]
+    private static partial Regex MyRegex1();
+
+    [GeneratedRegex("=+$")]
+    private static partial Regex MyRegex2();
 }

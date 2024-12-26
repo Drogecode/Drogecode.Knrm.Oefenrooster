@@ -1,6 +1,8 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages;
 
@@ -11,9 +13,9 @@ public sealed partial class Authentication
     [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
     [Inject] private IAuditClient AuditClient { get; set; } = default!;
     [Parameter] public string? Action { get; set; }
-    [Parameter] [SupplyParameterFromQuery] public string? code { get; set; }
-    [Parameter] [SupplyParameterFromQuery] public string? state { get; set; }
-    [Parameter] [SupplyParameterFromQuery] public string? session_state { get; set; }
+    [Parameter, SupplyParameterFromQuery] public string? code { get; set; }
+    [Parameter, SupplyParameterFromQuery] public string? state { get; set; }
+    [Parameter, SupplyParameterFromQuery] public string? session_state { get; set; }
 
     //https://learn.microsoft.com/nl-nl/azure/active-directory/develop/v2-protocols-oidc
     //https://codewithmukesh.com/blog/authentication-in-blazor-webassembly/
@@ -26,15 +28,16 @@ public sealed partial class Authentication
             {
                 case "login":
                     var secrets = await AuthenticationClient.GetLoginSecretsAsync();
-                    var tenant = secrets.TenantId;
-                    var clientId = secrets.ClientId;
-                    var responseType = "code";
-                    var responseMode = "query";
-                    var scope = "openid+profile+email";
-                    var code_challenge_method = "S256";
-                    var url =
-                        $"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize?client_id={clientId}&response_type={responseType}&redirect_uri={redirectUrl}&response_mode={responseMode}&scope={scope}&state={secrets.LoginSecret}&nonce={secrets.LoginNonce}&code_challenge={secrets.CodeChallenge}&code_challenge_method={code_challenge_method}";
-                    Navigation.NavigateTo(url);
+                    switch (secrets.IdentityProvider)
+                    {
+                        case IdentityProvider.Azure:
+                            await LoginAzure(secrets, redirectUrl);
+                            break;
+                        case IdentityProvider.KeyCloak:
+                            await LoginKeyCloak(secrets, redirectUrl);
+                            break;
+                    }
+
                     break;
                 case "login-callback":
                     //https://localhost:44327/authentication/login-callback?
@@ -57,17 +60,62 @@ public sealed partial class Authentication
                     await AuditClient.PostLogAsync(new PostLogRequest { Message = "Logout start" });
                     var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                     var logoutHint = authState?.User?.FindFirst(c => c.Type == "login_hint")?.Value ?? "";
+                    if(!Enum.TryParse(authState?.User?.FindFirst(c => c.Type == "IdentityProvider")?.Value, out IdentityProvider identityProvider))
+                        identityProvider = IdentityProvider.Azure;
+                    
                     var redirectLogoutUrl = $"{Navigation.BaseUri}landing_page";
                     await AuditClient.PostLogAsync(new PostLogRequest { Message = $"Logout logoutHint: `{logoutHint}` redirectLogoutUrl: `{redirectLogoutUrl}`" });
-                    string urlLogout;
-                    if (string.IsNullOrEmpty(logoutHint))
-                        urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri={redirectLogoutUrl}";
-                    else
-                        urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?logout_hint={logoutHint}&post_logout_redirect_uri={redirectLogoutUrl}";
+                    string urlLogout = string.Empty;
+                    switch (identityProvider)
+                    {
+                        case IdentityProvider.Azure:
+                            if (string.IsNullOrEmpty(logoutHint))
+                                urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri={redirectLogoutUrl}";
+                            else
+                                urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?logout_hint={logoutHint}&post_logout_redirect_uri={redirectLogoutUrl}";
+                            break;
+                        case IdentityProvider.KeyCloak:
+                            // ToDo: Missing parameters: id_token_hint
+                            if (string.IsNullOrEmpty(logoutHint))
+                                urlLogout = $"https://keycloaktest.droogers.cloud/realms/master/protocol/openid-connect/logout?post_logout_redirect_uri={redirectLogoutUrl}";
+                            else
+                                urlLogout = $"https://keycloaktest.droogers.cloud/realms/master/protocol/openid-connect/logout?logout_hint={logoutHint}&post_logout_redirect_uri={redirectLogoutUrl}";
+                            break;
+                        default: 
+                            await AuditClient.PostLogAsync(new PostLogRequest { Message = $"Unknown identity provider: '{identityProvider}' while logging out" });
+                            return;
+                    }
                     await AuthenticationStateProvider.Logout();
                     Navigation.NavigateTo(urlLogout);
                     break;
             }
         }
+    }
+
+    private async Task LoginAzure(GetLoginSecretsResponse secrets, string redirectUrl)
+    {
+        var tenant = secrets.TenantId;
+        var clientId = secrets.ClientId;
+        var responseType = "code";
+        var responseMode = "query";
+        var scope = "openid+profile+email";
+        var code_challenge_method = "S256";
+        var url =
+            $"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize?client_id={clientId}&response_type={responseType}&redirect_uri={redirectUrl}&response_mode={responseMode}&scope={scope}&state={secrets.LoginSecret}&nonce={secrets.LoginNonce}&code_challenge={secrets.CodeChallenge}&code_challenge_method={code_challenge_method}";
+        Navigation.NavigateTo(url);
+    }
+
+    private async Task LoginKeyCloak(GetLoginSecretsResponse secrets, string redirectUrl)
+    {
+        var instance = secrets.Instance;
+        var tenant = secrets.TenantId;
+        var clientId = secrets.ClientId;
+        var responseType = "code";
+        var responseMode = "query";
+        var scope = "openid+profile+email";
+        var code_challenge_method = "S256";
+        var url =
+            $"{instance}/realms/{tenant}/protocol/openid-connect/auth?client_id={clientId}&response_type={responseType}&redirect_uri={redirectUrl}&response_mode={responseMode}&scope={scope}&state={secrets.LoginSecret}&nonce={secrets.LoginNonce}&code_challenge={secrets.CodeChallenge}&code_challenge_method={code_challenge_method}";
+        Navigation.NavigateTo(url);
     }
 }

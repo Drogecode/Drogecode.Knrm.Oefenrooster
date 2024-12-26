@@ -200,8 +200,8 @@ public class UserService : IUserService
 
     public async Task<bool> PatchLastOnline(Guid userId, Guid? customerId, string? clientVersion, CancellationToken clt)
     {
-        if (clientVersion?.Length > 10 == true)
-            clientVersion = clientVersion[..10];
+        if (clientVersion?.Length > 17 == true)
+            clientVersion = clientVersion[..17];
         var cacheKey = "LastOnline_" + userId + clientVersion?.Replace(Environment.NewLine, "");
         var lastUpdated = _memoryCache.Get<DateTime?>(cacheKey);
         if (lastUpdated is not null && lastUpdated.Value.AddMinutes(1).CompareTo(DateTime.UtcNow) >= 0) return false;

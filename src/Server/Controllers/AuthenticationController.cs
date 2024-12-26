@@ -1,32 +1,27 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
-using Drogecode.Knrm.Oefenrooster.Server.Helpers;
+using Drogecode.Knrm.Oefenrooster.Server.Services;
+using IAuthenticationService = Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces.IAuthenticationService;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 [ApiExplorerSettings(GroupName = "Authentication")]
-public partial class AuthenticationController : ControllerBase
+public class AuthenticationController : ControllerBase
 {
     private readonly ILogger<AuthenticationController> _logger;
     private readonly IMemoryCache _memoryCache;
     private readonly IUserRoleService _userRoleService;
     private readonly IUserService _userService;
+    private readonly ICustomerSettingService _customerSettingService;
     private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
 
@@ -37,6 +32,7 @@ public partial class AuthenticationController : ControllerBase
         IMemoryCache memoryCache,
         IUserRoleService userRoleService,
         IUserService userService,
+        ICustomerSettingService customerSettingService,
         IConfiguration configuration,
         HttpClient httpClient)
     {
@@ -44,34 +40,19 @@ public partial class AuthenticationController : ControllerBase
         _memoryCache = memoryCache;
         _userRoleService = userRoleService;
         _userService = userService;
+        _customerSettingService = customerSettingService;
         _configuration = configuration;
         _httpClient = httpClient;
     }
 
     [HttpGet]
     [Route("login-secrets")]
-    public ActionResult<GetLoginSecretsResponse> GetLoginSecrets()
+    public async Task<ActionResult<GetLoginSecretsResponse>> GetLoginSecrets()
     {
         try
         {
-            var codeVerifier = SecretHelper.CreateSecret(120);
-            var tenantId = new Guid(_configuration.GetValue<string>("AzureAd:TenantId") ?? throw new DrogeCodeNullException("no tenant id found for azure login"));
-            var clientId = new Guid(_configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new DrogeCodeNullException("no client id found for azure login"));
-            var response = new CacheLoginSecrets
-            {
-                LoginSecret = SecretHelper.CreateSecret(64),
-                LoginNonce = SecretHelper.CreateSecret(64),
-                CodeChallenge = GenerateCodeChallenge(codeVerifier),
-                CodeVerifier = codeVerifier,
-                TenantId = tenantId,
-                ClientId = clientId,
-                Success = true
-            };
-
-            var cacheOptions = new MemoryCacheEntryOptions();
-            cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
-            _memoryCache.Set(response.LoginSecret, response, cacheOptions);
-            return response;
+            var authService = GetAuthenticationService();
+            return await authService.GetLoginSecrets();
         }
         catch (Exception e)
         {
@@ -80,15 +61,24 @@ public partial class AuthenticationController : ControllerBase
         }
     }
 
-    private static string GenerateCodeChallenge(string codeVerifier)
+    private IAuthenticationService GetAuthenticationService()
     {
-        using var sha256 = SHA256.Create();
-        var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
-        var b64Hash = Convert.ToBase64String(hash);
-        var code = MyRegex().Replace(b64Hash, "-");
-        code = MyRegex1().Replace(code, "_");
-        code = MyRegex2().Replace(code, "");
-        return code;
+        var identityProvider = _configuration.GetValue<IdentityProvider>("IdentityProvider");
+        IAuthenticationService authService;
+        switch (identityProvider)
+        {
+            case IdentityProvider.Azure:
+                authService = new AuthenticationAzureService(_logger, _memoryCache, _configuration, _httpClient);
+                break;
+            case IdentityProvider.KeyCloak:
+                authService = new AuthenticationKeyCloakService(_logger, _memoryCache, _configuration, _httpClient);
+                break;
+            case IdentityProvider.None:
+            default:
+                throw new ArgumentOutOfRangeException($"identityProvider: `{identityProvider}` is not supported");
+        }
+
+        return authService;
     }
 
     [HttpGet]
@@ -97,8 +87,6 @@ public partial class AuthenticationController : ControllerBase
     {
         try
         {
-            var idToken = "";
-            var refreshToken = "";
             var found = _memoryCache.Get<CacheLoginSecrets>(state);
             if (found?.Success is not true || found.CodeVerifier is null)
             {
@@ -107,45 +95,13 @@ public partial class AuthenticationController : ControllerBase
             }
 
             _memoryCache.Remove(state);
-            var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new DrogeCodeConfigurationException("no tenant id found for azure login");
-            var secret = InternalGetLoginClientSecret();
-            var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new DrogeCodeConfigurationException("no client id found for azure login");
-            var scope = _configuration.GetValue<string>("AzureAd:LoginScope") ?? throw new DrogeCodeConfigurationException("no scope found for azure login");
-            var formContent = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("client_id", clientId),
-                new KeyValuePair<string, string>("scope", scope),
-                new KeyValuePair<string, string>("code", code),
-                new KeyValuePair<string, string>("redirect_uri", redirectUrl),
-                new KeyValuePair<string, string>("grant_type", "authorization_code"),
-                new KeyValuePair<string, string>("code_verifier", found.CodeVerifier),
-                new KeyValuePair<string, string>("client_secret", secret),
-            });
-            using (var response = await _httpClient.PostAsync($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token", formContent))
-            {
-                var responseString = await response.Content.ReadAsStringAsync(clt);
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    var resObj = JsonConvert.DeserializeObject<AzureLoginResponse>(responseString);
-                    idToken = resObj?.id_token ?? "";
-                    refreshToken = resObj?.refresh_token ?? "";
-                }
-                else
-                {
-                    _logger.LogWarning("Failed login: {jsonstring}", responseString);
-                    return false;
-                }
-            }
 
-            var handler = new JwtSecurityTokenHandler();
-            var jwtSecurityToken = handler.ReadJwtToken(idToken);
-            if (string.Compare(found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value, false, CultureInfo.InvariantCulture) != 0)
-            {
-                _logger.LogWarning("Nonce is wrong `{cache}` != `{jwt}`", found.LoginNonce, jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value ?? "null");
+            var authService = GetAuthenticationService();
+            var supResult = await authService.AuthenticateUser(found, code, state, sessionState, redirectUrl, clt);
+            if (supResult.Success is not true || supResult.JwtSecurityToken is null)
                 return false;
-            }
 
-            await SetUser(jwtSecurityToken, refreshToken, false, clt);
+            await SetUser(supResult.JwtSecurityToken, supResult.RefreshToken, false, clt);
             return true;
         }
         catch (Exception e)
@@ -153,24 +109,6 @@ public partial class AuthenticationController : ControllerBase
             _logger.LogError(e, "AuthenticatUser");
             return false;
         }
-    }
-
-    private string InternalGetLoginClientSecret()
-    {
-        var fromKeyVault = KeyVaultHelper.GetSecret("LoginClientSecret");
-        if (fromKeyVault is not null) return fromKeyVault.Value;
-        return _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new DrogeCodeConfigurationException("no secret found for azure login");
-    }
-
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    private class AzureLoginResponse
-    {
-        public string? access_token { get; set; }
-        public string? token_type { get; set; }
-        public int expires_in { get; set; }
-        public string? scope { get; set; }
-        public string? refresh_token { get; set; }
-        public string? id_token { get; set; }
     }
 
     [HttpGet]
@@ -215,49 +153,35 @@ public partial class AuthenticationController : ControllerBase
     [Route("refresh")]
     public async Task<ActionResult<bool>> Refresh(CancellationToken clt = default)
     {
-        // https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow#refresh-the-access-token
         try
         {
             if (User?.Identity?.IsAuthenticated != true)
+            {
+                _logger.LogInformation("Refresh request, but user is not authenticated");
                 return false;
+            }
+
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+
 
             var oldRefreshToken = User?.FindFirstValue(REFRESHTOKEN);
             if (oldRefreshToken == null)
+            {
+                _logger.LogInformation("Refresh request, but old refresh token is null for user `{userId}` in customer `{customerId}`", userId, customerId);
                 return false;
-
-            string id_token = "";
-            string refresh_token = "";
-            var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new DrogeCodeConfigurationException("no tenant id found for azure login");
-            var secret = InternalGetLoginClientSecret();
-            var clientId = _configuration.GetValue<string>("AzureAd:LoginClientId") ?? throw new DrogeCodeConfigurationException("no client id found for azure login");
-            var scope = _configuration.GetValue<string>("AzureAd:LoginScope") ?? throw new DrogeCodeConfigurationException("no scope found for azure login");
-            var formContent = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("client_id", clientId),
-                new KeyValuePair<string, string>("scope", scope),
-                new KeyValuePair<string, string>("refresh_token", oldRefreshToken),
-                new KeyValuePair<string, string>("grant_type", "refresh_token"),
-                new KeyValuePair<string, string>("client_secret", secret),
-            });
-            using (var response = await _httpClient.PostAsync($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token", formContent))
-            {
-                string responseString = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    var resObj = JsonConvert.DeserializeObject<AzureLoginResponse>(responseString);
-                    id_token = resObj?.id_token ?? "";
-                    refresh_token = resObj?.refresh_token ?? "";
-                }
-                else
-                {
-                    _logger.LogWarning("Failed refresh: {jsonstring}", responseString);
-                    return false;
-                }
             }
 
-            var handler = new JwtSecurityTokenHandler();
-            var jwtSecurityToken = handler.ReadJwtToken(id_token);
-            await SetUser(jwtSecurityToken, refresh_token, false, clt);
+            var authService = GetAuthenticationService();
+            var supResult = await authService.Refresh(oldRefreshToken, clt);
+            if (supResult.Success is not true || supResult.JwtSecurityToken is null)
+            {
+                _logger.LogInformation("Refresh request, but refresh failed for user `{userId}` in customer `{customerId}`", userId, customerId);
+                return false;
+            }
+
+            _logger.LogInformation("Refresh for user `{userId}` in customer `{customerId}` successful", userId, customerId);
+            await SetUser(supResult.JwtSecurityToken, supResult.RefreshToken, false, clt);
             return true;
         }
         catch (Exception e)
@@ -305,21 +229,20 @@ public partial class AuthenticationController : ControllerBase
 
     private async Task<IEnumerable<Claim>> GetClaimsList(JwtSecurityToken jwtSecurityToken, string refresh_token, CancellationToken clt)
     {
-        var email = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "email")?.Value ?? "";
-        var fullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? "";
-        var externalUserId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "oid")?.Value ?? "";
-        var loginHint = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "login_hint")?.Value ?? "";
-        var customerId = new Guid(jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "tid")?.Value ?? throw new Exception("customerId not found"));
-        var userId = await GetUserIdByExternalId(externalUserId, fullName, email, customerId, clt);
+        var authService = GetAuthenticationService();
+        var drogeClaims = authService.GetClaims(jwtSecurityToken);
+        var customerId = await GetCustomerIdByExternalId(drogeClaims.ExternalCustomerId, clt);
+        var userId = await GetUserIdByExternalId(drogeClaims.ExternalUserId, drogeClaims.FullName, drogeClaims.Email, customerId, clt);
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Name, email),
-            new("FullName", fullName),
-            new("ExternalUserId", externalUserId),
-            new("login_hint", loginHint),
+            new(ClaimTypes.Name, drogeClaims.Email),
+            new("FullName", drogeClaims.FullName),
+            new("ExternalUserId", drogeClaims.ExternalUserId),
+            new("login_hint", drogeClaims.LoginHint),
             new(REFRESHTOKEN, refresh_token),
             new("ValidFrom", jwtSecurityToken.ValidFrom.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             new("ValidTo", jwtSecurityToken.ValidTo.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+            new("IdentityProvider", authService.IdentityProvider.ToString()),
             new("http://schemas.microsoft.com/identity/claims/objectidentifier", userId.ToString()),
             new("http://schemas.microsoft.com/identity/claims/tenantid", customerId.ToString())
         };
@@ -339,7 +262,19 @@ public partial class AuthenticationController : ControllerBase
         return claims;
     }
 
-    internal async Task<Guid> GetUserIdByExternalId(string externalUserId, string userName, string userEmail, Guid customerId, CancellationToken clt)
+    private async Task<Guid> GetCustomerIdByExternalId(string externalCustomerId, CancellationToken clt)
+    {
+        var user = await _customerSettingService.GetByExternalCustomerId(externalCustomerId, clt);
+        if (user is null)
+        {
+            _logger.LogWarning("Failed to get or set user by external id");
+            throw new UnauthorizedAccessException();
+        }
+
+        return user.Id;
+    }
+
+    private async Task<Guid> GetUserIdByExternalId(string externalUserId, string userName, string userEmail, Guid customerId, CancellationToken clt)
     {
         var user = await _userService.GetOrSetUserById(null, externalUserId, userName, userEmail, customerId, true, clt);
         if (user is null)
@@ -350,13 +285,4 @@ public partial class AuthenticationController : ControllerBase
 
         return user.Id;
     }
-
-    [GeneratedRegex("\\+")]
-    private static partial Regex MyRegex();
-
-    [GeneratedRegex("\\/")]
-    private static partial Regex MyRegex1();
-
-    [GeneratedRegex("=+$")]
-    private static partial Regex MyRegex2();
 }

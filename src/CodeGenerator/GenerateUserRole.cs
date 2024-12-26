@@ -164,7 +164,7 @@ public static class GenerateUserRole
         sb.AppendLine("        }");
 
         // Render the ExternalId TextField
-        sb.AppendLine("        <MudTextField T=\"Guid?\" @bind-Value=\"_userRole.Role.ExternalId\" Label=\"@L[\"ExternalId\"]\"/>");
+        sb.AppendLine("        <MudTextField T=\"string?\" @bind-Value=\"_userRole.Role.ExternalId\" Label=\"@L[\"ExternalId\"]\"/>");
 
         // Generate switches based on the group
         var group = string.Empty;
@@ -249,7 +249,7 @@ public static class GenerateUserRole
 
         // Add basic properties (Id, ExternalId, and Name)
         sb.AppendLine("    public Guid Id { get; set; }");
-        sb.AppendLine("    public Guid? ExternalId { get; set; }");
+        sb.AppendLine("    public string? ExternalId { get; set; }");
         sb.AppendLine("    public string? Name { get; set; }");
         sb.AppendLine();
 

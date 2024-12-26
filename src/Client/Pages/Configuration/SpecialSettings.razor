@@ -1,4 +1,5 @@
 ﻿@page "/configuration/global"
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.User
 @attribute [Authorize(Roles = AccessesNames.AUTH_super_user)]
 <h3>Global configuration</h3>
 
@@ -103,22 +104,41 @@ else if (_killDb?.Success == false)
                     <MudText>@function.Name</MudText>
                     @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id).OrderBy(x => x.Name))
                     {
-                        <MudListItem T="string" OnClick="() => ChangeUser(user)">
-                            <div class="flex space-x-4">
-                                <p>@user.Name</p>
-                                <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin"/>
-                                @if (user.Versions is not null)
-                                {
-                                    @foreach (var version in user.Versions)
-                                    {
-                                        <MudChip T="string" Size="Size.Small">@version</MudChip>
-                                    }
-                                }
-                            </div>
-                        </MudListItem>
+                        @UserInfo(user)
                     }
                 }
             }
+            @{
+                var any = false;
+            }
+            @foreach (var user in _users.Where(x => x.UserFunctionId == null || _functions.All(y => y.Id != x.UserFunctionId)))
+            {
+                if (!any)
+                {
+                    any = true;
+                    <MudText>@L["Users with no function"]</MudText>
+                }
+                @UserInfo(user)
+            }
         </MudList>
     </MudPaper>
+}
+@code{
+
+    private RenderFragment<DrogeUser> UserInfo => user =>
+        @<div>
+            <MudListItem T="string" OnClick="() => ChangeUser(user)">
+                <div class="flex space-x-4">
+                    <p>@user.Name</p>
+                    <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin"/>
+                    @if (user.Versions is not null)
+                    {
+                        @foreach (var version in user.Versions)
+                        {
+                            <MudChip T="string" Size="Size.Small">@version</MudChip>
+                        }
+                    }
+                </div>
+            </MudListItem>
+        </div>;
 }
