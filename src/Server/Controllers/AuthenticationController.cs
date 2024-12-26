@@ -51,7 +51,7 @@ public class AuthenticationController : ControllerBase
     {
         try
         {
-            var authService = GetAuthenticationService(); 
+            var authService = GetAuthenticationService();
             return await authService.GetLoginSecrets();
         }
         catch (Exception e)
@@ -63,20 +63,21 @@ public class AuthenticationController : ControllerBase
 
     private IAuthenticationService GetAuthenticationService()
     {
-        var identityProvider =_configuration.GetValue<IdentityProvider>("IdentityProvider");
-        IAuthenticationService authService;  
+        var identityProvider = _configuration.GetValue<IdentityProvider>("IdentityProvider");
+        IAuthenticationService authService;
         switch (identityProvider)
         {
             case IdentityProvider.Azure:
                 authService = new AuthenticationAzureService(_logger, _memoryCache, _configuration, _httpClient);
                 break;
-            case  IdentityProvider.KeyCloak:
+            case IdentityProvider.KeyCloak:
                 authService = new AuthenticationKeyCloakService(_logger, _memoryCache, _configuration, _httpClient);
                 break;
             case IdentityProvider.None:
             default:
                 throw new ArgumentOutOfRangeException($"identityProvider: `{identityProvider}` is not supported");
         }
+
         return authService;
     }
 
@@ -94,8 +95,8 @@ public class AuthenticationController : ControllerBase
             }
 
             _memoryCache.Remove(state);
-            
-            var authService = GetAuthenticationService(); 
+
+            var authService = GetAuthenticationService();
             var supResult = await authService.AuthenticateUser(found, code, state, sessionState, redirectUrl, clt);
             if (supResult.Success is not true || supResult.JwtSecurityToken is null)
                 return false;
@@ -155,17 +156,31 @@ public class AuthenticationController : ControllerBase
         try
         {
             if (User?.Identity?.IsAuthenticated != true)
+            {
+                _logger.LogInformation("Refresh request, but user is not authenticated");
                 return false;
+            }
+
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+
 
             var oldRefreshToken = User?.FindFirstValue(REFRESHTOKEN);
             if (oldRefreshToken == null)
+            {
+                _logger.LogInformation("Refresh request, but old refresh token is null for user `{userId}` in customer `{customerId}`", userId, customerId);
                 return false;
+            }
 
-            var authService = GetAuthenticationService(); 
+            var authService = GetAuthenticationService();
             var supResult = await authService.Refresh(oldRefreshToken, clt);
             if (supResult.Success is not true || supResult.JwtSecurityToken is null)
+            {
+                _logger.LogInformation("Refresh request, but refresh failed for user `{userId}` in customer `{customerId}`", userId, customerId);
                 return false;
-            
+            }
+
+            _logger.LogInformation("Refresh for user `{userId}` in customer `{customerId}` successful", userId, customerId);
             await SetUser(supResult.JwtSecurityToken, supResult.RefreshToken, false, clt);
             return true;
         }
@@ -215,7 +230,7 @@ public class AuthenticationController : ControllerBase
     private async Task<IEnumerable<Claim>> GetClaimsList(JwtSecurityToken jwtSecurityToken, string refresh_token, CancellationToken clt)
     {
         var authService = GetAuthenticationService();
-        var drogeClaims =  authService.GetClaims(jwtSecurityToken);
+        var drogeClaims = authService.GetClaims(jwtSecurityToken);
         var customerId = await GetCustomerIdByExternalId(drogeClaims.ExternalCustomerId, clt);
         var userId = await GetUserIdByExternalId(drogeClaims.ExternalUserId, drogeClaims.FullName, drogeClaims.Email, customerId, clt);
         var claims = new List<Claim>
@@ -227,7 +242,7 @@ public class AuthenticationController : ControllerBase
             new(REFRESHTOKEN, refresh_token),
             new("ValidFrom", jwtSecurityToken.ValidFrom.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             new("ValidTo", jwtSecurityToken.ValidTo.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
-            new("IdentityProvider", authService.IdentityProvider.ToString() ),
+            new("IdentityProvider", authService.IdentityProvider.ToString()),
             new("http://schemas.microsoft.com/identity/claims/objectidentifier", userId.ToString()),
             new("http://schemas.microsoft.com/identity/claims/tenantid", customerId.ToString())
         };
@@ -247,7 +262,7 @@ public class AuthenticationController : ControllerBase
         return claims;
     }
 
-    private async Task<Guid> GetCustomerIdByExternalId(string externalCustomerId,  CancellationToken clt)
+    private async Task<Guid> GetCustomerIdByExternalId(string externalCustomerId, CancellationToken clt)
     {
         var user = await _customerSettingService.GetByExternalCustomerId(externalCustomerId, clt);
         if (user is null)
