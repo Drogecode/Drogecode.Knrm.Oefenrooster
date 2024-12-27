@@ -14,6 +14,10 @@ public class DrogeUserRole
     public string? Name { get; set; }
 
 
+    // Group: GROUP_GLOBAL
+    public bool AUTH_basic_access { get; set; }
+    public bool AUTH_show_c_footer { get; set; }
+
     // Group: GROUP_CONFIGURATION
     public bool AUTH_configure_training_types { get; set; }
     public bool AUTH_configure_user_roles { get; set; }
@@ -51,7 +55,4 @@ public class DrogeUserRole
 
     // Group: GROUP_PRECOM
     public bool AUTH_precom_manual { get; set; }
-
-    // Group: GROUP_GLOBAL
-    public bool AUTH_show_c_footer { get; set; }
 }

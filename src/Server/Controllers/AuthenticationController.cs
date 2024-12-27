@@ -251,6 +251,7 @@ public class AuthenticationController : ControllerBase
         {
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_super_user));
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_user_roles));
+            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_basic_access));
         }
 
         var accesses = await _userRoleService.GetAccessForUser(userId, customerId, jwtSecurityToken.Claims, clt);

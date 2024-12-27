@@ -11,6 +11,10 @@ public struct AccessesNames
     public const string AUTH_super_user = "isSuperGlobalAdmin";
     public const string AUTH_Hide = "do_not_show";
 
+    public const string GROUP_GLOBAL = "global";
+    public const string AUTH_basic_access = "basic_access";
+    public const string AUTH_show_c_footer = "showCfooter";
+    
     public const string GROUP_CONFIGURATION= "Configuration";
     public const string AUTH_configure_training_types = "configure_training-types";
     public const string AUTH_configure_user_roles = "configure_user_roles";
@@ -48,9 +52,6 @@ public struct AccessesNames
     
     public const string GROUP_PRECOM = "PreCom";
     public const string AUTH_precom_manual = "precom_manual";
-
-    public const string GROUP_GLOBAL = "global";
-    public const string AUTH_show_c_footer = "showCfooter";
 }
 
 public struct AccessesSettings

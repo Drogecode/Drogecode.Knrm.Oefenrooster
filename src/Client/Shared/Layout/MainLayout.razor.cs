@@ -109,6 +109,11 @@ public sealed partial class MainLayout : IDisposable
     {
         Navigation.NavigateTo("/landing_page");
     }
+    private async Task Logout(MouseEventArgs args)
+    {
+        await AuthenticationStateProvider.Logout();
+        Navigation.NavigateTo("/landing_page");
+    }
 
     public void ShowSnackbarAssignmentChanged(PlanUser user, PlannedTraining training)
     {
