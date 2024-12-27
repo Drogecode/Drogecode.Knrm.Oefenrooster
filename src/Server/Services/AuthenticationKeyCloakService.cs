@@ -33,51 +33,12 @@ public class AuthenticationKeyCloakService : AuthenticationService, IAuthenticat
 
     public async Task<AuthenticateUserResult> AuthenticateUser(CacheLoginSecrets found, string code, string state, string sessionState, string redirectUrl, CancellationToken clt)
     {
-        var result = new AuthenticateUserResult
-        {
-            Success = false,
-        };
         var tenantId = _configuration.GetValue<string>("KeyCloak:TenantId") ?? throw new DrogeCodeConfigurationException("no tenant id found for KeyCloak login");
         var secret = InternalGetLoginClientSecret();
         var clientId = _configuration.GetValue<string>("KeyCloak:ClientId") ?? throw new DrogeCodeConfigurationException("no client id found for KeyCloak login");
         var scope = _configuration.GetValue<string>("KeyCloak:Scopes") ?? throw new DrogeCodeConfigurationException("no scope found for KeyCloak login");
         var instance = _configuration.GetValue<string>("KeyCloak:Instance") ?? throw new DrogeCodeNullException("no instance found for KeyCloak login");
-        var formContent = new FormUrlEncodedContent(new[]
-        {
-            new KeyValuePair<string, string>("client_id", clientId),
-            new KeyValuePair<string, string>("scope", scope),
-            new KeyValuePair<string, string>("code", code),
-            new KeyValuePair<string, string>("redirect_uri", redirectUrl),
-            new KeyValuePair<string, string>("grant_type", "authorization_code"),
-            new KeyValuePair<string, string>("code_verifier", found.CodeVerifier),
-            new KeyValuePair<string, string>("client_secret", secret),
-        });
-        using (var response = await _httpClient.PostAsync($"{instance}/realms/{tenantId}/protocol/openid-connect/token", formContent))
-        {
-            var responseString = await response.Content.ReadAsStringAsync(clt);
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                var resObj = JsonConvert.DeserializeObject<LoginResponse>(responseString);
-                result.IdToken = resObj?.id_token ?? "";
-                result.RefreshToken = resObj?.refresh_token ?? "";
-            }
-            else
-            {
-                _logger.LogWarning("Failed login: {jsonstring}", responseString);
-                return result;
-            }
-        }
-
-        var handler = new JwtSecurityTokenHandler();
-        result.JwtSecurityToken = handler.ReadJwtToken(result.IdToken);
-        if (string.Compare(found.LoginNonce, result.JwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value, false, CultureInfo.InvariantCulture) != 0)
-        {
-            _logger.LogWarning("Nonce is wrong `{cache}` != `{jwt}`", found.LoginNonce, result.JwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "nonce")?.Value ?? "null");
-            return result;
-        }
-
-        result.Success = true;
-        return result;
+        return await AuthenticateUserShared($"{instance}/realms/{tenantId}/protocol/openid-connect/token", clientId, scope, code, secret, redirectUrl, found, clt);
     }
 
     public async Task<AuthenticateUserResult> Refresh(string oldRefreshToken, CancellationToken clt)
@@ -91,34 +52,7 @@ public class AuthenticationKeyCloakService : AuthenticationService, IAuthenticat
         var clientId = _configuration.GetValue<string>("KeyCloak:ClientId") ?? throw new DrogeCodeConfigurationException("no client id found for KeyCloak refresh");
         var scope = _configuration.GetValue<string>("KeyCloak:Scopes") ?? throw new DrogeCodeConfigurationException("no scope found for KeyCloak refresh");
         var instance = _configuration.GetValue<string>("KeyCloak:Instance") ?? throw new DrogeCodeNullException("no instance found for KeyCloak refresh");
-        var formContent = new FormUrlEncodedContent(new[]
-        {
-            new KeyValuePair<string, string>("client_id", clientId),
-            new KeyValuePair<string, string>("scope", scope),
-            new KeyValuePair<string, string>("refresh_token", oldRefreshToken),
-            new KeyValuePair<string, string>("grant_type", "refresh_token"),
-            new KeyValuePair<string, string>("client_secret", secret),
-        });
-        using (var response = await _httpClient.PostAsync($"{instance}/realms/{tenantId}/protocol/openid-connect/token", formContent))
-        {
-            string responseString = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                var resObj = JsonConvert.DeserializeObject<LoginResponse>(responseString);
-                result.IdToken = resObj?.id_token ?? "";
-                result.RefreshToken = resObj?.refresh_token ?? "";
-            }
-            else
-            {
-                _logger.LogWarning("Failed refresh: {jsonstring}", responseString);
-                return result;
-            }
-        }
-
-        var handler = new JwtSecurityTokenHandler();
-        result.JwtSecurityToken = handler.ReadJwtToken(result.IdToken);
-        result.Success = true;
-        return result;
+        return await RefreshShared($"{instance}/realms/{tenantId}/protocol/openid-connect/token", clientId, scope, oldRefreshToken, secret, clt);
     }
 
     public DrogeClaims GetClaims(JwtSecurityToken jwtSecurityToken)
@@ -138,16 +72,5 @@ public class AuthenticationKeyCloakService : AuthenticationService, IAuthenticat
         var fromKeyVault = KeyVaultHelper.GetSecret("LoginClientSecret");
         if (fromKeyVault is not null) return fromKeyVault.Value;
         return _configuration.GetValue<string>("KeyCloak:ClientSecret") ?? throw new DrogeCodeConfigurationException("no secret found for keycloak login");
-    }
-    
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    private class LoginResponse
-    {
-        public string? access_token { get; set; }
-        public string? token_type { get; set; }
-        public int expires_in { get; set; }
-        public string? scope { get; set; }
-        public string? refresh_token { get; set; }
-        public string? id_token { get; set; }
     }
 }
