@@ -150,4 +150,7 @@
   <data name="Profile" xml:space="preserve">
     <value>Profile</value>
   </data>
+  <data name="No access" xml:space="preserve">
+    <value>No access</value>
+  </data>
 </root>
