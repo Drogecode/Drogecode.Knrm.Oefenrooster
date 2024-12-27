@@ -11,81 +11,94 @@
 <MudLayout>
     <AuthorizeView>
         <Authorized>
-            <MudAppBar>
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => DrawerToggle())"/>
-                @L["Title"]
-                <MudSpacer/>
-                <AuthorizeView Roles="@AccessesNames.AUTH_Hide" Context="inner">
-                    <MudBadge Color="Color.Secondary" Dot="true" Overlap="true" Visible="_newNotificationsAvailable">
-                        <MudMenu Icon="@Icons.Material.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter"
-                                 PopoverClass="docs-layout-menu-shadow" ListClass="pa-2 docs-menu-list" LockScroll="true">
-                            <div class="d-flex justify-space-between align-center px-2">
-                                <MudText Typo="Typo.subtitle2">Notifications</MudText>
-                                <MudButton Disabled="@(_newNotificationsAvailable == false)" StartIcon="@Icons.Material.Filled.DoneAll" Variant="Variant.Text" Color="Color.Primary"
-                                           Class="ml-16 mr-n2">
-                                    Mark as read
-                                </MudButton>
-                            </div>
-                            @if (_messages != null && _newNotificationsAvailable)
-                            {
-                                @foreach (var (message, isRead) in _messages.Take(5))
-                                {
-                                    <MudMenuItem Class="px-2 py-0 rounded" Href="@($"/mud/announcements/{message.Id}")">
-                                        <MudText Typo="Typo.subtitle2">@message.Title</MudText>
-                                        <MudText Typo="Typo.body2">@($"{message.Authors.FirstOrDefault()?.DisplayName} • {message.PublishDate.ToString("MM/dd/yyyy")}")</MudText>
-                                    </MudMenuItem>
-                                    <MudDivider Class="my-2"/>
-                                }
-                            }
-                            else
-                            {
-                                <div class="d-flex justify-center align-center px-2 py-8 relative">
-                                    <MudText Class="mud-text-secondary my-12">Nothing new :(</MudText>
-                                </div>
-                            }
-                        </MudMenu>
-                    </MudBadge>
-                </AuthorizeView>
-                <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft" TransformOrigin="@Origin.TopLeft" AriaLabel="@L["User menu dropdown"]">
-                    <MudMenuItem Href="/user/profile">@L["Profile"]</MudMenuItem>
-                    <MudMenuItem Href="/authentication/logout">@L["Logout"]</MudMenuItem>
-                </MudMenu>
-                <Theming Global="_global" MudThemeProvider="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" @bind-DarkModeToggle="_darkModeToggle"/>
-            </MudAppBar>
-            <CascadingValue Value="_global">
-                <MudDrawer @bind-Open="@_drawerOpen">
-                    <NavMenu/>
-                </MudDrawer>
-                <MudMainContent>
-                    <CascadingValue Value="this">
-                        @Body
-                        <AuthorizeView Roles="@AccessesNames.AUTH_show_c_footer" Context="inner">
-                            <footer class="fixed bottom-0">
-                                <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
-                                    © 2022-2024 Taco Droogers - @DefaultSettingsHelper.CURRENT_VERSION
-                                </span>
-                            </footer>
+            <AuthorizeView Roles="@AccessesNames.AUTH_basic_access" Context="basic">
+                <Authorized>
+                    <MudAppBar>
+                        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => DrawerToggle())"/>
+                        @L["Title"]
+                        <MudSpacer/>
+                        <AuthorizeView Roles="@AccessesNames.AUTH_Hide" Context="inner">
+                            <MudBadge Color="Color.Secondary" Dot="true" Overlap="true" Visible="_newNotificationsAvailable">
+                                <MudMenu Icon="@Icons.Material.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter"
+                                         PopoverClass="docs-layout-menu-shadow" ListClass="pa-2 docs-menu-list" LockScroll="true">
+                                    <div class="d-flex justify-space-between align-center px-2">
+                                        <MudText Typo="Typo.subtitle2">Notifications</MudText>
+                                        <MudButton Disabled="@(_newNotificationsAvailable == false)" StartIcon="@Icons.Material.Filled.DoneAll" Variant="Variant.Text" Color="Color.Primary"
+                                                   Class="ml-16 mr-n2">
+                                            Mark as read
+                                        </MudButton>
+                                    </div>
+                                    @if (_messages != null && _newNotificationsAvailable)
+                                    {
+                                        @foreach (var (message, isRead) in _messages.Take(5))
+                                        {
+                                            <MudMenuItem Class="px-2 py-0 rounded" Href="@($"/mud/announcements/{message.Id}")">
+                                                <MudText Typo="Typo.subtitle2">@message.Title</MudText>
+                                                <MudText Typo="Typo.body2">@($"{message.Authors.FirstOrDefault()?.DisplayName} • {message.PublishDate.ToString("MM/dd/yyyy")}")</MudText>
+                                            </MudMenuItem>
+                                            <MudDivider Class="my-2"/>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex justify-center align-center px-2 py-8 relative">
+                                            <MudText Class="mud-text-secondary my-12">Nothing new :(</MudText>
+                                        </div>
+                                    }
+                                </MudMenu>
+                            </MudBadge>
                         </AuthorizeView>
-                        <UpdateChecker/>
+                        <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft" TransformOrigin="@Origin.TopLeft" AriaLabel="@L["User menu dropdown"]">
+                            <MudMenuItem Href="/user/profile">@L["Profile"]</MudMenuItem>
+                            <MudMenuItem Href="/authentication/logout">@L["Logout"]</MudMenuItem>
+                        </MudMenu>
+                        <Theming Global="_global" MudThemeProvider="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" @bind-DarkModeToggle="_darkModeToggle"/>
+                    </MudAppBar>
+                    <CascadingValue Value="_global">
+                        <MudDrawer @bind-Open="@_drawerOpen">
+                            <NavMenu/>
+                        </MudDrawer>
+                        <MudMainContent>
+                            <CascadingValue Value="this">
+                                @Body
+                                <AuthorizeView Roles="@AccessesNames.AUTH_show_c_footer" Context="inner">
+                                    <footer class="fixed bottom-0">
+                                        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+                                            © 2022-2024 Taco Droogers - @DefaultSettingsHelper.CURRENT_VERSION
+                                        </span>
+                                    </footer>
+                                </AuthorizeView>
+                                <UpdateChecker/>
+                            </CascadingValue>
+                        </MudMainContent>
                     </CascadingValue>
-                </MudMainContent>
-            </CascadingValue>
 
-            @if (_trainingTypes != null)
-            {
-                <style>
-                    @foreach (var trainingType in _trainingTypes)
+                    @if (_trainingTypes != null)
                     {
-                        @($".trainingType-{trainingType.Id}{{")
-                        @($"background-color:{(_isDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)} !important;")
-                        if (!string.IsNullOrEmpty(trainingType.TextColorLight))
-                        {
-                            @($"color:{(_isDarkMode ? string.IsNullOrEmpty(trainingType.TextColorDark) ? trainingType.TextColorLight : trainingType.TextColorDark : trainingType.TextColorLight)} !important;")
-                        }
-                        @("}")
+                        <style>
+                            @foreach (var trainingType in _trainingTypes)
+                            {
+                                @($".trainingType-{trainingType.Id}{{")
+                                @($"background-color:{(_isDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)} !important;")
+                                if (!string.IsNullOrEmpty(trainingType.TextColorLight))
+                                {
+                                    @($"color:{(_isDarkMode ? string.IsNullOrEmpty(trainingType.TextColorDark) ? trainingType.TextColorLight : trainingType.TextColorDark : trainingType.TextColorLight)} !important;")
+                                }
+
+                                @("}")
+                            }
+                        </style>
                     }
-                </style>
-            }
+                </Authorized>
+                <NotAuthorized>
+                    <MudMainContent>
+                        <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
+                            <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">@L["No access"]</MudText>
+                            <MudButton @onclick="Logout">@L["Logout"]</MudButton>
+                        </MudContainer>
+                    </MudMainContent>
+                </NotAuthorized>
+            </AuthorizeView>
         </Authorized>
         <Authorizing>
             <MudMainContent>
