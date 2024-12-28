@@ -234,22 +234,24 @@ public class UserController : ControllerBase
 
                         var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(newUserResponse.Id, clt);
                         var roles = await _userRoleService.GetAll(customerId, clt);
-                        if (groups?.Value is not null && roles.Roles is not null)
+                        if (groups?.Value is not null && roles.Roles is not null && roles.Roles.Count != 0)
                         {
                             foreach (var group in groups.Value.Where(x => roles.Roles.Any(y => y.ExternalId?.ToString().Equals(x.Id) == true)))
                             {
                                 if (group.Id is null) continue;
-                                var roleId = new Guid(group.Id);
-                                linkedRoles.Remove(roleId);
-                                await _linkUserRoleService.LinkUserToRoleAsync(newUserResponse.Id, roleId, true, true, clt);
+                                var role = roles.Roles.FirstOrDefault(x => x.ExternalId?.Equals(group.Id) == true);
+                                if (role is null) continue;
+                                linkedRoles.Remove(role.Id);
+                                await _linkUserRoleService.LinkUserToRoleAsync(newUserResponse.Id, role, true, true, clt);
+                            }
+
+                            foreach (var linkedRole in linkedRoles)
+                            {
+                                var role = roles.Roles.FirstOrDefault(x => x.Id.Equals(linkedRole));
+                                if (role is null) continue;
+                                await _linkUserRoleService.LinkUserToRoleAsync(newUserResponse.Id, role, false, true, clt);
                             }
                         }
-
-                        foreach (var linkedRole in linkedRoles)
-                        {
-                            await _linkUserRoleService.LinkUserToRoleAsync(newUserResponse.Id, linkedRole, false, true, clt);
-                        }
-
 
                         await _userService.UpdateUser(newUserResponse, userId, customerId);
                     }
