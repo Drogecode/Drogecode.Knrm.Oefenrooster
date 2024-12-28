@@ -56,7 +56,7 @@ public class AuthenticationAzureService : AuthenticationService, IAuthentication
             FullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? "",
             ExternalUserId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "oid")?.Value ?? "",
             LoginHint = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "login_hint")?.Value ?? "",
-            ExternalCustomerId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "tid")?.Value ?? ""
+            TenantId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "tid")?.Value ?? ""
         };
     }
 

@@ -27,7 +27,7 @@ public class ReportActionService : IReportActionService
                         && x.Users.Count(y => users.Contains(y.DrogeCodeId!.Value)) == users.Count
                         && (types == null || !types.Any() || types.Contains(x.Type))
                         && (search == null || !search.Any() || search.Any(y => EF.Functions.ILike(x.ShortDescription, "%" + y + "%"))
-                                            || search.Any(y => EF.Functions.ILike(x.Description, "%" + y + "%"))));
+                            || search.Any(y => EF.Functions.ILike(x.Description, "%" + y + "%"))));
 
         var sharePointActionsUser = new MultipleReportActionsResponse
         {
@@ -112,7 +112,7 @@ public class ReportActionService : IReportActionService
                 result.Message = "None is not valid";
                 break;
             case DistinctReport.Prio:
-                var prio = _database.ReportActions.Select(x => x.Prio).Distinct();
+                var prio = _database.ReportActions.Where(x => x.CustomerId == customerId).Select(x => x.Prio).Distinct();
                 if (await prio.AnyAsync(clt))
                 {
                     result.Values = await prio.ToListAsync(clt);
@@ -122,7 +122,7 @@ public class ReportActionService : IReportActionService
 
                 break;
             case DistinctReport.Type:
-                var type = _database.ReportActions.Select(x => x.Type).Distinct();
+                var type = _database.ReportActions.Where(x => x.CustomerId == customerId).Select(x => x.Type).Distinct();
                 if (await type.AnyAsync(clt))
                 {
                     result.Values = await type.ToListAsync(clt);
@@ -132,7 +132,7 @@ public class ReportActionService : IReportActionService
 
                 break;
             case DistinctReport.Year:
-                var years = _database.ReportActions.Select(x => x.Start.Year).Distinct();
+                var years = _database.ReportActions.Where(x => x.CustomerId == customerId).Select(x => x.Start.Year).Distinct();
                 if (await years.AnyAsync(clt))
                 {
                     result.Values = [];
