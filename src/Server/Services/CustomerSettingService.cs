@@ -14,9 +14,9 @@ public class CustomerSettingService : ICustomerSettingService
         _database = database;
     }
 
-    public async Task<Customer> GetByExternalCustomerId(string externalCustomerId, CancellationToken clt)
+    public async Task<Customer> GetByTenantId(string tenantId, CancellationToken clt)
     {
-        var customer = await _database.Customers.FirstOrDefaultAsync(x => x.ExternalId == externalCustomerId);
+        var customer = await _database.Customers.FirstOrDefaultAsync(x => x.TenantId == tenantId);
         return new Customer { Id = customer?.Id ?? Guid.Empty };
     }
 

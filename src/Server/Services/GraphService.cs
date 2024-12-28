@@ -7,6 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph.Models;
 using System.Diagnostics;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
+using IdentityProvider = Drogecode.Knrm.Oefenrooster.Shared.Enums.IdentityProvider;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -37,6 +38,9 @@ public class GraphService : IGraphService
 
     public void InitializeGraph(Settings? settings = null)
     {
+        var identityProvider = _configuration.GetValue<IdentityProvider>("IdentityProvider");
+        if (identityProvider != IdentityProvider.Azure)
+            return;
         if (settings == null)
         {
             settings = Settings.LoadSettings(_configuration);

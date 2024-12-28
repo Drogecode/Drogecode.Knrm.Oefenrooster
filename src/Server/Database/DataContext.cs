@@ -225,7 +225,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     Created = new DateTime(2022, 10, 12, 18, 12, 5, DateTimeKind.Utc),
                     Instance = "https://login.microsoftonline.com/",
                     Domain = "hui.nu",
-                    TenantId = "d9754755-b054-4a9c-a77f-da42a4009365", // Same as Id for KNRM Huizen, but could be different for future customers.
+                    TenantId = DefaultSettingsHelper.KnrmHuizenId.ToString(), // Same as Id for KNRM Huizen, but could be different for future customers.
                     ClientIdServer = "220e1008-1131-4e82-a388-611cd773ddf8",
                     ClientSecretServer = "", //set in db
                     ClientIdLogin = "a9c68159-901c-449a-83e0-85243364e3cc",

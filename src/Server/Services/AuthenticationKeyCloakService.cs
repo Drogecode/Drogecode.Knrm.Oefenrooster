@@ -63,7 +63,7 @@ public class AuthenticationKeyCloakService : AuthenticationService, IAuthenticat
             FullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "preferred_username")?.Value ?? "",
             ExternalUserId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "sub")?.Value ?? "",
             LoginHint = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "login_hint")?.Value ?? "",
-            ExternalCustomerId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "iss")?.Value ?? ""
+            TenantId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "iss")?.Value ?? ""
         };
     }
 

@@ -231,7 +231,7 @@ public class AuthenticationController : ControllerBase
     {
         var authService = GetAuthenticationService();
         var drogeClaims = authService.GetClaims(jwtSecurityToken);
-        var customerId = await GetCustomerIdByExternalId(drogeClaims.ExternalCustomerId, clt);
+        var customerId = await GetCustomerIdByExternalId(drogeClaims.TenantId, clt);
         var userId = await GetUserIdByExternalId(drogeClaims.ExternalUserId, drogeClaims.FullName, drogeClaims.Email, customerId, clt);
         var claims = new List<Claim>
         {
@@ -263,9 +263,9 @@ public class AuthenticationController : ControllerBase
         return claims;
     }
 
-    private async Task<Guid> GetCustomerIdByExternalId(string externalCustomerId, CancellationToken clt)
+    private async Task<Guid> GetCustomerIdByExternalId(string tenantId, CancellationToken clt)
     {
-        var user = await _customerSettingService.GetByExternalCustomerId(externalCustomerId, clt);
+        var user = await _customerSettingService.GetByTenantId(tenantId, clt);
         if (user is null)
         {
             _logger.LogWarning("Failed to get or set user by external id");
