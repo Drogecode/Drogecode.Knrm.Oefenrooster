@@ -2,6 +2,8 @@
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportActionShared;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -39,5 +41,18 @@ public class ReportActionSharedService : IReportActionSharedService
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
+    }
+
+    public async Task<AuthenticateExternalResult> AuthenticateExternal(AuthenticateExternalRequest body, CancellationToken clt)
+    {
+        var response = new AuthenticateExternalResult();
+        var sharedReport = await _database.ReportActionShares.Where(x=> x.Id == body.ExternalId).Select(x=> new {x.HashedPassword, x.CustomerId}).FirstOrDefaultAsync(clt);
+        if (PasswordHasher.ComparePassword(body.Passwoord, sharedReport?.HashedPassword))
+        {
+            response.Success = true;
+            response.CustomerId = sharedReport!.CustomerId;
+
+        }
+        return response;
     }
 }

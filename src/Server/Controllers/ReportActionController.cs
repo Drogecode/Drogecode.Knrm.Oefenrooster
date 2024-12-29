@@ -63,6 +63,7 @@ public class ReportActionController : ControllerBase
 
     [HttpPost]
     [Route("get")]
+    [Authorize]
     public async Task<ActionResult<MultipleReportActionsResponse>> GetLastActions([FromBody] GetLastActionsRequest body, CancellationToken clt = default)
     {
         try
@@ -176,7 +177,7 @@ public class ReportActionController : ControllerBase
 
     [HttpGet]
     [Route("distinct/{column}")]
-    [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics)]
+    [Authorize]
     public async Task<ActionResult<DistinctResponse>> Distinct(DistinctReport column, CancellationToken clt = default)
     {
         try

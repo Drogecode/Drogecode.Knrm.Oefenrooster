@@ -111,7 +111,6 @@ public class ReportTrainingController : ControllerBase
 
     [HttpGet]
     [Route("distinct/{column}")]
-    [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics)]
     public async Task<ActionResult<DistinctResponse>> Distinct(DistinctReport column, CancellationToken clt = default)
     {
         try

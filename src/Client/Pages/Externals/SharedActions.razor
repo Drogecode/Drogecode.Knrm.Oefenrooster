@@ -1,5 +1,34 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 @layout ExternalsLayout
-@attribute [Authorize]
 @page "/external/actions/{Id:guid}"
-<ActionsTab Users="@_users" Functions="@_functions" EnableOptions="false" SharedId="@Id"/>
+@if (_isLoaded)
+{
+    @if (_isAuthenticated)
+    {
+        <ActionsTab EnableOptions="false" SharedId="@Id"/>
+    }
+    else
+    {
+        <MudGrid>
+            <MudItem xs="12" sm="7">
+                <MudPaper Class="pa-4">
+                    <MudForm @ref="_form" @bind-IsValid="@_success">
+                        <MudTextField T="string" Label="@L["Password"]" HelperText="@L["Insert password"]" @ref="_pwField"
+                                      InputType="InputType.Password" Required="true"
+                                      RequiredError="@L["Password is required!"]"/>
+                        <div class="d-flex align-center justify-space-between">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="ValidatePassword">@L["Validate"]</MudButton>
+                        </div>
+                    </MudForm>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    }
+}
+else
+{
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+    <MudSkeleton/>
+}

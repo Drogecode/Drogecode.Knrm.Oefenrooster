@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Models.Palettes;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Microsoft.AspNetCore.Components.Web;
@@ -14,6 +15,7 @@ public sealed partial class MainLayout : IDisposable
     [Inject] private TrainingTypesRepository TrainingTypesRepository { get; set; } = default!;
     [Inject] private UserRepository UserRepository { get; set; } = default!;
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     private readonly DrogeCodeGlobal _global = new();
     private MudThemeProvider _mudThemeProvider = new();
@@ -55,6 +57,12 @@ public sealed partial class MainLayout : IDisposable
                 return;
             }
 
+            if (UserHelper.InRole(authState, AccessesNames.AUTH_External))
+            {
+                DebugHelper.WriteLine("Authenticated as external user");
+                return;
+            }
+
             var dbUser = await UserRepository.GetCurrentUserAsync(); //Force creation of user.
             if (dbUser?.Id != null && dbUser.Id != Guid.Empty)
             {
@@ -80,7 +88,7 @@ public sealed partial class MainLayout : IDisposable
             DebugHelper.WriteLine("Faild to start hubconnection.", ex);
         }
     }
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -107,6 +115,7 @@ public sealed partial class MainLayout : IDisposable
     {
         Navigation.NavigateTo("/landing_page");
     }
+
     private async Task Logout(MouseEventArgs args)
     {
         await AuthenticationStateProvider.Logout();

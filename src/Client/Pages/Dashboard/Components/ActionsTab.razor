@@ -8,7 +8,10 @@
             <MudChip T="string">@_reportActions.ElapsedMilliseconds</MudChip>
         </AuthorizeView>
         <MudText Typo="Typo.h5">@L["Actions from SharePoint"]</MudText>
-        <SelectMultipleUsers Disabled="_busy" Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection"/>
+        @if (Users is not null && Functions is not null)
+        {
+            <SelectMultipleUsers Disabled="_busy" Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection"/>
+        }
         <AuthorizeView Roles="@AccessesNames.AUTH_action_search">
             <MudTextField T="string?" Label="@LApp["Search"]" Value="@_search" ValueChanged="@SearchChanged"/>
         </AuthorizeView>

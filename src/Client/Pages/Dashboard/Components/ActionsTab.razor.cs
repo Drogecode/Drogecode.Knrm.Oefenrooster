@@ -17,8 +17,8 @@ public sealed partial class ActionsTab : IDisposable
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public DrogeUser? User { get; set; }
     [Parameter] public Guid? SharedId { get; set; }
-    [Parameter, EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
-    [Parameter, EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
+    [Parameter] public List<DrogeUser>? Users { get; set; }
+    [Parameter] public List<DrogeFunction>? Functions { get; set; }
     [Parameter, EditorRequired] public bool EnableOptions { get; set; }
     private MultipleReportActionsResponse? _reportActions;
     private CancellationTokenSource _cls = new();
@@ -48,7 +48,7 @@ public sealed partial class ActionsTab : IDisposable
                 }
             }
 
-            if (User is not null)
+            if (User is not null && Users is not null)
             {
                 var thisUser = Users.FirstOrDefault(x => x.Id == User.Id);
                 if (thisUser is not null)

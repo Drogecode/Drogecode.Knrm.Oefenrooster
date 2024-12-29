@@ -8,6 +8,7 @@ using Microsoft.Extensions.Caching.Memory;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using IAuthenticationService = Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces.IAuthenticationService;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
@@ -22,6 +23,7 @@ public class AuthenticationController : ControllerBase
     private readonly IUserRoleService _userRoleService;
     private readonly IUserService _userService;
     private readonly ICustomerSettingService _customerSettingService;
+    private readonly IReportActionSharedService _reportActionSharedService;
     private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
 
@@ -33,6 +35,7 @@ public class AuthenticationController : ControllerBase
         IUserRoleService userRoleService,
         IUserService userService,
         ICustomerSettingService customerSettingService,
+        IReportActionSharedService reportActionSharedService,
         IConfiguration configuration,
         HttpClient httpClient)
     {
@@ -41,6 +44,7 @@ public class AuthenticationController : ControllerBase
         _userRoleService = userRoleService;
         _userService = userService;
         _customerSettingService = customerSettingService;
+        _reportActionSharedService = reportActionSharedService;
         _configuration = configuration;
         _httpClient = httpClient;
     }
@@ -106,7 +110,51 @@ public class AuthenticationController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "AuthenticatUser");
+            _logger.LogError(e, "AuthenticateUser");
+            return false;
+        }
+    }
+
+    [HttpPost]
+    [Route("authenticate-external")]
+    public async Task<ActionResult<bool>> AuthenticateExternal([FromBody] AuthenticateExternalRequest body, CancellationToken clt = default)
+    {
+        try
+        {
+            if (User?.Identity?.IsAuthenticated == true && !User.IsInRole(AccessesNames.AUTH_External))
+            {
+                _logger.LogInformation("AuthenticateExternal request, but user is already authenticated");
+                return false;
+            }
+
+            var passwordCorrect = await _reportActionSharedService.AuthenticateExternal(body, clt);
+            if (!passwordCorrect.Success) return false;
+            var claims = new List<Claim>
+            {
+                new("http://schemas.microsoft.com/identity/claims/objectidentifier", body.ExternalId?.ToString() ?? ""),
+                new("http://schemas.microsoft.com/identity/claims/tenantid", passwordCorrect.CustomerId.ToString()),
+                new("ExternalId", body.ExternalId?.ToString() ?? throw new AggregateException("ExternalId is null")),
+                new(ClaimTypes.Role, AccessesNames.AUTH_External),
+                new("ValidFrom", DateTime.UtcNow.AddMinutes(-10).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+                new("ValidTo", DateTime.UtcNow.AddHours(1).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = false
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "AuthenticateExternal");
             return false;
         }
     }
@@ -122,6 +170,15 @@ public class AuthenticationController : ControllerBase
                 {
                     IsAuthenticated = false
                 };
+            if (User.IsInRole(AccessesNames.AUTH_External))
+            {
+                return new CurrentUser
+                {
+                    IsAuthenticated = true,
+                    Claims = User.Claims.Select(claim => new KeyValuePair<string, string>(claim.Type, claim.Value)).ToList(),
+                };
+            }
+
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No objectidentifier found"));
             var res = new CurrentUser
             {
@@ -161,14 +218,21 @@ public class AuthenticationController : ControllerBase
                 return false;
             }
 
+            if (User.IsInRole(AccessesNames.AUTH_External))
+            {
+                _logger.LogInformation("Refresh request for external user, but external will expire");
+                await HttpContext.SignOutAsync();
+                return false;
+            }
+
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-
 
             var oldRefreshToken = User?.FindFirstValue(REFRESHTOKEN);
             if (oldRefreshToken == null)
             {
                 _logger.LogInformation("Refresh request, but old refresh token is null for user `{userId}` in customer `{customerId}`", userId, customerId);
+                await HttpContext.SignOutAsync();
                 return false;
             }
 
@@ -177,6 +241,7 @@ public class AuthenticationController : ControllerBase
             if (supResult.Success is not true || supResult.JwtSecurityToken is null)
             {
                 _logger.LogInformation("Refresh request, but refresh failed for user `{userId}` in customer `{customerId}`", userId, customerId);
+                await HttpContext.SignOutAsync();
                 return false;
             }
 
@@ -187,6 +252,7 @@ public class AuthenticationController : ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e, "Refresh");
+            await HttpContext.SignOutAsync();
             return false;
         }
     }

@@ -13,7 +13,7 @@
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Authentication.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="AuthenticationClient">
 			<OutputPath>../Clients/AuthenticationClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.User</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.User,Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\DayItem.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="DayItemClient">
 			<OutputPath>../Clients/DayItemClient.g.cs</OutputPath>
