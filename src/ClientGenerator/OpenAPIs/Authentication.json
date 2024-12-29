@@ -230,11 +230,11 @@
           },
           "tenantId": {
             "type": "string",
-            "format": "uuid"
+            "nullable": true
           },
           "clientId": {
             "type": "string",
-            "format": "uuid"
+            "nullable": true
           }
         },
         "additionalProperties": false

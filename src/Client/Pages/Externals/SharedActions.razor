@@ -1,0 +1,5 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
+@layout ExternalsLayout
+@attribute [Authorize]
+@page "/external/actions/{Id:guid}"
+<ActionsTab Users="@_users" Functions="@_functions" EnableOptions="false" SharedId="@Id"/>

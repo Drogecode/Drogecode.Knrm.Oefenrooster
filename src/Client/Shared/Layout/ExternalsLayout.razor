@@ -1,0 +1,32 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Services
+@inherits LayoutComponentBase
+@inject CustomStateProvider AuthenticationStateProvider
+
+<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" Theme="@_myCustomTheme"/>
+<MudPopoverProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+<MudLayout>
+    <MudAppBar>
+        <MudSpacer/>
+        <Theming Global="_global" MudThemeProvider="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode"/>
+    </MudAppBar>
+    <MudMainContent>
+        <AuthorizeView>
+            <Authorized>
+                @Body
+            </Authorized>
+            <Authorizing>
+                <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
+                    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">@L["One moment"]</MudText>
+                </MudContainer>
+            </Authorizing>
+            <NotAuthorized>
+                <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
+                    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">@L["Not authorized"]</MudText>
+                </MudContainer>
+            </NotAuthorized>
+        </AuthorizeView>
+    </MudMainContent>
+</MudLayout>

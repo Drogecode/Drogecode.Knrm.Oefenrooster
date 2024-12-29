@@ -1,11 +1,9 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Models.Palettes;
-using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 
@@ -52,7 +50,7 @@ public sealed partial class MainLayout : IDisposable
             _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
             if (!_isAuthenticated)
             {
-                if (!Navigation.Uri.Contains("/authentication/login-callback") && !Navigation.Uri.Contains("/landing_page"))
+                if (!Navigation.Uri.Contains("/authentication/login-callback") && !Navigation.Uri.Contains("/landing_page") && !Navigation.Uri.Contains("/external/actions/"))
                     Navigation.NavigateTo("/authentication/login");
                 return;
             }

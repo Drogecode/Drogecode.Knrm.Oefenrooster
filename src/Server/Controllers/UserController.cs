@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
-[Authorize]
+[Authorize(Roles = AccessesNames.AUTH_basic_access)]
 [ApiController]
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]

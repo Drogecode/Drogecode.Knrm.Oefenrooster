@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
@@ -9,14 +10,16 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 
 public sealed partial class ActionsTab : IDisposable
 {
-    [Inject] private IStringLocalizer<ActionsTab> L { get; set; } = default!;
-    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private IStringLocalizer<DateToString> LDateToString { get; set; } = default!;
-    [Inject] private ReportActionRepository ReportActionRepository { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<ActionsTab>? L { get; set; }
+    [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
+    [Inject, NotNull] private IStringLocalizer<DateToString>? LDateToString { get; set; }
+    [Inject, NotNull] private ReportActionRepository? ReportActionRepository { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
-    [Parameter] [EditorRequired] public DrogeUser User { get; set; } = default!;
-    [Parameter] [EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
-    [Parameter] [EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
+    [Parameter] public DrogeUser? User { get; set; }
+    [Parameter] public Guid? SharedId { get; set; }
+    [Parameter, EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
+    [Parameter, EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
+    [Parameter, EditorRequired] public bool EnableOptions { get; set; }
     private MultipleReportActionsResponse? _reportActions;
     private CancellationTokenSource _cls = new();
     private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
@@ -36,32 +39,37 @@ public sealed partial class ActionsTab : IDisposable
         {
             _multiSelection = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_action_history_full);
             _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user);
-            _reportActions = await ReportActionRepository.GetLastActionsForCurrentUser(_count, 0, _cls.Token);
             var actionTypes = await ReportActionRepository.Distinct(DistinctReport.Type, _cls.Token);
             if (actionTypes?.Values is not null)
             {
-                foreach (var value in actionTypes.Values.Where(x=> x is not null))
+                foreach (var value in actionTypes.Values.Where(x => x is not null))
                 {
                     _actionTypes.Add(value!);
                 }
             }
-            var thisUser = Users.FirstOrDefault(x => x.Id == User.Id);
-            if (thisUser is not null)
+
+            if (User is not null)
             {
-                ((List<DrogeUser>)_selectedUsersAction).Add(thisUser);
+                var thisUser = Users.FirstOrDefault(x => x.Id == User.Id);
+                if (thisUser is not null)
+                {
+                    ((List<DrogeUser>)_selectedUsersAction).Add(thisUser);
+                }
             }
+            _reportActions = await ReportActionRepository.GetLastActions(_selectedUsersAction, _selectedActionTypes, _search, _count, 0, _cls.Token);
+
             StateHasChanged();
         }
     }
 
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
     {
-        if (_busy) return;
+        if (_busy || !EnableOptions) return;
         _busy = true;
         StateHasChanged();
         _selectedUsersAction = selection;
         _count = DEFAULT_COUNT;
-        _reportActions = await ReportActionRepository.GetLastActions(selection, _selectedActionTypes, _search, _count, 0, _cls.Token);
+        _reportActions = await ReportActionRepository.GetLastActions(_selectedUsersAction, _selectedActionTypes, _search, _count, 0, _cls.Token);
         _currentPage = 1;
         _busy = false;
         StateHasChanged();
@@ -69,7 +77,7 @@ public sealed partial class ActionsTab : IDisposable
 
     private async Task SelectedActionChanged(IEnumerable<string> selection)
     {
-        if (_busy) return;
+        if (_busy || !EnableOptions) return;
         _busy = true;
         StateHasChanged();
         _selectedActionTypes = selection;
@@ -80,12 +88,12 @@ public sealed partial class ActionsTab : IDisposable
         StateHasChanged();
     }
 
-    private async Task OnCountChange(int arg)
+    private async Task OnCountChange(int newCount)
     {
         if (_busy) return;
         _busy = true;
         StateHasChanged();
-        _count = arg;
+        _count = newCount;
         _reportActions = await ReportActionRepository.GetLastActions(_selectedUsersAction, _selectedActionTypes, _search, _count, 0, _cls.Token);
         _currentPage = 1;
         _busy = false;
@@ -94,7 +102,7 @@ public sealed partial class ActionsTab : IDisposable
 
     private async Task SearchChanged(string? search)
     {
-        if (_busy) return;
+        if (_busy || !EnableOptions) return;
         _busy = true;
         try
         {

@@ -10,6 +10,7 @@ public struct AccessesNames
     public const string GROUP_NO_READ = "ignore";
     public const string AUTH_super_user = "isSuperGlobalAdmin";
     public const string AUTH_Hide = "do_not_show";
+    public const string AUTH_External = "external";
 
     public const string GROUP_GLOBAL = "global";
     public const string AUTH_basic_access = "basic_access";
