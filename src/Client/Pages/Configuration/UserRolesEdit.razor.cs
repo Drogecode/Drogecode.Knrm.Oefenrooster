@@ -30,7 +30,7 @@ public partial class UserRolesEdit : IDisposable
                 DebugHelper.WriteLine($"Loading user role: {Id}");
                 _userRole = await UserRoleClient.GetByIdAsync(Id.Value, _cls.Token);
                 _linkedUsers = await UserRoleClient.GetLinkedUsersByIdAsync(Id.Value, _cls.Token);
-                _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
+                _users = await UserRepository.GetAllUsersAsync(false, true, false, _cls.Token);
             }
             else
             {

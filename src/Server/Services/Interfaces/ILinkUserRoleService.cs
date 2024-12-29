@@ -6,5 +6,5 @@ public interface ILinkUserRoleService
 {
     Task<List<Guid>> GetLinkUserRolesAsync(Guid userId, CancellationToken clt);
     Task<GetLinkedUsersByIdResponse> GetLinkedUsersById(Guid roleId, Guid customerId, CancellationToken clt);
-    Task<bool> LinkUserToRoleAsync(Guid userId, Guid roleId, bool isSet, bool setExternal, CancellationToken clt);
+    Task<bool> LinkUserToRoleAsync(Guid userId, DrogeUserRole? role, bool isSet, bool setExternal, CancellationToken clt);
 }

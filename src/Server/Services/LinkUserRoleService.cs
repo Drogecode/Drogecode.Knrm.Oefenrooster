@@ -17,7 +17,7 @@ public class LinkUserRoleService : ILinkUserRoleService
 
     public async Task<List<Guid>> GetLinkUserRolesAsync(Guid userId, CancellationToken clt)
     {
-        var links = await _database.LinkUserRoles.Where(x => x.UserId == userId).Select(x => x.RoleId).ToListAsync(clt);
+        var links = await _database.LinkUserRoles.Where(x => x.UserId == userId && x.IsSet).Select(x => x.RoleId).ToListAsync(clt);
         return links;
     }
 
@@ -25,7 +25,7 @@ public class LinkUserRoleService : ILinkUserRoleService
     {
         var sw = Stopwatch.StartNew();
         var result = new GetLinkedUsersByIdResponse();
-        var query = _database.LinkUserRoles.Where(x => x.RoleId == roleId).Select(x => x.UserId);
+        var query = _database.LinkUserRoles.Where(x => x.RoleId == roleId && x.IsSet).Select(x => x.UserId);
         result.LinkedUsers = await query.ToListAsync(clt);
         result.TotalCount = await query.CountAsync(clt);
         result.Success = true;
@@ -34,18 +34,19 @@ public class LinkUserRoleService : ILinkUserRoleService
         return result;
     }
 
-    public async Task<bool> LinkUserToRoleAsync(Guid userId, Guid roleId, bool isSet, bool setExternal, CancellationToken clt)
+    public async Task<bool> LinkUserToRoleAsync(Guid userId, DrogeUserRole? role, bool isSet, bool setExternal, CancellationToken clt)
     {
-        var link = await _database.LinkUserRoles.FirstOrDefaultAsync(x => x.UserId == userId && x.RoleId == roleId, cancellationToken: clt);
+        if (role is null) return false;
+        var link = await _database.LinkUserRoles.FirstOrDefaultAsync(x => x.UserId == userId && x.RoleId == role.Id, cancellationToken: clt);
         if (link is null)
         {
-            if (!_database.UserRoles.Any(x => x.Id == roleId))
+            if (!_database.UserRoles.Any(x => x.ExternalId == role.ExternalId))
                 return false;
             _database.LinkUserRoles.Add(new DbLinkUserRole()
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,
-                RoleId = roleId,
+                RoleId = role.Id,
                 IsSet = isSet,
                 SetExternal = setExternal
             });
