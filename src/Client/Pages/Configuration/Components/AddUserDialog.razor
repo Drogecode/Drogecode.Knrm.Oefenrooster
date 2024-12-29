@@ -7,7 +7,7 @@
         @if (Functions != null)
         {
             <MudTextField @bind-Value="_user.Name" Label="@L["Name"]" Variant="Variant.Text" Counter="@DefaultSettingsHelper.MAX_LENGTH_DAY_ITEM_TEXT" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_DAY_ITEM_TEXT"/>
-            <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" @bind-Value="_user.UserFunctionId">
+            <MudSelect T="Guid?" Label="@L["Function"]" @bind-Value="_user.UserFunctionId">
                 @foreach (var function in Functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
                 {
                     <MudSelectItem T="Guid?" Value="@function.Id">@function.Name</MudSelectItem>

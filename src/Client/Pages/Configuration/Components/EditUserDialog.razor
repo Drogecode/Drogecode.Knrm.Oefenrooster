@@ -9,7 +9,7 @@
             <MudTextField @bind-Value="User.Name" Label="@L["Name"]" Variant="Variant.Text"/>
             <MudDatePicker Date="User.Created" Label="@L["Created"]" Disabled/>
             <MudDatePicker Date="User.LastLogin" Label="@L["Last login"]" Disabled/>
-            <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" @bind-Value="User.UserFunctionId">
+            <MudSelect T="Guid?" Label="@L["Function"]" @bind-Value="User.UserFunctionId">
                 @foreach (var function in Functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
                 {
                     <MudSelectItem T="Guid?" Value="@function.Id">@function.Name</MudSelectItem>

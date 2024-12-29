@@ -41,7 +41,7 @@
             <AuthorizeView Roles="@AccessesNames.AUTH_users_settigns">
                 <DrogeCodeMudTabPanel Text="@L["Settings"]">
                     <MudPaper Class="pa-4" MaxWidth="500px">
-                        <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" Value="_user.UserFunctionId" ValueChanged="UserFunctionChanged" Disabled="@_user.RoleFromSharePoint">
+                        <MudSelect T="Guid?" Label="@L["Function"]" Value="_user.UserFunctionId" ValueChanged="UserFunctionChanged" Disabled="@_user.RoleFromSharePoint">
                             @foreach (var function in _functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
                             {
                                 <MudSelectItem T="Guid?" Value="@function.Id">@function.Name</MudSelectItem>
