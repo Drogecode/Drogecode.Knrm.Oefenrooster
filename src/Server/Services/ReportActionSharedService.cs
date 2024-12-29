@@ -43,16 +43,23 @@ public class ReportActionSharedService : IReportActionSharedService
         return result;
     }
 
+    public async Task<ReportActionSharedConfiguration?> GetReportActionSharedConfiguration(Guid customerId, Guid sharedId, CancellationToken clt)
+    {
+        return await _database.ReportActionShares.Where(x => x.CustomerId == customerId && x.Id == sharedId).Select(x => x.ToDrogecode()).FirstOrDefaultAsync(clt);
+    }
+
     public async Task<AuthenticateExternalResult> AuthenticateExternal(AuthenticateExternalRequest body, CancellationToken clt)
     {
         var response = new AuthenticateExternalResult();
-        var sharedReport = await _database.ReportActionShares.Where(x=> x.Id == body.ExternalId).Select(x=> new {x.HashedPassword, x.CustomerId}).FirstOrDefaultAsync(clt);
+        var sharedReport = await _database.ReportActionShares.Where(x => x.Id == body.ExternalId).Select(x => new { x.HashedPassword, x.CustomerId, x.ValidUntil }).FirstOrDefaultAsync(clt);
+        if (sharedReport is null || sharedReport.ValidUntil < DateTime.UtcNow)
+            return response;
         if (PasswordHasher.ComparePassword(body.Passwoord, sharedReport?.HashedPassword))
         {
             response.Success = true;
             response.CustomerId = sharedReport!.CustomerId;
-
         }
+
         return response;
     }
 }

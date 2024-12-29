@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Server.Extensions;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.Graph.Models;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -18,20 +19,27 @@ public class ReportActionService : IReportActionService
         _logger = logger;
     }
 
-    public async Task<MultipleReportActionsResponse> GetListActionsUser(List<Guid> users, List<string>? types, List<string>? search, Guid userId, int count, int skip, Guid customerId,
-        CancellationToken clt)
+    public async Task<MultipleReportActionsResponse> GetListActionsUser(List<Guid> users, List<string>? types, List<string>? search, int count, int skip, Guid customerId,
+        bool minimal, DateTime? startDate, DateTime? endDate, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var listWhere = _database.ReportActions.Include(x => x.Users)
             .Where(x => x.CustomerId == customerId
+                        && (startDate == null || x.Start > startDate)
+                        && (endDate == null || x.End < endDate)
                         && x.Users.Count(y => users.Contains(y.DrogeCodeId!.Value)) == users.Count
                         && (types == null || !types.Any() || types.Contains(x.Type))
                         && (search == null || !search.Any() || search.Any(y => EF.Functions.ILike(x.ShortDescription, "%" + y + "%"))
                             || search.Any(y => EF.Functions.ILike(x.Description, "%" + y + "%"))));
 
+        List<DrogeAction>? drogeActions = null;
+        if (minimal)
+            drogeActions = await listWhere.OrderByDescending(x => x.Commencement).Skip(skip).Take(count).Select(x => x.ToMinimalDrogeAction()).ToListAsync(clt);
+        else
+            drogeActions = await listWhere.OrderByDescending(x => x.Commencement).Skip(skip).Take(count).Select(x => x.ToDrogeAction()).ToListAsync(clt);
         var sharePointActionsUser = new MultipleReportActionsResponse
         {
-            Actions = await listWhere.OrderByDescending(x => x.Commencement).Skip(skip).Take(count).Select(x => x.ToDrogeAction()).ToListAsync(clt),
+            Actions = drogeActions,
             TotalCount = await listWhere.CountAsync(clt),
             Success = true,
         };

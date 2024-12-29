@@ -23,7 +23,7 @@ public static class ReportActionSharedMapper
         return new ReportActionSharedConfiguration
         {
             Id = configuration.Id,
-            SelectedUsers = configuration.SelectedUsers,
+            SelectedUsers = configuration.SelectedUsers ?? [],
             Types = configuration.Types,
             Search = configuration.Search,
             StartDate = configuration.StartDate,
