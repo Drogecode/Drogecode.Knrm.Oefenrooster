@@ -2,20 +2,27 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Extensions
 @if (_reportActions?.Actions is not null)
 {
-    <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
-        <MudChip T="string">@_reportActions.ElapsedMilliseconds</MudChip>
-    </AuthorizeView>
-    <MudText Typo="Typo.h5">@L["Actions from SharePoint"]</MudText>
-    <SelectMultipleUsers Disabled="_busy" Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection"/>
-    <AuthorizeView Roles="@AccessesNames.AUTH_action_search">
-        <MudTextField T="string?" Label="@LApp["Search"]" Value="@_search" ValueChanged="@SearchChanged" />
-    </AuthorizeView>
-    <MudSelect T="string" Disabled="_busy" Label="@L["Type"]" SelectedValues="_selectedActionTypes" SelectedValuesChanged="SelectedActionChanged" Clearable="true" MultiSelection="true">
-        @foreach (var type in _actionTypes.OrderBy(x => x))
+    @if (EnableOptions)
+    {
+        <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
+            <MudChip T="string">@_reportActions.ElapsedMilliseconds</MudChip>
+        </AuthorizeView>
+        <MudText Typo="Typo.h5">@L["Actions from SharePoint"]</MudText>
+        @if (Users is not null && Functions is not null)
         {
-            <MudSelectItem T="string" Value="@type">@type</MudSelectItem>
+            <SelectMultipleUsers Disabled="_busy" Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection"/>
         }
-    </MudSelect>
+        <AuthorizeView Roles="@AccessesNames.AUTH_action_search">
+            <MudTextField T="string?" Label="@LApp["Search"]" Value="@_search" ValueChanged="@SearchChanged"/>
+        </AuthorizeView>
+        <MudSelect T="string" Disabled="_busy" Label="@L["Type"]" SelectedValues="_selectedActionTypes" SelectedValuesChanged="SelectedActionChanged" Clearable="true" MultiSelection="true">
+            @foreach (var type in _actionTypes.OrderBy(x => x))
+            {
+                <MudSelectItem T="string" Value="@type">@type</MudSelectItem>
+            }
+        </MudSelect>
+    }
+
     @if (_reportActions?.Actions?.Count() > 0)
     {
         <MudDataGrid Items="@_reportActions.Actions" ReadOnly="true" Filterable="false" SortMode="@SortMode.None">
@@ -39,42 +46,46 @@
                     </MudCardHeader>
                     <MudCardContent>
                         <MudMarkdown Value="@context.Item.Description"/>
-                        <MudText Typo="Typo.h6">@L["Crew"]</MudText>
-                        <MudList T="string" ReadOnly="true">
-                            @{ var users = context.Item.Users?.OrderBy(x => x.Order).ToList() ?? new List<SharePointUser>(); }
-                            @foreach (var user in users)
-                            {
-                                <MudListItem>@user.Name - @user.Role</MudListItem>
-                            }
-                        </MudList>
-                        <MudText Typo="Typo.h6">@L["Times"]</MudText>
-                        <MudList T="string" ReadOnly="true">
-                            <MudListItem>
-                                @($"{L["Start"]} - {context.Item.Start.ToNiceString(LDateToString)}")
-                            </MudListItem>
-                            <MudListItem>
-                                @($"{L["Commencement"]} - {context.Item.Commencement.ToNiceString(LDateToString, showDate: context.Item.Start.Date != context.Item.Commencement.Date)}") - @((context.Item.Commencement - context.Item.Start).TotalMinutes) @L["minutes"]
-                            </MudListItem>
-                            <MudListItem>
-                                @($"{L["Departure"]} - {context.Item.Departure.ToNiceString(LDateToString, showDate: context.Item.Commencement.ToLocalTime().Date != context.Item.Departure.ToLocalTime().Date)}") - @((context.Item.Departure - context.Item.Start).TotalMinutes) @L["minutes"]
-                            </MudListItem>
-                            <MudListItem>
-                                @($"{L["End"]} - {context.Item.End.ToNiceString(LDateToString, showDate: context.Item.Departure.ToLocalTime().Date != context.Item.End.ToLocalTime().Date)}") - @((context.Item.End - context.Item.Start).TotalMinutes) @L["minutes"]
-                            </MudListItem>
-                        </MudList>
-                        <MudText Typo="Typo.h6">@L["Miscellaneous"]</MudText>
-                        <MudList T="string" ReadOnly="true">
-                            <MudListItem>@L["Boat"]: @context.Item.Boat</MudListItem>
-                            <MudListItem>@L["Type"]: @context.Item.Type</MudListItem>
-                            <MudListItem>@L["CallMadeBy"]: @context.Item.CallMadeBy</MudListItem>
-                            <MudListItem>@L["Causes"]: @context.Item.Causes</MudListItem>
-                            <MudListItem>@L["Implications"]: @context.Item.Implications</MudListItem>
-                            @if (_isTaco) /*Work in progress*/
-                            {
-                                <MudListItem>@L["Minutes"]: @context.Item.TotalMinutes</MudListItem>
-                                <MudListItem>@L["Hours"]: @context.Item.TotalFullHours</MudListItem>
-                            }
-                        </MudList>
+
+                        @if (EnableOptions)
+                        {
+                            <MudText Typo="Typo.h6">@L["Crew"]</MudText>
+                            <MudList T="string" ReadOnly="true">
+                                @{ var users = context.Item.Users?.OrderBy(x => x.Order).ToList() ?? new List<SharePointUser>(); }
+                                @foreach (var user in users)
+                                {
+                                    <MudListItem>@user.Name - @user.Role</MudListItem>
+                                }
+                            </MudList>
+                            <MudText Typo="Typo.h6">@L["Times"]</MudText>
+                            <MudList T="string" ReadOnly="true">
+                                <MudListItem>
+                                    @($"{L["Start"]} - {context.Item.Start.ToNiceString(LDateToString)}")
+                                </MudListItem>
+                                <MudListItem>
+                                    @($"{L["Commencement"]} - {context.Item.Commencement.ToNiceString(LDateToString, showDate: context.Item.Start.Date != context.Item.Commencement.Date)}") - @((context.Item.Commencement - context.Item.Start).TotalMinutes) @L["minutes"]
+                                </MudListItem>
+                                <MudListItem>
+                                    @($"{L["Departure"]} - {context.Item.Departure.ToNiceString(LDateToString, showDate: context.Item.Commencement.ToLocalTime().Date != context.Item.Departure.ToLocalTime().Date)}") - @((context.Item.Departure - context.Item.Start).TotalMinutes) @L["minutes"]
+                                </MudListItem>
+                                <MudListItem>
+                                    @($"{L["End"]} - {context.Item.End.ToNiceString(LDateToString, showDate: context.Item.Departure.ToLocalTime().Date != context.Item.End.ToLocalTime().Date)}") - @((context.Item.End - context.Item.Start).TotalMinutes) @L["minutes"]
+                                </MudListItem>
+                            </MudList>
+                            <MudText Typo="Typo.h6">@L["Miscellaneous"]</MudText>
+                            <MudList T="string" ReadOnly="true">
+                                <MudListItem>@L["Boat"]: @context.Item.Boat</MudListItem>
+                                <MudListItem>@L["Type"]: @context.Item.Type</MudListItem>
+                                <MudListItem>@L["CallMadeBy"]: @context.Item.CallMadeBy</MudListItem>
+                                <MudListItem>@L["Causes"]: @context.Item.Causes</MudListItem>
+                                <MudListItem>@L["Implications"]: @context.Item.Implications</MudListItem>
+                                @if (_isTaco) /*Work in progress*/
+                                {
+                                    <MudListItem>@L["Minutes"]: @context.Item.TotalMinutes</MudListItem>
+                                    <MudListItem>@L["Hours"]: @context.Item.TotalFullHours</MudListItem>
+                                }
+                            </MudList>
+                        }
                     </MudCardContent>
                 </MudCard>
             </ChildRowContent>

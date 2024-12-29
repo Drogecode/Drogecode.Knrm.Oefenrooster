@@ -10,7 +10,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
-[Authorize]
+[Authorize(Roles = AccessesNames.AUTH_basic_access)]
 [ApiController]
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
@@ -43,7 +43,7 @@ public class ReportActionController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var users = new List<Guid>() { userId };
 
-            var result = await _reportActionService.GetListActionsUser(users, null, null, userId, count, skip, customerId, clt);
+            var result = await _reportActionService.GetListActionsUser(users, null, null, count, skip, customerId, false, null, null, clt);
             _logger.LogInformation("Loading actions {count} skipping {skip} for user {userName}", count, skip, userName);
             return result;
         }
@@ -80,7 +80,7 @@ public class ReportActionController : ControllerBase
             var cleanedSearch = advancedSearchAllowed ? FilthyInputHelper.CleanList(body.Search, 5, _logger) : null;
             var cleanedTypes = FilthyInputHelper.CleanList(body.Types, 10, _logger);
 
-            var result = await _reportActionService.GetListActionsUser(body.Users, cleanedTypes, cleanedSearch, userId, body.Count, body.Skip, customerId, clt);
+            var result = await _reportActionService.GetListActionsUser(body.Users, cleanedTypes, cleanedSearch, body.Count, body.Skip, customerId, false, null, null, clt);
             _logger.LogInformation("Loading actions {count} skipping {skip} for user {users} ({userId})", body.Count, body.Skip, body.Users, userId);
             return result;
         }
@@ -176,7 +176,7 @@ public class ReportActionController : ControllerBase
 
     [HttpGet]
     [Route("distinct/{column}")]
-    [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics)]
+    [Authorize]
     public async Task<ActionResult<DistinctResponse>> Distinct(DistinctReport column, CancellationToken clt = default)
     {
         try

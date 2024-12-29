@@ -13,7 +13,7 @@
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Authentication.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="AuthenticationClient">
 			<OutputPath>../Clients/AuthenticationClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.User</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.User,Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\DayItem.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="DayItemClient">
 			<OutputPath>../Clients/DayItemClient.g.cs</OutputPath>
@@ -46,6 +46,10 @@
 		<OpenApiReference Include="OpenAPIs\PreCom.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="PreComClient">
 			<OutputPath>../Clients/PreComClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom</Options>
+		</OpenApiReference>
+		<OpenApiReference Include="OpenAPIs\ReportActionShared.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ReportActionSharedClient">
+			<OutputPath>../Clients/ReportActionSharedClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.ReportActionShared,Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\ReportAction.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ReportActionClient">
 			<OutputPath>../Clients/ReportActionClient.g.cs</OutputPath>

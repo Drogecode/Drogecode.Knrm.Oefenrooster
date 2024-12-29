@@ -11,7 +11,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
-[Authorize]
+[Authorize(Roles = AccessesNames.AUTH_basic_access)]
 [ApiController]
 [Route("api/[controller]")]
 [ApiExplorerSettings(GroupName = "PreCom")]

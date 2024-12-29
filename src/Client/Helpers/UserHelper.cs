@@ -8,6 +8,11 @@ public static class UserHelper
     {
         if (authenticationState is null) return false;
         var authState = await authenticationState;
+        return InRole(authState, role);
+    }
+
+    public static bool InRole(AuthenticationState? authState, string role)
+    {
         var user = authState?.User;
         return user is not null && user.IsInRole(role);
     }

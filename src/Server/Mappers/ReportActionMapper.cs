@@ -157,6 +157,25 @@ public static class ReportActionMapper
             TotalFullHours = dbAction.TotalFullHours,
         };
     }
+    public static DrogeAction ToMinimalDrogeAction(this DbReportAction dbAction)
+    {
+        return new DrogeAction
+        {
+            Number = dbAction.Number,
+            ShortDescription = dbAction.ShortDescription,
+            Prio = dbAction.Prio,
+            Type = dbAction.Type,
+            FunctioningMaterial = dbAction.FunctioningMaterial,
+            ProblemsWithWeed = dbAction.ProblemsWithWeed,
+
+            //Shared
+            Id = dbAction.Id,
+            Title = dbAction.Title,
+            Description = dbAction.Description,
+            Date = dbAction.Date,
+            Start = dbAction.Start,
+        };
+    }
 
     public static DrogeTraining ToDrogeTraining(this DbReportTraining dbTraining)
     {

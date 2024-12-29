@@ -56,7 +56,7 @@ public class CustomStateProvider : AuthenticationStateProvider
             _currentUser = new ClaimsIdentity();
             return new ClaimsIdentity();
         }
-        var claims = new[] { new Claim(ClaimTypes.Name, user.UserName) }.Concat(user.Claims.Select(c => new Claim(c.Key, c.Value)));
+        var claims = new[] { new Claim(ClaimTypes.Name, user.UserName ?? "No name") }.Concat(user.Claims.Select(c => new Claim(c.Key, c.Value)));
         _currentUser = new ClaimsIdentity(claims, "Server authentication");
         return _currentUser;
     }

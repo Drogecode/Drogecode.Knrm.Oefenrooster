@@ -1,8 +1,10 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 
+[Table("ReportTraining")]
 public class DbReportTraining
 {
     [Key] public Guid Id { get; set; }

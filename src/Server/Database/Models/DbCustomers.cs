@@ -22,6 +22,7 @@ public class DbCustomers
     public ICollection<DbCustomerSettings>? CustomerSettings { get; set; }
     public ICollection<DbUsers>? Users { get; set; }
     public ICollection<DbReportAction>? ReportActions { get; set; }
+    public ICollection<DbReportActionShared>?  ReportActionShares{ get; set; }
     public ICollection<DbReportTraining>? ReportTrainings { get; set; }
     public ICollection<DbUserFunctions>? UserFunctions { get; set; }
     public ICollection<DbUserRoles>? UserRoles { get; set; }
