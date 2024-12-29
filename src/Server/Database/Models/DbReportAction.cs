@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 
-[Table("ReportAction")]
+[Table("ReportActions")]
 public class DbReportAction
 {
     [Key] public Guid Id { get; set; }
