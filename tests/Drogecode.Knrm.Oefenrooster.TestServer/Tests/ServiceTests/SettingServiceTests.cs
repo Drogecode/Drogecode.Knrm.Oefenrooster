@@ -28,9 +28,10 @@ public class SettingServiceTests : BaseTest
         ReportActionController reportActionController,
         ReportTrainingController reportTrainingController,
         UserRoleController userRoleController,
-        UserLinkedMailsController userLinkedMailsController) :
+        UserLinkedMailsController userLinkedMailsController,
+        ReportActionSharedController reportActionSharedController) :
         base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController)
+            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController, reportActionSharedController)
     {
         _userSettingService = userSettingService;
         _customerSettingService = customerSettingService;

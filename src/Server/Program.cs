@@ -126,6 +126,7 @@ builder.Services.AddScoped<IFunctionService, FunctionService>();
 builder.Services.AddScoped<IHolidayService, HolidayService>();
 builder.Services.AddScoped<ILinkUserRoleService, LinkUserRoleService>();
 builder.Services.AddScoped<IPreComService, PreComService>();
+builder.Services.AddScoped<IReportActionSharedService, ReportActionSharedService>();
 builder.Services.AddScoped<IReportActionService, ReportActionService>();
 builder.Services.AddScoped<IReportTrainingService, ReportTrainingService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
@@ -155,6 +156,7 @@ var groupNames = new List<string>
     "UserLinkedMails",
     "Vehicle",
     "SharePoint",
+    "ReportActionShared",
     "ReportAction",
     "ReportTraining",
     "DefaultSchedule",

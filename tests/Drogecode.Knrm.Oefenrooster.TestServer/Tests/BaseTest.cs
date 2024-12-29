@@ -60,6 +60,7 @@ public class BaseTest : IAsyncLifetime
     protected readonly ReportTrainingController ReportTrainingController;
     protected readonly UserRoleController UserRoleController;
     protected readonly UserLinkedMailsController UserLinkedMailsController;
+    protected readonly ReportActionSharedController ReportActionSharedController;
 
     public BaseTest(
         DataContext dataContext,
@@ -77,7 +78,8 @@ public class BaseTest : IAsyncLifetime
         ReportActionController reportActionController,
         ReportTrainingController reportTrainingController,
         UserRoleController userRoleController,
-        UserLinkedMailsController userLinkedMailsController)
+        UserLinkedMailsController userLinkedMailsController,
+        ReportActionSharedController reportActionSharedController)
     {
         DataContext = dataContext;
         DateTimeServiceMock = (IDateTimeServiceMock)dateTimeService;
@@ -96,6 +98,7 @@ public class BaseTest : IAsyncLifetime
         ReportTrainingController = reportTrainingController;
         UserRoleController = userRoleController;
         UserLinkedMailsController = userLinkedMailsController;
+        ReportActionSharedController = reportActionSharedController;
 
         DefaultCustomerId = Guid.NewGuid();
         SeedCustomer.Seed(dataContext, DefaultCustomerId);
@@ -114,6 +117,7 @@ public class BaseTest : IAsyncLifetime
         MockAuthenticatedUser(preComController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(vehicleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(defaultScheduleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(reportActionSharedController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(reportActionController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(reportTrainingController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(userRoleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);

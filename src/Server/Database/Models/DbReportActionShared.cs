@@ -14,7 +14,9 @@ public class DbReportActionShared
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public DateTime? ValidUntil { get; set; }
-    [StringLength(50)] public string Password { get; set; } = string.Empty;
+    [StringLength(200)] public string HashedPassword { get; set; } = string.Empty;
+    public DateTime? CreatedOn { get; set; }
+    public Guid CreatedBy { get; set; }
     
     public DbCustomers Customer { get; set; }
 }

@@ -30,6 +30,7 @@ public class Startup
         services.AddScoped<IHolidayService, HolidayService>();
         services.AddScoped<ILinkUserRoleService, LinkUserRoleService>();
         services.AddScoped<IPreComService, PreComService>();
+        services.AddScoped<IReportActionSharedService, ReportActionSharedService>();
         services.AddScoped<IReportActionService, ReportActionService>();
         services.AddScoped<IReportTrainingService, ReportTrainingService>();
         services.AddScoped<IGraphService, GraphServiceMock>();
@@ -50,6 +51,7 @@ public class Startup
         services.AddScoped<FunctionController>();
         services.AddScoped<HolidayController>();
         services.AddScoped<PreComController>();
+        services.AddScoped<ReportActionSharedController>();
         services.AddScoped<ReportActionController>();
         services.AddScoped<ReportTrainingController>();
         services.AddScoped<ScheduleController>();
