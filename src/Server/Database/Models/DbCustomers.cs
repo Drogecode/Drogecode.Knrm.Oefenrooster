@@ -44,4 +44,5 @@ public class DbCustomers
     public ICollection<DbPreComForward>? PreComForwards { get; set; }
     public ICollection<DbPreComAlert>? PreComAlerts { get; set; }
     public ICollection<DbLinkExchange>? LinkExchanges { get; set; }
+    public ICollection<DbMenu>? Menus { get; set; }
 }

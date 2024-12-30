@@ -11,4 +11,5 @@ public interface IAuthenticationService
      Task<AuthenticateUserResult> AuthenticateUser(CacheLoginSecrets found, string code, string state, string sessionState, string redirectUrl, CancellationToken clt);
      Task<AuthenticateUserResult> Refresh(string oldRefreshToken, CancellationToken clt);
      DrogeClaims GetClaims(JwtSecurityToken jwtSecurityToken);
+     Task<bool> AuditLogin(Guid? userId, Guid? sharedActionId, string ipAddress, CancellationToken clt);
 }

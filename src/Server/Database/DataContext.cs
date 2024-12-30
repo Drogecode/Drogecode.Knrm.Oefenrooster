@@ -17,6 +17,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbUserRoles> UserRoles { get; set; }
         public DbSet<DbUserDefaultGroup> UserDefaultGroups { get; set; }
         public DbSet<DbUserDefaultAvailable> UserDefaultAvailables { get; set; }
+        public DbSet<DbUserLogins> UserLogins { get; set; }
         public DbSet<DbUserHolidays> UserHolidays { get; set; }
         public DbSet<DbUserOnVersion> UserOnVersions { get; set; }
         public DbSet<DbUserSettings> UserSettings { get; set; }
@@ -32,6 +33,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbVehicles> Vehicles { get; set; }
         public DbSet<DbPreComForward> PreComForwards { get; set; }
         public DbSet<DbPreComAlert> PreComAlerts { get; set; }
+        public DbSet<DbMenu> Menus { get; set; }
 
         public DbSet<DbReportActionShared> ReportActionShares { get; set; }
         public DbSet<DbReportAction> ReportActions { get; set; }
@@ -114,6 +116,16 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserLinkedMails>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserLinkedMails>().HasOne(p => p.Customer).WithMany(g => g.UserLinkedMails).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserLinkedMails>().HasOne(p => p.User).WithMany(g => g.UserLinkedMails).HasForeignKey(s => s.UserId).IsRequired();
+            
+            //UserLogins
+            modelBuilder.Entity<DbUserLogins>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserLogins>().HasOne(p => p.User).WithMany(g => g.Logins).HasForeignKey(s => s.UserId);
+            modelBuilder.Entity<DbUserLogins>().HasOne(p => p.SharedAction).WithMany(g => g.Logins).HasForeignKey(s => s.SharedActionId);
+            
+            //Menu
+            modelBuilder.Entity<DbMenu>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbMenu>().HasOne(p => p.Customer).WithMany(g => g.Menus).HasForeignKey(s => s.CustomerId);
+            modelBuilder.Entity<DbMenu>().HasOne(p => p.Parent).WithMany(g => g.Children).HasForeignKey(s => s.ParentId);
 
             // Rooster available
             modelBuilder.Entity<DbRoosterAvailable>(e => { e.Property(en => en.Id).IsRequired(); });
@@ -213,6 +225,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             SetVehicles(modelBuilder);
             SetRoosterTrainingTypes(modelBuilder);
             SetSystemUsers(modelBuilder);
+            SetMenus(modelBuilder);
         }
 
         private static Guid IdTaco { get; } = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461");
@@ -935,7 +948,48 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CreatedOn = new DateTime(2024, 10, 11, 19, 46, 12, DateTimeKind.Utc),
             }));
         }
-
+        
+        private void SetMenus(ModelBuilder modelBuilder)
+        {
+            var parent = new Guid("2bf106c9-eae7-4a0d-978d-54af6c4e96a1");
+            modelBuilder.Entity<DbMenu>(e => e.HasData(new DbMenu
+            {
+                Id = parent,
+                ParentId = null,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Text = "Handige links",
+                Url = "",
+                IsGroup = true,
+                AddLoginHint = null,
+                TargetBlank = false,
+                Order = 10,
+            }));
+            modelBuilder.Entity<DbMenu>(e => e.HasData(new DbMenu
+            {
+                Id = new Guid("af84e214-7def-45ac-95c9-c8a66d1573a2"),
+                ParentId = parent,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Text = "Sharepoint",
+                Url = "https://dorus1824.sharepoint.com",
+                IsGroup = false,
+                AddLoginHint = '?',
+                TargetBlank = true,
+                Order = 20,
+            }));
+            modelBuilder.Entity<DbMenu>(e => e.HasData(new DbMenu
+            {
+                Id = new Guid("953de109-5526-433b-8dc8-61b10fa8fd20"),
+                ParentId = parent,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Text = "LPLH",
+                Url = "https://dorus1824.sharepoint.com/:b:/r/sites/KNRM/Documenten/EHBO/LPLH/20181115%20LPLH_KNRM_1_1.pdf?csf=1&web=1&e=4L3VPo",
+                IsGroup = false,
+                AddLoginHint = '&',
+                TargetBlank = true,
+                Order = 30,
+            }));
+        }
+        
         #endregion
     }
 }

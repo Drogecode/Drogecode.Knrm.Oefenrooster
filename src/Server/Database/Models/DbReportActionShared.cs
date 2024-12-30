@@ -19,4 +19,5 @@ public class DbReportActionShared
     public Guid CreatedBy { get; set; }
     
     public DbCustomers Customer { get; set; }
+    public ICollection<DbUserLogins>? Logins { get; set; }
 }

@@ -25,5 +25,8 @@ public class PasswordHasherTests
         Assert.NotEqual(password, hashed);
         var compare  = PasswordHasher.ComparePassword(password, hashed);
         Assert.True(compare);
+        var hashed2 = PasswordHasher.HashNewPassword(password);
+        Assert.NotEmpty(hashed2);
+        Assert.NotEqual(hashed2, hashed);
     }
 }

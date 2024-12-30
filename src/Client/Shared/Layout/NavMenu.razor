@@ -1,4 +1,6 @@
-﻿<MudNavMenu>
+﻿@using System.Diagnostics
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.Menu
+<MudNavMenu>
     <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/" Match="NavLinkMatch.All">@L["Dashboard"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.CalendarMonth" Href="@_uriCalendar" Match="NavLinkMatch.Prefix">@LApp["Availability"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.EditCalendar" Href="@_uriSchedule" Match="NavLinkMatch.Prefix">@L["Schedule"]</MudNavLink>
@@ -39,12 +41,11 @@
             </AuthorizeView>
         </MudNavGroup>
     </AuthorizeView>
-    <MudNavGroup Title="Handige links" Expanded="@_useFullLinkExpanded" ExpandedChanged="UseFullLinksExpandedChanged">
-        @* This should probably be configurible *@
-        <MudNavLink Href="@_sharePointUrl" Target="_blank" Match="NavLinkMatch.All">@L["Sharepoint"]</MudNavLink>
-        <MudNavLink Href="@_lplhUrl" Target="_blank" Match="NavLinkMatch.All">LPLH</MudNavLink>
-    </MudNavGroup>
-    <MudDivider/>
+    @if (_menuItems is not null)
+    {
+        var menuItems = _menuItems.ToList();
+        @CustomerMenu(menuItems)
+    }
     <MudDivider/>
     @if (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriCalendar.Substring(1)) ||
          (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriSchedule.Substring(1)) && !Navigation.Uri.EndsWith("Table")))
@@ -63,3 +64,56 @@
         </MudList>
     }
 </MudNavMenu>
+
+@code{
+    private RenderFragment<List<DrogeMenu>> CustomerMenu => menuItems =>
+        @<div>
+            @{
+                DrogeMenu prev = null;
+            }
+            @while (true)
+            {
+                var menu = menuItems.FirstOrDefault();
+                if (menu is null || !menu.IsGroup && prev is not null && !menu.ParentId.Equals(prev.ParentId)) break;
+                menuItems.Remove(menu);
+                try
+                {
+                    if (menu.IsGroup)
+                    {
+                        <MudNavGroup Title="@menu.Text" Expanded="@_useFullLinkExpanded" ExpandedChanged="UseFullLinksExpandedChanged">
+                            @{
+                                var subMenu = menuItems.ToList();
+                            }
+                            @CustomerMenu(subMenu)
+                        </MudNavGroup>
+                    }
+                    else
+                    {
+                        if (menu.AddLoginHint != null && _loginHint is not null)
+                        {
+                            switch (menu.AddLoginHint)
+                            {
+                                case '&':
+                                    <MudNavLink Href="@($"{menu.Url}&login_hint={_loginHint}")" Target="@(menu.TargetBlank ? "_blank" : "")" Match="NavLinkMatch.All">@menu.Text</MudNavLink>
+                                    break;
+                                case '?':
+                                    <MudNavLink Href="@($"{menu.Url}?login_hint={_loginHint}")" Target="@(menu.TargetBlank ? "_blank" : "")" Match="NavLinkMatch.All">@menu.Text</MudNavLink>
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            <MudNavLink Href="@menu.Url" Target="@(menu.TargetBlank ? "_blank" : "")" Match="NavLinkMatch.All">@menu.Text</MudNavLink>
+                        }
+                    }
+
+                    prev = menu;
+                }
+                catch (Exception ex)
+                {
+                    DebugHelper.WriteLine(ex);
+                }
+            }
+        </div>;
+
+}

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
+using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
@@ -19,7 +20,8 @@ public class AuthenticationKeyCloakService : AuthenticationService, IAuthenticat
         ILogger logger,
         IMemoryCache memoryCache,
         IConfiguration configuration,
-        HttpClient httpClient) : base(logger,memoryCache,configuration,httpClient)
+        HttpClient httpClient, 
+        DataContext database) : base(logger,memoryCache,configuration,httpClient, database)
     {
     }
 
@@ -65,6 +67,11 @@ public class AuthenticationKeyCloakService : AuthenticationService, IAuthenticat
             LoginHint = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "login_hint")?.Value ?? "",
             TenantId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "iss")?.Value ?? ""
         };
+    }
+    
+    public Task<bool> AuditLogin(Guid? userId, Guid? sharedActionId, string ipAddress, CancellationToken clt)
+    {
+        return AuditLoginShared(userId, sharedActionId, ipAddress , clt);
     }
 
     private string InternalGetLoginClientSecret()

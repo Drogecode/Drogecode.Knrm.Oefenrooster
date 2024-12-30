@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Text.Json;
+using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 
@@ -15,9 +16,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [ApiExplorerSettings(GroupName = "PreCom")]
-public class PreComController : ControllerBase
+public class PreComController : DrogeController
 {
-    private readonly ILogger<PreComController> _logger;
     private readonly IPreComService _preComService;
     private readonly PreComHub _preComHub;
     private readonly IHttpClientFactory _clientFactory;
@@ -26,9 +26,8 @@ public class PreComController : ControllerBase
         ILogger<PreComController> logger,
         IPreComService preComService,
         PreComHub preComHub,
-        IHttpClientFactory clientFactory)
+        IHttpClientFactory clientFactory) : base(logger)
     {
-        _logger = logger;
         _preComService = preComService;
         _preComHub = preComHub;
         _clientFactory = clientFactory;
@@ -241,27 +240,6 @@ public class PreComController : ControllerBase
 #endif
             _logger.LogError(ex, "Exception in AllForwards");
             return BadRequest();
-        }
-    }
-
-    private string GetRequesterIp()
-    {
-        try
-        {
-            var ip = Request.HttpContext.GetServerVariable("HTTP_X_FORWARDED_FOR");
-            if (!string.IsNullOrWhiteSpace(ip)) return "xf;" + ip;
-            ip = Request.HttpContext.GetServerVariable("REMOTE_HOST");
-            if (!string.IsNullOrWhiteSpace(ip)) return "rh;" + ip;
-            ip = Request.HttpContext.GetServerVariable("REMOTE_ADDR");
-            if (!string.IsNullOrWhiteSpace(ip)) return "ra;" + ip;
-            ip = Request.HttpContext.Connection.RemoteIpAddress?.ToString();
-            if (!string.IsNullOrWhiteSpace(ip)) return "ri;" + ip;
-            return "No ip";
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Exception while GetRequesterIp");
-            return "Exception";
         }
     }
 
