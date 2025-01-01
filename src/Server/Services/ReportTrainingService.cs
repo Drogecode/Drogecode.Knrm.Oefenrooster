@@ -103,6 +103,20 @@ public class ReportTrainingService : IReportTrainingService
                 }
 
                 break;
+            case DistinctReport.Boat:
+                var boats = _database.ReportTrainings.Where(x => x.CustomerId == customerId).Select(x => x.Boat).Distinct();
+                if (await boats.AnyAsync(clt))
+                {
+                    result.Values = [];
+                    foreach (var boat in await boats.ToListAsync(clt))
+                    {
+                        result.Values.Add(boat);
+                    }
+
+                    result.Success = true;
+                    result.TotalCount = await boats.CountAsync(clt);
+                }
+                break;
             case DistinctReport.None:
             case DistinctReport.Prio:
             default:

@@ -45,8 +45,28 @@
             "type": "string",
             "format": "uuid"
           },
+          "parentId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "addLoginHint": {
+            "type": "string",
+            "nullable": true
+          },
+          "isGroup": {
             "type": "boolean"
+          },
+          "targetBlank": {
+            "type": "boolean"
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
           },
           "url": {
             "type": "string",

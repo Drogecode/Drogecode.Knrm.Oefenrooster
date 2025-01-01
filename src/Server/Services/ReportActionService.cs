@@ -154,6 +154,20 @@ public class ReportActionService : IReportActionService
                 }
 
                 break;
+            case DistinctReport.Boat:
+                var boats = _database.ReportActions.Where(x => x.CustomerId == customerId).Select(x => x.Boat).Distinct();
+                if (await boats.AnyAsync(clt))
+                {
+                    result.Values = [];
+                    foreach (var boat in await boats.ToListAsync(clt))
+                    {
+                        result.Values.Add(boat);
+                    }
+
+                    result.Success = true;
+                    result.TotalCount = await boats.CountAsync(clt);
+                }
+                break;
             default:
                 result.Message = $"Invalid column type: `{column}`";
                 break;
@@ -164,7 +178,7 @@ public class ReportActionService : IReportActionService
         return result;
     }
 
-    public async Task<AnalyzeHoursResult> AnalyzeHours(int year, string type, string timeZone, Guid customerId, CancellationToken clt)
+    public async Task<AnalyzeHoursResult> AnalyzeHours(int year, string type, List<string>? boats, string timeZone, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new AnalyzeHoursResult
@@ -174,7 +188,10 @@ public class ReportActionService : IReportActionService
         var y = new List<int>() { year, year + 1, year - 1 };
         var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
 
-        var dbActions = await _database.ReportActions.Where(x => x.CustomerId == customerId && x.Type == type && y.Contains(x.Start.Year))
+        var dbActions = await _database.ReportActions.Where(x => 
+                x.CustomerId == customerId && 
+                x.Type == type && y.Contains(x.Start.Year) &&
+                (boats == null || !boats.Any() || boats.Contains(x.Boat!)))
             .Select(x => new { x.Start, x.Commencement, x.Departure, x.End, x.Users })
             .ToListAsync(clt);
 

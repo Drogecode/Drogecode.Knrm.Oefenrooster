@@ -202,17 +202,47 @@ public class ReportActionController : ControllerBase
     }
 
     [HttpGet]
+    [Obsolete("Use GetAnalyzeHours with body version")]// v0.4.26
     [Route("analyze/hours/{year:int}/{type}")]
     [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics_user_tabel)]
     public async Task<ActionResult<AnalyzeHoursResult>> AnalyzeHours(int year, string type, CancellationToken clt = default)
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var result = await GetAnalyzeHours(new AnalyzeHoursRequest(){Year = year, Type = type}, clt);
+            return result;
+        }
+        catch (OperationCanceledException)
+        {
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in AnalyzeHours Action");
+            return BadRequest();
+        }
+    }
+
+    [HttpPost]
+    [Route("analyze/hours")]
+    [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics_user_tabel)]
+    public async Task<ActionResult<AnalyzeHoursResult>> GetAnalyzeHours([FromBody] AnalyzeHoursRequest body, CancellationToken clt = default)
+    {
+        try
+        {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var timeZone = await _customerSettingService.GetTimeZone(customerId);
 
-            var result = await _reportActionService.AnalyzeHours(year, type, timeZone, customerId, clt);
+            if (body.Type is null)
+            {
+                _logger.LogWarning("GetAnalyzeHours request but Type is null");
+                return BadRequest();
+            }
+            
+            var result = await _reportActionService.AnalyzeHours(body.Year, body.Type, body.Boats, timeZone, customerId, clt);
             return result;
         }
         catch (OperationCanceledException)
