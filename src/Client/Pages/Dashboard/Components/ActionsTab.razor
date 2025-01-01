@@ -8,19 +8,29 @@
             <MudChip T="string">@_reportActions.ElapsedMilliseconds</MudChip>
         </AuthorizeView>
         <MudText Typo="Typo.h5">@L["Actions from SharePoint"]</MudText>
-        @if (Users is not null && Functions is not null)
-        {
-            <SelectMultipleUsers Disabled="_busy" Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="_multiSelection"/>
-        }
-        <AuthorizeView Roles="@AccessesNames.AUTH_action_search">
-            <MudTextField T="string?" Label="@LApp["Search"]" Value="@_search" ValueChanged="@SearchChanged"/>
-        </AuthorizeView>
-        <MudSelect T="string" Disabled="_busy" Label="@L["Type"]" SelectedValues="_selectedActionTypes" SelectedValuesChanged="SelectedActionChanged" Clearable="true" MultiSelection="true">
-            @foreach (var type in _actionTypes.OrderBy(x => x))
-            {
-                <MudSelectItem T="string" Value="@type">@type</MudSelectItem>
-            }
-        </MudSelect>
+        <MudGrid>
+            <MudItem xs="12" md="7">
+                @if (Users is not null && Functions is not null)
+                {
+                    <SelectMultipleUsers Disabled="_busy" Users="@Users" Functions="@Functions" Selection="@_selectedUsersAction" SelectionChanged="OnSelectionChanged"
+                                         MultiSelection="_multiSelection"/>
+                }
+                <AuthorizeView Roles="@AccessesNames.AUTH_action_search">
+                    <MudTextField T="string?" Label="@LApp["Search"]" Value="@_search" ValueChanged="@SearchChanged"/>
+                </AuthorizeView>
+                <MudSelect T="string" Disabled="_busy" Label="@L["Type"]" SelectedValues="_selectedActionTypes" SelectedValuesChanged="SelectedActionChanged" Clearable="true" MultiSelection="true">
+                    @foreach (var type in _actionTypes.OrderBy(x => x))
+                    {
+                        <MudSelectItem T="string" Value="@type">@type</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <AuthorizeView Roles="@AccessesNames.AUTH_action_share">
+                <MudItem xs="12" md="5" Class="hidden lg:block">
+                    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Share" Color="Color.Primary">@LApp["Share"]</MudButton>
+                </MudItem>
+            </AuthorizeView>
+        </MudGrid>
     }
 
     @if (_reportActions?.Actions?.Count() > 0)
@@ -95,7 +105,7 @@
             <div class="d-flex gap-1 place-items-center">
                 <MudText>@LApp["Rows per page"]</MudText>
                 <div class="max-w-28">
-                    <MudSelect T="int" Disabled="_busy" Value="_count" ValueChanged="OnCountChange" Clearable="false" MultiSelection="false" >
+                    <MudSelect T="int" Disabled="_busy" Value="_count" ValueChanged="OnCountChange" Clearable="false" MultiSelection="false">
                         <MudSelectItem T="int" Value="10">10</MudSelectItem>
                         <MudSelectItem T="int" Value="25">25</MudSelectItem>
                         <MudSelectItem T="int" Value="50">50</MudSelectItem>
