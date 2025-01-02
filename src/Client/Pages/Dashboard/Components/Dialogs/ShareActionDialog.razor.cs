@@ -11,7 +11,7 @@ public partial class ShareActionDialog : IDisposable
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
     [Inject, NotNull] private NavigationManager? Navigation { get; set; }
     [Inject, NotNull] private IReportActionSharedClient? ReportActionSharedClient { get; set; }
-    [CascadingParameter, NotNull] MudDialogInstance? MudDialog { get; set; }
+    [CascadingParameter, NotNull] IMudDialogInstance? MudDialog { get; set; }
     [Parameter] public List<DrogeUser>? SelectedUsersAction { get; set; }
     [Parameter] public List<string>? SelectedActionTypes { get; set; }
     [Parameter] public  string? Search {get; set;}
