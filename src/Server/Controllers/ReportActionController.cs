@@ -77,7 +77,7 @@ public class ReportActionController : ControllerBase
                 // Search could be a performance problem and should have a kill switch or be limited to a select group of users.
                 _logger.LogWarning("Search request from user `{userId}` without proper permission", userId);
             }
-            var cleanedSearch = advancedSearchAllowed ? FilthyInputHelper.CleanList(body.Search, 5, _logger) : null;
+            var cleanedSearch = advancedSearchAllowed ? FilthyInputHelper.CleanList(body.Search, 10, _logger) : null;
             var cleanedTypes = FilthyInputHelper.CleanList(body.Types, 10, _logger);
 
             var result = await _reportActionService.GetListActionsUser(body.Users, cleanedTypes, cleanedSearch, body.Count, body.Skip, customerId, false, null, null, clt);

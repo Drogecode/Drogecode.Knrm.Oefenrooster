@@ -13,7 +13,7 @@ public static class ReportActionSharedMapper
             Id = configuration.Id,
             SelectedUsers = configuration.SelectedUsers,
             Types = configuration.Types,
-            Search = FilthyInputHelper.CleanList( configuration.Search, 5, logger),
+            Search = FilthyInputHelper.CleanList( configuration.Search, 10, logger),
             StartDate = configuration.StartDate,
             EndDate = configuration.EndDate,
             ValidUntil = configuration.ValidUntil,
