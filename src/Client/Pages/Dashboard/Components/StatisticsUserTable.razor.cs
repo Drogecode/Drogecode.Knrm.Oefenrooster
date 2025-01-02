@@ -21,6 +21,8 @@ public partial class StatisticsUserTable : IDisposable
     private List<DistinctType>? _distinctTypes;
     private List<DistinctType?>? _selectedTypes;
     private List<UserCounters>? _analyzeHours;
+    private List<string>? _boats;
+    private List<string>? _selectedBoats;
     private List<int>? _years;
     private List<int> _selectedYear = [];
     private decimal _compensation = 1.25m;
@@ -74,6 +76,12 @@ public partial class StatisticsUserTable : IDisposable
                 }
             }
 
+            var boats = await ReportTrainingRepository.Distinct(DistinctReport.Boat, _cls.Token);
+            if (boats?.Values is not null)
+            {
+                _boats = boats.Values.Where(x => x is not null).ToList()!;
+            }
+
             StateHasChanged();
         }
     }
@@ -87,6 +95,8 @@ public partial class StatisticsUserTable : IDisposable
             { x => x.SelectedTypes, _selectedTypes },
             { x => x.SelectedYear, _selectedYear },
             { x => x.Compensation, _compensation },
+            { x => x.Boats, _boats },
+            { x => x.SelectedBoats, _selectedBoats },
         };
 
         var options = new DialogOptions()
@@ -103,6 +113,10 @@ public partial class StatisticsUserTable : IDisposable
             {
                 _selectedTypes = data.SelectedTypes.ToList();
                 _selectedYear = data.SelectedYear.ToList();
+                if (data.SelectedBoats is not null)
+                    _selectedBoats = data.SelectedBoats.ToList();
+                else
+                    _selectedBoats = null;
                 _compensation = data.Compensation;
                 _showHistoricalIncorrectWarning = _selectedYear.FirstOrDefault() <= 2021;
                 await TypeChanged();
@@ -113,7 +127,7 @@ public partial class StatisticsUserTable : IDisposable
 
     private async Task TypeChanged()
     {
-        if(_selectedTypes is null) return;
+        if (_selectedTypes is null) return;
         _analyzeHours = [];
         var year = _selectedYear.FirstOrDefault();
         foreach (var types in _selectedTypes.Where(x => x?.Type is not null))
@@ -121,18 +135,18 @@ public partial class StatisticsUserTable : IDisposable
             switch (types!.From)
             {
                 case DistinctFromWhere.Action:
-                    var d = await ReportActionRepository.AnalyzeHoursAsync(year, types!.Type!, _cls.Token);
-                    if (d?.UserCounters is not null)
+                    var action = await ReportActionRepository.AnalyzeHoursAsync(year, types!.Type!, _selectedBoats, _cls.Token);
+                    if (action?.UserCounters is not null)
                     {
-                        _analyzeHours.AddRange(d.UserCounters);
+                        _analyzeHours.AddRange(action.UserCounters);
                     }
 
                     break;
                 case DistinctFromWhere.Training:
-                    var g = await ReportTrainingRepository.AnalyzeHoursAsync(year, types!.Type!, _cls.Token);
-                    if (g?.UserCounters is not null)
+                    var training = await ReportTrainingRepository.AnalyzeHoursAsync(year, types!.Type!, _cls.Token);
+                    if (training?.UserCounters is not null)
                     {
-                        _analyzeHours.AddRange(g.UserCounters);
+                        _analyzeHours.AddRange(training.UserCounters);
                     }
 
                     break;

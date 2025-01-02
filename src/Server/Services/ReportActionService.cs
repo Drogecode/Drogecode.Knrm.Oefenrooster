@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Server.Extensions;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Microsoft.Graph.Models;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -18,20 +19,27 @@ public class ReportActionService : IReportActionService
         _logger = logger;
     }
 
-    public async Task<MultipleReportActionsResponse> GetListActionsUser(List<Guid> users, List<string>? types, List<string>? search, Guid userId, int count, int skip, Guid customerId,
-        CancellationToken clt)
+    public async Task<MultipleReportActionsResponse> GetListActionsUser(List<Guid> users, List<string>? types, List<string>? search, int count, int skip, Guid customerId,
+        bool minimal, DateTime? startDate, DateTime? endDate, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var listWhere = _database.ReportActions.Include(x => x.Users)
             .Where(x => x.CustomerId == customerId
+                        && (startDate == null || x.Start > startDate)
+                        && (endDate == null || x.End < endDate)
                         && x.Users.Count(y => users.Contains(y.DrogeCodeId!.Value)) == users.Count
                         && (types == null || !types.Any() || types.Contains(x.Type))
                         && (search == null || !search.Any() || search.Any(y => EF.Functions.ILike(x.ShortDescription, "%" + y + "%"))
                             || search.Any(y => EF.Functions.ILike(x.Description, "%" + y + "%"))));
 
+        List<DrogeAction>? drogeActions = null;
+        if (minimal)
+            drogeActions = await listWhere.OrderByDescending(x => x.Commencement).Skip(skip).Take(count).Select(x => x.ToMinimalDrogeAction()).ToListAsync(clt);
+        else
+            drogeActions = await listWhere.OrderByDescending(x => x.Commencement).Skip(skip).Take(count).Select(x => x.ToDrogeAction()).ToListAsync(clt);
         var sharePointActionsUser = new MultipleReportActionsResponse
         {
-            Actions = await listWhere.OrderByDescending(x => x.Commencement).Skip(skip).Take(count).Select(x => x.ToDrogeAction()).ToListAsync(clt),
+            Actions = drogeActions,
             TotalCount = await listWhere.CountAsync(clt),
             Success = true,
         };
@@ -146,6 +154,20 @@ public class ReportActionService : IReportActionService
                 }
 
                 break;
+            case DistinctReport.Boat:
+                var boats = _database.ReportActions.Where(x => x.CustomerId == customerId).Select(x => x.Boat).Distinct();
+                if (await boats.AnyAsync(clt))
+                {
+                    result.Values = [];
+                    foreach (var boat in await boats.ToListAsync(clt))
+                    {
+                        result.Values.Add(boat);
+                    }
+
+                    result.Success = true;
+                    result.TotalCount = await boats.CountAsync(clt);
+                }
+                break;
             default:
                 result.Message = $"Invalid column type: `{column}`";
                 break;
@@ -156,7 +178,7 @@ public class ReportActionService : IReportActionService
         return result;
     }
 
-    public async Task<AnalyzeHoursResult> AnalyzeHours(int year, string type, string timeZone, Guid customerId, CancellationToken clt)
+    public async Task<AnalyzeHoursResult> AnalyzeHours(int year, string type, List<string>? boats, string timeZone, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new AnalyzeHoursResult
@@ -166,7 +188,10 @@ public class ReportActionService : IReportActionService
         var y = new List<int>() { year, year + 1, year - 1 };
         var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
 
-        var dbActions = await _database.ReportActions.Where(x => x.CustomerId == customerId && x.Type == type && y.Contains(x.Start.Year))
+        var dbActions = await _database.ReportActions.Where(x => 
+                x.CustomerId == customerId && 
+                x.Type == type && y.Contains(x.Start.Year) &&
+                (boats == null || !boats.Any() || boats.Contains(x.Boat!)))
             .Select(x => new { x.Start, x.Commencement, x.Departure, x.End, x.Users })
             .ToListAsync(clt);
 

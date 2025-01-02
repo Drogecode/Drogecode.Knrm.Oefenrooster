@@ -41,4 +41,5 @@ public class DbUsers
     public ICollection<DbUserLinkedMails>? UserLinkedMails { get; set; }
     public ICollection<DbAudit>? Audits { get; set; }
     public ICollection<DbLinkUserRole>? LinkUserRoles { get; set; }
+    public ICollection<DbUserLogins>? Logins { get; set; }
 }

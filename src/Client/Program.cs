@@ -21,10 +21,7 @@ builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<CustomStateProvider>();
 
-builder.Services.AddMudServices(config =>
-{
-    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
-});
+builder.Services.AddMudServices(config => { config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft; });
 builder.Services.AddMudExtensions();
 builder.Services.AddMudMarkdownServices();
 builder.Services.AddBlazoredLocalStorage();
@@ -38,8 +35,10 @@ builder.Services.TryAddScoped<IConfigurationClient, ConfigurationClient>();
 builder.Services.TryAddScoped<ICustomerSettingsClient, CustomerSettingsClient>();
 builder.Services.TryAddScoped<IDefaultScheduleClient, DefaultScheduleClient>();
 builder.Services.TryAddScoped<IFunctionClient, FunctionClient>();
+builder.Services.TryAddScoped<IMenuClient, MenuClient>();
 builder.Services.TryAddScoped<IHolidayClient, HolidayClient>();
 builder.Services.TryAddScoped<IPreComClient, PreComClient>();
+builder.Services.TryAddScoped<IReportActionSharedClient, ReportActionSharedClient>();
 builder.Services.TryAddScoped<IReportActionClient, ReportActionClient>();
 builder.Services.TryAddScoped<IReportTrainingClient, ReportTrainingClient>();
 builder.Services.TryAddScoped<IScheduleClient, ScheduleClient>();
@@ -58,6 +57,7 @@ builder.Services.TryAddScoped<CustomerSettingRepository>();
 builder.Services.TryAddScoped<DefaultScheduleRepository>();
 builder.Services.TryAddScoped<FunctionRepository>();
 builder.Services.TryAddScoped<HolidayRepository>();
+builder.Services.TryAddScoped<MenuRepository>();
 builder.Services.TryAddScoped<PreComRepository>();
 builder.Services.TryAddScoped<ReportActionRepository>();
 builder.Services.TryAddScoped<ReportTrainingRepository>();
@@ -76,10 +76,7 @@ builder.Services.AddScoped(sp => new HttpClient
 {
     BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
 });
-builder.Services.AddHttpClient("Long", c =>
-{
-    c.Timeout = TimeSpan.FromSeconds(250);
-});
+builder.Services.AddHttpClient("Long", c => { c.Timeout = TimeSpan.FromSeconds(250); });
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 

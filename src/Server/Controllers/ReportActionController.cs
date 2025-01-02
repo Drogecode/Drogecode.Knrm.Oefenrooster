@@ -10,7 +10,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
-[Authorize]
+[Authorize(Roles = AccessesNames.AUTH_basic_access)]
 [ApiController]
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
@@ -43,7 +43,7 @@ public class ReportActionController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var users = new List<Guid>() { userId };
 
-            var result = await _reportActionService.GetListActionsUser(users, null, null, userId, count, skip, customerId, clt);
+            var result = await _reportActionService.GetListActionsUser(users, null, null, count, skip, customerId, false, null, null, clt);
             _logger.LogInformation("Loading actions {count} skipping {skip} for user {userName}", count, skip, userName);
             return result;
         }
@@ -80,7 +80,7 @@ public class ReportActionController : ControllerBase
             var cleanedSearch = advancedSearchAllowed ? FilthyInputHelper.CleanList(body.Search, 5, _logger) : null;
             var cleanedTypes = FilthyInputHelper.CleanList(body.Types, 10, _logger);
 
-            var result = await _reportActionService.GetListActionsUser(body.Users, cleanedTypes, cleanedSearch, userId, body.Count, body.Skip, customerId, clt);
+            var result = await _reportActionService.GetListActionsUser(body.Users, cleanedTypes, cleanedSearch, body.Count, body.Skip, customerId, false, null, null, clt);
             _logger.LogInformation("Loading actions {count} skipping {skip} for user {users} ({userId})", body.Count, body.Skip, body.Users, userId);
             return result;
         }
@@ -176,7 +176,7 @@ public class ReportActionController : ControllerBase
 
     [HttpGet]
     [Route("distinct/{column}")]
-    [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics)]
+    [Authorize]
     public async Task<ActionResult<DistinctResponse>> Distinct(DistinctReport column, CancellationToken clt = default)
     {
         try
@@ -202,17 +202,47 @@ public class ReportActionController : ControllerBase
     }
 
     [HttpGet]
+    [Obsolete("Use GetAnalyzeHours with body version")]// v0.4.26
     [Route("analyze/hours/{year:int}/{type}")]
     [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics_user_tabel)]
     public async Task<ActionResult<AnalyzeHoursResult>> AnalyzeHours(int year, string type, CancellationToken clt = default)
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var result = await GetAnalyzeHours(new AnalyzeHoursRequest(){Year = year, Type = type}, clt);
+            return result;
+        }
+        catch (OperationCanceledException)
+        {
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in AnalyzeHours Action");
+            return BadRequest();
+        }
+    }
+
+    [HttpPost]
+    [Route("analyze/hours")]
+    [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics_user_tabel)]
+    public async Task<ActionResult<AnalyzeHoursResult>> GetAnalyzeHours([FromBody] AnalyzeHoursRequest body, CancellationToken clt = default)
+    {
+        try
+        {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var timeZone = await _customerSettingService.GetTimeZone(customerId);
 
-            var result = await _reportActionService.AnalyzeHours(year, type, timeZone, customerId, clt);
+            if (body.Type is null)
+            {
+                _logger.LogWarning("GetAnalyzeHours request but Type is null");
+                return BadRequest();
+            }
+            
+            var result = await _reportActionService.AnalyzeHours(body.Year, body.Type, body.Boats, timeZone, customerId, clt);
             return result;
         }
         catch (OperationCanceledException)

@@ -10,7 +10,7 @@ using Microsoft.Identity.Web.Resource;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
-[Authorize]
+[Authorize(Roles = AccessesNames.AUTH_basic_access)]
 [ApiController]
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
@@ -111,7 +111,6 @@ public class ReportTrainingController : ControllerBase
 
     [HttpGet]
     [Route("distinct/{column}")]
-    [Authorize(Roles = AccessesNames.AUTH_dashboard_Statistics)]
     public async Task<ActionResult<DistinctResponse>> Distinct(DistinctReport column, CancellationToken clt = default)
     {
         try

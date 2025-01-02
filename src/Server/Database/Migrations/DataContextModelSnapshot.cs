@@ -277,6 +277,84 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.ToTable("LinkVehicleTraining");
                 });
 
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbMenu", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<char?>("AddLoginHint")
+                        .HasColumnType("character(1)");
+
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsGroup")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("TargetBlank")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("Menu");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("2bf106c9-eae7-4a0d-978d-54af6c4e96a1"),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsGroup = true,
+                            Order = 10,
+                            TargetBlank = false,
+                            Text = "Handige links",
+                            Url = ""
+                        },
+                        new
+                        {
+                            Id = new Guid("af84e214-7def-45ac-95c9-c8a66d1573a2"),
+                            AddLoginHint = '?',
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsGroup = false,
+                            Order = 20,
+                            ParentId = new Guid("2bf106c9-eae7-4a0d-978d-54af6c4e96a1"),
+                            TargetBlank = true,
+                            Text = "Sharepoint",
+                            Url = "https://dorus1824.sharepoint.com"
+                        },
+                        new
+                        {
+                            Id = new Guid("953de109-5526-433b-8dc8-61b10fa8fd20"),
+                            AddLoginHint = '&',
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            IsGroup = false,
+                            Order = 30,
+                            ParentId = new Guid("2bf106c9-eae7-4a0d-978d-54af6c4e96a1"),
+                            TargetBlank = true,
+                            Text = "LPLH",
+                            Url = "https://dorus1824.sharepoint.com/:b:/r/sites/KNRM/Documenten/EHBO/LPLH/20181115%20LPLH_KNRM_1_1.pdf?csf=1&web=1&e=4L3VPo"
+                        });
+                });
+
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbPreComAlert", b =>
                 {
                     b.Property<Guid>("Id")
@@ -471,6 +549,51 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("ReportActions");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportActionShared", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("HashedPassword")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<List<string>>("Search")
+                        .HasColumnType("text[]");
+
+                    b.Property<List<Guid>>("SelectedUsers")
+                        .HasColumnType("uuid[]");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<List<string>>("Types")
+                        .HasColumnType("text[]");
+
+                    b.Property<DateTime?>("ValidUntil")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("ReportActionShared");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportTraining", b =>
@@ -1672,6 +1795,34 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.ToTable("UserLinkedMails");
                 });
 
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserLogins", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Ip")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("LoginDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("SharedActionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SharedActionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserLogins");
+                });
+
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserOnVersion", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2186,6 +2337,21 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("Vehicles");
                 });
 
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbMenu", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("Menus")
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbMenu", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbPreComAlert", b =>
                 {
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
@@ -2228,6 +2394,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                 {
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
                         .WithMany("ReportActions")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportActionShared", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("ReportActionShares")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2480,6 +2657,21 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserLogins", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportActionShared", "SharedAction")
+                        .WithMany("Logins")
+                        .HasForeignKey("SharedActionId");
+
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "User")
+                        .WithMany("Logins")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("SharedAction");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserOnVersion", b =>
                 {
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
@@ -2567,9 +2759,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Navigation("LinkVehicleTrainings");
 
+                    b.Navigation("Menus");
+
                     b.Navigation("PreComAlerts");
 
                     b.Navigation("PreComForwards");
+
+                    b.Navigation("ReportActionShares");
 
                     b.Navigation("ReportActions");
 
@@ -2613,9 +2809,19 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("RoosterAvailables");
                 });
 
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbMenu", b =>
+                {
+                    b.Navigation("Children");
+                });
+
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportAction", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportActionShared", b =>
+                {
+                    b.Navigation("Logins");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbReportTraining", b =>
@@ -2677,6 +2883,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("LinkedUserAsA");
 
                     b.Navigation("LinkedUserAsB");
+
+                    b.Navigation("Logins");
 
                     b.Navigation("PreComAlerts");
 

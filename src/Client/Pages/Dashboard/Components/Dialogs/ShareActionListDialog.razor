@@ -1,0 +1,92 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Extensions
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportActionShared
+<MudDialog>
+    <TitleContent>
+        @L["All active share urls"]
+    </TitleContent>
+    <DialogContent>
+        @if (_configurationResponse?.ReportActionSharedConfiguration is not null)
+        {
+            <MudDataGrid Items="_configurationResponse?.ReportActionSharedConfiguration.OrderBy(x=>x.ValidUntil)" ReadOnly="true" Filterable="false" SortMode="@SortMode.None">
+                <Columns>
+                    @*<HierarchyColumn T="ReportActionSharedConfiguration"/>*@
+                    <TemplateColumn Title="@L["Created by"]">
+                        <CellTemplate>
+                            @if (context.Item?.CreatedBy is not null && Users is not null)
+                            {
+                                var user = Users.FirstOrDefault(x => x.Id == context.Item.CreatedBy);
+                                <p>@(user?.Name ?? LApp["User not found or deleted"])</p>
+                            }
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn Title="@LApp["ValidUntil"]">
+                        <CellTemplate>
+                            @if (context.Item?.ValidUntil is not null)
+                            {
+                                <p>@context.Item?.ValidUntil.Value.ToNiceString(LDateToString)</p>
+                            }
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn Title="@L["Reports from"]">
+                        <CellTemplate>
+                            @if (context.Item?.StartDate is not null)
+                            {
+                                <p>@context.Item?.StartDate.Value.ToNiceString(LDateToString)</p>
+                            }
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn Title="@L["Reports until"]">
+                        <CellTemplate>
+                            @if (context.Item?.EndDate is not null)
+                            {
+                                <p>@context.Item?.EndDate.Value.ToNiceString(LDateToString)</p>
+                            }
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn Title="@LApp["Search"]">
+                        <CellTemplate>
+                            @context.Item?.Search?.ToFancyString()
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn Title="@LApp["Type"]">
+                        <CellTemplate>
+                            @context.Item?.Types?.ToFancyString()
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn Title="@LApp["Users"]">
+                        <CellTemplate>
+                            @if (context.Item?.SelectedUsers is not null && Users is not null)
+                            {
+                                <div class="inline-flex space-x-1">
+                                    @for (var i = 0; i < context.Item.SelectedUsers.Count; i++)
+                                    {
+                                        var user = Users.FirstOrDefault(x => x.Id == context.Item.SelectedUsers[i]);
+                                        <p>@($"{user?.Name ?? LApp["User not found or deleted"]}{(context.Item.SelectedUsers.Count - 1 != i ? "," : "")}")</p>
+                                    }
+                                </div>
+                            }
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn>
+                        <CellTemplate>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await Delete(context.Item); })"/>
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+            </MudDataGrid>
+        }
+        else if (_configurationResponse is not null)
+        {
+            <MudText>
+                @L["Failed to load"]
+            </MudText>
+        }
+        else
+        {
+            <DrogeLoading/>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="()=>MudDialog.Cancel()">@LApp["Cancel"]</MudButton>
+    </DialogActions>
+</MudDialog>

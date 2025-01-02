@@ -45,10 +45,7 @@
         <MudPaper Elevation="0" Class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
             @if (_events == null || _month == null)
             {
-                <MudSkeleton/>
-                <MudSkeleton/>
-                <MudSkeleton/>
-                <MudSkeleton/>
+                <DrogeLoading />
             }
             else
             {
@@ -87,8 +84,5 @@
 }
 else
 {
-    <MudSkeleton/>
-    <MudSkeleton/>
-    <MudSkeleton/>
-    <MudSkeleton/>
+    <DrogeLoading />
 }

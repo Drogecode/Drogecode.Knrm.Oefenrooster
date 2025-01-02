@@ -6,4 +6,5 @@ public enum DistinctReport
     Prio = 1,
     Type = 2,
     Year = 3,
+    Boat = 4,
 }

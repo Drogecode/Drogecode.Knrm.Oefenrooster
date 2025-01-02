@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 
+[Table("ReportUsers")]
 public class DbReportUser
 {
     [Key] public Guid Id { get; set; }

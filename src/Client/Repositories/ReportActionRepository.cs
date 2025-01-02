@@ -67,9 +67,15 @@ public class ReportActionRepository
         return result;
     }
 
-    public async Task<AnalyzeHoursResult?> AnalyzeHoursAsync(int year, string type, CancellationToken clt)
+    public async Task<AnalyzeHoursResult?> AnalyzeHoursAsync(int year, string type, List<string>? boats, CancellationToken clt)
     {
-        var result = await _reportActionClient.AnalyzeHoursAsync(year, type, clt);
+        var body = new AnalyzeHoursRequest
+        {
+            Year = year,
+            Type = type,
+            Boats = boats,
+        };
+        var result = await _reportActionClient.GetAnalyzeHoursAsync(body, clt);
         return result;
     }
 }

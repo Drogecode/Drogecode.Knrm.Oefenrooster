@@ -124,7 +124,6 @@ else if (_killDb?.Success == false)
     </MudPaper>
 }
 @code{
-
     private RenderFragment<DrogeUser> UserInfo => user =>
         @<div>
             <MudListItem T="string" OnClick="() => ChangeUser(user)">

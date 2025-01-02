@@ -125,7 +125,9 @@ builder.Services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
 builder.Services.AddScoped<IHolidayService, HolidayService>();
 builder.Services.AddScoped<ILinkUserRoleService, LinkUserRoleService>();
+builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IPreComService, PreComService>();
+builder.Services.AddScoped<IReportActionSharedService, ReportActionSharedService>();
 builder.Services.AddScoped<IReportActionService, ReportActionService>();
 builder.Services.AddScoped<IReportTrainingService, ReportTrainingService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
@@ -153,8 +155,10 @@ var groupNames = new List<string>
     "User",
     "UserRole",
     "UserLinkedMails",
+    "Menu",
     "Vehicle",
     "SharePoint",
+    "ReportActionShared",
     "ReportAction",
     "ReportTraining",
     "DefaultSchedule",
@@ -247,8 +251,8 @@ if (!runningInContainers)
         var fileName = $"{controllerName}.json";
         using var stream = new MemoryStream();
         swaggerDoc.SerializeAsJson(stream, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
-        var asstring = Encoding.UTF8.GetString(stream.ToArray());
-        File.WriteAllText(Path.Combine("../ClientGenerator/OpenAPIs", fileName), asstring);
+        var asString = Encoding.UTF8.GetString(stream.ToArray());
+        File.WriteAllText(Path.Combine("../ClientGenerator/OpenAPIs", fileName), asString);
     }
 }
 #endif

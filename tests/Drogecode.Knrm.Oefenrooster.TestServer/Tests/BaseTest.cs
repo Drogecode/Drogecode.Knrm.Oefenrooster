@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportActionShared;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Drogecode.Knrm.Oefenrooster.TestServer.Seeds;
@@ -60,6 +61,7 @@ public class BaseTest : IAsyncLifetime
     protected readonly ReportTrainingController ReportTrainingController;
     protected readonly UserRoleController UserRoleController;
     protected readonly UserLinkedMailsController UserLinkedMailsController;
+    protected readonly ReportActionSharedController ReportActionSharedController;
 
     public BaseTest(
         DataContext dataContext,
@@ -77,7 +79,8 @@ public class BaseTest : IAsyncLifetime
         ReportActionController reportActionController,
         ReportTrainingController reportTrainingController,
         UserRoleController userRoleController,
-        UserLinkedMailsController userLinkedMailsController)
+        UserLinkedMailsController userLinkedMailsController,
+        ReportActionSharedController reportActionSharedController)
     {
         DataContext = dataContext;
         DateTimeServiceMock = (IDateTimeServiceMock)dateTimeService;
@@ -96,6 +99,7 @@ public class BaseTest : IAsyncLifetime
         ReportTrainingController = reportTrainingController;
         UserRoleController = userRoleController;
         UserLinkedMailsController = userLinkedMailsController;
+        ReportActionSharedController = reportActionSharedController;
 
         DefaultCustomerId = Guid.NewGuid();
         SeedCustomer.Seed(dataContext, DefaultCustomerId);
@@ -114,6 +118,7 @@ public class BaseTest : IAsyncLifetime
         MockAuthenticatedUser(preComController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(vehicleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(defaultScheduleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(reportActionSharedController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(reportActionController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(reportTrainingController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(userRoleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
@@ -309,6 +314,23 @@ public class BaseTest : IAsyncLifetime
         var result = await DefaultScheduleController.PutDefaultSchedule(body);
         Assert.NotNull(result?.Value?.NewId);
         return result.Value!.NewId.Value;
+    }
+
+    protected async Task<Guid> AddActionShared(List<string>? types, List<string>? search, DateTime? validUntil = null, DateTime? startDate = null, DateTime? endDate = null )
+    {
+        var body = new ReportActionSharedConfiguration
+        {
+            SelectedUsers = [DefaultSettingsHelperMock.IdTaco],
+            Types = types,
+            Search = search,
+            ValidUntil = validUntil,
+            StartDate = startDate,
+            EndDate = endDate,
+        };
+        var result = await ReportActionSharedController.PutReportActionShared(body);
+        Assert.NotNull(result.Value?.NewId);
+        result.Value.Success.Should().BeTrue();
+        return result.Value.NewId.Value;
     }
 
     public Task DisposeAsync()

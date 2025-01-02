@@ -10,6 +10,7 @@ public struct AccessesNames
     public const string GROUP_NO_READ = "ignore";
     public const string AUTH_super_user = "isSuperGlobalAdmin";
     public const string AUTH_Hide = "do_not_show";
+    public const string AUTH_External = "external";
 
     public const string GROUP_GLOBAL = "global";
     public const string AUTH_basic_access = "basic_access";
@@ -42,6 +43,7 @@ public struct AccessesNames
     public const string AUTH_action_history_full = "full_action_history";
     public const string AUTH_training_history_full = "full_training_history";
     public const string AUTH_action_search = "action_search";
+    public const string AUTH_action_share = "action_share";
     public const string AUTH_dashboard_Statistics = "full_dashboard_statistics";
     public const string AUTH_dashboard_Statistics_user_tabel = "full_dashboard_statistics_ut";
     public const string AUTH_dashboard_holidays = "dashboard_hol";

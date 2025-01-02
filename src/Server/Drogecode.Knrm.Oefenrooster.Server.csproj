@@ -53,4 +53,11 @@
 		<InternalsVisibleTo Include="Drogecode.Knrm.Oefenrooster.TestServer" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Remove="Database\Migrations\20241229143657_AddDbReportActionShared.cs" />
+	  <Compile Remove="Database\Migrations\20241229143657_AddDbReportActionShared.Designer.cs" />
+	  <Compile Remove="Database\Migrations\20241230192133_AuditLogins.cs" />
+	  <Compile Remove="Database\Migrations\20241230192133_AuditLogins.Designer.cs" />
+	</ItemGroup>
+
 </Project>

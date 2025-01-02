@@ -18,14 +18,20 @@
                     <MudSelectItem T="DistinctType?" Value="@type">@type.Type</MudSelectItem>
                 }
             </MudSelect>
+            @if (Boats is not null)
+            {
+                <MudSelect T="string" Label="@L["boats"]" @bind-SelectedValues="SelectedBoats" Clearable="true" MultiSelection="true">
+                    @foreach (var boat in Boats.OrderBy(x=>x))
+                    {
+                        <MudSelectItem T="string" Value="@boat">@boat</MudSelectItem>
+                    }
+                </MudSelect>
+            }
             <MudNumericField T="decimal" @bind-Value="@Compensation" Label="@L["Compensation"]"/>
         }
         else
         {
-            <MudSkeleton/>
-            <MudSkeleton/>
-            <MudSkeleton/>
-            <MudSkeleton/>
+            <DrogeLoading />
         }
     </DialogContent>
     <DialogActions>

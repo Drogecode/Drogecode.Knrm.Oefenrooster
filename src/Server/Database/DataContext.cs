@@ -17,6 +17,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbUserRoles> UserRoles { get; set; }
         public DbSet<DbUserDefaultGroup> UserDefaultGroups { get; set; }
         public DbSet<DbUserDefaultAvailable> UserDefaultAvailables { get; set; }
+        public DbSet<DbUserLogins> UserLogins { get; set; }
         public DbSet<DbUserHolidays> UserHolidays { get; set; }
         public DbSet<DbUserOnVersion> UserOnVersions { get; set; }
         public DbSet<DbUserSettings> UserSettings { get; set; }
@@ -32,7 +33,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbVehicles> Vehicles { get; set; }
         public DbSet<DbPreComForward> PreComForwards { get; set; }
         public DbSet<DbPreComAlert> PreComAlerts { get; set; }
+        public DbSet<DbMenu> Menus { get; set; }
 
+        public DbSet<DbReportActionShared> ReportActionShares { get; set; }
         public DbSet<DbReportAction> ReportActions { get; set; }
         public DbSet<DbReportTraining> ReportTrainings { get; set; }
         public DbSet<DbReportUser> ReportUsers { get; set; }
@@ -41,7 +44,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbLinkUserDayItem> LinkUserDayItems { get; set; }
         public DbSet<DbLinkUserRole> LinkUserRoles { get; set; }
         public DbSet<DbLinkUserUser> LinkUserUsers { get; set; }
-        public DbSet<DbLinkExchange> LinkExchanges{ get; set; }
+        public DbSet<DbLinkExchange> LinkExchanges { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -103,16 +106,26 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserOnVersion>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserOnVersion>().HasOne(p => p.Customer).WithMany(g => g.UserOnVersions).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserOnVersion>().HasOne(p => p.User).WithMany(g => g.UserOnVersions).HasForeignKey(s => s.UserId).IsRequired();
-            
+
             //UserSettings
             modelBuilder.Entity<DbUserSettings>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserSettings>().HasOne(p => p.Customer).WithMany(g => g.UserSettings).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserSettings>().HasOne(p => p.User).WithMany(g => g.UserSettings).HasForeignKey(s => s.UserId).IsRequired();
-            
+
             //UserLinkedMails
             modelBuilder.Entity<DbUserLinkedMails>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserLinkedMails>().HasOne(p => p.Customer).WithMany(g => g.UserLinkedMails).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserLinkedMails>().HasOne(p => p.User).WithMany(g => g.UserLinkedMails).HasForeignKey(s => s.UserId).IsRequired();
+            
+            //UserLogins
+            modelBuilder.Entity<DbUserLogins>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserLogins>().HasOne(p => p.User).WithMany(g => g.Logins).HasForeignKey(s => s.UserId);
+            modelBuilder.Entity<DbUserLogins>().HasOne(p => p.SharedAction).WithMany(g => g.Logins).HasForeignKey(s => s.SharedActionId);
+            
+            //Menu
+            modelBuilder.Entity<DbMenu>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbMenu>().HasOne(p => p.Customer).WithMany(g => g.Menus).HasForeignKey(s => s.CustomerId);
+            modelBuilder.Entity<DbMenu>().HasOne(p => p.Parent).WithMany(g => g.Children).HasForeignKey(s => s.ParentId);
 
             // Rooster available
             modelBuilder.Entity<DbRoosterAvailable>(e => { e.Property(en => en.Id).IsRequired(); });
@@ -168,6 +181,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbPreComAlert>().HasOne(p => p.Customer).WithMany(g => g.PreComAlerts).HasForeignKey(s => s.CustomerId).IsRequired();
 
             //// Reports
+            // ReportActionShared
+            modelBuilder.Entity<DbReportActionShared>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbReportActionShared>().HasOne(p => p.Customer).WithMany(g => g.ReportActionShares).HasForeignKey(s => s.CustomerId).IsRequired();
+
             // ReportActions
             modelBuilder.Entity<DbReportAction>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbReportAction>().HasMany(p => p.Users);
@@ -193,7 +210,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             // Vehicle with training with outlook exchange calendar
             modelBuilder.Entity<DbLinkExchange>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbLinkExchange>().HasOne(p => p.Customer).WithMany(g => g.LinkExchanges).HasForeignKey(s => s.CustomerId).IsRequired();
-            
+
             // User <--> UserRole
             modelBuilder.Entity<DbLinkUserRole>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbLinkUserRole>().HasOne(p => p.User).WithMany(g => g.LinkUserRoles).HasForeignKey(s => s.UserId).IsRequired();
@@ -208,11 +225,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             SetVehicles(modelBuilder);
             SetRoosterTrainingTypes(modelBuilder);
             SetSystemUsers(modelBuilder);
+            SetMenus(modelBuilder);
         }
-        
+
         private static Guid IdTaco { get; } = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461");
 
         #region Default data
+
         private void SetCustomer(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DbCustomers>(e =>
@@ -317,7 +336,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                     ShowTime = false,
                     CountToTrainingTarget = false,
                     Order = 50,
-                }); ;
+                });
+                ;
             });
             modelBuilder.Entity<DbRoosterDefault>(e =>
             {
@@ -384,6 +404,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 });
             });
         }
+
         private void SetRoosterItemsMonth(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DbRoosterItemMonth>(e => e.HasData(new DbRoosterItemMonth
@@ -659,7 +680,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 ExternalId = "287359b1-2035-435b-97b0-eb260dc497d6",
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Admin",
-                Accesses = $"{AccessesNames.AUTH_configure_training_types},{AccessesNames.AUTH_users_settigns},{AccessesNames.AUTH_scheduler_dayitem},{AccessesNames.AUTH_scheduler_monthitem},{AccessesNames.AUTH_scheduler_history}",
+                Accesses =
+                    $"{AccessesNames.AUTH_configure_training_types},{AccessesNames.AUTH_users_settigns},{AccessesNames.AUTH_scheduler_dayitem},{AccessesNames.AUTH_scheduler_monthitem},{AccessesNames.AUTH_scheduler_history}",
                 Order = 10,
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
@@ -668,7 +690,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 ExternalId = "f6b0c571-9050-40d6-bf58-807981e5ed6e",
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Scheduler",
-                Accesses = $"{AccessesNames.AUTH_scheduler},{AccessesNames.AUTH_scheduler_in_table_view},{AccessesNames.AUTH_scheduler_edit_past},{AccessesNames.AUTH_scheduler_dayitem},{AccessesNames.AUTH_scheduler_other_user},{AccessesNames.AUTH_scheduler_monthitem}",
+                Accesses =
+                    $"{AccessesNames.AUTH_scheduler},{AccessesNames.AUTH_scheduler_in_table_view},{AccessesNames.AUTH_scheduler_edit_past},{AccessesNames.AUTH_scheduler_dayitem},{AccessesNames.AUTH_scheduler_other_user},{AccessesNames.AUTH_scheduler_monthitem}",
                 Order = 20,
             }));
             modelBuilder.Entity<DbUserRoles>(e => e.HasData(new DbUserRoles
@@ -925,6 +948,48 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CreatedOn = new DateTime(2024, 10, 11, 19, 46, 12, DateTimeKind.Utc),
             }));
         }
+        
+        private void SetMenus(ModelBuilder modelBuilder)
+        {
+            var parent = new Guid("2bf106c9-eae7-4a0d-978d-54af6c4e96a1");
+            modelBuilder.Entity<DbMenu>(e => e.HasData(new DbMenu
+            {
+                Id = parent,
+                ParentId = null,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Text = "Handige links",
+                Url = "",
+                IsGroup = true,
+                AddLoginHint = null,
+                TargetBlank = false,
+                Order = 10,
+            }));
+            modelBuilder.Entity<DbMenu>(e => e.HasData(new DbMenu
+            {
+                Id = new Guid("af84e214-7def-45ac-95c9-c8a66d1573a2"),
+                ParentId = parent,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Text = "Sharepoint",
+                Url = "https://dorus1824.sharepoint.com",
+                IsGroup = false,
+                AddLoginHint = '?',
+                TargetBlank = true,
+                Order = 20,
+            }));
+            modelBuilder.Entity<DbMenu>(e => e.HasData(new DbMenu
+            {
+                Id = new Guid("953de109-5526-433b-8dc8-61b10fa8fd20"),
+                ParentId = parent,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Text = "LPLH",
+                Url = "https://dorus1824.sharepoint.com/:b:/r/sites/KNRM/Documenten/EHBO/LPLH/20181115%20LPLH_KNRM_1_1.pdf?csf=1&web=1&e=4L3VPo",
+                IsGroup = false,
+                AddLoginHint = '&',
+                TargetBlank = true,
+                Order = 30,
+            }));
+        }
+        
         #endregion
     }
 }

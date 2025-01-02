@@ -225,12 +225,17 @@
           },
           "externalId": {
             "type": "string",
-            "format": "uuid",
             "nullable": true
           },
           "name": {
             "type": "string",
             "nullable": true
+          },
+          "autH_basic_access": {
+            "type": "boolean"
+          },
+          "autH_show_c_footer": {
+            "type": "boolean"
           },
           "autH_configure_training_types": {
             "type": "boolean"
@@ -289,6 +294,12 @@
           "autH_training_history_full": {
             "type": "boolean"
           },
+          "autH_action_search": {
+            "type": "boolean"
+          },
+          "autH_action_share": {
+            "type": "boolean"
+          },
           "autH_dashboard_Statistics": {
             "type": "boolean"
           },
@@ -305,9 +316,6 @@
             "type": "boolean"
           },
           "autH_precom_manual": {
-            "type": "boolean"
-          },
-          "autH_show_c_footer": {
             "type": "boolean"
           }
         },
