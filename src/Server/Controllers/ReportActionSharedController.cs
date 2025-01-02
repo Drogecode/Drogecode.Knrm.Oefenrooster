@@ -32,7 +32,7 @@ public class ReportActionSharedController : ControllerBase
 
     [HttpPut]
     [Route("")]
-    [Authorize(Roles = AccessesNames.AUTH_basic_access)]
+    [Authorize(Roles = AccessesNames.AUTH_action_share)]
     public async Task<ActionResult<PutReportActionSharedResponse>> PutReportActionShared([FromBody] ReportActionSharedConfiguration body, CancellationToken clt = default)
     {
         try
@@ -55,6 +55,59 @@ public class ReportActionSharedController : ControllerBase
             return BadRequest();
         }
     }
+
+    [HttpGet]
+    [Route("all")]
+    [Authorize(Roles = AccessesNames.AUTH_action_share)]
+    public async Task<ActionResult<MultipleReportActionShareConfigurationResponse>> GetAllReportActionShared(CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var result = await _reportActionSharedService.GetAllReportActionSharedConfiguration(customerId, userId, clt);
+            return result;
+        }
+        catch (OperationCanceledException)
+        {
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in GetAllReportActionShared");
+            return BadRequest();
+        }
+    }
+    
+    [HttpDelete]
+    [Route("{itemId:guid}")]
+    [Authorize(Roles = AccessesNames.AUTH_action_share)]
+    public async Task<ActionResult<DeleteResponse>> DeleteReportActionShared(Guid itemId, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var result = await _reportActionSharedService.DeleteReportActionSharedConfiguration(itemId, customerId, userId, clt);
+            return result;
+        }
+        catch (OperationCanceledException)
+        {
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in DeleteReportActionShared");
+            return BadRequest();
+        }
+    }
+    
 
     [HttpGet]
     [Route("actions/{id:guid}/{count:int}/{skip:int}")]

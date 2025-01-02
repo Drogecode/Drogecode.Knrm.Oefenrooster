@@ -60,10 +60,7 @@
             }
             else if (_loading)
             {
-                <MudSkeleton/>
-                <MudSkeleton/>
-                <MudSkeleton/>
-                <MudSkeleton/>
+                <DrogeLoading />
             }
             <MudText Typo="Typo.h5">@L["Future trainings"]</MudText>
             @if (_trainings?.Trainings != null)
@@ -97,10 +94,7 @@
             }
             else if (_loading)
             {
-                <MudSkeleton/>
-                <MudSkeleton/>
-                <MudSkeleton/>
-                <MudSkeleton/>
+                <DrogeLoading />
             }
             <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_holidays">
                 @if (_futureHolidays != null)

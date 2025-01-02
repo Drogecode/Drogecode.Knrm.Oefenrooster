@@ -297,6 +297,9 @@
           "autH_action_search": {
             "type": "boolean"
           },
+          "autH_action_share": {
+            "type": "boolean"
+          },
           "autH_dashboard_Statistics": {
             "type": "boolean"
           },

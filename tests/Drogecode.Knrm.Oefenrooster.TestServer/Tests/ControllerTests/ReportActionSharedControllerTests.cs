@@ -23,24 +23,64 @@ public class ReportActionSharedControllerTests : BaseTest
         UserLinkedMailsController userLinkedMailsController,
         ReportActionSharedController reportActionSharedController) :
         base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController, reportActionSharedController)
+            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController,
+            reportActionSharedController)
     {
     }
 
     [Fact]
     public async Task PutReportActionSharedTest()
     {
-        var body = new ReportActionSharedConfiguration
-        {
-            SelectedUsers = [DefaultSettingsHelperMock.IdTaco],
-            Types = ["xUnit","MoreTests"],
-            Search = ["unhealthy"],
-            StartDate = DateTime.UtcNow.AddDays(-50),
-            EndDate = DateTime.UtcNow.AddDays(-5),
-            ValidUntil = DateTime.UtcNow.AddDays(100),
-        };
-        var result = await ReportActionSharedController.PutReportActionShared(body);
-        Assert.NotNull(result.Value?.NewId);
-        result.Value.Success.Should().BeTrue();
+        var id = await AddActionShared(
+            ["xUnit", "MoreTests"],
+            ["unhealthy"],
+            DateTime.UtcNow.AddDays(100),
+            DateTime.UtcNow.AddDays(-50),
+            DateTime.UtcNow.AddDays(-5));
+        id.Should().NotBe(Guid.Empty);
+    }
+
+    [Fact]
+    public async Task GetMultiple()
+    {
+        var put1 = await AddActionShared([], [], DateTime.UtcNow.AddDays(1));
+        var put2 = await AddActionShared([], [], DateTime.UtcNow.AddDays(-1));
+        var put3 = await AddActionShared([], [], DateTime.UtcNow.AddDays(10));
+        var getAll = await ReportActionSharedController.GetAllReportActionShared();
+        Assert.NotNull(getAll.Value?.ReportActionSharedConfiguration);
+        Assert.NotEmpty(getAll.Value.ReportActionSharedConfiguration);
+        getAll.Value.Success.Should().BeTrue();
+        getAll.Value.TotalCount.Should().Be(2);
+        getAll.Value.ReportActionSharedConfiguration.Should().Contain(x => x.Id == put1);
+        getAll.Value.ReportActionSharedConfiguration.Should().NotContain(x => x.Id == put2);
+        getAll.Value.ReportActionSharedConfiguration.Should().Contain(x => x.Id == put3);
+    }
+    
+    [Fact]
+    public async Task GetMultipleAndDeleteOne()
+    {
+        var put1 = await AddActionShared([], [], DateTime.UtcNow.AddDays(1));
+        var put2 = await AddActionShared([], [], DateTime.UtcNow.AddDays(-1));
+        var put3 = await AddActionShared([], [], DateTime.UtcNow.AddDays(10));
+        var getAll = await ReportActionSharedController.GetAllReportActionShared();
+        Assert.NotNull(getAll.Value?.ReportActionSharedConfiguration);
+        Assert.NotEmpty(getAll.Value.ReportActionSharedConfiguration);
+        getAll.Value.Success.Should().BeTrue();
+        getAll.Value.TotalCount.Should().Be(2);
+        getAll.Value.ReportActionSharedConfiguration.Should().Contain(x => x.Id == put1);
+        getAll.Value.ReportActionSharedConfiguration.Should().NotContain(x => x.Id == put2);
+        getAll.Value.ReportActionSharedConfiguration.Should().Contain(x => x.Id == put3);
+        
+        var delete3 = await ReportActionSharedController.DeleteReportActionShared(put3);
+        Assert.NotNull(delete3.Value?.Success);
+        Assert.True(delete3.Value.Success);
+        var getAllAgain = await ReportActionSharedController.GetAllReportActionShared();
+        Assert.NotNull(getAllAgain.Value?.ReportActionSharedConfiguration);
+        Assert.NotEmpty(getAllAgain.Value.ReportActionSharedConfiguration);
+        getAllAgain.Value.Success.Should().BeTrue();
+        getAllAgain.Value.TotalCount.Should().Be(1);
+        getAllAgain.Value.ReportActionSharedConfiguration.Should().Contain(x => x.Id == put1);
+        getAllAgain.Value.ReportActionSharedConfiguration.Should().NotContain(x => x.Id == put2);
+        getAllAgain.Value.ReportActionSharedConfiguration.Should().NotContain(x => x.Id == put3);
     }
 }

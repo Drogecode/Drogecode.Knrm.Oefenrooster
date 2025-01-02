@@ -3,6 +3,7 @@
 public class ReportActionSharedConfiguration
 {
     public Guid Id { get; set; }
+    public Guid? CreatedBy { get; set; }
     public List<Guid> SelectedUsers { get; set; } = [];
     public List<string>? Types { get; set; }
     public List<string>? Search { get; set; }

@@ -251,8 +251,8 @@ if (!runningInContainers)
         var fileName = $"{controllerName}.json";
         using var stream = new MemoryStream();
         swaggerDoc.SerializeAsJson(stream, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
-        var asstring = Encoding.UTF8.GetString(stream.ToArray());
-        File.WriteAllText(Path.Combine("../ClientGenerator/OpenAPIs", fileName), asstring);
+        var asString = Encoding.UTF8.GetString(stream.ToArray());
+        File.WriteAllText(Path.Combine("../ClientGenerator/OpenAPIs", fileName), asString);
     }
 }
 #endif

@@ -19,13 +19,29 @@ public class ReportActionSharedService : IReportActionSharedService
         _logger = logger;
     }
 
+    public async Task<MultipleReportActionShareConfigurationResponse> GetAllReportActionSharedConfiguration(Guid customerId, Guid userId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var query = _database.ReportActionShares.Where(x=>x.CustomerId == customerId && x.ValidUntil >= DateTime.UtcNow).Select(x=>x.ToDrogecode());
+        var result = new MultipleReportActionShareConfigurationResponse
+        {
+            ReportActionSharedConfiguration = await query.ToListAsync(clt),
+            TotalCount = await query.CountAsync(clt),
+            Success = true
+        };
+        
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
     public async Task<PutReportActionSharedResponse> PutReportActionShared(ReportActionSharedConfiguration sharedConfiguration, Guid customerId, Guid userId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new PutReportActionSharedResponse();
-        var password = SecretHelper.CreateSecret(12);
+        var password = SecretHelper.CreateSecret(22);
         sharedConfiguration.Id = Guid.NewGuid();
-        var dbShared = sharedConfiguration.ToDb();
+        var dbShared = sharedConfiguration.ToDb(_logger);
         dbShared.CreatedOn = DateTime.UtcNow;
         dbShared.CreatedBy = userId;
         dbShared.CustomerId = customerId;
@@ -61,5 +77,21 @@ public class ReportActionSharedService : IReportActionSharedService
         }
 
         return response;
+    }
+
+    public async Task<DeleteResponse> DeleteReportActionSharedConfiguration(Guid itemId, Guid customerId, Guid userId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new DeleteResponse();
+        var reportActionShared = await _database.ReportActionShares.Where(x => x.CustomerId == customerId && x.Id == itemId).FirstOrDefaultAsync(clt);
+        if (reportActionShared is not null)
+        {
+            reportActionShared.ValidUntil = DateTime.UtcNow;
+            _database.ReportActionShares.Update(reportActionShared);
+            result.Success = await _database.SaveChangesAsync(clt) > 0;
+        }
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
     }
 }

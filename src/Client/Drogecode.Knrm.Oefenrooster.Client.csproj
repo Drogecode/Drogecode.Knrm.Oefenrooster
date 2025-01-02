@@ -64,6 +64,7 @@
 	
 	<ItemGroup>
 	  <_ContentIncludedByDefault Remove="Pages\Planner\Components\CalendarBaseCard.razor" />
+	  <_ContentIncludedByDefault Remove="Components\DrogeCode\DataGrid\DateTimeTemplate.razor" />
 	</ItemGroup>
 	
 	<ItemGroup>

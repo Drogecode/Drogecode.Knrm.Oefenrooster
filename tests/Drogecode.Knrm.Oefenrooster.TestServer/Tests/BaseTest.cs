@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportActionShared;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Drogecode.Knrm.Oefenrooster.TestServer.Seeds;
@@ -313,6 +314,23 @@ public class BaseTest : IAsyncLifetime
         var result = await DefaultScheduleController.PutDefaultSchedule(body);
         Assert.NotNull(result?.Value?.NewId);
         return result.Value!.NewId.Value;
+    }
+
+    protected async Task<Guid> AddActionShared(List<string>? types, List<string>? search, DateTime? validUntil = null, DateTime? startDate = null, DateTime? endDate = null )
+    {
+        var body = new ReportActionSharedConfiguration
+        {
+            SelectedUsers = [DefaultSettingsHelperMock.IdTaco],
+            Types = types,
+            Search = search,
+            ValidUntil = validUntil,
+            StartDate = startDate,
+            EndDate = endDate,
+        };
+        var result = await ReportActionSharedController.PutReportActionShared(body);
+        Assert.NotNull(result.Value?.NewId);
+        result.Value.Success.Should().BeTrue();
+        return result.Value.NewId.Value;
     }
 
     public Task DisposeAsync()

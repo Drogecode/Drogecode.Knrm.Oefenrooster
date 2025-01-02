@@ -219,10 +219,7 @@ public static class GenerateUserRole
         sb.AppendLine("}");
         sb.AppendLine("else if (_userRole is null)");
         sb.AppendLine("{");
-        sb.AppendLine("    <MudSkeleton/>");
-        sb.AppendLine("    <MudSkeleton/>");
-        sb.AppendLine("    <MudSkeleton/>");
-        sb.AppendLine("    <MudSkeleton/>");
+        sb.AppendLine("    <DrogeLoading />");
         sb.AppendLine("}");
         return sb.ToString();
     }

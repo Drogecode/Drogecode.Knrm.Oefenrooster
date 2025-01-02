@@ -162,4 +162,7 @@
   <data name="Implications" xml:space="preserve">
     <value>Implications</value>
   </data>
+  <data name="Active shares" xml:space="preserve">
+    <value>Active shares</value>
+  </data>
 </root>

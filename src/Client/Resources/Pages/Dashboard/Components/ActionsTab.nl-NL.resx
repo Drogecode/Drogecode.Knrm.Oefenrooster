@@ -162,4 +162,7 @@
   <data name="Implications" xml:space="preserve">
     <value>Gevolg</value>
   </data>
+  <data name="Active shares" xml:space="preserve">
+    <value>Active deel links</value>
+  </data>
 </root>

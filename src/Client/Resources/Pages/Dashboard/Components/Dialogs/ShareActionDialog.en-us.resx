@@ -29,4 +29,10 @@
     <data name="Create share url" xml:space="preserve">
         <value>Create share url</value>
     </data>
+    <data name="All active share urls" xml:space="preserve">
+        <value>All active share urls</value>
+    </data>
+    <data name="Failed to load" xml:space="preserve">
+        <value>Failed to load</value>
+    </data>
 </root>

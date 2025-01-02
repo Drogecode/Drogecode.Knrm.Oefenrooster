@@ -53,7 +53,7 @@
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\ReportActionShared.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ReportActionSharedClient">
 			<OutputPath>../Clients/ReportActionSharedClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.ReportActionShared,Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models.ReportActionShared,Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\ReportAction.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ReportActionClient">
 			<OutputPath>../Clients/ReportActionClient.g.cs</OutputPath>

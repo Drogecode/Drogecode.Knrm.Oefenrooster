@@ -155,6 +155,9 @@ public sealed partial class ActionsTab : IDisposable
     {
         var parameters = new DialogParameters<ShareActionDialog>
         {
+            { x => x.SelectedUsersAction, _selectedUsersAction.ToList() },
+            { x => x.SelectedActionTypes, _selectedActionTypes.ToList() },
+            { x => x.Search, _search },
         };
 
         var options = new DialogOptions()
@@ -163,7 +166,23 @@ public sealed partial class ActionsTab : IDisposable
             CloseButton = true,
             FullWidth = true
         };
-        var dialog = await DialogProvider.ShowAsync<ShareActionDialog>("", parameters, options);
+        await DialogProvider.ShowAsync<ShareActionDialog>("", parameters, options);
+    }
+
+    private async Task OpenShareListDialog()
+    {
+        var parameters = new DialogParameters<ShareActionListDialog>
+        {
+            { x => x.Users, Users }
+        };
+
+        var options = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.ExtraLarge,
+            CloseButton = true,
+            FullWidth = true
+        };
+        await DialogProvider.ShowAsync<ShareActionListDialog>("", parameters, options);
     }
 
     public void Dispose()

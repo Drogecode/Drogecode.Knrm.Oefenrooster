@@ -33,4 +33,10 @@
     <data name="Create share url" xml:space="preserve">
         <value>Maak een deel url aan</value>
     </data>
+    <data name="All active share urls" xml:space="preserve">
+        <value>Alle active deel url's</value>
+    </data>
+    <data name="Failed to load" xml:space="preserve">
+        <value>Ophalen van active url's niet gelukt</value>
+    </data>
 </root>

@@ -61,11 +61,29 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Component
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alle active deel url&apos;s.
+        /// </summary>
+        internal static string All_active_share_urls {
+            get {
+                return ResourceManager.GetString("All active share urls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maak een deel url aan.
         /// </summary>
         internal static string Create_share_url {
             get {
                 return ResourceManager.GetString("Create share url", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ophalen van active url&apos;s niet gelukt.
+        /// </summary>
+        internal static string Failed_to_load {
+            get {
+                return ResourceManager.GetString("Failed to load", resourceCulture);
             }
         }
         
