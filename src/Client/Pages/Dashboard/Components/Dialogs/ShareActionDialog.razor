@@ -1,0 +1,22 @@
+﻿<MudDialog>
+    <TitleContent>
+        @L["Create share url"]
+    </TitleContent>
+    <DialogContent>
+        <MudDatePicker Label="@LApp["ValidUntil"]" @bind-Date="_sharedConfiguration.ValidUntil" Required Disabled="_saved"/>
+        <MudDatePicker Label="@L["Reports from"]" @bind-Date="_sharedConfiguration.StartDate" Required Disabled="_saved"/>
+        <MudDatePicker Label="@L["Reports until"]" @bind-Date="_sharedConfiguration.EndDate" Required Disabled="_saved"/>
+        @if (_passwoord is not null)
+        {
+            <CopyToClipboard Label="@L["Passwoord"]" Text="@_passwoord"/>
+        }
+        @if (_newId is not null)
+        {
+            <CopyToClipboard Label="@L["Url"]" Text="@(Navigation.BaseUri + "external/actions/" + _newId)"/>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="()=>MudDialog.Cancel()">@LApp["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit" Disabled="_saved">@LApp["Ok"]</MudButton>
+    </DialogActions>
+</MudDialog>

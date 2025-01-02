@@ -27,7 +27,7 @@
             </MudItem>
             <AuthorizeView Roles="@AccessesNames.AUTH_action_share">
                 <MudItem xs="12" md="5" Class="hidden lg:block">
-                    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Share" Color="Color.Primary">@LApp["Share"]</MudButton>
+                    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Share" Color="Color.Primary" OnClick="OpenShareDialog">@LApp["Share"]</MudButton>
                 </MudItem>
             </AuthorizeView>
         </MudGrid>

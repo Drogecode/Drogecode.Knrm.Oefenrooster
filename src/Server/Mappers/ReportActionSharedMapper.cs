@@ -12,7 +12,7 @@ public static class ReportActionSharedMapper
             Id = configuration.Id,
             SelectedUsers = configuration.SelectedUsers,
             Types = configuration.Types,
-            Search = configuration.Search,
+            Search =  configuration.Search,
             StartDate = configuration.StartDate,
             EndDate = configuration.EndDate,
             ValidUntil = configuration.ValidUntil,

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components.Dialogs;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
@@ -14,6 +15,7 @@ public sealed partial class ActionsTab : IDisposable
     [Inject, NotNull] private IStringLocalizer<ActionsTab>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
     [Inject, NotNull] private IStringLocalizer<DateToString>? LDateToString { get; set; }
+    [Inject, NotNull] private IDialogService? DialogProvider { get; set; }
     [Inject, NotNull] private ReportActionRepository? ReportActionRepository { get; set; }
     [Inject, NotNull] private IReportActionSharedClient? ReportActionSharedClient { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
@@ -147,6 +149,21 @@ public sealed partial class ActionsTab : IDisposable
         await UpdateReportActions(skip);
         _busy = false;
         StateHasChanged();
+    }
+
+    private async Task OpenShareDialog()
+    {
+        var parameters = new DialogParameters<ShareActionDialog>
+        {
+        };
+
+        var options = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.Large,
+            CloseButton = true,
+            FullWidth = true
+        };
+        var dialog = await DialogProvider.ShowAsync<ShareActionDialog>("", parameters, options);
     }
 
     public void Dispose()

@@ -1,5 +1,9 @@
-﻿<MudPaper Class="pa-4 inline-flex" Width="100%" MaxWidth="800px">
-    <MudTextField Value="@Text" ReadOnly="true" />
+﻿<MudPaper Class="pa-4 inline-flex space-x-2" Width="100%" MaxWidth="800px">
+    @if (Label is not null)
+    {
+        <MudText>@Label</MudText>
+    }
+    <MudTextField Value="@Text" ReadOnly="true"/>
     <MudButton OnClick="CopyTextToClipboard">@L["Copy"]</MudButton>
 </MudPaper>
 
