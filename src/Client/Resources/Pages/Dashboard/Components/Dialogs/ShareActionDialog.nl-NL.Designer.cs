@@ -79,6 +79,15 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Component
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Aangemaakt door.
+        /// </summary>
+        internal static string Created_by {
+            get {
+                return ResourceManager.GetString("Created by", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ophalen van active url&apos;s niet gelukt.
         /// </summary>
         internal static string Failed_to_load {

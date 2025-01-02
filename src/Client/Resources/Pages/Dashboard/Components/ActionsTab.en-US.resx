@@ -165,4 +165,7 @@
   <data name="Active shares" xml:space="preserve">
     <value>Active shares</value>
   </data>
+  <data name="No reports found" xml:space="preserve">
+    <value>No reports found</value>
+  </data>
 </root>

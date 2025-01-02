@@ -16,7 +16,7 @@
                                          MultiSelection="_multiSelection"/>
                 }
                 <AuthorizeView Roles="@AccessesNames.AUTH_action_search">
-                    <MudTextField T="string?" Label="@LApp["Search"]" Value="@_search" ValueChanged="@SearchChanged"/>
+                    <MudTextField T="string?" Disabled="_busy" Label="@LApp["Search"]" Value="@_search" ValueChanged="@SearchChanged"/>
                 </AuthorizeView>
                 <MudSelect T="string" Disabled="_busy" Label="@L["Type"]" SelectedValues="_selectedActionTypes" SelectedValuesChanged="SelectedActionChanged" Clearable="true" MultiSelection="true">
                     @foreach (var type in _actionTypes.OrderBy(x => x))
@@ -120,7 +120,11 @@
         }
     }
 }
+else if (_reportActions is not null)
+{
+    <MudText Typo="Typo.h4">@L["No reports found"]</MudText>
+}
 else
 {
-    <DrogeLoading />
+    <DrogeLoading/>
 }

@@ -122,13 +122,13 @@ public class ReportActionSharedController : ControllerBase
             if (config is null)
             {
                 _logger.LogWarning("GetReportActionSharedConfiguration requested but not found for customer `{customerId}` with id `{id}`", customerId, id);
-                return Ok();
+                return new MultipleReportActionsResponse();
             }
 
             if (config.ValidUntil < DateTime.UtcNow)
             {
                 _logger.LogWarning("GetReportActionSharedConfiguration requested for expired report `{customerId}` with id `{id}`", customerId, id);
-                return Ok();
+                return new MultipleReportActionsResponse();
             }
             var result = await _reportActionService.GetListActionsUser(config.SelectedUsers, config.Types, config.Search, count, skip, customerId, true, config.StartDate, config.EndDate, clt);
             _logger.LogInformation("External requested loading actions {count} skipping {skip} for user {users}", count, skip, config.SelectedUsers);
@@ -136,7 +136,7 @@ public class ReportActionSharedController : ControllerBase
         }
         catch (OperationCanceledException)
         {
-            return Ok();
+            return new MultipleReportActionsResponse();
         }
         catch (Exception ex)
         {

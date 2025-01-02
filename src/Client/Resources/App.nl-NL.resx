@@ -219,4 +219,10 @@
   <data name="Share" xml:space="preserve">
     <value>Delen</value>
   </data>
+  <data name="Users" xml:space="preserve">
+    <value>Gebruikers</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
 </root>

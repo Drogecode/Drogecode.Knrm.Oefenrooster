@@ -39,4 +39,7 @@
     <data name="Failed to load" xml:space="preserve">
         <value>Ophalen van active url's niet gelukt</value>
     </data>
+    <data name="Created by" xml:space="preserve">
+        <value>Aangemaakt door</value>
+    </data>
 </root>

@@ -6,13 +6,16 @@
         <MudDatePicker Label="@LApp["ValidUntil"]" @bind-Date="_sharedConfiguration.ValidUntil" Required Disabled="_saved"/>
         <MudDatePicker Label="@L["Reports from"]" @bind-Date="_sharedConfiguration.StartDate" Required Disabled="_saved"/>
         <MudDatePicker Label="@L["Reports until"]" @bind-Date="_sharedConfiguration.EndDate" Required Disabled="_saved"/>
-        @if (_passwoord is not null)
-        {
-            <CopyToClipboard Label="@L["Passwoord"]" Text="@_passwoord"/>
-        }
+        <MudTextField T="string?" Label="@LApp["Users"]" Value="@SelectedUsersAction?.ToFancyString()" Disabled="true" />
+        <MudTextField T="string?" Label="@LApp["Search"]" Value="@Search" Disabled="true" />
+        <MudTextField T="string?" Label="@LApp["Type"]" Value="@SelectedActionTypes?.ToFancyString()" Disabled="true" />
         @if (_newId is not null)
         {
             <CopyToClipboard Label="@L["Url"]" Text="@(Navigation.BaseUri + "external/actions/" + _newId)"/>
+        }
+        @if (_passwoord is not null)
+        {
+            <CopyToClipboard Label="@L["Passwoord"]" Text="@_passwoord"/>
         }
     </DialogContent>
     <DialogActions>

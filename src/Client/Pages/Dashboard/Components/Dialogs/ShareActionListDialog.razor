@@ -45,28 +45,12 @@
                     </TemplateColumn>
                     <TemplateColumn Title="@LApp["Search"]">
                         <CellTemplate>
-                            @if (context.Item?.Search is not null)
-                            {
-                                <div class="inline-flex space-x-1">
-                                    @for (var i = 0; i < context.Item.Search.Count; i++)
-                                    {
-                                        <p>@($"{context.Item.Search[i]}{(context.Item.Search.Count - 1 != i ? "," : "")}")</p>
-                                    }
-                                </div>
-                            }
+                            @context.Item?.Search?.ToFancyString()
                         </CellTemplate>
                     </TemplateColumn>
                     <TemplateColumn Title="@LApp["Type"]">
                         <CellTemplate>
-                            @if (context.Item?.Types is not null)
-                            {
-                                <div class="inline-flex space-x-1">
-                                    @for (var i = 0; i < context.Item.Types.Count; i++)
-                                    {
-                                        <p>@($"{context.Item.Types[i]}{(context.Item.Types.Count - 1 != i ? "," : "")}")</p>
-                                    }
-                                </div>
-                            }
+                            @context.Item?.Types?.ToFancyString()
                         </CellTemplate>
                     </TemplateColumn>
                     <TemplateColumn Title="@LApp["Users"]">
