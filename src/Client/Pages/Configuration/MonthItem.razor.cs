@@ -73,7 +73,7 @@ public sealed partial class MonthItem : IDisposable
             { x=> x.IsNew, isNew},
             { x=> x.Refresh, _refreshModel },
         };
-        DialogOptions options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        DialogOptions options = new DialogOptions() { FullScreen = true, FullWidth = true };
         DialogProvider.Show<MonthItemDialog>(isNew ? L["Patch month item"] : L["Edit month item"], parameters, options);
     }
 
