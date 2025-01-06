@@ -83,8 +83,8 @@ public sealed partial class EditTrainingDialog : IDisposable
             IsNew = false,
             DefaultId = Planner.DefaultId,
             Date = dateStartLocal.Date,
-            TimeStart = dateStartLocal.TimeOfDay,
-            TimeEnd = dateEndLocal.TimeOfDay,
+            TimeStart = dateStartLocal,
+            TimeEnd = dateEndLocal,
             Name = Planner.Name,
             RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
             CountToTrainingTarget = Planner.CountToTrainingTarget,
@@ -105,8 +105,8 @@ public sealed partial class EditTrainingDialog : IDisposable
         {
             Id = Planner.TrainingId,
             Date = dateStartLocal.Date,
-            TimeStart = dateStartLocal.TimeOfDay,
-            TimeEnd = dateEndLocal.TimeOfDay,
+            TimeStart = dateStartLocal,
+            TimeEnd = dateEndLocal,
             IsNew = false,
             Name = Planner.Name,
             Description = latestVersion?.Description,
@@ -128,10 +128,8 @@ public sealed partial class EditTrainingDialog : IDisposable
         }
         else
         {
-            var dateEnd = DateTime.SpecifyKind(
-                (_training.Date ?? throw new ArgumentNullException("_training.Date", "Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException($"TimeEnd is null")),
-                DateTimeKind.Local).ToUniversalTime();
-            if (dateEnd >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
+            if (_training.Date is null | _training.TimeEnd is null) throw new ArgumentException("Date or time start is null");
+            if (_training.Date >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
             {
                 _canEdit = true;
             }
@@ -159,7 +157,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         return L["To far in the past"];
     }
 
-    private string? StartBeforeEndValidation(TimeSpan? timeStart)
+    private string? StartBeforeEndValidation(DateTime? timeStart)
     {
         if (_training?.TimeEnd < timeStart)
         {
@@ -174,7 +172,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         return null;
     }
 
-    private string? EndAfterStartValidation(TimeSpan? timeEnd)
+    private string? EndAfterStartValidation(DateTime? timeEnd)
     {
         if (_training?.TimeStart >= timeEnd)
         {
@@ -261,9 +259,10 @@ public sealed partial class EditTrainingDialog : IDisposable
             return;
         }
 
-        var dateStart = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeStart ?? throw new ArgumentNullException("TimeStart is null")),
-            DateTimeKind.Local).ToUniversalTime();
-        var dateEnd = DateTime.SpecifyKind((_training.Date ?? throw new ArgumentNullException("Date is null")) + (_training.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null")),
+        if (_training.Date is null || _training.TimeStart is null || _training.TimeEnd is null) throw new ArgumentException("_training.Date is null || _training.TimeStart is null || _training.TimeEnd is null");
+        var dateStart = DateTime.SpecifyKind(_training.Date.Value.AddHours(_training.TimeStart.Value.Hour).AddMinutes(_training.TimeStart.Value.Minute).AddSeconds(_training.TimeStart.Value.Second)
+            , DateTimeKind.Local).ToUniversalTime();
+        var dateEnd = DateTime.SpecifyKind(_training.Date.Value.AddHours(_training.TimeEnd.Value.Hour).AddMinutes(_training.TimeEnd.Value.Minute).AddSeconds(_training.TimeEnd.Value.Second),
             DateTimeKind.Local).ToUniversalTime();
         if (Planner is null)
         {
