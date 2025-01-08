@@ -140,18 +140,13 @@ public sealed partial class ScheduleCalendar : IDisposable
 
     private async Task HandleNewTraining(EditTraining newTraining)
     {
-        if (newTraining.Date is null) return;
-        if (newTraining.TimeStart is null || newTraining.TimeEnd is null) throw new ArgumentException("_training.Date is null || _training.TimeStart is null || _training.TimeEnd is null");
-        var dateStart = DateTime.SpecifyKind(newTraining.Date.Value.AddHours(newTraining.TimeStart.Value.Hour).AddMinutes(newTraining.TimeStart.Value.Minute).AddSeconds(newTraining.TimeStart.Value.Second)
-            , DateTimeKind.Local).ToUniversalTime();
-        var dateEnd = DateTime.SpecifyKind(newTraining.Date.Value.AddHours(newTraining.TimeEnd.Value.Hour).AddMinutes(newTraining.TimeEnd.Value.Minute).AddSeconds(newTraining.TimeEnd.Value.Second),
-            DateTimeKind.Local).ToUniversalTime();
+        if (newTraining.Date == null) return;
         var asTraining = new PlannedTraining
         {
             TrainingId = newTraining.Id,
             Name = newTraining.Name,
-            DateStart = dateStart,
-            DateEnd = dateEnd,
+            DateStart = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Local).ToUniversalTime(),
+            DateEnd = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Local).ToUniversalTime(),
             RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId,
             ShowTime = newTraining.ShowTime,
             IsCreated = true,

@@ -34,24 +34,16 @@
                     <MudTextField T="string" Label="@L["Description - Markdown"]" @bind-Value="_training.Description" Lines="5" Counter="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION" Immediate="true"/>
                     <MudMarkdown Value="@_training.Description" />
                 </AuthorizeView>
-                @if (true)
-                {
-                    <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Validation="@(new Func<DateTime?, string?>(DateValidation))" Required Disabled="!_training.IsNew"/>
-                }
-                else
-                {
-                    // Keep this dead code around, who knows it will turn into a zombie
-                    <MudDateWheelPicker Label="@L["Date"]" @bind-value="_training.Date" DateView="DateView.Date" Validation="@(new Func<DateTime?, string?>(DateValidation))" Required/>
-                }
+                <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Validation="@(new Func<DateTime?, string?>(DateValidation))" Required Disabled="!_training.IsNew"/>
+
                 @if (!_training.ShowTime || _startedWithShowNoTime)
                 {
                     <MudSwitch Label="@L["Set time"]" @bind-Value="_training.ShowTime"/>
                 }
                 @if (_training.ShowTime)
                 {
-                    var minutes = new List<int>() { 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55 };
-                    <MudDateWheelPicker Label="@L["From"]" @bind-value="_training.TimeStart" DateView="DateView.Time" DateFormat="HH:mm" Validation="@(new Func<DateTime?, string?>(StartBeforeEndValidation))" Minutes="@minutes" Required/>
-                    <MudDateWheelPicker Label="@LApp["till"]" @bind-value="_training.TimeEnd" DateView="DateView.Time" DateFormat="HH:mm" Validation="@(new Func<DateTime?, string?>(EndAfterStartValidation))" Minutes="@minutes" Required/>
+                    <MudTimePicker Label="@L["From"]" @bind-Time="_training.TimeStart" Validation="@(new Func<TimeSpan?, string?>(StartBeforeEndValidation))" Required/>
+                    <MudTimePicker Label="@LApp["till"]" @bind-Time="_training.TimeEnd" Validation="@(new Func<TimeSpan?, string?>(EndAfterStartValidation))" Required/>
                 }
                 @if (_currentTrainingType?.IsActive == false)
                 {
