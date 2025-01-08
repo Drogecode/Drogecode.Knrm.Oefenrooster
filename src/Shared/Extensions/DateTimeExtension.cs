@@ -27,7 +27,7 @@ public static class DateTimeExtension
     
     public static long ConvertToTimestamp(this DateTime value)
     {
-        TimeSpan elapsedTime = value - Epoch;
+        var elapsedTime = value - Epoch;
         return (long) elapsedTime.TotalSeconds * 1000;
     }
 }

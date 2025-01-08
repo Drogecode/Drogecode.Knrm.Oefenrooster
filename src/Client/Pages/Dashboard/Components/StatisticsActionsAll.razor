@@ -30,7 +30,7 @@
     @if (_prios is not null)
     {
         <MudSelect T="string?" Label="@L["Prio"]" SelectedValues="_selectedPrio" SelectedValuesChanged="PrioChanged" Clearable="true" MultiSelection="true">
-            @foreach (var prio in _prios)
+            @foreach (var prio in _prios.OrderBy(x=>x))
             {
                 <MudSelectItem T="string?" Value="@prio">@prio</MudSelectItem>
             }

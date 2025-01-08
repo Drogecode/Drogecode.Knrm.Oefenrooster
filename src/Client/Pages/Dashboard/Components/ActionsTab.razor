@@ -1,5 +1,4 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
-@using Drogecode.Knrm.Oefenrooster.Client.Extensions
 @if (_reportActions?.Actions is not null)
 {
     @if (EnableOptions)
@@ -59,7 +58,6 @@
                     </MudCardHeader>
                     <MudCardContent>
                         <MudMarkdown Value="@context.Item.Description"/>
-
                         @if (EnableOptions)
                         {
                             <MudText Typo="Typo.h6">@L["Crew"]</MudText>

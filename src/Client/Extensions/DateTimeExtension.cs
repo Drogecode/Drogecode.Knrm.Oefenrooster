@@ -8,16 +8,6 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Extensions;
 
 public static partial class DateTimeExtension
 {
-    public static bool InPast(this DateTime dateTime)
-    {
-        if (dateTime.Kind == DateTimeKind.Utc)
-        {
-            return dateTime.CompareTo(DateTime.UtcNow.Date) <= 0;
-        }
-
-        return dateTime.CompareTo(DateTime.Now.Date) <= 0;
-    }
-
     public static string ToNiceString(this DateTime dateTime, IStringLocalizer<DateToString> localizer, bool isUtc = true, bool showDayOfWeek = false, bool showDate = true, bool showtime = true)
     {
         var dateTimeNotNull = isUtc ? dateTime.ToLocalTime() : dateTime;

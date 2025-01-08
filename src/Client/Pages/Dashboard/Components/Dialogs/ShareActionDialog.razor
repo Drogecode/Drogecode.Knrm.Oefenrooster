@@ -13,9 +13,9 @@
         {
             <CopyToClipboard Label="@L["Url"]" Text="@(Navigation.BaseUri + "external/actions/" + _newId)"/>
         }
-        @if (_passwoord is not null)
+        @if (_password is not null)
         {
-            <CopyToClipboard Label="@L["Passwoord"]" Text="@_passwoord"/>
+            <CopyToClipboard Label="@L["Password"]" Text="@_password"/>
         }
     </DialogContent>
     <DialogActions>

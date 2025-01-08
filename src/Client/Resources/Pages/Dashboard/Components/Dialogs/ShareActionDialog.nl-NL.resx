@@ -21,9 +21,6 @@
     <data name="Reports from" xml:space="preserve">
         <value>Raporten vanaf</value>
     </data>
-    <data name="Passwoord" xml:space="preserve">
-        <value>Wachtwoord</value>
-    </data>
     <data name="Url" xml:space="preserve">
         <value>Url</value>
     </data>
@@ -41,5 +38,8 @@
     </data>
     <data name="Created by" xml:space="preserve">
         <value>Aangemaakt door</value>
+    </data>
+    <data name="Password" xml:space="preserve">
+        <value>Wachtwoord</value>
     </data>
 </root>

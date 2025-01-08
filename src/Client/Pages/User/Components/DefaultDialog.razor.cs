@@ -15,15 +15,15 @@ public sealed partial class DefaultDialog : IDisposable
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private DefaultScheduleRepository _defaultScheduleRepository { get; set; } = default!;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
-    [Parameter] public DefaultUserSchedule DefaultUserSchedule { get; set; } = default!;
+    [Parameter] public DefaultUserSchedule? DefaultUserSchedule { get; set; } = default!;
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool? IsNew { get; set; }
     [Parameter] public Guid? DefaultId { get; set; }
     private CancellationTokenSource _cls = new();
    private void Cancel() => MudDialog.Cancel();
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
-        if (IsNew == true)
+        if (IsNew == true || DefaultUserSchedule is null)
         {
             DefaultUserSchedule = new DefaultUserSchedule();
         }
@@ -34,7 +34,7 @@ public sealed partial class DefaultDialog : IDisposable
     }
     private async Task Submit()
     {
-        if (DefaultUserSchedule.ValidFromUser is null || DefaultUserSchedule.ValidUntilUser is null) return;
+        if (DefaultUserSchedule?.ValidFromUser is null || DefaultUserSchedule.ValidUntilUser is null) return;
         if (DefaultId is null)
         {
             Console.WriteLine("DefaultId is null");
@@ -49,7 +49,7 @@ public sealed partial class DefaultDialog : IDisposable
             Assigned = DefaultUserSchedule.Assigned,
             Availability = DefaultUserSchedule.Availability,
         };
-        var result = await _defaultScheduleRepository.PatchDefaultScheduleForUser(body, _cls.Token);
+        await _defaultScheduleRepository.PatchDefaultScheduleForUser(body, _cls.Token);
         if (Refresh is not null)
             await Refresh.CallRequestRefreshAsync();
         MudDialog.Close(DialogResult.Ok(true));
