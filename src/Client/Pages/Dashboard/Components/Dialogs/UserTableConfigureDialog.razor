@@ -20,7 +20,7 @@
             </MudSelect>
             @if (Boats is not null)
             {
-                <MudSelect T="string" Label="@L["boats"]" @bind-SelectedValues="SelectedBoats" Clearable="true" MultiSelection="true">
+                <MudSelect T="string" Label="@L["Boats"]" @bind-SelectedValues="SelectedBoats" Clearable="true" MultiSelection="true">
                     @foreach (var boat in Boats.OrderBy(x=>x))
                     {
                         <MudSelectItem T="string" Value="@boat">@boat</MudSelectItem>
