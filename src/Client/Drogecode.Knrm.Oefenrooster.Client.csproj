@@ -10,7 +10,6 @@
 
 	<ItemGroup>
 	  <Content Remove="Pages\Planner\Components\CalendarBaseCard.razor" />
-	  <Content Remove="wwwroot\js\empty.ts" />
 	  <Content Remove="wwwroot\js\LocalStorageAccessor.ts" />
 	  <Content Update="wwwroot\colorscheme-fix.html">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -210,6 +209,10 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>ShareActionDialog.nl-NL.resx</DependentUpon>
 	  </Compile>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <TypeScriptCompile Remove="wwwroot\js\empty.ts" />
 	</ItemGroup>
 
 </Project>

@@ -195,7 +195,7 @@ public class ScheduleService : IScheduleService
         if (training.TrainingId == null || training.TrainingId == Guid.Empty)
         {
             dbTraining = await _database.RoosterTrainings.FirstOrDefaultAsync(x =>
-                x.CustomerId == customerId && x.RoosterDefaultId == training.DefaultId && x.DateStart == training.DateStart && x.DateEnd == training.DateEnd);
+                x.CustomerId == customerId && x.RoosterDefaultId == training.DefaultId && x.DateStart == training.DateStart && x.DateEnd == training.DateEnd, cancellationToken: clt);
             if (dbTraining == null)
             {
                 training.TrainingId = Guid.NewGuid();
