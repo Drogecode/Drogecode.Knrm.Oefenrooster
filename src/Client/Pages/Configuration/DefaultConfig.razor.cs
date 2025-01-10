@@ -35,7 +35,7 @@ public sealed partial class DefaultConfig : IDisposable
             { x => x.IsNew, isNew },
             { x => x.Refresh, _refreshModel },
         };
-        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var options = new DialogOptions() { FullScreen = true, FullWidth = true };
         return DialogProvider.ShowAsync<DefaultConfigDialog>(isNew ? L["Put default schedule"] : L["Edit default schedule"], parameters, options);
     }
 

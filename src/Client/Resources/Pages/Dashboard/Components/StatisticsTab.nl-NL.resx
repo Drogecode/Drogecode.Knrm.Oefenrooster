@@ -114,4 +114,10 @@
     <data name="Count / full hours / exact time (d:hh:mm)" xml:space="preserve">
         <value>Aantal / hele uren / exacte tijd (d:hh:mm)</value>
     </data>
+    <data name="Total: €{0}" xml:space="preserve">
+        <value>Totaal: €{0}</value>
+    </data>
+    <data name="Boats" xml:space="preserve">
+        <value>Boten</value>
+    </data>
 </root>

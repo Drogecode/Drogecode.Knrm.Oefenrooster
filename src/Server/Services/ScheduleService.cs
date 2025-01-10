@@ -35,17 +35,17 @@ public class ScheduleService : IScheduleService
         var result = new MultipleTrainingsResponse();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
-        var defaults = await _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
+        var defaults = await _database.RoosterDefaults.AsNoTracking().Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
-        var defaultAveUser = await _database.UserDefaultAvailables.Include(x => x.DefaultGroup)
+        var defaultAveUser = await _database.UserDefaultAvailables.AsNoTracking().Include(x => x.DefaultGroup)
             .Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
-        var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
+        var userHolidays = await _database.UserHolidays.AsNoTracking().Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
-        var trainings = _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).OrderBy(x => x.DateStart);
-        var availables = await _database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate)
+        var trainings = _database.RoosterTrainings.AsNoTracking().Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).OrderBy(x => x.DateStart);
+        var availables = await _database.RoosterAvailables.AsNoTracking().Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
-        var roosterTrainingTypes = await _database.RoosterTrainingTypes.Where(x => x.CustomerId == customerId)
+        var roosterTrainingTypes = await _database.RoosterTrainingTypes.AsNoTracking().Where(x => x.CustomerId == customerId)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
 
         var scheduleDate = DateOnly.FromDateTime(startDate);

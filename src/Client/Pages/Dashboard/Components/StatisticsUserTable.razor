@@ -1,7 +1,7 @@
 ﻿@if (_distinctTypes is not null && _years is not null)
 {
     <MudButton Color="Color.Primary" StartIcon="@Icons.Material.Filled.DisplaySettings" OnClick="OpenConfigureDialog">@L["Selection"]</MudButton>
-    @if (_users is not null && _selectedTypes?.Any() == true)
+    @if (_users is not null && _selectedTypes?.Any() == true && !_loading)
     {
         @if (_showHistoricalIncorrectWarning)
         {
@@ -9,13 +9,18 @@
         }
 
         <MudText>@L["Count / full hours / exact time (d:hh:mm)"]</MudText>
+        if (_fullCompensation is not null)
+        {
+            <MudText>@L["Total: €{0}", _fullCompensation * _compensation]</MudText>
+        }
+
         <MudTable Hover="true" Breakpoint="Breakpoint.None"
                   Items="@_users.OrderBy(x => _functions?.FirstOrDefault(y => y.Id == x.UserFunctionId)?.Order).ThenBy(x => x.Name)"
                   GroupBy="@_groupBy"
                   GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
                   GroupFooterClass="mb-4"
                   FixedHeader="true"
-                  Height="@(_showHistoricalIncorrectWarning ? "calc(100vh - 305px )" : "calc(100vh - 255px )")"
+                  Height="@($"calc(100vh - {_tableHeight}px )")"
                   Dense="true"
                   Bordered="true">
             <HeaderContent>
@@ -90,6 +95,10 @@
                 }
             </RowTemplate>
         </MudTable>
+    }
+    else if (_loading)
+    {
+        <DrogeLoading />
     }
     else
     {

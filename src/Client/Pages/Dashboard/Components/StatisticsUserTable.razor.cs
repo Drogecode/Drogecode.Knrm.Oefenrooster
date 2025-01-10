@@ -27,14 +27,17 @@ public partial class StatisticsUserTable : IDisposable
     private List<int> _selectedYear = [];
     private decimal _compensation = 1.25m;
     private bool _showHistoricalIncorrectWarning = false;
-
+    private bool _loading = false;
+    private int? _fullCompensation;
+    private int _tableHeight = 255;
+    
     private TableGroupDefinition<DrogeUser> _groupBy = new()
     {
         GroupName = "Group",
         Indentation = false,
         Expandable = true,
         IsInitiallyExpanded = true,
-        Selector = (e) => e.UserFunctionId
+        Selector = (user) => user.UserFunctionId ?? Guid.Empty
     };
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -107,30 +110,36 @@ public partial class StatisticsUserTable : IDisposable
         };
         var dialog = await DialogProvider.ShowAsync<UserTableConfigureDialog>("", parameters, options);
         var result = await dialog.Result;
-        if (result?.Canceled == false)
+        if (result is { Canceled: false, Data: StatisticsUserTableConfigureSettings data })
         {
-            if (result.Data is StatisticsUserTableConfigureSettings data)
-            {
-                _selectedTypes = data.SelectedTypes.ToList();
-                _selectedYear = data.SelectedYear.ToList();
-                if (data.SelectedBoats is not null)
-                    _selectedBoats = data.SelectedBoats.ToList();
-                else
-                    _selectedBoats = null;
-                _compensation = data.Compensation;
-                _showHistoricalIncorrectWarning = _selectedYear.FirstOrDefault() <= 2021;
-                await TypeChanged();
-                StateHasChanged();
-            }
+            _loading = true;
+            StateHasChanged();
+            _tableHeight = 255;
+            _selectedTypes = data.SelectedTypes.ToList();
+            _selectedYear = data.SelectedYear.ToList();
+            _selectedBoats = data.SelectedBoats?.ToList();
+            _compensation = data.Compensation;
+            _showHistoricalIncorrectWarning = _selectedYear.FirstOrDefault() <= 2021;
+            if (_showHistoricalIncorrectWarning)
+                _tableHeight += 50;
+            await TypeChanged();
+            _loading = false;
+            StateHasChanged();
         }
     }
 
     private async Task TypeChanged()
     {
         if (_selectedTypes is null) return;
+        await SetAnalyzeHours();
+        CalculateFullCompensation();
+    }
+
+    private async Task SetAnalyzeHours()
+    {
         _analyzeHours = [];
         var year = _selectedYear.FirstOrDefault();
-        foreach (var types in _selectedTypes.Where(x => x?.Type is not null))
+        foreach (var types in _selectedTypes!.Where(x => x?.Type is not null))
         {
             switch (types!.From)
             {
@@ -152,6 +161,17 @@ public partial class StatisticsUserTable : IDisposable
                     break;
             }
         }
+    }
+
+    private void CalculateFullCompensation()
+    {
+        _fullCompensation = 0;
+        foreach (var analyzeHour in _analyzeHours!.Where(x => _users?.Any(y => y.Id == x.UserId) == true))
+        {
+            _fullCompensation += analyzeHour.FullHours;
+        }
+
+        _tableHeight += 24;
     }
 
     public void Dispose()

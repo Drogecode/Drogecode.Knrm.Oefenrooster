@@ -99,9 +99,9 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Dashboard.Component
         /// <summary>
         ///   Looks up a localized string similar to Wachtwoord.
         /// </summary>
-        internal static string Passwoord {
+        internal static string Password {
             get {
-                return ResourceManager.GetString("Passwoord", resourceCulture);
+                return ResourceManager.GetString("Password", resourceCulture);
             }
         }
         

@@ -67,6 +67,10 @@ public class TrainingTypesController : ControllerBase
             }
             return result;
         }
+        catch (OperationCanceledException)
+        {
+            return Ok();
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in GetTrainingTypes");
@@ -83,6 +87,10 @@ public class TrainingTypesController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var result = await _trainingTypesService.GetById(id, customerId, clt);
             return result;
+        }
+        catch (OperationCanceledException)
+        {
+            return Ok();
         }
         catch (Exception ex)
         {

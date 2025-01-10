@@ -16,15 +16,15 @@ public partial class ShareActionDialog : IDisposable
     [Parameter] public List<string>? SelectedActionTypes { get; set; }
     [Parameter] public  string? Search {get; set;}
 
-    private ReportActionSharedConfiguration _sharedConfiguration = new ReportActionSharedConfiguration
+    private readonly ReportActionSharedConfiguration _sharedConfiguration = new ReportActionSharedConfiguration
     {
         StartDate = DateTime.UtcNow.AddYears(-1),
         EndDate = DateTime.UtcNow,
         ValidUntil = DateTime.UtcNow.AddMonths(1)
     };
 
-    private CancellationTokenSource _cls = new();
-    private string? _passwoord = null;
+    private readonly CancellationTokenSource _cls = new();
+    private string? _password = null;
     private Guid? _newId = null;
     private bool _saved = false;
 
@@ -45,7 +45,7 @@ public partial class ShareActionDialog : IDisposable
         var putResponse = await ReportActionSharedClient.PutReportActionSharedAsync(_sharedConfiguration);
         if (putResponse is not null)
         {
-            _passwoord = putResponse.Password;
+            _password = putResponse.Password;
             _newId = putResponse.NewId;
             _saved = putResponse.Success;
         }

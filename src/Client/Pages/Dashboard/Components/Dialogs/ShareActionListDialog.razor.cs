@@ -15,7 +15,7 @@ public partial class ShareActionListDialog : IDisposable
     [CascadingParameter, NotNull] IMudDialogInstance? MudDialog { get; set; }
     [Parameter] public List<DrogeUser>? Users { get; set; }
 
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private MultipleReportActionShareConfigurationResponse? _configurationResponse = null;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -47,7 +47,7 @@ public sealed partial class DayItem : IDisposable
             { x => x.Functions, _functions },
             { x => x.Refresh, _refreshModel },
         };
-        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var options = new DialogOptions() { FullScreen = true, FullWidth = true };
         return DialogProvider.ShowAsync<DayItemDialog>(L["Edit day item"], parameters, options);
     }
 
