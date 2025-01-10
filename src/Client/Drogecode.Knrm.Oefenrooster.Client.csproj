@@ -18,7 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Blazor-ApexCharts" Version="5.0.0" />
+		<PackageReference Include="Blazor-ApexCharts" Version="5.0.1" />
 		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 		<PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
 		<PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="8.0.0-preview.1" />
@@ -35,7 +35,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="MudBlazor" Version="8.0.0-preview.7" />
+		<PackageReference Include="MudBlazor" Version="8.0.0-rc.2" />
 		<PackageReference Include="MudBlazor.Markdown" Version="7.14.0" />
 	</ItemGroup>
 
