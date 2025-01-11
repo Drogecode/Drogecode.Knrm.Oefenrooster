@@ -14,4 +14,7 @@
     <data name="Add new role" xml:space="preserve">
         <value>Add new role</value>
     </data>
+    <data name="User roles" xml:space="preserve">
+        <value>User roles</value>
+    </data>
 </root>

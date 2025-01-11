@@ -138,4 +138,7 @@
   <data name="Forward webhooks" xml:space="preserve">
     <value>Stuur webhook door naar andre sites</value>
   </data>
+  <data name="PreCom alerts" xml:space="preserve">
+    <value>PreCom meldingen</value>
+  </data>
 </root>

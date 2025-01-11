@@ -138,4 +138,7 @@
   <data name="Forward webhooks" xml:space="preserve">
     <value>Forward webhooks</value>
   </data>
+  <data name="PreCom alerts" xml:space="preserve">
+    <value>PreCom alerts</value>
+  </data>
 </root>

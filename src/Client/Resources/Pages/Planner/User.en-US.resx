@@ -120,4 +120,7 @@
   <data name="Click user to view" xml:space="preserve">
     <value>Click user to view</value>
   </data>
+  <data name="Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
 </root>

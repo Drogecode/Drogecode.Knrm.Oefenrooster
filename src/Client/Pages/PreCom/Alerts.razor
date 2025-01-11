@@ -1,7 +1,8 @@
 ﻿@page "/precom/alerts"
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom
 @attribute [Authorize]
-<MudText Typo="Typo.h5">Precom alerts</MudText>
+<PageTitle>@L["PreCom alerts"]</PageTitle>
+<MudText Typo="Typo.h5">@L["PreCom alerts"]</MudText>
 
 @if (_alerts?.PreComAlerts is not null)
 {

@@ -149,6 +149,7 @@ public static class GenerateUserRole
         
         sb.AppendLine("@page \"/configuration/user-roles/edit/{Id:guid}\"");
         sb.AppendLine("@page \"/configuration/user-roles/add/\"");
+        sb.AppendLine("<PageTitle>@L[\"User role\"]</PageTitle>");
         sb.AppendLine("@if (_userRole?.Role is not null)");
         sb.AppendLine("{");
         sb.AppendLine("    <MudPaper Class=\"pa-4\" MaxWidth=\"800px\">");

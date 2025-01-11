@@ -23,4 +23,7 @@
     <data name="Users in this role" xml:space="preserve">
         <value>Users in this role</value>
     </data>
+    <data name="User role" xml:space="preserve">
+        <value>User role</value>
+    </data>
 </root>

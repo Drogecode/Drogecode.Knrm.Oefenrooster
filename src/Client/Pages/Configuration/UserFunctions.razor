@@ -1,5 +1,6 @@
 ﻿@page "/configuration/user-functions"
 @attribute [Authorize(Roles = AccessesNames.AUTH_configure_user_functions)]
+<PageTitle>@L["User functions"]</PageTitle>
 @if (_functions is not null)
 {
     <MudButton OnClick='() => Navigation.NavigateTo("/configuration/user-functions/add/")'>@L["Add new function"]</MudButton>

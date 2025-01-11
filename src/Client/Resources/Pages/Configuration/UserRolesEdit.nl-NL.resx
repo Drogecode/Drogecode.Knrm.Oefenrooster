@@ -30,4 +30,7 @@
     <data name="Users in this role" xml:space="preserve">
         <value>Gebruikers met deze rol</value>
     </data>
+    <data name="User role" xml:space="preserve">
+        <value>Gebruikers rol</value>
+    </data>
 </root>

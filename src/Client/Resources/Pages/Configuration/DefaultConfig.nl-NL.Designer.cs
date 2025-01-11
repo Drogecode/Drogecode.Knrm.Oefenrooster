@@ -70,6 +70,15 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configureer standaard rooster.
+        /// </summary>
+        internal static string Configure_default_schedule {
+            get {
+                return ResourceManager.GetString("Configure default schedule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Wijzig standaard rooster.
         /// </summary>
         internal static string Edit_default_schedule {

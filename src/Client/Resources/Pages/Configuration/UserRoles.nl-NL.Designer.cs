@@ -67,5 +67,14 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration {
                 return ResourceManager.GetString("Add new role", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gebruikers rollen.
+        /// </summary>
+        internal static string User_roles {
+            get {
+                return ResourceManager.GetString("User roles", resourceCulture);
+            }
+        }
     }
 }
