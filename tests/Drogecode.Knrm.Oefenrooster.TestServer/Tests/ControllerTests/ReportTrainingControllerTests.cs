@@ -40,7 +40,7 @@ public class ReportTrainingControllerTests : BaseTest
         Assert.NotNull(getResult.Value?.Trainings);
         Assert.NotEmpty(getResult.Value.Trainings);
         Assert.True(getResult.Value.Success);
-        getResult.Value.Trainings.Count.Should().BeGreaterOrEqualTo(2);
+        getResult.Value.Trainings.Count.Should().BeGreaterThanOrEqualTo(2);
         var prevStart = DateTime.MaxValue;
         foreach (var action in getResult.Value.Trainings)
         {
@@ -57,7 +57,7 @@ public class ReportTrainingControllerTests : BaseTest
         Assert.NotNull(getResult.Value?.Trainings);
         Assert.NotEmpty(getResult.Value.Trainings);
         Assert.True(getResult.Value.Success);
-        getResult.Value.Trainings.Count.Should().BeGreaterOrEqualTo(2);
+        getResult.Value.Trainings.Count.Should().BeGreaterThanOrEqualTo(2);
     }
 
     [Fact]
