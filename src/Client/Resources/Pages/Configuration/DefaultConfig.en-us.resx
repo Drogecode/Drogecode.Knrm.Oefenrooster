@@ -53,4 +53,7 @@
     <data name="Should not be before start date" xml:space="preserve">
         <value>Should not be before start date</value>
     </data>
+    <data name="Configure default schedule" xml:space="preserve">
+        <value>Configure default schedule</value>
+    </data>
 </root>

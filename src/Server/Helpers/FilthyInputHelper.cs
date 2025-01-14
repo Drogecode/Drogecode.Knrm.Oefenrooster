@@ -1,8 +1,8 @@
 ﻿namespace Drogecode.Knrm.Oefenrooster.Server.Helpers;
 
-internal static class FilthyInputHelper
+public static class FilthyInputHelper
 {
-    internal static List<string>? CleanList(List<string>? input, int maxLength, ILogger logger)
+    public static List<string>? CleanList(List<string>? input, int maxLength, ILogger logger)
     {
         if (input is null) return null;
         List<string>? cleanedInput = [];

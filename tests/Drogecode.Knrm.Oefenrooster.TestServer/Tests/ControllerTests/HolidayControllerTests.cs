@@ -105,16 +105,17 @@ public class HolidayControllerTests : BaseTest
     [Fact]
     public async Task GetAllFutureTest()
     {
-        DateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-10));
-        var newHoliday1 = await AddHoliday("GetAllFutureTest1", 1, 10);
-        var newHoliday2 = await AddHoliday("GetAllFutureTest2", -3, 5);
-        var newHoliday3 = await AddHoliday("GetAllFutureTest3", -6, -2);
-        var newHoliday4 = await AddHoliday("GetAllFutureTest4", 40, 50);
-        var newHoliday5 = await AddHoliday("GetAllFutureTest5", 20, 40);
-        DateTimeServiceMock.SetMockDateTime(DateTime.Now);
+        var mockedDateTime = new DateTime(2024, 9, 4, 15, 0, 0);
+        DateTimeServiceMock.SetMockDateTime(mockedDateTime.AddDays(-10));
+        var newHoliday1 = await AddHoliday("GetAllFutureTest1", 11, 20);
+        var newHoliday2 = await AddHoliday("GetAllFutureTest2", 3, 15);
+        var newHoliday3 = await AddHoliday("GetAllFutureTest3", 6, 8);
+        var newHoliday4 = await AddHoliday("GetAllFutureTest4", 50, 60);
+        var newHoliday5 = await AddHoliday("GetAllFutureTest5", 30, 50);
+        DateTimeServiceMock.SetMockDateTime(mockedDateTime);
         var result = await HolidayController.GetAllFuture(30, false);
         Assert.NotNull(result?.Value?.Holidays);
-        result.Value.Holidays.Should().Contain(x => x.Id == DefaultHoliday);
+        result.Value.Holidays.Should().NotContain(x => x.Id == DefaultHoliday);
         result.Value.Holidays.Should().Contain(x => x.Id == newHoliday1);
         result.Value.Holidays.Should().Contain(x => x.Id == newHoliday2);
         result.Value.Holidays.Should().NotContain(x => x.Id == newHoliday3);
@@ -136,17 +137,18 @@ public class HolidayControllerTests : BaseTest
     [Fact]
     public async Task DeleteFullPastTest()
     {
-        DateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-5));
+        var mockedDateTime = new DateTime(2024, 9, 4, 15, 0, 0);
+        DateTimeServiceMock.SetMockDateTime(mockedDateTime);
         var holiday = new Holiday
         {
             Description = "DeleteFullPastTest",
-            ValidFrom = DateTime.Today.AddDays(-4),
-            ValidUntil = DateTime.Today.AddDays(-1),
+            ValidFrom = mockedDateTime.AddDays(1),
+            ValidUntil = mockedDateTime.AddDays(5),
         };
         var resultPut = await HolidayController.PutHolidayForUser(holiday);
         Assert.NotNull(resultPut?.Value?.Put);
         Assert.True(resultPut.Value.Success);
-        DateTimeServiceMock.SetMockDateTime(null);
+        DateTimeServiceMock.SetMockDateTime(mockedDateTime.AddDays(10));
         var result = await HolidayController.Delete(resultPut.Value.Put.Id);
         Assert.NotNull(result?.Value?.Success);
         Assert.False(result!.Value!.Success);
@@ -160,17 +162,18 @@ public class HolidayControllerTests : BaseTest
     [Fact]
     public async Task DeleteStartPastTest()
     {
-        DateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-5));
+        var mockedDateTime = new DateTime(2024, 9, 4, 15, 0, 0);
+        DateTimeServiceMock.SetMockDateTime(mockedDateTime);
         var holiday = new Holiday
         {
             Description = "DeleteStartPastTest",
-            ValidFrom = DateTime.Today.AddDays(-4),
-            ValidUntil = DateTime.Today.AddDays(2),
+            ValidFrom = mockedDateTime.AddDays(1),
+            ValidUntil = DateTime.Today.AddDays(5),
         };
         var resultPut = await HolidayController.PutHolidayForUser(holiday);
         Assert.NotNull(resultPut?.Value?.Put);
         Assert.True(resultPut.Value.Success);
-        DateTimeServiceMock.SetMockDateTime(null);
+        DateTimeServiceMock.SetMockDateTime(mockedDateTime.AddDays(10));
         var result = await HolidayController.Delete(resultPut.Value.Put.Id);
         Assert.NotNull(result?.Value?.Success);
         Assert.True(result.Value.Success);
@@ -178,6 +181,6 @@ public class HolidayControllerTests : BaseTest
         Assert.NotNull(resultGet?.Value?.Holiday?.ValidUntil);
         Assert.True(resultGet.Value.Success);
         resultGet.Value.Holiday.ValidFrom.Should().Be(holiday.ValidFrom);
-        resultGet.Value.Holiday.ValidUntil.Value.Date.Should().Be(DateTime.Today);
+        resultGet.Value.Holiday.ValidUntil.Value.Date.Should().Be(mockedDateTime.AddDays(10).Date);
     }
 }

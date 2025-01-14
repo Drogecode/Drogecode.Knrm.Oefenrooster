@@ -120,4 +120,7 @@
   <data name="Click user to view" xml:space="preserve">
     <value>Klik op gebruiker die je wilt bekijken</value>
   </data>
+  <data name="Users" xml:space="preserve">
+    <value>Gebruikers</value>
+  </data>
 </root>

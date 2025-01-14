@@ -1,6 +1,6 @@
 ﻿@page "/planner/user"
-@using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components
 @attribute [Authorize(Roles = AccessesNames.AUTH_users_details)]
+<PageTitle>@L["Users"]</PageTitle>
 
 @if (_users != null && _functions != null)
 {

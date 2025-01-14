@@ -131,5 +131,14 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration {
                 return ResourceManager.GetString("TrainingTarget", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gebruikers functies.
+        /// </summary>
+        internal static string User_functions {
+            get {
+                return ResourceManager.GetString("User functions", resourceCulture);
+            }
+        }
     }
 }

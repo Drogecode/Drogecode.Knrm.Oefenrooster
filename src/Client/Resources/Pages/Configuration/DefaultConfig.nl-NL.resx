@@ -60,4 +60,7 @@
     <data name="Should not be before start date" xml:space="preserve">
         <value>Mag niet voor begin datum</value>
     </data>
+    <data name="Configure default schedule" xml:space="preserve">
+        <value>Configureer standaard rooster</value>
+    </data>
 </root>

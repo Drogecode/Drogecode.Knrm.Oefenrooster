@@ -181,8 +181,8 @@ public class BaseTest : IAsyncLifetime
         var result = await HolidayController.PutHolidayForUser(new Holiday
         {
             Description = description,
-            ValidFrom = DateTime.Today.AddDays(from),
-            ValidUntil = DateTime.Today.AddDays(until),
+            ValidFrom = DateTimeServiceMock.Today().AddDays(from),
+            ValidUntil = DateTimeServiceMock.Today().AddDays(until),
         });
         Assert.NotNull(result?.Value?.Put?.Id);
         return result!.Value!.Put!.Id;
@@ -190,8 +190,8 @@ public class BaseTest : IAsyncLifetime
 
     protected async Task<Guid> AddTraining(string name, bool countToTrainingTarget, DateTime? dateStart = null, DateTime? dateEnd = null, bool isPinned = false, string? description = null)
     {
-        dateStart ??= DateTime.Today.AddHours(12).AddMinutes(50);
-        dateEnd ??= DateTime.Today.AddHours(13).AddMinutes(40);
+        dateStart ??= DateTimeServiceMock.Today().AddHours(12).AddMinutes(50);
+        dateEnd ??= DateTimeServiceMock.Today().AddHours(13).AddMinutes(40);
         var body = new PlannedTraining
         {
             Name = name,

@@ -1,4 +1,6 @@
 ﻿@page "/configuration/audit"
+@attribute [Authorize(Roles = AccessesNames.AUTH_super_user)]
+<PageTitle>@L["Audit"]</PageTitle>
 @if (_trainingAudits?.TrainingAudits is not null && _users is not null)
 {
     <MudDataGrid Items="_trainingAudits.TrainingAudits" Striped="true" Hover="true">

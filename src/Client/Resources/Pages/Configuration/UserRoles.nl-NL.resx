@@ -21,4 +21,7 @@
     <data name="Add new role" xml:space="preserve">
         <value>Voeg nieuwe rol toe</value>
     </data>
+    <data name="User roles" xml:space="preserve">
+        <value>Gebruikers rollen</value>
+    </data>
 </root>
