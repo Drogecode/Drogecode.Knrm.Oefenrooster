@@ -21,12 +21,12 @@
                 }
             </DrogeCodeMudTabPanel>
             <DrogeCodeMudTabPanel Text="@L["For target"]">
-                @if (_userFunction is not null)
+                @if (_userFunction is not null && _userMonthInfo is not null)
                 {
                     <MudText Typo="Typo.body1">@L["Target: {0}", _userFunction.TrainingTarget]</MudText>
                     <MudPaper>
                         <MudGrid Spacing="2" Justify="Justify.FlexStart">
-                            @foreach (var userMonthInfo in _trainings.UserMonthInfos.OrderByDescending(x => x.Year).ThenByDescending(x => x.Month))
+                            @foreach (var userMonthInfo in _userMonthInfo.UserMonthInfo.OrderByDescending(x => x.Year).ThenByDescending(x => x.Month))
                             {
                                 <MudItem xs="12" sm="6" md="4" lg="3">
                                     <MudText Style=@(userMonthInfo.Valid < _userFunction.TrainingTarget ? "color: var(--mud-palette-error)" : "")>
@@ -37,17 +37,23 @@
                         </MudGrid>
                     </MudPaper>
                 }
+                else
+                {
+                    <DrogeLoading/>
+                }
             </DrogeCodeMudTabPanel>
             <AuthorizeView Roles="@AccessesNames.AUTH_users_settigns">
                 <DrogeCodeMudTabPanel Text="@L["Settings"]">
                     <MudPaper Class="pa-4" MaxWidth="500px">
-                        <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" Value="_user.UserFunctionId" ValueChanged="UserFunctionChanged" Disabled="@_user.RoleFromSharePoint">
+                        <MudSelect T="Guid?" Label="@L["Function"]" AnchorOrigin="Origin.BottomCenter" Value="_user.UserFunctionId" ValueChanged="UserFunctionChanged"
+                                   Disabled="@_user.RoleFromSharePoint">
                             @foreach (var function in _functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
                             {
                                 <MudSelectItem T="Guid?" Value="@function.Id">@function.Name</MudSelectItem>
                             }
                         </MudSelect>
-                        <SelectMultipleUsers Users="_users" Functions="_functions" Label="@L["Buddy"]" Selection="_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="false" ReadOnly="_updatingSelection"/>
+                        <SelectMultipleUsers Users="_users" Functions="_functions" Label="@L["Buddy"]" Selection="_selectedUsersAction" SelectionChanged="OnSelectionChanged" MultiSelection="false"
+                                             ReadOnly="_updatingSelection"/>
                         <MudNumericField T="int?" Value="_user.Nr" Label="@L["User number"]" ValueChanged="UserNumberChanged"/>
                     </MudPaper>
                 </DrogeCodeMudTabPanel>
@@ -57,5 +63,5 @@
 }
 else
 {
-    <DrogeLoading />
+    <DrogeLoading/>
 }

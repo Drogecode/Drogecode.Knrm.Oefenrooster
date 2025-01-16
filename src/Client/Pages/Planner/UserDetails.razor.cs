@@ -25,13 +25,14 @@ public sealed partial class UserDetails : IDisposable
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
     private GetScheduledTrainingsForUserResponse? _trainings;
+    private GetUserMonthInfoResponse? _userMonthInfo;
     private List<DrogeVehicle>? _vehicles;
     private List<PlannerTrainingType>? _trainingTypes;
     private IEnumerable<DrogeUser> _selectedUsersAction;
-    private bool _updatingSelection = false;
+    private bool _updatingSelection;
     private const int TAKE = 15;
     private int _total = TAKE;
-    private int _skip = 0;
+    private int _skip;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -59,8 +60,10 @@ public sealed partial class UserDetails : IDisposable
                 else
                     _selectedUsersAction = [];
 
-                _trainings = (await _scheduleRepository.AllTrainingsForUser(Id.Value, TAKE, _skip * TAKE, _cls.Token));
+                _trainings = await _scheduleRepository.AllTrainingsForUser(Id.Value, TAKE, _skip * TAKE, _cls.Token);
+                StateHasChanged();
                 _userFunction = _functions?.FirstOrDefault(x => x.Id == _user?.UserFunctionId);
+                _userMonthInfo = await _scheduleRepository.GetUserMonthInfo(Id.Value, _cls.Token);
             }
 
             StateHasChanged();
