@@ -24,15 +24,17 @@
     <DialogContent>
         @if (_training == null || TrainingTypes == null)
         {
-            <DrogeLoading />
+            <DrogeLoading/>
         }
         else
         {
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors" Disabled="@(!_canEdit)">
-                <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" Counter="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" Immediate="true"/>
+                <MudTextField Label="@L["Name"]" @bind-Value="_training.Name" Counter="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE"
+                              Immediate="true"/>
                 <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_description_edit">
-                    <MudTextField T="string" Label="@L["Description - Markdown"]" @bind-Value="_training.Description" Lines="5" Counter="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION" Immediate="true"/>
-                    <MudMarkdown Value="@_training.Description" />
+                    <MudTextField T="string" Label="@L["Description - Markdown"]" @bind-Value="_training.Description" Lines="5" Counter="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION"
+                                  MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION" Immediate="true"/>
+                    <MudMarkdown Value="@_training.Description"/>
                 </AuthorizeView>
                 <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Validation="@(new Func<DateTime?, string?>(DateValidation))" Required Disabled="!_training.IsNew"/>
 
@@ -69,7 +71,8 @@
                         foreach (var vehicle in Vehicles.Where(x => x.IsActive))
                         {
                             bool? isSelected = _linkVehicleTraining?.FirstOrDefault(x => x.VehicleId == vehicle.Id)?.IsSelected;
-                            <MudSwitch T="bool" ValueChanged="(e) => CheckChanged(e, vehicle)" Color="Color.Success" Label="@vehicle.Name" Tag="@vehicle" Value="@(isSelected == true || (isSelected == null && vehicle.IsDefault))"/>
+                            <MudSwitch T="bool" ValueChanged="(e) => CheckChanged(e, vehicle)" Color="Color.Success" Label="@vehicle.Name" Tag="@vehicle"
+                                       Value="@(isSelected == true || (isSelected == null && vehicle.IsDefault))"/>
                             <br/>
                         }
                     }
@@ -79,17 +82,19 @@
     </DialogContent>
     <DialogActions>
         <div class="flex flex-wrap">
-            @if (_training?.IsNew is not true)
-            {
-                if (_showDelete)
+            <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_delete">
+                @if (_training?.IsNew is not true)
                 {
-                    <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">
-                        @L["Are you sure This can not be reverted"]<MudButton Color="Color.Warning" OnClick="Delete">@LApp["Delete"]</MudButton>
-                    </MudAlert>
-                }
+                    if (_showDelete)
+                    {
+                        <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">
+                            @L["Are you sure This can not be reverted"]<MudButton Color="Color.Warning" OnClick="Delete">@LApp["Delete"]</MudButton>
+                        </MudAlert>
+                    }
 
-                <MudButton Color="Color.Warning" OnClick="() => _showDelete = !_showDelete" Disabled="@(!_canEdit)">@LApp["Delete"]</MudButton>
-            }
+                    <MudButton Color="Color.Warning" OnClick="() => _showDelete = !_showDelete" Disabled="@(!_canEdit)">@LApp["Delete"]</MudButton>
+                }
+            </AuthorizeView>
             <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
             <MudButton Color="Color.Primary" OnClick="OnSubmit" Disabled="@(!_canEdit)">@LApp["save"]</MudButton>
         </div>

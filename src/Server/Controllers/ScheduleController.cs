@@ -523,6 +523,7 @@ public class ScheduleController : ControllerBase
 
     [HttpDelete]
     [Route("{id:guid}")]
+    //[Authorize(Roles = AccessesNames.AUTH_scheduler_delete)] //ToDo Enable when all users on v0.4.32 or above
     public async Task<ActionResult<bool>> DeleteTraining(Guid id, CancellationToken clt = default)
     {
         try

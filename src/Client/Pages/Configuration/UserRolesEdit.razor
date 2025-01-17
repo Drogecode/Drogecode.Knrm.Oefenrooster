@@ -33,6 +33,7 @@ Changes to this file may cause incorrect behavior and will be lost if the code i
         <MudSwitch Label="@L["configure_vehicles"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_configure_vehicles" ValueChanged="@(isChecked => { _userRole.Role.AUTH_configure_vehicles = isChecked; _saved = null; })"/>
         <MudText Typo="Typo.h6">@L["Scheduler"]</MudText>
         <MudSwitch Label="@L["scheduler"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_scheduler" ValueChanged="@(isChecked => { _userRole.Role.AUTH_scheduler = isChecked; _saved = null; })"/>
+        <MudSwitch Label="@L["scheduler_del"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_scheduler_delete" ValueChanged="@(isChecked => { _userRole.Role.AUTH_scheduler_delete = isChecked; _saved = null; })"/>
         <MudSwitch Label="@L["scheduler_table"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_scheduler_in_table_view" ValueChanged="@(isChecked => { _userRole.Role.AUTH_scheduler_in_table_view = isChecked; _saved = null; })"/>
         <MudSwitch Label="@L["scheduler_history"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_scheduler_history" ValueChanged="@(isChecked => { _userRole.Role.AUTH_scheduler_history = isChecked; _saved = null; })"/>
         <MudSwitch Label="@L["scheduler_past"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_scheduler_edit_past" ValueChanged="@(isChecked => { _userRole.Role.AUTH_scheduler_edit_past = isChecked; _saved = null; })"/>
