@@ -41,4 +41,9 @@ public static class FilthyInputHelper
 
         return cleanedInput;
     }
+
+    public static string CleanStringForLogging(this string input)
+    {
+        return input.Replace(Environment.NewLine, "");
+    }
 }

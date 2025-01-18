@@ -15,13 +15,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class AuthenticationKeyCloakService : AuthenticationService, IAuthenticationService
 {
     public IdentityProvider IdentityProvider => IdentityProvider.KeyCloak;
-    
+
     public AuthenticationKeyCloakService(
         ILogger logger,
         IMemoryCache memoryCache,
         IConfiguration configuration,
-        HttpClient httpClient, 
-        DataContext database) : base(logger,memoryCache,configuration,httpClient, database)
+        HttpClient httpClient,
+        DataContext database) : base(logger, memoryCache, configuration, httpClient, database)
     {
     }
 
@@ -68,10 +68,10 @@ public class AuthenticationKeyCloakService : AuthenticationService, IAuthenticat
             TenantId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "iss")?.Value ?? ""
         };
     }
-    
-    public Task<bool> AuditLogin(Guid? userId, Guid? sharedActionId, string ipAddress, CancellationToken clt)
+
+    public Task<bool> AuditLogin(Guid? userId, Guid? sharedActionId, string ipAddress, string clientVersion, bool directLogin, CancellationToken clt)
     {
-        return AuditLoginShared(userId, sharedActionId, ipAddress , clt);
+        return AuditLoginShared(userId, sharedActionId, ipAddress, clientVersion, directLogin, clt);
     }
 
     private string InternalGetLoginClientSecret()

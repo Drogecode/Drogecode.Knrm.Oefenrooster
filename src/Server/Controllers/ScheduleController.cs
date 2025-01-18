@@ -469,6 +469,27 @@ public class ScheduleController : ControllerBase
             return BadRequest();
         }
     }
+    [HttpGet]
+    [Route("training/user/month/all/{id:guid}", Order = 0)]
+    [Authorize(Roles = AccessesNames.AUTH_users_details)]
+    public async Task<ActionResult<GetUserMonthInfoResponse>> GetUserMonthInfo(Guid id, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var result = await _scheduleService.GetUserMonthInfo(id, customerId, clt);
+            return result;
+        }
+        catch (OperationCanceledException)
+        {
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in AllTrainingsForUser");
+            return BadRequest();
+        }
+    }
 
     [HttpGet]
     [Route("me/pinned/{callHub:bool}", Order = 0)]
@@ -502,6 +523,7 @@ public class ScheduleController : ControllerBase
 
     [HttpDelete]
     [Route("{id:guid}")]
+    //[Authorize(Roles = AccessesNames.AUTH_scheduler_delete)] //ToDo Enable when all users on v0.4.32 or above
     public async Task<ActionResult<bool>> DeleteTraining(Guid id, CancellationToken clt = default)
     {
         try

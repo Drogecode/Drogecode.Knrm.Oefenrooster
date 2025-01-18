@@ -106,11 +106,19 @@ public class ScheduleControllerTests : BaseTest
         Assert.NotNull(result?.Value);
         Assert.True(result.Value.Success);
         result.Value.Trainings.Should().NotBeEmpty();
-        result.Value.UserMonthInfos.Should().NotBeEmpty();
         var training = result.Value.Trainings.FirstOrDefault(x => x.TrainingId == DefaultTraining);
         Assert.NotNull(training);
         training.CountToTrainingTarget.Should().BeFalse();
-        var userMonthInfo = result.Value.UserMonthInfos.FirstOrDefault(x => x.Year == DateTime.UtcNow.Year && x.Month == DateTime.UtcNow.Month);
+    }
+    
+    [Fact]
+    public async Task GetUserMonthInfoSingleTest()
+    {
+        var result = await ScheduleController.GetUserMonthInfo(DefaultUserId);
+        Assert.NotNull(result?.Value);
+        Assert.True(result.Value.Success);
+        result.Value.UserMonthInfo.Should().NotBeEmpty();
+        var userMonthInfo = result.Value.UserMonthInfo.FirstOrDefault(x => x.Year == DateTime.UtcNow.Year && x.Month == DateTime.UtcNow.Month);
         Assert.NotNull(userMonthInfo);
         userMonthInfo.All.Should().Be(1);
         userMonthInfo.Valid.Should().Be(0);
@@ -135,11 +143,31 @@ public class ScheduleControllerTests : BaseTest
         Assert.NotNull(result?.Value);
         Assert.True(result.Value.Success);
         result.Value.Trainings.Should().NotBeEmpty();
-        result.Value.UserMonthInfos.Should().NotBeEmpty();
         var training = result.Value.Trainings.FirstOrDefault(x => x.TrainingId == DefaultTraining);
         Assert.NotNull(training);
         training.CountToTrainingTarget.Should().BeFalse();
-        var userMonthInfo = result.Value.UserMonthInfos.FirstOrDefault(x => x.Year == DateTime.UtcNow.Year && x.Month == DateTime.UtcNow.Month);
+    }
+
+    [Fact]
+    public async Task GetUserMonthInfoForAllTest()
+    {
+        var training1 = await AddTraining("AllTrainings_1", false);
+        var training2 = await AddTraining("AllTrainings_2", true);
+        var training3 = await AddTraining("AllTrainings_3", false);
+        var training4 = await AddTraining("AllTrainings_4", true);
+        var training5 = await AddTraining("AllTrainings_5", false);
+        var training6 = await AddTraining("AllTrainings_6", true);
+        await AssignTrainingToUser(training1, DefaultUserId, true);
+        await AssignTrainingToUser(training2, DefaultUserId, true);
+        await AssignTrainingToUser(training3, DefaultUserId, true);
+        await AssignTrainingToUser(training4, DefaultUserId, false);
+        await AssignTrainingToUser(training5, DefaultUserId, true);
+        await AssignTrainingToUser(training6, DefaultUserId, true);
+        var result = await ScheduleController.GetUserMonthInfo(DefaultUserId);
+        Assert.NotNull(result?.Value);
+        Assert.True(result.Value.Success);
+        result.Value.UserMonthInfo.Should().NotBeEmpty();
+        var userMonthInfo = result.Value.UserMonthInfo.FirstOrDefault(x => x.Year == DateTime.UtcNow.Year && x.Month == DateTime.UtcNow.Month);
         Assert.NotNull(userMonthInfo);
         userMonthInfo.All.Should().BeGreaterThanOrEqualTo(5);
         userMonthInfo.Valid.Should().BeGreaterThanOrEqualTo(2);

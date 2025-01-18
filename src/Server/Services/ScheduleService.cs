@@ -365,23 +365,34 @@ public class ScheduleService : IScheduleService
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
         var users = await _database.Users
+            .AsNoTracking()
             .Include(x => x.UserDefaultAvailables)
             .Include(x => x.UserFunction)
             .Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.UserFunction!.IsActive)
             .Select(x => new { x.Id, x.UserDefaultAvailables, x.UserFunctionId, x.Name, x.LinkedUserAsA, x.ExternalId })
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
-        var defaults = await _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate).Select(x =>
-                new { x.Id, x.WeekDay, x.ValidFrom, x.ValidUntil, x.TimeZone, x.TimeStart, x.TimeEnd, x.Name, x.ShowTime, x.RoosterTrainingTypeId, x.CountToTrainingTarget })
+        var defaults = await _database.RoosterDefaults
+            .AsNoTracking()
+            .Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
+            .Select(x => new { x.Id, x.WeekDay, x.ValidFrom, x.ValidUntil, x.TimeZone, x.TimeStart, x.TimeEnd, x.Name, x.ShowTime, x.RoosterTrainingTypeId, x.CountToTrainingTarget })
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
-        var defaultAveUser = await _database.UserDefaultAvailables.Include(x => x.DefaultGroup).Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
+        var defaultAveUser = await _database.UserDefaultAvailables
+            .AsNoTracking()
+            .Include(x => x.DefaultGroup)
+            .Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
-        var userHolidays = await _database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
+        var userHolidays = await _database.UserHolidays
+            .AsNoTracking()
+            .Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
-        var trainings = await _database.RoosterTrainings.Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
+        var trainings = await _database.RoosterTrainings
+            .AsNoTracking()
+            .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
             .Include(x => x.LinkVehicleTrainings)
             .OrderBy(x => x.DateStart)
             .AsSingleQuery().ToListAsync(clt);
         var availables = await _database.RoosterAvailables
+            .AsNoTracking()
             .Include(x => x.User)
             .ThenInclude(x => x.LinkedUserA).Include(dbRoosterAvailable => dbRoosterAvailable.User).ThenInclude(dbUsers => dbUsers.LinkedUserAsA)
             .Where(x => x.CustomerId == customerId && (includeUnAssigned || x.Assigned) && x.Date >= startDate && x.Date <= tillDate)
@@ -979,7 +990,28 @@ public class ScheduleService : IScheduleService
             }
 
             result.Trainings.Add(plan);
-            var userMonthInfo = result.UserMonthInfos.FirstOrDefault(x => x.Year == schedule.Training.DateStart.Year && x.Month == schedule.Training.DateStart.Month);
+        }
+        
+        sw.Stop();
+        result.Success = true;
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<GetUserMonthInfoResponse> GetUserMonthInfo(Guid userId, Guid customerId, CancellationToken clt)
+    {
+        
+        var sw = Stopwatch.StartNew();
+        var result = new GetUserMonthInfoResponse();
+        
+        var scheduled = _database.RoosterAvailables
+            .Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Training.DeletedOn == null)
+            .Include(i => i.Training);
+        result.TotalCount = await scheduled.CountAsync(clt);
+
+        foreach (var schedule in scheduled)
+        {
+            var userMonthInfo = result.UserMonthInfo.FirstOrDefault(x => x.Year == schedule.Training.DateStart.Year && x.Month == schedule.Training.DateStart.Month);
             if (userMonthInfo is null)
             {
                 userMonthInfo = new UserMonthInfo
@@ -989,7 +1021,7 @@ public class ScheduleService : IScheduleService
                     All = 1,
                     Valid = schedule.Training.CountToTrainingTarget ? 1 : 0,
                 };
-                result.UserMonthInfos.Add(userMonthInfo);
+                result.UserMonthInfo.Add(userMonthInfo);
             }
             else
             {
@@ -998,7 +1030,7 @@ public class ScheduleService : IScheduleService
                     userMonthInfo.Valid += 1;
             }
         }
-
+        
         sw.Stop();
         result.Success = true;
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;

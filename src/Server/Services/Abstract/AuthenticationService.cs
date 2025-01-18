@@ -32,6 +32,20 @@ public abstract class AuthenticationService
         _httpClient = httpClient;
         _database = database;
     }
+
+    public async Task<bool> ValidatePassword(string password, string hashedPassword, CancellationToken clt)
+    {
+        if (!_configuration.GetValue<bool>("Drogecode:DirectLogin"))
+        {
+            _logger.LogWarning("Drogecode:DirectLogin is not enabled");
+            return false;
+        }
+
+        if (clt.IsCancellationRequested)
+            return false;
+        return PasswordHasher.ComparePassword(password, hashedPassword);
+    }
+    
     protected async Task<GetLoginSecretsResponse> GetLoginSecretShared(IdentityProvider provider, string tenantId, string clientId, string? instance)
     {
         var codeVerifier = SecretHelper.CreateSecret(120);
@@ -134,7 +148,7 @@ public abstract class AuthenticationService
         return result;
     }
 
-    protected async Task<bool> AuditLoginShared(Guid? userId, Guid? sharedActionId, string ipAddress, CancellationToken clt)
+    protected async Task<bool> AuditLoginShared(Guid? userId, Guid? sharedActionId, string ipAddress, string clientVersion, bool directLogin, CancellationToken clt)
     {
         _database.UserLogins.Add(
             new DbUserLogins
@@ -144,6 +158,8 @@ public abstract class AuthenticationService
                 SharedActionId = sharedActionId, 
                 Ip = ipAddress,
                 LoginDate = DateTime.UtcNow,
+                DirectLogin = directLogin,
+                Version = clientVersion
             });
         return await _database.SaveChangesAsync(clt) > 0;
     }

@@ -2,12 +2,12 @@
 
 1. Open: "Package Manager Console"
 2. cd .\src\Server
-3. dotnet ef migrations add AuditLogins -o Database/Migrations --project ./Drogecode.Knrm.Oefenrooster.Server.csproj
+3. dotnet ef migrations add DirectLogin -o Database/Migrations --project ./Drogecode.Knrm.Oefenrooster.Server.csproj
 4. dotnet ef database update --project ./Drogecode.Knrm.Oefenrooster.Server.csproj
 
 # Revert
 
-dotnet ef database update "20241229225208_AddDbReportActionShared"
+dotnet ef database update "20241230205320_AuditLogins"
 
 # Update tools:
 

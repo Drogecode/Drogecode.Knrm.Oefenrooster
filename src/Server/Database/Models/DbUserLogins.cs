@@ -11,6 +11,8 @@ public class DbUserLogins
     public Guid? SharedActionId { get; set; }
     public DateTime LoginDate { get; set; }
     [StringLength(50)] public string? Ip { get; set; }
+    public bool? DirectLogin { get; set; }
+    [StringLength(20)] public string? Version { get; set; }
     
     public DbUsers? User { get; set; }
     public DbReportActionShared? SharedAction { get; set; }

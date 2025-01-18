@@ -255,6 +255,9 @@
           "autH_scheduler": {
             "type": "boolean"
           },
+          "autH_scheduler_delete": {
+            "type": "boolean"
+          },
           "autH_scheduler_in_table_view": {
             "type": "boolean"
           },
