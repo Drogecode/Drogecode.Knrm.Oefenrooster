@@ -62,9 +62,9 @@ public class AuthenticationAzureService : AuthenticationService, IAuthentication
         };
     }
 
-    public Task<bool> AuditLogin(Guid? userId, Guid? sharedActionId, string ipAddress, CancellationToken clt)
+    public Task<bool> AuditLogin(Guid? userId, Guid? sharedActionId, string ipAddress, string clientVersion, bool directLogin, CancellationToken clt)
     {
-        return AuditLoginShared(userId, sharedActionId, ipAddress , clt);
+        return AuditLoginShared(userId, sharedActionId, ipAddress, clientVersion, directLogin , clt);
     }
 
     private string InternalGetLoginClientSecret()

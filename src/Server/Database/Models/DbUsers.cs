@@ -21,6 +21,8 @@ public class DbUsers
     public bool SyncedFromSharePoint { get; set; }
     public bool RoleFromSharePoint { get; set; }
     public bool IsSystemUser { get; set; }
+    public bool DirectLogin { get; set; }
+    [StringLength(200)] public string? HashedPassword { get; set; }
 
     public DbCustomers Customer { get; set; }
     public DbUserFunctions? UserFunction { get; set; }

@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Server.Models.User;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -34,7 +35,7 @@ public class UserService : IUserService
             .ToListAsync(clt);
         foreach (var dbUser in dbUsers)
         {
-            result.DrogeUsers.Add(dbUser.ToSharedUser(includeLastLogin));
+            result.DrogeUsers.Add(dbUser.ToSharedUser(includeLastLogin, false));
         }
 
         sw.Stop();
@@ -51,10 +52,20 @@ public class UserService : IUserService
             .Where(u => u.Id == userId && u.DeletedOn == null)
             .AsNoTracking()
             .FirstOrDefaultAsync(clt);
-        return userObj?.ToSharedUser(false);
+        return userObj?.ToSharedUser(false, false);
     }
 
-    public async Task<GetOrSetDrogeUser?> GetOrSetUserById(Guid? userId, string? externalId, string userName, string userEmail, Guid customerId, bool setLastOnline, CancellationToken clt)
+    public async Task<DrogeUserServer?> GetUserByNameForServer(string? name, CancellationToken clt)
+    {
+        if (name is null) return null;
+        var userObj = await _database.Users
+            .Where(u => u.Name == name && u.DeletedOn == null)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(clt);
+        return userObj?.ToSharedUser(false, true);
+    }
+
+    public async Task<DrogeUserServer?> GetOrSetUserById(Guid? userId, string? externalId, string userName, string userEmail, Guid customerId, bool setLastOnline, CancellationToken clt)
     {
         var isNew = false;
         if (userId is null && externalId is null)
@@ -110,7 +121,7 @@ public class UserService : IUserService
             await _database.SaveChangesAsync(clt);
         }
 
-        var sharedUser = userObj?.ToSharedUser(false);
+        var sharedUser = userObj?.ToSharedUser(false, false);
         if (sharedUser is null)
             return null;
         sharedUser.IsNew = isNew;

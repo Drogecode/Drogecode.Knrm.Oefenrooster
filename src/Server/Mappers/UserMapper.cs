@@ -1,13 +1,14 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Server.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
 
 internal static class UserMapper
 {
-    public static GetOrSetDrogeUser ToSharedUser(this DbUsers dbUsers, bool includeLastLogin)
+    public static DrogeUserServer ToSharedUser(this DbUsers dbUsers, bool includeLastLogin, bool includeHashedPassword)
     {
-        var user = new GetOrSetDrogeUser
+        var user = new DrogeUserServer
         {
             Id = dbUsers.Id,
             ExternalId = dbUsers.ExternalId,
@@ -19,8 +20,16 @@ internal static class UserMapper
             CustomerId = dbUsers.CustomerId,
             SyncedFromSharePoint = dbUsers.SyncedFromSharePoint,
             RoleFromSharePoint = dbUsers.RoleFromSharePoint,
+            DirectLogin = dbUsers.DirectLogin,
+            
             Buddy = dbUsers.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name
         };
+
+        if (includeLastLogin)
+        {
+            user.HashedPassword = dbUsers.HashedPassword;
+        }
+        
         if (dbUsers.LinkedUserAsA?.Count > 0)
         {
             user.LinkedAsA = [];

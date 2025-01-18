@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
+using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using IAuthenticationService = Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces.IAuthenticationService;
@@ -91,34 +92,52 @@ public class AuthenticationController : DrogeController
     }
 
     [HttpGet]
+    [Obsolete("Use Post version")] // ToDo Remove when all users on v0.4.32 or above
     [Route("authenticate-user")]
-    public async Task<ActionResult<bool>> AuthenticateUser(string code, string state, string sessionState, string redirectUrl, CancellationToken clt = default)
+    public async Task<ActionResult<bool>> AuthenticateUserGet(string code, string state, string sessionState, string redirectUrl, CancellationToken clt = default)
     {
         try
         {
-            var found = _memoryCache.Get<CacheLoginSecrets>(state);
+            var body = new AuthenticateRequest(code, state, sessionState, redirectUrl, "??v0.4.x");
+            return await AuthenticateUser(body, clt);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "AuthenticateUser GET");
+            return false;
+        }
+    }
+
+    [HttpPost]
+    [Route("authenticate-user")]
+    public async Task<ActionResult<bool>> AuthenticateUser([FromBody] AuthenticateRequest body, CancellationToken clt = default)
+    {
+        try
+        {
+            var found = _memoryCache.Get<CacheLoginSecrets>(body.State);
             if (found?.Success is not true || found.CodeVerifier is null)
             {
                 _logger.LogWarning("found?.success = `{false}` || found?.CodeVerifier = `{null}`", found?.Success is not true, found?.CodeVerifier is null);
                 return false;
             }
 
-            _memoryCache.Remove(state);
+            _memoryCache.Remove(body.State);
 
             var authService = GetAuthenticationService();
-            var supResult = await authService.AuthenticateUser(found, code, state, sessionState, redirectUrl, clt);
+            var supResult = await authService.AuthenticateUser(found, body.Code, body.State, body.SessionState, body.RedirectUrl, clt);
             if (supResult.Success is not true || supResult.JwtSecurityToken is null)
                 return false;
 
-            await SetUser(supResult.JwtSecurityToken, supResult.RefreshToken, false, clt);
+            await SetUser(supResult.JwtSecurityToken, supResult.RefreshToken, false, body.ClientVersion, clt);
             return true;
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "AuthenticateUser");
+            _logger.LogError(e, "AuthenticateUser POST");
             return false;
         }
     }
+
 
     [HttpPost]
     [Route("authenticate-external")]
@@ -157,7 +176,79 @@ public class AuthenticationController : DrogeController
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
-            await authService.AuditLogin(null, body.ExternalId, ip, clt);
+            await authService.AuditLogin(null, body.ExternalId, ip, body.ClientVersion, true, clt);
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "AuthenticateExternal");
+            return false;
+        }
+    }
+
+    [HttpPost]
+    [Route("authenticate-direct")]
+    public async Task<ActionResult<bool>> AuthenticateDirect([FromBody] AuthenticateDirectRequest body, CancellationToken clt = default)
+    {
+        try
+        {
+            if (!_configuration.GetValue<bool>("Drogecode:DirectLogin"))
+            {
+                _logger.LogWarning("Drogecode:DirectLogin is not enabled");
+                return false;
+            }
+
+            if (User?.Identity?.IsAuthenticated == true && !User.IsInRole(AccessesNames.AUTH_External))
+            {
+                _logger.LogInformation("AuthenticateDirect request, but user is already authenticated");
+                return false;
+            }
+
+            var user = await _userService.GetUserByNameForServer(body.Name, clt);
+            if (user is null)
+            {
+                _logger.LogInformation("No user found with name {name}", body.Name?.CleanStringForLogging());
+                return false;
+            }
+
+            if (user.HashedPassword is null || body.Passwoord is null)
+            {
+                _logger.LogInformation("No password `{hashed}` '{fromBody}' found ", user.HashedPassword is null, body.Passwoord is null);
+                return false;
+            }
+
+            var authService = GetAuthenticationService();
+
+            var passwordCorrect = await authService.ValidatePassword(body.Passwoord, user.HashedPassword, clt);
+            if (!passwordCorrect)
+            {
+                _logger.LogInformation("Wrong password for user {name}", body.Name?.CleanStringForLogging());
+                return false;
+            }
+
+            var ip = GetRequesterIp();
+            var claims = new List<Claim>
+            {
+                new("http://schemas.microsoft.com/identity/claims/objectidentifier", user.Id.ToString() ?? ""),
+                new("http://schemas.microsoft.com/identity/claims/tenantid", user.CustomerId.ToString()),
+                new("ExternalId", user.ExternalId ?? string.Empty),
+                new(ClaimTypes.Role, AccessesNames.AUTH_Direct),
+                new("ValidFrom", DateTime.UtcNow.AddMinutes(-10).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+                new("ValidTo", DateTime.UtcNow.AddHours(1).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = false
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+            await authService.AuditLogin(user.Id, null, ip, body.ClientVersion, true, clt);
             return true;
         }
         catch (Exception e)
@@ -254,7 +345,7 @@ public class AuthenticationController : DrogeController
             }
 
             _logger.LogInformation("Refresh for user `{userId}` in customer `{customerId}` successful", userId, customerId);
-            await SetUser(supResult.JwtSecurityToken, supResult.RefreshToken, false, clt);
+            await SetUser(supResult.JwtSecurityToken, supResult.RefreshToken, false, "refresh", clt);
             return true;
         }
         catch (Exception e)
@@ -265,9 +356,9 @@ public class AuthenticationController : DrogeController
         }
     }
 
-    private async Task SetUser(JwtSecurityToken jwtSecurityToken, string refresh_token, bool rememberMe, CancellationToken clt)
+    private async Task SetUser(JwtSecurityToken jwtSecurityToken, string refresh_token, bool rememberMe, string clientVersion, CancellationToken clt)
     {
-        var claims = await GetClaimsList(jwtSecurityToken, refresh_token, clt);
+        var claims = await GetClaimsList(jwtSecurityToken, refresh_token, clientVersion, clt);
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -301,7 +392,7 @@ public class AuthenticationController : DrogeController
             authProperties);
     }
 
-    private async Task<IEnumerable<Claim>> GetClaimsList(JwtSecurityToken jwtSecurityToken, string refresh_token, CancellationToken clt)
+    private async Task<IEnumerable<Claim>> GetClaimsList(JwtSecurityToken jwtSecurityToken, string refresh_token, string clientVersion, CancellationToken clt)
     {
         var authService = GetAuthenticationService();
         var drogeClaims = authService.GetClaims(jwtSecurityToken);
@@ -335,7 +426,7 @@ public class AuthenticationController : DrogeController
             claims.Add(new Claim(ClaimTypes.Role, access));
         }
 
-        await authService.AuditLogin(userId, null, ip, clt);
+        await authService.AuditLogin(userId, null, ip, clientVersion, false, clt);
         return claims;
     }
 

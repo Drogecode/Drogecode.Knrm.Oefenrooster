@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 
@@ -62,11 +63,7 @@ public partial class SharedActions : IDisposable
         _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
         if (!_isAuthenticated)
         {
-            var body = new AuthenticateExternalRequest
-            {
-                ExternalId = Id,
-                Passwoord = _pwField.Value
-            };
+            var body = new AuthenticateExternalRequest(Id, _pwField.Value, DefaultSettingsHelper.CURRENT_VERSION);
             await AuthenticationClient.AuthenticateExternalAsync(body, _cls.Token);
             await AuthenticationStateProvider.loginCallback();
             StateHasChanged();

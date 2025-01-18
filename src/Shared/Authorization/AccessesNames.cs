@@ -1,16 +1,15 @@
 ﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
 // When adding a new role, the role should be added to the model, mapper and the UI
-// (Could be automated in the future)
+// After editing this file, run "Drogecode.Knrm.Oefenrooster.CodeGenerator" to update related files.
 public struct AccessesNames
 {
     // Can not be set by configuration
-
-
     public const string GROUP_NO_READ = "ignore";
     public const string AUTH_super_user = "isSuperGlobalAdmin";
     public const string AUTH_Hide = "do_not_show";
     public const string AUTH_External = "external";
+    public const string AUTH_Direct = "direct";
 
     public const string GROUP_GLOBAL = "global";
     public const string AUTH_basic_access = "basic_access";
