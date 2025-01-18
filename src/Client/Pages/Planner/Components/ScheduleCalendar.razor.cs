@@ -2,7 +2,6 @@
 using Drogecode.Knrm.Oefenrooster.Client.Enums;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
-using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
@@ -10,7 +9,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Heron.MudCalendar;
-using Microsoft.Extensions.Localization;
+
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
 public sealed partial class ScheduleCalendar : IDisposable
@@ -34,17 +33,19 @@ public sealed partial class ScheduleCalendar : IDisposable
     private List<UserTrainingCounter>? _userTrainingCounter;
     private List<RoosterItemMonth>? _monthItems;
     private DrogeUser? _user;
-    private bool _updating;
-    private bool _currentMonth;
-    private bool _initialized;
     private ScheduleView _view = ScheduleView.Calendar;
     private DateTime? _month;
     private DateTime _firstMonth = DateTime.Today;
+    private RefreshModel _refreshModel = new();
+    private bool _updating;
+    private bool _currentMonth;
+    private bool _initialized;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            _refreshModel.RefreshRequested += RefreshMe;
             _firstMonth = await SessionExpireService.GetSelectedMonth(_cls.Token);
             Global.NewTrainingAddedAsync += HandleNewTraining;
             _user = await UserRepository.GetCurrentUserAsync();
@@ -54,7 +55,7 @@ public sealed partial class ScheduleCalendar : IDisposable
             StateHasChanged();
         }
     }
-    
+
     private async Task SetMonth(DateTime? dateTime)
     {
         if (dateTime == null) return;
@@ -94,6 +95,7 @@ public sealed partial class ScheduleCalendar : IDisposable
                 });
             }
         }
+
         _month = PlannerHelper.ForMonth(dateRange);
         if (_month is not null)
         {
@@ -106,7 +108,6 @@ public sealed partial class ScheduleCalendar : IDisposable
             {
                 foreach (var dayItem in dayItems.DayItems.Where(x => x.DateStart is not null))
                 {
-
                     var userDeleted = false;
                     if (dayItem.LinkedUsers?.FirstOrDefault()?.UserId is not null)
                     {
@@ -122,6 +123,7 @@ public sealed partial class ScheduleCalendar : IDisposable
                             userDeleted = true;
                         }
                     }
+
                     _events.Add(new RoosterItemDayCalendarItem
                     {
                         Start = dayItem.DateStart!.Value,
@@ -133,6 +135,7 @@ public sealed partial class ScheduleCalendar : IDisposable
                 }
             }
         }
+
         await SessionExpireService.SetSelectedMonth(_month, _cls.Token);
         _updating = false;
         StateHasChanged();
@@ -145,8 +148,10 @@ public sealed partial class ScheduleCalendar : IDisposable
         {
             TrainingId = newTraining.Id,
             Name = newTraining.Name,
-            DateStart = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Local).ToUniversalTime(),
-            DateEnd = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Local).ToUniversalTime(),
+            DateStart = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("StartTime is null")),
+                DateTimeKind.Local).ToUniversalTime(),
+            DateEnd = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null")),
+                DateTimeKind.Local).ToUniversalTime(),
             RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId,
             ShowTime = newTraining.ShowTime,
             IsCreated = true,
@@ -161,9 +166,15 @@ public sealed partial class ScheduleCalendar : IDisposable
         StateHasChanged();
     }
 
+    private void RefreshMe()
+    {
+        StateHasChanged();
+    }
+
     public void Dispose()
     {
         Global.NewTrainingAddedAsync -= HandleNewTraining;
+        _refreshModel.RefreshRequested -= RefreshMe;
         _cls.Cancel();
     }
 }

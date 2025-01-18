@@ -21,6 +21,7 @@ public sealed partial class ScheduleCard : IDisposable
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
     [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter, EditorRequired] public List<PlannerTrainingType>? TrainingTypes { get; set; }
+    [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public string Width { get; set; } = "100%";
     [Parameter] public string? MinWidth { get; set; }
@@ -35,11 +36,15 @@ public sealed partial class ScheduleCard : IDisposable
     private bool _showHistory;
     private bool _showPastBody = true;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _refreshModel.RefreshRequested += RefreshMe;
-        Global.TrainingDeletedAsync += TrainingDeleted;
-        _showHistory = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_history);
+        if (firstRender)
+        {
+            _refreshModel.RefreshRequested += RefreshMe;
+            Global.TrainingDeletedAsync += TrainingDeleted;
+            _showHistory = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_history);
+            StateHasChanged();
+        }
     }
 
     protected override void OnInitialized()
@@ -129,6 +134,7 @@ public sealed partial class ScheduleCard : IDisposable
     private void RefreshMe()
     {
         StateHasChanged();
+        Refresh?.CallRequestRefresh();
     }
 
     public void Dispose()
