@@ -12,7 +12,7 @@ public sealed partial class TrainingHistoryDialog
     [Inject] private IStringLocalizer<TrainingHistoryDialog> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private IAuditClient AuditClient { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public Guid? TrainingId { get; set; }
     [Parameter] public List<DrogeUser>? Users { get; set; }
 

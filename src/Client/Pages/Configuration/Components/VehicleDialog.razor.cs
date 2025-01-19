@@ -9,7 +9,7 @@ public partial class VehicleDialog : IDisposable
     [Inject] private IStringLocalizer<Vehicles> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private IVehicleClient VehicleClient { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public DrogeVehicle? DrogeVehicle { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool? IsNew { get; set; }

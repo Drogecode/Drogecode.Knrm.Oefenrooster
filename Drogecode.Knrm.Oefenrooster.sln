@@ -15,11 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.ClientGenerator", "src\ClientGenerator\Drogecode.Knrm.Oefenrooster.ClientGenerator.csproj", "{AC063140-0166-40EF-ACFB-62DFD45EE787}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.PreCom", "src\PreCom\Drogecode.Knrm.Oefenrooster.PreCom.csproj", "{F036668C-313D-4B99-AC60-0F6C1918187B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.TestClient", "tests\Drogecode.Knrm.Oefenrooster.TestClient\Drogecode.Knrm.Oefenrooster.TestClient.csproj", "{6C88A283-DE9A-4DBE-858F-7B0DA45587B2}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drogecode.Knrm.Oefenrooster.TestPreCom", "tests\Drogecode.Knrm.Oefenrooster.TestPreCom\Drogecode.Knrm.Oefenrooster.TestPreCom.csproj", "{3A28D93C-2B82-4F03-8C22-E90A69393760}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6DE471B8-1129-4FE3-BC60-FCCF71A80409}"
 EndProject
@@ -57,18 +53,10 @@ Global
 		{AC063140-0166-40EF-ACFB-62DFD45EE787}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC063140-0166-40EF-ACFB-62DFD45EE787}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC063140-0166-40EF-ACFB-62DFD45EE787}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F036668C-313D-4B99-AC60-0F6C1918187B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F036668C-313D-4B99-AC60-0F6C1918187B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F036668C-313D-4B99-AC60-0F6C1918187B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F036668C-313D-4B99-AC60-0F6C1918187B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6C88A283-DE9A-4DBE-858F-7B0DA45587B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6C88A283-DE9A-4DBE-858F-7B0DA45587B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C88A283-DE9A-4DBE-858F-7B0DA45587B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C88A283-DE9A-4DBE-858F-7B0DA45587B2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3A28D93C-2B82-4F03-8C22-E90A69393760}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3A28D93C-2B82-4F03-8C22-E90A69393760}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3A28D93C-2B82-4F03-8C22-E90A69393760}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3A28D93C-2B82-4F03-8C22-E90A69393760}.Release|Any CPU.Build.0 = Release|Any CPU
 		{52974398-69EC-4111-8C9C-42AC6BF8B055}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{52974398-69EC-4111-8C9C-42AC6BF8B055}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52974398-69EC-4111-8C9C-42AC6BF8B055}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -82,7 +70,6 @@ Global
 		{2C3B2883-7EA8-49B9-8AC0-6F38DCF1FC40} = {6DE471B8-1129-4FE3-BC60-FCCF71A80409}
 		{AC063140-0166-40EF-ACFB-62DFD45EE787} = {85808613-29D9-458F-9009-17F6F8FCA2FE}
 		{6C88A283-DE9A-4DBE-858F-7B0DA45587B2} = {6DE471B8-1129-4FE3-BC60-FCCF71A80409}
-		{3A28D93C-2B82-4F03-8C22-E90A69393760} = {6DE471B8-1129-4FE3-BC60-FCCF71A80409}
 		{52974398-69EC-4111-8C9C-42AC6BF8B055} = {85808613-29D9-458F-9009-17F6F8FCA2FE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

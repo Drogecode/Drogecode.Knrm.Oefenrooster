@@ -40,7 +40,7 @@ public class ReportActionControllerTests : BaseTest
         Assert.NotNull(getResult.Value?.Actions);
         Assert.NotEmpty(getResult.Value.Actions);
         Assert.True(getResult.Value.Success);
-        getResult.Value.Actions.Count.Should().BeGreaterOrEqualTo(2);
+        getResult.Value.Actions.Count.Should().BeGreaterThanOrEqualTo(2);
         var prevStart = DateTime.MaxValue;
         foreach (var action in getResult.Value.Actions)
         {
@@ -57,7 +57,7 @@ public class ReportActionControllerTests : BaseTest
         Assert.NotNull(getResult.Value?.Actions);
         Assert.NotEmpty(getResult.Value.Actions);
         Assert.True(getResult.Value.Success);
-        getResult.Value.Actions.Count.Should().BeGreaterOrEqualTo(2);
+        getResult.Value.Actions.Count.Should().BeGreaterThanOrEqualTo(2);
     }
 
     [Fact]

@@ -1,13 +1,11 @@
 ﻿@page "/user/defaults"
 @attribute [Authorize]
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components
-@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-@using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 <PageTitle>@L["Default schedule"]</PageTitle>
 
 @if (_defaultGroups is not null)
 {
-    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{OpenGroupDialog(null, true);}">@L["Add new group"]</MudButton>
+    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick=" ()=>  { return OpenGroupDialog(null, true);}">@L["Add new group"]</MudButton>
     if (_defaultGroups.Count > 1)
     {
         <MudExpansionPanels>

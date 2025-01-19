@@ -12,7 +12,7 @@ public partial class ShareActionListDialog : IDisposable
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
     [Inject, NotNull] private IStringLocalizer<DateToString>? LDateToString { get; set; }
     [Inject, NotNull] private IReportActionSharedClient? ReportActionSharedClient { get; set; }
-    [CascadingParameter, NotNull] MudDialogInstance? MudDialog { get; set; }
+    [CascadingParameter, NotNull] IMudDialogInstance? MudDialog { get; set; }
     [Parameter] public List<DrogeUser>? Users { get; set; }
 
     private readonly CancellationTokenSource _cls = new();

@@ -7,7 +7,7 @@
     <MudText Typo="Typo.h4">@L["Add or change special day"]</MudText>
     @if (_items?.DayItems is not null)
     {
-        <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{OpenDayItemDialog(null, true);}">@L["Add new special day"]</MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{return OpenDayItemDialog(null, true);}">@L["Add new special day"]</MudButton>
         <MudTable Items="_items.DayItems.OrderBy(x=>x.DateStart)">
             <HeaderContent>
                 <MudTh>@LApp["Description"]</MudTh>
@@ -35,7 +35,7 @@
                     @if (context.Type != CalendarItemType.SpecialDate)
                     {
                         <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context);}" />
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{OpenDayItemDialog(context, false);}" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{return OpenDayItemDialog(context, false);}" />
                     }
                 </MudTd>
             </RowTemplate>

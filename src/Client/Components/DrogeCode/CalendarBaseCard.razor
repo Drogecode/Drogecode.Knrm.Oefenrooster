@@ -35,12 +35,12 @@
 
                         @if (OnClickHistory.HasDelegate)
                         {
-                            <MudIconButton Class="DrogeCode-card-header-history" Icon="@Icons.Material.Filled.History" Color="Color.Default" OnClick="() => OnClickHistory.InvokeAsync()"/>
+                            <MudIconButton Class="DrogeCode-card-header-history" Icon="@Icons.Material.Filled.History" Color="Color.Default" OnClick="async () => await OnClickHistory.InvokeAsync()"/>
                         }
 
                         @if (OnClickSettings.HasDelegate)
                         {
-                            <MudIconButton Class="DrogeCode-card-header-settings" Icon="@Icons.Material.Filled.Settings" Color="Color.Default" OnClick="() => OnClickSettings.InvokeAsync()"/>
+                            <MudIconButton Class="DrogeCode-card-header-settings" Icon="@Icons.Material.Filled.Settings" Color="Color.Default" OnClick="async () => await OnClickSettings.InvokeAsync()"/>
                         }
                     }
                     else if (_iconCount > 1)

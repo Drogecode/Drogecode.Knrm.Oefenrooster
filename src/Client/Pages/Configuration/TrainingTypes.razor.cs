@@ -20,7 +20,7 @@ public sealed partial class TrainingTypes : IDisposable
         _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
     }
 
-    private void OpenTrainingTypeDialog(PlannerTrainingType? trainingType, bool isNew)
+    private Task OpenTrainingTypeDialog(PlannerTrainingType? trainingType, bool isNew)
     {
         var header = isNew ? L["Add new training type"] : L["Edit training type"];
         var parameters = new DialogParameters<TrainingTypeDialog> {
@@ -28,13 +28,13 @@ public sealed partial class TrainingTypes : IDisposable
             { x=> x.Refresh, _refreshModel },
             { x=> x.IsNew, isNew},
         };
-        DialogOptions options = new DialogOptions()
+        var options = new DialogOptions()
         {
             MaxWidth = MaxWidth.Medium,
             CloseButton = true,
             FullWidth = true
         };
-        DialogProvider.Show<TrainingTypeDialog>(header, parameters, options);
+        return DialogProvider.ShowAsync<TrainingTypeDialog>(header, parameters, options);
     }
 
     private async Task RefreshMeAsync()

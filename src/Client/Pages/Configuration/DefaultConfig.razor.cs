@@ -27,7 +27,7 @@ public sealed partial class DefaultConfig : IDisposable
         }
     }
 
-    private void OpenDefaultConfigDialog(DefaultSchedule? defaultSchedule, bool isNew)
+    private Task OpenDefaultConfigDialog(DefaultSchedule? defaultSchedule, bool isNew)
     {
         var parameters = new DialogParameters<DefaultConfigDialog>
         {
@@ -35,8 +35,8 @@ public sealed partial class DefaultConfig : IDisposable
             { x => x.IsNew, isNew },
             { x => x.Refresh, _refreshModel },
         };
-        DialogOptions options = new DialogOptions() { FullScreen = true, FullWidth = true };
-        DialogProvider.Show<DefaultConfigDialog>(isNew ? L["Put default schedule"] : L["Edit default schedule"], parameters, options);
+        var options = new DialogOptions() { FullScreen = true, FullWidth = true };
+        return DialogProvider.ShowAsync<DefaultConfigDialog>(isNew ? L["Put default schedule"] : L["Edit default schedule"], parameters, options);
     }
 
     private async Task RefreshMeAsync()

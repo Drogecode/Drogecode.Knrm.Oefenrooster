@@ -104,7 +104,7 @@ public sealed partial class SpecialSettings : IDisposable
                     case ConfigurationUpdated.UsersOnlineChanged:
                         if (type.ByUserId.Equals(_userId))
                             break;
-                        if (_lastSyncDateTime.CompareTo(DateTime.UtcNow.AddSeconds(-50)) < 1 )
+                        if (_lastSyncDateTime.CompareTo(DateTime.UtcNow.AddSeconds(-50)) < 1)
                         {
                             _lastSyncDateTime = DateTime.UtcNow;
                             _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
@@ -189,7 +189,7 @@ public sealed partial class SpecialSettings : IDisposable
         StateHasChanged();
     }
 
-    private void AddUser()
+    private Task AddUser()
     {
         var options = new DialogOptions()
         {
@@ -198,10 +198,10 @@ public sealed partial class SpecialSettings : IDisposable
             FullWidth = true
         };
         var parameters = new DialogParameters { { "Functions", _functions }, { "Refresh", _refreshModel } };
-        DialogProvider.Show<AddUserDialog>(L["Add user"], parameters, options);
+        return DialogProvider.ShowAsync<AddUserDialog>(L["Add user"], parameters, options);
     }
 
-    private void ChangeUser(DrogeUser user)
+    private Task ChangeUser(DrogeUser user)
     {
         var options = new DialogOptions()
         {
@@ -210,7 +210,7 @@ public sealed partial class SpecialSettings : IDisposable
             FullWidth = true
         };
         var parameters = new DialogParameters { { "User", user }, { "Functions", _functions }, { "Refresh", _refreshModel } };
-        DialogProvider.Show<EditUserDialog>(L["Edit user"], parameters, options);
+        return DialogProvider.ShowAsync<EditUserDialog>(L["Edit user"], parameters, options);
     }
 
     private async Task RefreshMeAsync()

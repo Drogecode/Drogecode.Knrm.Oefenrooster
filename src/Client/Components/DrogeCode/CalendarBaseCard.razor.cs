@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
@@ -18,6 +19,7 @@ public sealed partial class CalendarBaseCard : IDisposable
     [Parameter] public EventCallback OnClickSettings { get; set; }
     [Parameter] public EventCallback OnClickHistory { get; set; }
     [Parameter] public AvailabilitySetBy SetBy { get; set; }
+    [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public string? ContentClass { get; set; }
     [Parameter] public string Width { get; set; } = "200px";
     [Parameter] public string? MinWidth { get; set; }
@@ -43,6 +45,7 @@ public sealed partial class CalendarBaseCard : IDisposable
             if (ShowPastBodyChanged.HasDelegate)
             {
                 ShowPastBodyChanged.InvokeAsync(value);
+                Refresh?.CallRequestRefresh();
             }
         }
     }

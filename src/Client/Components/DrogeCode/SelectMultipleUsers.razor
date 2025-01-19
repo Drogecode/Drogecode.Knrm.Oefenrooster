@@ -2,7 +2,7 @@
 @if (Users is not null && Functions is not null)
 {
     <MudSelectExtended Clearable="@Clearable"
-                       T="DrogeUser"
+                       T="DrogeUser?"
                        Disabled="Disabled"
                        MultiSelectionTextFunc="@(new Func<List<DrogeUser>, string>(GetMultiSelectionText))"
                        ToStringFunc="@(new Func<DrogeUser, string>(GetSelectedText))"
@@ -10,13 +10,14 @@
                        MultiSelection="@MultiSelection"
                        SelectedValues="@Selection"
                        SelectedValuesChanged="OnSelectionChanged"
-                       ReadOnly="@ReadOnly">
+                       ReadOnly="@ReadOnly"
+                       AnchorOrigin="Origin.BottomCenter">
         @foreach (var function in Functions.Where(function => Users.Any(x => x.UserFunctionId == function.Id)))
         {
-            <MudSelectItemGroupExtended T="DrogeUser" Text="@function.Name" Sticky="true">
+            <MudSelectItemGroupExtended T="DrogeUser?" Text="@function.Name" Sticky="true">
                 @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
                 {
-                    <MudSelectItemExtended T="DrogeUser" Value="@user">@user.Name</MudSelectItemExtended>
+                    <MudSelectItemExtended T="DrogeUser?" Value="@user">@user.Name</MudSelectItemExtended>
                 }
             </MudSelectItemGroupExtended>
         }

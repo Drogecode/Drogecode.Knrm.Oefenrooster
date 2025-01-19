@@ -12,7 +12,7 @@ public sealed partial class DayItemDialog : IDisposable
     [Inject] private IStringLocalizer<DayItemDialog> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private IDayItemClient DayItemClient { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public RoosterItemDay? DayItem { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public List<DrogeUser>? Users { get; set; }

@@ -11,7 +11,7 @@ public sealed partial class TrainingTypeDialog : IDisposable
     [Inject] private IStringLocalizer<TrainingTypeDialog> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public PlannerTrainingType? TrainingType { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool IsNew { get; set; }

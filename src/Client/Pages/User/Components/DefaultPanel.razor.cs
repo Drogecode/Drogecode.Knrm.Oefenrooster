@@ -33,20 +33,20 @@ public sealed partial class DefaultPanel : IDisposable
         StateHasChanged();
     }
 
-    private void OpenGroupDialog(DefaultGroup? group, bool isNew)
+    private Task OpenGroupDialog(DefaultGroup? group, bool isNew)
     {
         var parameters = new DialogParameters<GroupDialog> {
             { x=>x.DefaultGroup, group},
             { x=> x.IsNew, isNew},
             { x=> x.Refresh, _refreshModel },
         };
-        DialogOptions options = new DialogOptions()
+        var options = new DialogOptions()
         {
             MaxWidth = MaxWidth.Medium,
             CloseButton = true,
             FullWidth = true
         };
-        _dialogProvider.Show<GroupDialog>(L["Add group"], parameters, options);
+        return _dialogProvider.ShowAsync<GroupDialog>(L["Add group"], parameters, options);
     }
     
     private async Task OnChange(Availability? value, DefaultUserSchedule? old, Guid defaultId, bool isNew)

@@ -30,16 +30,17 @@ public class ScheduleDialogTests : BlazorTestBase
         {
             Name = name,
         };
-        var param = new DialogParameters<ScheduleDialog>() {
+        var param = new DialogParameters<ScheduleDialog>
+        {
             { x => x.Planner, planner },
         };
         var comp = RenderComponent<MudDialogProvider>();
         comp.Markup.Trim().Should().BeEmpty();
-        var service = Services.GetService<IDialogService>() as DialogService;
+        var service = Services.GetRequiredService<IDialogService>();
         service.Should().NotBe(null);
-
-        IDialogReference? dialogReference = null;
-        await comp.InvokeAsync(() => dialogReference = service!.Show<ScheduleDialog>(string.Empty, param));
+        var dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service.ShowAsync<ScheduleDialog>(string.Empty, param));
+        await comp.InvokeAsync(() => dialogReferenceLazy.Value);
+        var dialogReference = await dialogReferenceLazy.Value;
         dialogReference.Should().NotBe(null);
         comp.Find("div.mud-dialog-container").Should().NotBe(null);
         return comp;

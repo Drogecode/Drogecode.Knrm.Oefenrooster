@@ -32,7 +32,7 @@
                             options.RequireInteraction = true;
                             options.Action = L["Click to reload"];
                             options.ActionColor = Color.Inherit;
-                            options.Onclick = snackbar =>
+                            options.OnClick = snackbar =>
                             {
                                 Navigation.NavigateTo(Navigation.Uri, true);
                                 return Task.CompletedTask;

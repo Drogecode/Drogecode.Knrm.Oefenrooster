@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Drogecode.Knrm.Oefenrooster.Server.Helpers.JsonConverters;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 using Microsoft.AspNetCore.Authorization;
@@ -54,7 +53,7 @@ public class PreComController : DrogeController
                     var forwards = await _preComService.GetAllForwards(30, 0, userId, customerId, clt);
                     if (forwards?.PreComForwards?.Any() == true)
                     {
-                        var client = _clientFactory.CreateClient();
+                        using var client = _clientFactory.CreateClient();
                         foreach (var forward in forwards.PreComForwards)
                         {
                             try
@@ -216,7 +215,7 @@ public class PreComController : DrogeController
             }
 
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var client = _clientFactory.CreateClient();
+            using var client = _clientFactory.CreateClient();
             var forward = await _preComService.GetForward(body.ForwardId, customerId, clt);
             if (forward == null)
             {

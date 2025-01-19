@@ -19,7 +19,7 @@
                         var training = item.Training;
                         if (training != null)
                         {
-                            <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth"/>
+                            <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth" Refresh="_refreshModel"/>
                         }
 
                         break;

@@ -434,7 +434,8 @@ public class ScheduleService : IScheduleService
                             if (avaUser is null && !includeUnAssigned) continue;
                             avaUser ??= new DbRoosterAvailable();
                             defVehicle ??= await GetDefaultVehicleForTraining(customerId, training, clt);
-                            if (avaUser.VehicleId is null || (avaUser.VehicleId != defVehicle && !(training.LinkVehicleTrainings?.Any(x => x.IsSelected && x.VehicleId == avaUser.VehicleId) ?? false)))
+                            if (avaUser.VehicleId is null ||
+                                (avaUser.VehicleId != defVehicle && !(training.LinkVehicleTrainings?.Any(x => x.IsSelected && x.VehicleId == avaUser.VehicleId) ?? false)))
                             {
                                 /*if (avaUser is { Assigned: true, VehicleId: not null } && avaUser.UserId != Guid.Empty && avaUser.VehicleId != defVehicle &&
                                     !await IsVehicleSelectedForTraining(customerId, training.Id, avaUser.VehicleId, clt))
@@ -450,6 +451,7 @@ public class ScheduleService : IScheduleService
                             Availability? available = avaUser.Available;
                             AvailabilitySetBy? setBy = avaUser.SetBy;
                             GetAvailability(defaultAveUser, userHolidays, training.DateStart, training.DateEnd, training.RoosterDefaultId, user.Id, ref available, ref setBy);
+
                             newPlanner.PlanUsers.Add(new PlanUser
                             {
                                 UserId = user.Id,
@@ -460,7 +462,7 @@ public class ScheduleService : IScheduleService
                                 PlannedFunctionId = avaUser.UserFunctionId ?? user.UserFunctionId,
                                 UserFunctionId = user.UserFunctionId,
                                 VehicleId = avaUser.VehicleId,
-                                Buddy = avaUser.User?.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB.Name,
+                                Buddy = avaUser.User?.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name,
                             });
                             if (countPerUser && training.CountToTrainingTarget && scheduleDate.Month == forMonth && avaUser.Assigned)
                             {
@@ -991,7 +993,7 @@ public class ScheduleService : IScheduleService
 
             result.Trainings.Add(plan);
         }
-        
+
         sw.Stop();
         result.Success = true;
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
@@ -1000,10 +1002,9 @@ public class ScheduleService : IScheduleService
 
     public async Task<GetUserMonthInfoResponse> GetUserMonthInfo(Guid userId, Guid customerId, CancellationToken clt)
     {
-        
         var sw = Stopwatch.StartNew();
         var result = new GetUserMonthInfoResponse();
-        
+
         var scheduled = _database.RoosterAvailables
             .Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Training.DeletedOn == null)
             .Include(i => i.Training);
@@ -1030,7 +1031,7 @@ public class ScheduleService : IScheduleService
                     userMonthInfo.Valid += 1;
             }
         }
-        
+
         sw.Stop();
         result.Success = true;
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
