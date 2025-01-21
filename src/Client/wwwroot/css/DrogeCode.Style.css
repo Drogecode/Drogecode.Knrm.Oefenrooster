@@ -2,13 +2,11 @@
     /* Fixes issue in FireFox */
     vertical-align: top;
 }
-.mud-cal-month-cell{
+/*.mud-cal-month-cell{
     z-index: 1;
-}
+}*/
 
 ul {
     /* Temporary until the issue is resolved https://github.com/MudBlazor/MudBlazor/issues/10655 */
-    margin: 0;
-    padding: 0;
     list-style: none;
 }

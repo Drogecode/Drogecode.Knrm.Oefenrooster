@@ -17,7 +17,7 @@ services:
       - database__username=postgresUser
       - database__password=postgresPW
       - database__FQDN=host.docker.internal
-      - database__name=BackupProd
+      - database__name=BackupProd2
       - database__port:5432
     build:
       context: .
