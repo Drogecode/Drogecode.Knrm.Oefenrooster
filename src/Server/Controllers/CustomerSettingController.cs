@@ -59,7 +59,7 @@ public class CustomerSettingController : ControllerBase
                 case SettingName.TimeZone:
                     result = new SettingStringResponse()
                     {
-                        Value = System.Text.Json.JsonSerializer.Serialize(await _customerSettingService.GetTimeZone(customerId)),
+                        Value = await _customerSettingService.GetTimeZone(customerId),
                         Success = true
                     };
                     break;
@@ -113,7 +113,7 @@ public class CustomerSettingController : ControllerBase
 
     [HttpPatch]
     [Route("training-string/{name}/{newValue}")]
-    [Authorize(Roles = AccessesNames.AUTH_super_user)]
+    [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
     public async Task<ActionResult> PatchStringSetting(SettingName name, string newValue, CancellationToken token = default)
     {
         try
@@ -134,7 +134,7 @@ public class CustomerSettingController : ControllerBase
 
     [HttpPatch]
     [Route("training-bool/{name}/{newValue:bool}")]
-    [Authorize(Roles = AccessesNames.AUTH_super_user)]
+    [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
     public async Task<ActionResult> PatchBoolSetting(SettingName name, bool newValue, CancellationToken token = default)
     {
         try

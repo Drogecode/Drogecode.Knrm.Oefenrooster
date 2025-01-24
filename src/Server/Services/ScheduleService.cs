@@ -460,7 +460,7 @@ public class ScheduleService : IScheduleService
                                 PlannedFunctionId = avaUser.UserFunctionId ?? user.UserFunctionId,
                                 UserFunctionId = user.UserFunctionId,
                                 VehicleId = avaUser.VehicleId,
-                                Buddy = avaUser.User?.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB.Name,
+                                Buddy = avaUser.User?.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name,
                             });
                             if (countPerUser && training.CountToTrainingTarget && scheduleDate.Month == forMonth && avaUser.Assigned)
                             {
