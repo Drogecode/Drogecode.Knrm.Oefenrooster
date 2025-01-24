@@ -36,6 +36,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_show_c_footer:
                         drogeUserRole.AUTH_show_c_footer = true;
                         break;
+                    case AccessesNames.AUTH_configure_global_all:
+                        drogeUserRole.AUTH_configure_global_all = true;
+                        break;
                     case AccessesNames.AUTH_configure_training_types:
                         drogeUserRole.AUTH_configure_training_types = true;
                         break;
@@ -141,6 +144,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_basic_access).Append(',');
             if (userRole.AUTH_show_c_footer)
                 sb.Append(AccessesNames.AUTH_show_c_footer).Append(',');
+            if (userRole.AUTH_configure_global_all)
+                sb.Append(AccessesNames.AUTH_configure_global_all).Append(',');
             if (userRole.AUTH_configure_training_types)
                 sb.Append(AccessesNames.AUTH_configure_training_types).Append(',');
             if (userRole.AUTH_configure_user_roles)

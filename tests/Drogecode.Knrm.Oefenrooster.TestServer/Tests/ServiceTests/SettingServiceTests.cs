@@ -1,8 +1,6 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using Drogecode.Knrm.Oefenrooster.Server.Database;
-using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ServiceTests;
 
@@ -42,12 +40,12 @@ public class SettingServiceTests : BaseTest
     {
         var value = await _userSettingService.TrainingToCalendar(DefaultSettingsHelper.KnrmHuizenId, DefaultUserId);
         Assert.False(value);
-        await _customerSettingService.Patch_TrainingToCalendar(DefaultSettingsHelper.KnrmHuizenId, true); value = await _userSettingService.TrainingToCalendar(DefaultSettingsHelper.KnrmHuizenId, DefaultUserId);
+        await _customerSettingService.PatchBoolSetting(DefaultSettingsHelper.KnrmHuizenId, SettingName.TrainingToCalendar, true); value = await _userSettingService.TrainingToCalendar(DefaultSettingsHelper.KnrmHuizenId, DefaultUserId);
         Assert.True(value);
         await _userSettingService.Patch_TrainingToCalendar(DefaultSettingsHelper.KnrmHuizenId, DefaultUserId, false);
         value = await _userSettingService.TrainingToCalendar(DefaultSettingsHelper.KnrmHuizenId, DefaultUserId);
         Assert.False(value);
-        value = await _customerSettingService.TrainingToCalendar(DefaultSettingsHelper.KnrmHuizenId);
+        value = (await _customerSettingService.GetBoolCustomerSetting(DefaultSettingsHelper.KnrmHuizenId, SettingName.TrainingToCalendar)).Value;
         Assert.True(value);
     }
 }

@@ -5,36 +5,6 @@
     "version": "v1"
   },
   "paths": {
-    "/api/CustomerSetting/ios-dark-light-check": {
-      "get": {
-        "tags": [
-          "CustomerSetting"
-        ],
-        "operationId": "GetIosDarkLightCheck",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/CustomerSetting/time-zone": {
       "get": {
         "tags": [
@@ -62,47 +32,140 @@
               }
             }
           }
-        }
+        },
+        "deprecated": true
       }
     },
-    "/api/CustomerSetting/training-to-calendar": {
+    "/api/CustomerSetting/training-string/{name}": {
       "get": {
         "tags": [
           "CustomerSetting"
         ],
-        "operationId": "GetTrainingToCalendar",
+        "operationId": "GetStringSetting",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SettingName"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/SettingStringResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/SettingStringResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/SettingStringResponse"
                 }
               }
             }
           }
         }
-      },
+      }
+    },
+    "/api/CustomerSetting/training-bool/{name}": {
+      "get": {
+        "tags": [
+          "CustomerSetting"
+        ],
+        "operationId": "GetBoolSetting",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SettingName"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingBoolResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingBoolResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingBoolResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CustomerSetting/training-string/{name}/{newValue}": {
       "patch": {
         "tags": [
           "CustomerSetting"
         ],
-        "operationId": "PatchTrainingToCalendar",
+        "operationId": "PatchStringSetting",
         "parameters": [
           {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SettingName"
+            }
+          },
+          {
             "name": "newValue",
-            "in": "query",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/CustomerSetting/training-bool/{name}/{newValue}": {
+      "patch": {
+        "tags": [
+          "CustomerSetting"
+        ],
+        "operationId": "PatchBoolSetting",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SettingName"
+            }
+          },
+          {
+            "name": "newValue",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "boolean"
             }
@@ -116,5 +179,57 @@
       }
     }
   },
-  "components": { }
+  "components": {
+    "schemas": {
+      "SettingBoolResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "value": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SettingName": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "SettingStringResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
 }

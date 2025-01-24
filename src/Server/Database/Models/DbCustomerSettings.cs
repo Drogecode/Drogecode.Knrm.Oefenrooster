@@ -8,7 +8,7 @@ public class DbCustomerSettings
 {
     [Key] public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
-    [StringLength(50)] public string? Setting { get; set; }
+    public SettingName Name { get; set; } = SettingName.None;
     [StringLength(50)] public string? Value { get; set; }
 
     public DbCustomers Customer { get; set; }

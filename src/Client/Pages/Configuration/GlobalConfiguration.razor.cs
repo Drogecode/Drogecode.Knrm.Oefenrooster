@@ -1,9 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
-using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
@@ -11,13 +9,12 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
-public sealed partial class SpecialSettings : IDisposable
+public sealed partial class GlobalConfiguration : IDisposable
 {
-    [Inject] private IStringLocalizer<SpecialSettings> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<GlobalConfiguration> L { get; set; } = default!;
     [Inject] private IDialogService DialogProvider { get; set; } = default!;
     [Inject] private ConfigurationRepository ConfigurationRepository { get; set; } = default!;
     [Inject] private UserRepository UserRepository { get; set; } = default!;
@@ -34,11 +31,13 @@ public sealed partial class SpecialSettings : IDisposable
     private readonly RefreshModel _refreshModel = new();
     private readonly CancellationTokenSource _cls = new();
 
+    private string? _settingCalenderPrefix;
     private bool? _clickedUpdate;
     private bool? _usersSynced;
     private bool? _specialDatesUpdated;
     private bool? _settingTrainingToCalendar;
     private bool _clickedSyncHistorical;
+    private bool _loaded;
     private Guid _userId;
     private GetHistoricalResponse? _syncHistorical;
     private DbCorrectionResponse? _dbCorrection;
@@ -51,19 +50,18 @@ public sealed partial class SpecialSettings : IDisposable
         Global.VisibilityChangeAsync += VisibilityChanged;
     }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        _settingTrainingToCalendar = await CustomerSettingsClient.GetTrainingToCalendarAsync();
-        _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
-        _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            _settingTrainingToCalendar = (await CustomerSettingsClient.GetBoolSettingAsync(SettingName.TrainingToCalendar, _cls.Token)).Value;
+            _settingCalenderPrefix = (await CustomerSettingsClient.GetStringSettingAsync(SettingName.CalendarPrefix, _cls.Token)).Value;
+            _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
+            _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
             await SetUser();
             await ConfigureHub();
+            _loaded = true;
+            StateHasChanged();
         }
     }
 
@@ -142,7 +140,13 @@ public sealed partial class SpecialSettings : IDisposable
     private async Task PatchTrainingToCalendar(bool isChecked)
     {
         _settingTrainingToCalendar = isChecked;
-        await CustomerSettingsClient.PatchTrainingToCalendarAsync(isChecked);
+        await CustomerSettingsClient.PatchBoolSettingAsync(SettingName.TrainingToCalendar, isChecked);
+    }
+
+    private async Task PatchCalenderPrefix(string newValue)
+    {
+        _settingCalenderPrefix = newValue;
+        await CustomerSettingsClient.PatchStringSettingAsync(SettingName.CalendarPrefix, newValue);
     }
 
     private async Task UpdateDatabase()

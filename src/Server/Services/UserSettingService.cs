@@ -17,41 +17,41 @@ public class UserSettingService : IUserSettingService
 
     public async Task<bool> TrainingToCalendar(Guid customerId, Guid userId)
     {
-        var result = await GetUserSetting(customerId, userId, SettingNames.TRAINING_TO_CALENDAR);
+        var result = await GetUserSetting(customerId, userId, SettingName.TrainingToCalendar);
         if (result is null)
-            return await _customerSettingService.TrainingToCalendar(customerId);
+            return (await _customerSettingService.GetBoolCustomerSetting(customerId, SettingName.TrainingToCalendar)).Value;
         else
             return SettingNames.StringToBool(result);
     }
 
     public async Task Patch_TrainingToCalendar(Guid customerId, Guid userId, bool value)
     {
-        await PatchUserSetting(customerId, userId, SettingNames.TRAINING_TO_CALENDAR, value ? "true" : "false");
+        await PatchUserSetting(customerId, userId, SettingName.TrainingToCalendar, value ? "true" : "false");
     }
 
     public async Task<string> TrainingCalenderPrefix(Guid customerId, Guid userId)
     {
-        var result = await GetUserSetting(customerId, userId, SettingNames.TRAINING_CALENDER_PREFIX);
+        var result = await GetUserSetting(customerId, userId, SettingName.CalendarPrefix);
         if (result is null)
-            return await _customerSettingService.TrainingCalenderPrefix(customerId);
+            return (await _customerSettingService.GetStringCustomerSetting(customerId, SettingName.CalendarPrefix, string.Empty)).Value;
         return result;
     }
 
-    private async Task<string?> GetUserSetting(Guid customerId, Guid userId, string setting)
+    private async Task<string?> GetUserSetting(Guid customerId, Guid userId, SettingName name)
     {
-        var result = await _database.UserSettings.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Setting == setting).FirstOrDefaultAsync();
+        var result = await _database.UserSettings.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Name == name).FirstOrDefaultAsync();
         return result?.Value;
     }
 
-    private async Task PatchUserSetting(Guid customerId, Guid userId, string setting, string value)
+    private async Task PatchUserSetting(Guid customerId, Guid userId, SettingName name, string value)
     {
-        var result = await _database.UserSettings.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Setting == setting).FirstOrDefaultAsync();
+        var result = await _database.UserSettings.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Name == name).FirstOrDefaultAsync();
         if (result is null)
             _database.UserSettings.Add(new Database.Models.DbUserSettings
             {
                 CustomerId = customerId,
                 UserId = userId,
-                Setting = setting,
+                Name = name,
                 Value = value
             });
         else
