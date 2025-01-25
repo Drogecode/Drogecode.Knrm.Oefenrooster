@@ -192,6 +192,36 @@
         }
       }
     },
+    "/api/Authentication/authenticate-direct/enabled": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "GetAuthenticateDirectEnabled",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Authentication/authenticate-direct": {
       "post": {
         "tags": [

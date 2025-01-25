@@ -30,14 +30,14 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     {
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        //[System.Obsolete]
-        //System.Threading.Tasks.Task<string> GetTimeZoneAsync();
+        [System.Obsolete]
+        System.Threading.Tasks.Task<string> GetTimeZoneAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        //[System.Obsolete]
-        //System.Threading.Tasks.Task<string> GetTimeZoneAsync(System.Threading.CancellationToken cancellationToken);
+        [System.Obsolete]
+        System.Threading.Tasks.Task<string> GetTimeZoneAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>

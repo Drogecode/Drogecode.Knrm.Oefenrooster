@@ -137,8 +137,7 @@ public class AuthenticationController : DrogeController
             return false;
         }
     }
-
-
+    
     [HttpPost]
     [Route("authenticate-external")]
     public async Task<ActionResult<bool>> AuthenticateExternal([FromBody] AuthenticateExternalRequest body, CancellationToken clt = default)
@@ -184,6 +183,13 @@ public class AuthenticationController : DrogeController
             _logger.LogError(e, "AuthenticateExternal");
             return false;
         }
+    }
+
+    [HttpGet]
+    [Route("authenticate-direct/enabled")]
+    public async Task<ActionResult<bool>> GetAuthenticateDirectEnabled()
+    {
+        return _configuration.GetValue<bool>("Drogecode:DirectLogin");
     }
 
     [HttpPost]
