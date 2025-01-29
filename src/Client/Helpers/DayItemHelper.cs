@@ -1,5 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Helpers;
 
@@ -16,4 +15,5 @@ public static class DayItemHelper
             _ => Color.Secondary,
         };
     }
+    public static string GetColor(Color color) => $"var(--mud-palette-{color.ToDescriptionString()})";
 }

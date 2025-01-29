@@ -33,15 +33,22 @@ public class ConfigurationService : IConfigurationService
     {
         if (holiday.LocalName == null) return false;
         var date = DateTime.SpecifyKind(holiday.Date, DateTimeKind.Utc);
-        var d = await _database.RoosterItemDays.FirstOrDefaultAsync(x =>
+        var existingDate = await _database.RoosterItemDays.FirstOrDefaultAsync(x =>
             x.CustomerId == customerId && x.Type == CalendarItemType.SpecialDate && x.IsFullDay == true && x.DateStart == date && x.Text == holiday.LocalName, cancellationToken: clt);
-        if (d is not null) return false;
+        if (existingDate is not null)
+        {
+            if (existingDate.DateEnd is not null && !existingDate.DateEnd.Equals(DateTime.MinValue)) return false;
+            existingDate.DateEnd = date;
+            _database.RoosterItemDays.Update(existingDate);
+            return await _database.SaveChangesAsync(clt) > 0;
+        }
         await _database.RoosterItemDays.AddAsync(new DbRoosterItemDay
         {
             Id = Guid.NewGuid(),
             Type = CalendarItemType.SpecialDate,
             CustomerId = customerId,
             DateStart = date,
+            DateEnd = date,
             Text = holiday.LocalName,
             IsFullDay = true
         }, clt);
