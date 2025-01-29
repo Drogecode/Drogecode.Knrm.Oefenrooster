@@ -25,6 +25,7 @@ public sealed partial class ScheduleTable : IDisposable
     [Parameter, EditorRequired] public bool CanEdit { get; set; }
 
     private CancellationTokenSource _cls = new();
+    private Guid? _specialFunctionId = null;
     private bool _updating;
     private bool _working;
     private List<PlannedTraining> _events = new();
@@ -43,6 +44,7 @@ public sealed partial class ScheduleTable : IDisposable
     {
         if (firstRender)
         {
+            _specialFunctionId = Functions?.FirstOrDefault(x => x.Special)?.Id;
             var month = await SessionExpireService.GetSelectedMonth(_cls.Token);
             await SetMonth(month);
             StateHasChanged();

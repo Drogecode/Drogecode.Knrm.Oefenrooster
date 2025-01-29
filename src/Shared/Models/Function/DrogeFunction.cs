@@ -16,4 +16,5 @@ public class DrogeFunction
     public bool TrainingOnly { get; set; }
     public bool Default { get; set; }
     public bool Active { get; set; }
+    public bool Special { get; set; }
 }

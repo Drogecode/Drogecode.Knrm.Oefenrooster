@@ -28,6 +28,11 @@
                     <MudCheckBox Disabled="true" Value="context.Item.Default" />
                 </CellTemplate>
             </PropertyColumn>
+            <PropertyColumn Property="x => x.Special" Title="@L["Special"]">
+                <CellTemplate>
+                    <MudCheckBox Disabled="true" Value="context.Item.Special" />
+                </CellTemplate>
+            </PropertyColumn>
             <TemplateColumn>
                 <CellTemplate>
                     <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick='() => Navigation.NavigateTo($"/configuration/user-functions/edit/{context.Item.Id}")'/>

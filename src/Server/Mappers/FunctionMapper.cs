@@ -17,6 +17,7 @@ public static class FunctionMapper
             TrainingOnly = function.TrainingOnly,
             Default = function.IsDefault,
             Active = function.IsActive,
+            Special = function.IsSpecial,
         };
     }
 }

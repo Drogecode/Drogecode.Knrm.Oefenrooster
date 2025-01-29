@@ -13,6 +13,7 @@
         <MudCheckBox T="bool" Value="_function.Function.TrainingOnly" Label="@L["TrainingOnly"]" ValueChanged="@(value => { _function.Function.TrainingOnly = value; _saved = null; })"/>
         <MudCheckBox T="bool" Value="_function.Function.Active" Label="@L["Active"]" ValueChanged="@(value => { _function.Function.Active = value; _saved = null; })"/>
         <MudCheckBox T="bool" Value="_function.Function.Default" Label="@L["Default"]" ValueChanged="@(value => { _function.Function.Default = value; _saved = null; })"/>
+        <MudCheckBox T="bool" Value="_function.Function.Special" Label="@L["Special"]" ValueChanged="@(value => { _function.Function.Special = value; _saved = null; })"/>
         <MudButton Color="Color.Primary" OnClick="Submit">
             @LApp["Submit"]
             @switch (_saved)

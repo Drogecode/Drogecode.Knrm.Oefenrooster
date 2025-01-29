@@ -40,7 +40,7 @@ public class FunctionService : IFunctionService
         var sw = Stopwatch.StartNew();
         var result = new AddFunctionResponse();
         function.Id = Guid.NewGuid();
-        var functions = await _database.UserFunctions.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x=>x.Order).ToListAsync(clt);
+        var functions = await _database.UserFunctions.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x => x.Order).ToListAsync(clt);
         var order = functions.Prepend(-1).Max() + 10;
         _database.UserFunctions.Add(new DbUserFunctions
         {
@@ -52,6 +52,7 @@ public class FunctionService : IFunctionService
             TrainingOnly = function.TrainingOnly,
             IsDefault = function.Default,
             IsActive = function.Active,
+            IsSpecial = function.Special
         });
         result.Success = (await _database.SaveChangesAsync(clt) > 0);
         result.NewId = function.Id;
@@ -75,6 +76,7 @@ public class FunctionService : IFunctionService
             oldFunction.TrainingOnly = function.TrainingOnly;
             oldFunction.IsActive = function.Active;
             oldFunction.IsDefault = function.Default;
+            oldFunction.IsSpecial = function.Special;
             _database.UserFunctions.Update(oldFunction);
             result.Success = await _database.SaveChangesAsync(clt) > 0;
         }
@@ -95,17 +97,7 @@ public class FunctionService : IFunctionService
             .ToListAsync(clt);
         foreach (var function in functions)
         {
-            result.Functions.Add(new DrogeFunction
-            {
-                Id = function.Id,
-                RoleId = function.RoleId,
-                Name = function.Name,
-                Order = function.Order,
-                TrainingTarget = function.TrainingTarget,
-                TrainingOnly = function.TrainingOnly,
-                Default = function.IsDefault,
-                Active = function.IsActive,
-            });
+            result.Functions.Add(function.ToDrogeFunction());
         }
 
         result.Success = true;

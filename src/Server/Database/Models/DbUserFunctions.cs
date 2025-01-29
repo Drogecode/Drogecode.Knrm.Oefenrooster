@@ -14,6 +14,7 @@ public class DbUserFunctions
     public bool TrainingOnly { get; set; }
     public bool IsDefault { get; set; }
     public bool IsActive { get; set; }
+    public bool IsSpecial { get; set; }
 
     public DbCustomers Customer { get; set; }
     public ICollection<DbUsers>? Users { get; set; }

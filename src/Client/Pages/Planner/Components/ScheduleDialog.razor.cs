@@ -30,6 +30,7 @@ public sealed partial class ScheduleDialog : IDisposable
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
     private List<DrogeVehicle> _vehicleInfoForThisTraining = [];
     private Guid? _currentUserId = null;
+    private Guid? _specialFunctionId = null;
     private bool _plannerIsUpdated;
     private bool _showWoeps;
     private bool _canEdit;
@@ -50,6 +51,7 @@ public sealed partial class ScheduleDialog : IDisposable
         if (firstRender)
         {
             Task<GetPlannedTrainingResponse?>? latestVersionTask = null;
+            _specialFunctionId = Functions?.FirstOrDefault(x => x.Special)?.Id;
             if (Planner.TrainingId is not null && !Planner.TrainingId.Equals(Guid.Empty))
                 latestVersionTask = _scheduleRepository.GetPlannedTrainingById(Planner.TrainingId, _cls.Token);
             else if (Planner.DefaultId is not null && !Planner.DefaultId.Equals(Guid.Empty))
@@ -120,13 +122,13 @@ public sealed partial class ScheduleDialog : IDisposable
         }
     }
 
-    private async Task ClickLeader(PlanUser user)
+    private async Task ClickSpecialFunction(PlanUser user)
     {
         if (!_canEdit) return;
-        if (user.PlannedFunctionId.Equals(DefaultSettingsHelper.KompasLeiderId))
+        if (user.PlannedFunctionId.Equals(_specialFunctionId))
             await FunctionSelectionChanged(user, user.UserFunctionId);
         else
-            await FunctionSelectionChanged(user, DefaultSettingsHelper.KompasLeiderId);
+            await FunctionSelectionChanged(user, _specialFunctionId);
     }
 
     private async Task CheckChanged(bool toggled, PlanUser user, Guid functionId)

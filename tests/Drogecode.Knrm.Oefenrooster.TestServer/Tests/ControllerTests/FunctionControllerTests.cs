@@ -38,6 +38,7 @@ public class FunctionControllerTests : BaseTest
             Name = NAME,
             TrainingTarget = 2,
             Active = true,
+            Special = true,
         });
         Assert.NotNull(result?.Value?.NewId);
         result.Value.Success.Should().Be(true);
@@ -48,6 +49,7 @@ public class FunctionControllerTests : BaseTest
         functionGet.Value.Function.TrainingTarget.Should().Be(2);
         functionGet.Value.Function.TrainingOnly.Should().Be(false);
         functionGet.Value.Function.Active.Should().Be(true);
+        functionGet.Value.Function.Special.Should().Be(true);
         result.Value.ElapsedMilliseconds.Should().NotBe(-1);
     }
 
@@ -61,5 +63,34 @@ public class FunctionControllerTests : BaseTest
         result.Value.Functions.Should().Contain(x => x.Id == DefaultFunction);
         result.Value.Functions.Should().Contain(x => x.Id == newFunction);
         result.Value.ElapsedMilliseconds.Should().NotBe(-1);
+    }
+
+    [Fact]
+    public async Task PatchFunctionTest()
+    {
+        const string NAME = "PatchFunctionTest";
+        var result = await FunctionController.AddFunction(new Shared.Models.Function.DrogeFunction
+        {
+            Name = NAME,
+            TrainingTarget = 42,
+            Active = false,
+            Special = false,
+        });
+        Assert.NotNull(result?.Value?.NewId);
+        result.Value.Success.Should().Be(true);
+        var functionGet = await FunctionController.GetById(result.Value.NewId.Value);
+        Assert.NotNull(functionGet?.Value?.Function);
+        functionGet.Value.Function.Active.Should().Be(false);
+        functionGet.Value.Function.Special.Should().Be(false);
+        result.Value.ElapsedMilliseconds.Should().NotBe(-1);
+        functionGet.Value.Function.Active = true;
+        functionGet.Value.Function.Special = true;
+        var patchResult = await FunctionController.PatchFunction(functionGet.Value.Function);
+        Assert.NotNull(patchResult.Value?.Success);
+        patchResult.Value.Success.Should().Be(true);
+        var functionGetPatched = await FunctionController.GetById(result.Value.NewId.Value);
+        Assert.NotNull(functionGetPatched?.Value?.Function);
+        functionGetPatched.Value.Function.Active.Should().Be(true);
+        functionGetPatched.Value.Function.Special.Should().Be(true);
     }
 }

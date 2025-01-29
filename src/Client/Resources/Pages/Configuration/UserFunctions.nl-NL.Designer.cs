@@ -115,6 +115,15 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Oefenleider rol.
+        /// </summary>
+        internal static string Special {
+            get {
+                return ResourceManager.GetString("Special", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alleen oefeningen.
         /// </summary>
         internal static string TrainingOnly {

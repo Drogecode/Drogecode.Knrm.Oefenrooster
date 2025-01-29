@@ -573,13 +573,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         {
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
-                Id = DefaultSettingsHelper.KompasLeiderId,
+                Id = new Guid("d23de705-d950-4833-8b94-aa531022d450"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Name = "Kompas leider",
                 Order = 10,
                 IsActive = true,
                 TrainingOnly = true,
                 TrainingTarget = 0,
+                IsSpecial = true,
             }));
             modelBuilder.Entity<DbUserFunctions>(e => e.HasData(new DbUserFunctions
             {
