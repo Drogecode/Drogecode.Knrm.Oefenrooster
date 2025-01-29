@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Pages.Planner.Components;
 
@@ -17,7 +18,7 @@ public class CalendarCardTests : BlazorTestBase
         var training = new Training
         {
             Name = "xUnit meets bUnit",
-            Availability = Shared.Enums.Availability.Available,
+            Availability = Availability.Available,
             DateStart = DateTime.UtcNow,
             ShowTime = true,
         };
@@ -35,7 +36,7 @@ public class CalendarCardTests : BlazorTestBase
         var training = new Training
         {
             Name = "xUnit meets bUnit",
-            Availability = Shared.Enums.Availability.Available,
+            Availability = Availability.Available,
             DateStart = DateTime.UtcNow
         };
         var cut = RenderComponent<CalendarCard>(parameter => parameter
