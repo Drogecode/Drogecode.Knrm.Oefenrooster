@@ -6,6 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Setting;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -140,13 +141,15 @@ public sealed partial class GlobalConfiguration : IDisposable
     private async Task PatchTrainingToCalendar(bool isChecked)
     {
         _settingTrainingToCalendar = isChecked;
-        await CustomerSettingsClient.PatchBoolSettingAsync(SettingName.TrainingToCalendar, isChecked);
+        var body = new PatchSettingBoolRequest(SettingName.TrainingToCalendar, isChecked);
+        await CustomerSettingsClient.PatchBoolSettingAsync(body);
     }
 
     private async Task PatchCalenderPrefix(string newValue)
     {
         _settingCalenderPrefix = newValue;
-        await CustomerSettingsClient.PatchStringSettingAsync(SettingName.CalendarPrefix, newValue);
+        var body = new PatchSettingStringRequest(SettingName.CalendarPrefix, newValue);
+        await CustomerSettingsClient.PatchStringSettingAsync(body);
     }
 
     private async Task UpdateDatabase()

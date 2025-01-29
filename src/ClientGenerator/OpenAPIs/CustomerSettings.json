@@ -116,30 +116,31 @@
         }
       }
     },
-    "/api/CustomerSetting/training-string/{name}/{newValue}": {
+    "/api/CustomerSetting/training-string": {
       "patch": {
         "tags": [
           "CustomerSetting"
         ],
         "operationId": "PatchStringSetting",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/SettingName"
-            }
-          },
-          {
-            "name": "newValue",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchSettingStringRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchSettingStringRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchSettingStringRequest"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -147,30 +148,31 @@
         }
       }
     },
-    "/api/CustomerSetting/training-bool/{name}/{newValue}": {
+    "/api/CustomerSetting/training-bool": {
       "patch": {
         "tags": [
           "CustomerSetting"
         ],
         "operationId": "PatchBoolSetting",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/SettingName"
-            }
-          },
-          {
-            "name": "newValue",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "boolean"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchSettingBoolRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchSettingBoolRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchSettingBoolRequest"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -181,6 +183,31 @@
   },
   "components": {
     "schemas": {
+      "PatchSettingBoolRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/SettingName"
+          },
+          "value": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PatchSettingStringRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/SettingName"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "SettingBoolResponse": {
         "type": "object",
         "properties": {

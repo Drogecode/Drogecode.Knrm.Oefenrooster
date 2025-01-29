@@ -59,21 +59,21 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task PatchStringSettingAsync(SettingName name, string newValue);
+        System.Threading.Tasks.Task PatchStringSettingAsync(PatchSettingStringRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task PatchStringSettingAsync(SettingName name, string newValue, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task PatchStringSettingAsync(PatchSettingStringRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task PatchBoolSettingAsync(SettingName name, bool newValue);
+        System.Threading.Tasks.Task PatchBoolSettingAsync(PatchSettingBoolRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task PatchBoolSettingAsync(SettingName name, bool newValue, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task PatchBoolSettingAsync(PatchSettingBoolRequest body, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -355,38 +355,32 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task PatchStringSettingAsync(SettingName name, string newValue)
+        public virtual System.Threading.Tasks.Task PatchStringSettingAsync(PatchSettingStringRequest body)
         {
-            return PatchStringSettingAsync(name, newValue, System.Threading.CancellationToken.None);
+            return PatchStringSettingAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task PatchStringSettingAsync(SettingName name, string newValue, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task PatchStringSettingAsync(PatchSettingStringRequest body, System.Threading.CancellationToken cancellationToken)
         {
-            if (name == null)
-                throw new System.ArgumentNullException("name");
-
-            if (newValue == null)
-                throw new System.ArgumentNullException("newValue");
-
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("PATCH");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/CustomerSetting/training-string/{name}/{newValue}"
-                    urlBuilder_.Append("api/CustomerSetting/training-string/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture)));
-                    urlBuilder_.Append('/');
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(newValue, System.Globalization.CultureInfo.InvariantCulture)));
+                    // Operation Path: "api/CustomerSetting/training-string"
+                    urlBuilder_.Append("api/CustomerSetting/training-string");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -437,38 +431,32 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task PatchBoolSettingAsync(SettingName name, bool newValue)
+        public virtual System.Threading.Tasks.Task PatchBoolSettingAsync(PatchSettingBoolRequest body)
         {
-            return PatchBoolSettingAsync(name, newValue, System.Threading.CancellationToken.None);
+            return PatchBoolSettingAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task PatchBoolSettingAsync(SettingName name, bool newValue, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task PatchBoolSettingAsync(PatchSettingBoolRequest body, System.Threading.CancellationToken cancellationToken)
         {
-            if (name == null)
-                throw new System.ArgumentNullException("name");
-
-            if (newValue == null)
-                throw new System.ArgumentNullException("newValue");
-
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("PATCH");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/CustomerSetting/training-bool/{name}/{newValue}"
-                    urlBuilder_.Append("api/CustomerSetting/training-bool/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture)));
-                    urlBuilder_.Append('/');
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(newValue, System.Globalization.CultureInfo.InvariantCulture)));
+                    // Operation Path: "api/CustomerSetting/training-bool"
+                    urlBuilder_.Append("api/CustomerSetting/training-bool");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 

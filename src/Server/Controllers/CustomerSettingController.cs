@@ -112,14 +112,14 @@ public class CustomerSettingController : ControllerBase
     }
 
     [HttpPatch]
-    [Route("training-string/{name}/{newValue}")]
+    [Route("training-string")]
     [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
-    public async Task<ActionResult> PatchStringSetting(SettingName name, string newValue, CancellationToken token = default)
+    public async Task<ActionResult> PatchStringSetting([FromBody] PatchSettingStringRequest body, CancellationToken token = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            await _customerSettingService.PatchStringSetting(customerId, name, newValue);
+            await _customerSettingService.PatchStringSetting(customerId, body.Name, body.Value);
             return Ok();
         }
         catch (Exception ex)
@@ -133,14 +133,14 @@ public class CustomerSettingController : ControllerBase
     }
 
     [HttpPatch]
-    [Route("training-bool/{name}/{newValue:bool}")]
+    [Route("training-bool")]
     [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
-    public async Task<ActionResult> PatchBoolSetting(SettingName name, bool newValue, CancellationToken token = default)
+    public async Task<ActionResult> PatchBoolSetting([FromBody] PatchSettingBoolRequest body, CancellationToken token = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            await _customerSettingService.PatchBoolSetting(customerId, name, newValue);
+            await _customerSettingService.PatchBoolSetting(customerId, body.Name, body.Value);
             return Ok();
         }
         catch (Exception ex)
