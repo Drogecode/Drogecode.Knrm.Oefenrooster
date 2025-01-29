@@ -14,8 +14,8 @@ public sealed partial class DefaultDialog : IDisposable
     //[Inject] private IStringLocalizer<DefaultDialog> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private DefaultScheduleRepository _defaultScheduleRepository { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
-    [Parameter] public DefaultUserSchedule? DefaultUserSchedule { get; set; } = default!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public DefaultUserSchedule DefaultUserSchedule { get; set; } = default!;
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool? IsNew { get; set; }
     [Parameter] public Guid? DefaultId { get; set; }

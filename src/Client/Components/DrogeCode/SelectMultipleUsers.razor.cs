@@ -16,17 +16,14 @@ public sealed partial class SelectMultipleUsers
     [Parameter] public string Label { get; set; } = string.Empty;
     [Parameter] public bool Disabled { get; set; } = false;
 
-    private IEnumerable<DrogeUser> _selectedUsers = new List<DrogeUser>();
+    private IEnumerable<DrogeUser?>? _selectedUsers = new List<DrogeUser>();
     [Parameter]
-    public IEnumerable<DrogeUser> Selection
+    public IEnumerable<DrogeUser?>? Selection
     {
-        get
-        {
-            return _selectedUsers;
-        }
+        get => _selectedUsers;
         set
         {
-            if (_selectedUsers == value) return;
+            if (Equals(_selectedUsers, value)) return;
             _selectedUsers = value;
             SelectionChanged.InvokeAsync(value);
         }
@@ -48,7 +45,7 @@ public sealed partial class SelectMultipleUsers
         return selectedValue.Name;
     }
 
-    private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
+    private async Task OnSelectionChanged(IEnumerable<DrogeUser?>? selection)
     {
         Selection = selection;
     }

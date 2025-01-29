@@ -14,7 +14,7 @@
             }
             else
             {
-                <MudSelect T="Guid?" Label="@L["Training type"]" AnchorOrigin="Origin.BottomCenter" @bind-Value="DefaultSchedule.RoosterTrainingTypeId" Required>
+                <MudSelect T="Guid?" Label="@L["Training type"]" @bind-Value="DefaultSchedule.RoosterTrainingTypeId" Required>
                     @foreach (var trainingType in _trainingTypes.Where(x => x.IsActive).OrderBy(x => x.Order))
                     {
                         <MudSelectItem T="Guid?" Value="@trainingType.Id">@trainingType.Name</MudSelectItem>

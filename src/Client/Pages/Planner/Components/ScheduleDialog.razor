@@ -78,7 +78,7 @@
                                 </MudText>
                                 @if (user.ClickedFunction)
                                 {
-                                    <MudSelect Disabled="@(!_canEdit)" T="Guid?" Label="@LApp["function"]" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Value="@user.PlannedFunctionId"
+                                    <MudSelect Disabled="@(!_canEdit)" T="Guid?" Label="@LApp["function"]" Variant="Variant.Text" Value="@user.PlannedFunctionId"
                                                ValueChanged="(e) => FunctionSelectionChanged(user, e)">
                                         @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
                                         {
@@ -97,7 +97,7 @@
                                             user.VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.IsDefault)!.Id;
                                         }
 
-                                        <MudSelect Disabled="@(!_canEdit)" T="Guid?" Label="@L["vehicle"]" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" Value="@user.VehicleId"
+                                        <MudSelect Disabled="@(!_canEdit)" T="Guid?" Label="@L["vehicle"]" Variant="Variant.Text" Value="@user.VehicleId"
                                                    ValueChanged="(e) => VehicleSelectionChanged(user, e)">
                                             @foreach (var vehicle in _vehicleInfoForThisTraining)
                                             {

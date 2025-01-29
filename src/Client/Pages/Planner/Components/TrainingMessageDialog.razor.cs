@@ -7,7 +7,7 @@ public sealed partial class TrainingMessageDialog
     [Inject] private IStringLocalizer<TrainingMessageDialog> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private IScheduleClient ScheduleClient { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     
     [Parameter, EditorRequired] public PlannedTraining Planner { get; set; } = default!;
     

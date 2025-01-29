@@ -19,7 +19,7 @@
                         var training = item.Training;
                         if (training != null)
                         {
-                            <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth"/>
+                            <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth" Refresh="_refreshModel"/>
                         }
 
                         break;
@@ -27,9 +27,8 @@
                     case RoosterItemDayCalendarItem { ItemDay: not null } dayItem:
                     {
                         var color = DayItemHelper.DayItemTypeColor(dayItem.ItemDay.Type);
-                        <div class="d-flex gap-1 @(dayItem.UserDeleted ? "text-red-600" : "")">
-                            <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@color" Size="Size.Small"/>
-                            <span>@dayItem.ItemDay.Text</span>
+                        <div style="width: 100%; height: 100%; border: 2px solid @DayItemHelper.GetColor(color)">
+                            <div style="background-color: @DayItemHelper.GetColor(color)"><MudText Style="color: #ffffff;" Typo="Typo.body1" Align="Align.Center">@dayItem.ItemDay.Text</MudText></div>
                         </div>
                         break;
                     }

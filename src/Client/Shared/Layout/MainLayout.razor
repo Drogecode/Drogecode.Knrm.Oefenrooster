@@ -48,7 +48,7 @@
                                 </MudMenu>
                             </MudBadge>
                         </AuthorizeView>
-                        <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft" TransformOrigin="@Origin.TopLeft">
+                        <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft" TransformOrigin="@Origin.TopLeft" AriaLabel="@L["User menu dropdown"]">
                             <MudMenuItem Href="/user/profile">@L["Profile"]</MudMenuItem>
                             <MudMenuItem Href="/authentication/logout">@L["Logout"]</MudMenuItem>
                         </MudMenu>
@@ -77,15 +77,16 @@
                     {
                         <style>
                             @foreach (var trainingType in _trainingTypes)
-                    {
-                        @($".trainingType-{trainingType.Id}{{")
-                        @($"background-color:{(_isDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)} !important;")
-                        if (!string.IsNullOrEmpty(trainingType.TextColorLight))
-                        {
-                            @($"color:{(_isDarkMode ? string.IsNullOrEmpty(trainingType.TextColorDark) ? trainingType.TextColorLight : trainingType.TextColorDark : trainingType.TextColorLight)} !important;")
-                        }
-                        @("}")
-                    }
+                            {
+                                @($".trainingType-{trainingType.Id}{{")
+                                @($"background-color:{(_isDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)} !important;")
+                                if (!string.IsNullOrEmpty(trainingType.TextColorLight))
+                                {
+                                    @($"color:{(_isDarkMode ? string.IsNullOrEmpty(trainingType.TextColorDark) ? trainingType.TextColorLight : trainingType.TextColorDark : trainingType.TextColorLight)} !important;")
+                                }
+
+                                @("}")
+                            }
                         </style>
                     }
                 </Authorized>
@@ -93,7 +94,7 @@
                     <MudMainContent>
                         <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
                             <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">@L["No access"]</MudText>
-                            <MudButton @onclick="Logout">@L["Logout"]</MudButton> 
+                            <MudButton @onclick="Logout">@L["Logout"]</MudButton>
                         </MudContainer>
                     </MudMainContent>
                 </NotAuthorized>

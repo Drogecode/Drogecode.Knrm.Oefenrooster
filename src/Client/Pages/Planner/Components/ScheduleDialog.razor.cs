@@ -18,7 +18,7 @@ public sealed partial class ScheduleDialog : IDisposable
     [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
     [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
     [Inject] private UserRepository _userRepository { get; set; } = default!;
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public PlannedTraining Planner { get; set; } = default!;
     [Parameter] public List<DrogeUser>? Users { get; set; }
@@ -45,73 +45,79 @@ public sealed partial class ScheduleDialog : IDisposable
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
-
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _isLoading = true;
-        Task<GetPlannedTrainingResponse?>? latestVersionTask = null;
-        if (Planner.TrainingId is not null && !Planner.TrainingId.Equals(Guid.Empty))
-            latestVersionTask = _scheduleRepository.GetPlannedTrainingById(Planner.TrainingId, _cls.Token);
-        else if (Planner.DefaultId is not null && !Planner.DefaultId.Equals(Guid.Empty))
-            latestVersionTask = _scheduleRepository.GetPlannedTrainingForDefaultDate(Planner.DateStart, Planner.DefaultId, _cls.Token);
-        if (Planner.TrainingId != null)
-            _linkVehicleTraining = await _vehicleRepository.GetForTrainingAsync(Planner.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
-        else if (Planner.DefaultId is not null)
-            _linkVehicleTraining = await _vehicleRepository.GetForDefaultAsync(Planner.DefaultId ?? throw new ArgumentNullException("Planner.DefaultId"));
-        if (Vehicles != null && _linkVehicleTraining != null)
+        if (firstRender)
         {
-            _vehicleInfoForThisTraining = [];
-            var count = 0;
-            foreach (var vehicle in Vehicles)
+            Task<GetPlannedTrainingResponse?>? latestVersionTask = null;
+            if (Planner.TrainingId is not null && !Planner.TrainingId.Equals(Guid.Empty))
+                latestVersionTask = _scheduleRepository.GetPlannedTrainingById(Planner.TrainingId, _cls.Token);
+            else if (Planner.DefaultId is not null && !Planner.DefaultId.Equals(Guid.Empty))
+                latestVersionTask = _scheduleRepository.GetPlannedTrainingForDefaultDate(Planner.DateStart, Planner.DefaultId, _cls.Token);
+            if (Planner.TrainingId != null)
+                _linkVehicleTraining = await _vehicleRepository.GetForTrainingAsync(Planner.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
+            else if (Planner.DefaultId is not null)
+                _linkVehicleTraining = await _vehicleRepository.GetForDefaultAsync(Planner.DefaultId ?? throw new ArgumentNullException("Planner.DefaultId"));
+            if (Vehicles != null && _linkVehicleTraining != null)
             {
-                bool? isSelected = _linkVehicleTraining?.FirstOrDefault(x => x.VehicleId == vehicle.Id)?.IsSelected;
-                if (isSelected == true || (isSelected == null && vehicle.IsDefault))
+                _vehicleInfoForThisTraining = [];
+                var count = 0;
+                foreach (var vehicle in Vehicles)
                 {
-                    _vehicleInfoForThisTraining.Add(vehicle);
-                    count++;
+                    bool? isSelected = _linkVehicleTraining?.FirstOrDefault(x => x.VehicleId == vehicle.Id)?.IsSelected;
+                    if (isSelected == true || (isSelected == null && vehicle.IsDefault))
+                    {
+                        _vehicleInfoForThisTraining.Add(vehicle);
+                        count++;
+                    }
+                }
+
+                _vehicleCount = count;
+            }
+
+            PlannedTraining? latestVersion = null;
+            ClaimsPrincipal? user = null;
+            if (AuthenticationState is not null)
+            {
+                var authState = await AuthenticationState;
+                user = authState?.User;
+                _authEditOtherUser = user?.IsInRole(AccessesNames.AUTH_scheduler_other_user) ?? false;
+                if (!_authEditOtherUser)
+                {
+                    var dbUser = await _userRepository.GetCurrentUserAsync();
+                    _currentUserId = dbUser?.Id;
                 }
             }
-            _vehicleCount = count;
-        }
-        PlannedTraining? latestVersion = null;
-        ClaimsPrincipal? user = null;
-        if (AuthenticationState is not null)
-        {
-            var authState = await AuthenticationState;
-            user = authState?.User;
-            _authEditOtherUser = user?.IsInRole(AccessesNames.AUTH_scheduler_other_user) ?? false;
-            if (!_authEditOtherUser)
+
+            if (latestVersionTask is not null)
+                latestVersion = (await latestVersionTask)?.Training;
+            if (latestVersion is not null)
             {
-                var dbUser = await _userRepository.GetCurrentUserAsync();
-                _currentUserId = dbUser?.Id;
+                Planner.PlanUsers = latestVersion.PlanUsers;
+                _plannerIsUpdated = true;
             }
-        }
-        if (latestVersionTask is not null)
-            latestVersion = (await latestVersionTask)?.Training;
-        if (latestVersion is not null)
-        {
-            Planner.PlanUsers = latestVersion.PlanUsers;
-            _plannerIsUpdated = true;
-        }
-        else
-            _showWoeps = true;
+            else
+                _showWoeps = true;
 
-        if (Planner.DateEnd >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
-        {
-            _canEdit = true;
-        }
-        else if (user is not null)
-        {
-            _showPadlock = true;
-            _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
-        }
-        if (!_canEdit)
-        {
-            _showPadlock = true;
-        }
+            if (Planner.DateEnd >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
+            {
+                _canEdit = true;
+            }
+            else if (user is not null)
+            {
+                _showPadlock = true;
+                _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
+            }
 
-        _isLoading = false;
-        MudDialog.StateHasChanged();
+            if (!_canEdit)
+            {
+                _showPadlock = true;
+            }
+
+            _isLoading = false;
+            MudDialog.StateHasChanged();
+            StateHasChanged();
+        }
     }
 
     private async Task ClickLeader(PlanUser user)
