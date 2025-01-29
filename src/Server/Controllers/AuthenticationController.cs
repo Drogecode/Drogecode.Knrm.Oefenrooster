@@ -137,8 +137,7 @@ public class AuthenticationController : DrogeController
             return false;
         }
     }
-
-
+    
     [HttpPost]
     [Route("authenticate-external")]
     public async Task<ActionResult<bool>> AuthenticateExternal([FromBody] AuthenticateExternalRequest body, CancellationToken clt = default)
@@ -184,6 +183,13 @@ public class AuthenticationController : DrogeController
             _logger.LogError(e, "AuthenticateExternal");
             return false;
         }
+    }
+
+    [HttpGet]
+    [Route("authenticate-direct/enabled")]
+    public async Task<ActionResult<bool>> GetAuthenticateDirectEnabled()
+    {
+        return _configuration.GetValue<bool>("Drogecode:DirectLogin");
     }
 
     [HttpPost]
@@ -418,6 +424,7 @@ public class AuthenticationController : DrogeController
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_super_user));
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_user_roles));
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_basic_access));
+            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_global_all));
         }
 
         var accesses = await _userRoleService.GetAccessForUser(userId, customerId, jwtSecurityToken.Claims, clt);

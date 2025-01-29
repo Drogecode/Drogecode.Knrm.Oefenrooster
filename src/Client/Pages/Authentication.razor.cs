@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Services;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
@@ -10,10 +11,11 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages;
 
 public sealed partial class Authentication
 {
-    [Inject] private NavigationManager Navigation { get; set; } = default!;
-    [Inject] private IAuthenticationClient AuthenticationClient { get; set; } = default!;
-    [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
-    [Inject] private IAuditClient AuditClient { get; set; } = default!;
+    [Inject, NotNull] private NavigationManager? Navigation { get; set; }
+    [Inject, NotNull] private IAuthenticationClient? AuthenticationClient { get; set; }
+    [Inject, NotNull] private AuthenticationRepository? AuthenticationRepository { get; set; }
+    [Inject, NotNull] private CustomStateProvider? AuthenticationStateProvider { get; set; }
+    [Inject, NotNull] private IAuditClient? AuditClient { get; set; }
     [Parameter] public string? Action { get; set; }
     [Parameter, SupplyParameterFromQuery] public string? code { get; set; }
     [Parameter, SupplyParameterFromQuery] public string? state { get; set; }
@@ -26,10 +28,19 @@ public sealed partial class Authentication
         if (firstRender)
         {
             var redirectUrl = $"{Navigation.BaseUri}authentication/login-callback";
+            var directAuthenticationEnabled = await AuthenticationRepository.GetAuthenticateDirectEnabled();
             switch (Action)
             {
                 case "login":
-                    await Login(redirectUrl);
+                    if (directAuthenticationEnabled)
+                    {
+                        
+                    }
+                    else
+                    {
+                        await Login(redirectUrl);
+                    }
+
                     break;
                 case "login-callback":
                     await LoginCallback(redirectUrl);

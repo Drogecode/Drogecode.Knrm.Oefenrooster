@@ -50,6 +50,7 @@ builder.Services.TryAddScoped<IUserLinkedMailsClient, UserLinkedMailsClient>();
 builder.Services.TryAddScoped<IUserSettingsClient, UserSettingsClient>();
 builder.Services.TryAddScoped<IVehicleClient, VehicleClient>();
 
+builder.Services.TryAddScoped<AuthenticationRepository>();
 builder.Services.TryAddScoped<DayItemRepository>();
 builder.Services.TryAddScoped<MonthItemRepository>();
 builder.Services.TryAddScoped<ConfigurationRepository>();

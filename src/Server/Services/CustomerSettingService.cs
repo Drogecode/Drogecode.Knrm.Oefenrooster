@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Setting;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -16,20 +17,17 @@ public class CustomerSettingService : ICustomerSettingService
 
     public async Task<Customer> GetByTenantId(string tenantId, CancellationToken clt)
     {
-        var customer = await _database.Customers.FirstOrDefaultAsync(x => x.TenantId == tenantId);
+        var customer = await _database.Customers.FirstOrDefaultAsync(x => x.TenantId == tenantId, clt);
         return new Customer { Id = customer?.Id ?? Guid.Empty };
     }
 
-    public async Task<bool> IosDarkLightCheck(Guid customerId)
+    public async Task<SettingBoolResponse> GetBoolCustomerSetting(Guid customerId, SettingName setting)
     {
-        var result = await GetCustomerSetting(customerId, SettingNames.IOS_DARK_LIGHT_CHECK, "true");
-        return SettingNames.StringToBool(result);
-    }
-
-    public async Task<bool> TrainingToCalendar(Guid customerId)
-    {
-        var result = await GetCustomerSetting(customerId, SettingNames.TRAINING_TO_CALENDAR, "false");
-        return SettingNames.StringToBool(result);
+        var response = new SettingBoolResponse();
+        var result = await GetStringCustomerSetting(customerId, setting, "false");
+        response.Value = SettingNames.StringToBool(result.Value);
+        response.Success = result.Success;
+        return response;
     }
 
     public async Task<string> GetTimeZone(Guid customerId)
@@ -43,35 +41,35 @@ public class CustomerSettingService : ICustomerSettingService
         return string.Empty;
     }
 
-    public async Task<string> TrainingCalenderPrefix(Guid customerId)
+    public async Task PatchBoolSetting(Guid customerId, SettingName setting, bool value)
     {
-        var result = await GetCustomerSetting(customerId, SettingNames.TRAINING_CALENDER_PREFIX, string.Empty);
-        return result;
+        await PatchStringSetting(customerId, SettingName.TrainingToCalendar, value ? "true" : "false");
     }
 
-    public async Task Patch_TrainingToCalendar(Guid customerId, bool value)
+    public async Task<SettingStringResponse> GetStringCustomerSetting(Guid customerId, SettingName setting, string def)
     {
-        await PatchCustomerSetting(customerId, SettingNames.TRAINING_TO_CALENDAR, value ? "true" : "false");
-    }
-
-    private async Task<string> GetCustomerSetting(Guid customerId, string setting, string def)
-    {
+        var response = new SettingStringResponse
+        {
+            Value = def
+        };
         var result = await _database.CustomerSettings
-            .Where(x => x.CustomerId == customerId && x.Setting == setting)
+            .Where(x => x.CustomerId == customerId && x.Name == setting)
             .AsNoTracking()
             .FirstOrDefaultAsync();
-        if (result?.Value is null) return def;
-        return result.Value;
+        if (result?.Value is null) return response;
+        response.Value = result.Value;
+        response.Success = true;
+        return response;
     }
 
-    private async Task PatchCustomerSetting(Guid customerId, string setting, string value)
+    public async Task PatchStringSetting(Guid customerId, SettingName setting, string value)
     {
-        var result = await _database.CustomerSettings.Where(x => x.CustomerId == customerId && x.Setting == setting).FirstOrDefaultAsync();
+        var result = await _database.CustomerSettings.Where(x => x.CustomerId == customerId && x.Name == setting).FirstOrDefaultAsync();
         if (result is null)
             _database.CustomerSettings.Add(new Database.Models.DbCustomerSettings
             {
                 CustomerId = customerId,
-                Setting = setting,
+                Name = setting,
                 Value = value
             });
         else

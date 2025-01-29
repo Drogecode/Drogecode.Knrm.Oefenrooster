@@ -1,7 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 
@@ -20,7 +20,8 @@ public class CustomerSettingRepository
     public async Task<string> GetTimeZone(CancellationToken clt)
     {
         var response = await _offlineService.CachedRequestAsync(string.Format(TIMEZONE),
-            async () => await _customerSettingsClient.GetTimeZoneAsync(clt), new ApiCachedRequest{OneCallPerSession = true},
+            async () => (await _customerSettingsClient.GetStringSettingAsync(SettingName.TimeZone, clt)).Value, 
+            new ApiCachedRequest{OneCallPerSession = true, ExpireSession = DateTime.UtcNow.AddHours(1)},
             clt: clt);
         return response ?? "Europe/Amsterdam";
     }

@@ -16,6 +16,7 @@ public struct AccessesNames
     public const string AUTH_show_c_footer = "showCfooter";
     
     public const string GROUP_CONFIGURATION= "Configuration";
+    public const string AUTH_configure_global_all = "configure_global_all";
     public const string AUTH_configure_training_types = "configure_training-types";
     public const string AUTH_configure_user_roles = "configure_user_roles";
     public const string AUTH_configure_user_functions = "configure_user_functions";

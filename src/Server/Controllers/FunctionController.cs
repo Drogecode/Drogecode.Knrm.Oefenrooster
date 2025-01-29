@@ -67,7 +67,7 @@ public class FunctionController : ControllerBase
 
     [HttpGet]
     [Route("all/{callHub:bool}", Order = 0)]
-    [Route("", Order = 1)] // from version v0.4.17 and older
+    [Route("", Order = 1)] // ToDo Remove when all users on v0.4.17 or above
     public async Task<ActionResult<MultipleFunctionsResponse>> GetAll(bool callHub = false, CancellationToken clt = default)
     {
         try
