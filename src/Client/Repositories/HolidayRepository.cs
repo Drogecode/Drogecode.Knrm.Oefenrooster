@@ -27,14 +27,14 @@ public class HolidayRepository
         var result = await _offlineService.CachedRequestAsync("List_hol_usr",
             async () => await _holidayClient.GetAllAsync(clt),
             clt: clt);
-        return result.Holidays;
+        return result?.Holidays;
     }
 
-    public async Task<MultipleHolidaysResponse?> GetAllFuture(Guid? userId, bool cachedAndReplace, CancellationToken clt)
+    public async Task<MultipleHolidaysResponse?> GetAllFuture(Guid? userId, bool cachedAndReplace, int days, CancellationToken clt)
     {
         if (userId is null) return null;
-        var schedule = await _offlineService.CachedRequestAsync(string.Format("AllFuHol_{0}", userId),
-            async () => { return await _holidayClient.GetAllFutureAsync(30, cachedAndReplace, clt); },
+        var schedule = await _offlineService.CachedRequestAsync($"AllFuHol_{userId}_{days}",
+            async () => await _holidayClient.GetAllFutureAsync(days, cachedAndReplace, clt),
             new ApiCachedRequest { CachedAndReplace = cachedAndReplace }, clt);
         return schedule;
     }

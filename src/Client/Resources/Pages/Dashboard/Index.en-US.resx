@@ -147,4 +147,7 @@
   <data name="Future holidays" xml:space="preserve">
     <value>Future holidays</value>
   </data>
+  <data name="Load all holidays" xml:space="preserve">
+    <value>Load all holidays</value>
+  </data>
 </root>

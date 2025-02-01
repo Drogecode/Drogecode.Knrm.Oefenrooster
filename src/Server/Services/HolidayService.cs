@@ -51,8 +51,9 @@ public class HolidayService : IHolidayService
         var sw = Stopwatch.StartNew();
         var result = new MultipleHolidaysResponse();
         var list = new List<Holiday>();
-        var dbHolidays = _database.UserHolidays.Where(y => y.CustomerId == customerId && y.ValidUntil >= _dateTimeService.UtcNow() && y.ValidFrom <= _dateTimeService.UtcNow().AddDays(days));
-        foreach (var dbHoliday in await dbHolidays.OrderBy(x => x.ValidFrom).ToListAsync(clt))
+        var dbHolidays = _database.UserHolidays.Where(y => y.CustomerId == customerId && y.ValidUntil >= _dateTimeService.UtcNow());
+        result.TotalCount = dbHolidays.Count();
+        foreach (var dbHoliday in await dbHolidays.Where(y => y.ValidFrom <= _dateTimeService.UtcNow().AddDays(days)).OrderBy(x => x.ValidFrom).ToListAsync(clt))
         {
             if (dbHoliday is null) continue;
             list.Add(new Holiday

@@ -43,10 +43,11 @@ public sealed partial class Index : IDisposable
     private List<DrogeVehicle>? _vehicles;
     private List<PlannerTrainingType>? _trainingTypes;
     private List<RoosterItemDay>? _dayItems;
-    private List<Holiday>? _futureHolidays;
+    private MultipleHolidaysResponse? _futureHolidays;
     private string? _name;
     private Guid _userId;
     private bool _loading = true;
+    private bool _allHolidays;
     private const int TAKE = 15;
     private int _total = TAKE;
     private int _skip = 0;
@@ -65,7 +66,7 @@ public sealed partial class Index : IDisposable
             _functions = await FunctionRepository.GetAllFunctionsAsync(true, _cls.Token);
             _dayItems = (await CalendarItemRepository.GetDayItemDashboardAsync(_userId, true, _cls.Token))?.DayItems;
             if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
-                _futureHolidays = (await _holidayRepository.GetAllFuture(_userId, true, _cls.Token))?.Holidays;
+                _futureHolidays = await _holidayRepository.GetAllFuture(_userId, true, 30, _cls.Token);
             _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
             _trainings = await ScheduleRepository.GetScheduledTrainingsForUser(_userId, true, TAKE, _skip * TAKE, _cls.Token);
 
@@ -133,7 +134,7 @@ public sealed partial class Index : IDisposable
                         break;
                     case ItemUpdated.FutureHolidays:
                         if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
-                            _futureHolidays = (await _holidayRepository.GetAllFuture(_userId, false, _cls.Token))?.Holidays;
+                            _futureHolidays = await _holidayRepository.GetAllFuture(_userId, false, 30, _cls.Token);
                         break;
                     default:
                         stateHasChanged = false;
@@ -194,6 +195,13 @@ public sealed partial class Index : IDisposable
         }
 
         StateHasChanged();
+    }
+
+    private async Task LoadYearHolidays()
+    {
+        _allHolidays = true;
+        if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
+            _futureHolidays = await _holidayRepository.GetAllFuture(_userId, false, 365, _cls.Token);
     }
 
     public void Dispose()

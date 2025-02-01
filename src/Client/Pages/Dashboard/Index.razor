@@ -97,13 +97,13 @@
                 <DrogeLoading />
             }
             <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_holidays">
-                @if (_futureHolidays != null)
+                @if (_futureHolidays is not null)
                 {
-                    @if (_futureHolidays.Any())
+                    @if (_futureHolidays.Holidays?.Any() == true)
                     {
                         <MudText Typo="Typo.h5">@L["Future holidays"]</MudText>
                         <MudList T="string" ReadOnly="true">
-                            @foreach (var holiday in _futureHolidays)
+                            @foreach (var holiday in _futureHolidays.Holidays)
                             {
                                 var holUser = _users?.FirstOrDefault(x => x.Id == holiday.UserId);
 
@@ -113,6 +113,10 @@
                                 }
                             }
                         </MudList>
+                    }
+                    if (!_allHolidays && _futureHolidays.TotalCount > (_futureHolidays?.Holidays?.Count ?? 0))
+                    {
+                        <MudButton OnClick="LoadYearHolidays">@L["Load all holidays"]</MudButton>
                     }
                 }
             </AuthorizeView>

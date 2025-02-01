@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 
-public class MultipleHolidaysResponse : BaseResponse
+public class MultipleHolidaysResponse : BaseMultipleResponse
 {
     public List<Holiday>? Holidays { get; set; }
 }
