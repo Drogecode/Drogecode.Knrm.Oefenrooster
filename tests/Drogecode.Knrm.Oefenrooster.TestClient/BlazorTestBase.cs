@@ -50,6 +50,7 @@ public abstract class BlazorTestBase : TestContext
         Services.AddScoped<ISharePointClient, SharePointClient>();
         Services.AddScoped<IScheduleClient, ScheduleClient>();
         Services.AddScoped<ITrainingTypesClient, MockTrainingTypesClient>();
+        Services.AddScoped<IAuthenticationClient, MockAuthenticationClient>();
         Services.AddScoped<IUserClient, UserClient>();
         Services.AddScoped<IVehicleClient, VehicleClient>();
 
