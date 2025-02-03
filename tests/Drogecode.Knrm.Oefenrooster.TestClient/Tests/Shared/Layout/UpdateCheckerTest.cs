@@ -1,7 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Services;
-using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
-using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Shared.Layout;
 
@@ -11,10 +9,8 @@ public class UpdateCheckerTest : BlazorTestBase
     [AutoFakeItEasyData]
     public void ListTest([Frozen] IStringLocalizer<UpdateChecker> L1)
     {
-        Services.AddScoped<AuthenticationStateProvider, CustomStateProvider>();
         Localize(L1);
         
-        Services.AddScoped<AuthenticationStateProvider, CustomStateProvider>();
         var cut = RenderComponent<UpdateChecker>();
     }
 

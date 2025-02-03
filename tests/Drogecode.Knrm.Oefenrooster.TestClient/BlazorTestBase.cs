@@ -11,6 +11,7 @@ using Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Services;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient;
 
@@ -70,6 +71,9 @@ public abstract class BlazorTestBase : TestContext
         Services.AddSingleton<ILocalStorageExpireService, LocalStorageExpireService>();
         Services.AddSingleton<ISessionExpireService, SessionExpireService>();
         Services.AddSingleton<IOfflineService, OfflineService>();
+        
+        Services.AddScoped<CustomStateProvider>();
+        Services.AddScoped<AuthenticationStateProvider>(c => c.GetRequiredService<CustomStateProvider>());
     }
 
     internal static Guid Function1Id = Guid.NewGuid();
