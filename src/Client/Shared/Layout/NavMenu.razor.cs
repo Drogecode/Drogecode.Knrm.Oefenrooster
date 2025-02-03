@@ -6,6 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Menu;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Extensions.Localization;
+using Microsoft.JSInterop;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 
@@ -22,6 +23,7 @@ public sealed partial class NavMenu : IDisposable
     [Inject, NotNull] private TrainingTypesRepository? TrainingTypesRepository { get; set; }
     [Inject, NotNull] private MenuRepository? MenuRepository { get; set; }
     [Inject, NotNull] private ILocalStorageService? LocalStorage { get; set; }
+    [Inject, NotNull] private IJSRuntime? JsRuntime { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
 
@@ -33,7 +35,6 @@ public sealed partial class NavMenu : IDisposable
     private string _uriPlannerUser = "/planner/user";
     private string _sharePointUrl = string.Empty;
     private string _lplhUrl = string.Empty;
-    private string? _loginHint;
     private bool _useFullLinkExpanded;
     private bool _configurationExpanded;
 
@@ -66,11 +67,6 @@ public sealed partial class NavMenu : IDisposable
         var menu = await MenuRepository.GetAllAsync(false, false, _cls.Token);
         if (menu is null || !menu.Any()) return;
         _menuItems = menu;
-        if (AuthenticationState is not null)
-        {
-            var authState = await AuthenticationState;
-            _loginHint = authState.User.FindFirst(c => c.Type == "login_hint")?.Value;
-        }
     }
 
     private void RefreshForSubMenu(object? sender, LocationChangedEventArgs e)
@@ -114,6 +110,39 @@ public sealed partial class NavMenu : IDisposable
         _userMenuSettings.ConfigurationExpanded = newValue;
         _configurationExpanded = newValue;
         await LocalStorage.SetItemAsync("userMenuSettings", _userMenuSettings);
+    }
+
+    private async Task ClickExtraMenu(DrogeMenu menu)
+    {
+        string? url = null;
+        string? loginHint = null;
+        if (AuthenticationState is not null)
+        {
+            var authState = await AuthenticationState;
+            loginHint = authState.User.FindFirst(c => c.Type == "login_hint")?.Value;
+        }
+
+        if (menu.AddLoginHint != null && loginHint is not null)
+        {
+            switch (menu.AddLoginHint)
+            {
+                case '&':
+                    url = $"{menu.Url}&login_hint={loginHint}";
+                    break;
+                case '?':
+                    url = $"{menu.Url}?login_hint={loginHint}";
+                    break;
+            }
+        }
+        else
+        {
+            url = menu.Url;
+        }
+
+        if (url is not null)
+        {
+            await JsRuntime.InvokeVoidAsync("open", url, menu.TargetBlank ? "_blank" : "");
+        }
     }
 
     public void Dispose()

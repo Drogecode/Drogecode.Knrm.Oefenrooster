@@ -5,8 +5,8 @@
 {
     <MudPaper Elevation="0" Class="p-2">
         <MudText Typo="Typo.h3">@L["Trainings for {0}", _user?.Name ?? "No name"]</MudText>
-        <DrogeCodeMudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
-            <DrogeCodeMudTabPanel Text="@L["Trainings"]">
+        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+            <MudTabPanel Text="@L["Trainings"]">
                 <MudPaper Elevation="0" Class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
                     @foreach (var training in _trainings.Trainings.OrderByDescending(x => x.DateStart))
                     {
@@ -19,8 +19,8 @@
                 {
                     <MudButton OnClick="LoadMore" Color="Color.Primary">@LApp["Load more"]</MudButton>
                 }
-            </DrogeCodeMudTabPanel>
-            <DrogeCodeMudTabPanel Text="@L["For target"]">
+            </MudTabPanel>
+            <MudTabPanel Text="@L["For target"]">
                 @if (_userFunction is not null && _userMonthInfo is not null)
                 {
                     <MudText Typo="Typo.body1">@L["Target: {0}", _userFunction.TrainingTarget]</MudText>
@@ -41,9 +41,9 @@
                 {
                     <DrogeLoading/>
                 }
-            </DrogeCodeMudTabPanel>
+            </MudTabPanel>
             <AuthorizeView Roles="@AccessesNames.AUTH_users_settigns">
-                <DrogeCodeMudTabPanel Text="@L["Settings"]">
+                <MudTabPanel Text="@L["Settings"]">
                     <MudPaper Class="pa-4" MaxWidth="500px">
                         <MudSelect T="Guid?" Label="@L["Function"]" Value="_user.UserFunctionId" ValueChanged="UserFunctionChanged" Disabled="@_user.RoleFromSharePoint" 
                                    AnchorOrigin="Origin.BottomCenter" >
@@ -56,9 +56,9 @@
                                              ReadOnly="_updatingSelection"/>
                         <MudNumericField T="int?" Value="_user.Nr" Label="@L["User number"]" ValueChanged="UserNumberChanged"/>
                     </MudPaper>
-                </DrogeCodeMudTabPanel>
+                </MudTabPanel>
             </AuthorizeView>
-        </DrogeCodeMudTabs>
+        </MudTabs>
     </MudPaper>
 }
 else

@@ -91,22 +91,7 @@
                     }
                     else
                     {
-                        if (menu.AddLoginHint != null && _loginHint is not null)
-                        {
-                            switch (menu.AddLoginHint)
-                            {
-                                case '&':
-                                    <MudNavLink Href="@($"{menu.Url}&login_hint={_loginHint}")" Target="@(menu.TargetBlank ? "_blank" : "")" Match="NavLinkMatch.All">@menu.Text</MudNavLink>
-                                    break;
-                                case '?':
-                                    <MudNavLink Href="@($"{menu.Url}?login_hint={_loginHint}")" Target="@(menu.TargetBlank ? "_blank" : "")" Match="NavLinkMatch.All">@menu.Text</MudNavLink>
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            <MudNavLink Href="@menu.Url" Target="@(menu.TargetBlank ? "_blank" : "")" Match="NavLinkMatch.All">@menu.Text</MudNavLink>
-                        }
+                        <MudNavLink OnClick="@(async x=> await ClickExtraMenu(menu))">@menu.Text</MudNavLink>
                     }
 
                     prev = menu;
