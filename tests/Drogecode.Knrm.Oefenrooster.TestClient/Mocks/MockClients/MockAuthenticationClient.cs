@@ -66,14 +66,26 @@ public class MockAuthenticationClient : IAuthenticationClient
         throw new NotImplementedException();
     }
 
+    private CurrentUser _currentUser = new () {
+        IsAuthenticated = true,
+        Id = Guid.CreateVersion7(),
+        UserName = "TEST USER",
+        Claims = new List<KeyValuePair<string, string>>
+        {
+            new ("http://schemes.random.net/identity/upn", "TEST USER"),
+            new ("ValidFrom", DateTime.Now.AddHours(-1).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+            new ("ValidTo", DateTime.Now.AddHours(1).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+        }
+    };
+    
     public async Task<CurrentUser> CurrentUserInfoAsync()
     {
-        return new CurrentUser();
+        return _currentUser;
     }
 
     public async Task<CurrentUser> CurrentUserInfoAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await CurrentUserInfoAsync();
     }
 
     public async Task LogoutAsync()

@@ -41,7 +41,7 @@ public abstract class BlazorTestBase : TestContext
 
         Services.AddScoped<IDayItemClient, DayItemClient>();
         Services.AddScoped<IMonthItemClient, MonthItemClient>();
-        Services.AddScoped<IConfigurationClient, ConfigurationClient>();
+        Services.AddScoped<IConfigurationClient, MockConfigurationClient>();
         Services.AddScoped<ICustomerSettingsClient, CustomerSettingsClient>();
         Services.AddScoped<IDefaultScheduleClient, DefaultScheduleClient>();
         Services.AddScoped<IFunctionClient, FunctionClient>();

@@ -12,5 +12,4 @@ public class VersionDetailResponse : BaseResponse
     public string CurrentVersion { get; set; }
     public int UpdateVersion { get; set; }
     public int ButtonVersion { get; set; }
-    public bool Installing { get; set; }
 }
