@@ -7,4 +7,5 @@ public class DrogeClaims
     internal string ExternalUserId { get; set; }
     internal string LoginHint { get; set; }
     internal string TenantId { get; set; }
+    internal string IdToken { get; set; }
 }

@@ -104,11 +104,12 @@ public sealed partial class Authentication
                     urlLogout = $"https://login.microsoftonline.com/common/oauth2/v2.0/logout?logout_hint={logoutHint}&post_logout_redirect_uri={redirectLogoutUrl}";
                 break;
             case IdentityProvider.KeyCloak:
-                // ToDo: Missing parameters: id_token_hint
-                if (string.IsNullOrEmpty(logoutHint))
+                // ToDo: configurable logout url for KeyCloak
+                var idToken = authState?.User?.FindFirst(c => c.Type == "idToken")?.Value ?? "";
+                if (string.IsNullOrEmpty(idToken))
                     urlLogout = $"https://keycloaktest.droogers.cloud/realms/master/protocol/openid-connect/logout?post_logout_redirect_uri={redirectLogoutUrl}";
                 else
-                    urlLogout = $"https://keycloaktest.droogers.cloud/realms/master/protocol/openid-connect/logout?logout_hint={logoutHint}&post_logout_redirect_uri={redirectLogoutUrl}";
+                    urlLogout = $"https://keycloaktest.droogers.cloud/realms/master/protocol/openid-connect/logout?id_token_hint={idToken}&post_logout_redirect_uri={redirectLogoutUrl}";
                 break;
             default:
                 await AuditClient.PostLogAsync(new PostLogRequest { Message = $"Unknown identity provider: '{identityProvider}' while logging out" });

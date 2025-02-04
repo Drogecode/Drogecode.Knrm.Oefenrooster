@@ -50,14 +50,16 @@ public class AuthenticationAzureService : AuthenticationService, IAuthentication
         return await RefreshShared($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token", clientId, scope, oldRefreshToken, secret, clt);
     }
 
-    public DrogeClaims GetClaims(JwtSecurityToken jwtSecurityToken)
+    public DrogeClaims GetClaims(AuthenticateUserResult subResult)
     {
+        var jwtSecurityToken = subResult.JwtSecurityToken!;
         return new DrogeClaims()
         {
             Email = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "email")?.Value ?? "",
             FullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? "",
             ExternalUserId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "oid")?.Value ?? "",
             LoginHint = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "login_hint")?.Value ?? "",
+            IdToken = "",
             TenantId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "tid")?.Value ?? ""
         };
     }

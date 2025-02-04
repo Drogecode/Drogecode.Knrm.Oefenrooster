@@ -57,14 +57,16 @@ public class AuthenticationKeyCloakService : AuthenticationService, IAuthenticat
         return await RefreshShared($"{instance}/realms/{tenantId}/protocol/openid-connect/token", clientId, scope, oldRefreshToken, secret, clt);
     }
 
-    public DrogeClaims GetClaims(JwtSecurityToken jwtSecurityToken)
+    public DrogeClaims GetClaims(AuthenticateUserResult subResult)
     {
+        var jwtSecurityToken = subResult.JwtSecurityToken!;
         return new DrogeClaims()
         {
             Email = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "email")?.Value ?? "",
             FullName = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "preferred_username")?.Value ?? "",
             ExternalUserId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "sub")?.Value ?? "",
-            LoginHint = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "login_hint")?.Value ?? "",
+            LoginHint = "",
+            IdToken = subResult.IdToken,
             TenantId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "iss")?.Value ?? ""
         };
     }

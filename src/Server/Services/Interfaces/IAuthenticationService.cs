@@ -10,7 +10,7 @@ public interface IAuthenticationService
      Task<GetLoginSecretsResponse> GetLoginSecrets();
      Task<AuthenticateUserResult> AuthenticateUser(CacheLoginSecrets found, string code, string state, string sessionState, string redirectUrl, CancellationToken clt);
      Task<AuthenticateUserResult> Refresh(string oldRefreshToken, CancellationToken clt);
-     DrogeClaims GetClaims(JwtSecurityToken jwtSecurityToken);
+     DrogeClaims GetClaims(AuthenticateUserResult subResult);
      Task<bool> AuditLogin(Guid? userId, Guid? sharedActionId, string ipAddress, string clientVersion, bool directLogin, CancellationToken clt);
      Task<bool> ValidatePassword(string password, string hashedPassword, CancellationToken clt);
 }

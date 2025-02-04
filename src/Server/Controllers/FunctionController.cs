@@ -91,7 +91,7 @@ public class FunctionController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = AccessesNames.AUTH_configure_user_roles)]
+    [Authorize(Roles = AccessesNames.AUTH_configure_user_functions)]
     [Route("{id:guid}")]
     public async Task<ActionResult<GetFunctionResponse>> GetById(Guid id, CancellationToken clt = default)
     {

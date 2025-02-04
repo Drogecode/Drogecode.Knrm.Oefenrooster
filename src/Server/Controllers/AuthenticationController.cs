@@ -10,6 +10,7 @@ using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
+using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using IAuthenticationService = Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces.IAuthenticationService;
@@ -128,7 +129,7 @@ public class AuthenticationController : DrogeController
             if (supResult.Success is not true || supResult.JwtSecurityToken is null)
                 return false;
 
-            await SetUser(supResult.JwtSecurityToken, supResult.RefreshToken, false, body.ClientVersion, clt);
+            await SetUser(supResult, false, body.ClientVersion, clt);
             return true;
         }
         catch (Exception e)
@@ -351,7 +352,7 @@ public class AuthenticationController : DrogeController
             }
 
             _logger.LogInformation("Refresh for user `{userId}` in customer `{customerId}` successful", userId, customerId);
-            await SetUser(supResult.JwtSecurityToken, supResult.RefreshToken, false, "refresh", clt);
+            await SetUser(supResult, false, "refresh", clt);
             return true;
         }
         catch (Exception e)
@@ -362,9 +363,9 @@ public class AuthenticationController : DrogeController
         }
     }
 
-    private async Task SetUser(JwtSecurityToken jwtSecurityToken, string refresh_token, bool rememberMe, string clientVersion, CancellationToken clt)
+    private async Task SetUser(AuthenticateUserResult subResult, bool rememberMe, string clientVersion, CancellationToken clt)
     {
-        var claims = await GetClaimsList(jwtSecurityToken, refresh_token, clientVersion, clt);
+        var claims = await GetClaimsList(subResult, clientVersion, clt);
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -398,10 +399,10 @@ public class AuthenticationController : DrogeController
             authProperties);
     }
 
-    private async Task<IEnumerable<Claim>> GetClaimsList(JwtSecurityToken jwtSecurityToken, string refresh_token, string clientVersion, CancellationToken clt)
+    private async Task<IEnumerable<Claim>> GetClaimsList(AuthenticateUserResult subResult, string clientVersion, CancellationToken clt)
     {
         var authService = GetAuthenticationService();
-        var drogeClaims = authService.GetClaims(jwtSecurityToken);
+        var drogeClaims = authService.GetClaims(subResult);
         var customerId = await GetCustomerIdByExternalId(drogeClaims.TenantId, clt);
         var userId = await GetUserIdByExternalId(drogeClaims.ExternalUserId, drogeClaims.FullName, drogeClaims.Email, customerId, clt);
         var ip = GetRequesterIp();
@@ -411,9 +412,10 @@ public class AuthenticationController : DrogeController
             new("FullName", drogeClaims.FullName),
             new("ExternalUserId", drogeClaims.ExternalUserId),
             new("login_hint", drogeClaims.LoginHint),
-            new(REFRESHTOKEN, refresh_token),
-            new("ValidFrom", jwtSecurityToken.ValidFrom.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
-            new("ValidTo", jwtSecurityToken.ValidTo.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+            new(REFRESHTOKEN, subResult.RefreshToken),
+            new("idToken", drogeClaims.IdToken),
+            new("ValidFrom", subResult.JwtSecurityToken!.ValidFrom.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+            new("ValidTo", subResult.JwtSecurityToken!.ValidTo.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             new("IdentityProvider", authService.IdentityProvider.ToString()),
             new("http://schemas.microsoft.com/identity/claims/objectidentifier", userId.ToString()),
             new("http://schemas.microsoft.com/identity/claims/tenantid", customerId.ToString())
@@ -427,7 +429,7 @@ public class AuthenticationController : DrogeController
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_global_all));
         }
 
-        var accesses = await _userRoleService.GetAccessForUser(userId, customerId, jwtSecurityToken.Claims, clt);
+        var accesses = await _userRoleService.GetAccessForUser(userId, customerId, subResult.JwtSecurityToken.Claims, clt);
         foreach (var access in accesses)
         {
             claims.Add(new Claim(ClaimTypes.Role, access));
