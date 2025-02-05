@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Pages.Configuration.Components;
 
-public class TrainingTypeDialogTests : BlazorTestBase
+public class xTrainingTypeDialogTests : BlazorTestBase
 {
     [Theory]
     [AutoFakeItEasyData]

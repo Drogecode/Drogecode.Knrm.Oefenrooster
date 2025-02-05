@@ -1,0 +1,10 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Models
+@using MudBlazor
+@using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout
+<MudPopoverProvider />
+<Theming Global="Global" MudThemeProvider="MudThemeProvider" />
+@code {
+    
+    [Parameter, EditorRequired] public DrogeCodeGlobal Global { get; set; } = default!;
+    [Parameter, EditorRequired] public MudThemeProvider MudThemeProvider { get; set; } = default!;
+}

@@ -59,8 +59,7 @@ public class UpdateCheckerTest : BlazorTestBase
     private void Localize(IStringLocalizer<UpdateChecker> L1)
     {
         Services.AddSingleton(L1);
-
-        A.CallTo(() => L1["Click to reload"]).Returns(new LocalizedString("Click to reload", "Click to reload"));
-        A.CallTo(() => L1["Update available"]).Returns(new LocalizedString("Update available", "Update available"));
+        LocalizeA(L1, "Click to reload");
+        LocalizeA(L1, "Update available");
     }
 }

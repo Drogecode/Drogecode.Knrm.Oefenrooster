@@ -24,9 +24,6 @@
                 {
                     var user = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                     _updateDetails = await ConfigurationRepository.NewVersionAvailable();
-                    /*DebugHelper.WriteLine($"UpdateVersion: {DefaultSettingsHelper.UPDATE_VERSION}/{_updateDetails?.UpdateVersion} ButtonVersion: {DefaultSettingsHelper.BUTTON_VERSION}/{_updateDetails?.ButtonVersion}");
-                    DebugHelper.WriteLine($"{_updateDetails is not null} && ({_updateDetails?.UpdateVersion != DefaultSettingsHelper.UPDATE_VERSION} || {_updateDetails?.ButtonVersion != DefaultSettingsHelper.BUTTON_VERSION}) && {DefaultSettingsHelper.UPDATE_VERSION <= _updateDetails?.ButtonVersion} results in {_updateDetails is not null && (_updateDetails.UpdateVersion != DefaultSettingsHelper.UPDATE_VERSION || _updateDetails.ButtonVersion != DefaultSettingsHelper.BUTTON_VERSION) && DefaultSettingsHelper.UPDATE_VERSION <= _updateDetails.ButtonVersion}");
-                    DebugHelper.WriteLine($"{DefaultSettingsHelper.UPDATE_VERSION} <= {_updateDetails?.ButtonVersion} = {DefaultSettingsHelper.UPDATE_VERSION <= _updateDetails?.ButtonVersion}");*/
                     if (_updateDetails is not null && (_updateDetails.UpdateVersion != DefaultSettingsHelper.UPDATE_VERSION || _updateDetails.ButtonVersion != DefaultSettingsHelper.BUTTON_VERSION) && DefaultSettingsHelper.UPDATE_VERSION <= _updateDetails.ButtonVersion)
                     {
                         var config = (SnackbarOptions options) =>

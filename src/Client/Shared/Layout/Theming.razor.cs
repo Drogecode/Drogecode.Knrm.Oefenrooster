@@ -4,7 +4,6 @@ using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;

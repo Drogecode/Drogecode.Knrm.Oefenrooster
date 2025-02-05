@@ -175,4 +175,9 @@ public abstract class BlazorTestBase : TestContext
             Name = "Vehicle 3 not selected",
         }
     };
+
+    internal void LocalizeA(IStringLocalizer stringLocalizer, string name)
+    {
+        A.CallTo(() => stringLocalizer[name]).Returns(new LocalizedString(name, name));
+    }
 }
