@@ -123,9 +123,6 @@
   <data name="Available" xml:space="preserve">
     <value>Beschikbaar</value>
   </data>
-  <data name="Availibility" xml:space="preserve">
-    <value>Beschikbaarheid</value>
-  </data>
   <data name="Configure training" xml:space="preserve">
     <value>Configureer oefening</value>
   </data>

@@ -364,6 +364,10 @@
             "type": "integer",
             "format": "int64"
           },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
           "holidays": {
             "type": "array",
             "items": {

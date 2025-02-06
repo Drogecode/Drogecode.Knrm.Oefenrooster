@@ -279,6 +279,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 CountToTrainingTarget = _training.CountToTrainingTarget,
                 IsPinned = _training.IsPinned,
                 ShowTime = _training.ShowTime,
+                HasDescription = !string.IsNullOrWhiteSpace(_training.Description)
             };
         }
         else
@@ -293,6 +294,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             Planner.CountToTrainingTarget = _training.CountToTrainingTarget;
             Planner.IsPinned = _training.IsPinned;
             Planner.ShowTime = _training.ShowTime;
+            Planner.HasDescription = !string.IsNullOrWhiteSpace(_training.Description);
         }
     }
 

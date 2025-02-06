@@ -29,19 +29,18 @@ public class CalendarCardTests : BlazorTestBase
 
     [Theory]
     [AutoFakeItEasyData]
-    public void ListTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<DateToString> L2)
+    public void NotAvailableTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<DateToString> L2)
     {
         Localize(L1, L2);
 
         var training = new Training
         {
             Name = "xUnit meets bUnit",
-            Availability = Availability.Available,
+            Availability = Availability.NotAvailable,
             DateStart = DateTime.UtcNow
         };
-        var cut = RenderComponent<CalendarCard>(parameter => parameter
-            .Add(p => p.Training, training));
-        cut.Markup.Should().Contain("Available");
+        var cut = RenderComponent<CalendarCard>(parameter => parameter.Add(p => p.Training, training));
+        cut.Markup.Should().Contain("NotAvailable");
     }
 
     private void Localize(IStringLocalizer<App> L1, IStringLocalizer<DateToString> L2)
@@ -50,9 +49,9 @@ public class CalendarCardTests : BlazorTestBase
         Services.AddSingleton(L2);
 
         A.CallTo(() => L1["till"]).Returns(new LocalizedString("till", "till with some more text to ensure it is replaced"));
-        A.CallTo(() => L1["Availibility"]).Returns(new LocalizedString("Availibility", "Availibility"));
-        A.CallTo(() => L1["Available"]).Returns(new LocalizedString("Available", "Available"));
-        A.CallTo(() => L1["NotAvailable"]).Returns(new LocalizedString("NotAvailable", "NotAvailable"));
-        A.CallTo(() => L1["Maybe"]).Returns(new LocalizedString("Maybe", "Maybe"));
+        LocalizeA(L1, "Availability");
+        LocalizeA(L1, "Available");
+        LocalizeA(L1, "NotAvailable");
+        LocalizeA(L1, "Maybe");
     }
 }

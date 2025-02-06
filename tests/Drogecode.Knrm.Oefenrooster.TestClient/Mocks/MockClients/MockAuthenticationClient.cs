@@ -1,4 +1,6 @@
-﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+﻿using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
@@ -75,6 +77,7 @@ public class MockAuthenticationClient : IAuthenticationClient
             new ("http://schemes.random.net/identity/upn", "TEST USER"),
             new ("ValidFrom", DateTime.Now.AddHours(-1).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             new ("ValidTo", DateTime.Now.AddHours(1).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+            new (ClaimTypes.Role, AccessesNames.AUTH_scheduler_description_read)
         }
     };
     

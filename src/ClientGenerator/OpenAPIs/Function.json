@@ -267,6 +267,9 @@
           },
           "active": {
             "type": "boolean"
+          },
+          "special": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

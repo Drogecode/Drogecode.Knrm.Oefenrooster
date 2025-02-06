@@ -447,6 +447,9 @@ public static partial class GraphHelper
     {
         try
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             var body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay, attendees);
             var result = await _appClient.Users[externalUserId].Events
                 .PostAsync(body, (requestConfiguration) => { requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Pacific Standard Time\""); });
@@ -466,6 +469,9 @@ public static partial class GraphHelper
     {
         try
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             var fromGet = await _appClient.Users[externalUserId].Events[eventId].GetAsync();
             if (fromGet is not null)
             {
@@ -552,6 +558,9 @@ public static partial class GraphHelper
     {
         try
         {
+#if DEBUG
+            Debugger.Break();
+#endif
             var eve = await _appClient.Users[externalUserId].Events[calendarEventId].GetAsync();
             if (eve is not null)
             {

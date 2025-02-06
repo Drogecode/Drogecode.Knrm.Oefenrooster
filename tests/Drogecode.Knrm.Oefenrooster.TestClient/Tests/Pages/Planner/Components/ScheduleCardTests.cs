@@ -26,6 +26,25 @@ public class ScheduleCardTests : BlazorTestBase
         cut.Markup.Should().Contain("xUnit meets bUnit");
         cut.Markup.Should().Contain("till with some more text to ensure it is replaced");
     }
+    
+    [Theory]
+    [AutoFakeItEasyData]
+    public void HasDescriptionTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3)
+    {
+        Localize(L1, L2, L3);
+
+        var training = new PlannedTraining
+        {
+            Name = "xUnit meets bUnit",
+            ShowTime = true,
+            Description = "testje",
+            HasDescription = true
+        };
+        var cut = RenderComponent<ScheduleCard>(parameter => parameter
+        .Add(p => p.Planner, training)
+        .Add(p => p.Global, new DrogeCodeGlobal()));
+        cut.WaitForAssertion(() => cut.Markup.Should().Contain("Read more"), TimeSpan.FromSeconds(2));
+    }
 
     [Theory]
     [AutoFakeItEasyData]
@@ -57,5 +76,6 @@ public class ScheduleCardTests : BlazorTestBase
         Services.AddSingleton(L3);
 
         A.CallTo(() => L1["till"]).Returns(new LocalizedString("till", "till with some more text to ensure it is replaced"));
+        LocalizeA(L2, "Read more");
     }
 }

@@ -264,9 +264,6 @@
           "buttonVersion": {
             "type": "integer",
             "format": "int32"
-          },
-          "installing": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false

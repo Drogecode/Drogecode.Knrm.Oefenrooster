@@ -11,6 +11,7 @@ using Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Services;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient;
@@ -23,6 +24,7 @@ public abstract class BlazorTestBase : TestContext
         var authContext = this.AddTestAuthorization();
         authContext.SetAuthorized("TEST USER");
         authContext.SetClaims(new Claim("http://schemes.random.net/identity/upn", "TEST USER"));
+        authContext.SetRoles(AccessesNames.AUTH_scheduler_description_read);
 
         JSInterop.Mode = JSRuntimeMode.Loose;
         Services.AddSingleton<NavigationManager>(new MockNavigationManager());
