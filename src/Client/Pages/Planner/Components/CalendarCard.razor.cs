@@ -1,6 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using Microsoft.Extensions.Localization;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 

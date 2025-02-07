@@ -1,10 +1,9 @@
-﻿using System.Diagnostics;
-using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
-using Microsoft.Graph.Models;
 using MudBlazor;
+using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 

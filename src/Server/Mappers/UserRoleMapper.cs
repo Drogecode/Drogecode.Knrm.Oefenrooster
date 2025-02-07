@@ -5,11 +5,10 @@
 // Changes to this file may cause incorrect behavior and will be lost if the code is regenerated.
 // </auto-generated>
 
-using System;
-using System.Text;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
+using System.Text;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
 {

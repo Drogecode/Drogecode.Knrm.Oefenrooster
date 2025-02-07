@@ -1,12 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Blazored.LocalStorage;
+﻿using Blazored.LocalStorage;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
-using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Menu;
 using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 

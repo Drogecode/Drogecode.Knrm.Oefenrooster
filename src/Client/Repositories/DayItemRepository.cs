@@ -2,7 +2,6 @@
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 

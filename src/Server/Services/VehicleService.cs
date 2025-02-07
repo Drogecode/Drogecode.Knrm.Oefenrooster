@@ -1,9 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
-using Microsoft.Graph.Models;
 using System.Diagnostics;
-using Drogecode.Knrm.Oefenrooster.Shared;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 

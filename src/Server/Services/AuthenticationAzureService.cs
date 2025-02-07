@@ -1,13 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
-using Drogecode.Knrm.Oefenrooster.Server.Database;
-using Drogecode.Knrm.Oefenrooster.Server.Helpers;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 

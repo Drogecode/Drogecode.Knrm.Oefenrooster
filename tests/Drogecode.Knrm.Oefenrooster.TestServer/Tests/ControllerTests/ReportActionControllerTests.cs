@@ -52,8 +52,7 @@ public class ReportActionControllerTests : BaseTest
     [Fact]
     public async Task GetReportActionsAllUsersTest()
     {
-        var emptyList = JsonSerializer.Serialize(new List<Guid>());
-        var getResult = await ReportActionController.GetLastActions(emptyList, 10, 0);
+        var getResult = await ReportActionController.GetLastActions(new GetLastActionsRequest{Users = [], Count = 10, Skip = 0});
         Assert.NotNull(getResult.Value?.Actions);
         Assert.NotEmpty(getResult.Value.Actions);
         Assert.True(getResult.Value.Success);
@@ -64,7 +63,7 @@ public class ReportActionControllerTests : BaseTest
     public async Task GetReportActionsUnknownUserTest()
     {
         var unknownUser = JsonSerializer.Serialize(new List<Guid> { Guid.NewGuid() });
-        var getResult = await ReportActionController.GetLastActions(unknownUser, 10, 0);
+        var getResult = await ReportActionController.GetLastActions(new GetLastActionsRequest{Users = [Guid.NewGuid()], Count = 10, Skip = 0});
         Assert.NotNull(getResult.Value?.Actions);
         Assert.True(getResult.Value.Success);
         getResult.Value.Actions.Should().BeEmpty();

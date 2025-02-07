@@ -707,47 +707,6 @@
         }
       }
     },
-    "/api/Schedule/me/scheduled-trainings/{callHub}": {
-      "get": {
-        "tags": [
-          "Schedule"
-        ],
-        "operationId": "GetScheduledTrainingsForUser",
-        "parameters": [
-          {
-            "name": "callHub",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Schedule/training/user/all/{id}/{take}/{skip}": {
       "get": {
         "tags": [
@@ -782,47 +741,6 @@
               "type": "integer",
               "format": "int32",
               "default": 0
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetScheduledTrainingsForUserResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Schedule/training/user/all/{id}": {
-      "get": {
-        "tags": [
-          "Schedule"
-        ],
-        "operationId": "AllTrainingsForUser",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
             }
           }
         ],
@@ -908,36 +826,6 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetPinnedTrainingsForUserResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetPinnedTrainingsForUserResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetPinnedTrainingsForUserResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Schedule/me/pinned": {
-      "get": {
-        "tags": [
-          "Schedule"
-        ],
-        "operationId": "GetPinnedTrainingsForUser",
         "responses": {
           "200": {
             "description": "OK",

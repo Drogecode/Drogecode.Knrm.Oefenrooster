@@ -121,64 +121,6 @@
         }
       }
     },
-    "/api/ReportTraining/{users}/{count}/{skip}": {
-      "get": {
-        "tags": [
-          "ReportTraining"
-        ],
-        "operationId": "GetLastTrainings",
-        "parameters": [
-          {
-            "name": "users",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "count",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "skip",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleReportTrainingsResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleReportTrainingsResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleReportTrainingsResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/ReportTraining/analyze/years": {
       "post": {
         "tags": [

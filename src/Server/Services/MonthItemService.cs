@@ -3,7 +3,6 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 using System.Diagnostics;
 using System.Linq.Expressions;
-using ZXing;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 

@@ -1,8 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
-using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components;
 
@@ -60,8 +57,8 @@ public sealed partial class VacationAdd : IDisposable
             // https://github.com/MudBlazor/MudBlazor/issues/4047
             if (_holiday?.Description is null || _holiday.ValidUntil is null || _holiday.ValidFrom is null) return;
             _holiday.Availability = Availability.NotAvailable;
-            _holiday.ValidFrom = DateTime.SpecifyKind(_holiday.ValidFrom.Value, DateTimeKind.Local).ToUniversalTime();
-            _holiday.ValidUntil = new DateTime(_holiday.ValidUntil.Value.Year, _holiday.ValidUntil.Value.Month, _holiday.ValidUntil.Value.Day, 23, 59, 59, DateTimeKind.Local).ToUniversalTime();
+            _holiday.ValidFrom = DateTime.SpecifyKind(_holiday.ValidFrom.Value, DateTimeKind.Utc);
+            _holiday.ValidUntil = new DateTime(_holiday.ValidUntil.Value.Year, _holiday.ValidUntil.Value.Month, _holiday.ValidUntil.Value.Day, 23, 59, 59, DateTimeKind.Utc);
             if (_isNew == true)
             {
                 var result = await _holidayRepository.PutHolidayForUser(_holiday);

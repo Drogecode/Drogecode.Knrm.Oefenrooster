@@ -1,5 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;

@@ -167,64 +167,6 @@
         }
       }
     },
-    "/api/DayItem/all/{count}/{skip}/{forAllUsers}": {
-      "get": {
-        "tags": [
-          "DayItem"
-        ],
-        "operationId": "GetAllFuture",
-        "parameters": [
-          {
-            "name": "count",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "skip",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "forAllUsers",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMultipleDayItemResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/DayItem/{id}": {
       "get": {
         "tags": [

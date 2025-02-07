@@ -1,5 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 

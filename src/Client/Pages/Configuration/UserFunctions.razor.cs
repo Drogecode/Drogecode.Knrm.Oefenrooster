@@ -1,7 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
-using Microsoft.AspNetCore.Components;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
@@ -17,7 +16,7 @@ public partial class UserFunctions : IDisposable
     {
         if (firstRender)
         {
-            _functions = await FunctionClient.GetAll2Async(false, _cls.Token);
+            _functions = await FunctionClient.GetAllAsync(false, _cls.Token);
             StateHasChanged();
         }
     }

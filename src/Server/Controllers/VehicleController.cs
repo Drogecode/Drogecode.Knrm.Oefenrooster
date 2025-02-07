@@ -1,13 +1,11 @@
-﻿using System.Diagnostics;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using System.Diagnostics;
 using System.Security.Claims;
-using Drogecode.Knrm.Oefenrooster.Server.Hubs;
-using Drogecode.Knrm.Oefenrooster.Shared;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 

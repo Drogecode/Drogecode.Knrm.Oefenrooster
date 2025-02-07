@@ -1,7 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using FluentAssertions;
-using MudBlazor;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Helpers;
 

@@ -1,7 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
-using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-using System.Linq;
+﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Services;

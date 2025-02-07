@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.Graph.Models.Security;
-using Microsoft.Graph.Models;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models
 {

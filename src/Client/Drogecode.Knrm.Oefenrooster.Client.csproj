@@ -47,13 +47,6 @@
 		<ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
 	</ItemGroup>
 	
-	<ItemGroup>
-	  <None Include="Components\MudBlazor\Pagination\DrogeCodeMudPagination.razor" />
-	  <None Include="Components\MudBlazor\Tabs\DrogeCodeMudDynamicTabs.razor" />
-	  <None Include="Components\MudBlazor\Tabs\DrogeCodeMudTabPanel.razor" />
-	  <None Include="Components\MudBlazor\Tabs\DrogeCodeMudTabs.razor" />
-	</ItemGroup>
-	
 	<Import Project="JsLib/tailwindcss.targets" />
 	
 	<ItemGroup>

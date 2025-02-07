@@ -1,8 +1,4 @@
-﻿using System.Text;
-using System.Text.RegularExpressions;
-using Microsoft.Extensions.Localization;
-
-namespace Drogecode.Knrm.Oefenrooster.Shared.Extensions;
+﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 
 public static class DateTimeExtension
 {

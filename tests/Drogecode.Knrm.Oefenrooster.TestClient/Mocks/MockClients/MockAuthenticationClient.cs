@@ -1,8 +1,8 @@
-﻿using System.Security.Claims;
-using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
 

@@ -1,5 +1,5 @@
-﻿using System.Security.Claims;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
+using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 

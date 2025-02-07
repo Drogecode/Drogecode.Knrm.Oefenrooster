@@ -1,12 +1,11 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Database;
-using Drogecode.Knrm.Oefenrooster.Server.Graph;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph.Models;
 using System.Diagnostics;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
 using IdentityProvider = Drogecode.Knrm.Oefenrooster.Shared.Enums.IdentityProvider;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;

@@ -1,15 +1,7 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
-using Drogecode.Knrm.Oefenrooster.Client;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
-using FluentAssertions.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
+﻿using Drogecode.Knrm.Oefenrooster.Client;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
+using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Pages.Planner.Components;
 

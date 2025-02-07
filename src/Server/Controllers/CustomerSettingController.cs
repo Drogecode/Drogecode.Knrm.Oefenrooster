@@ -1,10 +1,10 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Setting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Diagnostics;
 using System.Security.Claims;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Setting;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -22,28 +22,6 @@ public class CustomerSettingController : ControllerBase
     {
         _logger = logger;
         _customerSettingService = customerSettingService;
-    }
-
-    [HttpGet]
-    [Obsolete("Use GetStringSetting(SettingName.TimeZone)")] // ToDo Remove when all users on v0.4.32 or above
-    [Route("time-zone")]
-    public async Task<ActionResult<string>> GetTimeZone(CancellationToken token = default)
-    {
-        try
-        {
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var result = System.Text.Json.JsonSerializer.Serialize(await _customerSettingService.GetTimeZone(customerId));
-
-            return result;
-        }
-        catch (Exception ex)
-        {
-#if DEBUG
-            Debugger.Break();
-#endif
-            _logger.LogError(ex, "Exception in GetTrainingToCalendar");
-            return BadRequest();
-        }
     }
 
     [HttpGet]

@@ -1,11 +1,11 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Diagnostics;
 using System.Security.Claims;
-using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -70,8 +70,7 @@ public class DayItemController : ControllerBase
     }
 
     [HttpGet]
-    [Route("all/{count:int}/{skip:int}/{forAllUsers:bool}/{callHub:bool}", Order = 0)]
-    [Route("all/{count:int}/{skip:int}/{forAllUsers:bool}", Order = 1)]
+    [Route("all/{count:int}/{skip:int}/{forAllUsers:bool}/{callHub:bool}")]
     public async Task<ActionResult<GetMultipleDayItemResponse>> GetAllFuture(int count, int skip, bool forAllUsers, bool callHub = false, CancellationToken clt = default)
     {
         try
@@ -151,6 +150,7 @@ public class DayItemController : ControllerBase
             return BadRequest();
         }
     }
+    
     [HttpPut]
     [Authorize(Roles = AccessesNames.AUTH_scheduler_dayitem)]
     [Route("")]

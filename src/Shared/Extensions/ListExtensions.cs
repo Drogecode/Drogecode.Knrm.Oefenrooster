@@ -1,5 +1,5 @@
-﻿using System.Text;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using System.Text;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 
