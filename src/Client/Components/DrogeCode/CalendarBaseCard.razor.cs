@@ -31,7 +31,7 @@ public sealed partial class CalendarBaseCard : IDisposable
     private CancellationTokenSource _cls = new();
     private int _iconCount;
     private bool _showAllIcons = false;
-    private static string _timeZone = "Europe/Amsterdam";
+    private string _timeZone = "Europe/Amsterdam";
     [Parameter] public EventCallback<bool> ShowPastBodyChanged { get; set; }
     private bool _showPastBody { get; set; } = true;
     
