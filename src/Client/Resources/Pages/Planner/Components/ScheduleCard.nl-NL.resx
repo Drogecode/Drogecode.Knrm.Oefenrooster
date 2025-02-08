@@ -147,10 +147,4 @@
   <data name="till" xml:space="preserve">
     <value>t/m</value>
   </data>
-  <data name="Read more" xml:space="preserve">
-    <value>Lees meer</value>
-  </data>
-  <data name="Training message" xml:space="preserve">
-    <value>Omschrijving</value>
-  </data>
 </root>

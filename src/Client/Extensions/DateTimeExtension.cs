@@ -1,8 +1,7 @@
-﻿using System.Globalization;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Localization;
-using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Extensions;
 

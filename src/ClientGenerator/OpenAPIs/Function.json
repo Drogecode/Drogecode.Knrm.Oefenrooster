@@ -99,34 +99,6 @@
             }
           }
         }
-      },
-      "get": {
-        "tags": [
-          "Function"
-        ],
-        "operationId": "GetAll",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleFunctionsResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleFunctionsResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleFunctionsResponse"
-                }
-              }
-            }
-          }
-        }
       }
     },
     "/api/Function/all/{callHub}": {

@@ -1,11 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
+﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 
 public class TrainingAdvance : TrainingBase
 {
@@ -18,4 +11,5 @@ public class TrainingAdvance : TrainingBase
     public bool Updated { get; set; }
     public bool IsPinned { get; set; }
     public bool ShowTime { get; set; }
+    public bool HasDescription { get; set; }
 }

@@ -1,10 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 

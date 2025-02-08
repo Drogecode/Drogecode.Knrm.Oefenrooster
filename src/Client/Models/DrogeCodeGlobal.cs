@@ -1,6 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-
-namespace Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿namespace Drogecode.Knrm.Oefenrooster.Client.Models;
 
 public class DrogeCodeGlobal : RefreshModel
 {

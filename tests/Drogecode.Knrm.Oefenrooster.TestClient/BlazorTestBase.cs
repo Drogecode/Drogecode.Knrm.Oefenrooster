@@ -3,16 +3,16 @@ using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Drogecode.Knrm.Oefenrooster.TestClient.Mocks;
 using Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
 using System.Security.Claims;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient;
 
@@ -65,7 +65,6 @@ public abstract class BlazorTestBase : TestContext
         Services.AddScoped<HolidayRepository>();
         Services.AddScoped<PreComRepository>();
         Services.AddScoped<ScheduleRepository>();
-        Services.AddScoped<SharePointRepository>();
         Services.AddScoped<TrainingTypesRepository>();
         Services.AddScoped<UserRepository>();
         Services.AddScoped<VehicleRepository>();

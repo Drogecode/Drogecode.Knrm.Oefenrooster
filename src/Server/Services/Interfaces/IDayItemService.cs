@@ -1,5 +1,4 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces
 {

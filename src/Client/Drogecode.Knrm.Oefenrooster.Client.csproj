@@ -17,7 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Blazor-ApexCharts" Version="5.0.1" />
+		<PackageReference Include="Blazor-ApexCharts" Version="5.1.0" />
 		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 		<PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
 		<PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="8.0.0" />
@@ -45,13 +45,6 @@
 
 	<ItemGroup>
 		<ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <None Include="Components\MudBlazor\Pagination\DrogeCodeMudPagination.razor" />
-	  <None Include="Components\MudBlazor\Tabs\DrogeCodeMudDynamicTabs.razor" />
-	  <None Include="Components\MudBlazor\Tabs\DrogeCodeMudTabPanel.razor" />
-	  <None Include="Components\MudBlazor\Tabs\DrogeCodeMudTabs.razor" />
 	</ItemGroup>
 	
 	<Import Project="JsLib/tailwindcss.targets" />
@@ -98,10 +91,6 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>UserRolesEdit.nl-NL.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Planner\Components\TrainingMessageDialog.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>TrainingMessageDialog.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
 	  <EmbeddedResource Update="Resources\Pages\User\AddEditLinkMail.nl-NL.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>AddEditLinkMail.nl-NL.Designer.cs</LastGenOutput>
@@ -129,6 +118,14 @@
 	  <EmbeddedResource Update="Resources\Pages\Dashboard\Components\Dialogs\ShareActionDialog.nl-NL.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>ShareActionDialog.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Components\DrogeCode\Dialogs\TrainingMessageDialog.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>TrainingMessageDialog.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Components\DrogeCode\ReadMoreChip.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ReadMoreChip.nl-NL.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>
 	
@@ -168,11 +165,6 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>UserRolesEdit.nl-NL.resx</DependentUpon>
 	  </Compile>
-	  <Compile Update="Resources\Pages\Planner\Components\TrainingMessageDialog.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>TrainingMessageDialog.nl-NL.resx</DependentUpon>
-	  </Compile>
 	  <Compile Update="Resources\Pages\User\AddEditLinkMail.nl-NL.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
@@ -207,6 +199,16 @@
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>ShareActionDialog.nl-NL.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Components\DrogeCode\Dialogs\TrainingMessageDialog.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>TrainingMessageDialog.nl-NL.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Components\DrogeCode\ReadMoreChip.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ReadMoreChip.nl-NL.resx</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 	

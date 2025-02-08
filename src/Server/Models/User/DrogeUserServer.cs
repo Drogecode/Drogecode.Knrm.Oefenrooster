@@ -1,5 +1,5 @@
-﻿using System.Text.Json.Serialization;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using System.Text.Json.Serialization;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Models.User;
 

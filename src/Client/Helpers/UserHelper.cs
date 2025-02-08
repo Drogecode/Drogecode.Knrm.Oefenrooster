@@ -1,6 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-
-namespace Drogecode.Knrm.Oefenrooster.Client.Helpers;
+﻿namespace Drogecode.Knrm.Oefenrooster.Client.Helpers;
 
 public static class UserHelper
 {

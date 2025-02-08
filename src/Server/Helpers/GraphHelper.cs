@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using Azure.Core;
+﻿using Azure.Core;
 using Azure.Identity;
 using Drogecode.Knrm.Oefenrooster.Server.Graph;
 using Drogecode.Knrm.Oefenrooster.Server.Models.SharePoint;
@@ -14,6 +11,9 @@ using Microsoft.Graph.Sites.Item.Lists.Item.Items;
 using Microsoft.Graph.Users;
 using Microsoft.Graph.Users.Item.SendMail;
 using Microsoft.Kiota.Abstractions.Serialization;
+using System.Diagnostics;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Helpers;
 

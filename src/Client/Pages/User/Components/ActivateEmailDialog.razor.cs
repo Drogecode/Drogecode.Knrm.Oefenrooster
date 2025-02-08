@@ -2,7 +2,6 @@
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
-using Microsoft.AspNetCore.Components;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components;
 

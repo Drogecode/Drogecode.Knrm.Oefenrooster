@@ -1,11 +1,11 @@
-﻿using System.Diagnostics;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using System.Diagnostics;
 using System.Security.Claims;
-using Drogecode.Knrm.Oefenrooster.Server.Hubs;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -66,8 +66,7 @@ public class FunctionController : ControllerBase
     }
 
     [HttpGet]
-    [Route("all/{callHub:bool}", Order = 0)]
-    [Route("", Order = 1)] // ToDo Remove when all users on v0.4.17 or above
+    [Route("all/{callHub:bool}")]
     public async Task<ActionResult<MultipleFunctionsResponse>> GetAll(bool callHub = false, CancellationToken clt = default)
     {
         try

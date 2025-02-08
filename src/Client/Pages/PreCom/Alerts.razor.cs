@@ -1,12 +1,7 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
-using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-using Microsoft.Extensions.Localization;
 using System.Text.Json;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.PreCom;
 

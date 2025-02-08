@@ -19,7 +19,7 @@ public class FunctionRepository
     public async Task<List<DrogeFunction>?> GetAllFunctionsAsync(bool cachedAndReplace, CancellationToken clt)
     {
         var response = await _offlineService.CachedRequestAsync(string.Format("all_func"),
-            async () => await _functionClient.GetAll2Async(cachedAndReplace, clt),
+            async () => await _functionClient.GetAllAsync(cachedAndReplace, clt),
             new ApiCachedRequest
                 { OneCallPerSession = true, CachedAndReplace = cachedAndReplace },
             clt: clt);

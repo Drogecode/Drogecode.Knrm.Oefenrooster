@@ -1,22 +1,8 @@
-﻿using AutoFixture.Xunit2;
-using Bunit;
-using Drogecode.Knrm.Oefenrooster.Client;
-using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
+﻿using Drogecode.Knrm.Oefenrooster.Client;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
-using Drogecode.Knrm.Oefenrooster.TestClient.Mocks;
 using Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
-using FakeItEasy;
-using FluentAssertions;
-using FluentAssertions.Common;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Pages.Configuration;
 

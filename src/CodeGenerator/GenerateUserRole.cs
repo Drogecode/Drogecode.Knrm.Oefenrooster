@@ -1,6 +1,6 @@
-﻿using System.Reflection;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using System.Reflection;
 using System.Text;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
 namespace Drogecode.Knrm.Oefenrooster.CodeGenerator;
 
@@ -37,11 +37,10 @@ public static class GenerateUserRole
         sb.AppendLine();
 
         // Namespace and Usings
-        sb.AppendLine("using System;");
-        sb.AppendLine("using System.Text;");
         sb.AppendLine("using Drogecode.Knrm.Oefenrooster.Server.Database.Models;");
         sb.AppendLine("using Drogecode.Knrm.Oefenrooster.Shared.Authorization;");
         sb.AppendLine("using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;");
+        sb.AppendLine("using System.Text;");
         sb.AppendLine();
         sb.AppendLine("namespace Drogecode.Knrm.Oefenrooster.Server.Mappers");
         sb.AppendLine("{");

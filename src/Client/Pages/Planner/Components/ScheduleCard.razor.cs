@@ -92,21 +92,6 @@ public sealed partial class ScheduleCard : IDisposable
         return DialogProvider.ShowAsync<EditTrainingDialog>(L["Configure training"], parameters, options);
     }
 
-    private Task OpenMessageDialog()
-    {
-        var parameters = new DialogParameters<TrainingMessageDialog>
-        {
-            { x => x.Planner, Planner },
-        };
-        var options = new DialogOptions()
-        {
-            MaxWidth = MudBlazor.MaxWidth.Large,
-            CloseButton = true,
-            FullWidth = true
-        };
-        return DialogProvider.ShowAsync<TrainingMessageDialog>(L["Training message"], parameters, options);
-    }
-
     private Task OpenHistoryDialog()
     {
         var parameters = new DialogParameters<TrainingHistoryDialog>

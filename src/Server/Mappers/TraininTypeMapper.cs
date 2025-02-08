@@ -1,7 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
-using Microsoft.IdentityModel.Tokens;
 using MudBlazor;
 using MudBlazor.Utilities;
 

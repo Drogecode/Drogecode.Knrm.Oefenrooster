@@ -36,7 +36,7 @@ public class ReportActionRepository
             Count = count,
             Search = string.IsNullOrWhiteSpace(search) ? null : search.Split(',').ToList(),
         };
-        var result = await _reportActionClient.GetLastActionsPOSTAsync(body, clt);
+        var result = await _reportActionClient.GetLastActionsAsync(body, clt);
         return result;
     }
 

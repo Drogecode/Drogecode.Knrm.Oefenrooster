@@ -1,12 +1,12 @@
-﻿using System.Diagnostics;
-using System.Security.Claims;
-using System.Text.Json;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using System.Diagnostics;
+using System.Security.Claims;
+using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -58,8 +58,7 @@ public class ReportTrainingController : ControllerBase
     }
 
     [HttpGet]
-    [Route("{users}/{count:int}/{skip:int}/{types}", Order = 0)]
-    [Route("{users}/{count:int}/{skip:int}", Order = 1)]// ToDo Remove when all users on v0.4.22 or above
+    [Route("{users}/{count:int}/{skip:int}/{types}")]
     public async Task<ActionResult<MultipleReportTrainingsResponse>> GetLastTrainings(string users, int count, int skip, string? types = null, CancellationToken clt = default)
     {
         try

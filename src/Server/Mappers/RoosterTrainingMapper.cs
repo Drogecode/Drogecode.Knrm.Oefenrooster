@@ -17,7 +17,8 @@ public static class RoosterTrainingMapper
             DateEnd = roosterTraining.DateEnd,
             CountToTrainingTarget = roosterTraining.CountToTrainingTarget,
             IsPinned = roosterTraining.IsPinned,
-            ShowTime = roosterTraining?.ShowTime ?? false
+            ShowTime = roosterTraining.ShowTime ?? false,
+            HasDescription = !string.IsNullOrWhiteSpace(roosterTraining.Description),
         };
         if (roosterTraining?.RoosterAvailables is not null && userId is not null)
         {
@@ -47,7 +48,8 @@ public static class RoosterTrainingMapper
             CountToTrainingTarget = roosterTraining.CountToTrainingTarget,
             IsPinned = roosterTraining.IsPinned,
             ShowTime = roosterTraining.ShowTime ?? true,
-            TrainingTypeName = roosterTraining.RoosterTrainingType?.Name
+            TrainingTypeName = roosterTraining.RoosterTrainingType?.Name,
+            HasDescription = !string.IsNullOrWhiteSpace(roosterTraining.Description),
         };
         if (roosterTraining?.RoosterAvailables is not null)
         {

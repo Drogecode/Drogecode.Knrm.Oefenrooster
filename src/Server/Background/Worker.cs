@@ -69,16 +69,16 @@ public class Worker : BackgroundService
         graphService.InitializeGraph();
 
         var result = true;
-        result = (result & await SyncSharePointActions(graphService));
-        result = (result & await SyncSharePointUsers(scope, graphService));
+        result = (await SyncSharePointActions(graphService) && result);
+        result = (await SyncSharePointUsers(scope, graphService) && result);
         return result;
     }
 
     private async Task<bool> SyncSharePointActions(IGraphService graphService)
     {
         var result = true;
-        result = (result & await RunBackgroundTask(async () => await graphService.SyncSharePointActions(DefaultSettingsHelper.KnrmHuizenId, _clt), "SyncSharePointActions", _clt));
-        result = (result & await RunBackgroundTask(async () => await graphService.SyncSharePointTrainings(DefaultSettingsHelper.KnrmHuizenId, _clt), "SyncSharePointTrainings", _clt));
+        result = (await RunBackgroundTask(async () => await graphService.SyncSharePointActions(DefaultSettingsHelper.KnrmHuizenId, _clt), "SyncSharePointActions", _clt) && result);
+        result = (await RunBackgroundTask(async () => await graphService.SyncSharePointTrainings(DefaultSettingsHelper.KnrmHuizenId, _clt), "SyncSharePointTrainings", _clt) && result);
         return result;
     }
 

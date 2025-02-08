@@ -1,11 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Client.Repositories;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
-using Microsoft.Extensions.Localization;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components;
 

@@ -1,10 +1,9 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
-using System.Diagnostics;
-using System.Linq;
-using System.Text.Json;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers.JsonConverters;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
+using System.Diagnostics;
+using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 

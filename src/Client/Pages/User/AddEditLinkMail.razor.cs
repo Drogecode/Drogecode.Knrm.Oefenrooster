@@ -1,7 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
-using Microsoft.AspNetCore.Components;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User;
 

@@ -1,8 +1,8 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
-using System.Diagnostics;
-using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Microsoft.Extensions.Caching.Memory;
+using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 

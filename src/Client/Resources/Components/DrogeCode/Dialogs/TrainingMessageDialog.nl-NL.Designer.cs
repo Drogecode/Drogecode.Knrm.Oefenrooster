@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Planner.Components {
+namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Components.DrogeCode.Dialogs {
     using System;
     
     

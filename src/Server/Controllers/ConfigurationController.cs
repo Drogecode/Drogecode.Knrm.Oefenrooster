@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,6 @@ using Microsoft.Identity.Web.Resource;
 using Nager.Holiday;
 using System.Diagnostics;
 using System.Security.Claims;
-using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -92,22 +92,6 @@ public class ConfigurationController : ControllerBase
         {
             _logger.LogError(ex, "Exception in NewVersionAvailable");
             return BadRequest();
-        }
-    }
-
-    [HttpGet]
-    [Obsolete("Not used anymore, deleted on client with v0.3.48")]
-    [Route("installing-active")]
-    public ActionResult<InstallingActiveResponse> InstallingActive(CancellationToken clt = default)
-    {
-        try
-        {
-            return Ok(new InstallingActiveResponse { Success = true });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Exception in InstallingActive");
-            return new InstallingActiveResponse { Success = false };
         }
     }
 

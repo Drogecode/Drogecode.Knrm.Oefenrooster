@@ -1,9 +1,6 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
-using MudBlazor.Utilities;
 using System.Diagnostics;
-using ZXing.Aztec.Internal;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 

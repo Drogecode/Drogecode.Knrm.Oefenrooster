@@ -1,9 +1,6 @@
-﻿using System.Text.Json;
-using Blazored.LocalStorage;
-using Blazored.SessionStorage;
-using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
-using ZXing;
+using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Services;
 

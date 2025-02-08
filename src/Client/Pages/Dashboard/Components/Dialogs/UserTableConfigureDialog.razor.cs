@@ -1,5 +1,4 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components.Dialogs;
 

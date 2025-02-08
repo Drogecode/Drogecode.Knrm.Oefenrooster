@@ -1,8 +1,10 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +13,6 @@ using System.Diagnostics;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -418,8 +418,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("me/scheduled-trainings/{callHub:bool}/{take:int}/{skip:int}", Order = 0)]
-    [Route("me/scheduled-trainings/{callHub:bool}", Order = 1)] //ToDo Remove when all users on v0.4.5 or above
+    [Route("me/scheduled-trainings/{callHub:bool}/{take:int}/{skip:int}")]
     public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> GetScheduledTrainingsForUser(bool callHub = false, int take = 10, int skip = 0, CancellationToken clt = default)
     {
         try
@@ -448,8 +447,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("training/user/all/{id:guid}/{take:int}/{skip:int}", Order = 0)]
-    [Route("training/user/all/{id:guid}", Order = 1)] //ToDo Remove when all users on v0.4.5 or above
+    [Route("training/user/all/{id:guid}/{take:int}/{skip:int}")]
     [Authorize(Roles = AccessesNames.AUTH_users_details)]
     public async Task<ActionResult<GetScheduledTrainingsForUserResponse>> AllTrainingsForUser(Guid id, int take = 10, int skip = 0, CancellationToken clt = default)
     {
@@ -470,7 +468,7 @@ public class ScheduleController : ControllerBase
         }
     }
     [HttpGet]
-    [Route("training/user/month/all/{id:guid}", Order = 0)]
+    [Route("training/user/month/all/{id:guid}")]
     [Authorize(Roles = AccessesNames.AUTH_users_details)]
     public async Task<ActionResult<GetUserMonthInfoResponse>> GetUserMonthInfo(Guid id, CancellationToken clt = default)
     {
@@ -492,8 +490,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet]
-    [Route("me/pinned/{callHub:bool}", Order = 0)]
-    [Route("me/pinned", Order = 1)]
+    [Route("me/pinned/{callHub:bool}")]
     public async Task<ActionResult<GetPinnedTrainingsForUserResponse>> GetPinnedTrainingsForUser(bool callHub = false, CancellationToken clt = default)
     {
         try

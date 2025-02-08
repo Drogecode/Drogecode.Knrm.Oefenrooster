@@ -11,9 +11,9 @@ public class ScheduleCardTests : BlazorTestBase
 {
     [Theory]
     [AutoFakeItEasyData]
-    public void HasNameTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3)
+    public void HasNameTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3, [Frozen] IStringLocalizer<ReadMoreChip> L4)
     {
-        Localize(L1, L2, L3);
+        Localize(L1, L2, L3, L4);
 
         var training = new PlannedTraining
         {
@@ -29,9 +29,9 @@ public class ScheduleCardTests : BlazorTestBase
     
     [Theory]
     [AutoFakeItEasyData]
-    public void HasDescriptionTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3)
+    public void HasInformationTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3, [Frozen] IStringLocalizer<ReadMoreChip> L4)
     {
-        Localize(L1, L2, L3);
+        Localize(L1, L2, L3, L4);
 
         var training = new PlannedTraining
         {
@@ -43,14 +43,14 @@ public class ScheduleCardTests : BlazorTestBase
         var cut = RenderComponent<ScheduleCard>(parameter => parameter
         .Add(p => p.Planner, training)
         .Add(p => p.Global, new DrogeCodeGlobal()));
-        cut.WaitForAssertion(() => cut.Markup.Should().Contain("Read more"), TimeSpan.FromSeconds(2));
+        cut.WaitForAssertion(() => cut.Markup.Should().Contain("Information"), TimeSpan.FromSeconds(2));
     }
 
     [Theory]
     [AutoFakeItEasyData]
-    public void ListTest([Frozen] IStringLocalizer<App> L1, IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3)
+    public void ListTest([Frozen] IStringLocalizer<App> L1, IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3, [Frozen] IStringLocalizer<ReadMoreChip> L4)
     {
-        Localize(L1, L2, L3);
+        Localize(L1, L2, L3, L4);
 
         var cut = RenderComponent<ScheduleCard>(parameter => parameter
         .Add(p => p.Planner, Training)
@@ -69,13 +69,15 @@ public class ScheduleCardTests : BlazorTestBase
         cut.Markup.Should().NotContain("Vehicle 3 not selected");
     }
 
-    private void Localize(IStringLocalizer<App> L1, IStringLocalizer<ScheduleCard> L2, IStringLocalizer<DateToString> L3)
+    private void Localize(IStringLocalizer<App> L1, IStringLocalizer<ScheduleCard> L2, IStringLocalizer<DateToString> L3, IStringLocalizer<ReadMoreChip> L4)
     {
         Services.AddSingleton(L1);
         Services.AddSingleton(L2);
         Services.AddSingleton(L3);
+        Services.AddSingleton(L4);
 
         A.CallTo(() => L1["till"]).Returns(new LocalizedString("till", "till with some more text to ensure it is replaced"));
         LocalizeA(L2, "Read more");
+        LocalizeA(L4, "Information");
     }
 }

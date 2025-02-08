@@ -1,7 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
-using MudBlazor;
-using MudBlazor.Utilities;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Helpers;
 

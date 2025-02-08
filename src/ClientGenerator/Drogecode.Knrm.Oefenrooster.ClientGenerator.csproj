@@ -110,11 +110,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Clients\" />
+		<ProjectReference Include="..\Shared\Drogecode.Knrm.Oefenrooster.Shared.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Shared\Drogecode.Knrm.Oefenrooster.Shared.csproj" />
+	  <Folder Include="Clients\" />
 	</ItemGroup>
 
 </Project>

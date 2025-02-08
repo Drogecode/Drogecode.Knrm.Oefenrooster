@@ -1,18 +1,16 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
+using Drogecode.Knrm.Oefenrooster.Server.Helpers;
+using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
+using Drogecode.Knrm.Oefenrooster.Server.Services;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
-using Drogecode.Knrm.Oefenrooster.Server.Database;
-using Drogecode.Knrm.Oefenrooster.Server.Helpers;
-using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
-using Drogecode.Knrm.Oefenrooster.Server.Services;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using IAuthenticationService = Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces.IAuthenticationService;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
@@ -90,23 +88,6 @@ public class AuthenticationController : DrogeController
         }
 
         return _authService;
-    }
-
-    [HttpGet]
-    [Obsolete("Use Post version")] // ToDo Remove when all users on v0.4.32 or above
-    [Route("authenticate-user")]
-    public async Task<ActionResult<bool>> AuthenticateUserGet(string code, string state, string sessionState, string redirectUrl, CancellationToken clt = default)
-    {
-        try
-        {
-            var body = new AuthenticateRequest(code, state, sessionState, redirectUrl, "??v0.4.x");
-            return await AuthenticateUser(body, clt);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "AuthenticateUser GET");
-            return false;
-        }
     }
 
     [HttpPost]

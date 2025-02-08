@@ -1,9 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
-using Microsoft.AspNetCore.Components;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
