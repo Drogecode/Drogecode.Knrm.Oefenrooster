@@ -11,4 +11,5 @@ public class TrainingAdvance : TrainingBase
     public bool Updated { get; set; }
     public bool IsPinned { get; set; }
     public bool ShowTime { get; set; }
+    public bool HasDescription { get; set; }
 }

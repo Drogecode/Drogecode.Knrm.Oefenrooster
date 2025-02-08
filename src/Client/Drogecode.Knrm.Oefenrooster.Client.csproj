@@ -91,10 +91,6 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>UserRolesEdit.nl-NL.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Planner\Components\TrainingMessageDialog.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>TrainingMessageDialog.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
 	  <EmbeddedResource Update="Resources\Pages\User\AddEditLinkMail.nl-NL.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>AddEditLinkMail.nl-NL.Designer.cs</LastGenOutput>
@@ -122,6 +118,14 @@
 	  <EmbeddedResource Update="Resources\Pages\Dashboard\Components\Dialogs\ShareActionDialog.nl-NL.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>ShareActionDialog.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Components\DrogeCode\Dialogs\TrainingMessageDialog.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>TrainingMessageDialog.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Components\DrogeCode\ReadMoreChip.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ReadMoreChip.nl-NL.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>
 	
@@ -161,11 +165,6 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>UserRolesEdit.nl-NL.resx</DependentUpon>
 	  </Compile>
-	  <Compile Update="Resources\Pages\Planner\Components\TrainingMessageDialog.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>TrainingMessageDialog.nl-NL.resx</DependentUpon>
-	  </Compile>
 	  <Compile Update="Resources\Pages\User\AddEditLinkMail.nl-NL.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
@@ -200,6 +199,16 @@
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>ShareActionDialog.nl-NL.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Components\DrogeCode\Dialogs\TrainingMessageDialog.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>TrainingMessageDialog.nl-NL.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Components\DrogeCode\ReadMoreChip.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ReadMoreChip.nl-NL.resx</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 	

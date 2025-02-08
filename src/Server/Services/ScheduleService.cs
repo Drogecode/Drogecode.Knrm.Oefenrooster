@@ -72,7 +72,6 @@ public class ScheduleService : IScheduleService
                             Name = training.Name,
                             DateStart = training.DateStart,
                             DateEnd = training.DateEnd,
-                            Availabilty = (Availabilty)(int)(available ?? Availability.None), //ToDo Remove when all users on v0.3.50 or above
                             Availability = available,
                             SetBy = setBy ?? AvailabilitySetBy.None,
                             Assigned = ava?.Assigned ?? false,
@@ -80,6 +79,7 @@ public class ScheduleService : IScheduleService
                             CountToTrainingTarget = training.CountToTrainingTarget,
                             IsPinned = training.IsPinned,
                             ShowTime = training.ShowTime ?? true,
+                            HasDescription = !string.IsNullOrWhiteSpace(training.Description),
                         });
                     }
 
@@ -103,7 +103,6 @@ public class ScheduleService : IScheduleService
                         Name = def.Name,
                         DateStart = trainingStart,
                         DateEnd = trainingEnd,
-                        Availabilty = (Availabilty)(int)(available ?? Availability.None), //ToDo Remove when all users on v0.3.50 or above
                         Availability = available ?? Availability.None,
                         SetBy = setBy ?? AvailabilitySetBy.None,
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
@@ -158,7 +157,6 @@ public class ScheduleService : IScheduleService
     {
         var sw = Stopwatch.StartNew();
         training.Updated = false;
-        training.Availability ??= (Availability)(int)(training.Availabilty ?? Availabilty.None); //ToDo Remove when all users on v0.3.50 or above
         var result = new PatchScheduleForUserResponse();
         if (training.DateStart.CompareTo(DateTime.UtcNow) >= 0)
         {
@@ -846,7 +844,6 @@ public class ScheduleService : IScheduleService
         result.Success = true;
         result.AvailableId = ava.Id;
         result.CalendarEventId = ava.CalendarEventId;
-        result.Availabilty = (Availabilty)(int)(ava.Available ?? Availability.None); //ToDo Remove when all users on v0.3.50 or above
         result.Availability = ava.Available;
         result.SetBy = ava.SetBy;
         return result;
@@ -1064,7 +1061,6 @@ public class ScheduleService : IScheduleService
                 Name = training.Name,
                 DateStart = training.DateStart,
                 DateEnd = training.DateEnd,
-                Availabilty = (Availabilty)(int)(available ?? Availability.None), //ToDo Remove when all users on v0.3.50 or above
                 Availability = available,
                 SetBy = setBy ?? AvailabilitySetBy.None,
                 Assigned = ava?.Assigned ?? false,
@@ -1072,6 +1068,7 @@ public class ScheduleService : IScheduleService
                 CountToTrainingTarget = training.CountToTrainingTarget,
                 IsPinned = training.IsPinned,
                 ShowTime = training.ShowTime ?? true,
+                HasDescription = !string.IsNullOrWhiteSpace(training.Description),
             });
         }
 
