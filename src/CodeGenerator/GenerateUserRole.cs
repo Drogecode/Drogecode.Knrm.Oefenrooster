@@ -240,6 +240,7 @@ public static class GenerateUserRole
 
         // Begin the namespace and class definition
         sb.AppendLine("namespace Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;");
+        sb.AppendLine("#nullable enable");
         sb.AppendLine();
         sb.AppendLine("public class DrogeUserRole");
         sb.AppendLine("{");

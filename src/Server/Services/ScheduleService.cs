@@ -913,7 +913,6 @@ public class ScheduleService : IScheduleService
         result.AvailableId = ava?.Id;
         result.CalendarEventId = ava?.CalendarEventId;
         result.Success = true;
-        result.Availabilty = result.Availabilty = (Availabilty)(int)(ava?.Available ?? Availability.None); //ToDo Remove when all users on v0.3.50 or above
         result.Availability = ava?.Available;
         result.SetBy = ava?.SetBy;
         return result;

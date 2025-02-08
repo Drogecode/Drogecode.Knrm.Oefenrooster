@@ -199,15 +199,15 @@ public class AuthenticationController : DrogeController
                 return false;
             }
 
-            if (user.HashedPassword is null || body.Passwoord is null)
+            if (user.HashedPassword is null || body.Password is null)
             {
-                _logger.LogInformation("No password `{hashed}` '{fromBody}' found ", user.HashedPassword is null, body.Passwoord is null);
+                _logger.LogInformation("No password `{hashed}` '{fromBody}' found ", user.HashedPassword is null, body.Password is null);
                 return false;
             }
 
             var authService = GetAuthenticationService();
 
-            var passwordCorrect = await authService.ValidatePassword(body.Passwoord, user.HashedPassword, clt);
+            var passwordCorrect = await authService.ValidatePassword(body.Password, user.HashedPassword, clt);
             if (!passwordCorrect)
             {
                 _logger.LogInformation("Wrong password for user {name}", body.Name?.CleanStringForLogging());

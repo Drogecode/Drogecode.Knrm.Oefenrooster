@@ -6,6 +6,7 @@
 // </auto-generated>
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
+#nullable enable
 
 public class DrogeUserRole
 {

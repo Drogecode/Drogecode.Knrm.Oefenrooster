@@ -8,7 +8,7 @@ public class DrogeUser
     public string? ExternalId { get; set; }
     public Guid CustomerId { get; set; }
     public string? Buddy { get; set; }
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     public List<string>? Versions { get; set; }
     public int? Nr { get; set; }
     public DateTime Created { get; set; }

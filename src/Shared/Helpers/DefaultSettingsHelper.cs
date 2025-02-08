@@ -22,8 +22,6 @@ public static class DefaultSettingsHelper
     public const int BUTTON_VERSION = 4; // v0.4.17 version when it was last on this UPDATE_VERSION
 
     public static Guid KnrmHuizenId { get; } = new Guid("d9754755-b054-4a9c-a77f-da42a4009365");
-    public static Guid KompasOefeningId { get; } = new Guid("7dd5bf75-aef4-4cdd-9515-112e9b51f2f0");
-    public static Guid Oefening1op1Id { get; } = new Guid("52260d46-c748-4ffc-b94c-2baecacbfaf4");
     public static Guid SystemUser { get; } = new Guid("b4bcc37b-321a-4027-b02b-30630ad8f75e");
     public static Guid DefaultRoosterTuesday { get; } = new Guid("7b4693a8-ae9c-430f-9119-49a6ecbfeb54");
     public static Guid DefaultRoosterSaturdayMorning { get; } = new Guid("2bdaccc0-e9f7-40c1-ae76-d9ed66e4a978");

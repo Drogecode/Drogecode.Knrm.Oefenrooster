@@ -40,16 +40,6 @@ public class MockConfigurationClient : IMockConfigurationClient
         throw new NotImplementedException();
     }
 
-    public async Task<InstallingActiveResponse> InstallingActiveAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<InstallingActiveResponse> InstallingActiveAsync(CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<UpdateSpecialDatesResponse> UpdateSpecialDatesAsync()
     {
         throw new NotImplementedException();

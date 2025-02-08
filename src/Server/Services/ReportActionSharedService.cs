@@ -69,7 +69,7 @@ public class ReportActionSharedService : IReportActionSharedService
         var sharedReport = await _database.ReportActionShares.Where(x => x.Id == body.ExternalId).Select(x => new { x.HashedPassword, x.CustomerId, x.ValidUntil }).FirstOrDefaultAsync(clt);
         if (sharedReport is null || sharedReport.ValidUntil < DateTime.UtcNow)
             return response;
-        if (PasswordHasher.ComparePassword(body.Passwoord, sharedReport?.HashedPassword))
+        if (PasswordHasher.ComparePassword(body.Password, sharedReport?.HashedPassword))
         {
             response.Success = true;
             response.CustomerId = sharedReport!.CustomerId;

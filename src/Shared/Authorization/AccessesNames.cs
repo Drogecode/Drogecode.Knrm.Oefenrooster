@@ -1,4 +1,5 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿// ReSharper disable InconsistentNaming
+namespace Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
 // When adding a new role, the role should be added to the model, mapper and the UI
 // After editing this file, run "Drogecode.Knrm.Oefenrooster.CodeGenerator" to update related files.
