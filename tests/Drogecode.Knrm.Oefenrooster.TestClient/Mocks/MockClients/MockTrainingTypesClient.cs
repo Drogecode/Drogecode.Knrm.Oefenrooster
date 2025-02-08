@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
 

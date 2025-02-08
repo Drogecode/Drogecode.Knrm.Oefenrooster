@@ -1,4 +1,6 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
+
+namespace Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
 
 public class DrogeTraining : SharePointListBase
 {

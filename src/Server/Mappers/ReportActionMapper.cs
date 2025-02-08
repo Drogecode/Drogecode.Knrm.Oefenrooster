@@ -1,4 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
