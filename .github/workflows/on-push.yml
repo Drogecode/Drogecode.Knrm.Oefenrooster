@@ -24,11 +24,7 @@ jobs:
           dotnet-version: ${{ matrix.dotnet-version }}
       - name: Install dependencies
         run: dotnet restore ./Drogecode.Knrm.Oefenrooster.sln
-      - name: Install coverage
-        run: dotnet tool install --global dotnet-coverage
       - name: Build
         run: dotnet build ./src/Server/Drogecode.Knrm.Oefenrooster.Server.csproj --configuration Release --no-restore
       - name: Test
-        run: dotnet test ./Drogecode.Knrm.Oefenrooster.sln --configuration Release --no-restore
-      - name: coverage
-        run: dotnet-coverage collect 'dotnet test' -f xml -o 'coverage.xml'
+        run: dotnet test ./Drogecode.Knrm.Oefenrooster.sln --configuration Release --verbosity normal --logger trx --collect:"XPlat Code Coverage"
