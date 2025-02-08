@@ -7,6 +7,7 @@ using Microsoft.Identity.Web.Resource;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
+using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -74,7 +75,7 @@ public class ReportTrainingController : ControllerBase
             if(types is not null) typesAsList = JsonSerializer.Deserialize<List<string>>(types);
 
             var result = await _reportTrainingService.GetListTrainingUser(usersAsList, typesAsList, userId, count, skip, customerId, clt);
-            _logger.LogInformation("Loading trainings {count} skipping {skip} for user {users} ({userId})", count, skip, users, userId);
+            _logger.LogInformation("Loading trainings {count} skipping {skip} for user {users} ({userId})", count, skip, users.CleanStringForLogging(), userId);
             return result;
         }
         catch (Exception ex)
