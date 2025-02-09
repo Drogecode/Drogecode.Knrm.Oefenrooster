@@ -62,6 +62,7 @@ public class BaseTest : IAsyncLifetime
     protected readonly UserRoleController UserRoleController;
     protected readonly UserLinkedMailsController UserLinkedMailsController;
     protected readonly ReportActionSharedController ReportActionSharedController;
+    protected readonly AuditController AuditController;
 
     public BaseTest(
         DataContext dataContext,
@@ -80,7 +81,8 @@ public class BaseTest : IAsyncLifetime
         ReportTrainingController reportTrainingController,
         UserRoleController userRoleController,
         UserLinkedMailsController userLinkedMailsController,
-        ReportActionSharedController reportActionSharedController)
+        ReportActionSharedController reportActionSharedController,
+        AuditController auditController)
     {
         DataContext = dataContext;
         DateTimeServiceMock = (IDateTimeServiceMock)dateTimeService;
@@ -100,6 +102,7 @@ public class BaseTest : IAsyncLifetime
         UserRoleController = userRoleController;
         UserLinkedMailsController = userLinkedMailsController;
         ReportActionSharedController = reportActionSharedController;
+        AuditController = auditController;
 
         DefaultCustomerId = Guid.NewGuid();
         SeedCustomer.Seed(dataContext, DefaultCustomerId);
@@ -123,6 +126,7 @@ public class BaseTest : IAsyncLifetime
         MockAuthenticatedUser(reportTrainingController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(userRoleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(userLinkedMailsController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(auditController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
     }
 
     public async Task InitializeAsync()

@@ -21,10 +21,11 @@ public class ReportActionSharedControllerTests : BaseTest
         ReportTrainingController reportTrainingController,
         UserRoleController userRoleController,
         UserLinkedMailsController userLinkedMailsController,
-        ReportActionSharedController reportActionSharedController) :
+        ReportActionSharedController reportActionSharedController,
+        AuditController auditController) :
         base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController,
-            reportActionSharedController)
+            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController, reportActionSharedController,
+            auditController)
     {
     }
 

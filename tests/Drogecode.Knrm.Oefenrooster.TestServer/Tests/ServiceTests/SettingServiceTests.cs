@@ -6,8 +6,8 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ServiceTests;
 
 public class SettingServiceTests : BaseTest
 {
-    private IUserSettingService _userSettingService;
-    private ICustomerSettingService _customerSettingService;
+    private readonly IUserSettingService _userSettingService;
+    private readonly ICustomerSettingService _customerSettingService;
     public SettingServiceTests(
         DataContext dataContext,
         IUserSettingService userSettingService,
@@ -27,9 +27,11 @@ public class SettingServiceTests : BaseTest
         ReportTrainingController reportTrainingController,
         UserRoleController userRoleController,
         UserLinkedMailsController userLinkedMailsController,
-        ReportActionSharedController reportActionSharedController) :
+        ReportActionSharedController reportActionSharedController,
+        AuditController auditController) :
         base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController, reportActionSharedController)
+            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController, reportActionSharedController,
+            auditController)
     {
         _userSettingService = userSettingService;
         _customerSettingService = customerSettingService;

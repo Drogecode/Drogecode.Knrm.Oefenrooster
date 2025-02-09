@@ -45,6 +45,7 @@ public class Startup
         services.AddScoped<ICustomerSettingService, CustomerSettingService>();
         services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 
+        services.AddScoped<AuditController>();
         services.AddScoped<DayItemController>();
         services.AddScoped<MonthItemController>();
         services.AddScoped<ConfigurationController>();

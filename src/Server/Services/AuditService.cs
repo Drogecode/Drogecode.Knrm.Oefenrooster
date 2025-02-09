@@ -64,6 +64,7 @@ public class AuditService : IAuditService
         response.TotalCount = await audits.CountAsync(clt);
         sw.Stop();
         response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        response.Success = true;
         return response;
     }
 }
