@@ -45,14 +45,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: replace
-        uses: cschleiden/replace-tokens@v1
+        uses: cschleiden/replace-tokens@4d5a042c84c3568b3858b7af9394923d2d5195c9 #v1.3
         with:
             files: '["**/index.html","**/version.js","**/DefaultSettingsHelper.cs"]'
         env:
             VERSION_TOKEN: ${{ steps.get_version.outputs.VERSION }}
 
       - name: Build and push the Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./src/Server/Dockerfile
