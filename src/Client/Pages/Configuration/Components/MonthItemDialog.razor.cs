@@ -14,7 +14,7 @@ public sealed partial class MonthItemDialog : IDisposable
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool? IsNew { get; set; }
 
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     void Cancel() => MudDialog.Cancel();
 
     protected override void OnParametersSet()
@@ -37,7 +37,7 @@ public sealed partial class MonthItemDialog : IDisposable
         }
         else
         {
-            var patchResult = await MonthItemClient.PatchItemAsync(MonthItem, _cls.Token);
+            await MonthItemClient.PatchItemAsync(MonthItem, _cls.Token);
         }
 
         if (Refresh is not null) await Refresh.CallRequestRefreshAsync();

@@ -13,7 +13,7 @@ public class CustomStateProvider : AuthenticationStateProvider
     }
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var identity = new ClaimsIdentity();
+        ClaimsIdentity identity;
         try
         {
             identity = await GetCurrentUser();
@@ -39,7 +39,7 @@ public class CustomStateProvider : AuthenticationStateProvider
         catch (HttpRequestException ex)
         {
             identity = new ClaimsIdentity();
-            Console.WriteLine("Request failed:" + ex.ToString());
+            Console.WriteLine("Request failed:" + ex);
         }
         return new AuthenticationState(new ClaimsPrincipal(identity));
     }

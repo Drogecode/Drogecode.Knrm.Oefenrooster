@@ -1,14 +1,14 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-using Microsoft.Extensions.Localization;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 
 public sealed partial class SelectMultipleUsers
 {
-    [Inject] private IStringLocalizer<SelectMultipleUsers> L { get; set; } = default!;
-    [Parameter][EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
-    [Parameter][EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<SelectMultipleUsers>? L { get; set; }
+    [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
+    [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
     [Parameter] public EventCallback<IEnumerable<DrogeUser>> SelectionChanged { get; set; }
     [Parameter] public bool MultiSelection { get; set; } = true;
     [Parameter] public bool Clearable { get; set; } = true;
@@ -34,13 +34,13 @@ public sealed partial class SelectMultipleUsers
             Label = L["From who"];
     }
 
-    private string GetMultiSelectionText(List<DrogeUser> selectedValues)
+    private static string GetMultiSelectionText(List<DrogeUser> selectedValues)
     {
         var result = string.Join(", ", selectedValues.Select(x => x.Name));
         return result;
     }
 
-    private string GetSelectedText(DrogeUser selectedValue)
+    private static string GetSelectedText(DrogeUser selectedValue)
     {
         return selectedValue.Name;
     }

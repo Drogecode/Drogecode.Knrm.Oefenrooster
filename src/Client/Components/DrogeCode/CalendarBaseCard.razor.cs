@@ -28,12 +28,12 @@ public sealed partial class CalendarBaseCard : IDisposable
     [Parameter] public bool ShowDate { get; set; } = true;
     [Parameter] public bool ShowDayOfWeek { get; set; }
     [Parameter] public string MoreMessage { get; set; } = "Show more";
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private int _iconCount;
     private bool _showAllIcons = false;
     private string _timeZone = "Europe/Amsterdam";
     [Parameter] public EventCallback<bool> ShowPastBodyChanged { get; set; }
-    private bool _showPastBody { get; set; } = true;
+    private bool _showPastBody = true;
     
     [Parameter] public bool ShowPastBody
     {

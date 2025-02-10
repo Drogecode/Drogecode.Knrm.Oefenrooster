@@ -20,6 +20,7 @@ public sealed partial class Authentication
     [Parameter, SupplyParameterFromQuery] public string? code { get; set; }
     [Parameter, SupplyParameterFromQuery] public string? state { get; set; }
     [Parameter, SupplyParameterFromQuery] public string? session_state { get; set; }
+    private bool _showLogin;
 
     //https://learn.microsoft.com/nl-nl/azure/active-directory/develop/v2-protocols-oidc
     //https://codewithmukesh.com/blog/authentication-in-blazor-webassembly/
@@ -34,7 +35,8 @@ public sealed partial class Authentication
                 case "login":
                     if (directAuthenticationEnabled)
                     {
-                        
+                        _showLogin = true;
+                        StateHasChanged();
                     }
                     else
                     {
@@ -88,8 +90,8 @@ public sealed partial class Authentication
     {
         await AuditClient.PostLogAsync(new PostLogRequest { Message = "Logout start" });
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var logoutHint = authState?.User?.FindFirst(c => c.Type == "login_hint")?.Value ?? "";
-        if (!Enum.TryParse(authState?.User?.FindFirst(c => c.Type == "IdentityProvider")?.Value, out IdentityProvider identityProvider))
+        var logoutHint = authState.User.FindFirst(c => c.Type == "login_hint")?.Value ?? "";
+        if (!Enum.TryParse(authState.User.FindFirst(c => c.Type == "IdentityProvider")?.Value, out IdentityProvider identityProvider))
             identityProvider = IdentityProvider.Azure;
 
         var redirectLogoutUrl = $"{Navigation.BaseUri}landing_page";
@@ -105,7 +107,7 @@ public sealed partial class Authentication
                 break;
             case IdentityProvider.KeyCloak:
                 // ToDo: configurable logout url for KeyCloak
-                var idToken = authState?.User?.FindFirst(c => c.Type == "idToken")?.Value ?? "";
+                var idToken = authState.User?.FindFirst(c => c.Type == "idToken")?.Value ?? "";
                 if (string.IsNullOrEmpty(idToken))
                     urlLogout = $"https://keycloaktest.droogers.cloud/realms/master/protocol/openid-connect/logout?post_logout_redirect_uri={redirectLogoutUrl}";
                 else

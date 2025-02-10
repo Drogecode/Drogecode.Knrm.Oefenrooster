@@ -51,7 +51,7 @@ public class HolidayService : IHolidayService
         var result = new MultipleHolidaysResponse();
         var list = new List<Holiday>();
         var dbHolidays = _database.UserHolidays.Where(y => y.CustomerId == customerId && y.ValidUntil >= _dateTimeService.UtcNow());
-        result.TotalCount = dbHolidays.Count();
+        result.TotalCount = await dbHolidays.CountAsync(clt);
         foreach (var dbHoliday in await dbHolidays.Where(y => y.ValidFrom <= _dateTimeService.UtcNow().AddDays(days)).OrderBy(x => x.ValidFrom).ToListAsync(clt))
         {
             if (dbHoliday is null) continue;
