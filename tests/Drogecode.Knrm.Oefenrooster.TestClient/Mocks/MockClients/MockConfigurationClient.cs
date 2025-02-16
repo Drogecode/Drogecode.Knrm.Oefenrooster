@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients.Interfaces;
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
 
@@ -35,16 +36,6 @@ public class MockConfigurationClient : IMockConfigurationClient
     }
 
     public async Task<VersionDetailResponse> NewVersionAvailableAsync(string clientVersion, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<InstallingActiveResponse> InstallingActiveAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<InstallingActiveResponse> InstallingActiveAsync(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

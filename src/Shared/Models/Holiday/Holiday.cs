@@ -7,7 +7,6 @@ public class Holiday : ICloneable
     public string? Description { get; set; }
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
-    public Availabilty? Availabilty { get; set; }
     public Availability? Availability { get; set; }
     public DateTime? ValidFrom { get; set; }
     public DateTime? ValidUntil { get; set; }

@@ -48,11 +48,6 @@ public sealed partial class TrainingsTab : IDisposable
                     _trainingTypes.Add(value!);
                 }
             }
-            var thisUser = Users.FirstOrDefault(x => x.Id == User.Id);
-            if (thisUser is not null)
-            {
-                ((List<DrogeUser>)_selectedUsersTraining).Add(thisUser);
-            }
 
             StateHasChanged();
         }

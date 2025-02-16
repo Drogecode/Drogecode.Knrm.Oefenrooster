@@ -7,33 +7,14 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
 public class TrainingTypesControllerTests : BaseTest
 {
-    public TrainingTypesControllerTests(
-        DataContext dataContext,
-        IDateTimeService dateTimeServiceMock,
-        ScheduleController scheduleController,
-        FunctionController functionController,
-        UserController userController,
-        HolidayController holidayController,
-        TrainingTypesController trainingTypesController,
-        DayItemController dayItemController,
-        MonthItemController monthItemController,
-        PreComController preComController,
-        VehicleController vehicleController,
-        DefaultScheduleController defaultScheduleController,
-        ReportActionController reportActionController,
-        ReportTrainingController reportTrainingController,
-        UserRoleController userRoleController,
-        UserLinkedMailsController userLinkedMailsController,
-        ReportActionSharedController reportActionSharedController) :
-        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController, reportActionSharedController)
+    public TrainingTypesControllerTests(TestService testService) : base(testService)
     {
     }
 
     [Fact]
     public async Task AddTrainingTypeBaseTest()
     {
-        var result = await TrainingTypesController.PostNewTrainingType(new PlannerTrainingType
+        var result = await Tester.TrainingTypesController.PostNewTrainingType(new PlannerTrainingType
         {
             Name = "AddTrainingTypeBaseTest",
             ColorLight = "#bdbdbdff",
@@ -49,10 +30,10 @@ public class TrainingTypesControllerTests : BaseTest
     [Fact]
     public async Task AddTrainingTypeOrderTest()
     {
-        var type0 = await AddTrainingType("AddTrainingTypeOrderTest", 0);
-        var type1 = await AddTrainingType("AddTrainingTypeOrderTest", 10);
-        var type3 = await AddTrainingType("AddTrainingTypeOrderTest", 30);
-        var resultPost = await TrainingTypesController.PostNewTrainingType(new PlannerTrainingType
+        var type0 = await Tester.AddTrainingType("AddTrainingTypeOrderTest", 0);
+        var type1 = await Tester.AddTrainingType("AddTrainingTypeOrderTest", 10);
+        var type3 = await Tester.AddTrainingType("AddTrainingTypeOrderTest", 30);
+        var resultPost = await Tester.TrainingTypesController.PostNewTrainingType(new PlannerTrainingType
         {
             Name = "AddTrainingTypeOrderTest",
             ColorLight = "#bdbdbdff",
@@ -62,7 +43,7 @@ public class TrainingTypesControllerTests : BaseTest
         });
         Assert.NotNull(resultPost?.Value?.NewId);
         Assert.True(resultPost.Value.Success);
-        var resultGet = await TrainingTypesController.GetById(resultPost.Value.NewId.Value);
+        var resultGet = await Tester.TrainingTypesController.GetById(resultPost.Value.NewId.Value);
         Assert.NotNull(resultGet?.Value?.TrainingType);
         resultGet.Value.TrainingType.Order.Should().Be(40);
     }
@@ -70,38 +51,38 @@ public class TrainingTypesControllerTests : BaseTest
     [Fact]
     public async Task GetTrainingTypeByIdTest()
     {
-        var result = await TrainingTypesController.GetById(DefaultTrainingType);
+        var result = await Tester.TrainingTypesController.GetById(Tester.DefaultTrainingType);
         Assert.NotNull(result?.Value?.TrainingType);
         Assert.True(result.Value.Success);
-        result.Value.TrainingType.Id.Should().Be(DefaultTrainingType);
-        result.Value.TrainingType.Name.Should().Be(TRAINING_TYPE_DEFAULT);
+        result.Value.TrainingType.Id.Should().Be(Tester.DefaultTrainingType);
+        result.Value.TrainingType.Name.Should().Be(TestService.TRAINING_TYPE_DEFAULT);
     }
 
     [Fact]
     public async Task GetTrainingTypesTest()
     {
-        var oneMore = await AddTrainingType("GetTrainingTypesTest", 30);
-        var result = await TrainingTypesController.GetTrainingTypes();
+        var oneMore = await Tester.AddTrainingType("GetTrainingTypesTest", 30);
+        var result = await Tester.TrainingTypesController.GetTrainingTypes();
         Assert.NotNull(result?.Value?.PlannerTrainingTypes);
         result.Value.PlannerTrainingTypes.Should().NotBeEmpty();
-        result.Value.PlannerTrainingTypes.Should().Contain(x => x.Id == DefaultTrainingType);
+        result.Value.PlannerTrainingTypes.Should().Contain(x => x.Id == Tester.DefaultTrainingType);
         result.Value.PlannerTrainingTypes.Should().Contain(x => x.Id == oneMore);
     }
 
     [Fact]
     public async Task PatchTrainingTypeTest()
     {
-        var resultGetBefore = await TrainingTypesController.GetById(DefaultTrainingType);
+        var resultGetBefore = await Tester.TrainingTypesController.GetById(Tester.DefaultTrainingType);
         Assert.NotNull(resultGetBefore?.Value?.TrainingType);
         resultGetBefore.Value.TrainingType.IsActive.Should().BeTrue();
         resultGetBefore.Value.TrainingType.ColorLight.Should().Be("rgba(189,189,189,1)");
         resultGetBefore.Value.TrainingType.Name = "PatchTrainingTypeTest";
         resultGetBefore.Value.TrainingType.IsActive = false;
         resultGetBefore.Value.TrainingType.TextColorDark = "#000000";
-        var resultPatched = await TrainingTypesController.PatchTrainingType(resultGetBefore.Value.TrainingType);
+        var resultPatched = await Tester.TrainingTypesController.PatchTrainingType(resultGetBefore.Value.TrainingType);
         Assert.NotNull(resultPatched?.Value?.Success);
         Assert.True(resultPatched.Value.Success);
-        var resultGetAfter = await TrainingTypesController.GetById(DefaultTrainingType);
+        var resultGetAfter = await Tester.TrainingTypesController.GetById(Tester.DefaultTrainingType);
         Assert.NotNull(resultGetAfter?.Value?.TrainingType);
         resultGetAfter.Value.TrainingType.Name.Should().Be("PatchTrainingTypeTest");
         resultGetAfter.Value.TrainingType.IsActive.Should().BeFalse();

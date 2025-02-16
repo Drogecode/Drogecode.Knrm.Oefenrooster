@@ -7,8 +7,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class TrainingTypesService : ITrainingTypesService
 {
     private readonly ILogger<TrainingTypesService> _logger;
-    private readonly Database.DataContext _database;
-    public TrainingTypesService(ILogger<TrainingTypesService> logger, Database.DataContext database)
+    private readonly DataContext _database;
+    public TrainingTypesService(ILogger<TrainingTypesService> logger, DataContext database)
     {
         _logger = logger;
         _database = database;

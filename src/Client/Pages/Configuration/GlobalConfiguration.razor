@@ -4,65 +4,71 @@
 <PageTitle>@L["Global configuration"]</PageTitle>
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateDatabase">@L["Upgrade database"]</MudButton>
-@if (_clickedUpdate == true)
+@switch (_clickedUpdate)
 {
-    <MudText Typo="Typo.body1">Database upgraded!</MudText>
-}
-else if (_clickedUpdate == false)
-{
-    <MudText Typo="Typo.body1">Something went wrong, while upgrading database :')</MudText>
+    case true:
+        <MudText Typo="Typo.body1">Database upgraded!</MudText>
+        break;
+    case false:
+        <MudText Typo="Typo.body1">Something went wrong, while upgrading database :')</MudText>
+        break;
 }
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddUser">Voeg test user toe</MudButton>
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SyncUsers">Sync users</MudButton>
-@if (_usersSynced == true)
+@switch (_usersSynced)
 {
-    <MudText Typo="Typo.body1">users synced</MudText>
-}
-else if (_usersSynced == false)
-{
-    <MudText Typo="Typo.body1">Something went wrong while syncing users :')</MudText>
+    case true:
+        <MudText Typo="Typo.body1">users synced</MudText>
+        break;
+    case false:
+        <MudText Typo="Typo.body1">Something went wrong while syncing users :')</MudText>
+        break;
 }
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateSpecialDates">Update special dates</MudButton>
-@if (_specialDatesUpdated == true)
+@switch (_specialDatesUpdated)
 {
-    <MudText Typo="Typo.body1">special dates bijgewerkt</MudText>
-}
-else if (_specialDatesUpdated == false)
-{
-    <MudText Typo="Typo.body1">Something went wrong while updating special dates :')</MudText>
+    case true:
+        <MudText Typo="Typo.body1">special dates bijgewerkt</MudText>
+        break;
+    case false:
+        <MudText Typo="Typo.body1">Something went wrong while updating special dates :')</MudText>
+        break;
 }
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RunDbCorrection">Run db corrections</MudButton>
-@if (_dbCorrection?.Success == true)
+@switch (_dbCorrection?.Success)
 {
-    <MudText Typo="Typo.body1">Done: @_dbCorrection.Message</MudText>
-}
-else if (_dbCorrection?.Success == false)
-{
-    <MudText Typo="Typo.body1">Failed: @_dbCorrection.Message</MudText>
+    case true:
+        <MudText Typo="Typo.body1">Done: @_dbCorrection.Message</MudText>
+        break;
+    case false:
+        <MudText Typo="Typo.body1">Failed: @_dbCorrection.Message</MudText>
+        break;
 }
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RunSyncHistorical" Disabled="_clickedSyncHistorical">Run sync historical reports</MudButton>
-@if (_syncHistorical?.Success == true)
+@switch (_syncHistorical?.Success)
 {
-    <MudText Typo="Typo.body1">Done: _syncHistorical</MudText>
-}
-else if (_syncHistorical?.Success == false)
-{
-    <MudText Typo="Typo.body1">Failed: _syncHistorical</MudText>
+    case true:
+        <MudText Typo="Typo.body1">Done: _syncHistorical</MudText>
+        break;
+    case false:
+        <MudText Typo="Typo.body1">Failed: _syncHistorical</MudText>
+        break;
 }
 <AuthorizeView Roles="@AccessesNames.AUTH_super_user" Context="inner">
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="KillDb" Disabled="_clickedSyncHistorical">Kill db</MudButton>
-    @if (_killDb?.Success == true)
+    @switch (_killDb?.Success)
     {
-        <MudText Typo="Typo.body1">
-            Done: KillDb @_killDb.KillCount
-        </MudText>
-    }
-    else if (_killDb?.Success == false)
-    {
-        <MudText Typo="Typo.body1">
-            Failed: KillDb @_killDb.KillCount
-        </MudText>
+        case true:
+            <MudText Typo="Typo.body1">
+                Done: KillDb @_killDb.KillCount
+            </MudText>
+            break;
+        case false:
+            <MudText Typo="Typo.body1">
+                Failed: KillDb @_killDb.KillCount
+            </MudText>
+            break;
     }
 </AuthorizeView>
 

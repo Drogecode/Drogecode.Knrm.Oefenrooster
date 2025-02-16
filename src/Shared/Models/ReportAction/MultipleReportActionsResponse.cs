@@ -1,6 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
-
-namespace Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
+﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 
 public class MultipleReportActionsResponse : BaseMultipleResponse
 {

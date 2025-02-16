@@ -35,6 +35,7 @@ public class ScheduleController : ControllerBase
     private readonly IVehicleService _vehicleService;
     private readonly IFunctionService _functionService;
     private readonly IUserLinkedMailsService _userLinkedMailsService;
+    private readonly IUserLastCalendarUpdateService _userLastCalendarUpdateService;
 
     public ScheduleController(
         RefreshHub refreshHub,
@@ -48,7 +49,8 @@ public class ScheduleController : ControllerBase
         IUserService userService,
         IVehicleService vehicleService,
         IFunctionService functionService,
-        IUserLinkedMailsService userLinkedMailsService)
+        IUserLinkedMailsService userLinkedMailsService,
+        IUserLastCalendarUpdateService userLastCalendarUpdateService)
     {
         _refreshHub = refreshHub;
         _logger = logger;
@@ -62,6 +64,7 @@ public class ScheduleController : ControllerBase
         _vehicleService = vehicleService;
         _functionService = functionService;
         _userLinkedMailsService = userLinkedMailsService;
+        _userLastCalendarUpdateService = userLastCalendarUpdateService;
     }
 
     [HttpGet]
@@ -265,14 +268,14 @@ public class ScheduleController : ControllerBase
             var result = await _scheduleService.AddTrainingAsync(customerId, newTraining, trainingId, clt);
             if (false && result.Success) // Not sure if required
             {
-               var vehicles = await _vehicleService.GetAllVehicles(customerId);
-               if (vehicles.DrogeVehicles is not null)
-               {
-                   foreach (var vehicle in vehicles.DrogeVehicles.Where(x => x.IsDefault))
-                   {
-                       await _vehicleService.UpdateLinkVehicleTraining(customerId, new DrogeLinkVehicleTraining { IsSelected = true, RoosterTrainingId = trainingId, VehicleId = vehicle.Id });
-                   }
-               }
+                var vehicles = await _vehicleService.GetAllVehicles(customerId);
+                if (vehicles.DrogeVehicles is not null)
+                {
+                    foreach (var vehicle in vehicles.DrogeVehicles.Where(x => x.IsDefault))
+                    {
+                        await _vehicleService.UpdateLinkVehicleTraining(customerId, new DrogeLinkVehicleTraining { IsSelected = true, RoosterTrainingId = trainingId, VehicleId = vehicle.Id });
+                    }
+                }
             }
 
             await _userService.PatchLastOnline(userId, clt);
@@ -467,6 +470,7 @@ public class ScheduleController : ControllerBase
             return BadRequest();
         }
     }
+
     [HttpGet]
     [Route("training/user/month/all/{id:guid}")]
     [Authorize(Roles = AccessesNames.AUTH_users_details)]
@@ -563,11 +567,11 @@ public class ScheduleController : ControllerBase
     }
 
     private async Task ToOutlookCalendar(Guid planUserId, string? externalUserId, Guid? trainingId, bool assigned, TrainingAdvance? training, Guid currentUserId, Guid customerId, Guid? availableId,
-        string? calendarEventId,
-        string? functionName, CancellationToken clt)
+        string? calendarEventId, string? functionName, CancellationToken clt)
     {
         try
         {
+            await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(customerId, currentUserId, clt);
             if (assigned && await _userSettingService.TrainingToCalendar(customerId, planUserId))
             {
 #if DEBUG

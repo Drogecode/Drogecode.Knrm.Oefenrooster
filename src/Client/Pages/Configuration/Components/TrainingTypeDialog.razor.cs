@@ -14,10 +14,10 @@ public sealed partial class TrainingTypeDialog : IDisposable
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool IsNew { get; set; }
 
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private PlannerTrainingType? _originalTrainingType { get; set; }
     private bool _success;
-    private string[] _errors = Array.Empty<string>();
+    private string[] _errors = [];
     [AllowNull] private MudForm _form;
     void Cancel() => MudDialog.Cancel();
     protected override void OnParametersSet()

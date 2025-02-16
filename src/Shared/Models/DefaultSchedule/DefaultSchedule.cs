@@ -24,7 +24,6 @@ public class DefaultUserSchedule : ICloneable
 {
     public Guid? UserDefaultAvailableId { get; set; }
     public Guid? GroupId { get; set; }
-    public Availabilty? Available { get; set; }//ToDo Remove when all users on v0.3.50 or above
     public Availability? Availability { get; set; }
     public DateTime? ValidFromUser { get; set; }
     public DateTime? ValidUntilUser { get; set; }

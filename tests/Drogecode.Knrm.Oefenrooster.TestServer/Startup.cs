@@ -6,6 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services;
+using Drogecode.Knrm.Oefenrooster.TestServer.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.DependencyInjection.Logging;
@@ -36,6 +37,7 @@ public class Startup
         services.AddScoped<IGraphService, GraphServiceMock>();
         services.AddScoped<IScheduleService, ScheduleService>();
         services.AddScoped<ITrainingTypesService, TrainingTypesService>();
+        services.AddScoped<IUserLastCalendarUpdateService, UserLastCalendarUpdateService>();
         services.AddScoped<IUserRoleService, UserRoleService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserRoleService, UserRoleService>();
@@ -45,6 +47,7 @@ public class Startup
         services.AddScoped<ICustomerSettingService, CustomerSettingService>();
         services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 
+        services.AddScoped<AuditController>();
         services.AddScoped<DayItemController>();
         services.AddScoped<MonthItemController>();
         services.AddScoped<ConfigurationController>();
@@ -64,6 +67,8 @@ public class Startup
 
         services.AddScoped<PreComHub>();
         services.AddScoped<RefreshHub>();
+
+        services.AddScoped<TestService>();
 
         services.AddLogging(lb => lb.AddXunitOutput());
     }

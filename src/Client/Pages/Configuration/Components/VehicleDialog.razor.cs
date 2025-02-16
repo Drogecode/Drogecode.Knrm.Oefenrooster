@@ -14,7 +14,7 @@ public partial class VehicleDialog : IDisposable
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool? IsNew { get; set; }
 
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     void Cancel() => MudDialog.Cancel();
 
     protected override void OnParametersSet()
@@ -35,7 +35,7 @@ public partial class VehicleDialog : IDisposable
         }
         else
         {
-            var patchResult = await VehicleClient.PatchVehicleAsync(DrogeVehicle, _cls.Token);
+            await VehicleClient.PatchVehicleAsync(DrogeVehicle, _cls.Token);
         }
 
         if (Refresh is not null) await Refresh.CallRequestRefreshAsync();

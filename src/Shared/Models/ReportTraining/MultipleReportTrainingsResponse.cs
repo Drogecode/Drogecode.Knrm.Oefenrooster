@@ -1,6 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
-
-namespace Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
+﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
 
 public class MultipleReportTrainingsResponse : BaseMultipleResponse
 {

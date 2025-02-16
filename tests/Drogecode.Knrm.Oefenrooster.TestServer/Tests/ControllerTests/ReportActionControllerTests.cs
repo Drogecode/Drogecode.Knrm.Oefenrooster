@@ -1,42 +1,27 @@
 ﻿using System.Text.Json;
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.TestServer.Seeds;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
-public class ReportActionControllerTests : BaseTest
+public class ReportActionControllerTests : BaseTest, IAsyncLifetime
 {
-    public ReportActionControllerTests(
-        DataContext dataContext,
-        IDateTimeService dateTimeServiceMock,
-        ScheduleController scheduleController,
-        FunctionController functionController,
-        UserController userController,
-        HolidayController holidayController,
-        TrainingTypesController trainingTypesController,
-        DayItemController dayItemController,
-        MonthItemController monthItemController,
-        PreComController preComController,
-        VehicleController vehicleController,
-        DefaultScheduleController defaultScheduleController,
-        ReportActionController reportActionController,
-        ReportTrainingController reportTrainingController,
-        UserRoleController userRoleController,
-        UserLinkedMailsController userLinkedMailsController,
-        ReportActionSharedController reportActionSharedController) :
-        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController, reportActionSharedController)
+    public ReportActionControllerTests(TestService testService) : base(testService)
     {
-        SeedReportAction.Seed(dataContext, DefaultCustomerId);
+    }
+
+    public override async Task InitializeAsync()
+    {
+        await base.InitializeAsync();
+        SeedReportAction.Seed(Tester.DataContext, Tester.DefaultCustomerId);
     }
 
     [Fact]
     public async Task GetReportActionsCurrentUserTest()
     {
-        var getResult = await ReportActionController.GetLastActionsForCurrentUser(10, 0);
+        var getResult = await Tester.ReportActionController.GetLastActionsForCurrentUser(10, 0);
         Assert.NotNull(getResult.Value?.Actions);
         Assert.NotEmpty(getResult.Value.Actions);
         Assert.True(getResult.Value.Success);
@@ -52,7 +37,7 @@ public class ReportActionControllerTests : BaseTest
     [Fact]
     public async Task GetReportActionsAllUsersTest()
     {
-        var getResult = await ReportActionController.GetLastActions(new GetLastActionsRequest{Users = [], Count = 10, Skip = 0});
+        var getResult = await Tester.ReportActionController.GetLastActions(new GetLastActionsRequest { Users = [], Count = 10, Skip = 0 });
         Assert.NotNull(getResult.Value?.Actions);
         Assert.NotEmpty(getResult.Value.Actions);
         Assert.True(getResult.Value.Success);
@@ -63,7 +48,7 @@ public class ReportActionControllerTests : BaseTest
     public async Task GetReportActionsUnknownUserTest()
     {
         var unknownUser = JsonSerializer.Serialize(new List<Guid> { Guid.NewGuid() });
-        var getResult = await ReportActionController.GetLastActions(new GetLastActionsRequest{Users = [Guid.NewGuid()], Count = 10, Skip = 0});
+        var getResult = await Tester.ReportActionController.GetLastActions(new GetLastActionsRequest { Users = [Guid.NewGuid()], Count = 10, Skip = 0 });
         Assert.NotNull(getResult.Value?.Actions);
         Assert.True(getResult.Value.Success);
         getResult.Value.Actions.Should().BeEmpty();
@@ -74,13 +59,13 @@ public class ReportActionControllerTests : BaseTest
     {
         var request = new AnalyzeActionRequest()
         {
-            Users = new List<Guid?> {  },
+            Users = new List<Guid?> { },
         };
-        var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
+        var getResult = await Tester.ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
         Assert.True(getResult.Value.Success);
         getResult.Value.Years.Should().HaveCount(7);
-        getResult.Value.TotalCount.Should().Be(7*3);
+        getResult.Value.TotalCount.Should().Be(7 * 3);
         var y2022 = getResult.Value.Years.FirstOrDefault(x => x.Year == 2022);
         Assert.NotNull(y2022);
         y2022.Months.Should().Contain(x => x.Month == 3 && x.Count == 2);
@@ -92,14 +77,14 @@ public class ReportActionControllerTests : BaseTest
     {
         var request = new AnalyzeActionRequest()
         {
-            Users = new List<Guid?> {  },
+            Users = new List<Guid?> { },
             Years = 3
         };
-        var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
+        var getResult = await Tester.ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
         Assert.True(getResult.Value.Success);
         getResult.Value.Years.Should().HaveCount(3);
-        getResult.Value.TotalCount.Should().Be(3*3);
+        getResult.Value.TotalCount.Should().Be(3 * 3);
         getResult.Value.Years.Should().Contain(x => x.Year == 2022);
         getResult.Value.Years.Should().Contain(x => x.Year == 2020);
         getResult.Value.Years.Should().Contain(x => x.Year == 2019);
@@ -113,11 +98,11 @@ public class ReportActionControllerTests : BaseTest
         {
             Users = new List<Guid?> { DefaultSettingsHelperMock.IdTaco },
         };
-        var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
+        var getResult = await Tester.ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
         Assert.True(getResult.Value.Success);
         getResult.Value.Years.Should().HaveCount(7);
-        getResult.Value.TotalCount.Should().Be(7*3);
+        getResult.Value.TotalCount.Should().Be(7 * 3);
         var y2022 = getResult.Value.Years.FirstOrDefault(x => x.Year == 2022);
         Assert.NotNull(y2022);
         y2022.Months.Should().Contain(x => x.Month == 3 && x.Count == 2);
@@ -131,7 +116,7 @@ public class ReportActionControllerTests : BaseTest
         {
             Users = new List<Guid?> { Guid.NewGuid() },
         };
-        var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
+        var getResult = await Tester.ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
         Assert.True(getResult.Value.Success);
         getResult.Value.Years.Should().HaveCount(0);
@@ -145,10 +130,10 @@ public class ReportActionControllerTests : BaseTest
     {
         var start = new DateTime(2022, 4, 8, 8, 5, 41);
         var otherUser = Guid.NewGuid();
-        DataContext.ReportActions.Add(new DbReportAction
+        Tester.DataContext.ReportActions.Add(new DbReportAction
         {
             Id = Guid.NewGuid(),
-            CustomerId = DefaultCustomerId,
+            CustomerId = Tester.DefaultCustomerId,
             Description = "xUnit AnalyzeYearChartsAllTacoAndOtherUserTest",
             Start = start,
             Commencement = start.AddMinutes(5),
@@ -158,12 +143,12 @@ public class ReportActionControllerTests : BaseTest
             Prio = "Prio 1",
             Users = new List<DbReportUser> { new() { DrogeCodeId = DefaultSettingsHelperMock.IdTaco }, new() { DrogeCodeId = otherUser } },
         });
-        await DataContext.SaveChangesAsync();
+        await Tester.DataContext.SaveChangesAsync();
         var request = new AnalyzeActionRequest()
         {
             Users = new List<Guid?> { otherUser, DefaultSettingsHelperMock.IdTaco },
         };
-        var getResult = await ReportActionController.AnalyzeYearChartsAll(request);
+        var getResult = await Tester.ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
         Assert.True(getResult.Value.Success);
         getResult.Value.Years.Should().HaveCount(1);
@@ -176,7 +161,7 @@ public class ReportActionControllerTests : BaseTest
     [Fact]
     public async Task GetDistinctNoneTest()
     {
-        var prioResponse = await ReportActionController.Distinct(DistinctReport.None);
+        var prioResponse = await Tester.ReportActionController.Distinct(DistinctReport.None);
         Assert.Null(prioResponse.Value?.Values);
         Assert.NotNull(prioResponse.Value?.Message);
         prioResponse.Value.Message.Should().Be("None is not valid");
@@ -185,7 +170,7 @@ public class ReportActionControllerTests : BaseTest
     [Fact]
     public async Task GetDistinctPrioTest()
     {
-        var prioResponse = await ReportActionController.Distinct(DistinctReport.Prio);
+        var prioResponse = await Tester.ReportActionController.Distinct(DistinctReport.Prio);
         Assert.NotNull(prioResponse.Value?.Values);
         Assert.NotEmpty(prioResponse.Value.Values);
         prioResponse.Value.Values.Should().HaveCount(2);

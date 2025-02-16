@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using System.Security.Claims;
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
 

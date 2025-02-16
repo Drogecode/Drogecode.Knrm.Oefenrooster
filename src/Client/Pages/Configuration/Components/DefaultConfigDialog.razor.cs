@@ -23,7 +23,7 @@ public sealed partial class DefaultConfigDialog : IDisposable
     private List<DrogeVehicle>? _vehicles { get; set; }
     private IEnumerable<Guid> _selectedVehicleIds { get; set; }
     private PlannerTrainingType? _currentTrainingType;
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     void Cancel() => MudDialog.Cancel();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -34,17 +34,15 @@ public sealed partial class DefaultConfigDialog : IDisposable
             _vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
             if (IsNew == true || DefaultSchedule is null)
             {
-                DefaultSchedule = new DefaultSchedule
-                {
-                };
+                DefaultSchedule = new DefaultSchedule();
             }
 
-            if (DefaultSchedule?.RoosterTrainingTypeId is not null)
+            if (DefaultSchedule.RoosterTrainingTypeId is not null)
             {
                 _currentTrainingType = (await TrainingTypesClient.GetByIdAsync(DefaultSchedule.RoosterTrainingTypeId.Value, _cls.Token)).TrainingType;
             }
 
-            _selectedVehicleIds = DefaultSchedule?.VehicleIds ?? [];
+            _selectedVehicleIds = DefaultSchedule.VehicleIds ?? [];
 
             StateHasChanged();
         }

@@ -16,16 +16,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 public class AuditController : ControllerBase
 {
     private readonly ILogger<AuditController> _logger;
-    private readonly IConfiguration _configuration;
     private readonly IAuditService _auditService;
 
     public AuditController(
         ILogger<AuditController> logger,
-        IConfiguration configuration,
         IAuditService auditService)
     {
         _logger = logger;
-        _configuration = configuration;
         _auditService = auditService;
     }
 
@@ -80,7 +77,7 @@ public class AuditController : ControllerBase
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in GetTrainingAudit");
+            _logger.LogError(ex, "Exception in GetAllTrainingsAudit");
             return BadRequest();
         }
     }
@@ -102,7 +99,7 @@ public class AuditController : ControllerBase
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in GetTrainingAudit");
+            _logger.LogError(ex, "Exception in PostLog");
             return BadRequest();
         }
     }

@@ -1,11 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
+﻿namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
 public class ConfigurationControllerTests
 {

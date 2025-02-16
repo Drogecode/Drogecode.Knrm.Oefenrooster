@@ -1,37 +1,15 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportActionShared;
-
-namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
+﻿namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
 public class ReportActionSharedControllerTests : BaseTest
 {
-    public ReportActionSharedControllerTests(
-        DataContext dataContext,
-        IDateTimeService dateTimeServiceMock,
-        ScheduleController scheduleController,
-        FunctionController functionController,
-        UserController userController,
-        HolidayController holidayController,
-        TrainingTypesController trainingTypesController,
-        DayItemController dayItemController,
-        MonthItemController monthItemController,
-        PreComController preComController,
-        VehicleController vehicleController,
-        DefaultScheduleController defaultScheduleController,
-        ReportActionController reportActionController,
-        ReportTrainingController reportTrainingController,
-        UserRoleController userRoleController,
-        UserLinkedMailsController userLinkedMailsController,
-        ReportActionSharedController reportActionSharedController) :
-        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController,
-            reportActionSharedController)
+    public ReportActionSharedControllerTests(TestService testService) : base(testService)
     {
     }
 
     [Fact]
     public async Task PutReportActionSharedTest()
     {
-        var id = await AddActionShared(
+        var id = await Tester.AddActionShared(
             ["xUnit", "MoreTests"],
             ["unhealthy"],
             DateTime.UtcNow.AddDays(100),
@@ -43,10 +21,10 @@ public class ReportActionSharedControllerTests : BaseTest
     [Fact]
     public async Task GetMultiple()
     {
-        var put1 = await AddActionShared([], [], DateTime.UtcNow.AddDays(1));
-        var put2 = await AddActionShared([], [], DateTime.UtcNow.AddDays(-1));
-        var put3 = await AddActionShared([], [], DateTime.UtcNow.AddDays(10));
-        var getAll = await ReportActionSharedController.GetAllReportActionShared();
+        var put1 = await Tester.AddActionShared([], [], DateTime.UtcNow.AddDays(1));
+        var put2 = await Tester.AddActionShared([], [], DateTime.UtcNow.AddDays(-1));
+        var put3 = await Tester.AddActionShared([], [], DateTime.UtcNow.AddDays(10));
+        var getAll = await Tester.ReportActionSharedController.GetAllReportActionShared();
         Assert.NotNull(getAll.Value?.ReportActionSharedConfiguration);
         Assert.NotEmpty(getAll.Value.ReportActionSharedConfiguration);
         getAll.Value.Success.Should().BeTrue();
@@ -59,10 +37,10 @@ public class ReportActionSharedControllerTests : BaseTest
     [Fact]
     public async Task GetMultipleAndDeleteOne()
     {
-        var put1 = await AddActionShared([], [], DateTime.UtcNow.AddDays(1));
-        var put2 = await AddActionShared([], [], DateTime.UtcNow.AddDays(-1));
-        var put3 = await AddActionShared([], [], DateTime.UtcNow.AddDays(10));
-        var getAll = await ReportActionSharedController.GetAllReportActionShared();
+        var put1 = await Tester.AddActionShared([], [], DateTime.UtcNow.AddDays(1));
+        var put2 = await Tester.AddActionShared([], [], DateTime.UtcNow.AddDays(-1));
+        var put3 = await Tester.AddActionShared([], [], DateTime.UtcNow.AddDays(10));
+        var getAll = await Tester.ReportActionSharedController.GetAllReportActionShared();
         Assert.NotNull(getAll.Value?.ReportActionSharedConfiguration);
         Assert.NotEmpty(getAll.Value.ReportActionSharedConfiguration);
         getAll.Value.Success.Should().BeTrue();
@@ -71,10 +49,10 @@ public class ReportActionSharedControllerTests : BaseTest
         getAll.Value.ReportActionSharedConfiguration.Should().NotContain(x => x.Id == put2);
         getAll.Value.ReportActionSharedConfiguration.Should().Contain(x => x.Id == put3);
         
-        var delete3 = await ReportActionSharedController.DeleteReportActionShared(put3);
+        var delete3 = await Tester.ReportActionSharedController.DeleteReportActionShared(put3);
         Assert.NotNull(delete3.Value?.Success);
         Assert.True(delete3.Value.Success);
-        var getAllAgain = await ReportActionSharedController.GetAllReportActionShared();
+        var getAllAgain = await Tester.ReportActionSharedController.GetAllReportActionShared();
         Assert.NotNull(getAllAgain.Value?.ReportActionSharedConfiguration);
         Assert.NotEmpty(getAllAgain.Value.ReportActionSharedConfiguration);
         getAllAgain.Value.Success.Should().BeTrue();

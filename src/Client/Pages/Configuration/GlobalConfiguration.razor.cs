@@ -26,7 +26,7 @@ public sealed partial class GlobalConfiguration : IDisposable
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
     [CascadingParameter] private DrogeCodeGlobal Global { get; set; } = default!;
-    private static DateTime _lastSyncDateTime = DateTime.UtcNow;
+    private DateTime _lastSyncDateTime = DateTime.UtcNow;
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
     private readonly RefreshModel _refreshModel = new();

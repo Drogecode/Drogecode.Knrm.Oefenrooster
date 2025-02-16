@@ -18,7 +18,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -736,6 +736,15 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("LastSyncOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("LastUpdateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("LastUpdateOn")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid?>("LinkExchangeId")
                         .HasColumnType("uuid");
 
@@ -757,6 +766,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("LastUpdateBy");
 
                     b.HasIndex("LinkExchangeId");
 
@@ -1295,6 +1306,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.HasIndex("CustomerId");
 
+                    b.HasIndex("DeletedBy");
+
                     b.HasIndex("RoosterDefaultId");
 
                     b.HasIndex("RoosterTrainingTypeId");
@@ -1754,6 +1767,30 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserHolidays");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserLastCalendarUpdate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserLastCalendarUpdate");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserLinkedMails", b =>
@@ -2468,6 +2505,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "LastUpdateByUser")
+                        .WithMany("TrainingAvailableLastUpdated")
+                        .HasForeignKey("LastUpdateBy");
+
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkExchange", "LinkExchange")
                         .WithMany("RoosterAvailables")
                         .HasForeignKey("LinkExchangeId");
@@ -2493,6 +2534,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .HasForeignKey("VehicleId");
 
                     b.Navigation("Customer");
+
+                    b.Navigation("LastUpdateByUser");
 
                     b.Navigation("LinkExchange");
 
@@ -2552,6 +2595,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "DeletedByUser")
+                        .WithMany("TrainingsDeleted")
+                        .HasForeignKey("DeletedBy");
+
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterDefault", "RoosterDefault")
                         .WithMany("RoosterTrainings")
                         .HasForeignKey("RoosterDefaultId");
@@ -2561,6 +2608,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .HasForeignKey("RoosterTrainingTypeId");
 
                     b.Navigation("Customer");
+
+                    b.Navigation("DeletedByUser");
 
                     b.Navigation("RoosterDefault");
 
@@ -2651,6 +2700,25 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "User")
                         .WithMany("UserHolidays")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserLastCalendarUpdate", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("UserLastCalendarUpdates")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "User")
+                        .WithMany("UserLastCalendarUpdates")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2813,6 +2881,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Navigation("UserHolidays");
 
+                    b.Navigation("UserLastCalendarUpdates");
+
                     b.Navigation("UserLinkedMails");
 
                     b.Navigation("UserOnVersions");
@@ -2914,11 +2984,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Navigation("RoosterAvailables");
 
+                    b.Navigation("TrainingAvailableLastUpdated");
+
+                    b.Navigation("TrainingsDeleted");
+
                     b.Navigation("UserDefaultAvailables");
 
                     b.Navigation("UserDefaultGroups");
 
                     b.Navigation("UserHolidays");
+
+                    b.Navigation("UserLastCalendarUpdates");
 
                     b.Navigation("UserLinkedMails");
 
