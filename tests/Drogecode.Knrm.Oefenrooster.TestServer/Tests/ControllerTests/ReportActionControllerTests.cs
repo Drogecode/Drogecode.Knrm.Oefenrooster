@@ -6,7 +6,7 @@ using Drogecode.Knrm.Oefenrooster.TestServer.Seeds;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
-public class ReportActionControllerTests : BaseTest, IAsyncLifetime
+public class ReportActionControllerTests : BaseTest
 {
     public ReportActionControllerTests(TestService testService) : base(testService)
     {

@@ -63,6 +63,7 @@ public class TestService : IAsyncLifetime
     internal readonly UserLinkedMailsController UserLinkedMailsController;
     internal readonly ReportActionSharedController ReportActionSharedController;
     internal readonly AuditController AuditController;
+    internal readonly MenuController MenuController;
 
     public TestService(
         DataContext dataContext,
@@ -82,7 +83,8 @@ public class TestService : IAsyncLifetime
         UserRoleController userRoleController,
         UserLinkedMailsController userLinkedMailsController,
         ReportActionSharedController reportActionSharedController,
-        AuditController auditController)
+        AuditController auditController, 
+        MenuController menuController)
     {
         DataContext = dataContext;
         DateTimeServiceMock = (IDateTimeServiceMock)dateTimeService;
@@ -103,6 +105,7 @@ public class TestService : IAsyncLifetime
         UserLinkedMailsController = userLinkedMailsController;
         ReportActionSharedController = reportActionSharedController;
         AuditController = auditController;
+        MenuController = menuController;
     }
 
     public async Task InitializeAsync()
@@ -131,6 +134,7 @@ public class TestService : IAsyncLifetime
         MockAuthenticatedUser(UserRoleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(UserLinkedMailsController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(AuditController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(MenuController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         
         DefaultFunction = await AddFunction(FUNCTION_DEFAULT, true);
         DefaultUserRoleId = await AddUserRole(USER_ROLE_NAME);

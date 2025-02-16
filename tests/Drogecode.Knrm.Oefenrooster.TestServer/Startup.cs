@@ -4,9 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services;
-using Drogecode.Knrm.Oefenrooster.TestServer.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.DependencyInjection.Logging;
@@ -29,6 +27,7 @@ public class Startup
         services.AddScoped<IConfigurationService, ConfigurationService>();
         services.AddScoped<IFunctionService, FunctionService>();
         services.AddScoped<IHolidayService, HolidayService>();
+        services.AddScoped<IMenuService, MenuService>();
         services.AddScoped<ILinkUserRoleService, LinkUserRoleService>();
         services.AddScoped<IPreComService, PreComService>();
         services.AddScoped<IReportActionSharedService, ReportActionSharedService>();
@@ -53,6 +52,7 @@ public class Startup
         services.AddScoped<ConfigurationController>();
         services.AddScoped<FunctionController>();
         services.AddScoped<HolidayController>();
+        services.AddScoped<MenuController>();
         services.AddScoped<PreComController>();
         services.AddScoped<ReportActionSharedController>();
         services.AddScoped<ReportActionController>();

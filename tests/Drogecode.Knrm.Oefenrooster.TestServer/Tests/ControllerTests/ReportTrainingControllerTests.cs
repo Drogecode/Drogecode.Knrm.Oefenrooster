@@ -1,13 +1,10 @@
 ﻿using System.Text.Json;
-using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.TestServer.Seeds;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
-public class ReportTrainingControllerTests : BaseTest, IAsyncLifetime
+public class ReportTrainingControllerTests : BaseTest
 {
     public ReportTrainingControllerTests(TestService testService) : base(testService)
     {
