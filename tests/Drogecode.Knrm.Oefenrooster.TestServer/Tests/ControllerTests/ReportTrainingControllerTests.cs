@@ -7,38 +7,22 @@ using Drogecode.Knrm.Oefenrooster.TestServer.Seeds;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
-public class ReportTrainingControllerTests : BaseTest
+public class ReportTrainingControllerTests : BaseTest, IAsyncLifetime
 {
-    public ReportTrainingControllerTests(
-        DataContext dataContext,
-        IDateTimeService dateTimeServiceMock,
-        ScheduleController scheduleController,
-        FunctionController functionController,
-        UserController userController,
-        HolidayController holidayController,
-        TrainingTypesController trainingTypesController,
-        DayItemController dayItemController,
-        MonthItemController monthItemController,
-        PreComController preComController,
-        VehicleController vehicleController,
-        DefaultScheduleController defaultScheduleController,
-        ReportActionController reportActionController,
-        ReportTrainingController reportTrainingController,
-        UserRoleController userRoleController,
-        UserLinkedMailsController userLinkedMailsController,
-        ReportActionSharedController reportActionSharedController,
-        AuditController auditController) :
-        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController, reportActionSharedController,
-            auditController)
+    public ReportTrainingControllerTests(TestService testService) : base(testService)
     {
-        SeedReportTraining.Seed(dataContext, DefaultCustomerId);
+    }
+
+    public override async Task InitializeAsync()
+    {
+        await base.InitializeAsync();
+        SeedReportTraining.Seed(Tester.DataContext, Tester.DefaultCustomerId);
     }
 
     [Fact]
     public async Task GetReportActionsCurrentUserTest()
     {
-        var getResult = await ReportTrainingController.GetLastTrainingsForCurrentUser(10, 0);
+        var getResult = await Tester.ReportTrainingController.GetLastTrainingsForCurrentUser(10, 0);
         Assert.NotNull(getResult.Value?.Trainings);
         Assert.NotEmpty(getResult.Value.Trainings);
         Assert.True(getResult.Value.Success);
@@ -55,7 +39,7 @@ public class ReportTrainingControllerTests : BaseTest
     public async Task GetReportActionsAllUsersTest()
     {
         var emptyList = JsonSerializer.Serialize(new List<Guid>());
-        var getResult = await ReportTrainingController.GetLastTrainings(emptyList, 10, 0);
+        var getResult = await Tester.ReportTrainingController.GetLastTrainings(emptyList, 10, 0);
         Assert.NotNull(getResult.Value?.Trainings);
         Assert.NotEmpty(getResult.Value.Trainings);
         Assert.True(getResult.Value.Success);
@@ -70,7 +54,7 @@ public class ReportTrainingControllerTests : BaseTest
             Users = new List<Guid?> {  },
             Years = 3
         };
-        var getResult = await ReportTrainingController.AnalyzeYearChartsAll(request);
+        var getResult = await Tester.ReportTrainingController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
         Assert.True(getResult.Value.Success);
         getResult.Value.Years.Should().HaveCount(3);
@@ -85,7 +69,7 @@ public class ReportTrainingControllerTests : BaseTest
     public async Task GetReportActionsUnknownUserTest()
     {
         var unknownUser = JsonSerializer.Serialize(new List<Guid> { Guid.NewGuid() });
-        var getResult = await ReportTrainingController.GetLastTrainings(unknownUser, 10, 0);
+        var getResult = await Tester.ReportTrainingController.GetLastTrainings(unknownUser, 10, 0);
         Assert.NotNull(getResult.Value?.Trainings);
         Assert.True(getResult.Value.Success);
         getResult.Value.Trainings.Should().BeEmpty();

@@ -6,28 +6,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
 public class FunctionControllerTests : BaseTest
 {
-    public FunctionControllerTests(
-        DataContext dataContext,
-        IDateTimeService dateTimeServiceMock,
-        ScheduleController scheduleController,
-        FunctionController functionController,
-        UserController userController,
-        HolidayController holidayController,
-        TrainingTypesController trainingTypesController,
-        DayItemController dayItemController,
-        MonthItemController monthItemController,
-        PreComController preComController,
-        VehicleController vehicleController,
-        DefaultScheduleController defaultScheduleController,
-        ReportActionController reportActionController,
-        ReportTrainingController reportTrainingController,
-        UserRoleController userRoleController,
-        UserLinkedMailsController userLinkedMailsController,
-        ReportActionSharedController reportActionSharedController,
-        AuditController auditController) :
-        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController, reportActionSharedController,
-            auditController)
+    public FunctionControllerTests(TestService testService) : base(testService)
     {
     }
 
@@ -35,7 +14,7 @@ public class FunctionControllerTests : BaseTest
     public async Task AddFunctionTest()
     {
         const string NAME = "AddFunctionTest";
-        var result = await FunctionController.AddFunction(new Shared.Models.Function.DrogeFunction
+        var result = await Tester.FunctionController.AddFunction(new Shared.Models.Function.DrogeFunction
         {
             Name = NAME,
             TrainingTarget = 2,
@@ -44,7 +23,7 @@ public class FunctionControllerTests : BaseTest
         });
         Assert.NotNull(result?.Value?.NewId);
         result.Value.Success.Should().Be(true);
-        var functionGet = await FunctionController.GetById(result.Value.NewId.Value);
+        var functionGet = await Tester.FunctionController.GetById(result.Value.NewId.Value);
         Assert.NotNull(functionGet?.Value?.Function);
         functionGet.Value.Success.Should().Be(true);
         functionGet.Value.Function.Name.Should().Be(NAME);
@@ -58,11 +37,11 @@ public class FunctionControllerTests : BaseTest
     [Fact]
     public async Task GetAll()
     {
-        var newFunction = await AddFunction("GetAll functions", false);
-        var result = await FunctionController.GetAll();
+        var newFunction = await Tester.AddFunction("GetAll functions", false);
+        var result = await Tester.FunctionController.GetAll();
         Assert.NotNull(result?.Value?.Functions);
         result.Value.Success.Should().Be(true);
-        result.Value.Functions.Should().Contain(x => x.Id == DefaultFunction);
+        result.Value.Functions.Should().Contain(x => x.Id == Tester.DefaultFunction);
         result.Value.Functions.Should().Contain(x => x.Id == newFunction);
         result.Value.ElapsedMilliseconds.Should().NotBe(-1);
     }
@@ -71,7 +50,7 @@ public class FunctionControllerTests : BaseTest
     public async Task PatchFunctionTest()
     {
         const string NAME = "PatchFunctionTest";
-        var result = await FunctionController.AddFunction(new Shared.Models.Function.DrogeFunction
+        var result = await Tester.FunctionController.AddFunction(new Shared.Models.Function.DrogeFunction
         {
             Name = NAME,
             TrainingTarget = 42,
@@ -80,17 +59,17 @@ public class FunctionControllerTests : BaseTest
         });
         Assert.NotNull(result?.Value?.NewId);
         result.Value.Success.Should().Be(true);
-        var functionGet = await FunctionController.GetById(result.Value.NewId.Value);
+        var functionGet = await Tester.FunctionController.GetById(result.Value.NewId.Value);
         Assert.NotNull(functionGet?.Value?.Function);
         functionGet.Value.Function.Active.Should().Be(false);
         functionGet.Value.Function.Special.Should().Be(false);
         result.Value.ElapsedMilliseconds.Should().NotBe(-1);
         functionGet.Value.Function.Active = true;
         functionGet.Value.Function.Special = true;
-        var patchResult = await FunctionController.PatchFunction(functionGet.Value.Function);
+        var patchResult = await Tester.FunctionController.PatchFunction(functionGet.Value.Function);
         Assert.NotNull(patchResult.Value?.Success);
         patchResult.Value.Success.Should().Be(true);
-        var functionGetPatched = await FunctionController.GetById(result.Value.NewId.Value);
+        var functionGetPatched = await Tester.FunctionController.GetById(result.Value.NewId.Value);
         Assert.NotNull(functionGetPatched?.Value?.Function);
         functionGetPatched.Value.Function.Active.Should().Be(true);
         functionGetPatched.Value.Function.Special.Should().Be(true);

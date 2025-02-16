@@ -6,6 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services;
+using Drogecode.Knrm.Oefenrooster.TestServer.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.DependencyInjection.Logging;
@@ -66,6 +67,8 @@ public class Startup
 
         services.AddScoped<PreComHub>();
         services.AddScoped<RefreshHub>();
+
+        services.AddScoped<TestService>();
 
         services.AddLogging(lb => lb.AddXunitOutput());
     }

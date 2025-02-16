@@ -7,28 +7,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
 public class VehicleControllerTests : BaseTest
 {
-    public VehicleControllerTests(
-        DataContext dataContext,
-        IDateTimeService dateTimeServiceMock,
-        ScheduleController scheduleController,
-        FunctionController functionController,
-        UserController userController,
-        HolidayController holidayController,
-        TrainingTypesController trainingTypesController,
-        DayItemController dayItemController,
-        MonthItemController monthItemController,
-        PreComController preComController,
-        VehicleController vehicleController,
-        DefaultScheduleController defaultScheduleController,
-        ReportActionController reportActionController,
-        ReportTrainingController reportTrainingController,
-        UserRoleController userRoleController,
-        UserLinkedMailsController userLinkedMailsController,
-        ReportActionSharedController reportActionSharedController,
-        AuditController auditController) :
-        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController, reportActionSharedController,
-            auditController)
+    public VehicleControllerTests(TestService testService) : base(testService)
     {
     }
 
@@ -42,33 +21,33 @@ public class VehicleControllerTests : BaseTest
             IsDefault = false,
             IsActive = true,
         };
-        var result = await VehicleController.PutVehicle(vehicle);
+        var result = await Tester.VehicleController.PutVehicle(vehicle);
         Assert.NotNull(result?.Value);
     }
     
     [Fact]
     public async Task GetVehicleTest()
     {
-        var result = await VehicleController.GetAll(false);
+        var result = await Tester.VehicleController.GetAll(false);
         Assert.NotNull(result.Value?.DrogeVehicles);
         Assert.NotEmpty(result.Value.DrogeVehicles);
-        result.Value.DrogeVehicles.Should().Contain(x => x.Id == DefaultVehicle);
+        result.Value.DrogeVehicles.Should().Contain(x => x.Id == Tester.DefaultVehicle);
     }
 
     [Fact]
     public async Task PatchVehicleTest()
     {
         var NEW_NAME = "Patched";
-        var result = await VehicleController.GetAll(false);
-        result.Value!.DrogeVehicles.Should().Contain(x => x.Id == DefaultVehicle);
-        var vehicle = result.Value!.DrogeVehicles!.FirstOrDefault(x => x.Id == DefaultVehicle);
+        var result = await Tester.VehicleController.GetAll(false);
+        result.Value!.DrogeVehicles.Should().Contain(x => x.Id == Tester.DefaultVehicle);
+        var vehicle = result.Value!.DrogeVehicles!.FirstOrDefault(x => x.Id == Tester.DefaultVehicle);
         vehicle!.Name.Should().NotBe(NEW_NAME);
         vehicle!.Name = NEW_NAME;
-        var patchResult = await VehicleController.PatchVehicle(vehicle);
+        var patchResult = await Tester.VehicleController.PatchVehicle(vehicle);
         Assert.NotNull(patchResult.Value?.Success);
-        Assert.True(patchResult.Value.Success);result = await VehicleController.GetAll(false);
-        result.Value!.DrogeVehicles.Should().Contain(x => x.Id == DefaultVehicle);
-        vehicle = result.Value!.DrogeVehicles!.FirstOrDefault(x => x.Id == DefaultVehicle);
+        Assert.True(patchResult.Value.Success);result = await Tester.VehicleController.GetAll(false);
+        result.Value!.DrogeVehicles.Should().Contain(x => x.Id == Tester.DefaultVehicle);
+        vehicle = result.Value!.DrogeVehicles!.FirstOrDefault(x => x.Id == Tester.DefaultVehicle);
         Assert.NotNull(vehicle);
         vehicle!.Name.Should().Be(NEW_NAME);
     }
@@ -78,10 +57,10 @@ public class VehicleControllerTests : BaseTest
     {
         var body = new DrogeLinkVehicleTraining()
         {
-            RoosterTrainingId = DefaultTraining,
-            VehicleId = DefaultVehicle,
+            RoosterTrainingId = Tester.DefaultTraining,
+            VehicleId = Tester.DefaultVehicle,
         };
-        var result = await VehicleController.UpdateLinkVehicleTraining(body);
+        var result = await Tester.VehicleController.UpdateLinkVehicleTraining(body);
         Assert.NotNull(result?.Value?.DrogeLinkVehicleTraining);
         Assert.True(result.Value.Success);
     }

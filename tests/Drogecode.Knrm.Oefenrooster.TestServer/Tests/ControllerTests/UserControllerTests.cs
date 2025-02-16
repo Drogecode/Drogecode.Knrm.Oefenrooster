@@ -5,35 +5,14 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
 public class UserControllerTests : BaseTest
 {
-    public UserControllerTests(
-        DataContext dataContext,
-        IDateTimeService dateTimeServiceMock,
-        ScheduleController scheduleController,
-        FunctionController functionController,
-        UserController userController,
-        HolidayController holidayController,
-        TrainingTypesController trainingTypesController,
-        DayItemController dayItemController,
-        MonthItemController monthItemController,
-        PreComController preComController,
-        VehicleController vehicleController,
-        DefaultScheduleController defaultScheduleController,
-        ReportActionController reportActionController,
-        ReportTrainingController reportTrainingController,
-        UserRoleController userRoleController,
-        UserLinkedMailsController userLinkedMailsController,
-        ReportActionSharedController reportActionSharedController,
-        AuditController auditController) :
-        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController, reportActionSharedController,
-            auditController)
+    public UserControllerTests(TestService testService) : base(testService)
     {
     }
 
     [Fact]
     public async Task AddUserTest()
     {
-        var result = await UserController.AddUser(new DrogeUser
+        var result = await Tester.UserController.AddUser(new DrogeUser
         {
             Name = "AddUserTest"
         });
@@ -44,22 +23,22 @@ public class UserControllerTests : BaseTest
     [Fact]
     public async Task GetAllTest()
     {
-        var newUser = await AddUser("GetAllTest");
-        var users = await UserController.GetAll(true);
+        var newUser = await Tester.AddUser("GetAllTest");
+        var users = await Tester.UserController.GetAll(true);
         Assert.NotNull(users?.Value?.DrogeUsers?.Count);
         Assert.True(users.Value.Success);
-        users.Value.DrogeUsers.Should().Contain(x => x.Id == DefaultUserId);
+        users.Value.DrogeUsers.Should().Contain(x => x.Id == Tester.DefaultUserId);
         users.Value.DrogeUsers.Should().Contain(x => x.Id == newUser);
     }
 
     [Fact]
     public async Task GetUserByIdTest()
     {
-        var user = await UserController.GetById(DefaultUserId);
+        var user = await Tester.UserController.GetById(Tester.DefaultUserId);
         Assert.True(user.Value?.Success);
         Assert.NotNull(user.Value!.User);
-        user.Value.User.Id.Should().Be(DefaultUserId);
-        user.Value.User.Name.Should().Be(USER_NAME);
+        user.Value.User.Id.Should().Be(Tester.DefaultUserId);
+        user.Value.User.Name.Should().Be(TestService.USER_NAME);
         user.Value.User.LinkedAsA.Should().BeNull();
         user.Value.User.LinkedAsB.Should().BeNull();
     }
@@ -67,10 +46,10 @@ public class UserControllerTests : BaseTest
     [Fact]
     public async Task LinkUserUserTest()
     {
-        var userAId = await AddUser("User A");
-        var userBId = await AddUser("User B");
-        var userA = (await UserController.GetById(userAId))!.Value!.User;
-        var userB = (await UserController.GetById(userBId))!.Value!.User;
+        var userAId = await Tester.AddUser("User A");
+        var userBId = await Tester.AddUser("User B");
+        var userA = (await Tester.UserController.GetById(userAId))!.Value!.User;
+        var userB = (await Tester.UserController.GetById(userBId))!.Value!.User;
         Assert.Null(userA?.LinkedAsA);
         Assert.Null(userB?.LinkedAsB);
         var body = new UpdateLinkUserUserForUserRequest
@@ -80,10 +59,10 @@ public class UserControllerTests : BaseTest
             LinkType = Shared.Enums.UserUserLinkType.Buddy,
             Add = true
         };
-        var linkUser = await UserController.UpdateLinkUserUserForUser(body);
+        var linkUser = await Tester.UserController.UpdateLinkUserUserForUser(body);
         Assert.True(linkUser.Value?.Success);
-        userA = (await UserController.GetById(userAId))!.Value!.User;
-        userB = (await UserController.GetById(userBId))!.Value!.User;
+        userA = (await Tester.UserController.GetById(userAId))!.Value!.User;
+        userB = (await Tester.UserController.GetById(userBId))!.Value!.User;
         userA!.LinkedAsA.Should().Contain(x => x.LinkedUserId == userBId);
         userB!.LinkedAsB.Should().Contain(x => x.LinkedUserId == userAId);
     }
@@ -91,8 +70,8 @@ public class UserControllerTests : BaseTest
     [Fact(Skip = "Fails because of an in memory database bug")]
     public async Task UnLinkUserUserTest()
     {
-        var userAId = await AddUser("User A");
-        var userBId = await AddUser("User B");
+        var userAId = await Tester.AddUser("User A");
+        var userBId = await Tester.AddUser("User B");
         var body = new UpdateLinkUserUserForUserRequest
         {
             UserAId = userAId,
@@ -100,17 +79,17 @@ public class UserControllerTests : BaseTest
             LinkType = Shared.Enums.UserUserLinkType.Buddy,
             Add = true
         };
-        var linkUser = await UserController.UpdateLinkUserUserForUser(body);
+        var linkUser = await Tester.UserController.UpdateLinkUserUserForUser(body);
         Assert.True(linkUser.Value?.Success);
-        var userA = (await UserController.GetById(userAId))!.Value!.User;
-        var userB = (await UserController.GetById(userBId))!.Value!.User;
+        var userA = (await Tester.UserController.GetById(userAId))!.Value!.User;
+        var userB = (await Tester.UserController.GetById(userBId))!.Value!.User;
         userA!.LinkedAsA.Should().Contain(x => x.LinkedUserId == userBId);
         userB!.LinkedAsB.Should().Contain(x => x.LinkedUserId == userAId);
         body.Add = false;
-        var unLinkUser = await UserController.UpdateLinkUserUserForUser(body);
+        var unLinkUser = await Tester.UserController.UpdateLinkUserUserForUser(body);
         Assert.True(unLinkUser.Value?.Success);
-        var userAa = (await UserController.GetById(userAId))!.Value!.User;
-        var userBb = (await UserController.GetById(userBId))!.Value!.User;
+        var userAa = (await Tester.UserController.GetById(userAId))!.Value!.User;
+        var userBb = (await Tester.UserController.GetById(userBId))!.Value!.User;
         userAa!.LinkedAsA.Should().NotContain(x => x.LinkedUserId == userBId);
         userBb!.LinkedAsB.Should().NotContain(x => x.LinkedUserId == userAId);
 
@@ -119,7 +98,7 @@ public class UserControllerTests : BaseTest
     [Fact]
     public async Task GetTest()
     {
-        var user = await UserController.GetCurrentUser();
+        var user = await Tester.UserController.GetCurrentUser();
         Assert.NotNull(user?.Value?.DrogeUser);
         user.Value.DrogeUser.Id.Should().Be(DefaultSettingsHelperMock.IdTaco);
     }

@@ -6,28 +6,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.MappersTests;
 
 public class RoosterTrainingMapperTests : BaseTest
 {
-    public RoosterTrainingMapperTests(
-        DataContext dataContext,
-        IDateTimeService dateTimeServiceMock,
-        ScheduleController scheduleController,
-        FunctionController functionController,
-        UserController userController,
-        HolidayController holidayController,
-        TrainingTypesController trainingTypesController,
-        DayItemController dayItemController,
-        MonthItemController monthItemController,
-        PreComController preComController,
-        VehicleController vehicleController,
-        DefaultScheduleController defaultScheduleController,
-        ReportActionController reportActionController,
-        ReportTrainingController reportTrainingController,
-        UserRoleController userRoleController,
-        UserLinkedMailsController userLinkedMailsController,
-        ReportActionSharedController reportActionSharedController,
-        AuditController auditController) :
-        base(dataContext, dateTimeServiceMock, scheduleController, userController, functionController, holidayController, trainingTypesController, dayItemController, monthItemController,
-            preComController, vehicleController, defaultScheduleController, reportActionController, reportTrainingController, userRoleController, userLinkedMailsController, reportActionSharedController,
-            auditController)
+    public RoosterTrainingMapperTests(TestService testService) : base(testService)
     {
     }
 
@@ -46,7 +25,7 @@ public class RoosterTrainingMapperTests : BaseTest
                 {
                     Id = Guid.NewGuid(),
                     UserId = DefaultSettingsHelperMock.IdTaco,
-                    VehicleId = DefaultVehicle
+                    VehicleId = Tester.DefaultVehicle
                 }
             },
             LinkVehicleTrainings = new List<DbLinkVehicleTraining>
@@ -54,7 +33,7 @@ public class RoosterTrainingMapperTests : BaseTest
                 new()
                 {
                     RoosterTrainingId = id,
-                    VehicleId = DefaultVehicle,
+                    VehicleId = Tester.DefaultVehicle,
                     IsSelected = true,
                 }
             }
@@ -65,7 +44,7 @@ public class RoosterTrainingMapperTests : BaseTest
         mapped.PlanUsers.Should().HaveCount(1);
         var taco = mapped.PlanUsers.FirstOrDefault(x => x.UserId == DefaultSettingsHelperMock.IdTaco);
         taco.Should().NotBeNull();
-        taco!.VehicleId.Should().Be(DefaultVehicle);
+        taco!.VehicleId.Should().Be(Tester.DefaultVehicle);
         taco.Name.Should().Be("Some dude");
     }
 }
