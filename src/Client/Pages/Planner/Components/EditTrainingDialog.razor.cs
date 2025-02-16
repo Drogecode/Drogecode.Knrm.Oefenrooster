@@ -152,7 +152,7 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private string? DateValidation(DateTime? newDate)
     {
-        if (_editOld)
+        if (_editOld || !_canEdit)
             return null;
         if (newDate >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
             return null;
@@ -161,6 +161,8 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private string? StartBeforeEndValidation(TimeSpan? timeStart)
     {
+        if (!_canEdit)
+            return null;
         if (_training?.TimeEnd < timeStart)
         {
             return L["Start time past end time"];
@@ -176,6 +178,8 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private string? EndAfterStartValidation(TimeSpan? timeEnd)
     {
+        if (!_canEdit)
+            return null;
         if (_training?.TimeStart >= timeEnd)
         {
             return L["End time before start time"];
