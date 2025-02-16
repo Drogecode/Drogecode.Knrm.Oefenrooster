@@ -53,15 +53,6 @@ public sealed partial class ActionsTab : IDisposable
                         _actionTypes.Add(value!);
                     }
                 }
-
-                if (User is not null && Users is not null)
-                {
-                    var thisUser = Users.FirstOrDefault(x => x.Id == User.Id);
-                    if (thisUser is not null)
-                    {
-                        ((List<DrogeUser>)_selectedUsersAction).Add(thisUser);
-                    }
-                }
             }
 
             await UpdateReportActions(0);

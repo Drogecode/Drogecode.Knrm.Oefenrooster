@@ -8,6 +8,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Microsoft.Extensions.Caching.Memory;
 using System.Data;
 using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -16,15 +17,18 @@ public class ScheduleService : IScheduleService
     private readonly ILogger<ScheduleService> _logger;
     private readonly DataContext _database;
     private readonly IMemoryCache _memoryCache;
+    private readonly IDateTimeService _dateTimeService;
 
     public ScheduleService(
         ILogger<ScheduleService> logger,
         DataContext database,
-        IMemoryCache memoryCache)
+        IMemoryCache memoryCache, 
+        IDateTimeService dateTimeService)
     {
         _logger = logger;
         _database = database;
         _memoryCache = memoryCache;
+        _dateTimeService = dateTimeService;
     }
 
     public async Task<MultipleTrainingsResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd,
@@ -168,7 +172,7 @@ public class ScheduleService : IScheduleService
             {
                 if (!await AddAvailableInternalAsync(userId, customerId, training)) return result;
             }
-            else if (!await PatchAvailableInternalAsync(available, training)) return result;
+            else if (!await PatchAvailableInternalAsync(userId, available, training)) return result;
 
             training.Updated = true;
             result.Success = true;
@@ -333,15 +337,19 @@ public class ScheduleService : IScheduleService
             TrainingId = training.TrainingId ?? throw new NoNullAllowedException("TrainingId is still null while adding available"),
             Date = training.DateStart,
             Available = training.Availability,
-            SetBy = training.SetBy
+            SetBy = training.SetBy,
+            LastUpdateOn = DateTime.UtcNow,
+            LastUpdateBy = userId
         });
         return (await _database.SaveChangesAsync()) > 0;
     }
 
-    private async Task<bool> PatchAvailableInternalAsync(DbRoosterAvailable available, Training training)
+    private async Task<bool> PatchAvailableInternalAsync(Guid userId, DbRoosterAvailable available, Training training)
     {
         available.Available = training.Availability;
         available.SetBy = training.SetBy;
+        available.LastUpdateOn = DateTime.UtcNow;
+        available.LastUpdateBy = userId;
         _database.RoosterAvailables.Update(available);
         return (await _database.SaveChangesAsync()) > 0;
     }
@@ -837,6 +845,8 @@ public class ScheduleService : IScheduleService
         ava.Assigned = body.User.Assigned;
         ava.UserFunctionId = body.User.PlannedFunctionId;
         ava.VehicleId = body.User.VehicleId;
+        ava.LastUpdateBy = userId;
+        ava.LastUpdateOn = DateTime.UtcNow;
         clt.ThrowIfCancellationRequested();
         clt = CancellationToken.None;
         _database.RoosterAvailables.Update(ava);
@@ -893,7 +903,9 @@ public class ScheduleService : IScheduleService
                     Date = training.DateStart,
                     Available = Availability.None,
                     SetBy = AvailabilitySetBy.None,
-                    Assigned = body.Assigned
+                    Assigned = body.Assigned,
+                    LastUpdateBy = userId,
+                    LastUpdateOn = DateTime.UtcNow
                 };
                 _database.RoosterAvailables.Add(ava);
                 await _database.SaveChangesAsync(clt);
@@ -902,6 +914,8 @@ public class ScheduleService : IScheduleService
         else
         {
             ava.Assigned = body.Assigned;
+            ava.LastUpdateBy = userId;
+            ava.LastUpdateOn = DateTime.UtcNow;
             if (body.Assigned)
                 ava.UserFunctionId = body.FunctionId;
             else
@@ -1074,6 +1088,18 @@ public class ScheduleService : IScheduleService
         return result;
     }
 
+    public async Task<List<DbRoosterAvailable>> GetTrainingsThatRequireCalendarUpdate(Guid userId, Guid customerId)
+    {
+        var compareDate = _dateTimeService.UtcNow().AddDays(-1);
+        var ava = await _database.RoosterAvailables.Where(x =>
+                x.CustomerId == customerId && x.UserId == userId && x.Training.DeletedOn == null && x.LastUpdateOn != null &&
+                x.LastUpdateOn > compareDate && x.LastUpdateBy == userId &&
+                (x.LastSyncOn == null || x.LastUpdateOn < x.LastSyncOn))
+            .AsNoTracking()
+            .ToListAsync();
+        return ava;
+    }
+
     public async Task<bool> PatchEventIdForUserAvailible(Guid userId, Guid customerId, Guid? availableId, string? calendarEventId, CancellationToken clt)
     {
         var ava = await _database.RoosterAvailables.FindAsync(availableId, clt);
@@ -1083,17 +1109,27 @@ public class ScheduleService : IScheduleService
         }
 
         ava.CalendarEventId = calendarEventId;
+        ava.LastSyncOn = DateTime.UtcNow;
         _database.RoosterAvailables.Update(ava);
         return (await _database.SaveChangesAsync(clt) > 0);
     }
 
     public async Task<bool> DeleteTraining(Guid userId, Guid customerId, Guid trainingId, CancellationToken clt)
     {
-        var training = await _database.RoosterTrainings.FindAsync(trainingId);
+        var training = await _database.RoosterTrainings.Include(x => x.RoosterAvailables).FirstOrDefaultAsync(x => x.Id == trainingId, clt);
         if (training?.CustomerId == customerId)
         {
             training.DeletedOn = DateTime.UtcNow;
             training.DeletedBy = userId;
+            if (training.RoosterAvailables?.Any() == true)
+            {
+                foreach (var trainingRoosterAvailable in training.RoosterAvailables)
+                {
+                    trainingRoosterAvailable.LastUpdateBy = userId;
+                    trainingRoosterAvailable.LastUpdateOn = DateTime.UtcNow;
+                }
+            }
+
             _database.RoosterTrainings.Update(training);
             return await _database.SaveChangesAsync(clt) > 0;
         }

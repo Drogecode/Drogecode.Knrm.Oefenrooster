@@ -36,6 +36,7 @@ public class Startup
         services.AddScoped<IGraphService, GraphServiceMock>();
         services.AddScoped<IScheduleService, ScheduleService>();
         services.AddScoped<ITrainingTypesService, TrainingTypesService>();
+        services.AddScoped<IUserLastCalendarUpdateService, UserLastCalendarUpdateService>();
         services.AddScoped<IUserRoleService, UserRoleService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserRoleService, UserRoleService>();

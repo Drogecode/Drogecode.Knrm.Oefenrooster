@@ -44,4 +44,7 @@ public class DbUsers
     public ICollection<DbAudit>? Audits { get; set; }
     public ICollection<DbLinkUserRole>? LinkUserRoles { get; set; }
     public ICollection<DbUserLogins>? Logins { get; set; }
+    public ICollection<DbRoosterTraining>? TrainingsDeleted { get; set; }
+    public ICollection<DbRoosterAvailable>? TrainingAvailableLastUpdated { get; set; }
+    public ICollection<DbUserLastCalendarUpdate>? UserLastCalendarUpdates { get; set; }
 }

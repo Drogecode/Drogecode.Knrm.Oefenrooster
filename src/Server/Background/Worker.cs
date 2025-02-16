@@ -39,7 +39,7 @@ public class Worker : BackgroundService
                     await Task.Delay(1000, clt);
                 }
 
-                var successfull = await SyncSharePoint();
+                var successfull = await SyncSharePoint(clt);
 
                 if (successfull && _errorCount > 0)
                 {
@@ -62,15 +62,16 @@ public class Worker : BackgroundService
         }
     }
 
-    private async Task<bool> SyncSharePoint()
+    private async Task<bool> SyncSharePoint(CancellationToken clt)
     {
         using var scope = _scopeFactory.CreateScope();
         var graphService = scope.ServiceProvider.GetRequiredService<IGraphService>();
         graphService.InitializeGraph();
 
         var result = true;
-        result = (await SyncSharePointActions(graphService) && result);
-        result = (await SyncSharePointUsers(scope, graphService) && result);
+        result = await SyncSharePointActions(graphService) && result;
+        result = await SyncSharePointUsers(scope, graphService) && result;
+        result = await SyncCalendarEvents(scope, graphService, clt) && result;
         return result;
     }
 
@@ -100,6 +101,23 @@ public class Worker : BackgroundService
 
         _clt.ThrowIfCancellationRequested();
         _memoryCache.Set(NEXT_USER_SYNC, DateTime.SpecifyKind(DateTime.Today.AddDays(1).AddHours(1), DateTimeKind.Utc));
+        return true;
+    }
+
+    private async Task<bool> SyncCalendarEvents(IServiceScope scope, IGraphService graphService, CancellationToken clt)
+    {
+        var userLastCalendarUpdateService = scope.ServiceProvider.GetRequiredService<IUserLastCalendarUpdateService>();
+        var scheduleService = scope.ServiceProvider.GetRequiredService<IScheduleService>();
+        var usersToUpdate = await userLastCalendarUpdateService.GetLastUpdateUsers(clt);
+        foreach (var user in usersToUpdate)
+        {
+            var availables = await scheduleService.GetTrainingsThatRequireCalendarUpdate(user.UserId, user.CustomerId);
+            foreach (var ava in availables)
+            {
+                // ToDo: Sync with calendar
+            }
+        }
+
         return true;
     }
 

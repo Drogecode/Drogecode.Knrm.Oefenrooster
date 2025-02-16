@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
@@ -8,18 +9,18 @@ using Heron.MudCalendar;
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 public sealed partial class Calendar : IDisposable
 {
-    [Inject] private IStringLocalizer<Calendar> L { get; set; } = default!;
-    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private ISessionExpireService SessionExpireService { get; set; } = default!;
-    [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
-    [Inject] private DayItemRepository DayItemRepository { get; set; } = default!;
-    [Inject] private MonthItemRepository MonthItemRepository { get; set; } = default!;
-    [Inject] private UserRepository UserRepository { get; set; } = default!;
-    [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<Calendar>? L { get; set; }
+    [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
+    [Inject, NotNull] private ISessionExpireService? SessionExpireService { get; set; }
+    [Inject, NotNull] private ScheduleRepository? ScheduleRepository { get; set; }
+    [Inject, NotNull] private DayItemRepository? DayItemRepository { get; set; }
+    [Inject, NotNull] private MonthItemRepository? MonthItemRepository { get; set; }
+    [Inject, NotNull] private UserRepository? UserRepository { get; set; }
+    [CascadingParameter, NotNull] private DrogeCodeGlobal? Global { get; set; }
     [Parameter] public Guid CustomerId { get; set; } = Guid.Empty;
-    private List<CalendarItem> _events = new();
+    private List<CalendarItem> _events = [];
     private List<RoosterItemMonth>? _monthItems;
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private DrogeUser? _user;
     private bool _updating;
     private bool _initialized;

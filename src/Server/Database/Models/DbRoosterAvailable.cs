@@ -18,6 +18,9 @@ public class DbRoosterAvailable
     public Availability? Available { get; set; }
     public AvailabilitySetBy SetBy { get; set; }
     public bool Assigned { get; set; }
+    public Guid? LastUpdateBy { get; set; }
+    public DateTime? LastUpdateOn { get; set; }
+    public DateTime? LastSyncOn { get; set; }
 
     public DbCustomers Customer { get; set; }
     public DbUsers? User { get; set; }
@@ -25,4 +28,5 @@ public class DbRoosterAvailable
     public DbRoosterTraining Training { get; set; }
     public DbVehicles? Vehicle { get; set; }
     public DbLinkExchange? LinkExchange { get; set; }
+    public DbUsers? LastUpdateByUser { get; set; }
 }

@@ -134,6 +134,7 @@ builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserLinkedMailsService, UserLinkedMailsService>();
 builder.Services.AddScoped<ITrainingTypesService, TrainingTypesService>();
+builder.Services.AddScoped<IUserLastCalendarUpdateService, UserLastCalendarUpdateService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<IUserSettingService, UserSettingService>();
 builder.Services.AddScoped<ICustomerSettingService, CustomerSettingService>();

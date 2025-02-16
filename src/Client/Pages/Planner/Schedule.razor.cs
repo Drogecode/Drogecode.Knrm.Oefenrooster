@@ -24,7 +24,6 @@ public sealed partial class Schedule : IDisposable
     private List<DrogeFunction>? _functions;
     private List<DrogeVehicle>? _vehicles;
     private List<PlannerTrainingType>? _trainingTypes;
-    private bool _updating;
     private bool _canEdit;
     private bool _editOnClick;
     private ScheduleView _view = ScheduleView.Calendar;

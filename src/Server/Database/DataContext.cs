@@ -22,6 +22,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbUserOnVersion> UserOnVersions { get; set; }
         public DbSet<DbUserSettings> UserSettings { get; set; }
         public DbSet<DbUserLinkedMails> UserLinkedMails { get; set; }
+        public DbSet<DbUserLastCalendarUpdate> UserLastCalendarUpdates { get; set; }
         public DbSet<DbCustomers> Customers { get; set; }
         public DbSet<DbCustomerSettings> CustomerSettings { get; set; }
         public DbSet<DbRoosterDefault> RoosterDefaults { get; set; }
@@ -117,6 +118,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserLinkedMails>().HasOne(p => p.Customer).WithMany(g => g.UserLinkedMails).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserLinkedMails>().HasOne(p => p.User).WithMany(g => g.UserLinkedMails).HasForeignKey(s => s.UserId).IsRequired();
             
+            //UserLastCalendarUpdate
+            modelBuilder.Entity<DbUserLastCalendarUpdate>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserLastCalendarUpdate>().HasOne(p => p.Customer).WithMany(g => g.UserLastCalendarUpdates).HasForeignKey(s => s.CustomerId).IsRequired();
+            modelBuilder.Entity<DbUserLastCalendarUpdate>().HasOne(p => p.User).WithMany(g => g.UserLastCalendarUpdates).HasForeignKey(s => s.UserId).IsRequired();
+            
             //UserLogins
             modelBuilder.Entity<DbUserLogins>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserLogins>().HasOne(p => p.User).WithMany(g => g.Logins).HasForeignKey(s => s.UserId);
@@ -135,7 +141,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.UserFunction).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.UserFunctionId);
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.Vehicle).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.VehicleId);
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.LinkExchange).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.LinkExchangeId);
-
+            modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.LastUpdateByUser).WithMany(g => g.TrainingAvailableLastUpdated).HasForeignKey(s => s.LastUpdateBy);
+            
             // Rooster default
             modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(en => en.ValidFrom).IsRequired(); });
@@ -162,6 +169,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.Customer).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.RoosterDefault).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.RoosterDefaultId);
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.RoosterTrainingType).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.RoosterTrainingTypeId);
+            modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.DeletedByUser).WithMany(g => g.TrainingsDeleted).HasForeignKey(s => s.DeletedBy);
 
             // Rooster training type
             modelBuilder.Entity<DbRoosterTrainingType>(e => { e.Property(en => en.Id).IsRequired(); });
