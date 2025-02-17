@@ -61,7 +61,7 @@ public class CalendarBaseCardTests : BlazorTestBase
         cut.Markup.Should().NotContain(Icons.Material.Filled.Settings);
         var d = cut.Find(".DrogeCode-card-header-history");
         d.Click();
-        Assert.True(Clicked);
+        cut.WaitForAssertion(() => Clicked.Should().BeTrue(), TimeSpan.FromSeconds(2));
     }
 
     [Theory]
@@ -77,7 +77,7 @@ public class CalendarBaseCardTests : BlazorTestBase
         cut.Markup.Should().Contain(Icons.Material.Filled.Settings);
         var d = cut.Find(".DrogeCode-card-header-settings");
         d.Click();
-        Assert.True(Clicked);
+        cut.WaitForAssertion(() => Clicked.Should().BeTrue(), TimeSpan.FromSeconds(2));
     }
 
     [Theory]
@@ -93,9 +93,9 @@ public class CalendarBaseCardTests : BlazorTestBase
         cut.Markup.Should().Contain(Icons.Material.Filled.MoreVert);
         var d = cut.Find(".DrogeCode-card-header-more-icons");
         d.Click();
-        cut.Markup.Should().Contain(Icons.Material.Filled.History);
-        cut.Markup.Should().Contain(Icons.Material.Filled.Settings);
-        cut.Markup.Should().NotContain(Icons.Material.Filled.MoreVert);
+        cut.WaitForAssertion(() => cut.Markup.Should().Contain(Icons.Material.Filled.History), TimeSpan.FromSeconds(2));
+        cut.WaitForAssertion(() => cut.Markup.Should().Contain(Icons.Material.Filled.Settings), TimeSpan.FromSeconds(2));
+        cut.WaitForAssertion(() => cut.Markup.Should().NotContain(Icons.Material.Filled.MoreVert), TimeSpan.FromSeconds(2));
     }
 
     private bool Clicked = false;
