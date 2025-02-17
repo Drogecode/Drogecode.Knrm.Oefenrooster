@@ -6,7 +6,7 @@
                           OnClickSettings="@OpenConfigDialog" OnClickHistory="_showHistory ? OpenHistoryDialog : null!" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek"
                           @bind-ShowPastBody="@_showPastBody" MoreMessage="@L["Show attendees"]" Refresh="_refreshModel">
             <ChipContent>
-                <ReadMoreChip Planner="Planner" />
+                <ReadMoreChip Training="Planner" />
             </ChipContent>
             <ChildContent>
                 @if (ChildContent is not null)
@@ -42,7 +42,7 @@
                           OnClickSettings="@OpenConfigDialog" OnClickHistory="_showHistory ? OpenHistoryDialog : null!" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek"
                           @bind-ShowPastBody="@_showPastBody" MoreMessage="@L["Show attendees"]" Refresh="_refreshModel">
             <ChipContent>
-                <ReadMoreChip Planner="Planner" />
+                <ReadMoreChip Training="Planner" />
             </ChipContent>
         </CalendarBaseCard>
     }

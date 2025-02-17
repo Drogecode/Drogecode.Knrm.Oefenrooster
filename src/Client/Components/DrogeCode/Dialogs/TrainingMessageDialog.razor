@@ -1,10 +1,7 @@
-﻿<MudDialog>
+﻿<MudDialog Visible="@Visible">
     <DialogContent>
         @if (_description?.Description is not null)
         {
-            <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
-                <MudChip T="string">@_description.ElapsedMilliseconds</MudChip>
-            </AuthorizeView>
             <MudMarkdown Value="@_description.Description" />
         }
         else if (_description is not null)

@@ -1,6 +1,6 @@
 ﻿<div>
     <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_description_read">
-        @if (Planner.HasDescription)
+        @if (Training.HasDescription)
         {
             <div @onclick:stopPropagation="true" @onclick:preventDefault="true">
                 <MudChip T="string" OnClick="@OpenMessageDialog" Icon="@Icons.Material.Filled.Description" Color="Color.Primary">@L["Information"]</MudChip>

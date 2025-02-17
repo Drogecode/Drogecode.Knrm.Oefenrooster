@@ -8,14 +8,14 @@ public sealed partial class ReadMoreChip
 {
     [Inject] private IStringLocalizer<ReadMoreChip> L { get; set; } = default!;
     [Inject] private IDialogService DialogProvider { get; set; } = default!;
-    [Parameter, EditorRequired, NotNull] public TrainingAdvance? Planner { get; set; }
+    [Parameter, EditorRequired, NotNull] public TrainingAdvance? Training { get; set; }
     
 
     private Task OpenMessageDialog()
     {
         var parameters = new DialogParameters<TrainingMessageDialog>
         {
-            { x => x.Planner, Planner },
+            { x => x.Training, Training },
         };
         var options = new DialogOptions()
         {

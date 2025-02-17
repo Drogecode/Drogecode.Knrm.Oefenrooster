@@ -2,7 +2,7 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Helpers;
 <CalendarBaseCard MinWidth="@MinWidth" MaxWidth="@MaxWidth" Width="@Width" Training="@Training" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" SetBy="@Training.SetBy">
     <ChipContent>
-        <ReadMoreChip Planner="Training"/>
+        <ReadMoreChip Training="Training"/>
     </ChipContent>
     <ChildContent>
         <MudPaper Class="@PlannerHelper.StyleAvailabilty(Training.Availability)">

@@ -13,13 +13,15 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
 using System.Security.Claims;
+using RichardSzalay.MockHttp;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient;
 
-
 public abstract class BlazorTestBase : TestContext
 {
-    public BlazorTestBase()
+    protected MockHttpMessageHandler MockHttp { get; }
+
+    protected BlazorTestBase()
     {
         var authContext = this.AddTestAuthorization();
         authContext.SetAuthorized("TEST USER");
@@ -34,11 +36,12 @@ public abstract class BlazorTestBase : TestContext
             options.SnackbarConfiguration.HideTransitionDuration = 0;
             options.PopoverOptions.CheckForPopoverProvider = false;
         });
-        Services.AddScoped(sp => new HttpClient());
+        MockHttp = Services.AddMockHttpClient();
         Services.AddOptions();
 
         this.AddBlazoredLocalStorage();
         this.AddBlazoredSessionStorage();
+        Services.AddMudMarkdownServices();
 
 
         Services.AddScoped<IDayItemClient, DayItemClient>();
@@ -49,7 +52,6 @@ public abstract class BlazorTestBase : TestContext
         Services.AddScoped<IFunctionClient, FunctionClient>();
         Services.AddScoped<IHolidayClient, HolidayClient>();
         Services.AddScoped<IPreComClient, PreComClient>();
-        Services.AddScoped<IScheduleClient, ScheduleClient>();
         Services.AddScoped<ISharePointClient, SharePointClient>();
         Services.AddScoped<IScheduleClient, ScheduleClient>();
         Services.AddScoped<ITrainingTypesClient, MockTrainingTypesClient>();
@@ -72,7 +74,7 @@ public abstract class BlazorTestBase : TestContext
         Services.AddSingleton<ILocalStorageExpireService, LocalStorageExpireService>();
         Services.AddSingleton<ISessionExpireService, SessionExpireService>();
         Services.AddSingleton<IOfflineService, OfflineService>();
-        
+
         Services.AddScoped<CustomStateProvider>();
         Services.AddScoped<AuthenticationStateProvider>(c => c.GetRequiredService<CustomStateProvider>());
     }
@@ -82,77 +84,79 @@ public abstract class BlazorTestBase : TestContext
     internal static Guid Function3Id = Guid.NewGuid();
     internal static Guid Vehicle1Id = Guid.NewGuid();
     internal static Guid Vehicle2Id = Guid.NewGuid();
+
     internal List<DrogeFunction>? Functions = new List<DrogeFunction>
-         {
-             new DrogeFunction
-             {
-                 Id = Function1Id,
-                 Name = "Test function 1",
-                 Order = 1,
-                 Active = true,
-                 TrainingTarget = 2,
-             },
-             new DrogeFunction
-             {
-                 Id = Function2Id,
-                 Name = "Test function 2",
-                 Order = 2,
-                 Active = true,
-                 TrainingTarget = 0,
-             },
-             new DrogeFunction
-             {
-                 Id = Function3Id,
-                 Name = "Test function 3",
-                 Order = 2,
-                 Active = false,
-                 TrainingTarget = 2,
-             }
-         };
+    {
+        new DrogeFunction
+        {
+            Id = Function1Id,
+            Name = "Test function 1",
+            Order = 1,
+            Active = true,
+            TrainingTarget = 2,
+        },
+        new DrogeFunction
+        {
+            Id = Function2Id,
+            Name = "Test function 2",
+            Order = 2,
+            Active = true,
+            TrainingTarget = 0,
+        },
+        new DrogeFunction
+        {
+            Id = Function3Id,
+            Name = "Test function 3",
+            Order = 2,
+            Active = false,
+            TrainingTarget = 2,
+        }
+    };
+
     internal PlannedTraining Training = new PlannedTraining
     {
         Name = "xUnit meets bUnit",
         PlanUsers = new List<PlanUser>
+        {
+            new PlanUser
             {
-                new PlanUser
-                {
-                    UserFunctionId = Function2Id,
-                    PlannedFunctionId = Function1Id,
-                    Name = "test user 1",
-                    Assigned = true,
-                },
-                new PlanUser
-                {
-                    UserFunctionId = Function1Id,
-                    PlannedFunctionId = Function1Id,
-                    Name = "test user 2",
-                    Assigned = false,
-                    VehicleId = Vehicle2Id,
-                },
-                new PlanUser
-                {
-                    UserFunctionId = Function3Id,
-                    PlannedFunctionId = Function3Id,
-                    Name = "test user 3",
-                    Assigned = true,
-                },
-                new PlanUser
-                {
-                    UserFunctionId = Function2Id,
-                    PlannedFunctionId = Function3Id,
-                    Name = "test user 4",
-                    Assigned = true,
-                    VehicleId = Vehicle1Id,
-                },
-                new PlanUser
-                {
-                    UserFunctionId = Function3Id,
-                    PlannedFunctionId = Function1Id,
-                    Name = "test user 5",
-                    Assigned = true,
-                    VehicleId = Vehicle2Id,
-                },
-            }
+                UserFunctionId = Function2Id,
+                PlannedFunctionId = Function1Id,
+                Name = "test user 1",
+                Assigned = true,
+            },
+            new PlanUser
+            {
+                UserFunctionId = Function1Id,
+                PlannedFunctionId = Function1Id,
+                Name = "test user 2",
+                Assigned = false,
+                VehicleId = Vehicle2Id,
+            },
+            new PlanUser
+            {
+                UserFunctionId = Function3Id,
+                PlannedFunctionId = Function3Id,
+                Name = "test user 3",
+                Assigned = true,
+            },
+            new PlanUser
+            {
+                UserFunctionId = Function2Id,
+                PlannedFunctionId = Function3Id,
+                Name = "test user 4",
+                Assigned = true,
+                VehicleId = Vehicle1Id,
+            },
+            new PlanUser
+            {
+                UserFunctionId = Function3Id,
+                PlannedFunctionId = Function1Id,
+                Name = "test user 5",
+                Assigned = true,
+                VehicleId = Vehicle2Id,
+            },
+        }
     };
 
     internal List<DrogeVehicle>? Vehicles = new List<DrogeVehicle>

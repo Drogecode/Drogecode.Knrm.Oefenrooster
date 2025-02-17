@@ -1,0 +1,9 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode.Dialogs
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract
+@using MudBlazor
+<MudDialogProvider/>
+<MudPopoverProvider />
+<TrainingMessageDialog Training="Training" Visible="true" />
+@code {
+    [Parameter, EditorRequired] public TrainingAdvance Training { get; set; } = default!;
+}

@@ -6,19 +6,19 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode.Dialogs;
 public sealed partial class TrainingMessageDialog
 {
     [Inject] private IStringLocalizer<TrainingMessageDialog> L { get; set; } = default!;
-    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private IScheduleClient ScheduleClient { get; set; } = default!;
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     
-    [Parameter, EditorRequired] public TrainingAdvance Planner { get; set; } = default!;
+    [Parameter, EditorRequired] public TrainingAdvance Training { get; set; } = default!;
+    [Parameter] public bool Visible { get; set; }
     
     private GetDescriptionByTrainingIdResponse? _description;
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && Planner.TrainingId is not null)
+        if (firstRender && Training.TrainingId is not null)
         {
-            _description = await ScheduleClient.GetDescriptionByTrainingIdAsync(Planner.TrainingId.Value);
+            _description = await ScheduleClient.GetDescriptionByTrainingIdAsync(Training.TrainingId.Value);
             StateHasChanged();
         }
     }
