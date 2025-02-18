@@ -197,7 +197,7 @@ public class ScheduleController : ControllerBase
 
             await _userService.PatchLastOnline(userId, clt);
             clt = CancellationToken.None;
-            await PatchTrainingCalenderUsers(patchedTraining.TrainingId!.Value, customerId, clt);
+            await PatchTrainingCalenderUsers(patchedTraining.TrainingId!.Value, customerId, userId, clt);
             await _userService.PatchLastOnline(userId, clt);
 
             return result;
@@ -213,7 +213,7 @@ public class ScheduleController : ControllerBase
         }
     }
 
-    private async Task PatchTrainingCalenderUsers(Guid trainingId, Guid customerId, CancellationToken clt)
+    private async Task PatchTrainingCalenderUsers(Guid trainingId, Guid customerId, Guid currentUserId, CancellationToken clt)
     {
         var training = await _scheduleService.GetPlannedTrainingById(customerId, trainingId, clt);
         clt.ThrowIfCancellationRequested();
@@ -221,6 +221,7 @@ public class ScheduleController : ControllerBase
         _graphService.InitializeGraph();
         if (training.Training?.PlanUsers.Count > 0)
         {
+            var i = 0;
             foreach (var user in training.Training.PlanUsers)
             {
                 await _refreshHub.SendMessage(user.UserId, ItemUpdated.FutureTrainings);
@@ -236,7 +237,17 @@ public class ScheduleController : ControllerBase
                     var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(10, 0, user.UserId, customerId, clt)).UserLinkedMails ?? [];
                     await _graphService.PatchCalender(drogeUser.ExternalId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime,
                         allUserLinkedMail);
+                    await _scheduleService.PatchLastSynced(customerId, user);
+                    i++;
                 }
+            }
+
+            if (i > 0)
+            {
+                var savedCount = await _scheduleService.SaveDb(clt);
+                await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(customerId, currentUserId, clt);
+                if (savedCount < i)
+                    _logger.LogWarning("`{expected}` is less changes than expected `{expectedCount}`.", i, savedCount);
             }
         }
     }

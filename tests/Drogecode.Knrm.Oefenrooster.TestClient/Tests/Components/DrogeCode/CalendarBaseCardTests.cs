@@ -98,7 +98,7 @@ public class CalendarBaseCardTests : BlazorTestBase
         cut.WaitForAssertion(() => cut.Markup.Should().NotContain(Icons.Material.Filled.MoreVert), TimeSpan.FromSeconds(2));
     }
 
-    private bool Clicked = false;
+    private bool Clicked { get; set; }
 
     private void ClickButton()
     {

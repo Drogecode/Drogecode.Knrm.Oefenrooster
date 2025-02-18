@@ -1,9 +1,12 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+﻿using System.Text.Json.Serialization;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
 public class PlanUser
 {
+
+    [JsonIgnore] public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public Guid? TrainingId { get; set; }
     public Guid? UserFunctionId { get; set; }
