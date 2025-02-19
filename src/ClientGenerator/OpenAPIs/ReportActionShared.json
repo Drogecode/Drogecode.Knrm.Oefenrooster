@@ -226,7 +226,51 @@
             "type": "string",
             "nullable": true
           },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
           "boat": {
+            "type": "string",
+            "nullable": true
+          },
+          "area": {
+            "type": "string",
+            "nullable": true
+          },
+          "windDirection": {
+            "type": "string",
+            "nullable": true
+          },
+          "windPower": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "waterTemperature": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "golfHight": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "sight": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "weatherCondition": {
+            "type": "string",
+            "nullable": true
+          },
+          "functioningMaterial": {
+            "type": "string",
+            "nullable": true
+          },
+          "problemsWithWeed": {
             "type": "string",
             "nullable": true
           },
@@ -274,10 +318,6 @@
             "type": "string",
             "nullable": true
           },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
           "request": {
             "type": "string",
             "nullable": true
@@ -291,38 +331,6 @@
             "nullable": true
           },
           "implications": {
-            "type": "string",
-            "nullable": true
-          },
-          "area": {
-            "type": "string",
-            "nullable": true
-          },
-          "windDirection": {
-            "type": "string",
-            "nullable": true
-          },
-          "windPower": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "waterTemperature": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "golfHight": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "sight": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "weatherCondition": {
             "type": "string",
             "nullable": true
           },
@@ -343,14 +351,6 @@
           "countAnimals": {
             "type": "number",
             "format": "double",
-            "nullable": true
-          },
-          "functioningMaterial": {
-            "type": "string",
-            "nullable": true
-          },
-          "problemsWithWeed": {
-            "type": "string",
             "nullable": true
           },
           "completedby": {

@@ -904,16 +904,6 @@
         "type": "integer",
         "format": "int32"
       },
-      "Availabilty": {
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ],
-        "type": "integer",
-        "format": "int32"
-      },
       "GetDescriptionByTrainingIdResponse": {
         "type": "object",
         "properties": {
@@ -1146,9 +1136,6 @@
             "type": "string",
             "nullable": true
           },
-          "availabilty": {
-            "$ref": "#/components/schemas/Availabilty"
-          },
           "availability": {
             "$ref": "#/components/schemas/Availability"
           },
@@ -1307,6 +1294,9 @@
           "showTime": {
             "type": "boolean"
           },
+          "hasDescription": {
+            "type": "boolean"
+          },
           "planUsers": {
             "type": "array",
             "items": {
@@ -1320,9 +1310,6 @@
           "trainingTypeName": {
             "type": "string",
             "nullable": true
-          },
-          "hasDescription": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1353,9 +1340,6 @@
           "calendarEventId": {
             "type": "string",
             "nullable": true
-          },
-          "availabilty": {
-            "$ref": "#/components/schemas/Availabilty"
           },
           "availability": {
             "$ref": "#/components/schemas/Availability"
@@ -1447,8 +1431,8 @@
           "showTime": {
             "type": "boolean"
           },
-          "availabilty": {
-            "$ref": "#/components/schemas/Availabilty"
+          "hasDescription": {
+            "type": "boolean"
           },
           "availability": {
             "$ref": "#/components/schemas/Availability"
@@ -1511,6 +1495,9 @@
             "type": "boolean"
           },
           "showTime": {
+            "type": "boolean"
+          },
+          "hasDescription": {
             "type": "boolean"
           }
         },

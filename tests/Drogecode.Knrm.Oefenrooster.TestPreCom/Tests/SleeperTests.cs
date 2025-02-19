@@ -1,5 +1,5 @@
 using Drogecode.Knrm.Oefenrooster.PreCom;
-using Drogecode.Knrm.Oefenrooster.PreCom.Enums;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace Drogecode.Knrm.Oefenrooster.TestPreCom.Tests;

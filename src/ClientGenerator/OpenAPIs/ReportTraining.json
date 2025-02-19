@@ -435,6 +435,10 @@
             "type": "string",
             "nullable": true
           },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
           "boat": {
             "type": "string",
             "nullable": true
@@ -508,10 +512,6 @@
             "items": {
               "$ref": "#/components/schemas/SharePointUser"
             },
-            "nullable": true
-          },
-          "type": {
-            "type": "string",
             "nullable": true
           },
           "typeTraining": {

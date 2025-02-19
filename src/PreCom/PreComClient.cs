@@ -3,10 +3,11 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
+using Drogecode.Knrm.Oefenrooster.PreCom.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.PreCom;
 
-public class PreComClient
+public class PreComClient : IPreComClient
 {
     const string UrlBase = "https://pre-com.nl/Mobile/";
     static readonly JsonSerializer Serializer = JsonSerializer.CreateDefault();
@@ -110,19 +111,19 @@ public class PreComClient
         var jsonResult = JsonConvert.SerializeObject(result);
     }
 
-    protected virtual async Task<T> Get<T>(string url, CancellationToken cancellationToken)
+    private async Task<T> Get<T>(string url, CancellationToken cancellationToken)
     {
         using var response = await httpClient.GetAsync(UrlBase + url, cancellationToken);
         return await ProcessResponse<T>(url, response);
     }
 
-    protected virtual async Task<T> Post<T>(string url, HttpContent content = default, CancellationToken cancellationToken = default)
+    private async Task<T> Post<T>(string url, HttpContent content = default, CancellationToken cancellationToken = default)
     {
         using var response = await httpClient.PostAsync(UrlBase + url, content, cancellationToken);
         return await ProcessResponse<T>(url, response);
     }
 
-    protected virtual async Task<T> ProcessResponse<T>(string url, HttpResponseMessage response)
+    private async Task<T> ProcessResponse<T>(string url, HttpResponseMessage response)
     {
         response.EnsureSuccessStatusCode();
         return await DeserializeResponse<T>(response);

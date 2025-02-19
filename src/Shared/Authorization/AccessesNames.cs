@@ -56,6 +56,7 @@ public struct AccessesNames
     
     public const string GROUP_PRECOM = "PreCom";
     public const string AUTH_precom_manual = "precom_manual";
+    public const string AUTH_precom_problems = "precom_problems";
 }
 
 public struct AccessesSettings

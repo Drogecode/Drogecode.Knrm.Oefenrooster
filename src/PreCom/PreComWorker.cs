@@ -1,20 +1,15 @@
-﻿using Drogecode.Knrm.Oefenrooster.PreCom.Enums;
+﻿using Drogecode.Knrm.Oefenrooster.PreCom.Interfaces;
 using Drogecode.Knrm.Oefenrooster.PreCom.Models;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 
 namespace Drogecode.Knrm.Oefenrooster.PreCom;
 
 public class PreComWorker
 {
-    private readonly PreComClient _preComClient;
+    private readonly IPreComClient _preComClient;
     private readonly ILogger _logger;
-    public PreComWorker(PreComClient preComClient, ILogger logger)
+    public PreComWorker(IPreComClient preComClient, ILogger logger)
     {
         _preComClient = preComClient;
         _logger = logger;
@@ -29,13 +24,13 @@ public class PreComWorker
         var q = await _preComClient.GetOccupancyLevels(userGroups[0].GroupID, DateTime.Today, DateTime.Today.AddDays(7));
         var schipper = d.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM schipper"));
         var opstapper = d.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM opstapper"));
-        var algemeen = d.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM algemeen"));
+        var aankOpstapper = d.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM Aank. Opstapper"));
         switch (nextRunMode)
         {
             case NextRunMode.NextHour:
-                var requestSchipper = schipper.OccupancyDays[DateTime.Today][$"Hour{DateTime.Now.Hour - 1}"];
-                var requestOpstapper = opstapper.OccupancyDays[DateTime.Today][$"Hour{DateTime.Now.Hour - 1}"];
-                var requestAlgemeen = algemeen.OccupancyDays[DateTime.Today][$"Hour{DateTime.Now.Hour - 1}"];
+                var requestSchipper = schipper?.OccupancyDays[DateTime.Today][$"Hour{DateTime.Now.Hour - 1}"];
+                var requestOpstapper = opstapper?.OccupancyDays[DateTime.Today][$"Hour{DateTime.Now.Hour - 1}"];
+                var requestAlgemeen = aankOpstapper?.OccupancyDays[DateTime.Today][$"Hour{DateTime.Now.Hour - 1}"];
                 if (requestSchipper == true || requestOpstapper == true || requestAlgemeen == true)
                 {
                     result += "Voor aankomend uur hebben we nog een ";
@@ -69,7 +64,6 @@ public class PreComWorker
                 break;
         }
         return result;
-
     }
 
     private async Task SendMessage(Group[] userGroups)

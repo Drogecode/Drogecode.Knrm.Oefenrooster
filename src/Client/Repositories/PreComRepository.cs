@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
@@ -32,6 +33,11 @@ public class PreComRepository
     public async Task<bool> PostForwardAsync(PostForwardRequest body, CancellationToken clt)
     {
         var result = await _preComClient.PostForwardAsync(body, clt);
+        return result;
+    }
+    public async Task<GetProblemsResponse> GetProblemsAsync(NextRunMode nextRunMode, CancellationToken clt)
+    {
+        var result = await _preComClient.GetProblemsAsync(nextRunMode, clt);
         return result;
     }
 }

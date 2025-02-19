@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
+using Drogecode.Knrm.Oefenrooster.PreCom;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -20,16 +21,22 @@ public class PreComController : DrogeController
     private readonly IPreComService _preComService;
     private readonly PreComHub _preComHub;
     private readonly IHttpClientFactory _clientFactory;
+    private readonly HttpClient _httpClient;
+    private readonly IConfiguration _configuration;
 
     public PreComController(
         ILogger<PreComController> logger,
         IPreComService preComService,
         PreComHub preComHub,
-        IHttpClientFactory clientFactory) : base(logger)
+        IHttpClientFactory clientFactory,
+        HttpClient httpClient,
+        IConfiguration configuration) : base(logger)
     {
         _preComService = preComService;
         _preComHub = preComHub;
         _clientFactory = clientFactory;
+        _httpClient = httpClient;
+        _configuration = configuration;
     }
 
     [HttpPost]
@@ -239,6 +246,34 @@ public class PreComController : DrogeController
             Debugger.Break();
 #endif
             _logger.LogError(ex, "Exception in AllForwards");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Authorize(Roles = AccessesNames.AUTH_precom_problems)]
+    [Route("problems")]
+    public async Task<ActionResult<GetProblemsResponse>> GetProblems(NextRunMode nextRunMode, CancellationToken clt = default)
+    {
+        try
+        {
+            var preComClient = new PreComClient(_httpClient, "drogecode", _logger);
+            var preComUser = _configuration.GetValue<string>("PreCom:User");
+            var preComPassword = _configuration.GetValue<string>("PreCom:Password");
+            if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
+                return BadRequest();
+            await preComClient.Login(preComUser, preComPassword);
+            var preComWorker = new PreComWorker(preComClient, _logger);
+            var problems = await preComWorker.Work(nextRunMode);
+            return new GetProblemsResponse() { Problems = problems };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetProblems");
+#if DEBUG
+            Debugger.Break();
+            return new GetProblemsResponse() { Problems = ex.Message };
+#endif
             return BadRequest();
         }
     }

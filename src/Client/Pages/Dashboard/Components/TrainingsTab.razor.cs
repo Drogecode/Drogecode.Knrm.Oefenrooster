@@ -39,11 +39,11 @@ public sealed partial class TrainingsTab : IDisposable
     {
         if (firstRender)
         {
-            _reportTrainings = await ReportTrainingRepository.GetLastTrainingsForCurrentUser(10, 0, _cls.Token);
+            await UpdateReportTrainings(0);
             var trainingTypes = await ReportTrainingRepository.Distinct(DistinctReport.Type, _cls.Token);
             if (trainingTypes?.Values is not null)
             {
-                foreach (var value in trainingTypes.Values.Where(x=> x is not null))
+                foreach (var value in trainingTypes.Values.Where(x => x is not null))
                 {
                     _trainingTypes.Add(value!);
                 }
@@ -53,6 +53,11 @@ public sealed partial class TrainingsTab : IDisposable
         }
     }
 
+    private async Task UpdateReportTrainings(int skip)
+    {
+        _reportTrainings = await ReportTrainingRepository.GetLastTraining(_selectedUsersTraining, _selectedTrainingTypes, _count, skip, _cls.Token);
+    }
+
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
     {
         if (_busy) return;
@@ -60,7 +65,7 @@ public sealed partial class TrainingsTab : IDisposable
         StateHasChanged();
         _selectedUsersTraining = selection;
         _count = DEFAULT_COUNT;
-        _reportTrainings = await ReportTrainingRepository.GetLastTraining(selection, _selectedTrainingTypes, 10, 0, _cls.Token);
+        await UpdateReportTrainings(0);
         _currentPage = 1;
         _busy = false;
         StateHasChanged();
@@ -73,7 +78,7 @@ public sealed partial class TrainingsTab : IDisposable
         StateHasChanged();
         _selectedTrainingTypes = selection;
         _count = DEFAULT_COUNT;
-        _reportTrainings = await ReportTrainingRepository.GetLastTraining(_selectedUsersTraining, _selectedTrainingTypes, _count, 0, _cls.Token);
+        await UpdateReportTrainings(0);
         _currentPage = 1;
         _busy = false;
         StateHasChanged();
@@ -85,7 +90,7 @@ public sealed partial class TrainingsTab : IDisposable
         _busy = true;
         StateHasChanged();
         _count = arg;
-        _reportTrainings = await ReportTrainingRepository.GetLastTraining(_selectedUsersTraining, _selectedTrainingTypes, _count, 0, _cls.Token);
+        await UpdateReportTrainings(0);
         _currentPage = 1;
         _busy = false;
         StateHasChanged();
@@ -99,7 +104,7 @@ public sealed partial class TrainingsTab : IDisposable
         if (nextPage <= 0) return;
         _currentPage = nextPage;
         var skip = (nextPage - 1) * _count;
-        _reportTrainings = await ReportTrainingRepository.GetLastTraining(_selectedUsersTraining, _selectedTrainingTypes, _count, skip, _cls.Token);
+        await UpdateReportTrainings(skip);
         _busy = false;
         StateHasChanged();
     }

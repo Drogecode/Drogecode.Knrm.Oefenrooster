@@ -353,16 +353,6 @@
         "type": "integer",
         "format": "int32"
       },
-      "Availabilty": {
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ],
-        "type": "integer",
-        "format": "int32"
-      },
       "DayOfWeek": {
         "enum": [
           0,
@@ -486,9 +476,6 @@
             "type": "string",
             "format": "uuid",
             "nullable": true
-          },
-          "available": {
-            "$ref": "#/components/schemas/Availabilty"
           },
           "availability": {
             "$ref": "#/components/schemas/Availability"
@@ -656,9 +643,6 @@
             "type": "string",
             "format": "uuid",
             "nullable": true
-          },
-          "available": {
-            "$ref": "#/components/schemas/Availabilty"
           },
           "availability": {
             "$ref": "#/components/schemas/Availability"

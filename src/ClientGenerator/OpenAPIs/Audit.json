@@ -197,16 +197,6 @@
         "type": "integer",
         "format": "int32"
       },
-      "Availabilty": {
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ],
-        "type": "integer",
-        "format": "int32"
-      },
       "GetTrainingAuditResponse": {
         "type": "object",
         "properties": {
@@ -295,8 +285,8 @@
           "showTime": {
             "type": "boolean"
           },
-          "availabilty": {
-            "$ref": "#/components/schemas/Availabilty"
+          "hasDescription": {
+            "type": "boolean"
           },
           "availability": {
             "$ref": "#/components/schemas/Availability"
@@ -331,9 +321,6 @@
           "assigned": {
             "type": "boolean",
             "nullable": true
-          },
-          "availabilty": {
-            "$ref": "#/components/schemas/Availabilty"
           },
           "availability": {
             "$ref": "#/components/schemas/Availability"

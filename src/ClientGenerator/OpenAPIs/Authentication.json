@@ -295,7 +295,7 @@
             "type": "string",
             "nullable": true
           },
-          "passwoord": {
+          "password": {
             "type": "string",
             "nullable": true
           },
@@ -314,7 +314,7 @@
             "format": "uuid",
             "nullable": true
           },
-          "passwoord": {
+          "password": {
             "type": "string",
             "nullable": true
           },

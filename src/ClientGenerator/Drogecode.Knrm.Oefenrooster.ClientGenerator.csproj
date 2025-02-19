@@ -49,7 +49,7 @@
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\PreCom.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="PreComClient">
 			<OutputPath>../Clients/PreComClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom,Drogecode.Knrm.Oefenrooster.Shared.Enums</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\ReportActionShared.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ReportActionSharedClient">
 			<OutputPath>../Clients/ReportActionSharedClient.g.cs</OutputPath>

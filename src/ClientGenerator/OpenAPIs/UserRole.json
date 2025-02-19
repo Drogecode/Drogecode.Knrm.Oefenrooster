@@ -323,6 +323,9 @@
           },
           "autH_precom_manual": {
             "type": "boolean"
+          },
+          "autH_precom_problems": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

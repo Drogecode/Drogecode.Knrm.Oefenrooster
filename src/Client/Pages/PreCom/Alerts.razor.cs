@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using System.Text.Json;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.PreCom;
 
@@ -20,6 +21,7 @@ public sealed partial class Alerts : IDisposable
     private int _currentPage = 1;
     private int _count = 30;
     private bool _bussy;
+    private string? _problemText;
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -52,6 +54,12 @@ public sealed partial class Alerts : IDisposable
         var skip = (nextPage - 1) * _count;
         _alerts = await PreComRepository.GetAllAlerts(_count, skip, _cls.Token);
         _bussy = false;
+        StateHasChanged();
+    }
+
+    private async Task Problems(NextRunMode nextRunMode)
+    {
+        _problemText = (await PreComRepository.GetProblemsAsync(nextRunMode, _cls.Token)).Problems;
         StateHasChanged();
     }
 

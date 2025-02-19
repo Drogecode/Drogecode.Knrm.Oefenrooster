@@ -416,10 +416,69 @@
           }
         }
       }
+    },
+    "/api/PreCom/problems": {
+      "get": {
+        "tags": [
+          "PreCom"
+        ],
+        "operationId": "GetProblems",
+        "parameters": [
+          {
+            "name": "nextRunMode",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/NextRunMode"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetProblemsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetProblemsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetProblemsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "GetProblemsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "problems": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "MultiplePreComAlertsResponse": {
         "type": "object",
         "properties": {
@@ -473,6 +532,16 @@
           }
         },
         "additionalProperties": false
+      },
+      "NextRunMode": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "PatchPreComForwardResponse": {
         "type": "object",
