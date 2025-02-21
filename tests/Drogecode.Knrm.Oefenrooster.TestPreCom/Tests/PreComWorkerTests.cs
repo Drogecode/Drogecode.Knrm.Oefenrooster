@@ -22,22 +22,156 @@ public class PreComWorkerTests
         var mockClient = MockClient();
         var worker = new PreComWorker(mockClient, _logger);
         var result = await worker.Work(NextRunMode.NextHour);
-        result.Should().Be("Voor aankomend uur hebben we nog een schipper nodig opstapper nodig algemeen nodig ");
+        result.Trim().Should().Be("Voor aankomend uur hebben we nog een schipper nodig opstapper nodig algemeen nodig");
+    }
+
+    [Fact]
+    public async Task TodayTomorrowTest()
+    {
+        var mockClient = MockClient();
+        var worker = new PreComWorker(mockClient, _logger);
+        var result = await worker.Work(NextRunMode.TodayTomorrow);
+        result.Trim().Should().Be("We hebben morgen nog gaten in het rooster");
+    }
+
+    [Fact]
+    public async Task NextWeekTest()
+    {
+        var mockClient = MockClient();
+        var worker = new PreComWorker(mockClient, _logger);
+        var result = await worker.Work(NextRunMode.NextWeek);
+        result.Should().Be("We hebben aankomende zeven dagen nog mogelijkheden 4");
     }
 
     private IPreComClient MockClient()
     {
         var mockClient = Substitute.For<IPreComClient>();
         mockClient.GetAllUserGroups().Returns([new Group { GroupID = 1201 }]);
-        
-        mockClient.GetAllFunctions(1201, DateTime.Today).Returns(new Group
+
+
+        mockClient.GetAllFunctions(1201, DateTime.Today).Returns(GetGroup(DateTime.Today));
+        mockClient.GetAllFunctions(1201, DateTime.Today.AddDays(1)).Returns(GetGroup(DateTime.Today.AddDays(1)));
+        mockClient.GetAllFunctions(1201, DateTime.Today.AddDays(2)).Returns(GetGroup(DateTime.Today.AddDays(2)));
+        mockClient.GetAllFunctions(1201, DateTime.Today.AddDays(3)).Returns(GetGroup(DateTime.Today.AddDays(3)));
+        mockClient.GetAllFunctions(1201, DateTime.Today.AddDays(4)).Returns(GetGroup(DateTime.Today.AddDays(4)));
+        mockClient.GetAllFunctions(1201, DateTime.Today.AddDays(5)).Returns(GetGroup(DateTime.Today.AddDays(5)));
+        mockClient.GetAllFunctions(1201, DateTime.Today.AddDays(6)).Returns(GetGroup(DateTime.Today.AddDays(6)));
+        mockClient.GetOccupancyLevels(1201, DateTime.Today, DateTime.Today.AddDays(7)).Returns(new Dictionary<DateTime, int>()
+        {
+            {
+                DateTime.Today, -1
+            },
+            {
+                DateTime.Today.AddDays(1), -1
+            },
+            {
+                DateTime.Today.AddDays(2), -1
+            },
+            {
+                DateTime.Today.AddDays(3), 1
+            },
+            {
+                DateTime.Today.AddDays(4), -1
+            },
+            {
+                DateTime.Today.AddDays(5), 1
+            },
+            {
+                DateTime.Today.AddDays(6), -1
+            }
+        });
+        return mockClient;
+    }
+
+    public Dictionary<string, bool?> GetDefaultHoursDictionary(bool hour0, bool hour2, bool hour8, bool hour16, bool hour22)
+    {
+        return new Dictionary<string, bool?>()
+        {
+            {
+                "Hour0", hour0
+            },
+            {
+                "Hour1", hour0
+            },
+            {
+                "Hour2", hour2
+            },
+            {
+                "Hour3", hour2
+            },
+            {
+                "Hour4", hour2
+            },
+            {
+                "Hour5", hour2
+            },
+            {
+                "Hour6", hour2
+            },
+            {
+                "Hour7", hour2
+            },
+            {
+                "Hour8", hour8
+            },
+            {
+                "Hour9", hour8
+            },
+            {
+                "Hour10", hour8
+            },
+            {
+                "Hour11", hour8
+            },
+            {
+                "Hour12", hour8
+            },
+            {
+                "Hour13", hour8
+            },
+            {
+                "Hour14", hour8
+            },
+            {
+                "Hour15", hour8
+            },
+            {
+                "Hour16", hour16
+            },
+            {
+                "Hour17", hour16
+            },
+            {
+                "Hour18", hour16
+            },
+            {
+                "Hour19", hour16
+            },
+            {
+                "Hour20", hour16
+            },
+            {
+                "Hour21", hour16
+            },
+            {
+                "Hour22", hour22
+            },
+            {
+                "Hour23", hour22
+            },
+        };
+    }
+
+    public Group GetGroup(DateTime date)
+    {
+        return new Group
         {
             GroupID = 1201,
             Label = "HUI Allen",
             SchedulerDays = new Dictionary<DateTime, Dictionary<string, bool?>>()
             {
                 {
-                    DateTime.Today, DefaultHoursDictionary
+                    date, GetDefaultHoursDictionary(false, true, false, true, false)
                 }
             },
             ServiceFuntions =
@@ -48,7 +182,7 @@ public class PreComWorkerTests
                     OccupancyDays = new Dictionary<DateTime, Dictionary<string, bool?>>()
                     {
                         {
-                            DateTime.Today, DefaultHoursDictionary
+                            date, GetDefaultHoursDictionary(false, false, true, false, false)
                         }
                     }
                 },
@@ -58,7 +192,7 @@ public class PreComWorkerTests
                     OccupancyDays = new Dictionary<DateTime, Dictionary<string, bool?>>()
                     {
                         {
-                            DateTime.Today, DefaultHoursDictionary
+                            date, GetDefaultHoursDictionary(false, true, true, false, false)
                         }
                     }
                 },
@@ -68,94 +202,11 @@ public class PreComWorkerTests
                     OccupancyDays = new Dictionary<DateTime, Dictionary<string, bool?>>()
                     {
                         {
-                            DateTime.Today, DefaultHoursDictionary
+                            date, GetDefaultHoursDictionary(true, false, true, false, true)
                         }
                     }
                 },
             ]
-        });
-        mockClient.GetOccupancyLevels(1201, DateTime.Today, DateTime.Today.AddDays(7)).Returns(new Dictionary<DateTime, int>()
-        {
-            {
-                DateTime.Today, 1
-            }
-        });
-        return mockClient;
+        };
     }
-    
-    Dictionary<string, bool?> DefaultHoursDictionary = new Dictionary<string, bool?>()
-    {
-        {
-            "Hour0", true
-        },
-        {
-            "Hour1", true
-        },
-        {
-            "Hour2", true
-        },
-        {
-            "Hour3", true
-        },
-        {
-            "Hour4", true
-        },
-        {
-            "Hour5", true
-        },
-        {
-            "Hour6", true
-        },
-        {
-            "Hour7", true
-        },
-        {
-            "Hour8", true
-        },
-        {
-            "Hour9", true
-        },
-        {
-            "Hour10", true
-        },
-        {
-            "Hour11", true
-        },
-        {
-            "Hour12", true
-        },
-        {
-            "Hour13", true
-        },
-        {
-            "Hour14", true
-        },
-        {
-            "Hour15", true
-        },
-        {
-            "Hour16", true
-        },
-        {
-            "Hour17", true
-        },
-        {
-            "Hour18", true
-        },
-        {
-            "Hour19", true
-        },
-        {
-            "Hour20", true
-        },
-        {
-            "Hour21", true
-        },
-        {
-            "Hour22", true
-        },
-        {
-            "Hour23", true
-        },
-    };
 }
