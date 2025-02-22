@@ -3,4 +3,5 @@
 public class GetProblemsResponse : BaseResponse
 {
     public string? Problems { get; set; }
+    public List<DateTime>? Dates { get; set; }
 }

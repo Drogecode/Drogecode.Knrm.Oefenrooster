@@ -265,7 +265,7 @@ public class PreComController : DrogeController
             await preComClient.Login(preComUser, preComPassword);
             var preComWorker = new PreComWorker(preComClient, _logger);
             var problems = await preComWorker.Work(nextRunMode);
-            return new GetProblemsResponse() { Problems = problems };
+            return problems;
         }
         catch (Exception ex)
         {

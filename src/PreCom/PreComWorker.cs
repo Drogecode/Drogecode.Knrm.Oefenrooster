@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.PreCom.Interfaces;
 using Drogecode.Knrm.Oefenrooster.PreCom.Models;
 using Microsoft.Extensions.Logging;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 using Microsoft.Extensions.Primitives;
 
 namespace Drogecode.Knrm.Oefenrooster.PreCom;
@@ -18,9 +19,12 @@ public class PreComWorker
         _logger = logger;
     }
 
-    public async Task<string> Work(NextRunMode nextRunMode)
+    public async Task<GetProblemsResponse> Work(NextRunMode nextRunMode)
     {
-        var result = new StringBuilder();
+        var response = new GetProblemsResponse()
+        {
+            Dates = []
+        };
         //var schedulerAppointments = await preComClient.GetUserSchedulerAppointments(DateTime.Today, DateTime.Today.AddDays(7));
         var userGroups = await _preComClient.GetAllUserGroups();
         var groupInfo = await _preComClient.GetAllFunctions(userGroups[0].GroupID, DateTime.Today);
@@ -36,13 +40,15 @@ public class PreComWorker
                 var requestAlgemeen = aankOpstapper?.OccupancyDays[DateTime.Today][$"Hour{DateTime.Now.Hour - 1}"];
                 if (requestSchipper == true || requestOpstapper == true || requestAlgemeen == true)
                 {
-                    result.Append("Voor aankomend uur hebben we nog een ");
+                    var problems = new StringBuilder();
+                    problems.Append("Voor aankomend uur hebben we nog een ");
                     if (requestSchipper == true)
-                        result.Append("schipper nodig ");
+                        problems.Append("schipper nodig ");
                     if (requestOpstapper == true)
-                        result.Append("opstapper nodig ");
+                        problems.Append("opstapper nodig ");
                     if (requestAlgemeen == true)
-                        result.Append("algemeen nodig ");
+                        problems.Append("algemeen nodig ");
+                    response.Problems = problems.ToString();
                 }
 
                 break;
@@ -50,31 +56,24 @@ public class PreComWorker
                 var today = q.ContainsKey(DateTime.Today) && q[DateTime.Today] == -1;
                 var tomorrow = q.ContainsKey(DateTime.Today.AddDays(1)) && q[DateTime.Today.AddDays(1)] == -1;
                 if (today)
-                    result.Append(await GetMissingForDate(userGroups[0].GroupID, DateTime.Today));
+                    await GetMissingForDate(response, userGroups[0].GroupID, DateTime.Today);
                 if (tomorrow)
-                    result.Append(await GetMissingForDate(userGroups[0].GroupID, DateTime.Today.AddDays(1)));
+                    await GetMissingForDate(response, userGroups[0].GroupID, DateTime.Today.AddDays(1));
 
                 break;
             case NextRunMode.NextWeek:
-                var nextWeek = q.Where(x => x.Value == -1);
-                if (nextWeek.Count() > 0)
+                foreach (var day in q.Where(day => day.Value == -1))
                 {
-                    result.Append($"We hebben aankomende zeven dagen nog mogelijkheden {nextWeek.Count()}");
-                }
-
-                foreach (var day in q)
-                {
-                    if(day.Value == -1)
-                        result.Append(await GetMissingForDate(userGroups[0].GroupID, day.Key));
+                    await GetMissingForDate(response, userGroups[0].GroupID, day.Key);
                 }
 
                 break;
         }
 
-        return result.ToString();
+        return response;
     }
 
-    private async Task<string> GetMissingForDate(long groupId, DateTime date)
+    private async Task GetMissingForDate(GetProblemsResponse response, long groupId, DateTime date)
     {
         var groupInfo = await _preComClient.GetAllFunctions(groupId, date);
         var schipper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM schipper"));
@@ -87,7 +86,9 @@ public class PreComWorker
         if (!string.IsNullOrWhiteSpace(schipperProblems) || !string.IsNullOrWhiteSpace(opstapperProblems) || !string.IsNullOrWhiteSpace(aankOpstapperProblems))
         {
             var result = new StringBuilder();
-            result.AppendLine(date.DayOfWeek.ToString());
+            result.Append("{");
+            result.Append(response.Dates!.Count);
+            result.AppendLine("}");
             if (!string.IsNullOrWhiteSpace(schipperProblems))
             {
                 result.AppendLine("Schipper");
@@ -105,11 +106,9 @@ public class PreComWorker
                 result.AppendLine("Aankomend opstapper");
                 result.AppendLine(aankOpstapperProblems);
             }
-
-            return result.ToString();
+            response.Problems += result.ToString();
+            response.Dates!.Add(date);
         }
-
-        return string.Empty;
     }
 
     private async Task<string> GetMissingForFunction(ServiceFuntion? function, DateTime date)

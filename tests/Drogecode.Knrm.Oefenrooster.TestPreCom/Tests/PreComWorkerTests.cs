@@ -22,7 +22,8 @@ public class PreComWorkerTests
         var mockClient = MockClient();
         var worker = new PreComWorker(mockClient, _logger);
         var result = await worker.Work(NextRunMode.NextHour);
-        result.Trim().Should().Be("Voor aankomend uur hebben we nog een schipper nodig opstapper nodig algemeen nodig");
+        Assert.NotNull(result.Problems);
+        result.Problems.Trim().Should().Be("Voor aankomend uur hebben we nog een schipper nodig opstapper nodig algemeen nodig");
     }
 
     [Fact]
@@ -31,7 +32,8 @@ public class PreComWorkerTests
         var mockClient = MockClient();
         var worker = new PreComWorker(mockClient, _logger);
         var result = await worker.Work(NextRunMode.TodayTomorrow);
-        result.Trim().Should().Be("We hebben morgen nog gaten in het rooster");
+        Assert.NotNull(result.Problems);
+        result.Problems.Trim().Should().Be("We hebben morgen nog gaten in het rooster");
     }
 
     [Fact]
@@ -40,7 +42,66 @@ public class PreComWorkerTests
         var mockClient = MockClient();
         var worker = new PreComWorker(mockClient, _logger);
         var result = await worker.Work(NextRunMode.NextWeek);
-        result.Should().Be("We hebben aankomende zeven dagen nog mogelijkheden 4");
+        Assert.NotNull(result.Problems);
+        result.Problems.Trim().Should().Be(@"{0}
+Schipper
+van 8 tot 16
+
+Opstapper
+van 2 tot 16
+
+Aankomend opstapper
+van 0 tot 2
+van 8 tot 16
+van 22 tot 24
+
+{1}
+Schipper
+van 8 tot 16
+
+Opstapper
+van 2 tot 16
+
+Aankomend opstapper
+van 0 tot 2
+van 8 tot 16
+van 22 tot 24
+
+{2}
+Schipper
+van 8 tot 16
+
+Opstapper
+van 2 tot 16
+
+Aankomend opstapper
+van 0 tot 2
+van 8 tot 16
+van 22 tot 24
+
+{3}
+Schipper
+van 8 tot 16
+
+Opstapper
+van 2 tot 16
+
+Aankomend opstapper
+van 0 tot 2
+van 8 tot 16
+van 22 tot 24
+
+{4}
+Schipper
+van 8 tot 16
+
+Opstapper
+van 2 tot 16
+
+Aankomend opstapper
+van 0 tot 2
+van 8 tot 16
+van 22 tot 24");
     }
 
     private IPreComClient MockClient()
