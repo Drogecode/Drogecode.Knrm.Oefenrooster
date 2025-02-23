@@ -531,7 +531,7 @@ public class ScheduleService : DrogeService, IScheduleService
                                 Name = user.Name,
                                 PlannedFunctionId = user.UserFunctionId,
                                 UserFunctionId = user.UserFunctionId,
-                                Buddy = user.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB.Name,
+                                Buddy = user.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name,
                             });
                         }
                     }
