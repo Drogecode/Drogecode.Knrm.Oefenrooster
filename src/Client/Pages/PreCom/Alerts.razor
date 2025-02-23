@@ -11,9 +11,13 @@
         <MudSelectItem Value="NextRunMode.TodayTomorrow">@NextRunMode.TodayTomorrow</MudSelectItem>
         <MudSelectItem Value="NextRunMode.NextWeek">@NextRunMode.NextWeek</MudSelectItem>
     </MudSelect>
-    @if (_problemText is not null)
+    @if (!string.IsNullOrWhiteSpace(_problemText))
     {
         <CopyToClipboard TrustedHtmlText="@_problemText"/>
+    }
+    else if (_noProblems)
+    {
+        <MudText>@L["No problems found"]</MudText>
     }
 </AuthorizeView>
 @if (_alerts?.PreComAlerts is not null)

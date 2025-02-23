@@ -35,9 +35,17 @@ public class PreComRepository
         var result = await _preComClient.PostForwardAsync(body, clt);
         return result;
     }
-    public async Task<GetProblemsResponse> GetProblemsAsync(NextRunMode nextRunMode, CancellationToken clt)
+    public async Task<GetProblemsResponse?> GetProblemsAsync(NextRunMode nextRunMode, CancellationToken clt)
     {
-        var result = await _preComClient.GetProblemsAsync(nextRunMode, clt);
-        return result;
+        try
+        {
+            var result = await _preComClient.GetProblemsAsync(nextRunMode, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.WriteLine(ex);
+            return null;
+        }
     }
 }

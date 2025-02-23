@@ -25,6 +25,7 @@ public sealed partial class Alerts : IDisposable
     private int _currentPage = 1;
     private int _count = 30;
     private bool _bussy;
+    private bool _noProblems;
     private string? _problemText;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -64,16 +65,25 @@ public sealed partial class Alerts : IDisposable
 
     private async Task Problems(NextRunMode nextRunMode)
     {
+        _problemText = null;
+        _noProblems = false;
+        StateHasChanged();
         var problems = await PreComRepository.GetProblemsAsync(nextRunMode, _cls.Token);
-        if (problems.Problems is null || problems.Dates is null)
+        if (problems?.Problems is null || problems.Dates is null)
+        {
+            _noProblems = true;
+            StateHasChanged();
             return;
-        var dateName = new string[problems.Dates.Count];
+        }
+
+        var dateName = new object?[problems.Dates.Count];
         for (var i = 0; i < problems.Dates.Count; i++)
         {
             dateName[i] = problems.Dates[i].ToNiceString(LDateToString, false, true, true, false);
         }
 
         _problemText = string.Format(problems.Problems, dateName);
+        _noProblems = string.IsNullOrWhiteSpace(_problemText);
         StateHasChanged();
     }
 
