@@ -32,6 +32,7 @@ public sealed partial class Audit : IDisposable
     {
         if (_busy) return;
         _busy = true;
+        _trainingAudits = null;
         StateHasChanged();
         _currentPage = nextPage;
         if (nextPage <= 0) return;

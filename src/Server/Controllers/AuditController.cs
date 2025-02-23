@@ -68,7 +68,7 @@ public class AuditController : ControllerBase
             }
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            GetTrainingAuditResponse result = await _auditService.GetTrainingAudit(customerId, userId, count, skip, Guid.Empty, clt);
+            var result = await _auditService.GetTrainingAudit(customerId, userId, count, skip, Guid.Empty, clt);
             return result;
         }
         catch (OperationCanceledException) { return Ok(); }

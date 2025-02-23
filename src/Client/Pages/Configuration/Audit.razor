@@ -49,3 +49,7 @@
         <MudPagination Disabled="_busy" ShowFirstButton="true" ShowLastButton="true" MiddleCount="5" Count="@(Convert.ToInt32(Math.Ceiling((double)_trainingAudits.TotalCount/(double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4" />
     }
 }
+else
+{
+    <DrogeLoading />
+}
