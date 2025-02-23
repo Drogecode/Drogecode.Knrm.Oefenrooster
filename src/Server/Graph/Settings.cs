@@ -8,19 +8,19 @@ public class Settings
     public string? ClientSecret { get; set; }
     public string? TenantId { get; set; }
 
-    public static Settings LoadSettings(IConfiguration configuration)
+    public static Settings LoadSettings(IConfiguration configuration, ILogger logger)
     {
         return new Settings
         {
             ClientId = configuration.GetValue<string>("AzureAd:ClientId"),
-            ClientSecret = InternalGetClientSecret(configuration),
+            ClientSecret = InternalGetClientSecret(configuration, logger),
             TenantId = configuration.GetValue<string>("AzureAd:TenantId")
         };
     }
 
-    private static string InternalGetClientSecret(IConfiguration configuration)
+    private static string InternalGetClientSecret(IConfiguration configuration, ILogger logger)
     {
-        var fromKeyVault = KeyVaultHelper.GetSecret("ClientSecret");
+        var fromKeyVault = KeyVaultHelper.GetSecret("ClientSecret", logger);
         if (fromKeyVault is not null) return fromKeyVault.Value;
         return configuration.GetValue<string>("AzureAd:ClientSecret") ?? throw new DrogeCodeConfigurationException("no secret found for azure login");
     }

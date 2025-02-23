@@ -21,11 +21,19 @@ public static class KeyVaultHelper
 
     public static string? KeyVaultUri { get; set; }
 
-    public static KeyVaultSecret? GetSecret(string key)
+    public static KeyVaultSecret? GetSecret(string key, ILogger? logger = null)
     {
-        if (KeyVaultUri is null) return null;
-        _secretClient ??= new SecretClient(new Uri(KeyVaultUri), new DefaultAzureCredential(), _options);
-        KeyVaultSecret value = _secretClient.GetSecret(key);
-        return value;
+        try
+        {
+            if (KeyVaultUri is null) return null;
+            _secretClient ??= new SecretClient(new Uri(KeyVaultUri), new DefaultAzureCredential(), _options);
+            KeyVaultSecret value = _secretClient.GetSecret(key);
+            return value;
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError(ex, "Get key vault secret failed");
+            return null;
+        }
     }
 }

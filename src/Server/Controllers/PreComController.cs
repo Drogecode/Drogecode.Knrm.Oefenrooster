@@ -267,8 +267,8 @@ public class PreComController : DrogeController
             var preComPassword = _configuration.GetValue<string>("PreCom:Password");
             if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
             {
-                preComUser = KeyVaultHelper.GetSecret("PreComUser")?.Value;
-                preComPassword = KeyVaultHelper.GetSecret("PreComPassword")?.Value;
+                preComUser = KeyVaultHelper.GetSecret("PreComUser", _logger)?.Value;
+                preComPassword = KeyVaultHelper.GetSecret("PreComPassword", _logger)?.Value;
                 if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
                     return BadRequest();
             }

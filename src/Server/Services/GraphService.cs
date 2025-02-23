@@ -42,7 +42,7 @@ public class GraphService : IGraphService
             return;
         if (settings == null)
         {
-            settings = Settings.LoadSettings(_configuration);
+            settings = Settings.LoadSettings(_configuration, _logger);
         }
 
         _logger.LogTrace("Start ClientSecret: {ClientSecret}", settings.ClientSecret?[..3] ?? "Is null");
