@@ -28,7 +28,7 @@ public class PreComWorkerTests
         var worker = new PreComWorker(mockClient, _logger, _dateTimeServiceMock);
         var result = await worker.Work(NextRunMode.NextHour);
         Assert.NotNull(result.Problems);
-        result.Problems.Trim().Should().Be("Voor aankomend uur hebben we nog een schipper nodig opstapper nodig algemeen nodig");
+        result.Problems.Trim().Should().Be("Voor aankomend uur hebben we nog een schipper nodig opstapper nodig aankomend opstapper nodig");
     }
 
     [Fact]

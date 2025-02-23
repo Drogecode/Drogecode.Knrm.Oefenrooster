@@ -255,7 +255,7 @@ public class PreComController : DrogeController
     }
 
     [HttpGet]
-    [Authorize(Roles = AccessesNames.AUTH_precom_problems)]
+    [Authorize(Roles = AccessesNames.AUTH_super_user)]
     [Route("problems")]
     public async Task<ActionResult<GetProblemsResponse>> GetProblems(NextRunMode nextRunMode, CancellationToken clt = default)
     {

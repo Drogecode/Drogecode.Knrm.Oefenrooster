@@ -51,7 +51,7 @@ public class PreComWorker
                     if (requestOpstapper == true)
                         problems.Append("opstapper nodig ");
                     if (requestAlgemeen == true)
-                        problems.Append("algemeen nodig ");
+                        problems.Append("aankomend opstapper nodig ");
                     response.Problems = problems.ToString();
                 }
 

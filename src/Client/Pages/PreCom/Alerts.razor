@@ -5,9 +5,9 @@
 <PageTitle>@L["PreCom alerts"]</PageTitle>
 <MudText Typo="Typo.h5">@L["PreCom alerts"]</MudText>
 
-<AuthorizeView Roles="@AccessesNames.AUTH_precom_problems">
+<AuthorizeView Roles="@AccessesNames.AUTH_super_user">
     <MudSelect T="NextRunMode" ValueChanged="Problems">
-        <MudSelectItem Value="NextRunMode.NextHour">@NextRunMode.NextHour</MudSelectItem>
+        @*<MudSelectItem Value="NextRunMode.NextHour">@NextRunMode.NextHour</MudSelectItem>*@
         <MudSelectItem Value="NextRunMode.TodayTomorrow">@NextRunMode.TodayTomorrow</MudSelectItem>
         <MudSelectItem Value="NextRunMode.NextWeek">@NextRunMode.NextWeek</MudSelectItem>
     </MudSelect>

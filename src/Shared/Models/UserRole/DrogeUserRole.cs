@@ -59,5 +59,4 @@ public class DrogeUserRole
 
     // Group: GROUP_PRECOM
     public bool AUTH_precom_manual { get; set; }
-    public bool AUTH_precom_problems { get; set; }
 }

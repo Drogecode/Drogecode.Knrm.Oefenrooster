@@ -60,7 +60,6 @@ Changes to this file may cause incorrect behavior and will be lost if the code i
         <MudSwitch Label="@L["mail_invite_external"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_mail_invite_external" ValueChanged="@(isChecked => { _userRole.Role.AUTH_mail_invite_external = isChecked; _saved = null; })"/>
         <MudText Typo="Typo.h6">@L["PreCom"]</MudText>
         <MudSwitch Label="@L["precom_manual"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_precom_manual" ValueChanged="@(isChecked => { _userRole.Role.AUTH_precom_manual = isChecked; _saved = null; })"/>
-        <MudSwitch Label="@L["precom_problems"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_precom_problems" ValueChanged="@(isChecked => { _userRole.Role.AUTH_precom_problems = isChecked; _saved = null; })"/>
         <MudButton Color="Color.Primary" OnClick="Submit">
             @LApp["Submit"]
             @switch (_saved)
