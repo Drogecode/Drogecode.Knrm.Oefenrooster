@@ -1,11 +1,19 @@
-﻿<MudPaper Class="pa-4 inline-flex space-x-2" Width="100%" MaxWidth="800px">
-    @if (Label is not null)
-    {
-        <MudText>@Label</MudText>
-    }
-    <MudTextField Value="@Text" ReadOnly="true"/>
-    <MudButton OnClick="CopyTextToClipboard">@L["Copy"]</MudButton>
-</MudPaper>
+﻿@if (TextField is not null)
+{
+    <MudPaper Class="pa-4 inline-flex space-x-2" Width="100%" MaxWidth="800px">
+        @if (Label is not null)
+        {
+            <MudText>@Label</MudText>
+        }
+        <MudTextField Value="@TextField" ReadOnly="true"/>
+        <MudButton OnClick="() => CopyTextToClipboard(TextField)">@L["Copy"]</MudButton>
+    </MudPaper>
+}
+else if (TrustedHtmlText is not null)
+{
+    <div>@((MarkupString)TrustedHtmlText)</div>
+    <div><MudButton OnClick='() => CopyTextToClipboard(TrustedHtmlText.Replace("<br />", "\r"))'>@L["Copy"]</MudButton></div>
+}
 
 <script>
     window.clipboardCopy = {

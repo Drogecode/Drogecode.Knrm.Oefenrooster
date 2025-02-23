@@ -11,11 +11,11 @@
         <MudTextField T="string?" Label="@LApp["Type"]" Value="@SelectedActionTypes?.ToFancyString()" Disabled="true" />
         @if (_newId is not null)
         {
-            <CopyToClipboard Label="@L["Url"]" Text="@(Navigation.BaseUri + "external/actions/" + _newId)"/>
+            <CopyToClipboard Label="@L["Url"]" TextField="@(Navigation.BaseUri + "external/actions/" + _newId)"/>
         }
         @if (_password is not null)
         {
-            <CopyToClipboard Label="@L["Password"]" Text="@_password"/>
+            <CopyToClipboard Label="@L["Password"]" TextField="@_password"/>
         }
     </DialogContent>
     <DialogActions>

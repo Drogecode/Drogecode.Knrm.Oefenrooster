@@ -3,6 +3,7 @@ using Drogecode.Knrm.Oefenrooster.PreCom.Interfaces;
 using Drogecode.Knrm.Oefenrooster.PreCom.Models;
 using Microsoft.Extensions.Logging;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.Extensions.Primitives;
@@ -73,6 +74,8 @@ public class PreComWorker
                 break;
         }
 
+        if (response.Problems is not null)
+            response.Problems = response.Problems.TrimString("<br />");
         return response;
     }
 
@@ -112,6 +115,7 @@ public class PreComWorker
                 result.Append(aankOpstapperProblems);
                 result.Append("<br />");
             }
+
             response.Problems += result.ToString();
             response.Dates!.Add(date);
         }
@@ -130,8 +134,9 @@ public class PreComWorker
             if (isToday && i < _dateTimeService.Now().Hour)
             {
                 i++;
-                continue; 
+                continue;
             }
+
             if (hour.Value == true)
             {
                 if (!last)

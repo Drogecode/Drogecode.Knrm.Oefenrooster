@@ -9,10 +9,11 @@ public sealed partial class CopyToClipboard
     [Inject] IStringLocalizer<CopyToClipboard> L { get; set; }
     [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
     [Parameter] public string? Label { get; set; }
-    [Parameter, EditorRequired] public string Text { get; set; }
+    [Parameter] public string? TextField { get; set; }
+    [Parameter] public string? TrustedHtmlText { get; set; }
 
-    private async Task CopyTextToClipboard()
+    private async Task CopyTextToClipboard(string text)
     {
-        await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", Text, L["Copied to clipboard"].ToString());
+        await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", text, L["Copied to clipboard"].ToString());
     }
 }

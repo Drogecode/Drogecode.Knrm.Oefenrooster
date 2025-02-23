@@ -13,7 +13,7 @@
     </MudSelect>
     @if (_problemText is not null)
     {
-        <div>@((MarkupString)_problemText)</div>
+        <CopyToClipboard TrustedHtmlText="@_problemText"/>
     }
 </AuthorizeView>
 @if (_alerts?.PreComAlerts is not null)
@@ -66,7 +66,7 @@
     if (_showHowTo && _user is not null)
     {
         <hr/>
-        <CopyToClipboard Label="@L["Webhook"]" Text="@(Navigation.BaseUri + "api/PreCom/webhook/" + _user.CustomerId + "/" + _user.Id)"/>
+        <CopyToClipboard Label="@L["Webhook"]" TextField="@(Navigation.BaseUri + "api/PreCom/webhook/" + _user.CustomerId + "/" + _user.Id)"/>
         <hr/>
         <img src="/Images/PreCom/IMG_6685.PNG" asp-append-version="true" width="@(1170 / 3)px" hight="@(2532 / 3)px" alt="@L["Click settings"]"/>
         <img src="/Images/PreCom/IMG_6686.PNG" asp-append-version="true" width="@(1170 / 3)px" hight="@(2532 / 3)px" alt="@L["Click webhook"]"/>
