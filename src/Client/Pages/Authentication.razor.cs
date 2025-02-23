@@ -96,7 +96,7 @@ public sealed partial class Authentication
 
         var redirectLogoutUrl = $"{Navigation.BaseUri}landing_page";
         await AuditClient.PostLogAsync(new PostLogRequest { Message = $"Logout logoutHint: `{logoutHint}` redirectLogoutUrl: `{redirectLogoutUrl}`" });
-        string urlLogout = string.Empty;
+        string urlLogout;
         switch (identityProvider)
         {
             case IdentityProvider.Azure:
@@ -113,12 +113,14 @@ public sealed partial class Authentication
                 else
                     urlLogout = $"https://keycloaktest.droogers.cloud/realms/master/protocol/openid-connect/logout?id_token_hint={idToken}&post_logout_redirect_uri={redirectLogoutUrl}";
                 break;
+            case IdentityProvider.None:
             default:
                 await AuditClient.PostLogAsync(new PostLogRequest { Message = $"Unknown identity provider: '{identityProvider}' while logging out" });
                 return;
         }
 
         await AuthenticationStateProvider.Logout();
+        StateHasChanged();
         Navigation.NavigateTo(urlLogout);
     }
 

@@ -119,6 +119,7 @@ public sealed partial class MainLayout : IDisposable
     private async Task Logout(MouseEventArgs args)
     {
         await AuthenticationStateProvider.Logout();
+        StateHasChanged();
         Navigation.NavigateTo("/landing_page");
     }
 

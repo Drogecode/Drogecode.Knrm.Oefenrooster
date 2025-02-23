@@ -41,8 +41,9 @@
                         Snackbar.Add(L["Update available"], Severity.Warning, configure: config, key: "outdated");
                     }
 
-                    if (user.User.Identity?.IsAuthenticated is not true)
-                        await AuthenticationStateProvider.Logout();
+                    if (user.User.Identity?.IsAuthenticated is true) continue;
+                    await AuthenticationStateProvider.Logout();
+                    StateHasChanged();
                 }
                 catch (Exception ex)
                 {
