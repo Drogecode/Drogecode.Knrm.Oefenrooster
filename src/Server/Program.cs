@@ -59,10 +59,11 @@ else
 {
     try
     {
-        var dbUserName = KeyVaultHelper.GetSecret("administratorLogin");
-        var dbPassword = KeyVaultHelper.GetSecret("administratorLoginPassword");
+        var dbUserName = KeyVaultHelper.GetSecret("databaseLoginUser");
+        var dbPassword = KeyVaultHelper.GetSecret("databaseLoginPassword");
         var dbUri = KeyVaultHelper.GetSecret("databaseFQDN");
         var dbName = KeyVaultHelper.GetSecret("databaseName");
+        var dbPort = KeyVaultHelper.GetSecret("databasePort");
         var dbNameValue = dbName?.Value;
         if (string.IsNullOrWhiteSpace(dbNameValue))
         {
@@ -73,7 +74,7 @@ else
             dbNameValue = "OefenroosterAcc";
 #endif
         }
-        dbConnectionString = $"host={dbUri?.Value};port=5432;database={dbNameValue};username={dbUserName?.Value};password={dbPassword?.Value}";
+        dbConnectionString = $"host={dbUri?.Value};port={dbPort?.Value ?? "5432" };database={dbNameValue};username={dbUserName?.Value};password={dbPassword?.Value}";
     }
     catch (Exception ex)
     {
