@@ -33,7 +33,7 @@
                                     <DateToString DateTimeLocal="item.DateStart" @key="@(item.DateStart?.Ticks + DateTime.Today.Day)"/>
                                     @if (item.DateEnd is not null && !item.DateEnd.Equals(item.DateStart) && item.DateEnd.Value.CompareTo(DateTime.MinValue) != 0 && item.DateEnd.Value.Year >= 5)
                                     {
-                                        <div> - </div>
+                                        <div> -</div>
                                         <DateToString DateTimeLocal="item.DateEnd" @key="@(item.DateEnd?.Ticks + DateTime.Today.Day)"/>
                                     }
                                     @item.Text
@@ -60,7 +60,7 @@
             }
             else if (_loading)
             {
-                <DrogeLoading />
+                <DrogeLoading/>
             }
             <MudText Typo="Typo.h5">@L["Future trainings"]</MudText>
             @if (_trainings?.Trainings != null)
@@ -73,7 +73,8 @@
                             @if (training.DateEnd.Date >= DateTime.Today)
                             {
                                 <div class="flex-1">
-                                    <IndexCard MinWidth="300px" MaxWidth="600px" User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles" ShowDayOfWeek="true"/>
+                                    <IndexCard MinWidth="300px" MaxWidth="600px" User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes"
+                                               Vehicles="_vehicles" ShowDayOfWeek="true"/>
                                 </div>
                             }
                             else
@@ -94,7 +95,7 @@
             }
             else if (_loading)
             {
-                <DrogeLoading />
+                <DrogeLoading/>
             }
             <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_holidays">
                 @if (_futureHolidays is not null)
@@ -109,11 +110,15 @@
 
                                 @if (holUser is not null)
                                 {
-                                    <MudListItem T="string">@holUser.Name : @holiday.Description <MudText Typo="Typo.subtitle2">(@LApp["from"]: @holiday.ValidFrom?.ToNiceString(LDateToString, showtime: false) @LApp["till"]: @holiday.ValidUntil?.ToNiceString(LDateToString, showtime: false))</MudText></MudListItem>
+                                    <MudListItem T="string">@holUser.Name : @holiday.Description <MudText Typo="Typo.subtitle2">
+                                            (@LApp["from"]: @holiday.ValidFrom?.ToNiceString(LDateToString, isUtc: false, showtime: false) @LApp["till"]: @holiday.ValidUntil?.ToNiceString(LDateToString, isUtc: false, showtime: false))
+                                        </MudText>
+                                    </MudListItem>
                                 }
                             }
                         </MudList>
                     }
+
                     if (!_allHolidays && _futureHolidays.TotalCount > (_futureHolidays?.Holidays?.Count ?? 0))
                     {
                         <MudButton OnClick="LoadYearHolidays">@L["Load all holidays"]</MudButton>

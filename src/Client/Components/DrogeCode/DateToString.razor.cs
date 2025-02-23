@@ -1,13 +1,13 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
-using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode
 {
     public sealed partial class DateToString
     {
-        [Inject] IStringLocalizer<DateToString> L { get; set; }
+        [Inject, NotNull] private CustomerSettingRepository? CustomerSettingRepository { get; set; }
+        [Inject, NotNull] IStringLocalizer<DateToString>? L { get; set; }
         [Parameter] public DateTime? DateTimeUtc { get; set; }
         [Parameter] public DateTime? DateTimeLocal { get; set; }
         [Parameter] public bool ShowDayOfWeek { get; set; }
@@ -17,9 +17,18 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode
         public string DateStringFormat { get; set; } = string.Empty;
         public string DatePrefix { get; set; } = string.Empty;
 
-        protected override void OnParametersSet()
+        protected override async Task OnParametersSetAsync()
         {
-            DateTimeNotNull = DateTimeUtc?.ToLocalTime() ?? DateTimeLocal ?? DateTime.MinValue;
+            if (DateTimeUtc is not null)
+            {
+                var timeZone = await CustomerSettingRepository.GetTimeZone();
+                var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
+                DateTimeNotNull = TimeZoneInfo.ConvertTimeFromUtc(DateTimeUtc.Value, zone);
+            }
+            else
+            {
+                DateTimeNotNull =  DateTimeLocal ?? DateTime.MinValue;
+            }
             SetDatePrefix();
             SetDateStringFormat();
             StateHasChanged();

@@ -17,7 +17,7 @@ public class CustomerSettingRepository
         _offlineService = offlineService;
     }
 
-    public async Task<string> GetTimeZone(CancellationToken clt)
+    public async Task<string> GetTimeZone(CancellationToken clt = default)
     {
         var response = await _offlineService.CachedRequestAsync(string.Format(TIMEZONE),
             async () => (await _customerSettingsClient.GetStringSettingAsync(SettingName.TimeZone, clt)).Value, 

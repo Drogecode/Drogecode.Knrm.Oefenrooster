@@ -15,8 +15,8 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="@L["Description"]">@context.Description</MudTd>
-                <MudTd DataLabel="@L["From"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.ValidFrom" /></MudTd>
-                <MudTd DataLabel="@L["Till"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.ValidUntil" /></MudTd>
+                <MudTd DataLabel="@L["From"]"><DateToString ShowDate="true" ShowTime="false" DateTimeLocal="@context.ValidFrom" /></MudTd>
+                <MudTd DataLabel="@L["Till"]"><DateToString ShowDate="true" ShowTime="false" DateTimeLocal="@context.ValidUntil" /></MudTd>
                 <MudTd DataLabel="@L["Edit"]">
                     @if (context.ValidUntil!.Value.CompareTo(DateTime.UtcNow) > 0)
                     {

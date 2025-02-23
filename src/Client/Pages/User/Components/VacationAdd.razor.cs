@@ -59,6 +59,8 @@ public sealed partial class VacationAdd : IDisposable
             _holiday.Availability = Availability.NotAvailable;
             _holiday.ValidFrom = DateTime.SpecifyKind(_holiday.ValidFrom.Value, DateTimeKind.Utc);
             _holiday.ValidUntil = new DateTime(_holiday.ValidUntil.Value.Year, _holiday.ValidUntil.Value.Month, _holiday.ValidUntil.Value.Day, 23, 59, 59, DateTimeKind.Utc);
+            var local = _holiday.ValidUntil.Value.ToLocalTime();
+            Console.WriteLine($"{_holiday.ValidUntil.Value.ToString()} == {local.ToString()}");
             if (_isNew == true)
             {
                 var result = await _holidayRepository.PutHolidayForUser(_holiday);
