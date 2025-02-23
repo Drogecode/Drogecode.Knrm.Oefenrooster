@@ -32,7 +32,7 @@ public static class KeyVaultHelper
         }
         catch (Exception ex)
         {
-            logger?.LogError(ex, "Get key vault secret failed");
+            logger?.LogError(ex, "Get key vault secret failed, `{key}`", key);
             return null;
         }
     }

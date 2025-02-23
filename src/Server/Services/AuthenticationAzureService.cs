@@ -66,8 +66,10 @@ public class AuthenticationAzureService : AuthenticationService, IAuthentication
 
     private string InternalGetLoginClientSecret()
     {
+        var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret");
+        if (secret is not null) return secret;
         var fromKeyVault = KeyVaultHelper.GetSecret("LoginClientSecret", _logger);
         if (fromKeyVault is not null) return fromKeyVault.Value;
-        return _configuration.GetValue<string>("AzureAd:LoginClientSecret") ?? throw new DrogeCodeConfigurationException("no secret found for azure login");
+        throw new DrogeCodeConfigurationException("no secret found for azure login");
     }
 }

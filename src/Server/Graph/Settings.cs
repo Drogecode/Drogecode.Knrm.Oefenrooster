@@ -20,9 +20,11 @@ public class Settings
 
     private static string InternalGetClientSecret(IConfiguration configuration, ILogger logger)
     {
+        var secret = configuration.GetValue<string>("AzureAd:ClientSecret");
+        if (secret is not null) return secret;
         var fromKeyVault = KeyVaultHelper.GetSecret("ClientSecret", logger);
         if (fromKeyVault is not null) return fromKeyVault.Value;
-        return configuration.GetValue<string>("AzureAd:ClientSecret") ?? throw new DrogeCodeConfigurationException("no secret found for azure login");
+        throw new DrogeCodeConfigurationException("no secret found for azure login");
     }
 
     public static Settings LoadSettingsLikeThis()
