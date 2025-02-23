@@ -8,7 +8,6 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +15,7 @@ using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportActionShared;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
+using Drogecode.Knrm.Oefenrooster.SharedForTests.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.TestServer.Seeds;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Services;

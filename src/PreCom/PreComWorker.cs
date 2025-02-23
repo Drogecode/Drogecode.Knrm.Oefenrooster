@@ -4,6 +4,7 @@ using Drogecode.Knrm.Oefenrooster.PreCom.Models;
 using Microsoft.Extensions.Logging;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.Extensions.Primitives;
 
 namespace Drogecode.Knrm.Oefenrooster.PreCom;
@@ -12,11 +13,13 @@ public class PreComWorker
 {
     private readonly IPreComClient _preComClient;
     private readonly ILogger _logger;
+    private IDateTimeService _dateTimeService;
 
-    public PreComWorker(IPreComClient preComClient, ILogger logger)
+    public PreComWorker(IPreComClient preComClient, ILogger logger, IDateTimeService dateTimeService)
     {
         _preComClient = preComClient;
         _logger = logger;
+        _dateTimeService = dateTimeService;
     }
 
     public async Task<GetProblemsResponse> Work(NextRunMode nextRunMode)
@@ -25,19 +28,19 @@ public class PreComWorker
         {
             Dates = []
         };
-        //var schedulerAppointments = await preComClient.GetUserSchedulerAppointments(DateTime.Today, DateTime.Today.AddDays(7));
+        //var schedulerAppointments = await preComClient.GetUserSchedulerAppointments(_dateTimeService.Today(), _dateTimeService.Today().AddDays(7));
         var userGroups = await _preComClient.GetAllUserGroups();
-        var groupInfo = await _preComClient.GetAllFunctions(userGroups[0].GroupID, DateTime.Today);
-        var q = await _preComClient.GetOccupancyLevels(userGroups[0].GroupID, DateTime.Today, DateTime.Today.AddDays(7));
+        var groupInfo = await _preComClient.GetAllFunctions(userGroups[0].GroupID, _dateTimeService.Today());
+        var q = await _preComClient.GetOccupancyLevels(userGroups[0].GroupID, _dateTimeService.Today(), _dateTimeService.Today().AddDays(7));
         var schipper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM schipper"));
         var opstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM opstapper"));
         var aankOpstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM Aank. Opstapper"));
         switch (nextRunMode)
         {
             case NextRunMode.NextHour:
-                var requestSchipper = schipper?.OccupancyDays[DateTime.Today][$"Hour{DateTime.Now.Hour - 1}"];
-                var requestOpstapper = opstapper?.OccupancyDays[DateTime.Today][$"Hour{DateTime.Now.Hour - 1}"];
-                var requestAlgemeen = aankOpstapper?.OccupancyDays[DateTime.Today][$"Hour{DateTime.Now.Hour - 1}"];
+                var requestSchipper = schipper?.OccupancyDays[_dateTimeService.Today()][$"Hour{_dateTimeService.Now().Hour - 1}"];
+                var requestOpstapper = opstapper?.OccupancyDays[_dateTimeService.Today()][$"Hour{_dateTimeService.Now().Hour - 1}"];
+                var requestAlgemeen = aankOpstapper?.OccupancyDays[_dateTimeService.Today()][$"Hour{_dateTimeService.Now().Hour - 1}"];
                 if (requestSchipper == true || requestOpstapper == true || requestAlgemeen == true)
                 {
                     var problems = new StringBuilder();
@@ -53,12 +56,12 @@ public class PreComWorker
 
                 break;
             case NextRunMode.TodayTomorrow:
-                var today = q.ContainsKey(DateTime.Today) && q[DateTime.Today] == -1;
-                var tomorrow = q.ContainsKey(DateTime.Today.AddDays(1)) && q[DateTime.Today.AddDays(1)] == -1;
+                var today = q.ContainsKey(_dateTimeService.Today()) && q[_dateTimeService.Today()] == -1;
+                var tomorrow = q.ContainsKey(_dateTimeService.Today().AddDays(1)) && q[_dateTimeService.Today().AddDays(1)] == -1;
                 if (today)
-                    await GetMissingForDate(response, userGroups[0].GroupID, DateTime.Today);
+                    await GetMissingForDate(response, userGroups[0].GroupID, _dateTimeService.Today());
                 if (tomorrow)
-                    await GetMissingForDate(response, userGroups[0].GroupID, DateTime.Today.AddDays(1));
+                    await GetMissingForDate(response, userGroups[0].GroupID, _dateTimeService.Today().AddDays(1));
 
                 break;
             case NextRunMode.NextWeek:
@@ -88,23 +91,26 @@ public class PreComWorker
             var result = new StringBuilder();
             result.Append("{");
             result.Append(response.Dates!.Count);
-            result.AppendLine("}");
+            result.Append("}<br />");
             if (!string.IsNullOrWhiteSpace(schipperProblems))
             {
-                result.AppendLine("Schipper");
-                result.AppendLine(schipperProblems);
+                result.Append("Schipper<br />");
+                result.Append(schipperProblems);
+                result.Append("<br />");
             }
 
             if (!string.IsNullOrWhiteSpace(opstapperProblems))
             {
-                result.AppendLine("Opstapper");
-                result.AppendLine(opstapperProblems);
+                result.Append("Opstapper<br />");
+                result.Append(opstapperProblems);
+                result.Append("<br />");
             }
 
             if (!string.IsNullOrWhiteSpace(aankOpstapperProblems))
             {
-                result.AppendLine("Aankomend opstapper");
-                result.AppendLine(aankOpstapperProblems);
+                result.Append("Aankomend opstapper<br />");
+                result.Append(aankOpstapperProblems);
+                result.Append("<br />");
             }
             response.Problems += result.ToString();
             response.Dates!.Add(date);
@@ -118,8 +124,14 @@ public class PreComWorker
         var last = false;
         var firstProblemHour = 0;
         var i = 0;
+        var isToday = _dateTimeService.Today().Equals(date.Date);
         foreach (var hour in function.OccupancyDays[date])
         {
+            if (isToday && i < _dateTimeService.Now().Hour)
+            {
+                i++;
+                continue; 
+            }
             if (hour.Value == true)
             {
                 if (!last)
@@ -144,7 +156,7 @@ public class PreComWorker
             if (last)
             {
                 last = false;
-                result.AppendLine($"van {firstProblemHour} tot {i}");
+                result.Append($"van {firstProblemHour} tot {i}<br />");
             }
 
             return last;

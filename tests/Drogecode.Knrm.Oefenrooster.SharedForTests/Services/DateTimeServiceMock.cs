@@ -1,12 +1,6 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
-using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Drogecode.Knrm.Oefenrooster.SharedForTests.Services.Interfaces;
 
-namespace Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services;
+namespace Drogecode.Knrm.Oefenrooster.SharedForTests.Services;
 
 public class DateTimeServiceMock : IDateTimeServiceMock
 {

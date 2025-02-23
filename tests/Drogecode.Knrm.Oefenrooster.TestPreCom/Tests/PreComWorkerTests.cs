@@ -2,6 +2,8 @@
 using Drogecode.Knrm.Oefenrooster.PreCom.Interfaces;
 using Drogecode.Knrm.Oefenrooster.PreCom.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+using Drogecode.Knrm.Oefenrooster.SharedForTests.Services;
+using Drogecode.Knrm.Oefenrooster.SharedForTests.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
@@ -10,17 +12,20 @@ namespace Drogecode.Knrm.Oefenrooster.TestPreCom.Tests;
 public class PreComWorkerTests
 {
     private readonly ILogger _logger;
+    private readonly IDateTimeServiceMock _dateTimeServiceMock;
 
     public PreComWorkerTests(ILoggerProvider loggerProvider)
     {
         _logger = loggerProvider.CreateLogger("PreComWorkerTests");
+        _dateTimeServiceMock = new DateTimeServiceMock();
+        _dateTimeServiceMock.SetMockDateTime(new DateTime(2022, 3, 18, 12, 2, 1));
     }
 
     [Fact]
     public async Task NextHourTest()
     {
         var mockClient = MockClient();
-        var worker = new PreComWorker(mockClient, _logger);
+        var worker = new PreComWorker(mockClient, _logger, _dateTimeServiceMock);
         var result = await worker.Work(NextRunMode.NextHour);
         Assert.NotNull(result.Problems);
         result.Problems.Trim().Should().Be("Voor aankomend uur hebben we nog een schipper nodig opstapper nodig algemeen nodig");
@@ -30,20 +35,21 @@ public class PreComWorkerTests
     public async Task TodayTomorrowTest()
     {
         var mockClient = MockClient();
-        var worker = new PreComWorker(mockClient, _logger);
+        var worker = new PreComWorker(mockClient, _logger, _dateTimeServiceMock);
         var result = await worker.Work(NextRunMode.TodayTomorrow);
         Assert.NotNull(result.Problems);
-        result.Problems.Trim().Should().Be("We hebben morgen nog gaten in het rooster");
-    }
-
-    [Fact]
-    public async Task NextWeekTest()
-    {
-        var mockClient = MockClient();
-        var worker = new PreComWorker(mockClient, _logger);
-        var result = await worker.Work(NextRunMode.NextWeek);
-        Assert.NotNull(result.Problems);
         result.Problems.Trim().Should().Be(@"{0}
+Schipper
+van 12 tot 16
+
+Opstapper
+van 12 tot 16
+
+Aankomend opstapper
+van 12 tot 16
+van 22 tot 24
+
+{1}
 Schipper
 van 8 tot 16
 
@@ -53,6 +59,25 @@ van 2 tot 16
 Aankomend opstapper
 van 0 tot 2
 van 8 tot 16
+van 22 tot 24");
+    }
+
+    [Fact]
+    public async Task NextWeekTest()
+    {
+        var mockClient = MockClient();
+        var worker = new PreComWorker(mockClient, _logger, _dateTimeServiceMock);
+        var result = await worker.Work(NextRunMode.NextWeek);
+        Assert.NotNull(result.Problems);
+        result.Problems.Trim().Should().Be(@"{0}
+Schipper
+van 12 tot 16
+
+Opstapper
+van 12 tot 16
+
+Aankomend opstapper
+van 12 tot 16
 van 22 tot 24
 
 {1}
@@ -110,35 +135,35 @@ van 22 tot 24");
         mockClient.GetAllUserGroups().Returns([new Group { GroupID = 1201 }]);
 
 
-        mockClient.GetAllFunctions(1201, DateTime.Today).Returns(GetGroup(DateTime.Today));
-        mockClient.GetAllFunctions(1201, DateTime.Today.AddDays(1)).Returns(GetGroup(DateTime.Today.AddDays(1)));
-        mockClient.GetAllFunctions(1201, DateTime.Today.AddDays(2)).Returns(GetGroup(DateTime.Today.AddDays(2)));
-        mockClient.GetAllFunctions(1201, DateTime.Today.AddDays(3)).Returns(GetGroup(DateTime.Today.AddDays(3)));
-        mockClient.GetAllFunctions(1201, DateTime.Today.AddDays(4)).Returns(GetGroup(DateTime.Today.AddDays(4)));
-        mockClient.GetAllFunctions(1201, DateTime.Today.AddDays(5)).Returns(GetGroup(DateTime.Today.AddDays(5)));
-        mockClient.GetAllFunctions(1201, DateTime.Today.AddDays(6)).Returns(GetGroup(DateTime.Today.AddDays(6)));
-        mockClient.GetOccupancyLevels(1201, DateTime.Today, DateTime.Today.AddDays(7)).Returns(new Dictionary<DateTime, int>()
+        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today()).Returns(GetGroup(_dateTimeServiceMock.Today()));
+        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(1)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(1)));
+        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(2)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(2)));
+        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(3)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(3)));
+        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(4)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(4)));
+        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(5)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(5)));
+        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(6)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(6)));
+        mockClient.GetOccupancyLevels(1201, _dateTimeServiceMock.Today(), _dateTimeServiceMock.Today().AddDays(7)).Returns(new Dictionary<DateTime, int>()
         {
             {
-                DateTime.Today, -1
+                _dateTimeServiceMock.Today(), -1
             },
             {
-                DateTime.Today.AddDays(1), -1
+                _dateTimeServiceMock.Today().AddDays(1), -1
             },
             {
-                DateTime.Today.AddDays(2), -1
+                _dateTimeServiceMock.Today().AddDays(2), -1
             },
             {
-                DateTime.Today.AddDays(3), 1
+                _dateTimeServiceMock.Today().AddDays(3), 1
             },
             {
-                DateTime.Today.AddDays(4), -1
+                _dateTimeServiceMock.Today().AddDays(4), -1
             },
             {
-                DateTime.Today.AddDays(5), 1
+                _dateTimeServiceMock.Today().AddDays(5), 1
             },
             {
-                DateTime.Today.AddDays(6), -1
+                _dateTimeServiceMock.Today().AddDays(6), -1
             }
         });
         return mockClient;

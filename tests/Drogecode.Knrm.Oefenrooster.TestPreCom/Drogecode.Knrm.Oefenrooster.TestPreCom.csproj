@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\PreCom\Drogecode.Knrm.Oefenrooster.PreCom.csproj" />
+    <ProjectReference Include="..\Drogecode.Knrm.Oefenrooster.SharedForTests\Drogecode.Knrm.Oefenrooster.SharedForTests.csproj" />
   </ItemGroup>
 
 </Project>

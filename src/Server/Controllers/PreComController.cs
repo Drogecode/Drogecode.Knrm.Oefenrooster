@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
 using Drogecode.Knrm.Oefenrooster.PreCom;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -23,6 +24,7 @@ public class PreComController : DrogeController
     private readonly IHttpClientFactory _clientFactory;
     private readonly HttpClient _httpClient;
     private readonly IConfiguration _configuration;
+    private readonly IDateTimeService _dateTimeService;
 
     public PreComController(
         ILogger<PreComController> logger,
@@ -30,13 +32,15 @@ public class PreComController : DrogeController
         PreComHub preComHub,
         IHttpClientFactory clientFactory,
         HttpClient httpClient,
-        IConfiguration configuration) : base(logger)
+        IConfiguration configuration, 
+        IDateTimeService dateTimeService) : base(logger)
     {
         _preComService = preComService;
         _preComHub = preComHub;
         _clientFactory = clientFactory;
         _httpClient = httpClient;
         _configuration = configuration;
+        _dateTimeService = dateTimeService;
     }
 
     [HttpPost]
@@ -263,7 +267,7 @@ public class PreComController : DrogeController
             if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
                 return BadRequest();
             await preComClient.Login(preComUser, preComPassword);
-            var preComWorker = new PreComWorker(preComClient, _logger);
+            var preComWorker = new PreComWorker(preComClient, _logger, _dateTimeService);
             var problems = await preComWorker.Work(nextRunMode);
             return problems;
         }

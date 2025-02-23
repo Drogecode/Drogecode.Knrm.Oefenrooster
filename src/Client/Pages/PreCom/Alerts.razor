@@ -6,12 +6,15 @@
 <MudText Typo="Typo.h5">@L["PreCom alerts"]</MudText>
 
 <AuthorizeView Roles="@AccessesNames.AUTH_precom_problems">
-    <MudSelect T="NextRunMode" ValueChanged="Problems" >
+    <MudSelect T="NextRunMode" ValueChanged="Problems">
         <MudSelectItem Value="NextRunMode.NextHour">@NextRunMode.NextHour</MudSelectItem>
         <MudSelectItem Value="NextRunMode.TodayTomorrow">@NextRunMode.TodayTomorrow</MudSelectItem>
         <MudSelectItem Value="NextRunMode.NextWeek">@NextRunMode.NextWeek</MudSelectItem>
     </MudSelect>
-    @_problemText
+    @if (_problemText is not null)
+    {
+        <div>@((MarkupString)_problemText)</div>
+    }
 </AuthorizeView>
 @if (_alerts?.PreComAlerts is not null)
 {
@@ -44,7 +47,8 @@
     </MudDataGrid>
     @if (_alerts.TotalCount > _count)
     {
-        <MudPagination Disabled="_bussy" ShowFirstButton="true" ShowLastButton="true" Count="@(Convert.ToInt32(Math.Ceiling((double)_alerts.TotalCount / (double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4"/>
+        <MudPagination Disabled="_bussy" ShowFirstButton="true" ShowLastButton="true" Count="@(Convert.ToInt32(Math.Ceiling((double)_alerts.TotalCount / (double)_count)))" Selected="_currentPage"
+                       SelectedChanged="Next" Class="mt-4"/>
     }
 
     <hr/>
