@@ -99,23 +99,21 @@ public class PreComWorker
             {
                 result.Append("Schipper<br />");
                 result.Append(schipperProblems);
-                result.Append("<br />");
             }
 
             if (!string.IsNullOrWhiteSpace(opstapperProblems))
             {
                 result.Append("Opstapper<br />");
                 result.Append(opstapperProblems);
-                result.Append("<br />");
             }
 
             if (!string.IsNullOrWhiteSpace(aankOpstapperProblems))
             {
                 result.Append("Aankomend opstapper<br />");
                 result.Append(aankOpstapperProblems);
-                result.Append("<br />");
             }
 
+            result.Append("<br />");
             response.Problems += result.ToString();
             response.Dates!.Add(date);
         }
