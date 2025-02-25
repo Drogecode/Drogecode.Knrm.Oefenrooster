@@ -38,7 +38,7 @@ public class PreComWorkerTests
         var worker = new PreComWorker(mockClient, _logger, _dateTimeServiceMock);
         var result = await worker.Work(NextRunMode.TodayTomorrow);
         Assert.NotNull(result.Problems);
-        result.Problems.Trim().Should().Be("{0}<br />Schipper<br />van 12 tot 16<br /><br />Opstapper<br />van 12 tot 16<br /><br />Aankomend opstapper<br />van 12 tot 16<br />van 22 tot 24<br /><br />{1}<br />Schipper<br />van 8 tot 16<br /><br />Opstapper<br />van 2 tot 16<br /><br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24");
+        result.Problems.Trim().Should().Be("{0}<br />Schipper<br />van 12 tot 16<br />Opstapper<br />van 12 tot 16<br />Aankomend opstapper<br />van 12 tot 16<br />van 22 tot 24<br /><br />{1}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24");
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class PreComWorkerTests
         var worker = new PreComWorker(mockClient, _logger, _dateTimeServiceMock);
         var result = await worker.Work(NextRunMode.NextWeek);
         Assert.NotNull(result.Problems);
-        result.Problems.Trim().Should().Be("{0}<br />Schipper<br />van 12 tot 16<br /><br />Opstapper<br />van 12 tot 16<br /><br />Aankomend opstapper<br />van 12 tot 16<br />van 22 tot 24<br /><br />{1}<br />Schipper<br />van 8 tot 16<br /><br />Opstapper<br />van 2 tot 16<br /><br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24<br /><br />{2}<br />Schipper<br />van 8 tot 16<br /><br />Opstapper<br />van 2 tot 16<br /><br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24<br /><br />{3}<br />Schipper<br />van 8 tot 16<br /><br />Opstapper<br />van 2 tot 16<br /><br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24<br /><br />{4}<br />Schipper<br />van 8 tot 16<br /><br />Opstapper<br />van 2 tot 16<br /><br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24");
+        result.Problems.Trim().Should().Be("{0}<br />Schipper<br />van 12 tot 16<br />Opstapper<br />van 12 tot 16<br />Aankomend opstapper<br />van 12 tot 16<br />van 22 tot 24<br /><br />{1}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24<br /><br />{2}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24<br /><br />{3}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24<br /><br />{4}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24");
     }
 
     private IPreComClient MockClient()
