@@ -3,19 +3,24 @@
 public class ApiCachedRequest
 {
     /// <summary>
-    /// Will be deleted from localstorge when this time has passed.
+    /// Will be deleted from localstorge when this time has passed. UTC
     /// </summary>
     public DateTime ExpireLocalStorage { get; set; } = DateTime.UtcNow.AddDays(7);
 
     /// <summary>
-    /// If one call per session, expire after set time
+    /// If one call per session, expire after set time UTC
     /// </summary>
-    public DateTime ExpireSession { get; set; } = DateTime.UtcNow.AddMinutes(5);
+    public DateTime ExpireSession { get; set; } = DateTime.UtcNow.AddMinutes(15);
 
     /// <summary>
     /// One call per session, but not expired.
     /// </summary>
     public bool OneCallPerSession { get; set; } = false;
+
+    /// <summary>
+    /// One call per cache, but not expired.
+    /// </summary>
+    public bool OneCallPerCache { get; set; } = false;
 
     /// <summary>
     /// Ignore session cache

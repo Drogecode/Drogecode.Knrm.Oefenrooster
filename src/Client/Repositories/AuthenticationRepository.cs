@@ -19,7 +19,7 @@ public class AuthenticationRepository
     {
         var result = await _offlineService.CachedRequestAsync("auth_dir",
             async () => await _authenticationClient.GetAuthenticateDirectEnabledAsync(clt),
-            new ApiCachedRequest{OneCallPerSession = true},
+            ApiCachedRequestDefaults.LongCache,
             clt);
         return result;
     }

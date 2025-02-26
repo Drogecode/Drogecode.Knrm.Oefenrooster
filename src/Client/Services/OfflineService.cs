@@ -33,6 +33,13 @@ public class OfflineService : IOfflineService
                     return sessionResult;
             }
 
+            if ((request.CachedAndReplace || request.OneCallPerCache) && !request.ForceCache)
+            {
+                var cacheResult = await _localStorageExpireService.GetItemAsync<TRes?>(cacheKey, clt);
+                if (cacheResult is not null)
+                    return cacheResult;
+            }
+
             if (!request.CachedAndReplace)
             {
                 var result = await function();
@@ -56,7 +63,7 @@ public class OfflineService : IOfflineService
 
         try
         {
-            var cacheResult = (await _localStorageExpireService.GetItemAsync<TRes?>(cacheKey, clt));
+            var cacheResult = await _localStorageExpireService.GetItemAsync<TRes?>(cacheKey, clt);
             cacheResult ??= Activator.CreateInstance<TRes>();
             if (cacheResult is BaseResponse response)
             {

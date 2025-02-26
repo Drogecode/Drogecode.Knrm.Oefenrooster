@@ -21,7 +21,7 @@ public class CustomerSettingRepository
     {
         var response = await _offlineService.CachedRequestAsync(string.Format(TIMEZONE),
             async () => (await _customerSettingsClient.GetStringSettingAsync(SettingName.TimeZone, clt)).Value, 
-            new ApiCachedRequest{OneCallPerSession = true, ExpireSession = DateTime.UtcNow.AddHours(1)},
+            ApiCachedRequestDefaults.LongCache,
             clt: clt);
         return response ?? "Europe/Amsterdam";
     }

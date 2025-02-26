@@ -21,7 +21,7 @@ public class FunctionRepository
         var response = await _offlineService.CachedRequestAsync(string.Format("all_func"),
             async () => await _functionClient.GetAllAsync(cachedAndReplace, clt),
             new ApiCachedRequest
-                { OneCallPerSession = true, CachedAndReplace = cachedAndReplace },
+                { OneCallPerSession = true, CachedAndReplace = cachedAndReplace, ExpireSession = DateTime.UtcNow.AddHours(6) },
             clt: clt);
         return response?.Functions?.ToList();
     }

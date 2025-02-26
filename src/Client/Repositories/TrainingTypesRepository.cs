@@ -21,7 +21,7 @@ public class TrainingTypesRepository
         var response = await _offlineService.CachedRequestAsync(string.Format("tra_tp_all"),
             async () => await _trainingTypesClient.GetTrainingTypesAsync(cachedAndReplace, clt),
             new ApiCachedRequest
-                { OneCallPerSession = true, ForceCache = forceCache, CachedAndReplace = cachedAndReplace },
+                { OneCallPerSession = true, ForceCache = forceCache, CachedAndReplace = cachedAndReplace, ExpireSession = DateTime.UtcNow.AddHours(1) },
             clt: clt);
         return response?.PlannerTrainingTypes?.ToList();
     }
