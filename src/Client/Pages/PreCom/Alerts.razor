@@ -2,14 +2,13 @@
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom
 @attribute [Authorize]
-<PageTitle>@L["PreCom alerts"]</PageTitle>
-<MudText Typo="Typo.h5">@L["PreCom alerts"]</MudText>
-
-<AuthorizeView Roles="@AccessesNames.AUTH_super_user">
+<AuthorizeView Roles="@AccessesNames.AUTH_precom_problems">
+    <MudText Typo="Typo.h5">@L["PreCom problems"]</MudText>
     <MudSelect T="NextRunMode" ValueChanged="Problems">
+        <MudSelectItem Value="NextRunMode.None" Disabled="true">@L["Select option"]</MudSelectItem>
         @*<MudSelectItem Value="NextRunMode.NextHour">@NextRunMode.NextHour</MudSelectItem>*@
-        <MudSelectItem Value="NextRunMode.TodayTomorrow">@NextRunMode.TodayTomorrow</MudSelectItem>
-        <MudSelectItem Value="NextRunMode.NextWeek">@NextRunMode.NextWeek</MudSelectItem>
+        <MudSelectItem Value="NextRunMode.TodayTomorrow">@L[NextRunMode.TodayTomorrow.ToString()]</MudSelectItem>
+        <MudSelectItem Value="NextRunMode.NextWeek">@L[NextRunMode.NextWeek.ToString()]</MudSelectItem>
     </MudSelect>
     @if (!string.IsNullOrWhiteSpace(_problemText))
     {
@@ -20,6 +19,7 @@
         <MudText>@L["No problems found"]</MudText>
     }
 </AuthorizeView>
+<MudText Typo="Typo.h5">@L["PreCom alerts"]</MudText>
 @if (_alerts?.PreComAlerts is not null)
 {
     <MudDataGrid Items="@_alerts.PreComAlerts.OrderByDescending(x => x.SendTime)"

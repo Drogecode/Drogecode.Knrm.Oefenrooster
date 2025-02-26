@@ -55,6 +55,7 @@ public struct AccessesNames
     public const string AUTH_mail_invite_external = "mail_invite_external";
     
     public const string GROUP_PRECOM = "PreCom";
+    public const string AUTH_precom_problems = "precom_problems";
     public const string AUTH_precom_manual = "precom_manual";
 }
 

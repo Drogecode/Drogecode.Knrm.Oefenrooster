@@ -141,4 +141,19 @@
   <data name="PreCom alerts" xml:space="preserve">
     <value>PreCom meldingen</value>
   </data>
+  <data name="PreCom problems" xml:space="preserve">
+    <value>PreCom problemen</value>
+  </data>
+  <data name="Select option" xml:space="preserve">
+    <value>Selecteer selectie</value>
+  </data>
+  <data name="TodayTomorrow" xml:space="preserve">
+    <value>Vandaag &amp; morgen</value>
+  </data>
+  <data name="NextWeek" xml:space="preserve">
+    <value>7 dagen</value>
+  </data>
+  <data name="No problems found" xml:space="preserve">
+    <value>Geen problemen gevonden, selecteer een langere termijn</value>
+  </data>
 </root>

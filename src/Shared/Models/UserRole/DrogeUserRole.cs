@@ -58,5 +58,6 @@ public class DrogeUserRole
     public bool AUTH_mail_invite_external { get; set; }
 
     // Group: GROUP_PRECOM
+    public bool AUTH_precom_problems { get; set; }
     public bool AUTH_precom_manual { get; set; }
 }

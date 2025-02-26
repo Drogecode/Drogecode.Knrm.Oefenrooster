@@ -141,4 +141,19 @@
   <data name="PreCom alerts" xml:space="preserve">
     <value>PreCom alerts</value>
   </data>
+  <data name="PreCom problems" xml:space="preserve">
+    <value>PreCom problems</value>
+  </data>
+  <data name="Select option" xml:space="preserve">
+    <value>Select option</value>
+  </data>
+  <data name="TodayTomorrow" xml:space="preserve">
+    <value>Today &amp; tomorrow</value>
+  </data>
+  <data name="NextWeek" xml:space="preserve">
+    <value>7 days</value>
+  </data>
+  <data name="No problems found" xml:space="preserve">
+    <value>No problems found</value>
+  </data>
 </root>
