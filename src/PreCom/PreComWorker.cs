@@ -6,7 +6,6 @@ using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
-using Microsoft.Extensions.Primitives;
 
 namespace Drogecode.Knrm.Oefenrooster.PreCom;
 
@@ -32,7 +31,6 @@ public class PreComWorker
         //var schedulerAppointments = await preComClient.GetUserSchedulerAppointments(_dateTimeService.Today(), _dateTimeService.Today().AddDays(7));
         var userGroups = await _preComClient.GetAllUserGroups();
         var groupInfo = await _preComClient.GetAllFunctions(userGroups[0].GroupID, _dateTimeService.Today());
-        var q = await _preComClient.GetOccupancyLevels(userGroups[0].GroupID, _dateTimeService.Today(), _dateTimeService.Today().AddDays(7));
         var schipper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM schipper"));
         var opstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM opstapper"));
         var aankOpstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM Aank. Opstapper"));
@@ -57,8 +55,9 @@ public class PreComWorker
 
                 break;
             case NextRunMode.TodayTomorrow:
-                var today = q.ContainsKey(_dateTimeService.Today()) && q[_dateTimeService.Today()] == -1;
-                var tomorrow = q.ContainsKey(_dateTimeService.Today().AddDays(1)) && q[_dateTimeService.Today().AddDays(1)] == -1;
+                var twoDays = await _preComClient.GetOccupancyLevels(userGroups[0].GroupID, _dateTimeService.Today(), _dateTimeService.Today().AddDays(2));
+                var today = twoDays.ContainsKey(_dateTimeService.Today()) && twoDays[_dateTimeService.Today()] == -1;
+                var tomorrow = twoDays.ContainsKey(_dateTimeService.Today().AddDays(1)) && twoDays[_dateTimeService.Today().AddDays(1)] == -1;
                 if (today)
                     await GetMissingForDate(response, userGroups[0].GroupID, _dateTimeService.Today());
                 if (tomorrow)
@@ -66,7 +65,8 @@ public class PreComWorker
 
                 break;
             case NextRunMode.NextWeek:
-                foreach (var day in q.Where(day => day.Value == -1))
+                var eightDays = await _preComClient.GetOccupancyLevels(userGroups[0].GroupID, _dateTimeService.Today(), _dateTimeService.Today().AddDays(8));
+                foreach (var day in eightDays.Where(day => day.Value == -1))
                 {
                     await GetMissingForDate(response, userGroups[0].GroupID, day.Key);
                 }
