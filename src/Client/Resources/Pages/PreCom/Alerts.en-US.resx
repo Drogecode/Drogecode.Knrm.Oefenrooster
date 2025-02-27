@@ -151,7 +151,7 @@
     <value>Today &amp; tomorrow</value>
   </data>
   <data name="NextWeek" xml:space="preserve">
-    <value>7 days</value>
+    <value>Next week</value>
   </data>
   <data name="No problems found" xml:space="preserve">
     <value>No problems found</value>

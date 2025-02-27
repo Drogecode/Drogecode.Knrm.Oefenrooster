@@ -64,7 +64,8 @@ public class PreComWorkerTests
         mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(4)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(4)));
         mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(5)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(5)));
         mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(6)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(6)));
-        mockClient.GetOccupancyLevels(1201, _dateTimeServiceMock.Today(), _dateTimeServiceMock.Today().AddDays(7)).Returns(new Dictionary<DateTime, int>()
+        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(7)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(7)));
+        mockClient.GetOccupancyLevels(1201, _dateTimeServiceMock.Today(), _dateTimeServiceMock.Today().AddDays(8)).Returns(new Dictionary<DateTime, int>()
         {
             {
                 _dateTimeServiceMock.Today(), -1
@@ -86,6 +87,18 @@ public class PreComWorkerTests
             },
             {
                 _dateTimeServiceMock.Today().AddDays(6), -1
+            },
+            {
+                _dateTimeServiceMock.Today().AddDays(7), 1
+            }
+        });
+        mockClient.GetOccupancyLevels(1201, _dateTimeServiceMock.Today(), _dateTimeServiceMock.Today().AddDays(2)).Returns(new Dictionary<DateTime, int>()
+        {
+            {
+                _dateTimeServiceMock.Today(), -1
+            },
+            {
+                _dateTimeServiceMock.Today().AddDays(1), -1
             }
         });
         return mockClient;

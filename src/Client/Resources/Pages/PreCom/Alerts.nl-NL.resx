@@ -151,7 +151,7 @@
     <value>Vandaag &amp; morgen</value>
   </data>
   <data name="NextWeek" xml:space="preserve">
-    <value>7 dagen</value>
+    <value>Aankomende week</value>
   </data>
   <data name="No problems found" xml:space="preserve">
     <value>Geen problemen gevonden, selecteer een langere termijn</value>
