@@ -13,6 +13,7 @@
         <Authorized>
             <AuthorizeView Roles="@AccessesNames.AUTH_basic_access" Context="basic">
                 <Authorized>
+                    <TrainingColors IsDarkMode="@_isDarkMode" />
                     <MudAppBar>
                         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => DrawerToggle())"/>
                         @L["Title"]
@@ -72,23 +73,6 @@
                             </CascadingValue>
                         </MudMainContent>
                     </CascadingValue>
-
-                    @if (_trainingTypes != null)
-                    {
-                        <style>
-                            @foreach (var trainingType in _trainingTypes)
-                            {
-                                @($".trainingType-{trainingType.Id}{{")
-                                @($"background-color:{(_isDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)} !important;")
-                                if (!string.IsNullOrEmpty(trainingType.TextColorLight))
-                                {
-                                    @($"color:{(_isDarkMode ? string.IsNullOrEmpty(trainingType.TextColorDark) ? trainingType.TextColorLight : trainingType.TextColorDark : trainingType.TextColorLight)} !important;")
-                                }
-
-                                @("}")
-                            }
-                        </style>
-                    }
                 </Authorized>
                 <NotAuthorized>
                     <MudMainContent>

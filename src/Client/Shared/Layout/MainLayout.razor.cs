@@ -2,7 +2,6 @@
 using Drogecode.Knrm.Oefenrooster.Client.Models.Palettes;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.SignalR.Client;
 
@@ -12,7 +11,6 @@ public sealed partial class MainLayout : IDisposable
 {
     [Inject] private IStringLocalizer<MainLayout> L { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
-    [Inject] private TrainingTypesRepository TrainingTypesRepository { get; set; } = default!;
     [Inject] private UserRepository UserRepository { get; set; } = default!;
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
@@ -20,7 +18,6 @@ public sealed partial class MainLayout : IDisposable
     private readonly DrogeCodeGlobal _global = new();
     private MudThemeProvider _mudThemeProvider = new();
     private IDictionary<NotificationMessage, bool>? _messages = null;
-    private List<PlannerTrainingType>? _trainingTypes;
     private HubConnection? _hubConnection;
     private readonly CancellationTokenSource _cls = new();
     private DarkLightMode _darkModeToggle;
@@ -94,19 +91,6 @@ public sealed partial class MainLayout : IDisposable
         if (firstRender)
         {
             _global.RefreshRequested += RefreshMe;
-            await GetTrainingTypes();
-            RefreshMe();
-        }
-    }
-
-    private async Task GetTrainingTypes()
-    {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        _isAuthenticated = authState?.User?.Identity?.IsAuthenticated ?? false;
-        if (_isAuthenticated)
-        {
-            if (_trainingTypes == null)
-                _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false);
             RefreshMe();
         }
     }

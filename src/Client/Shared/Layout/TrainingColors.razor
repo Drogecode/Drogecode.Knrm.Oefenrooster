@@ -1,0 +1,16 @@
+﻿
+@if (_trainingTypes != null)
+{
+    <style>
+        @foreach (var trainingType in _trainingTypes)
+        {
+            @($".trainingType-{trainingType.Id}{{")
+            @($"background-color:{(IsDarkMode ? string.IsNullOrEmpty(trainingType.ColorDark) ? trainingType.ColorLight : trainingType.ColorDark : trainingType.ColorLight)} !important;")
+            if (!string.IsNullOrEmpty(trainingType.TextColorLight))
+            {
+                @($"color:{(IsDarkMode ? string.IsNullOrEmpty(trainingType.TextColorDark) ? trainingType.TextColorLight : trainingType.TextColorDark : trainingType.TextColorLight)} !important;")
+            }
+            @("}")
+        }
+    </style>
+}
