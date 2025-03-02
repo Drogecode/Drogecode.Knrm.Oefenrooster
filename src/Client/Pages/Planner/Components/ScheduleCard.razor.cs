@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
@@ -13,6 +14,7 @@ public sealed partial class ScheduleCard : IDisposable
     [Inject] private IStringLocalizer<ScheduleCard> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private IDialogService DialogProvider { get; set; } = default!;
+    [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
     [CascadingParameter] public DrogeCodeGlobal Global { get; set; } = default!;
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
@@ -31,6 +33,7 @@ public sealed partial class ScheduleCard : IDisposable
     [Parameter] public bool ShowDayOfWeek { get; set; }
     [Parameter] public bool ShowPastBody { get; set; } = true;
     private RefreshModel _refreshModel = new();
+    private Guid _userId;
     private bool _updating;
     private bool _isDeleted;
     private bool _showHistory;
@@ -43,6 +46,7 @@ public sealed partial class ScheduleCard : IDisposable
             _refreshModel.RefreshRequested += RefreshMe;
             Global.TrainingDeletedAsync += TrainingDeleted;
             _showHistory = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_history);
+            await SetUser();
             StateHasChanged();
         }
     }
@@ -50,6 +54,25 @@ public sealed partial class ScheduleCard : IDisposable
     protected override void OnInitialized()
     {
         _showPastBody = ShowPastBody;
+    }
+    
+    
+
+    private async Task<bool> SetUser()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userClaims = authState.User;
+        if (userClaims?.Identity?.IsAuthenticated ?? false)
+        {
+            if (!Guid.TryParse(userClaims.Identities.FirstOrDefault()!.Claims.FirstOrDefault(x => x.Type.Equals("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value, out _userId))
+                return false;
+        }
+        else
+        {
+            // Should never happen.
+            return false;
+        }
+        return true;
     }
 
     private Task OpenScheduleDialog()

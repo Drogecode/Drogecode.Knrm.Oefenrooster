@@ -113,9 +113,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_dashboard_holidays:
                         drogeUserRole.AUTH_dashboard_holidays = true;
                         break;
-                    case AccessesNames.AUTH_dashboard_qr:
-                        drogeUserRole.AUTH_dashboard_qr = true;
-                        break;
                     case AccessesNames.AUTH_mail_invite_external:
                         drogeUserRole.AUTH_mail_invite_external = true;
                         break;
@@ -198,8 +195,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_dashboard_Statistics_user_tabel).Append(',');
             if (userRole.AUTH_dashboard_holidays)
                 sb.Append(AccessesNames.AUTH_dashboard_holidays).Append(',');
-            if (userRole.AUTH_dashboard_qr)
-                sb.Append(AccessesNames.AUTH_dashboard_qr).Append(',');
             if (userRole.AUTH_mail_invite_external)
                 sb.Append(AccessesNames.AUTH_mail_invite_external).Append(',');
             if (userRole.AUTH_precom_problems)

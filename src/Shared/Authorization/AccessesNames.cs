@@ -49,7 +49,6 @@ public struct AccessesNames
     public const string AUTH_dashboard_Statistics = "full_dashboard_statistics";
     public const string AUTH_dashboard_Statistics_user_tabel = "full_dashboard_statistics_ut";
     public const string AUTH_dashboard_holidays = "dashboard_hol";
-    public const string AUTH_dashboard_qr = "dashboard_qr";
     
     public const string GROUP_MAIL = "Mail";
     public const string AUTH_mail_invite_external = "mail_invite_external";
