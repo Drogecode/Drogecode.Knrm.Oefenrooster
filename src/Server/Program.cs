@@ -131,6 +131,7 @@ builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IDayItemService, DayItemService>();
 builder.Services.AddScoped<IMonthItemService, MonthItemService>();
 builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
 builder.Services.AddScoped<IHolidayService, HolidayService>();
@@ -177,7 +178,8 @@ var groupNames = new List<string>
     "PreCom",
     "TrainingTypes",
     "CustomerSettings",
-    "UserSettings"
+    "UserSettings",
+    "Customer"
 };
 var runningInContainers = string.Equals(builder.Configuration["DOTNET_RUNNING_IN_CONTAINER"], "true");
 if (!runningInContainers)

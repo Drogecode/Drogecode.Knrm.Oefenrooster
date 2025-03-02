@@ -27,7 +27,6 @@ public class MenuController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = AccessesNames.AUTH_scheduler_monthitem)]
     [Route("all")]
     public async Task<ActionResult<MultipleMenuResponse>> GetAll(CancellationToken clt = default)
     {

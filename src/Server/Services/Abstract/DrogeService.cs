@@ -12,7 +12,7 @@ public abstract class DrogeService : IDrogeService
     protected readonly IDateTimeService DateTimeService;
 
     public DrogeService(
-        ILogger<ScheduleService> logger,
+        ILogger<DrogeService> logger,
         DataContext database,
         IMemoryCache memoryCache,
         IDateTimeService dateTimeService)

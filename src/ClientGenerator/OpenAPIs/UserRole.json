@@ -315,16 +315,13 @@
           "autH_dashboard_holidays": {
             "type": "boolean"
           },
-          "autH_dashboard_qr": {
-            "type": "boolean"
-          },
           "autH_mail_invite_external": {
             "type": "boolean"
           },
-          "autH_precom_manual": {
+          "autH_precom_problems": {
             "type": "boolean"
           },
-          "autH_precom_problems": {
+          "autH_precom_manual": {
             "type": "boolean"
           }
         },

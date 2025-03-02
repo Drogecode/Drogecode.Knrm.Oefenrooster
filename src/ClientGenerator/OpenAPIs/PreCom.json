@@ -475,6 +475,14 @@
           "problems": {
             "type": "string",
             "nullable": true
+          },
+          "dates": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

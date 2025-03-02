@@ -46,6 +46,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbLinkUserRole> LinkUserRoles { get; set; }
         public DbSet<DbLinkUserUser> LinkUserUsers { get; set; }
         public DbSet<DbLinkExchange> LinkExchanges { get; set; }
+        public DbSet<DbLinkUserCustomer> LinkUserCustomers { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -223,6 +224,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbLinkUserRole>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbLinkUserRole>().HasOne(p => p.User).WithMany(g => g.LinkUserRoles).HasForeignKey(s => s.UserId).IsRequired();
             modelBuilder.Entity<DbLinkUserRole>().HasOne(p => p.Role).WithMany(g => g.LinkUserRoles).HasForeignKey(s => s.RoleId).IsRequired();
+            
+            // User <--> Customer
+            modelBuilder.Entity<DbLinkUserCustomer>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbLinkUserCustomer>().HasOne(p => p.User).WithMany(g => g.LinkUserCustomers).HasForeignKey(s => s.UserId).IsRequired();
+            modelBuilder.Entity<DbLinkUserCustomer>().HasOne(p => p.Customer).WithMany(g => g.LinkUserCustomers).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // Required data
             SetCustomer(modelBuilder);

@@ -79,6 +79,10 @@
 			<OutputPath>../Clients/UserClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.User</Options>
 		</OpenApiReference>
+		<OpenApiReference Include="OpenAPIs\Customer.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="CustomerClient">
+			<OutputPath>../Clients/CustomerClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer</Options>
+		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\UserLinkedMails.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="UserLinkedMailsClient">
 			<OutputPath>../Clients/UserLinkedMailsClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail</Options>

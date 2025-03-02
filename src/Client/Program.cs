@@ -32,6 +32,7 @@ builder.Services.TryAddScoped<IAuthenticationClient, AuthenticationClient>();
 builder.Services.TryAddScoped<IDayItemClient, DayItemClient>();
 builder.Services.TryAddScoped<IMonthItemClient, MonthItemClient>();
 builder.Services.TryAddScoped<IConfigurationClient, ConfigurationClient>();
+builder.Services.TryAddScoped<ICustomerClient, CustomerClient>();
 builder.Services.TryAddScoped<ICustomerSettingsClient, CustomerSettingsClient>();
 builder.Services.TryAddScoped<IDefaultScheduleClient, DefaultScheduleClient>();
 builder.Services.TryAddScoped<IFunctionClient, FunctionClient>();
