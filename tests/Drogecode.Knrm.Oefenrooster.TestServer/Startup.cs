@@ -23,6 +23,7 @@ public class Startup
         services.AddScoped<IMonthItemService, MonthItemService>();
         services.AddScoped<IAuditService, AuditService>();
         services.AddScoped<IConfigurationService, ConfigurationService>();
+        services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<IFunctionService, FunctionService>();
         services.AddScoped<IHolidayService, HolidayService>();
         services.AddScoped<IMenuService, MenuService>();
@@ -48,6 +49,7 @@ public class Startup
         services.AddScoped<DayItemController>();
         services.AddScoped<MonthItemController>();
         services.AddScoped<ConfigurationController>();
+        services.AddScoped<CustomerController>();
         services.AddScoped<FunctionController>();
         services.AddScoped<HolidayController>();
         services.AddScoped<MenuController>();

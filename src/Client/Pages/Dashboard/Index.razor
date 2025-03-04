@@ -10,7 +10,7 @@
             <MudTabPanel Text="@L["Planner"]">
                 @if (_name is not null)
                 {
-                    <div class="inline-flex ml-5 mt-8">
+                    <div class="inline-flex mx-3 mt-8">
                         <MudText Typo="Typo.h5">@L["Welcome", _name]</MudText>
                         @if (_user?.Nr is not null)
                         {
@@ -20,7 +20,7 @@
                 }
                 @if (_dayItems != null && _dayItems.Any())
                 {
-                    <div class="ml-5 mt-8">
+                    <div class="mx-3 mt-8">
                         <MudText Typo="Typo.h5">@L["Special days"]</MudText>
                         <MudPaper Elevation="0" Class="p-2">
                             <MudGrid Spacing="2" Justify="Justify.FlexStart">
@@ -44,7 +44,7 @@
                         </MudPaper>
                     </div>
                 }
-                <div class="ml-5 mt-8">
+                <div class="mx-3 mt-8">
                     @if (_pinnedTrainings is not null)
                     {
                         @if (_pinnedTrainings.Any())
@@ -65,7 +65,7 @@
                         <DrogeLoading/>
                     }
                 </div>
-                <div class="ml-5 mt-8">
+                <div class="mx-3 mt-8">
                     <MudText Typo="Typo.h5">@L["Future trainings"]</MudText>
                     @if (_trainings?.Trainings != null)
                     {
@@ -105,7 +105,7 @@
                 <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_holidays">
                     @if (_futureHolidays is not null)
                     {
-                        <div class="ml-5 mt-8">
+                        <div class="mx-3 mt-8">
                             @if (_futureHolidays.Holidays?.Any() == true)
                             {
                                 <MudText Typo="Typo.h5">@L["Future holidays"]</MudText>

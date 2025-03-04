@@ -229,6 +229,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbLinkUserCustomer>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbLinkUserCustomer>().HasOne(p => p.User).WithMany(g => g.LinkUserCustomers).HasForeignKey(s => s.UserId).IsRequired();
             modelBuilder.Entity<DbLinkUserCustomer>().HasOne(p => p.Customer).WithMany(g => g.LinkUserCustomers).HasForeignKey(s => s.CustomerId).IsRequired();
+            modelBuilder.Entity<DbLinkUserCustomer>().HasOne(p => p.LinkedUser).WithMany(g => g.LinkLinkedUserCustomers).HasForeignKey(s => s.UserId).IsRequired();
 
             // Required data
             SetCustomer(modelBuilder);

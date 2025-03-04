@@ -1,8 +1,8 @@
 ﻿namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
-public class AuditControllerTest : BaseTest
+public class AuditControllerTests : BaseTest
 {
-    public AuditControllerTest(TestService testService) : base(testService)
+    public AuditControllerTests(TestService testService) : base(testService)
     {
     }
 

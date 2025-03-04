@@ -19,7 +19,10 @@
                         var training = item.Training;
                         if (training != null)
                         {
-                            <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth" Refresh="_refreshModel"/>
+                            <div class="m-2">
+                                <ScheduleCard Planner="training" Users="Users" Functions="Functions" Vehicles="Vehicles" TrainingTypes="TrainingTypes" ShowPastBody="!_currentMonth"
+                                              Refresh="_refreshModel"/>
+                            </div>
                         }
 
                         break;
@@ -28,7 +31,9 @@
                     {
                         var color = DayItemHelper.DayItemTypeColor(dayItem.ItemDay.Type);
                         <div style="width: 100%; height: 100%; border: 2px solid @DayItemHelper.GetColor(color)">
-                            <div style="background-color: @DayItemHelper.GetColor(color)"><MudText Style="color: #ffffff;" Typo="Typo.body1" Align="Align.Center">@dayItem.ItemDay.Text</MudText></div>
+                            <div style="background-color: @DayItemHelper.GetColor(color)">
+                                <MudText Style="color: #ffffff;" Typo="Typo.body1" Align="Align.Center">@dayItem.ItemDay.Text</MudText>
+                            </div>
                         </div>
                         break;
                     }
@@ -41,7 +46,7 @@
         <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
             @if (_month == null)
             {
-                <DrogeLoading />
+                <DrogeLoading/>
             }
             else
             {
@@ -86,5 +91,5 @@
 }
 else
 {
-    <DrogeLoading />
+    <DrogeLoading/>
 }

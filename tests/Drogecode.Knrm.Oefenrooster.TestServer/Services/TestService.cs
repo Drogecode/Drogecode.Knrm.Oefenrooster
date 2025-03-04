@@ -33,6 +33,7 @@ public class TestService : IAsyncLifetime
     internal const string TRAINING_CALENDAR_DAY = "xUnit day item";
     internal const string VEHICLE_DEFAULT = "xUnit default vehicle";
     internal Guid DefaultCustomerId { get; private set; }
+    internal Guid SecondaryCustomerId { get; private set; }
     internal Guid DefaultUserId { get; private set; }
     internal Guid DefaultUserRoleId { get; private set; }
     internal Guid DefaultFunction { get; private set; }
@@ -64,6 +65,7 @@ public class TestService : IAsyncLifetime
     internal readonly ReportActionSharedController ReportActionSharedController;
     internal readonly AuditController AuditController;
     internal readonly MenuController MenuController;
+    internal readonly CustomerController CustomerController;
 
     public TestService(
         DataContext dataContext,
@@ -84,7 +86,8 @@ public class TestService : IAsyncLifetime
         UserLinkedMailsController userLinkedMailsController,
         ReportActionSharedController reportActionSharedController,
         AuditController auditController, 
-        MenuController menuController)
+        MenuController menuController,
+        CustomerController customerController)
     {
         DataContext = dataContext;
         DateTimeServiceMock = (IDateTimeServiceMock)dateTimeService;
@@ -106,13 +109,16 @@ public class TestService : IAsyncLifetime
         ReportActionSharedController = reportActionSharedController;
         AuditController = auditController;
         MenuController = menuController;
+        CustomerController = customerController;
     }
 
     public async Task InitializeAsync()
     {
         DateTimeServiceMock.SetMockDateTime(null);
         DefaultCustomerId = Guid.NewGuid();
+        SecondaryCustomerId = Guid.NewGuid();
         SeedCustomer.Seed(DataContext, DefaultCustomerId);
+        SeedCustomer.Seed(DataContext, SecondaryCustomerId);
 
         var defaultRoles = new List<string>
         {
@@ -135,6 +141,7 @@ public class TestService : IAsyncLifetime
         MockAuthenticatedUser(UserLinkedMailsController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(AuditController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(MenuController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(CustomerController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         
         DefaultFunction = await AddFunction(FUNCTION_DEFAULT, true);
         DefaultUserRoleId = await AddUserRole(USER_ROLE_NAME);
