@@ -96,6 +96,7 @@ else
     culture = new CultureInfo("nl-NL");
     await js.InvokeVoidAsync("blazorCulture.set", "nl-NL");
 }
+await js.InvokeVoidAsync("eval", $"document.documentElement.lang = '{culture.Name}'");
 
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
