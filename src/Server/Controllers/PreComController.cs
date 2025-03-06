@@ -26,6 +26,7 @@ public class PreComController : DrogeController
     private readonly HttpClient _httpClient;
     private readonly IConfiguration _configuration;
     private readonly IDateTimeService _dateTimeService;
+    private readonly IAuditService _auditService;
 
     public PreComController(
         ILogger<PreComController> logger,
@@ -34,7 +35,8 @@ public class PreComController : DrogeController
         IHttpClientFactory clientFactory,
         HttpClient httpClient,
         IConfiguration configuration,
-        IDateTimeService dateTimeService) : base(logger)
+        IDateTimeService dateTimeService,
+        IAuditService auditService) : base(logger)
     {
         _preComService = preComService;
         _preComHub = preComHub;
@@ -42,6 +44,7 @@ public class PreComController : DrogeController
         _httpClient = httpClient;
         _configuration = configuration;
         _dateTimeService = dateTimeService;
+        _auditService = auditService;
     }
 
     [HttpPost]
@@ -262,6 +265,9 @@ public class PreComController : DrogeController
     {
         try
         {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            await _auditService.Log(userId, AuditType.PreComProblems, customerId, nextRunMode.ToString());
             var preComClient = new PreComClient(_httpClient, "drogecode", _logger);
             var preComUser = _configuration.GetValue<string>("PreCom:User");
             var preComPassword = _configuration.GetValue<string>("PreCom:Password");

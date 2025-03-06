@@ -13,4 +13,5 @@ public enum AuditType
     PreComRaw = 8,
     UpdateLinkUserUserForUser = 9,
     DeleteTraining = 10,
+    PreComProblems = 11,
 }
