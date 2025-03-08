@@ -271,6 +271,7 @@ public class PreComController : DrogeController
             var preComClient = new PreComClient(_httpClient, "drogecode", _logger);
             var preComUser = _configuration.GetValue<string>("PreCom:User");
             var preComPassword = _configuration.GetValue<string>("PreCom:Password");
+            var whatsAppBearer = _configuration.GetValue<string>("WhatsApp:Bearer");
             if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
             {
                 preComUser = KeyVaultHelper.GetSecret("PreComUser", _logger)?.Value;
@@ -279,9 +280,21 @@ public class PreComController : DrogeController
                     return BadRequest();
             }
 
+            if (false && string.IsNullOrWhiteSpace(whatsAppBearer))
+            {
+                whatsAppBearer = KeyVaultHelper.GetSecret("WhatsAppBearer", _logger)?.Value;
+            }
+
             await preComClient.Login(preComUser, preComPassword);
             var preComWorker = new PreComWorker(preComClient, _logger, _dateTimeService);
             var problems = await preComWorker.Work(nextRunMode);
+            if (false && !string.IsNullOrWhiteSpace(whatsAppBearer) && problems.Problems is not null)
+            {
+                using var client = _clientFactory.CreateClient();
+                var whatsAppClient = new WhatsAppClient(client, whatsAppBearer, _logger);
+                await whatsAppClient.SendMessage("", problems.Problems);
+            }
+
             return problems;
         }
         catch (Exception ex)
