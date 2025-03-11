@@ -121,7 +121,7 @@ public sealed partial class Authentication
 
         await AuthenticationStateProvider.Logout();
         StateHasChanged();
-        Navigation.NavigateTo(urlLogout);
+        Navigation.NavigateTo(urlLogout, true);
     }
 
     private async Task LoginAzure(GetLoginSecretsResponse secrets, string redirectUrl)

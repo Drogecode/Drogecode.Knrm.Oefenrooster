@@ -23,11 +23,11 @@
                     <div class="mx-3 mt-8">
                         <MudText Typo="Typo.h5">@L["Special days"]</MudText>
                         <MudPaper Elevation="0" Class="p-2">
-                            <MudGrid Spacing="2" Justify="Justify.FlexStart">
+                            <div class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
                                 @foreach (var item in _dayItems)
                                 {
                                     var color = DayItemHelper.DayItemTypeColor(item.Type);
-                                    <MudItem xs="12" sm="6" md="4" lg="3">
+                                    <MudItem Class="flex-1 min-w-72 max-w-72">
                                         <div class="d-flex gap-1">
                                             <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small"/>
                                             <DateToString DateTimeLocal="item.DateStart" @key="@(item.DateStart?.Ticks + DateTime.Today.Day)"/>
@@ -40,7 +40,7 @@
                                         </div>
                                     </MudItem>
                                 }
-                            </MudGrid>
+                            </div>
                         </MudPaper>
                     </div>
                 }

@@ -11,6 +11,7 @@ using Microsoft.JSInterop;
 using MudBlazor.Services;
 using MudExtensions.Services;
 using System.Globalization;
+using MudBlazor.Translations;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -22,6 +23,7 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<CustomStateProvider>();
 
 builder.Services.AddMudServices(config => { config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft; });
+builder.Services.AddMudTranslations();
 builder.Services.AddMudExtensions();
 builder.Services.AddMudMarkdownServices();
 builder.Services.AddBlazoredLocalStorage();
