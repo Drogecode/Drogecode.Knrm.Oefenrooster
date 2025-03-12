@@ -368,3 +368,4 @@ FodyWeavers.xsd
 /src/Client/wwwroot/js/*.js.map
 /src/Server/appsettings.Development.json
 /.idea/.idea.Drogecode.Knrm.Oefenrooster/Docker/docker-compose.generated.override.yml
+/src/Tools/DrogeCode.PreCom/appsettings.development.json

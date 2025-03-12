@@ -31,6 +31,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{77D16A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drogecode.Knrm.Oefenrooster.SharedForTests", "tests\Drogecode.Knrm.Oefenrooster.SharedForTests\Drogecode.Knrm.Oefenrooster.SharedForTests.csproj", "{328EF45D-0C5E-4DA9-8BC7-05356C2DBD70}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{D4FC654B-ED4A-4587-B608-4EBF8805942F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrogeCode.PreCom", "src\Tools\DrogeCode.PreCom\DrogeCode.PreCom.csproj", "{B54FC790-2CDB-4B32-8F7A-E2F283896D41}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +85,10 @@ Global
 		{328EF45D-0C5E-4DA9-8BC7-05356C2DBD70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{328EF45D-0C5E-4DA9-8BC7-05356C2DBD70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{328EF45D-0C5E-4DA9-8BC7-05356C2DBD70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B54FC790-2CDB-4B32-8F7A-E2F283896D41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B54FC790-2CDB-4B32-8F7A-E2F283896D41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B54FC790-2CDB-4B32-8F7A-E2F283896D41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B54FC790-2CDB-4B32-8F7A-E2F283896D41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,6 +102,7 @@ Global
 		{BB8CEDE3-B2A8-4620-9100-ED5E0BE8D8A2} = {6DE471B8-1129-4FE3-BC60-FCCF71A80409}
 		{77D16A28-D352-4581-8705-5834FD1B50E9} = {6DE471B8-1129-4FE3-BC60-FCCF71A80409}
 		{328EF45D-0C5E-4DA9-8BC7-05356C2DBD70} = {77D16A28-D352-4581-8705-5834FD1B50E9}
+		{B54FC790-2CDB-4B32-8F7A-E2F283896D41} = {D4FC654B-ED4A-4587-B608-4EBF8805942F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {36F3F586-0B2F-484C-9B32-46210C5E3929}
