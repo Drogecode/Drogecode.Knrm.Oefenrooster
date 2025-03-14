@@ -1,0 +1,12 @@
+﻿@page "/configuration/customers"
+@attribute [Authorize(Roles = AccessesNames.AUTH_super_user)]
+
+@if (_customers?.Customers is not null)
+{
+    <MudList T="string">
+    @foreach (var customer in _customers.Customers)
+    {
+        <MudListItem>@customer.Name</MudListItem>
+    }
+    </MudList>
+}

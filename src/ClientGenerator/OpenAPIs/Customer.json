@@ -35,6 +35,36 @@
         }
       }
     },
+    "/api/Customer/all": {
+      "get": {
+        "tags": [
+          "Customer"
+        ],
+        "operationId": "GetAllCustomers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllCustomersResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllCustomersResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllCustomersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Customer/linked": {
       "patch": {
         "tags": [
@@ -66,17 +96,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PatchResponse"
+                  "$ref": "#/components/schemas/LinkUserToCustomerResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PatchResponse"
+                  "$ref": "#/components/schemas/LinkUserToCustomerResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PatchResponse"
+                  "$ref": "#/components/schemas/LinkUserToCustomerResponse"
                 }
               }
             }
@@ -98,15 +128,52 @@
             "type": "string",
             "nullable": true
           },
-          "isPrimary": {
+          "timeZone": {
+            "type": "string",
+            "nullable": true
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          },
+          "domain": {
+            "type": "string",
+            "nullable": true
+          },
+          "tenantId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetAllCustomersResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
             "type": "boolean"
           },
-          "isCurrent": {
+          "offline": {
             "type": "boolean"
           },
-          "order": {
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "customers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Customer"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -131,7 +198,7 @@
           "userLinkedCustomers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Customer"
+              "$ref": "#/components/schemas/LinkedCustomer"
             },
             "nullable": true
           }
@@ -149,13 +216,21 @@
             "type": "string",
             "format": "uuid"
           },
+          "linkedUserId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "isActive": {
+            "type": "boolean"
+          },
+          "createNew": {
             "type": "boolean"
           }
         },
         "additionalProperties": false
       },
-      "PatchResponse": {
+      "LinkUserToCustomerResponse": {
         "type": "object",
         "properties": {
           "success": {
@@ -167,6 +242,35 @@
           "elapsedMilliseconds": {
             "type": "integer",
             "format": "int64"
+          },
+          "newUserId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LinkedCustomer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "isPrimary": {
+            "type": "boolean"
+          },
+          "isCurrent": {
+            "type": "boolean"
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

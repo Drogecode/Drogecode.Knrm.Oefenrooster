@@ -5,15 +5,29 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
 
 public static class CustomerMapper
 {
-    public static Customer ToCustomer(this DbLinkUserCustomer dbLinkUserCustomer, Guid currentCustomerId)
+    public static LinkedCustomer ToLinkedCustomer(this DbLinkUserCustomer dbLinkUserCustomer, Guid currentCustomerId)
     {
-        return new Customer()
+        return new LinkedCustomer()
         {
             Id = dbLinkUserCustomer.CustomerId,
             Name = dbLinkUserCustomer.Customer.Name,
             IsPrimary = dbLinkUserCustomer.IsPrimary,
             IsCurrent = dbLinkUserCustomer.CustomerId == currentCustomerId,
             Order = dbLinkUserCustomer.Order,
+        };
+    }
+
+    public static Customer ToCustomer(this DbCustomers dbCustomer)
+    {
+        return new Customer()
+        {
+            Id = dbCustomer.Id,
+            Name = dbCustomer.Name,
+            TimeZone = dbCustomer.TimeZone,
+            Created = dbCustomer.Created,
+            Domain = dbCustomer.Domain,
+            Instance = dbCustomer.Instance,
+            TenantId = dbCustomer.TenantId,
         };
     }
 }

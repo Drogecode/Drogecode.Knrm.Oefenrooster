@@ -86,6 +86,25 @@ public class PreComClient : IPreComClient
         return Get<Group>($"api/Group/GetAllFunctions?groupID={groupID}&date={date:s}", cancellationToken);
     }
 
+    public Task TestGetA(int userId, long groupId, DateTime from, DateTime to, CancellationToken cancellationToken = default)
+    {
+        OnlyDate(from, nameof(from));
+        OnlyDate(to, nameof(to));
+        return Get<Group>($"api/v2/Piket/GetSchedule?userId={userId}&groupId={groupId}&from={from:s}&to={to:s}", cancellationToken);
+    }
+    public Task TestGetB(long groupId, DateTime from, DateTime to, CancellationToken cancellationToken = default)
+    {
+        OnlyDate(from, nameof(from));
+        OnlyDate(to, nameof(to));
+        return Get<Group>($"api/Group/GetOccupancyLevels?groupID={groupId}&from={from:s}&to={to:s}", cancellationToken);
+    }
+    public Task TestGetC(DateTime from, DateTime to, CancellationToken cancellationToken = default)
+    {
+        OnlyDate(from, nameof(from));
+        OnlyDate(to, nameof(to));
+        return Get<Group>($"api/User/GetUserSchedulerAppointments?from={from:s}&to={to:s}", cancellationToken);
+    }
+
     public Task<MsgOut[]> GetMessages(string controlID = default, CancellationToken cancellationToken = default)
     {
         var url = "api/User/GetMessages";
@@ -125,6 +144,8 @@ public class PreComClient : IPreComClient
 
     private async Task<T> ProcessResponse<T>(string url, HttpResponseMessage response)
     {
+        //var d = await response.Content.ReadAsStringAsync();
+        
         response.EnsureSuccessStatusCode();
         return await DeserializeResponse<T>(response);
     }

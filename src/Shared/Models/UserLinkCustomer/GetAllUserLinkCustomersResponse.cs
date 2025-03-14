@@ -1,7 +1,9 @@
 ﻿
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Customer;
+
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
 
 public class GetAllUserLinkCustomersResponse : BaseMultipleResponse
 {
-    public List<Customer.Customer>? UserLinkedCustomers { get; set; }
+    public List<LinkedCustomer>? UserLinkedCustomers { get; set; }
 }

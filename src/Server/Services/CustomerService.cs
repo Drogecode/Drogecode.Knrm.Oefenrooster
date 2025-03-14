@@ -24,9 +24,24 @@ public class CustomerService : DrogeService, ICustomerService
         var links = await Database.LinkUserCustomers
             .Include(x => x.Customer)
             .Where(x => x.UserId == userId && x.IsActive)
-            .Select(x => x.ToCustomer(customerId))
+            .Select(x => x.ToLinkedCustomer(customerId))
             .ToListAsync();
         result.UserLinkedCustomers = links;
+        result.TotalCount = links.Count;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        result.Success = true;
+        return result;
+    }
+
+    public async Task<GetAllCustomersResponse> GetAllCustomers()
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new GetAllCustomersResponse();
+        var links = await Database.Customers
+            .Select(x => x.ToCustomer())
+            .ToListAsync();
+        result.Customers = links;
         result.TotalCount = links.Count;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;

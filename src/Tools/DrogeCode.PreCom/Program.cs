@@ -30,10 +30,22 @@ try
     var preComPassword = config.GetValue<string>("PreCom:Password");
 
     await preComClient.Login(preComUser, preComPassword);
-    var preComWorker = new PreComWorker(preComClient, logger, new DateTimeService());
-    var problems = await preComWorker.Work(NextRunMode.TodayTomorrow);
+    /*var preComWorker = new PreComWorker(preComClient, logger, new DateTimeService());
+    var problems = await preComWorker.Work(NextRunMode.NextWeek);
+    logger.LogInformation(problems.ToString());*/
 
-    logger.LogInformation(problems.ToString());
+
+    var userGroups = await preComClient.GetAllUserGroups();
+    var groupInfo = await preComClient.GetAllFunctions(userGroups[0].GroupID, DateTime.Today);
+    var schipper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM schipper"));
+    var opstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM opstapper"));
+    var aankOpstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM Aank. Opstapper"));
+
+    var userId = opstapper?.Users.FirstOrDefault(x => x.FullName == "HUI Taco Droogers")?.UserID ?? -1;
+    
+    await preComClient.TestGetA(userId, userGroups[0].GroupID, DateTime.Today, DateTime.Today.AddDays(7));
+    //await preComClient.TestGetB(userGroups[0].GroupID, DateTime.Today, DateTime.Today.AddDays(3));
+    //await preComClient.TestGetC(DateTime.Today, DateTime.Today.AddDays(3));
 }
 catch (Exception ex)
 {

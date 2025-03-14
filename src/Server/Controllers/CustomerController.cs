@@ -43,6 +43,25 @@ public class CustomerController : DrogeController
             return BadRequest();
         }
     }
+    
+    [HttpGet]
+    [Route("all")]
+    public async Task<ActionResult<GetAllCustomersResponse>> GetAllCustomers()
+    {
+        try
+        {
+            var response = await _customerService.GetAllCustomers();
+            return response;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in GetAllCustomers");
+            return BadRequest();
+        }
+    }
 
     [HttpPatch]
     [Route("linked")]
