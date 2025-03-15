@@ -5,59 +5,58 @@
 <MudText Typo="Typo.h5">@L["Profile"]</MudText>
 
 <MudPaper Class="pa-4" MaxWidth="800px">
-    <CultureSelector/>
+    <CultureSelector />
     <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
         @if (_settingTrainingToCalendar is not null)
         {
-            <MudSwitch Label="@L["Setting training to calendar"]" Color="Color.Primary" T="bool" Value="@_settingTrainingToCalendar.Value" ValueChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))"/>
+            <MudSwitch Label="@L["Setting training to calendar"]" Color="Color.Primary" T="bool" Value="@_settingTrainingToCalendar.Value" ValueChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))" />
         }
     </AuthorizeView>
     <MudText>
         <table class="table-auto">
             <tbody>
-            <tr>
-                <td>@L["Client version:"]</td>
-                <td>@DefaultSettingsHelper.CURRENT_VERSION</td>
-            </tr>
-            @if (_updateDetails is not null)
-            {
                 <tr>
-                    <td>@L["Server version:"]</td>
-                    <td>@_updateDetails.CurrentVersion</td>
+                    <td>@L["Client version:"]</td>
+                    <td>@DefaultSettingsHelper.CURRENT_VERSION</td>
                 </tr>
-            }
+                @if (_updateDetails is not null)
+                {
+                    <tr>
+                        <td>@L["Server version:"]</td>
+                        <td>@_updateDetails.CurrentVersion</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </MudText>
-    <AuthorizeView Roles="@AccessesNames.AUTH_super_user"><!-- Remove when ready -->
-        <AuthorizeView Roles="@AccessesNames.AUTH_mail_invite_external" Context="inner">
-            <MudText>@L["Mails to invite to your trainings"]</MudText>
-            <MudButton OnClick='(() => Navigation.NavigateTo("/user/profile/link-mail/add"))'>@L["Add link mail"]</MudButton>
-            @if (_allUserLinkedMailResponse?.UserLinkedMails is not null && _allUserLinkedMailResponse.UserLinkedMails.Any())
-            {
-                <MudDataGrid Items="@_allUserLinkedMailResponse.UserLinkedMails!.OrderBy(x => x.ActivateRequestedOn)" Striped="true" Hover="true">
-                    <Columns>
-                        <PropertyColumn Property="x => x.Email" Title="@L["Email"]"/>
-                        <PropertyColumn Property="x => x.IsEnabled" Title="@L["Is enabled"]">
-                            <CellTemplate Context="templateContext">
-                                <MudCheckBox T="bool" Disabled="!templateContext.Item.IsActive || templateContext.Item.IsDrogeCodeUser" Value="templateContext.Item.IsEnabled" ValueChanged="(newValue)=>IsEnabledChanged(newValue, templateContext.Item.Id)" />
-                            </CellTemplate>
-                        </PropertyColumn>
-                        <PropertyColumn Property="x => x.IsActive" Title="@L["Is active"]">
-                            <CellTemplate Context="templateContext">
-                               @if (templateContext.Item.IsActive)
-                               {
-                                   <MudIcon Icon="@Icons.Material.Filled.ThumbUp"/>
-                               }
-                               else
-                               {
-                                   <MudButton OnClick="()=>OpenActivationDialog(templateContext.Item.Id)">@L["Activate"]</MudButton>
-                               }
-                            </CellTemplate>
-                        </PropertyColumn>
-                    </Columns>
-                </MudDataGrid>
-            }
-        </AuthorizeView>
+    <AuthorizeView Roles="@AccessesNames.AUTH_mail_invite_external" Context="inner">
+        <MudAlert Severity="Severity.Warning">@L["This will result in a lot of mails"]</MudAlert>
+        <MudText>@L["Mails to invite to your trainings"]</MudText>
+        <MudButton OnClick='(() => Navigation.NavigateTo("/user/profile/link-mail/add"))'>@L["Add link mail"]</MudButton>
+        @if (_allUserLinkedMailResponse?.UserLinkedMails is not null && _allUserLinkedMailResponse.UserLinkedMails.Any())
+        {
+            <MudDataGrid Items="@_allUserLinkedMailResponse.UserLinkedMails!.OrderBy(x => x.ActivateRequestedOn)" Striped="true" Hover="true">
+                <Columns>
+                    <PropertyColumn Property="x => x.Email" Title="@L["Email"]" />
+                    <PropertyColumn Property="x => x.IsEnabled" Title="@L["Is enabled"]">
+                        <CellTemplate Context="templateContext">
+                            <MudCheckBox T="bool" Disabled="!templateContext.Item.IsActive || templateContext.Item.IsDrogeCodeUser" Value="templateContext.Item.IsEnabled" ValueChanged="(newValue)=>IsEnabledChanged(newValue, templateContext.Item.Id)" />
+                        </CellTemplate>
+                    </PropertyColumn>
+                    <PropertyColumn Property="x => x.IsActive" Title="@L["Is active"]">
+                        <CellTemplate Context="templateContext">
+                            @if (templateContext.Item.IsActive)
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.ThumbUp" />
+                            }
+                            else
+                            {
+                                <MudButton OnClick="()=>OpenActivationDialog(templateContext.Item.Id)">@L["Activate"]</MudButton>
+                            }
+                        </CellTemplate>
+                    </PropertyColumn>
+                </Columns>
+            </MudDataGrid>
+        }
     </AuthorizeView>
 </MudPaper>

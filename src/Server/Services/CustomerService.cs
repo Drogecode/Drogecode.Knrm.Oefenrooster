@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Customer;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
@@ -17,7 +18,7 @@ public class CustomerService : DrogeService, ICustomerService
         _userService = userService;
     }
 
-    public async Task<GetAllUserLinkCustomersResponse> GetAllLinkUserCustomers(Guid userId, Guid customerId)
+    public async Task<GetAllUserLinkCustomersResponse> GetAllLinkUserCustomers(Guid userId, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new GetAllUserLinkCustomersResponse();
@@ -34,7 +35,7 @@ public class CustomerService : DrogeService, ICustomerService
         return result;
     }
 
-    public async Task<GetAllCustomersResponse> GetAllCustomers()
+    public async Task<GetAllCustomersResponse> GetAllCustomers(CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new GetAllCustomersResponse();
@@ -49,7 +50,24 @@ public class CustomerService : DrogeService, ICustomerService
         return result;
     }
 
-    public async Task<LinkUserToCustomerResponse> LinkUserToCustomer(Guid userId, Guid customerId, LinkUserToCustomerRequest body)
+    public async Task<PutResponse> PutNewCustomer(Customer customer, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new PutResponse();
+
+        var db = Database.Customers.Add(new DbCustomers
+        {
+            Id = Guid.CreateVersion7(),
+            Name = customer.Name,
+            TimeZone
+        });
+        
+        result.Success = await Database.SaveChangesAsync() > 0;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+    public async Task<LinkUserToCustomerResponse> LinkUserToCustomer(Guid userId, Guid customerId, LinkUserToCustomerRequest body, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new LinkUserToCustomerResponse();

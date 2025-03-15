@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Customer;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
@@ -42,5 +43,17 @@ public class CustomerControllerTests : BaseTest
         result.Value.Customers.Should().HaveCountGreaterOrEqualTo(2);
         result.Value.Customers.Should().Contain(x => x.Id == Tester.DefaultCustomerId);
         result.Value.Customers.Should().Contain(x => x.Id == Tester.SecondaryCustomerId);
+    }
+
+    [Fact]
+    public async Task PutNewCustomerTest()
+    {
+        var body = new Customer
+        {
+            Name = "xUnit",
+        };
+        var result = await Tester.CustomerController.PutNewCustomer(body);
+        Assert.NotNull(result?.Value?.NewId);
+        Assert.True(result.Value.Success);
     }
 }
