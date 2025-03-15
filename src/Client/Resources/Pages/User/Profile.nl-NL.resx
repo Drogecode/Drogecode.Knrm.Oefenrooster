@@ -51,4 +51,7 @@
     <data name="Add link mail" xml:space="preserve">
         <value>Voeg kalender email toe</value>
     </data>
+    <data name="This will result in a lot of mails" xml:space="preserve">
+        <value>Dit gaat je veel mails sturen!</value>
+    </data>
 </root>

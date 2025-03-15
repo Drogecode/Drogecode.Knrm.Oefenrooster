@@ -26,7 +26,7 @@ public class CustomerService : DrogeService, ICustomerService
             .Include(x => x.Customer)
             .Where(x => x.UserId == userId && x.IsActive)
             .Select(x => x.ToLinkedCustomer(customerId))
-            .ToListAsync();
+            .ToListAsync(clt);
         result.UserLinkedCustomers = links;
         result.TotalCount = links.Count;
         sw.Stop();
@@ -41,7 +41,7 @@ public class CustomerService : DrogeService, ICustomerService
         var result = new GetAllCustomersResponse();
         var links = await Database.Customers
             .Select(x => x.ToCustomer())
-            .ToListAsync();
+            .ToListAsync(clt);
         result.Customers = links;
         result.TotalCount = links.Count;
         sw.Stop();
@@ -54,15 +54,21 @@ public class CustomerService : DrogeService, ICustomerService
     {
         var sw = Stopwatch.StartNew();
         var result = new PutResponse();
-
-        var db = Database.Customers.Add(new DbCustomers
+        var newId = Guid.CreateVersion7();
+        Database.Customers.Add(new DbCustomers
         {
-            Id = Guid.CreateVersion7(),
+            Id = newId,
             Name = customer.Name,
-            TimeZone
+            TimeZone = customer.TimeZone,
+            Created = DateTime.UtcNow,
+            Instance = customer.Instance,
+            Domain = customer.Domain,
+            TenantId = customer.TenantId,
         });
         
-        result.Success = await Database.SaveChangesAsync() > 0;
+        result.Success = await Database.SaveChangesAsync(clt) > 0;
+        if (result.Success)
+            result.NewId = newId;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
@@ -71,8 +77,8 @@ public class CustomerService : DrogeService, ICustomerService
     {
         var sw = Stopwatch.StartNew();
         var result = new LinkUserToCustomerResponse();
-        var links = await Database.LinkUserCustomers.Where(x => x.UserId == body.UserId).ToListAsync();
-        var mainUser = await Database.Users.FirstOrDefaultAsync(x => x.Id == body.UserId);
+        var links = await Database.LinkUserCustomers.Where(x => x.UserId == body.UserId).ToListAsync(clt);
+        var mainUser = await Database.Users.FirstOrDefaultAsync(x => x.Id == body.UserId, clt);
         if (mainUser is null)
         {
             return ResponseFailed();
@@ -141,7 +147,7 @@ public class CustomerService : DrogeService, ICustomerService
 
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
-        result.Success = await Database.SaveChangesAsync() > 0;
+        result.Success = await Database.SaveChangesAsync(clt) > 0;
         return result;
 
         LinkUserToCustomerResponse ResponseFailed()
