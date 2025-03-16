@@ -31,12 +31,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
     {
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetAllCustomersResponse> GetAllCustomersAsync();
+        System.Threading.Tasks.Task<GetAllCustomersResponse> GetAllCustomersAsync(int take, int skip);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetAllCustomersResponse> GetAllCustomersAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetAllCustomersResponse> GetAllCustomersAsync(int take, int skip, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -101,16 +101,22 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetAllCustomersResponse> GetAllCustomersAsync()
+        public virtual System.Threading.Tasks.Task<GetAllCustomersResponse> GetAllCustomersAsync(int take, int skip)
         {
-            return GetAllCustomersAsync(System.Threading.CancellationToken.None);
+            return GetAllCustomersAsync(take, skip, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetAllCustomersResponse> GetAllCustomersAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetAllCustomersResponse> GetAllCustomersAsync(int take, int skip, System.Threading.CancellationToken cancellationToken)
         {
+            if (take == null)
+                throw new System.ArgumentNullException("take");
+
+            if (skip == null)
+                throw new System.ArgumentNullException("skip");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -122,8 +128,11 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/Customer/all"
-                    urlBuilder_.Append("api/Customer/all");
+                    // Operation Path: "api/Customer/all/{take}/{skip}"
+                    urlBuilder_.Append("api/Customer/all/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(take, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('/');
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(skip, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 

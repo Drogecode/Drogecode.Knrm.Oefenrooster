@@ -21,7 +21,7 @@ public partial class Customers : IDisposable
         if (firstRender)
         {
             _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
-            _customers = await CustomerClient.GetAllCustomersAsync();
+            _customers = await CustomerClient.GetAllCustomersAsync(500, 0);
             StateHasChanged();
         }
     }
@@ -45,6 +45,7 @@ public partial class Customers : IDisposable
 
     private async Task RefreshMeAsync()
     {
+        _customers = await CustomerClient.GetAllCustomersAsync(500, 0);
         StateHasChanged();
     }
 

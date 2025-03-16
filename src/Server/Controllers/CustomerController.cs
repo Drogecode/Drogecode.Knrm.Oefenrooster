@@ -23,12 +23,12 @@ public class CustomerController : DrogeController
     }
     
     [HttpGet]
-    [Route("all")]
-    public async Task<ActionResult<GetAllCustomersResponse>> GetAllCustomers(CancellationToken clt = default)
+    [Route("all/{take:int}/{skip:int}")]
+    public async Task<ActionResult<GetAllCustomersResponse>> GetAllCustomers(int take, int skip, CancellationToken clt = default)
     {
         try
         {
-            var response = await _customerService.GetAllCustomers(clt);
+            var response = await _customerService.GetAllCustomers(take, skip, clt);
             return response;
         }
         catch (Exception ex)

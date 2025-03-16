@@ -4,7 +4,7 @@
 @attribute [Authorize]
 <AuthorizeView Roles="@AccessesNames.AUTH_precom_problems">
     <MudText Typo="Typo.h5">@L["PreCom problems"]</MudText>
-    <MudSelect T="NextRunMode" ValueChanged="Problems">
+    <MudSelect T="NextRunMode" ValueChanged="Problems" Disabled="_loadingProblems">
         <MudSelectItem Value="NextRunMode.None" Disabled="true">@L["Select option"]</MudSelectItem>
         @*<MudSelectItem Value="NextRunMode.NextHour">@NextRunMode.NextHour</MudSelectItem>*@
         <MudSelectItem Value="NextRunMode.TodayTomorrow">@L[NextRunMode.TodayTomorrow.ToString()]</MudSelectItem>
@@ -17,6 +17,10 @@
     else if (_noProblems)
     {
         <MudText>@L["No problems found"]</MudText>
+    }
+    else if (_loadingProblems)
+    {
+        <DrogeLoading/>
     }
 </AuthorizeView>
 <MudText Typo="Typo.h5">@L["PreCom alerts"]</MudText>

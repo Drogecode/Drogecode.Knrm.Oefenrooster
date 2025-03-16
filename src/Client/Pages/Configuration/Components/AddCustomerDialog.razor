@@ -4,6 +4,10 @@
         {
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
                 <MudTextField T="string" Label="@L["Name"]" @bind-Value="@Customer.Name" />
+                <MudTextField T="string" Label="@L["TimeZone"]" @bind-Value="@Customer.TimeZone" />
+                <MudTextField T="string" Label="@L["Instance"]" @bind-Value="@Customer.Instance" />
+                <MudTextField T="string" Label="@L["Domain"]" @bind-Value="@Customer.Domain" />
+                <MudTextField T="string" Label="@L["TenantId"]" @bind-Value="@Customer.TenantId" />
             </MudForm>
         }
     </DialogContent>

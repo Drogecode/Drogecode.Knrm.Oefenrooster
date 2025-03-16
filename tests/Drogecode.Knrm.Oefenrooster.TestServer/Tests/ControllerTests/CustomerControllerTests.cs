@@ -12,7 +12,7 @@ public class CustomerControllerTests : BaseTest
     [Fact]
     public async Task GetAllCustomerTest()
     {
-        var result = await Tester.CustomerController.GetAllCustomers();
+        var result = await Tester.CustomerController.GetAllCustomers(500, 0);
         Assert.NotNull(result?.Value?.Customers);
         Assert.True(result.Value.Success);
         result.Value.Customers.Should().NotBeEmpty();

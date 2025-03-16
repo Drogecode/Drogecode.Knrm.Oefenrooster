@@ -52,6 +52,8 @@ public sealed partial class AddCustomerDialog : IDisposable
         else
         {
             var patchResult = await CustomerClient.PatchCustomerAsync(Customer, _cls.Token);
+            if (Refresh is not null)
+                await Refresh.CallRequestRefreshAsync();
             if (patchResult?.Success == true)
                 MudDialog.Close();
         }

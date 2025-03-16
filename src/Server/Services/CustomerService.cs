@@ -16,11 +16,13 @@ public class CustomerService : DrogeService, ICustomerService
     {
     }
 
-    public async Task<GetAllCustomersResponse> GetAllCustomers(CancellationToken clt)
+    public async Task<GetAllCustomersResponse> GetAllCustomers(int take, int skip, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new GetAllCustomersResponse();
         var links = await Database.Customers
+            .Skip(skip)
+            .Take(take)
             .Select(x => x.ToCustomer())
             .ToListAsync(clt);
         result.Customers = links;
