@@ -5,8 +5,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 
 public interface ICustomerService
 {
-    Task<GetAllUserLinkCustomersResponse> GetAllLinkUserCustomers(Guid userId, Guid customerId, CancellationToken clt);
     Task<GetAllCustomersResponse> GetAllCustomers(CancellationToken clt);
+    Task<GetCustomerResponse> GetCustomerById(GetCustomerRequest body, CancellationToken clt);
     Task<PutResponse> PutNewCustomer(Customer customer, CancellationToken clt);
-    Task<LinkUserToCustomerResponse> LinkUserToCustomer(Guid userId, Guid customerId, LinkUserToCustomerRequest body, CancellationToken clt);
+    Task<PatchResponse> PatchCustomer(Customer customer, CancellationToken clt);
 }

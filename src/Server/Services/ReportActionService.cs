@@ -8,11 +8,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class ReportActionService : IReportActionService
 {
-    private readonly Database.DataContext _database;
+    private readonly DataContext _database;
     private readonly ILogger<ReportActionService> _logger;
     private static readonly List<string> _typeInzetToIgnore = new() { "Boot uitgemeld" };
 
-    public ReportActionService(Database.DataContext database, ILogger<ReportActionService> logger)
+    public ReportActionService(DataContext database, ILogger<ReportActionService> logger)
     {
         _database = database;
         _logger = logger;

@@ -23,7 +23,7 @@
                 </PropertyColumn>
                 <TemplateColumn>
                     <CellTemplate>
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => {return OpenVehicleDialog(context.Item, false); })"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => {OpenVehicleDialog(context.Item, false); })"/>
                     </CellTemplate>
                 </TemplateColumn>
             </Columns>

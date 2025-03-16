@@ -2,18 +2,18 @@
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
-public class VehicleService : IVehicleService
+public class VehicleService :DrogeService,  IVehicleService
 {
-    private readonly ILogger<VehicleService> _logger;
-    private readonly Database.DataContext _database;
 
-    public VehicleService(ILogger<VehicleService> logger, Database.DataContext database)
+    public VehicleService(ILogger<VehicleService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeService dateTimeService, IUserService userService) : base(logger, database,
+        memoryCache, dateTimeService)
     {
-        _logger = logger;
-        _database = database;
     }
 
     public async Task<MultipleVehicleResponse> GetAllVehicles(Guid customerId)
@@ -23,7 +23,7 @@ public class VehicleService : IVehicleService
         {
             DrogeVehicles = []
         };
-        var dbVehicles = _database.Vehicles.Where(u => u.CustomerId == customerId && u.DeletedOn == null).OrderBy(x => x.Order);
+        var dbVehicles = Database.Vehicles.Where(u => u.CustomerId == customerId && u.DeletedOn == null).OrderBy(x => x.Order);
         foreach (var dbVehicle in dbVehicles)
         {
             result.DrogeVehicles.Add(new DrogeVehicle
@@ -52,7 +52,7 @@ public class VehicleService : IVehicleService
         {
             DrogeLinkVehicleTrainingLinks = []
         };
-        var dbVehicles = await _database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.RoosterTrainingId == trainingId).ToListAsync(clt);
+        var dbVehicles = await Database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.RoosterTrainingId == trainingId).ToListAsync(clt);
         foreach (var dbVehicle in dbVehicles)
         {
             result.DrogeLinkVehicleTrainingLinks.Add(new DrogeLinkVehicleTraining
@@ -76,9 +76,9 @@ public class VehicleService : IVehicleService
         {
             DrogeLinkVehicleTrainingLinks = []
         };
-        var dbVehicles = await _database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.Id == defaultId).Select(x => x.VehicleIds).FirstOrDefaultAsync(clt);
+        var dbVehicles = await Database.RoosterDefaults.Where(x => x.CustomerId == customerId && x.Id == defaultId).Select(x => x.VehicleIds).FirstOrDefaultAsync(clt);
         if (dbVehicles == null) return result;
-        var defaultSelectedVehicles = await _database.Vehicles.Where(x => x.IsDefault).Select(x => x.Id).ToListAsync(clt);
+        var defaultSelectedVehicles = await Database.Vehicles.Where(x => x.IsDefault).Select(x => x.Id).ToListAsync(clt);
         foreach (var dbVehicle in dbVehicles)
         {
             result.DrogeLinkVehicleTrainingLinks.Add(new DrogeLinkVehicleTraining
@@ -112,8 +112,8 @@ public class VehicleService : IVehicleService
         dbVehicle.CreatedOn = DateTime.UtcNow;
         dbVehicle.Createdby = userId;
         dbVehicle.CustomerId = customerId;
-        _database.Vehicles.Add(dbVehicle);
-        if ((await _database.SaveChangesAsync(clt)) > 0)
+        Database.Vehicles.Add(dbVehicle);
+        if ((await Database.SaveChangesAsync(clt)) > 0)
         {
             result.NewId = vehicle.Id;
             result.Success = true;
@@ -129,7 +129,7 @@ public class VehicleService : IVehicleService
         var sw = Stopwatch.StartNew();
         var result = new PatchResponse();
 
-        var oldVehicle = await _database.Vehicles.Where(x => x.CustomerId == customerId && x.Id == vehicle.Id && x.DeletedOn == null).FirstOrDefaultAsync(clt);
+        var oldVehicle = await Database.Vehicles.Where(x => x.CustomerId == customerId && x.Id == vehicle.Id && x.DeletedOn == null).FirstOrDefaultAsync(clt);
         if (oldVehicle is not null)
         {
             oldVehicle.Name = vehicle.Name;
@@ -137,8 +137,8 @@ public class VehicleService : IVehicleService
             oldVehicle.Order = vehicle.Order;
             oldVehicle.IsDefault = vehicle.IsDefault;
             oldVehicle.IsActive = vehicle.IsActive;
-            _database.Vehicles.Update(oldVehicle);
-            result.Success = (await _database.SaveChangesAsync(clt)) > 0;
+            Database.Vehicles.Update(oldVehicle);
+            result.Success = (await Database.SaveChangesAsync(clt)) > 0;
         }
 
         sw.Stop();
@@ -150,11 +150,11 @@ public class VehicleService : IVehicleService
     {
         var sw = Stopwatch.StartNew();
         var result = new DrogeLinkVehicleTrainingResponse();
-        var foundLinks = await _database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.VehicleId == link.VehicleId && x.RoosterTrainingId == link.RoosterTrainingId).ToListAsync();
+        var foundLinks = await Database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.VehicleId == link.VehicleId && x.RoosterTrainingId == link.RoosterTrainingId).ToListAsync();
         if (foundLinks.Count == 0)
         {
             var newId = Guid.NewGuid();
-            _database.LinkVehicleTraining.Add(new DbLinkVehicleTraining
+            Database.LinkVehicleTraining.Add(new DbLinkVehicleTraining
             {
                 Id = newId,
                 IsSelected = link.IsSelected,
@@ -174,24 +174,24 @@ public class VehicleService : IVehicleService
                     first = false;
                     link.Id = foundLink.Id;
                     foundLink.IsSelected = link.IsSelected;
-                    _database.LinkVehicleTraining.Update(foundLink);
+                    Database.LinkVehicleTraining.Update(foundLink);
                 }
                 else
                 {
-                    _database.LinkVehicleTraining.Remove(foundLink);
+                    Database.LinkVehicleTraining.Remove(foundLink);
                 }
             }
         }
         result.DrogeLinkVehicleTraining = link;
-        result.Success = (await _database.SaveChangesAsync()) > 0;
+        result.Success = (await Database.SaveChangesAsync()) > 0;
 
         if (!link.IsSelected)
         {
-            var trainings = _database.RoosterAvailables.Where(x => x.TrainingId == link.RoosterTrainingId && x.VehicleId == link.VehicleId);
+            var trainings = Database.RoosterAvailables.Where(x => x.TrainingId == link.RoosterTrainingId && x.VehicleId == link.VehicleId);
             foreach (var training in trainings)
             {
                 training.VehicleId = null;
-                _database.RoosterAvailables.Update(training);
+                Database.RoosterAvailables.Update(training);
             }
         }
 

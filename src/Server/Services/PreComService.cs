@@ -10,9 +10,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class PreComService : IPreComService
 {
     private readonly ILogger<PreComService> _logger;
-    private readonly Database.DataContext _database;
+    private readonly DataContext _database;
 
-    public PreComService(ILogger<PreComService> logger, Database.DataContext database)
+    public PreComService(ILogger<PreComService> logger, DataContext database)
     {
         _logger = logger;
         _database = database;

@@ -61,11 +61,12 @@ public class TestService : IAsyncLifetime
     internal readonly ReportActionController ReportActionController;
     internal readonly ReportTrainingController ReportTrainingController;
     internal readonly UserRoleController UserRoleController;
-    internal readonly UserLinkedMailsController UserLinkedMailsController;
+    internal readonly UserLinkMailsController UserLinkMailsController;
     internal readonly ReportActionSharedController ReportActionSharedController;
     internal readonly AuditController AuditController;
     internal readonly MenuController MenuController;
     internal readonly CustomerController CustomerController;
+    internal readonly UserLinkCustomerController UserLinkCustomerController;
 
     public TestService(
         DataContext dataContext,
@@ -83,11 +84,12 @@ public class TestService : IAsyncLifetime
         ReportActionController reportActionController,
         ReportTrainingController reportTrainingController,
         UserRoleController userRoleController,
-        UserLinkedMailsController userLinkedMailsController,
+        UserLinkMailsController userLinkMailsController,
         ReportActionSharedController reportActionSharedController,
         AuditController auditController, 
         MenuController menuController,
-        CustomerController customerController)
+        CustomerController customerController,
+        UserLinkCustomerController userLinkCustomerController)
     {
         DataContext = dataContext;
         DateTimeServiceMock = (IDateTimeServiceMock)dateTimeService;
@@ -105,11 +107,12 @@ public class TestService : IAsyncLifetime
         ReportActionController = reportActionController;
         ReportTrainingController = reportTrainingController;
         UserRoleController = userRoleController;
-        UserLinkedMailsController = userLinkedMailsController;
+        UserLinkMailsController = userLinkMailsController;
         ReportActionSharedController = reportActionSharedController;
         AuditController = auditController;
         MenuController = menuController;
         CustomerController = customerController;
+        UserLinkCustomerController = userLinkCustomerController;
     }
 
     public async Task InitializeAsync()
@@ -138,10 +141,11 @@ public class TestService : IAsyncLifetime
         MockAuthenticatedUser(ReportActionController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(ReportTrainingController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(UserRoleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(UserLinkedMailsController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(UserLinkMailsController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(AuditController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(MenuController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(CustomerController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(UserLinkCustomerController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         
         DefaultFunction = await AddFunction(FUNCTION_DEFAULT, true);
         DefaultUserRoleId = await AddUserRole(USER_ROLE_NAME);

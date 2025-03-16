@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
-public class UserLinkedMailsControllerTests : BaseTest
+public class UserLinkMailsControllerTests : BaseTest
 {
-    public UserLinkedMailsControllerTests(TestService testService) : base(testService)
+    public UserLinkMailsControllerTests(TestService testService) : base(testService)
     {
     }
 
@@ -20,7 +20,7 @@ public class UserLinkedMailsControllerTests : BaseTest
     public async Task GetAllUserLinkedMailTest()
     {
         var newId = await PutUserLinkedMail();
-        var allResult = await Tester.UserLinkedMailsController.AllUserLinkedMail(10, 0);
+        var allResult = await Tester.UserLinkMailsController.AllUserLinkedMail(10, 0);
         Assert.NotNull(allResult?.Value?.UserLinkedMails);
         Assert.True(allResult.Value.Success);
         allResult.Value.UserLinkedMails.Should().NotBeEmpty();
@@ -32,10 +32,10 @@ public class UserLinkedMailsControllerTests : BaseTest
     {
         var newId = await PutUserLinkedMail();
         var db = await Tester.DataContext.UserLinkedMails.FirstOrDefaultAsync(x => x.Id == newId);
-        var validateResponse = await Tester.UserLinkedMailsController.ValidateUserLinkedActivateKey(new ValidateUserLinkedActivateKeyRequest() { UserLinkedMailId = newId, ActivationKey = db!.ActivateKey!});
+        var validateResponse = await Tester.UserLinkMailsController.ValidateUserLinkedActivateKey(new ValidateUserLinkedActivateKeyRequest() { UserLinkedMailId = newId, ActivationKey = db!.ActivateKey!});
         Assert.NotNull(validateResponse.Value?.Success);
         Assert.True(validateResponse.Value.Success);
-        var allResult = await Tester.UserLinkedMailsController.AllUserLinkedMail(10, 0);
+        var allResult = await Tester.UserLinkMailsController.AllUserLinkedMail(10, 0);
         Assert.NotNull(allResult?.Value?.UserLinkedMails);
         allResult.Value.UserLinkedMails.Should().Contain(x => x.Id == newId && x.IsActive);
     }
@@ -44,10 +44,10 @@ public class UserLinkedMailsControllerTests : BaseTest
     public async Task ValidateUserLinkedMailWithWrongKeyTest()
     {
         var newId = await PutUserLinkedMail();
-        var validateResponse = await Tester.UserLinkedMailsController.ValidateUserLinkedActivateKey(new ValidateUserLinkedActivateKeyRequest() { UserLinkedMailId = newId, ActivationKey = "wrongkey"});
+        var validateResponse = await Tester.UserLinkMailsController.ValidateUserLinkedActivateKey(new ValidateUserLinkedActivateKeyRequest() { UserLinkedMailId = newId, ActivationKey = "wrongkey"});
         Assert.NotNull(validateResponse.Value?.Success);
         Assert.False(validateResponse.Value.Success);
-        var allResult = await Tester.UserLinkedMailsController.AllUserLinkedMail(10, 0);
+        var allResult = await Tester.UserLinkMailsController.AllUserLinkedMail(10, 0);
         Assert.NotNull(allResult?.Value?.UserLinkedMails);
         allResult.Value.UserLinkedMails.Should().Contain(x => x.Id == newId && !x.IsActive);
     }
@@ -57,8 +57,8 @@ public class UserLinkedMailsControllerTests : BaseTest
     {
         var newId = await PutUserLinkedMail();
         var db = await Tester.DataContext.UserLinkedMails.FirstOrDefaultAsync(x => x.Id == newId);
-        await Tester.UserLinkedMailsController.ValidateUserLinkedActivateKey(new ValidateUserLinkedActivateKeyRequest() { UserLinkedMailId = newId, ActivationKey = db!.ActivateKey!});
-        var enabledResponse =  await Tester.UserLinkedMailsController.IsEnabledChanged(new IsEnabledChangedRequest(){UserLinkedMailId = newId, IsEnabled = false});
+        await Tester.UserLinkMailsController.ValidateUserLinkedActivateKey(new ValidateUserLinkedActivateKeyRequest() { UserLinkedMailId = newId, ActivationKey = db!.ActivateKey!});
+        var enabledResponse =  await Tester.UserLinkMailsController.IsEnabledChanged(new IsEnabledChangedRequest(){UserLinkedMailId = newId, IsEnabled = false});
         Assert.NotNull(enabledResponse.Value?.Success);
         Assert.True(enabledResponse.Value.Success);
     }
@@ -67,7 +67,7 @@ public class UserLinkedMailsControllerTests : BaseTest
     public async Task ChangeEnabledWhenNotValidatedTest()
     {
         var newId = await PutUserLinkedMail();
-        var enabledResponse =  await Tester.UserLinkedMailsController.IsEnabledChanged(new IsEnabledChangedRequest(){UserLinkedMailId = newId, IsEnabled = false});
+        var enabledResponse =  await Tester.UserLinkMailsController.IsEnabledChanged(new IsEnabledChangedRequest(){UserLinkedMailId = newId, IsEnabled = false});
         Assert.NotNull(enabledResponse.Value?.Success);
         Assert.False(enabledResponse.Value.Success);
     }
@@ -82,7 +82,7 @@ public class UserLinkedMailsControllerTests : BaseTest
             },
             SendMail = false, // Do not send mail for unit tests
         };
-        var result = await Tester.UserLinkedMailsController.PutUserLinkedMail(body);
+        var result = await Tester.UserLinkMailsController.PutUserLinkedMail(body);
         Assert.NotNull(result?.Value?.Success);
         Assert.Null(result.Value.ActivateKey);
         Assert.True(result.Value.Success);

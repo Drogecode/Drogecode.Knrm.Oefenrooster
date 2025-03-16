@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
@@ -7,10 +8,10 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
 public partial class Vehicles : IDisposable
 {
-    [Inject] private IStringLocalizer<Vehicles> L { get; set; } = default!;
-    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private IVehicleClient VehicleClient { get; set; } = default!;
-    [Inject] private IDialogService DialogProvider { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<Vehicles>? L { get; set; }
+    [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
+    [Inject, NotNull] private IVehicleClient? VehicleClient { get; set; }
+    [Inject, NotNull] private IDialogService? DialogProvider { get; set; }
     private CancellationTokenSource _cls = new();
     private RefreshModel _refreshModel = new();
     private MultipleVehicleResponse? _vehicles;
@@ -45,6 +46,7 @@ public partial class Vehicles : IDisposable
 
     public void Dispose()
     {
+        _refreshModel.RefreshRequestedAsync -= RefreshMeAsync;
         _cls.Cancel();
     }
 }

@@ -2,17 +2,16 @@
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
-using MudBlazor;
 using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class ReportTrainingService : IReportTrainingService
 {
-    private readonly Database.DataContext _database;
+    private readonly DataContext _database;
     private readonly ILogger<ReportTrainingService> _logger;
 
-    public ReportTrainingService(ILogger<ReportTrainingService> logger, Database.DataContext database)
+    public ReportTrainingService(ILogger<ReportTrainingService> logger, DataContext database)
     {
         _logger = logger;
         _database = database;

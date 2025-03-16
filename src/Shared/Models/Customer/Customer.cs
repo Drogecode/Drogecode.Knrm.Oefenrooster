@@ -3,7 +3,7 @@
 public class Customer
 {
     public Guid Id { get; set; }
-    public string Name { get; set; } = "New customer";
+    public string Name { get; set; } = string.Empty;
     public string TimeZone { get; set; } = "Europe/Amsterdam";
     public DateTime Created { get; set; }
     public string? Instance { get; set; }

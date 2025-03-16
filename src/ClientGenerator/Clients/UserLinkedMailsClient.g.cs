@@ -133,8 +133,8 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/UserLinkedMails"
-                    urlBuilder_.Append("api/UserLinkedMails");
+                    // Operation Path: "api/UserLinkMails"
+                    urlBuilder_.Append("api/UserLinkMails");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -215,8 +215,8 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/UserLinkedMails"
-                    urlBuilder_.Append("api/UserLinkedMails");
+                    // Operation Path: "api/UserLinkMails"
+                    urlBuilder_.Append("api/UserLinkMails");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -297,8 +297,8 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/UserLinkedMails/validate"
-                    urlBuilder_.Append("api/UserLinkedMails/validate");
+                    // Operation Path: "api/UserLinkMails/validate"
+                    urlBuilder_.Append("api/UserLinkMails/validate");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -379,8 +379,8 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/UserLinkedMails/is-enabled"
-                    urlBuilder_.Append("api/UserLinkedMails/is-enabled");
+                    // Operation Path: "api/UserLinkMails/is-enabled"
+                    urlBuilder_.Append("api/UserLinkMails/is-enabled");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -463,8 +463,8 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/UserLinkedMails/{take}/{skip}"
-                    urlBuilder_.Append("api/UserLinkedMails/");
+                    // Operation Path: "api/UserLinkMails/{take}/{skip}"
+                    urlBuilder_.Append("api/UserLinkMails/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(take, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('/');
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(skip, System.Globalization.CultureInfo.InvariantCulture)));

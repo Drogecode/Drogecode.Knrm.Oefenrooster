@@ -10,30 +10,6 @@ public class CustomerControllerTests : BaseTest
     }
 
     [Fact]
-    public async Task LinkUserToCustomerTest()
-    {
-        var body = new LinkUserToCustomerRequest()
-        {
-            CustomerId = Tester.SecondaryCustomerId,
-            UserId = Tester.DefaultUserId,
-            IsActive = true,
-            CreateNew = true,
-        };
-        var result = await Tester.CustomerController.LinkUserToCustomer(body);
-        Assert.NotNull(result?.Value);
-        Assert.True(result.Value.Success);
-        Assert.NotNull(result.Value.NewUserId);
-        
-        var defaultUser = await Tester.UserController.GetById(Tester.DefaultUserId);
-        Assert.NotNull(defaultUser?.Value?.User?.Name);
-        var newUser = await Tester.UserController.GetById(result.Value.NewUserId.Value);
-        Assert.NotNull(newUser?.Value);
-        Assert.True(newUser.Value.Success);
-        newUser.Value.User.Should().NotBeNull();
-        newUser.Value.User.Name.Should().Be(defaultUser.Value.User.Name);
-    }
-
-    [Fact]
     public async Task GetAllCustomerTest()
     {
         var result = await Tester.CustomerController.GetAllCustomers();
@@ -46,14 +22,54 @@ public class CustomerControllerTests : BaseTest
     }
 
     [Fact]
+    public async Task GetCustomerByIdTest()
+    {
+        var result = await Tester.CustomerController.GetCustomerById(new GetCustomerRequest()
+        {
+            CustomerId = Tester.DefaultCustomerId,
+        });
+        Assert.NotNull(result?.Value?.Customer);
+        Assert.True(result.Value.Success);
+        result.Value.Customer.Name.Should().Be("xUnit customer");
+    }
+
+    [Fact]
     public async Task PutNewCustomerTest()
     {
+        const string customerName = "xUnit";
         var body = new Customer
         {
-            Name = "xUnit",
+            Name = customerName,
         };
         var result = await Tester.CustomerController.PutNewCustomer(body);
         Assert.NotNull(result?.Value?.NewId);
         Assert.True(result.Value.Success);
+        var resultGet = await Tester.CustomerController.GetCustomerById(new GetCustomerRequest()
+        {
+            CustomerId = result.Value.NewId.Value,
+        });
+        Assert.NotNull(resultGet?.Value?.Customer);
+        Assert.True(resultGet.Value.Success);
+        resultGet.Value.Customer.Name.Should().Be(customerName);
+    }
+
+    [Fact]
+    public async Task PatchCustomerTest()
+    {
+        const string newName = "Patched customer";
+        var old = (await Tester.CustomerController.GetCustomerById(new GetCustomerRequest()
+        {
+            CustomerId = Tester.DefaultCustomerId,
+        }))!.Value!.Customer;
+        old!.Name = newName;
+        var patchedResult = await Tester.CustomerController.PatchCustomer(old);
+        Assert.NotNull(patchedResult?.Value);
+        Assert.True(patchedResult.Value.Success);
+        var newVersion = (await Tester.CustomerController.GetCustomerById(new GetCustomerRequest()
+        {
+            CustomerId = Tester.DefaultCustomerId,
+        }))!.Value!.Customer;
+        Assert.NotNull(newVersion);
+        newVersion!.Name.Should().Be(newName);
     }
 }

@@ -19,7 +19,7 @@ public sealed partial class ReadMoreChip
         };
         var options = new DialogOptions()
         {
-            MaxWidth = MudBlazor.MaxWidth.Large,
+            MaxWidth = MaxWidth.Large,
             CloseButton = true,
             FullWidth = true
         };

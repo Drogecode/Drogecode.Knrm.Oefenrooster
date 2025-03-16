@@ -1,12 +1,25 @@
 ﻿@page "/configuration/customers"
 @attribute [Authorize(Roles = AccessesNames.AUTH_super_user)]
 
-@if (_customers?.Customers is not null)
+<PageTitle>@L["Customers"]</PageTitle>
+<MudPaper Elevation="0" Class="p-2">
+@if (_customers is not null)
 {
-    <MudList T="string">
-    @foreach (var customer in _customers.Customers)
-    {
-        <MudListItem>@customer.Name</MudListItem>
-    }
-    </MudList>
+    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="() => {return OpenCustomerDialog(null, true); }">@L["Add new customer"]</MudButton>
+
+    <MudDataGrid Items="@_customers.Customers?.OrderBy(x => x.Name)" ReadOnly="true" Filterable="false" SortMode="@SortMode.None">
+        <Columns>
+            <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
+            <TemplateColumn>
+                <CellTemplate>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => { OpenCustomerDialog(context.Item, false); })"/>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
 }
+else
+{
+    <DrogeLoading />
+}
+</MudPaper>

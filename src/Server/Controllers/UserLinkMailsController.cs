@@ -11,14 +11,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [ApiExplorerSettings(GroupName = "UserLinkedMails")]
-public class UserLinkedMailsController : ControllerBase
+public class UserLinkMailsController : ControllerBase
 {
-    private readonly ILogger<UserLinkedMailsController> _logger;
+    private readonly ILogger<UserLinkMailsController> _logger;
     private readonly IUserLinkedMailsService _userLinkedMailsService;
     private readonly IAuditService _auditService;
     private readonly IGraphService _graphService;
 
-    public UserLinkedMailsController(ILogger<UserLinkedMailsController> logger, IUserLinkedMailsService userLinkedMailsService, IAuditService auditService, IGraphService graphService)
+    public UserLinkMailsController(ILogger<UserLinkMailsController> logger, IUserLinkedMailsService userLinkedMailsService, IAuditService auditService, IGraphService graphService)
     {
         _logger = logger;
         _userLinkedMailsService = userLinkedMailsService;

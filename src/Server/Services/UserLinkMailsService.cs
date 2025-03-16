@@ -6,12 +6,12 @@ using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
-public class UserLinkedMailsService : IUserLinkedMailsService
+public class UserLinkMailsService : IUserLinkedMailsService
 {
-    private readonly ILogger<UserLinkedMailsService> _logger;
-    private readonly Database.DataContext _database;
+    private readonly ILogger<UserLinkMailsService> _logger;
+    private readonly DataContext _database;
 
-    public UserLinkedMailsService(ILogger<UserLinkedMailsService> logger, Database.DataContext database)
+    public UserLinkMailsService(ILogger<UserLinkMailsService> logger, DataContext database)
     {
         _logger = logger;
         _database = database;

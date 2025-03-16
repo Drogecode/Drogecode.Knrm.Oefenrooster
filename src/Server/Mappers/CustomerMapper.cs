@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Customer;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
 

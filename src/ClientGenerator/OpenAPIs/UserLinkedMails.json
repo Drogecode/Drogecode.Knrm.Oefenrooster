@@ -5,10 +5,10 @@
     "version": "v1"
   },
   "paths": {
-    "/api/UserLinkedMails": {
+    "/api/UserLinkMails": {
       "put": {
         "tags": [
-          "UserLinkedMails"
+          "UserLinkMails"
         ],
         "operationId": "PutUserLinkedMail",
         "requestBody": {
@@ -55,7 +55,7 @@
       },
       "patch": {
         "tags": [
-          "UserLinkedMails"
+          "UserLinkMails"
         ],
         "operationId": "PatchUserLinkedMail",
         "requestBody": {
@@ -101,10 +101,10 @@
         }
       }
     },
-    "/api/UserLinkedMails/validate": {
+    "/api/UserLinkMails/validate": {
       "patch": {
         "tags": [
-          "UserLinkedMails"
+          "UserLinkMails"
         ],
         "operationId": "ValidateUserLinkedActivateKey",
         "requestBody": {
@@ -150,10 +150,10 @@
         }
       }
     },
-    "/api/UserLinkedMails/is-enabled": {
+    "/api/UserLinkMails/is-enabled": {
       "patch": {
         "tags": [
-          "UserLinkedMails"
+          "UserLinkMails"
         ],
         "operationId": "IsEnabledChanged",
         "requestBody": {
@@ -199,10 +199,10 @@
         }
       }
     },
-    "/api/UserLinkedMails/{take}/{skip}": {
+    "/api/UserLinkMails/{take}/{skip}": {
       "get": {
         "tags": [
-          "UserLinkedMails"
+          "UserLinkMails"
         ],
         "operationId": "AllUserLinkedMail",
         "parameters": [

@@ -1,4 +1,4 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Customer;
+﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
 
 public class LinkedCustomer
 {
