@@ -36,7 +36,7 @@ public class CustomerController : DrogeController
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in GetAllCustomers");
+            Logger.LogError(ex, "Exception in GetAllCustomers");
             return BadRequest();
         }
     }
@@ -56,7 +56,7 @@ public class CustomerController : DrogeController
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in GetCustomerById");
+            Logger.LogError(ex, "Exception in GetCustomerById");
             return BadRequest();
         }
     }
@@ -76,7 +76,7 @@ public class CustomerController : DrogeController
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in PutNewCustomer");
+            Logger.LogError(ex, "Exception in PutNewCustomer");
             return BadRequest();
         }
     }
@@ -96,7 +96,7 @@ public class CustomerController : DrogeController
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in PatchCustomer");
+            Logger.LogError(ex, "Exception in PatchCustomer");
             return BadRequest();
         }
     }

@@ -2,7 +2,9 @@
 using Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Setting;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User;
@@ -25,7 +27,7 @@ public sealed partial class Profile : IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        _settingTrainingToCalendar = await UserSettingsClient.GetTrainingToCalendarAsync();
+        _settingTrainingToCalendar = (await UserSettingsClient.GetBoolSettingAsync(SettingName.TrainingToCalendar)).Value;
         _updateDetails = await ConfigurationRepository.NewVersionAvailable();
     }
 
@@ -46,7 +48,7 @@ public sealed partial class Profile : IDisposable
     private async Task PatchTrainingToCalendar(bool isChecked)
     {
         _settingTrainingToCalendar = isChecked;
-        await UserSettingsClient.PatchTrainingToCalendarAsync(isChecked);
+        await UserSettingsClient.PatchBoolSettingAsync(new PatchSettingBoolRequest(SettingName.TrainingToCalendar, isChecked));
     }
 
     private async Task OpenActivationDialog(Guid emailId)

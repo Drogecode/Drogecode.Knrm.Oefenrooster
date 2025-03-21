@@ -21,14 +21,15 @@ public class SettingServiceTests : BaseTest
     [Fact]
     public async Task TrainingToCalendarTest()
     {
-        var value = await _userSettingService.TrainingToCalendar(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId);
-        Assert.False(value);
-        await _customerSettingService.PatchBoolSetting(DefaultSettingsHelper.KnrmHuizenId, SettingName.TrainingToCalendar, true); value = await _userSettingService.TrainingToCalendar(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId);
-        Assert.True(value);
-        await _userSettingService.Patch_TrainingToCalendar(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId, false);
-        value = await _userSettingService.TrainingToCalendar(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId);
-        Assert.False(value);
-        value = (await _customerSettingService.GetBoolCustomerSetting(DefaultSettingsHelper.KnrmHuizenId, SettingName.TrainingToCalendar)).Value;
-        Assert.True(value);
+        var value = await _userSettingService.GetBoolUserSetting(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId, SettingName.TrainingToCalendar);
+        Assert.False(value.Value);
+        await _customerSettingService.PatchBoolSetting(DefaultSettingsHelper.KnrmHuizenId, SettingName.TrainingToCalendar, true); 
+        value = await _userSettingService.GetBoolUserSetting(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId, SettingName.TrainingToCalendar);
+        Assert.True(value.Value);
+        await _userSettingService.PatchBoolSetting(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId, SettingName.TrainingToCalendar, false);
+        value = await _userSettingService.GetBoolUserSetting(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId, SettingName.TrainingToCalendar);
+        Assert.False(value.Value);
+        value = (await _customerSettingService.GetBoolCustomerSetting(DefaultSettingsHelper.KnrmHuizenId, SettingName.TrainingToCalendar));
+        Assert.True(value.Value);
     }
 }

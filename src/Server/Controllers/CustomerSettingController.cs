@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Diagnostics;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -13,19 +14,18 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [ApiExplorerSettings(GroupName = "CustomerSettings")]
-public class CustomerSettingController : ControllerBase
+public class CustomerSettingController : DrogeController
 {
-    private readonly ILogger<CustomerSettingController> _logger;
     private readonly ICustomerSettingService _customerSettingService;
 
-    public CustomerSettingController(ILogger<CustomerSettingController> logger, ICustomerSettingService customerSettingService)
+    public CustomerSettingController(ILogger<CustomerSettingController> logger, ICustomerSettingService customerSettingService) : base(logger)
     {
-        _logger = logger;
         _customerSettingService = customerSettingService;
     }
 
     [HttpGet]
-    [Route("training-string/{name}")]
+    [Route("string/{name}", Order = 0)]
+    [Route("training-string/{name}", Order = 1)] // ToDo Remove when all users on v0.5.12 or above
     public async Task<ActionResult<SettingStringResponse>> GetStringSetting(SettingName name, CancellationToken token = default)
     {
         try
@@ -55,13 +55,14 @@ public class CustomerSettingController : ControllerBase
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in GetTrainingToCalendar");
+            Logger.LogError(ex, "Exception in GetStringSetting");
             return BadRequest();
         }
     }
 
     [HttpGet]
-    [Route("training-bool/{name}")]
+    [Route("bool/{name}", Order = 0)]
+    [Route("training-bool/{name}", Order = 1)] // ToDo Remove when all users on v0.5.12 or above
     public async Task<ActionResult<SettingBoolResponse>> GetBoolSetting(SettingName name, CancellationToken token = default)
     {
         try
@@ -84,13 +85,13 @@ public class CustomerSettingController : ControllerBase
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in GetTrainingToCalendar");
+            Logger.LogError(ex, "Exception in GetBoolSetting");
             return BadRequest();
         }
     }
 
     [HttpPatch]
-    [Route("training-string")]
+    [Route("string")]
     [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
     public async Task<ActionResult> PatchStringSetting([FromBody] PatchSettingStringRequest body, CancellationToken token = default)
     {
@@ -105,13 +106,13 @@ public class CustomerSettingController : ControllerBase
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in PatchTrainingToCalendar");
+            Logger.LogError(ex, "Exception in PatchStringSetting");
             return BadRequest();
         }
     }
 
     [HttpPatch]
-    [Route("training-bool")]
+    [Route("bool")]
     [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
     public async Task<ActionResult> PatchBoolSetting([FromBody] PatchSettingBoolRequest body, CancellationToken token = default)
     {
@@ -126,7 +127,7 @@ public class CustomerSettingController : ControllerBase
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in PatchTrainingToCalendar");
+            Logger.LogError(ex, "Exception in PatchBoolSetting");
             return BadRequest();
         }
     }

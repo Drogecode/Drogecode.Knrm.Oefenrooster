@@ -64,7 +64,7 @@ public class AuthenticationController : DrogeController
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "GetLoginSecrets");
+            Logger.LogError(e, "GetLoginSecrets");
             return BadRequest();
         }
     }
@@ -77,10 +77,10 @@ public class AuthenticationController : DrogeController
         switch (identityProvider)
         {
             case IdentityProvider.Azure:
-                _authService = new AuthenticationAzureService(_logger, _memoryCache, _configuration, _httpClient, _database);
+                _authService = new AuthenticationAzureService(Logger, _memoryCache, _configuration, _httpClient, _database);
                 break;
             case IdentityProvider.KeyCloak:
-                _authService = new AuthenticationKeyCloakService(_logger, _memoryCache, _configuration, _httpClient, _database);
+                _authService = new AuthenticationKeyCloakService(Logger, _memoryCache, _configuration, _httpClient, _database);
                 break;
             case IdentityProvider.None:
             default:
@@ -99,7 +99,7 @@ public class AuthenticationController : DrogeController
             var found = _memoryCache.Get<CacheLoginSecrets>(body.State);
             if (found?.Success is not true || found.CodeVerifier is null)
             {
-                _logger.LogWarning("found?.success = `{false}` || found?.CodeVerifier = `{null}`", found?.Success is not true, found?.CodeVerifier is null);
+                Logger.LogWarning("found?.success = `{false}` || found?.CodeVerifier = `{null}`", found?.Success is not true, found?.CodeVerifier is null);
                 return false;
             }
 
@@ -115,7 +115,7 @@ public class AuthenticationController : DrogeController
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "AuthenticateUser POST");
+            Logger.LogError(e, "AuthenticateUser POST");
             return false;
         }
     }
@@ -128,7 +128,7 @@ public class AuthenticationController : DrogeController
         {
             if (User?.Identity?.IsAuthenticated == true && !User.IsInRole(AccessesNames.AUTH_External))
             {
-                _logger.LogInformation("AuthenticateExternal request, but user is already authenticated");
+                Logger.LogInformation("AuthenticateExternal request, but user is already authenticated");
                 return false;
             }
 
@@ -162,7 +162,7 @@ public class AuthenticationController : DrogeController
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "AuthenticateExternal");
+            Logger.LogError(e, "AuthenticateExternal");
             return false;
         }
     }
@@ -182,26 +182,26 @@ public class AuthenticationController : DrogeController
         {
             if (!_configuration.GetValue<bool>("Drogecode:DirectLogin"))
             {
-                _logger.LogWarning("Drogecode:DirectLogin is not enabled");
+                Logger.LogWarning("Drogecode:DirectLogin is not enabled");
                 return false;
             }
 
             if (User?.Identity?.IsAuthenticated == true && !User.IsInRole(AccessesNames.AUTH_External))
             {
-                _logger.LogInformation("AuthenticateDirect request, but user is already authenticated");
+                Logger.LogInformation("AuthenticateDirect request, but user is already authenticated");
                 return false;
             }
 
             var user = await _userService.GetUserByNameForServer(body.Name, clt);
             if (user is null)
             {
-                _logger.LogInformation("No user found with name {name}", body.Name?.CleanStringForLogging());
+                Logger.LogInformation("No user found with name {name}", body.Name?.CleanStringForLogging());
                 return false;
             }
 
             if (user.HashedPassword is null || body.Password is null)
             {
-                _logger.LogInformation("No password `{hashed}` '{fromBody}' found ", user.HashedPassword is null, body.Password is null);
+                Logger.LogInformation("No password `{hashed}` '{fromBody}' found ", user.HashedPassword is null, body.Password is null);
                 return false;
             }
 
@@ -210,7 +210,7 @@ public class AuthenticationController : DrogeController
             var passwordCorrect = await authService.ValidatePassword(body.Password, user.HashedPassword, clt);
             if (!passwordCorrect)
             {
-                _logger.LogInformation("Wrong password for user {name}", body.Name?.CleanStringForLogging());
+                Logger.LogInformation("Wrong password for user {name}", body.Name?.CleanStringForLogging());
                 return false;
             }
 
@@ -241,7 +241,7 @@ public class AuthenticationController : DrogeController
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "AuthenticateExternal");
+            Logger.LogError(e, "AuthenticateExternal");
             return false;
         }
     }
@@ -278,7 +278,7 @@ public class AuthenticationController : DrogeController
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "CurrentUserInfo");
+            Logger.LogError(e, "CurrentUserInfo");
             return BadRequest();
         }
     }
@@ -301,13 +301,13 @@ public class AuthenticationController : DrogeController
         {
             if (User?.Identity?.IsAuthenticated != true)
             {
-                _logger.LogInformation("Refresh request, but user is not authenticated");
+                Logger.LogInformation("Refresh request, but user is not authenticated");
                 return false;
             }
 
             if (User.IsInRole(AccessesNames.AUTH_External))
             {
-                _logger.LogInformation("Refresh request for external user, but external will expire");
+                Logger.LogInformation("Refresh request for external user, but external will expire");
                 await HttpContext.SignOutAsync();
                 return false;
             }
@@ -318,7 +318,7 @@ public class AuthenticationController : DrogeController
             var oldRefreshToken = User?.FindFirstValue(REFRESHTOKEN);
             if (oldRefreshToken == null)
             {
-                _logger.LogInformation("Refresh request, but old refresh token is null for user `{userId}` in customer `{customerId}`", userId, customerId);
+                Logger.LogInformation("Refresh request, but old refresh token is null for user `{userId}` in customer `{customerId}`", userId, customerId);
                 await HttpContext.SignOutAsync();
                 return false;
             }
@@ -327,18 +327,18 @@ public class AuthenticationController : DrogeController
             var supResult = await authService.Refresh(oldRefreshToken, clt);
             if (supResult.Success is not true || supResult.JwtSecurityToken is null)
             {
-                _logger.LogInformation("Refresh request, but refresh failed for user `{userId}` in customer `{customerId}`", userId, customerId);
+                Logger.LogInformation("Refresh request, but refresh failed for user `{userId}` in customer `{customerId}`", userId, customerId);
                 await HttpContext.SignOutAsync();
                 return false;
             }
 
-            _logger.LogInformation("Refresh for user `{userId}` in customer `{customerId}` successful", userId, customerId);
+            Logger.LogInformation("Refresh for user `{userId}` in customer `{customerId}` successful", userId, customerId);
             await SetUser(supResult, false, "refresh", clt);
             return true;
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Refresh");
+            Logger.LogError(e, "Refresh");
             await HttpContext.SignOutAsync();
             return false;
         }
@@ -425,7 +425,7 @@ public class AuthenticationController : DrogeController
         var user = await _customerSettingService.GetByTenantId(tenantId, clt);
         if (user is null)
         {
-            _logger.LogWarning("Failed to get or set user by external id");
+            Logger.LogWarning("Failed to get or set user by external id");
             throw new UnauthorizedAccessException();
         }
 
@@ -437,7 +437,7 @@ public class AuthenticationController : DrogeController
         var user = await _userService.GetOrSetUserById(null, externalUserId, userName, userEmail, customerId, true, clt);
         if (user is null)
         {
-            _logger.LogWarning("Failed to get or set user by external id");
+            Logger.LogWarning("Failed to get or set user by external id");
             throw new UnauthorizedAccessException();
         }
 

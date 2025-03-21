@@ -277,11 +277,11 @@ public class DayItemController : ControllerBase
             return;
         if (roosterItemDay.DateEnd is null)
             roosterItemDay.DateEnd = roosterItemDay.DateStart;
-        if (assigned && await _userSettingService.TrainingToCalendar(customerId, user.UserId))
+        if (assigned && (await _userSettingService.GetBoolUserSetting(customerId, user.UserId, SettingName.TrainingToCalendar)).Value)
         {
             var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(10, 0, user.UserId, customerId, clt)).UserLinkedMails ?? [];
-            var preText = await _userSettingService.TrainingCalenderPrefix(customerId, user.UserId);
-            var text = preText + roosterItemDay.Text;
+            var preText = await _userSettingService.GetStringUserSetting(customerId, user.UserId, SettingName.CalendarPrefix);
+            var text = preText.Value + roosterItemDay.Text;
             _graphService.InitializeGraph();
             if (string.IsNullOrEmpty(user.CalendarEventId))
             {

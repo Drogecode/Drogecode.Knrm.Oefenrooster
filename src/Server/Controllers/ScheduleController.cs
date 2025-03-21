@@ -229,11 +229,11 @@ public class ScheduleController : ControllerBase
                 {
                     var drogeUser = await _userService.GetUserById(user.UserId, clt);
                     if (drogeUser is null) throw new DrogeCodeNullException("No user found");
-                    var preText = await _userSettingService.TrainingCalenderPrefix(customerId, drogeUser.Id);
+                    var preText = await _userSettingService.GetStringUserSetting(customerId, drogeUser.Id, SettingName.CalendarPrefix);
                     DrogeFunction? function = null;
                     if (user.PlannedFunctionId is not null && user.UserFunctionId is not null && user.UserFunctionId != user.PlannedFunctionId)
                         function = await _functionService.GetById(customerId, user.PlannedFunctionId.Value, clt);
-                    var text = GetTrainingCalenderText(training.Training.TrainingTypeName, training.Training.Name, function?.Name, preText);
+                    var text = GetTrainingCalenderText(training.Training.TrainingTypeName, training.Training.Name, function?.Name, preText.Value);
                     var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(10, 0, user.UserId, customerId, clt)).UserLinkedMails ?? [];
                     await _graphService.PatchCalender(drogeUser.ExternalId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime,
                         allUserLinkedMail);
@@ -583,7 +583,7 @@ public class ScheduleController : ControllerBase
         try
         {
             await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(customerId, currentUserId, clt);
-            if (assigned && await _userSettingService.TrainingToCalendar(customerId, planUserId))
+            if (assigned && (await _userSettingService.GetBoolUserSetting(customerId, planUserId, SettingName.TrainingToCalendar)).Value)
             {
 #if DEBUG
                 // Be carefully when debugging.
@@ -592,8 +592,8 @@ public class ScheduleController : ControllerBase
                 if (training is null && trainingId is not null)
                     training = (await _scheduleService.GetTrainingById(planUserId, customerId, trainingId.Value, clt)).Training;
                 var type = await _trainingTypesService.GetById(training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
-                var preText = await _userSettingService.TrainingCalenderPrefix(customerId, planUserId);
-                var text = GetTrainingCalenderText(type.TrainingType?.Name, training?.Name, functionName, preText);
+                    var preText = await _userSettingService.GetStringUserSetting(customerId, planUserId, SettingName.CalendarPrefix);
+                var text = GetTrainingCalenderText(type.TrainingType?.Name, training?.Name, functionName, preText.Value);
                 if (training is null)
                 {
                     _logger.LogWarning("Failed to set a training for trainingId {trainingId}", trainingId);

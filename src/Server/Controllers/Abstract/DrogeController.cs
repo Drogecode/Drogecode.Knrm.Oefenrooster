@@ -8,11 +8,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
 [Controller]
 public abstract class DrogeController : ControllerBase
 {
-    internal readonly ILogger _logger;
+    internal readonly ILogger Logger;
 
     protected DrogeController(ILogger logger)
     {
-        _logger = logger;
+        Logger = logger;
     }
 
     internal string GetRequesterIp()
@@ -31,7 +31,7 @@ public abstract class DrogeController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception while GetRequesterIp");
+            Logger.LogError(ex, "Exception while GetRequesterIp");
             return "Exception";
         }
     }

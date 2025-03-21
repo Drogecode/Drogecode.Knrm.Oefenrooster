@@ -39,7 +39,7 @@ public class UserLinkCustomerController : DrogeController
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in GetAllLinkUserCustomers");
+            Logger.LogError(ex, "Exception in GetAllLinkUserCustomers");
             return BadRequest();
         }
     }
@@ -61,7 +61,7 @@ public class UserLinkCustomerController : DrogeController
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in GetAllLinkUserCustomers");
+            Logger.LogError(ex, "Exception in GetAllLinkUserCustomers");
             return BadRequest();
         }
     }

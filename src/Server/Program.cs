@@ -23,6 +23,11 @@ using Microsoft.AspNetCore.RateLimiting;
 var builder = WebApplication.CreateBuilder(args);
 Console.WriteLine("Start oefenrooster");
 
+builder.Host.UseDefaultServiceProvider(options =>
+{
+    options.ValidateScopes = true;
+});
+
 // Add services to the container.
 builder.Configuration
     .SetBasePath(builder.Environment.ContentRootPath)

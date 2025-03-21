@@ -43,7 +43,7 @@ try
 
     var userId = opstapper?.Users.FirstOrDefault(x => x.FullName == "HUI Taco Droogers")?.UserID ?? -1;
     
-    await preComClient.TestGetA(userId, userGroups[0].GroupID, DateTime.Today, DateTime.Today.AddDays(7));
+    //await preComClient.TestGetA(userId, userGroups[0].GroupID, DateTime.Today, DateTime.Today.AddDays(7));
     //await preComClient.TestGetB(userGroups[0].GroupID, DateTime.Today, DateTime.Today.AddDays(3));
     //await preComClient.TestGetC(DateTime.Today, DateTime.Today.AddDays(3));
 }

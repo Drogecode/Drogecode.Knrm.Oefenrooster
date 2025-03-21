@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Diagnostics;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Setting;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -12,26 +14,32 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [ApiExplorerSettings(GroupName = "UserSettings")]
-public class UserSettingController : ControllerBase
+public class UserSettingController : DrogeController
 {
-    private readonly ILogger<CustomerSettingController> _logger;
     private readonly IUserSettingService _userSettingService;
 
-    public UserSettingController(ILogger<CustomerSettingController> logger, IUserSettingService userSettingService)
+    public UserSettingController(ILogger<CustomerSettingController> logger, IUserSettingService userSettingService) : base(logger)
     {
-        _logger = logger;
         _userSettingService = userSettingService;
     }
 
     [HttpGet]
-    [Route("training-to-calendar")]
-    public async Task<ActionResult<bool>> GetTrainingToCalendar(CancellationToken token = default)
+    [Route("string/{name}")]
+    public async Task<ActionResult<SettingStringResponse>> GetStringSetting(SettingName name, CancellationToken token = default)
     {
         try
         {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            bool result = await _userSettingService.TrainingToCalendar(customerId, userId);
+            SettingStringResponse result;
+            switch (name)
+            {
+                case SettingName.CalendarPrefix:
+                    result = await _userSettingService.GetStringUserSetting(customerId, userId, name);
+                    break;
+                default:
+                    return BadRequest("Not bool");
+            }
 
             return result;
         }
@@ -40,21 +48,51 @@ public class UserSettingController : ControllerBase
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in GetTrainingToCalendar");
+            Logger.LogError(ex, "Exception in GetStringSetting");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("bool/{name}")]
+    public async Task<ActionResult<SettingBoolResponse>> GetBoolSetting(SettingName name, CancellationToken token = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            SettingBoolResponse result;
+            switch (name)
+            {
+                case SettingName.TrainingToCalendar:
+                    result = await _userSettingService.GetBoolUserSetting(customerId, userId, name);
+                    break;
+                default:
+                    return BadRequest("Not bool");
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            Logger.LogError(ex, "Exception in GetBoolSetting");
             return BadRequest();
         }
     }
 
     [HttpPatch]
-    [Route("training-to-calendar")]
-    [Authorize(Roles = AccessesNames.AUTH_super_user)]
-    public async Task<ActionResult> PatchTrainingToCalendar(bool newValue, CancellationToken token = default)
+    [Route("string")]
+    [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
+    public async Task<ActionResult> PatchStringSetting([FromBody] PatchSettingStringRequest body, CancellationToken token = default)
     {
         try
         {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            await _userSettingService.Patch_TrainingToCalendar(customerId, userId, newValue);
+            await _userSettingService.PatchStringSetting(customerId, userId, body.Name, body.Value);
             return Ok();
         }
         catch (Exception ex)
@@ -62,7 +100,29 @@ public class UserSettingController : ControllerBase
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in PatchTrainingToCalendar");
+            Logger.LogError(ex, "Exception in PatchStringSetting");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
+    [Route("bool")]
+    [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
+    public async Task<ActionResult> PatchBoolSetting([FromBody] PatchSettingBoolRequest body, CancellationToken token = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            await _userSettingService.PatchBoolSetting(customerId, userId, body.Name, body.Value);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            Logger.LogError(ex, "Exception in PatchBoolSetting");
             return BadRequest();
         }
     }

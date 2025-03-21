@@ -1,10 +1,50 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": {
     "title": "CustomerSettings",
     "version": "v1"
   },
   "paths": {
+    "/api/CustomerSetting/string/{name}": {
+      "get": {
+        "tags": [
+          "CustomerSetting"
+        ],
+        "operationId": "GetStringSetting",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SettingName"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingStringResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingStringResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingStringResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/CustomerSetting/training-string/{name}": {
       "get": {
         "tags": [
@@ -38,6 +78,46 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SettingStringResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CustomerSetting/bool/{name}": {
+      "get": {
+        "tags": [
+          "CustomerSetting"
+        ],
+        "operationId": "GetBoolSetting",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SettingName"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingBoolResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingBoolResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingBoolResponse"
                 }
               }
             }
@@ -85,7 +165,7 @@
         }
       }
     },
-    "/api/CustomerSetting/training-string": {
+    "/api/CustomerSetting/string": {
       "patch": {
         "tags": [
           "CustomerSetting"
@@ -117,7 +197,7 @@
         }
       }
     },
-    "/api/CustomerSetting/training-bool": {
+    "/api/CustomerSetting/bool": {
       "patch": {
         "tags": [
           "CustomerSetting"

@@ -55,7 +55,7 @@ public class PreComController : DrogeController
     {
         try
         {
-            _logger.LogInformation("received PreCom message");
+            Logger.LogInformation("received PreCom message");
             var ip = GetRequesterIp();
             try
             {
@@ -76,16 +76,16 @@ public class PreComController : DrogeController
                                 if (Uri.IsWellFormedUriString(forward.ForwardUrl, UriKind.Absolute))
                                 {
                                     await client.PostAsJsonAsync(forward.ForwardUrl, body, clt);
-                                    _logger.LogInformation("Forwarded request to `{Uri}`", forward.ForwardUrl.Replace(Environment.NewLine, ""));
+                                    Logger.LogInformation("Forwarded request to `{Uri}`", forward.ForwardUrl.Replace(Environment.NewLine, ""));
                                 }
                                 else
                                 {
-                                    _logger.LogWarning("Forward uri `{Uri}` not correct formatted", forward.ForwardUrl?.Replace(Environment.NewLine, ""));
+                                    Logger.LogWarning("Forward uri `{Uri}` not correct formatted", forward.ForwardUrl?.Replace(Environment.NewLine, ""));
                                 }
                             }
                             catch (Exception ex)
                             {
-                                _logger.LogError(ex, "Error in PreComController WebHook forward `{sendToHub}`", sendToHub);
+                                Logger.LogError(ex, "Error in PreComController WebHook forward `{sendToHub}`", sendToHub);
                             }
                         }
                     }
@@ -93,7 +93,7 @@ public class PreComController : DrogeController
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in PreComController WebHook `{sendToHub}`", sendToHub);
+                Logger.LogError(ex, "Error in PreComController WebHook `{sendToHub}`", sendToHub);
                 _preComService.WriteAlertToDb(userId, customerId, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body), ip);
                 if (sendToHub)
                     await _preComHub.SendMessage(userId, "PreCom", "piep piep");
@@ -106,7 +106,7 @@ public class PreComController : DrogeController
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in PreCom WebHook");
+            Logger.LogError(ex, "Exception in PreCom WebHook");
             return BadRequest("Exception in PreCom WebHook");
         }
     }
@@ -127,7 +127,7 @@ public class PreComController : DrogeController
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in AllAlerts");
+            Logger.LogError(ex, "Exception in AllAlerts");
             return BadRequest();
         }
     }
@@ -148,7 +148,7 @@ public class PreComController : DrogeController
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in PutItem");
+            Logger.LogError(ex, "Exception in PutItem");
             return BadRequest();
         }
     }
@@ -169,7 +169,7 @@ public class PreComController : DrogeController
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in PutItem");
+            Logger.LogError(ex, "Exception in PutItem");
             return BadRequest();
         }
     }
@@ -190,7 +190,7 @@ public class PreComController : DrogeController
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in AllForwards");
+            Logger.LogError(ex, "Exception in AllForwards");
             return BadRequest();
         }
     }
@@ -212,7 +212,7 @@ public class PreComController : DrogeController
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in AllForwards");
+            Logger.LogError(ex, "Exception in AllForwards");
             return BadRequest();
         }
     }
@@ -253,7 +253,7 @@ public class PreComController : DrogeController
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in AllForwards");
+            Logger.LogError(ex, "Exception in AllForwards");
             return BadRequest();
         }
     }
@@ -268,30 +268,30 @@ public class PreComController : DrogeController
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             await _auditService.Log(userId, AuditType.PreComProblems, customerId, nextRunMode.ToString());
-            var preComClient = new PreComClient(_httpClient, "drogecode", _logger);
+            var preComClient = new PreComClient(_httpClient, "drogecode", Logger);
             var preComUser = _configuration.GetValue<string>("PreCom:User");
             var preComPassword = _configuration.GetValue<string>("PreCom:Password");
             var whatsAppBearer = _configuration.GetValue<string>("WhatsApp:Bearer");
             if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
             {
-                preComUser = KeyVaultHelper.GetSecret("PreComUser", _logger)?.Value;
-                preComPassword = KeyVaultHelper.GetSecret("PreComPassword", _logger)?.Value;
+                preComUser = KeyVaultHelper.GetSecret("PreComUser", Logger)?.Value;
+                preComPassword = KeyVaultHelper.GetSecret("PreComPassword", Logger)?.Value;
                 if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
                     return BadRequest();
             }
 
             if (false && string.IsNullOrWhiteSpace(whatsAppBearer))
             {
-                whatsAppBearer = KeyVaultHelper.GetSecret("WhatsAppBearer", _logger)?.Value;
+                whatsAppBearer = KeyVaultHelper.GetSecret("WhatsAppBearer", Logger)?.Value;
             }
 
             await preComClient.Login(preComUser, preComPassword);
-            var preComWorker = new PreComWorker(preComClient, _logger, _dateTimeService);
+            var preComWorker = new PreComWorker(preComClient, Logger, _dateTimeService);
             var problems = await preComWorker.Work(nextRunMode);
             if (false && !string.IsNullOrWhiteSpace(whatsAppBearer) && problems.Problems is not null)
             {
                 using var client = _clientFactory.CreateClient();
-                var whatsAppClient = new WhatsAppClient(client, whatsAppBearer, _logger);
+                var whatsAppClient = new WhatsAppClient(client, whatsAppBearer, Logger);
                 await whatsAppClient.SendMessage("", problems.Problems);
             }
 
@@ -299,7 +299,7 @@ public class PreComController : DrogeController
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in GetProblems");
+            Logger.LogError(ex, "Exception in GetProblems");
 #if DEBUG
             Debugger.Break();
             return new GetProblemsResponse() { Problems = ex.Message };

@@ -83,10 +83,10 @@ public class PreComClient : IPreComClient
     public Task<Group> GetAllFunctions(long groupID, DateTime date, CancellationToken cancellationToken = default)
     {
         OnlyDate(date, nameof(date));
-        return Get<Group>($"api/Group/GetAllFunctions?groupID={groupID}&date={date:s}", cancellationToken);
+        return Get<Group>($"api/v2/Group/GetAllFunctions?groupID={groupID}&date={date:s}", cancellationToken);
     }
 
-    public Task TestGetA(int userId, long groupId, DateTime from, DateTime to, CancellationToken cancellationToken = default)
+    /*public Task TestGetA(int userId, long groupId, DateTime from, DateTime to, CancellationToken cancellationToken = default)
     {
         OnlyDate(from, nameof(from));
         OnlyDate(to, nameof(to));
@@ -103,7 +103,7 @@ public class PreComClient : IPreComClient
         OnlyDate(from, nameof(from));
         OnlyDate(to, nameof(to));
         return Get<Group>($"api/User/GetUserSchedulerAppointments?from={from:s}&to={to:s}", cancellationToken);
-    }
+    }*/
 
     public Task<MsgOut[]> GetMessages(string controlID = default, CancellationToken cancellationToken = default)
     {
@@ -144,7 +144,7 @@ public class PreComClient : IPreComClient
 
     private async Task<T> ProcessResponse<T>(string url, HttpResponseMessage response)
     {
-        //var d = await response.Content.ReadAsStringAsync();
+        var d = await response.Content.ReadAsStringAsync();
         
         response.EnsureSuccessStatusCode();
         return await DeserializeResponse<T>(response);
