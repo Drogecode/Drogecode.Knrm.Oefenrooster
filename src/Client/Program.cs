@@ -40,6 +40,7 @@ builder.Services.TryAddScoped<IDefaultScheduleClient, DefaultScheduleClient>();
 builder.Services.TryAddScoped<IFunctionClient, FunctionClient>();
 builder.Services.TryAddScoped<IMenuClient, MenuClient>();
 builder.Services.TryAddScoped<IHolidayClient, HolidayClient>();
+builder.Services.TryAddScoped<ILinkedCustomerClient, LinkedCustomerClient>();
 builder.Services.TryAddScoped<IPreComClient, PreComClient>();
 builder.Services.TryAddScoped<IReportActionSharedClient, ReportActionSharedClient>();
 builder.Services.TryAddScoped<IReportActionClient, ReportActionClient>();

@@ -24,10 +24,7 @@ public class CustomerControllerTests : BaseTest
     [Fact]
     public async Task GetCustomerByIdTest()
     {
-        var result = await Tester.CustomerController.GetCustomerById(new GetCustomerRequest()
-        {
-            CustomerId = Tester.DefaultCustomerId,
-        });
+        var result = await Tester.CustomerController.GetCustomerById(Tester.DefaultCustomerId);
         Assert.NotNull(result?.Value?.Customer);
         Assert.True(result.Value.Success);
         result.Value.Customer.Name.Should().Be("xUnit customer");
@@ -44,10 +41,7 @@ public class CustomerControllerTests : BaseTest
         var result = await Tester.CustomerController.PutNewCustomer(body);
         Assert.NotNull(result?.Value?.NewId);
         Assert.True(result.Value.Success);
-        var resultGet = await Tester.CustomerController.GetCustomerById(new GetCustomerRequest()
-        {
-            CustomerId = result.Value.NewId.Value,
-        });
+        var resultGet = await Tester.CustomerController.GetCustomerById(result.Value.NewId.Value);
         Assert.NotNull(resultGet?.Value?.Customer);
         Assert.True(resultGet.Value.Success);
         resultGet.Value.Customer.Name.Should().Be(customerName);
@@ -57,18 +51,12 @@ public class CustomerControllerTests : BaseTest
     public async Task PatchCustomerTest()
     {
         const string newName = "Patched customer";
-        var old = (await Tester.CustomerController.GetCustomerById(new GetCustomerRequest()
-        {
-            CustomerId = Tester.DefaultCustomerId,
-        }))!.Value!.Customer;
+        var old = (await Tester.CustomerController.GetCustomerById( Tester.DefaultCustomerId))!.Value!.Customer;
         old!.Name = newName;
         var patchedResult = await Tester.CustomerController.PatchCustomer(old);
         Assert.NotNull(patchedResult?.Value);
         Assert.True(patchedResult.Value.Success);
-        var newVersion = (await Tester.CustomerController.GetCustomerById(new GetCustomerRequest()
-        {
-            CustomerId = Tester.DefaultCustomerId,
-        }))!.Value!.Customer;
+        var newVersion = (await Tester.CustomerController.GetCustomerById(Tester.DefaultCustomerId))!.Value!.Customer;
         Assert.NotNull(newVersion);
         newVersion!.Name.Should().Be(newName);
     }

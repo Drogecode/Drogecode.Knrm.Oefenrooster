@@ -8,7 +8,7 @@ public sealed partial class SelectMultipleUsers
 {
     [Inject, NotNull] private IStringLocalizer<SelectMultipleUsers>? L { get; set; }
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; }
-    [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }
+    [Parameter] public List<DrogeFunction>? Functions { get; set; }
     [Parameter] public EventCallback<IEnumerable<DrogeUser>> SelectionChanged { get; set; }
     [Parameter] public bool MultiSelection { get; set; } = true;
     [Parameter] public bool Clearable { get; set; } = true;

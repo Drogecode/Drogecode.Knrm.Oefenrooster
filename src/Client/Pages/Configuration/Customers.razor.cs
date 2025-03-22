@@ -11,6 +11,7 @@ public partial class Customers : IDisposable
     [Inject, NotNull] private IStringLocalizer<Customers>? L { get; set; }
     [Inject, NotNull] private ICustomerClient? CustomerClient { get; set; }
     [Inject, NotNull] private IDialogService? DialogProvider { get; set; }
+    [Inject, NotNull] private NavigationManager? Navigation { get; set; }
 
     private GetAllCustomersResponse? _customers;
     private RefreshModel _refreshModel = new();

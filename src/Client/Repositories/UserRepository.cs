@@ -23,8 +23,17 @@ public class UserRepository
     public async Task<List<DrogeUser>?> GetAllUsersAsync(bool includeHidden, bool forceCache, bool cachedAndReplace, CancellationToken clt)
     {
         var response = await _offlineService.CachedRequestAsync(string.Format(MONTHITEMS, includeHidden),
-            async () => await _userClient.GetAllAsync(includeHidden, cachedAndReplace), 
+            async () => await _userClient.GetAllAsync(includeHidden, cachedAndReplace, clt), 
             new ApiCachedRequest { OneCallPerSession = true, ForceCache = forceCache, CachedAndReplace = cachedAndReplace},
+            clt: clt);
+        return response?.DrogeUsers?.ToList();
+    }
+    
+    public async Task<List<DrogeUser>?> GetAllDifferentCustomerAsync(Guid customerId, bool includeHidden, CancellationToken clt)
+    {
+        var response = await _offlineService.CachedRequestAsync(string.Format(MONTHITEMS, includeHidden),
+            async () => await _userClient.GetAllDifferentCustomerAsync(customerId, includeHidden, clt), 
+            new ApiCachedRequest { OneCallPerSession = false},
             clt: clt);
         return response?.DrogeUsers?.ToList();
     }

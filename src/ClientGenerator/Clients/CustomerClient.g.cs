@@ -40,12 +40,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetCustomerResponse> GetCustomerByIdAsync(GetCustomerRequest body);
+        System.Threading.Tasks.Task<GetCustomerResponse> GetCustomerByIdAsync(System.Guid customerId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetCustomerResponse> GetCustomerByIdAsync(GetCustomerRequest body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetCustomerResponse> GetCustomerByIdAsync(System.Guid customerId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -188,33 +188,33 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetCustomerResponse> GetCustomerByIdAsync(GetCustomerRequest body)
+        public virtual System.Threading.Tasks.Task<GetCustomerResponse> GetCustomerByIdAsync(System.Guid customerId)
         {
-            return GetCustomerByIdAsync(body, System.Threading.CancellationToken.None);
+            return GetCustomerByIdAsync(customerId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetCustomerResponse> GetCustomerByIdAsync(GetCustomerRequest body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetCustomerResponse> GetCustomerByIdAsync(System.Guid customerId, System.Threading.CancellationToken cancellationToken)
         {
+            if (customerId == null)
+                throw new System.ArgumentNullException("customerId");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, JsonSerializerSettings);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("GET");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/Customer"
-                    urlBuilder_.Append("api/Customer");
+                    // Operation Path: "api/Customer/{customerId}"
+                    urlBuilder_.Append("api/Customer/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(customerId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 

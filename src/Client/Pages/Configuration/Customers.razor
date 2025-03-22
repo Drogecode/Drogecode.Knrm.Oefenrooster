@@ -17,6 +17,7 @@
             <TemplateColumn>
                 <CellTemplate>
                     <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => { OpenCustomerDialog(context.Item, false); })"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.Settings" OnClick="@(() => { Navigation.NavigateTo($"/configuration/customer/{context.Item?.Id}"); })"/>
                 </CellTemplate>
             </TemplateColumn>
         </Columns>

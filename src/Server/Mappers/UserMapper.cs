@@ -25,7 +25,7 @@ internal static class UserMapper
             Buddy = dbUsers.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name
         };
 
-        if (includeLastLogin)
+        if (includeHashedPassword)
         {
             user.HashedPassword = dbUsers.HashedPassword;
         }

@@ -20,6 +20,31 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
         _userService = userService;
     }
 
+    public async Task<GetAllUsersWithLinkToCustomerResponse> GetAllUsersWithLinkToCustomer(Guid currentCustomerId, Guid linkedCustomerId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new GetAllUsersWithLinkToCustomerResponse();
+        var links = await Database.LinkUserCustomers
+            .Include(x => x.Customer)
+            .Include(x => x.User)
+            .Include(x => x.LinkedUser)
+            .Where(x => x.CustomerId == linkedCustomerId && x.IsActive && x.User.CustomerId == currentCustomerId)
+            .ToListAsync(clt);
+        result.LinkInfo = [];
+        foreach (var link in links)
+        {
+            result.LinkInfo.Add(new LinkUserCustomerInfo()
+            {
+                DrogeUserCurrent = link.User.ToSharedUser(false,false),
+                DrogeUserOther = link.LinkedUser.ToSharedUser(false,false)
+            });
+        }
+        result.TotalCount = links.Count;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        result.Success = true;
+        return result;
+    }
 
     public async Task<GetAllUserLinkCustomersResponse> GetAllLinkUserCustomers(Guid userId, Guid customerId, CancellationToken clt)
     {

@@ -54,6 +54,55 @@
         }
       }
     },
+    "/api/User/all/customer/{customerId}/{includeHidden}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "GetAllDifferentCustomer",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "includeHidden",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleDrogeUsersResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleDrogeUsersResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleDrogeUsersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/User/me": {
       "get": {
         "tags": [
@@ -458,6 +507,10 @@
           "elapsedMilliseconds": {
             "type": "integer",
             "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
           },
           "drogeUsers": {
             "type": "array",

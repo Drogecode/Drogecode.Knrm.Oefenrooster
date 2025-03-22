@@ -66,6 +66,28 @@ public class UserController : ControllerBase
             return BadRequest();
         }
     }
+    
+    [HttpGet]
+    [Route("all/customer/{customerId:guid}/{includeHidden:bool}")]
+    [Authorize(Roles = AccessesNames.AUTH_super_user)]
+    public async Task<ActionResult<MultipleDrogeUsersResponse>> GetAllDifferentCustomer(Guid customerId, bool includeHidden, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var includeLastLogin = User.IsInRole(AccessesNames.AUTH_super_user);
+            if (includeHidden && includeLastLogin)
+                await _userService.PatchLastOnline(userId, clt);
+            var result = await _userService.GetAllUsers(customerId, includeHidden, includeLastLogin, clt);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetAllDifferentCustomer");
+            return BadRequest();
+        }
+    }
 
     [HttpGet]
     [Route("me")]

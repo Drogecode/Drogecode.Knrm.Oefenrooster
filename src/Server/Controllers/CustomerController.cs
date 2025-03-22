@@ -42,13 +42,13 @@ public class CustomerController : DrogeController
     }
 
     [HttpGet]
-    [Route("")]
+    [Route("{customerId:guid}")]
     [Authorize(Roles = AccessesNames.AUTH_super_user)]
-    public async Task<ActionResult<GetCustomerResponse>> GetCustomerById([FromBody] GetCustomerRequest body, CancellationToken clt = default)
+    public async Task<ActionResult<GetCustomerResponse>> GetCustomerById(Guid customerId, CancellationToken clt = default)
     {
         try
         {
-            var response = await _customerService.GetCustomerById(body, clt);
+            var response = await _customerService.GetCustomerById(customerId, clt);
             return response;
         }
         catch (Exception ex)

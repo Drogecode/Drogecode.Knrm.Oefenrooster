@@ -33,12 +33,12 @@ public class CustomerService : DrogeService, ICustomerService
         return result;
     }
 
-    public async Task<GetCustomerResponse> GetCustomerById(GetCustomerRequest body, CancellationToken clt)
+    public async Task<GetCustomerResponse> GetCustomerById(Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new GetCustomerResponse
         {
-            Customer = await Database.Customers.Where(x => x.Id == body.CustomerId).Select(x => x.ToCustomer()).FirstOrDefaultAsync(clt)
+            Customer = await Database.Customers.Where(x => x.Id == customerId).Select(x => x.ToCustomer()).FirstOrDefaultAsync(clt)
         };
         result.Success = result.Customer is not null;
         sw.Stop();

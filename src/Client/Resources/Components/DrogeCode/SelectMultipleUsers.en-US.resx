@@ -120,4 +120,7 @@
   <data name="From who" xml:space="preserve">
     <value>From who</value>
   </data>
+  <data name="Function not found" xml:space="preserve">
+    <value>Function not found</value>
+  </data>
 </root>

@@ -1,0 +1,19 @@
+﻿@page "/configuration/customer/{Id:guid}"
+
+@if (Customer?.Customer is not null)
+{
+    <MudText Typo="Typo.h5">@Customer?.Customer?.Name</MudText>
+    
+    <MudGrid>
+        <MudItem xs="12" sm="6">
+            <SelectMultipleUsers Users="UsersThisCustomer" MultiSelection="false" Label="@L["Current customer users"]"  />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <SelectMultipleUsers Users="UsersDifferentCustomer" MultiSelection="false" Label="@L["Other customer users"]"  />
+        </MudItem>
+    </MudGrid>
+}
+else
+{
+    <DrogeLoading/>
+}

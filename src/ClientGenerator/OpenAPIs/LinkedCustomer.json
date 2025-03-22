@@ -5,7 +5,48 @@
     "version": "v1"
   },
   "paths": {
-    "/api/UserLinkCustomer/me/all": {
+    "/api/UserLinkCustomer/all/users/{linkedCustomerId}": {
+      "get": {
+        "tags": [
+          "UserLinkCustomer"
+        ],
+        "operationId": "GetAllUsersWithLinkToCustomer",
+        "parameters": [
+          {
+            "name": "linkedCustomerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllUsersWithLinkToCustomerResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllUsersWithLinkToCustomerResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllUsersWithLinkToCustomerResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/UserLinkCustomer/all/me": {
       "get": {
         "tags": [
           "UserLinkCustomer"
@@ -87,6 +128,77 @@
   },
   "components": {
     "schemas": {
+      "DrogeUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "externalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "buddy": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "nr": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastLogin": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "userFunctionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "linkedAsA": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkedDrogeUser"
+            },
+            "nullable": true
+          },
+          "linkedAsB": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkedDrogeUser"
+            },
+            "nullable": true
+          },
+          "syncedFromSharePoint": {
+            "type": "boolean"
+          },
+          "roleFromSharePoint": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "GetAllUserLinkCustomersResponse": {
         "type": "object",
         "properties": {
@@ -110,6 +222,45 @@
               "$ref": "#/components/schemas/LinkedCustomer"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetAllUsersWithLinkToCustomerResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "linkInfo": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkUserCustomerInfo"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LinkUserCustomerInfo": {
+        "type": "object",
+        "properties": {
+          "drogeUserCurrent": {
+            "$ref": "#/components/schemas/DrogeUser"
+          },
+          "drogeUserOther": {
+            "$ref": "#/components/schemas/DrogeUser"
           }
         },
         "additionalProperties": false
@@ -183,6 +334,27 @@
           }
         },
         "additionalProperties": false
+      },
+      "LinkedDrogeUser": {
+        "type": "object",
+        "properties": {
+          "linkedUserId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "linkType": {
+            "$ref": "#/components/schemas/UserUserLinkType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserUserLinkType": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
       }
     }
   }

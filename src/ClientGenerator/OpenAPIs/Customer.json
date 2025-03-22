@@ -55,31 +55,23 @@
         }
       }
     },
-    "/api/Customer": {
+    "/api/Customer/{customerId}": {
       "get": {
         "tags": [
           "Customer"
         ],
         "operationId": "GetCustomerById",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GetCustomerRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GetCustomerRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GetCustomerRequest"
-              }
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -102,7 +94,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/Customer": {
       "put": {
         "tags": [
           "Customer"
@@ -258,16 +252,6 @@
               "$ref": "#/components/schemas/Customer"
             },
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "GetCustomerRequest": {
-        "type": "object",
-        "properties": {
-          "customerId": {
-            "type": "string",
-            "format": "uuid"
           }
         },
         "additionalProperties": false

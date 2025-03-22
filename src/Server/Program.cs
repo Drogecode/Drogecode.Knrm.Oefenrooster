@@ -92,7 +92,7 @@ else
         dbConnectionString = builder.Configuration.GetConnectionString("postgresDB");
     }
 }
-var fixedPolicy = "fixed";
+/*var fixedPolicy = "fixed";
 builder.Services.AddRateLimiter(_ => _
     .AddFixedWindowLimiter(policyName: fixedPolicy, options =>
     {
@@ -100,7 +100,7 @@ builder.Services.AddRateLimiter(_ => _
         options.Window = TimeSpan.FromSeconds(1);
         options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
         options.QueueLimit = 12;
-    }));
+    }));*/
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
@@ -234,7 +234,7 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseRateLimiter();
+/*app.UseRateLimiter();*/
 app.MapHealthChecks("/api/_health", new HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
@@ -279,7 +279,7 @@ if (!runningInContainers)
 #endif
 
 app.MapRazorPages();
-app.MapControllers().RequireRateLimiting(fixedPolicy);
+app.MapControllers()/*.RequireRateLimiting(fixedPolicy)*/;
 app.MapHub<PreComHub>("/hub/precomhub");
 app.MapHub<RefreshHub>("/hub/refresh");
 app.MapHub<ConfigurationHub>("/hub/configuration");

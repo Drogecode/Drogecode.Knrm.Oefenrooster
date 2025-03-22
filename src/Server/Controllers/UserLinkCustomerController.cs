@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,27 @@ public class UserLinkCustomerController : DrogeController
     }
 
     [HttpGet]
-    [Route("me/all")]
+    [Route("all/users/{linkedCustomerId:guid}")]
+    public async Task<ActionResult<GetAllUsersWithLinkToCustomerResponse>> GetAllUsersWithLinkToCustomer(Guid linkedCustomerId, CancellationToken clt = default)
+    {
+        try
+        {
+            var currentCustomerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var response = await _userLinkCustomerService.GetAllUsersWithLinkToCustomer(currentCustomerId, linkedCustomerId, clt);
+            return response;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            Logger.LogError(ex, "Exception in GetAllUsersWithLinkToCustomer");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("all/me")]
     public async Task<ActionResult<GetAllUserLinkCustomersResponse>> GetAllLinkUserCustomers(CancellationToken clt = default)
     {
         try

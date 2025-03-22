@@ -1,5 +1,5 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-@if (Users is not null && Functions is not null)
+@if (Users is not null)
 {
     <MudSelectExtended Clearable="@Clearable"
                        T="DrogeUser?"
@@ -12,14 +12,33 @@
                        SelectedValuesChanged="OnSelectionChanged"
                        ReadOnly="@ReadOnly"
                        AnchorOrigin="Origin.BottomCenter">
-        @foreach (var function in Functions.Where(function => Users.Any(x => x.UserFunctionId == function.Id)))
+        @if (Functions is null)
         {
-            <MudSelectItemGroupExtended T="DrogeUser?" Text="@function.Name" Sticky="true">
-                @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
+            @foreach (var user in Users)
+            {
+                <MudSelectItemExtended T="DrogeUser?" Value="@user">@user.Name</MudSelectItemExtended>
+            }
+        }
+        else
+        {
+            @foreach (var function in Functions.Where(function => Users.Any(x => x.UserFunctionId == function.Id)))
+            {
+                <MudSelectItemGroupExtended T="DrogeUser?" Text="@function.Name" Sticky="true">
+                    @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id))
+                    {
+                        <MudSelectItemExtended T="DrogeUser?" Value="@user">@user.Name</MudSelectItemExtended>
+                    }
+                </MudSelectItemGroupExtended>
+            }
+            @if (Users.Any(x => x.UserFunctionId == null || Functions.All(y => y.Id != x.UserFunctionId)))
+            {
+                <MudSelectItemGroupExtended T="DrogeUser?" Text="@L["Function not found"]" Sticky="true">
+                @foreach (var user in Users.Where(x => x.UserFunctionId == null || Functions.All(y => y.Id != x.UserFunctionId)))
                 {
                     <MudSelectItemExtended T="DrogeUser?" Value="@user">@user.Name</MudSelectItemExtended>
                 }
-            </MudSelectItemGroupExtended>
+                </MudSelectItemGroupExtended>
+            }
         }
     </MudSelectExtended>
 }
