@@ -1,17 +1,30 @@
 ﻿@page "/configuration/customer/{Id:guid}"
 
-@if (Customer?.Customer is not null)
+@if (_customer?.Customer is not null)
 {
-    <MudText Typo="Typo.h5">@Customer?.Customer?.Name</MudText>
+    <MudText Typo="Typo.h5">@_customer?.Customer?.Name</MudText>
     
     <MudGrid>
-        <MudItem xs="12" sm="6">
-            <SelectMultipleUsers Users="UsersThisCustomer" MultiSelection="false" Label="@L["Current customer users"]"  />
+        <MudItem xs="12" sm="4">
+            <SelectMultipleUsers Users="_usersThisCustomer" MultiSelection="false" Label="@L["Current customer users"]" SelectionChanged="SelectionCurrentCustomer" Selection="_selectedUsersCurrent" />
         </MudItem>
-        <MudItem xs="12" sm="6">
-            <SelectMultipleUsers Users="UsersDifferentCustomer" MultiSelection="false" Label="@L["Other customer users"]"  />
+        <MudItem xs="12" sm="4">
+            <SelectMultipleUsers Users="_usersDifferentCustomer" MultiSelection="false" Label="@L["Other customer users"]" SelectionChanged="SelectionOtherCustomer" Selection="_selectedUsersOther" />
+        </MudItem>
+        <MudItem xs = "12" sm="2">
+            <MudButton OnClick="Save" Disabled="@(!_allowSave)">@LApp["Save"]</MudButton>
         </MudItem>
     </MudGrid>
+    
+    @if (_linkedUsers?.LinkInfo is not null)
+    {
+        <MudList T="string">
+        @foreach (var link in _linkedUsers.LinkInfo)
+        {
+            <MudListItem>@link.DrogeUserCurrent?.Name == @link.DrogeUserOther?.Name</MudListItem>
+        }
+        </MudList>
+    }
 }
 else
 {

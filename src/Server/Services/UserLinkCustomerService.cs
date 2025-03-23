@@ -104,15 +104,24 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
                 Logger.LogInformation("Link to customer not changed `{user}` `{customer}` `{isActive}`", body.UserId, body.CustomerId, body.IsActive);
             }
         }
-        else if (body.CreateNew)
+        else
         {
-            var drogeUser = new DrogeUser()
+            if (body.LinkedUserId is null && body.CreateNew)
             {
-                Id = Guid.CreateVersion7(),
-                Name = mainUser.Name
-            };
-            var newUser = await _userService.AddUser(drogeUser, body.CustomerId);
-            if (newUser.Success != true)
+                var drogeUser = new DrogeUser
+                {
+                    Id = Guid.CreateVersion7(),
+                    Name = mainUser.Name
+                };
+                var newUser = await _userService.AddUser(drogeUser, body.CustomerId);
+                if (newUser.Success != true)
+                {
+                    return ResponseFailed();
+                }
+                body.LinkedUserId = drogeUser.Id;
+                result.NewUserId = drogeUser.Id;
+            }
+            else if (body.LinkedUserId is null)
             {
                 return ResponseFailed();
             }
@@ -121,7 +130,7 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
             {
                 Id = Guid.CreateVersion7(),
                 UserId = body.UserId,
-                LinkUserId = drogeUser.Id,
+                LinkUserId = body.LinkedUserId.Value,
                 CustomerId = body.CustomerId,
                 IsPrimary = false,
                 IsActive = true,
@@ -129,11 +138,6 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
                 LinkedBy = userId,
                 LinkedOn = DateTime.UtcNow
             });
-            result.NewUserId = drogeUser.Id;
-        }
-        else
-        {
-            return ResponseFailed();
         }
 
         sw.Stop();
