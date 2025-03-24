@@ -48,5 +48,4 @@ public class DbUsers
     public ICollection<DbRoosterAvailable>? TrainingAvailableLastUpdated { get; set; }
     public ICollection<DbUserLastCalendarUpdate>? UserLastCalendarUpdates { get; set; }
     public ICollection<DbLinkUserCustomer>? LinkUserCustomers { get; set; }
-    public ICollection<DbLinkUserCustomer>? LinkLinkedUserCustomers { get; set; }
 }

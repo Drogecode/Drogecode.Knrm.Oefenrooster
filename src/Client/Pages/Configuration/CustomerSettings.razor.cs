@@ -91,7 +91,7 @@ public sealed partial class CustomerSettings : IDisposable
         {
             CustomerId = Id.Value,
             UserId = _selectedUsersCurrent.FirstOrDefault()!.Id,
-            LinkedUserId = _selectedUsersOther.FirstOrDefault()!.Id,
+            GlobalUserId = _selectedUsersOther.FirstOrDefault()!.Id,
             IsActive = true,
             CreateNew = false
         });

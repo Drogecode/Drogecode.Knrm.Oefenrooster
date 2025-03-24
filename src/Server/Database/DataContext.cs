@@ -13,6 +13,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
 
         public DbSet<DbAudit> Audits { get; set; }
         public DbSet<DbUsers> Users { get; set; }
+        public DbSet<DbUsersGlobal> UsersGlobal { get; set; }
         public DbSet<DbUserFunctions> UserFunctions { get; set; }
         public DbSet<DbUserRoles> UserRoles { get; set; }
         public DbSet<DbUserDefaultGroup> UserDefaultGroups { get; set; }
@@ -75,6 +76,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 .UsingEntity<DbLinkUserUser>(
                     l => l.HasOne<DbUsers>(e => e.UserA).WithMany(e => e.LinkedUserAsA).HasForeignKey(e => e.UserAId),
                     r => r.HasOne<DbUsers>(e => e.UserB).WithMany(e => e.LinkedUserAsB).HasForeignKey(e => e.UserBId));
+
+            // UsersGlobal
+            modelBuilder.Entity<DbUsersGlobal>(e => { e.Property(en => en.Id).IsRequired(); });
 
             //UserFunctions
             modelBuilder.Entity<DbUserFunctions>(e => { e.Property(en => en.Id).IsRequired(); });
@@ -229,7 +233,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbLinkUserCustomer>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbLinkUserCustomer>().HasOne(p => p.User).WithMany(g => g.LinkUserCustomers).HasForeignKey(s => s.UserId).IsRequired();
             modelBuilder.Entity<DbLinkUserCustomer>().HasOne(p => p.Customer).WithMany(g => g.LinkUserCustomers).HasForeignKey(s => s.CustomerId).IsRequired();
-            modelBuilder.Entity<DbLinkUserCustomer>().HasOne(p => p.LinkedUser).WithMany(g => g.LinkLinkedUserCustomers).HasForeignKey(s => s.LinkUserId).IsRequired();
+            modelBuilder.Entity<DbLinkUserCustomer>().HasOne(p => p.LinkedUser).WithMany(g => g.LinkUserCustomers).HasForeignKey(s => s.GlobalUserId).IsRequired();
 
             // Required data
             SetCustomer(modelBuilder);
