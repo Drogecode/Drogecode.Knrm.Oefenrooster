@@ -5,6 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Menu;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 
@@ -117,7 +118,7 @@ public sealed partial class NavMenu : IDisposable
         if (AuthenticationState is not null)
         {
             var authState = await AuthenticationState;
-            loginHint = authState.User.FindFirst(c => c.Type == "login_hint")?.Value;
+            loginHint = authState.User.FindFirst(c => c.Type == ClaimTypes.Name)?.Value;
         }
 
         if (menu.AddLoginHint != null && loginHint is not null)

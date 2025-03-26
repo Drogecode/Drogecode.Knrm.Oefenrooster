@@ -59,24 +59,31 @@
                                   .OrderBy(x => x.Start))
                 {
                     <div class="flex-1">
-                        @if (ev is DrogeCodeCalendarItem)
+                        @switch (ev)
                         {
-                            var training = ((DrogeCodeCalendarItem)ev).Training;
-                            @if (training != null)
+                            case DrogeCodeCalendarItem item:
                             {
-                                <CalendarCard MinWidth="300px" MaxWidth="600px" Training="training" ShowDate="true" ShowDayOfWeek="true"/>
+                                var training = item.Training;
+                                if (training != null)
+                                {
+                                    <CalendarCard MinWidth="300px" MaxWidth="600px" Training="training" ShowDate="true" ShowDayOfWeek="true"/>
+                                }
+
+                                break;
                             }
-                        }
-                        else if (ev is RoosterItemDayCalendarItem)
-                        {
-                            var dayItem = ((RoosterItemDayCalendarItem)ev).ItemDay;
-                            @if (dayItem != null)
+                            case RoosterItemDayCalendarItem item:
                             {
-                                var color = DayItemHelper.DayItemTypeColor(dayItem.Type);
-                                <div class="flex gap-1" style="min-width:300px;max-width:600px;">
-                                    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@color" Size="Size.Small"/>
-                                    <div>@dayItem.Text - @dayItem.DateStart!.Value.ToString("dddd dd MMM")</div>
-                                </div>
+                                var dayItem = item.ItemDay;
+                                if (dayItem != null)
+                                {
+                                    var color = DayItemHelper.DayItemTypeColor(dayItem.Type);
+                                    <div class="flex gap-1" style="min-width:300px;max-width:600px;">
+                                        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@color" Size="Size.Small"/>
+                                        <div>@dayItem.Text - @dayItem.DateStart!.Value.ToString("dddd dd MMM")</div>
+                                    </div>
+                                }
+
+                                break;
                             }
                         }
                     </div>

@@ -56,7 +56,7 @@ public sealed partial class Calendar : IDisposable
     {
         if (_updating || dateRange.Start == null) return;
         _updating = true;
-        _events = new();
+        _events = [];
         TrainingWeek scheduleForUser = new();
         var trainingsInWeek = (await ScheduleRepository.CalendarForUser(dateRange, _cls.Token))?.Trainings;
         if (trainingsInWeek != null && trainingsInWeek.Count > 0)
