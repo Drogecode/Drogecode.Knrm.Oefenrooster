@@ -122,17 +122,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserLinkedMails>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserLinkedMails>().HasOne(p => p.Customer).WithMany(g => g.UserLinkedMails).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserLinkedMails>().HasOne(p => p.User).WithMany(g => g.UserLinkedMails).HasForeignKey(s => s.UserId).IsRequired();
-            
+
             //UserLastCalendarUpdate
             modelBuilder.Entity<DbUserLastCalendarUpdate>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserLastCalendarUpdate>().HasOne(p => p.Customer).WithMany(g => g.UserLastCalendarUpdates).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbUserLastCalendarUpdate>().HasOne(p => p.User).WithMany(g => g.UserLastCalendarUpdates).HasForeignKey(s => s.UserId).IsRequired();
-            
+
             //UserLogins
             modelBuilder.Entity<DbUserLogins>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserLogins>().HasOne(p => p.User).WithMany(g => g.Logins).HasForeignKey(s => s.UserId);
             modelBuilder.Entity<DbUserLogins>().HasOne(p => p.SharedAction).WithMany(g => g.Logins).HasForeignKey(s => s.SharedActionId);
-            
+
             //Menu
             modelBuilder.Entity<DbMenu>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbMenu>().HasOne(p => p.Customer).WithMany(g => g.Menus).HasForeignKey(s => s.CustomerId);
@@ -147,7 +147,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.Vehicle).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.VehicleId);
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.LinkExchange).WithMany(g => g.RoosterAvailables).HasForeignKey(s => s.LinkExchangeId);
             modelBuilder.Entity<DbRoosterAvailable>().HasOne(p => p.LastUpdateByUser).WithMany(g => g.TrainingAvailableLastUpdated).HasForeignKey(s => s.LastUpdateBy);
-            
+
             // Rooster default
             modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbRoosterDefault>(e => { e.Property(en => en.ValidFrom).IsRequired(); });
@@ -228,7 +228,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbLinkUserRole>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbLinkUserRole>().HasOne(p => p.User).WithMany(g => g.LinkUserRoles).HasForeignKey(s => s.UserId).IsRequired();
             modelBuilder.Entity<DbLinkUserRole>().HasOne(p => p.Role).WithMany(g => g.LinkUserRoles).HasForeignKey(s => s.RoleId).IsRequired();
-            
+
             // User <--> Customer
             modelBuilder.Entity<DbLinkUserCustomer>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbLinkUserCustomer>().HasOne(p => p.User).WithMany(g => g.LinkUserCustomers).HasForeignKey(s => s.UserId).IsRequired();
@@ -245,6 +245,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             SetRoosterTrainingTypes(modelBuilder);
             SetSystemUsers(modelBuilder);
             SetMenus(modelBuilder);
+            SetUserGlobal(modelBuilder);
         }
 
         private static Guid IdTaco { get; } = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461");
@@ -969,7 +970,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CreatedOn = new DateTime(2024, 10, 11, 19, 46, 12, DateTimeKind.Utc),
             }));
         }
-        
+
         private void SetMenus(ModelBuilder modelBuilder)
         {
             var parent = new Guid("2bf106c9-eae7-4a0d-978d-54af6c4e96a1");
@@ -1011,6 +1012,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             }));
         }
         
+        private void SetUserGlobal(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DbUsersGlobal>(e => e.HasData(new DbUsersGlobal
+            {
+                Id = new Guid("588df154-9ef2-4014-a700-02dd69011a4d"),
+                Name = "Taco Droogers",
+                CreatedOn = new DateTime(1992, 9, 4, 1, 4, 8, DateTimeKind.Utc),
+                CreatedBy = DefaultSettingsHelper.SystemUser
+            }));
+        }
+
         #endregion
     }
 }

@@ -199,6 +199,29 @@
         },
         "additionalProperties": false
       },
+      "DrogeUserGlobal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "GetAllUserLinkCustomersResponse": {
         "type": "object",
         "properties": {
@@ -256,11 +279,11 @@
       "LinkUserCustomerInfo": {
         "type": "object",
         "properties": {
-          "drogeUserCurrent": {
-            "$ref": "#/components/schemas/DrogeUser"
-          },
           "drogeUserOther": {
             "$ref": "#/components/schemas/DrogeUser"
+          },
+          "userGlobal": {
+            "$ref": "#/components/schemas/DrogeUserGlobal"
           }
         },
         "additionalProperties": false
@@ -274,12 +297,12 @@
           },
           "userId": {
             "type": "string",
-            "format": "uuid"
-          },
-          "linkedUserId": {
-            "type": "string",
             "format": "uuid",
             "nullable": true
+          },
+          "globalUserId": {
+            "type": "string",
+            "format": "uuid"
           },
           "isActive": {
             "type": "boolean"

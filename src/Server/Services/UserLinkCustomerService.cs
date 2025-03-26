@@ -28,15 +28,15 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
             .Include(x => x.Customer)
             .Include(x => x.User)
             .Include(x => x.LinkedUser)
-            .Where(x => x.CustomerId == linkedCustomerId && x.IsActive && x.User.CustomerId == currentCustomerId)
+            .Where(x => x.CustomerId == linkedCustomerId && x.IsActive && x.User.CustomerId == linkedCustomerId)
             .ToListAsync(clt);
         result.LinkInfo = [];
         foreach (var link in links)
         {
             result.LinkInfo.Add(new LinkUserCustomerInfo()
             {
-                DrogeUserCurrent = link.User.ToSharedUser(false,false),
-                //DrogeUserOther = link.LinkedUser.ToSharedUser(false,false)
+                DrogeUserOther = link.User.ToSharedUser(false,false),
+                UserGlobal = link.LinkedUser.ToDrogeUserGlobal()
             });
         }
         result.TotalCount = links.Count;

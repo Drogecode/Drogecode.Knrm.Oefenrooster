@@ -35,6 +35,7 @@ public class Startup
         services.AddScoped<IGraphService, GraphServiceMock>();
         services.AddScoped<IScheduleService, ScheduleService>();
         services.AddScoped<ITrainingTypesService, TrainingTypesService>();
+        services.AddScoped<IUserGlobalService, UserGlobalService>();
         services.AddScoped<IUserLastCalendarUpdateService, UserLastCalendarUpdateService>();
         services.AddScoped<IUserRoleService, UserRoleService>();
         services.AddScoped<IUserService, UserService>();
@@ -60,6 +61,7 @@ public class Startup
         services.AddScoped<ReportTrainingController>();
         services.AddScoped<ScheduleController>();
         services.AddScoped<TrainingTypesController>();
+        services.AddScoped<UserGlobalController>();
         services.AddScoped<UserController>();
         services.AddScoped<UserRoleController>();
         services.AddScoped<UserLinkMailsController>();

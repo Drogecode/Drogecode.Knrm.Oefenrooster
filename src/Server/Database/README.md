@@ -7,7 +7,7 @@
 
 # Revert
 
-dotnet ef database update "20250215160420_HoldSyncingExternalCalendar"
+dotnet ef database update "20250322093902_bugUserLinkedWrongToCustomergetAllResult"
 
 # Update tools:
 

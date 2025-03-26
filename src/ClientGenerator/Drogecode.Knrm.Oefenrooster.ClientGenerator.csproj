@@ -79,6 +79,10 @@
 			<OutputPath>../Clients/UserClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.User</Options>
 		</OpenApiReference>
+		<OpenApiReference Include="OpenAPIs\UserGlobal.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="UserGlobalClient">
+			<OutputPath>../Clients/UserGlobalClient.g.cs</OutputPath>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.UserGlobal</Options>
+		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Customer.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="CustomerClient">
 			<OutputPath>../Clients/CustomerClient.g.cs</OutputPath>
 			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer,Drogecode.Knrm.Oefenrooster.Shared.Models.Customer</Options>

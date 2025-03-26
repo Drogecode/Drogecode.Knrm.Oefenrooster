@@ -1,15 +1,21 @@
 ﻿@page "/configuration/customer/{Id:guid}"
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.UserGlobal
 
-@if (_customer?.Customer is not null)
+@if (_customer?.Customer is not null && _usersGlobal?.GlobalUsers is not null)
 {
     <MudText Typo="Typo.h5">@_customer?.Customer?.Name</MudText>
     
     <MudGrid>
         <MudItem xs="12" sm="4">
-            <SelectMultipleUsers Users="_usersThisCustomer" MultiSelection="false" Label="@L["Current customer users"]" SelectionChanged="SelectionCurrentCustomer" Selection="_selectedUsersCurrent" />
+            <SelectMultipleUsers Users="_usersDifferentCustomer" MultiSelection="false" Label="@L["Users in customer"]" SelectionChanged="SelectionOtherCustomer" Selection="_selectedUsersOther" />
         </MudItem>
         <MudItem xs="12" sm="4">
-            <SelectMultipleUsers Users="_usersDifferentCustomer" MultiSelection="false" Label="@L["Other customer users"]" SelectionChanged="SelectionOtherCustomer" Selection="_selectedUsersOther" />
+            <MudSelect Label="@L["Global user"]" T="Guid?" ValueChanged="SelectionGlobalUsers" Value="_selectedUserGlobal">
+                @foreach (var userGlobal in _usersGlobal.GlobalUsers)
+                {
+                    <MudSelectItem Value="userGlobal.Id" T="Guid?" >@userGlobal.Name</MudSelectItem>
+                }
+            </MudSelect>
         </MudItem>
         <MudItem xs = "12" sm="2">
             <MudButton OnClick="Save" Disabled="@(!_allowSave)">@LApp["Save"]</MudButton>
@@ -21,7 +27,7 @@
         <MudList T="string">
         @foreach (var link in _linkedUsers.LinkInfo)
         {
-            <MudListItem>@link.DrogeUserCurrent?.Name == @link.DrogeUserOther?.Name</MudListItem>
+            <MudListItem>@link.DrogeUserOther?.Name == @link.UserGlobal?.Name</MudListItem>
         }
         </MudList>
     }
