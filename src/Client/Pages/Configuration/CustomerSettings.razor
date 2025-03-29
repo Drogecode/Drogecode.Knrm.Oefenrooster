@@ -27,7 +27,7 @@
         <MudList T="string">
         @foreach (var link in _linkedUsers.LinkInfo)
         {
-            <MudListItem>@link.DrogeUserOther?.Name == @link.UserGlobal?.Name</MudListItem>
+            <MudListItem>@link.DrogeUser?.Name == @link.UserGlobal?.Name</MudListItem>
         }
         </MudList>
     }

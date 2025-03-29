@@ -11,7 +11,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
 {
-    
     public readonly IUserService _userService;
 
     public UserLinkCustomerService(ILogger<CustomerService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeService dateTimeService, IUserService userService) : base(logger, database,
@@ -35,10 +34,11 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
         {
             result.LinkInfo.Add(new LinkUserCustomerInfo()
             {
-                DrogeUserOther = link.User.ToSharedUser(false,false),
+                DrogeUser = link.User.ToSharedUser(false, false),
                 UserGlobal = link.LinkedUser.ToDrogeUserGlobal()
             });
         }
+
         result.TotalCount = links.Count;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
@@ -50,18 +50,33 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
     {
         var sw = Stopwatch.StartNew();
         var result = new GetAllUserLinkCustomersResponse();
-        var links = await Database.LinkUserCustomers
-            .Include(x => x.Customer)
+        var globalUsers = await Database.LinkUserCustomers
             .Where(x => x.UserId == userId && x.IsActive)
-            .Select(x => x.ToLinkedCustomer(customerId))
+            .Select(x => x.GlobalUserId)
             .ToListAsync(clt);
-        result.UserLinkedCustomers = links;
-        result.TotalCount = links.Count;
+        if (globalUsers.Count != 0)
+        {
+            if (globalUsers.Count > 1)
+            {
+                Logger.LogWarning("Multiple global users found for `{userId}` in `{customerId}`", userId, customerId);
+            }
+
+            var links = await Database.LinkUserCustomers
+                .Include(x => x.Customer)
+                .Where(x => x.GlobalUserId == globalUsers.FirstOrDefault() && x.IsActive)
+                .Select(x => x.ToLinkedCustomer(customerId))
+                .ToListAsync(clt);
+            result.UserLinkedCustomers = links;
+            result.CurrentCustomerId = customerId;
+            result.TotalCount = links.Count;
+            result.Success = true;
+        }
+
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
-        result.Success = true;
         return result;
     }
+
     public async Task<LinkUserToCustomerResponse> LinkUserToCustomer(Guid userId, Guid customerId, LinkUserToCustomerRequest body, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
@@ -102,6 +117,7 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
                 {
                     return ResponseFailed();
                 }
+
                 body.UserId = drogeUser.Id;
                 result.NewUserId = drogeUser.Id;
             }
@@ -123,6 +139,7 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
                 LinkedOn = DateTime.UtcNow
             });
         }
+
         result.Success = await Database.SaveChangesAsync(clt) > 0;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;

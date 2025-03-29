@@ -5,6 +5,9 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Menu;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 
@@ -20,6 +23,7 @@ public sealed partial class NavMenu : IDisposable
     [Inject, NotNull] private ScheduleRepository? ScheduleRepository { get; set; }
     [Inject, NotNull] private TrainingTypesRepository? TrainingTypesRepository { get; set; }
     [Inject, NotNull] private MenuRepository? MenuRepository { get; set; }
+    [Inject, NotNull] private ILinkedCustomerClient? LinkedCustomerClient { get; set; }
     [Inject, NotNull] private ILocalStorageService? LocalStorage { get; set; }
     [Inject, NotNull] private IJSRuntime? JsRuntime { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
@@ -28,13 +32,16 @@ public sealed partial class NavMenu : IDisposable
     private CancellationTokenSource _cls = new();
     private UserMenuSettings? _userMenuSettings;
     private List<DrogeMenu>? _menuItems;
+    private List<LinkedCustomer>? _linkedCustomers;
     private string _uriCalendar = "/planner/calendar";
     private string _uriSchedule = "/planner/schedule";
     private string _uriPlannerUser = "/planner/user";
     private string _sharePointUrl = string.Empty;
     private string _lplhUrl = string.Empty;
+    private Guid? _currentCustomer;
     private bool _useFullLinkExpanded;
     private bool _configurationExpanded;
+    private bool _changingCustomer;
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,9 +62,30 @@ public sealed partial class NavMenu : IDisposable
             // Can not use the object directly because it freezes the page.
             _useFullLinkExpanded = _userMenuSettings.UseFullLinkExpanded;
             _configurationExpanded = _userMenuSettings.ConfigurationExpanded;
+            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user))
+            {
+                var linkedCustomers = await LinkedCustomerClient.GetAllCustomersLinkedToMeAsync();
+                if (linkedCustomers?.UserLinkedCustomers?.Count > 1)
+                {
+                    _linkedCustomers = linkedCustomers.UserLinkedCustomers;
+                    _currentCustomer = linkedCustomers.CurrentCustomerId;
+                }
+            }
+
             await SetMenu();
             StateHasChanged();
         }
+    }
+
+    private string? CustomerIdToName(Guid? customerId)
+    {
+        return _linkedCustomers?.FirstOrDefault(x=>x.Id == customerId)?.Name ;
+    }
+
+    private async Task OnCustomerChange(Guid? customerId)
+    {
+        _changingCustomer = true;
+        StateHasChanged();
     }
 
     private async Task SetMenu()

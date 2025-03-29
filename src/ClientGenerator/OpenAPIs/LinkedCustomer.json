@@ -51,7 +51,7 @@
         "tags": [
           "UserLinkCustomer"
         ],
-        "operationId": "GetAllLinkUserCustomers",
+        "operationId": "GetAllCustomersLinkedToMe",
         "responses": {
           "200": {
             "description": "OK",
@@ -245,6 +245,11 @@
               "$ref": "#/components/schemas/LinkedCustomer"
             },
             "nullable": true
+          },
+          "currentCustomerId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -279,7 +284,7 @@
       "LinkUserCustomerInfo": {
         "type": "object",
         "properties": {
-          "drogeUserOther": {
+          "drogeUser": {
             "$ref": "#/components/schemas/DrogeUser"
           },
           "userGlobal": {

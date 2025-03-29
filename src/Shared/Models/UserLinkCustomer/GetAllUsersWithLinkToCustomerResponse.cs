@@ -10,6 +10,6 @@ public class GetAllUsersWithLinkToCustomerResponse : BaseMultipleResponse
 
 public class LinkUserCustomerInfo
 {
-    public DrogeUser? DrogeUserOther { get; set; }
+    public DrogeUser? DrogeUser { get; set; }
     public DrogeUserGlobal? UserGlobal { get; set; }
 }

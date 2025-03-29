@@ -46,7 +46,7 @@ public class UserLinkCustomerController : DrogeController
 
     [HttpGet]
     [Route("all/me")]
-    public async Task<ActionResult<GetAllUserLinkCustomersResponse>> GetAllLinkUserCustomers(CancellationToken clt = default)
+    public async Task<ActionResult<GetAllUserLinkCustomersResponse>> GetAllCustomersLinkedToMe(CancellationToken clt = default)
     {
         try
         {

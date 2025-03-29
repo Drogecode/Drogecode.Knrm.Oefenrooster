@@ -9,12 +9,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class ConfigurationService : IConfigurationService
 {
     private readonly ILogger<ConfigurationService> _logger;
-    private readonly Database.DataContext _database;
+    private readonly DataContext _database;
     private readonly IPreComService _preComService;
 
     public ConfigurationService(
         ILogger<ConfigurationService> logger, 
-        Database.DataContext database, 
+        DataContext database, 
         IPreComService preComService)
     {
         _logger = logger;

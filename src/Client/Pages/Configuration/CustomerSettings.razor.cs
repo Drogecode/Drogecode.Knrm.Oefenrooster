@@ -51,7 +51,7 @@ public sealed partial class CustomerSettings : IDisposable
             var linkedDifferent = new List<DrogeUser>();
             foreach (var t in _usersDifferentCustomer)
             {
-                if (_linkedUsers.LinkInfo?.Any(x => x.DrogeUserOther != null && x.DrogeUserOther.Id == t.Id) == true)
+                if (_linkedUsers.LinkInfo?.Any(x => x.DrogeUser != null && x.DrogeUser.Id == t.Id) == true)
                 {
                     linkedDifferent.Add(t);
                 }
