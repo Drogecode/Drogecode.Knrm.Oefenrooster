@@ -1,5 +1,4 @@
-﻿@implements IDisposable
-@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Repositories;
 @using Drogecode.Knrm.Oefenrooster.Client.Services
 @using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
@@ -12,13 +11,12 @@
     [Inject] IOfflineService OfflineService { get; set; } = default!;
     [Inject] ISnackbar Snackbar { get; set; } = default!;
     private VersionDetailResponse? _updateDetails;
-    private readonly CancellationTokenSource _cls = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            while (!_cls.IsCancellationRequested)
+            while (true)
             {
                 try
                 {
@@ -53,18 +51,10 @@
                 {
                     for (int i = 0; i < 30; i++)
                     {
-                        if (_cls.IsCancellationRequested)
-                            break;
                         await Task.Delay(1000);
                     }
                 }
             }
         }
     }
-
-    public void Dispose()
-    {
-        _cls.Cancel();
-    }
-
 }

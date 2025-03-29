@@ -1,0 +1,37 @@
+﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserGlobal;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
+
+[Authorize(Roles = AccessesNames.AUTH_basic_access)]
+[ApiController]
+[Route("api/[controller]")]
+[ApiExplorerSettings(GroupName = "UserGlobal")]
+public class UserGlobalController : DrogeController
+{
+    private readonly IUserGlobalService _userGlobalService;
+
+    public UserGlobalController(ILogger<CustomerSettingController> logger, IUserGlobalService userGlobalService) : base(logger)
+    {
+        _userGlobalService = userGlobalService;
+    }
+
+    [HttpGet]
+    [Route("all")]
+    public async Task<ActionResult<AllDrogeUserGlobalResponse>> GetAll(CancellationToken clt = default)
+    {
+        try
+        {
+            var result = await _userGlobalService.GetAllUserGlobals(clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Exception in GetAll");
+            return BadRequest();
+        }
+    }
+}

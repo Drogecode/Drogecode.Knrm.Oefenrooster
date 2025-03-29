@@ -11,7 +11,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
 {
-    
     public readonly IUserService _userService;
 
     public UserLinkCustomerService(ILogger<CustomerService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeService dateTimeService, IUserService userService) : base(logger, database,
@@ -28,17 +27,18 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
             .Include(x => x.Customer)
             .Include(x => x.User)
             .Include(x => x.LinkedUser)
-            .Where(x => x.CustomerId == linkedCustomerId && x.IsActive && x.User.CustomerId == currentCustomerId)
+            .Where(x => x.CustomerId == linkedCustomerId && x.IsActive && x.User.CustomerId == linkedCustomerId)
             .ToListAsync(clt);
         result.LinkInfo = [];
         foreach (var link in links)
         {
             result.LinkInfo.Add(new LinkUserCustomerInfo()
             {
-                DrogeUserCurrent = link.User.ToSharedUser(false,false),
-                DrogeUserOther = link.LinkedUser.ToSharedUser(false,false)
+                DrogeUser = link.User.ToSharedUser(false, false),
+                UserGlobal = link.LinkedUser.ToDrogeUserGlobal()
             });
         }
+
         result.TotalCount = links.Count;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
@@ -50,43 +50,42 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
     {
         var sw = Stopwatch.StartNew();
         var result = new GetAllUserLinkCustomersResponse();
-        var links = await Database.LinkUserCustomers
-            .Include(x => x.Customer)
+        var globalUsers = await Database.LinkUserCustomers
             .Where(x => x.UserId == userId && x.IsActive)
-            .Select(x => x.ToLinkedCustomer(customerId))
+            .Select(x => x.GlobalUserId)
             .ToListAsync(clt);
-        result.UserLinkedCustomers = links;
-        result.TotalCount = links.Count;
+        if (globalUsers.Count != 0)
+        {
+            if (globalUsers.Count > 1)
+            {
+                Logger.LogWarning("Multiple global users found for `{userId}` in `{customerId}`", userId, customerId);
+            }
+
+            var links = await Database.LinkUserCustomers
+                .Include(x => x.Customer)
+                .Where(x => x.GlobalUserId == globalUsers.FirstOrDefault() && x.IsActive)
+                .Select(x => x.ToLinkedCustomer(customerId))
+                .ToListAsync(clt);
+            result.UserLinkedCustomers = links;
+            result.CurrentCustomerId = customerId;
+            result.TotalCount = links.Count;
+            result.Success = true;
+        }
+
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
-        result.Success = true;
         return result;
     }
+
     public async Task<LinkUserToCustomerResponse> LinkUserToCustomer(Guid userId, Guid customerId, LinkUserToCustomerRequest body, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new LinkUserToCustomerResponse();
-        var links = await Database.LinkUserCustomers.Where(x => x.UserId == body.UserId).ToListAsync(clt);
-        var mainUser = await Database.Users.FirstOrDefaultAsync(x => x.Id == body.UserId, clt);
-        if (mainUser is null)
+        var links = await Database.LinkUserCustomers.Where(x => x.GlobalUserId == body.GlobalUserId).ToListAsync(clt);
+        var globalUser = await Database.UsersGlobal.FirstOrDefaultAsync(x => x.Id == body.GlobalUserId, clt);
+        if (globalUser is null)
         {
             return ResponseFailed();
-        }
-
-        if (links.Count == 0)
-        {
-            Database.LinkUserCustomers.Add(new DbLinkUserCustomer()
-            {
-                Id = Guid.CreateVersion7(),
-                UserId = body.UserId,
-                LinkUserId = body.UserId,
-                CustomerId = mainUser.CustomerId,
-                IsPrimary = true,
-                IsActive = true,
-                Order = 0,
-                LinkedBy = userId,
-                LinkedOn = DateTime.UtcNow
-            });
         }
 
         if (links.Any(x => x.CustomerId == body.CustomerId))
@@ -106,22 +105,23 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
         }
         else
         {
-            if (body.LinkedUserId is null && body.CreateNew)
+            if (body.UserId is null && body.CreateNew)
             {
                 var drogeUser = new DrogeUser
                 {
                     Id = Guid.CreateVersion7(),
-                    Name = mainUser.Name
+                    Name = globalUser.Name
                 };
                 var newUser = await _userService.AddUser(drogeUser, body.CustomerId);
                 if (newUser.Success != true)
                 {
                     return ResponseFailed();
                 }
-                body.LinkedUserId = drogeUser.Id;
+
+                body.UserId = drogeUser.Id;
                 result.NewUserId = drogeUser.Id;
             }
-            else if (body.LinkedUserId is null)
+            else if (body.UserId is null)
             {
                 return ResponseFailed();
             }
@@ -129,8 +129,8 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
             Database.LinkUserCustomers.Add(new DbLinkUserCustomer()
             {
                 Id = Guid.CreateVersion7(),
-                UserId = body.UserId,
-                LinkUserId = body.LinkedUserId.Value,
+                UserId = body.UserId.Value,
+                GlobalUserId = body.GlobalUserId,
                 CustomerId = body.CustomerId,
                 IsPrimary = false,
                 IsActive = true,
@@ -140,9 +140,9 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
             });
         }
 
+        result.Success = await Database.SaveChangesAsync(clt) > 0;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
-        result.Success = await Database.SaveChangesAsync(clt) > 0;
         return result;
 
         LinkUserToCustomerResponse ResponseFailed()
