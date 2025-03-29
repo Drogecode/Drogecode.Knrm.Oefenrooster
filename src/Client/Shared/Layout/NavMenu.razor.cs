@@ -85,6 +85,8 @@ public sealed partial class NavMenu : IDisposable
 
     private async Task OnCustomerChange(Guid? customerId)
     {
+        if (customerId == _currentCustomer)
+            return;
         _changingCustomer = true;
         StateHasChanged();
     }

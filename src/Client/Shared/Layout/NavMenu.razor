@@ -4,10 +4,10 @@
         @if (_linkedCustomers is not null)
         {
             <div class="m-2">
-                <MudSelect T="Guid?" Value="@_currentCustomer" ValueChanged="OnCustomerChange" ToStringFunc="CustomerIdToName" Disabled="@(!_changingCustomer)">
+                <MudSelect T="Guid?" Value="@_currentCustomer" ValueChanged="OnCustomerChange" ToStringFunc="CustomerIdToName" Disabled="@(_changingCustomer)">
                     @foreach (var customer in _linkedCustomers)
                     {
-                        <MudSelectItem T="Guid?" Value="@customer.Id">@customer.Name</MudSelectItem>
+                        <MudSelectItem T="Guid?" Value="@customer.Id" Disabled="@(_currentCustomer == customer.Id)">@customer.Name</MudSelectItem>
                     }
                 </MudSelect>
             </div>

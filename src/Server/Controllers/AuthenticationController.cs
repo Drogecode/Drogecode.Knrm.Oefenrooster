@@ -284,6 +284,22 @@ public class AuthenticationController : DrogeController
     }
 
     [Authorize]
+    [HttpPatch]
+    [Route("switch")]
+    public async Task<IActionResult> SwitchUser([FromBody] SwitchUserRequest body, CancellationToken clt = default)
+    {
+        try
+        {
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "SwitchUser");
+            return BadRequest();
+        }
+    }
+
+    [Authorize]
     [HttpPost]
     [Route("logout")]
     public async Task<IActionResult> Logout()
