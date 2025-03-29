@@ -74,7 +74,7 @@ public class AuthenticationKeyCloakService : AuthenticationService, IAuthenticat
     private string InternalGetLoginClientSecret()
     {
         var secret = _configuration.GetValue<string>("KeyCloak:ClientSecret");
-        if (secret is not null) return secret;
+        if (!string.IsNullOrWhiteSpace(secret)) return secret;
         var fromKeyVault = KeyVaultHelper.GetSecret("LoginClientSecret", _logger);
         if (fromKeyVault is not null) return fromKeyVault.Value;
         throw new DrogeCodeConfigurationException("no secret found for keycloak login");
