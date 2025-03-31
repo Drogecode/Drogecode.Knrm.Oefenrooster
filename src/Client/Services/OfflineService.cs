@@ -8,19 +8,25 @@ public class OfflineService : IOfflineService
 {
     private readonly ILocalStorageExpireService _localStorageExpireService;
     private readonly ISessionExpireService _sessionStorageExpireService;
+    private readonly CustomStateProvider _customStateProvider;
+
+    private static Guid? _userId;
 
     public OfflineService(
         ILocalStorageExpireService localStorageExpireService,
-        ISessionExpireService sessionStorageExpireService)
+        ISessionExpireService sessionStorageExpireService,
+        CustomStateProvider customStateProvider)
     {
         _localStorageExpireService = localStorageExpireService;
         _sessionStorageExpireService = sessionStorageExpireService;
+        _customStateProvider = customStateProvider;
     }
 
     public async Task<TRes?> CachedRequestAsync<TRes>(string cacheKey, Func<Task<TRes>> function, ApiCachedRequest? request = null, CancellationToken clt = default)
     {
         try
         {
+            cacheKey += $"__{_userId}";
             if (clt.IsCancellationRequested) return default(TRes);
             request ??= new ApiCachedRequest();
             if (request.CachedAndReplace)
@@ -100,5 +106,23 @@ public class OfflineService : IOfflineService
         }
 
         return default(TRes);
+    }
+
+    public async Task<bool> SetUser()
+    {
+        var authState = await _customStateProvider.GetAuthenticationStateAsync();
+        var userClaims = authState.User;
+        if (userClaims?.Identity?.IsAuthenticated ?? false)
+        {
+            if (!Guid.TryParse(userClaims.Identities.FirstOrDefault()!.Claims.FirstOrDefault(x => x.Type.Equals("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value, out var userId))
+                return false;
+            _userId = userId;
+        }
+        else
+        {
+            // Should never happen.
+            return false;
+        }
+        return true;
     }
 }

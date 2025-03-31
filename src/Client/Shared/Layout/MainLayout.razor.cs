@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Models.Palettes;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Microsoft.AspNetCore.Components.Web;
@@ -11,6 +12,7 @@ public sealed partial class MainLayout : IDisposable
 {
     [Inject] private IStringLocalizer<MainLayout> L { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
+    [Inject] private IOfflineService OfflineService { get; set; } = default!;
     [Inject] private UserRepository UserRepository { get; set; } = default!;
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
@@ -53,6 +55,8 @@ public sealed partial class MainLayout : IDisposable
                     Navigation.NavigateTo("/authentication/login");
                 return;
             }
+
+            await OfflineService.SetUser();
 
             if (UserHelper.InRole(authState, AccessesNames.AUTH_External))
             {

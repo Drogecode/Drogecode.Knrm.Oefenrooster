@@ -8,10 +8,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class UserRoleService : IUserRoleService
 {
     private readonly ILogger<UserRoleService> _logger;
-    private readonly Database.DataContext _database;
+    private readonly DataContext _database;
     private readonly ILinkUserRoleService _linkUserRoleService;
 
-    public UserRoleService(ILogger<UserRoleService> logger, Database.DataContext database, ILinkUserRoleService linkUserRoleService)
+    public UserRoleService(ILogger<UserRoleService> logger, DataContext database, ILinkUserRoleService linkUserRoleService)
     {
         _logger = logger;
         _database = database;
@@ -34,41 +34,48 @@ public class UserRoleService : IUserRoleService
         return result;
     }
 
-    public async Task<List<string>> GetAccessForUser(Guid userId, Guid customerId, IEnumerable<Claim> claims, CancellationToken clt)
+    public async Task<List<string>> GetAccessForUserByClaims(Guid userId, Guid customerId, IEnumerable<Claim> claims, CancellationToken clt)
     {
         var result = new List<string>();
-        try
+        var roles = await _database.UserRoles.Where(x => x.CustomerId == customerId).ToListAsync(clt);
+        var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(userId, clt);
+        foreach (var claim in claims.Where(x => x.Type.Equals("groups")))
         {
-            var roles = await _database.UserRoles.Where(x => x.CustomerId == customerId).ToListAsync(clt);
-            /*var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(userId, clt);*/
-            foreach (var claim in claims.Where(x => x.Type.Equals("groups")))
+            var role = roles.FirstOrDefault(x => string.CompareOrdinal(x.ExternalId, claim.Value) == 0);
+            if (role is null) continue;
+            await _linkUserRoleService.LinkUserToRoleAsync(userId, role.ToDrogeUserRole(), true, true, clt);
+            linkedRoles.Remove(role.Id);
+            var accesses = role.Accesses?.Split(',');
+            if (accesses is null) continue;
+            foreach (var access in accesses)
             {
-                var role = roles.FirstOrDefault(x => string.CompareOrdinal(x.ExternalId, claim.Value) == 0);
-                if (role is null)continue;
-                /*await _linkUserRoleService.LinkUserToRoleAsync(userId, role.Id, true, true, clt);
-                linkedRoles.Remove(role.Id);*/
-                var accesses = role.Accesses?.Split(',');
-                if (accesses is null) continue;
-                foreach (var access in accesses)
-                {
-                    if (!result.Contains(access))
-                        result.Add(access);
-                }
+                if (!result.Contains(access))
+                    result.Add(access);
             }
-
-            /*
-             // Disabled for performance, is done by the background service every night.
-             
-             foreach (var linkedRole in linkedRoles)
-            {
-                await _linkUserRoleService.LinkUserToRoleAsync(userId, linkedRole, false, true, clt);
-            }*/
         }
-        catch (Exception ex)
+
+        foreach (var linkedRole in linkedRoles)
         {
-            //Catch all to prevent issues when database is not yet updated.
-            _logger.LogError(ex, "Failed to get roles for user");
-            return new List<string>();
+            var role = roles.FirstOrDefault(x => x.Id == linkedRole);
+            await _linkUserRoleService.LinkUserToRoleAsync(userId, role.ToDrogeUserRole(), false, true, clt);
+        }
+
+        return result;
+    }
+
+    public async Task<List<string>> GetAccessForUserByUserId(Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var result = new List<string>();
+        var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(userId, clt);
+        foreach (var linkedRole in linkedRoles)
+        {
+            var accesses = await _database.UserRoles.Where(x => x.Id == linkedRole).Select(x => x.Accesses).FirstOrDefaultAsync(clt);
+            if (accesses is null) continue;
+            foreach (var access in accesses.Split(','))
+            {
+                if (!result.Contains(access))
+                    result.Add(access);
+            }
         }
 
         return result;

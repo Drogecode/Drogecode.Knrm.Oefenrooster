@@ -5,9 +5,9 @@
         {
             <div class="m-2">
                 <MudSelect T="Guid?" Value="@_currentCustomer" ValueChanged="OnCustomerChange" ToStringFunc="CustomerIdToName" Disabled="@(_changingCustomer)">
-                    @foreach (var customer in _linkedCustomers)
+                    @foreach (var customer in _linkedCustomers.OrderBy(x => x.Name))
                     {
-                        <MudSelectItem T="Guid?" Value="@customer.Id" Disabled="@(_currentCustomer == customer.Id)">@customer.Name</MudSelectItem>
+                        <MudSelectItem T="Guid?" Value="@customer.CustomerId" Disabled="@(_currentCustomer == customer.CustomerId)">@customer.Name</MudSelectItem>
                     }
                 </MudSelect>
             </div>

@@ -39,7 +39,7 @@ public class UserLinkCustomerControllerTests : BaseTest
         Assert.NotNull(getAllResult?.Value?.UserLinkedCustomers);
         Assert.True(getAllResult.Value.Success);
         Assert.NotEmpty(getAllResult.Value.UserLinkedCustomers);
-        getAllResult.Value.UserLinkedCustomers.Should().Contain(x => x.Id == Tester.DefaultCustomerId);
+        getAllResult.Value.UserLinkedCustomers.Should().Contain(x => x.CustomerId == Tester.DefaultCustomerId);
     }
 
     private async Task<LinkUserToCustomerResponse?> UserLinkCustomerController(Guid userId, Guid globalUserId)

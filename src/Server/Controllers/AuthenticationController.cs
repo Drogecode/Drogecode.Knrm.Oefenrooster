@@ -23,6 +23,7 @@ public class AuthenticationController : DrogeController
     private readonly IMemoryCache _memoryCache;
     private readonly IUserRoleService _userRoleService;
     private readonly IUserService _userService;
+    private readonly IUserLinkCustomerService _userLinkCustomerService;
     private readonly ICustomerSettingService _customerSettingService;
     private readonly IReportActionSharedService _reportActionSharedService;
     private readonly IConfiguration _configuration;
@@ -37,6 +38,7 @@ public class AuthenticationController : DrogeController
         IMemoryCache memoryCache,
         IUserRoleService userRoleService,
         IUserService userService,
+        IUserLinkCustomerService userLinkCustomerService,
         ICustomerSettingService customerSettingService,
         IReportActionSharedService reportActionSharedService,
         IConfiguration configuration,
@@ -46,6 +48,7 @@ public class AuthenticationController : DrogeController
         _memoryCache = memoryCache;
         _userRoleService = userRoleService;
         _userService = userService;
+        _userLinkCustomerService = userLinkCustomerService;
         _customerSettingService = customerSettingService;
         _reportActionSharedService = reportActionSharedService;
         _configuration = configuration;
@@ -119,7 +122,7 @@ public class AuthenticationController : DrogeController
             return false;
         }
     }
-    
+
     [HttpPost]
     [Route("authenticate-external")]
     public async Task<ActionResult<bool>> AuthenticateExternal([FromBody] AuthenticateExternalRequest body, CancellationToken clt = default)
@@ -286,16 +289,69 @@ public class AuthenticationController : DrogeController
     [Authorize]
     [HttpPatch]
     [Route("switch")]
-    public async Task<IActionResult> SwitchUser([FromBody] SwitchUserRequest body, CancellationToken clt = default)
+    public async Task<ActionResult<bool>> SwitchUser([FromBody] SwitchUserRequest body, CancellationToken clt = default)
     {
         try
         {
-            return Ok();
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var linkedUsers = await _userLinkCustomerService.GetAllLinkUserCustomers(userId, customerId, clt);
+            if (!linkedUsers.Success || linkedUsers.UserLinkedCustomers?.Count < 2)
+            {
+                Logger.LogWarning("Not enough linked users found for {user} : {success} : {count}", userId, linkedUsers.Success, linkedUsers.UserLinkedCustomers?.Count);
+                return false;
+            }
+
+            if (linkedUsers.UserLinkedCustomers?.Any(x => x.UserId == body.UserId) != true)
+            {
+                Logger.LogWarning("User {user} is trying to switch to {linkedUser} but that is not linked.", userId, body.UserId);
+                return false;
+            }
+
+            var linkedUser = await _userService.GetUserById(body.CustomerId, body.UserId, clt);
+            if (linkedUser is null)
+            {
+                Logger.LogWarning("Linked user {linkedUser} not found for {user}", body.UserId, userId);
+                return false;
+            }
+
+            var authService = GetAuthenticationService();
+            var ip = GetRequesterIp();
+            var claims = new List<Claim>
+            {
+                new("http://schemas.microsoft.com/identity/claims/objectidentifier", linkedUser.Id.ToString() ?? ""),
+                new("http://schemas.microsoft.com/identity/claims/tenantid", linkedUser.CustomerId.ToString()),
+                new("ExternalId", linkedUser.ExternalId ?? throw new AggregateException("ExternalId is null")),
+                new("ValidFrom", DateTime.UtcNow.AddMinutes(-10).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+                new("ValidTo", DateTime.UtcNow.AddHours(1).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
+            };
+            var userClaims = await _userRoleService.GetAccessForUserByUserId(linkedUser.Id, linkedUser.CustomerId, clt);
+            foreach (var userClaim in userClaims)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, userClaim));
+            }
+#if DEBUG
+            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_super_user));
+#endif
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = false
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+            await authService.AuditLogin(body.UserId, null, ip, "SwitchUser", true, clt);
+            return true;
         }
         catch (Exception e)
         {
             Logger.LogError(e, "SwitchUser");
-            return BadRequest();
+            return false;
         }
     }
 
@@ -426,7 +482,7 @@ public class AuthenticationController : DrogeController
             claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_global_all));
         }
 
-        var accesses = await _userRoleService.GetAccessForUser(userId, customerId, subResult.JwtSecurityToken.Claims, clt);
+        var accesses = await _userRoleService.GetAccessForUserByClaims(userId, customerId, subResult.JwtSecurityToken.Claims, clt);
         foreach (var access in accesses)
         {
             claims.Add(new Claim(ClaimTypes.Role, access));

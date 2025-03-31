@@ -11,11 +11,12 @@ public class RefreshModel
         RefreshRequestedAsync?.Invoke();
     }
 
-    public async Task CallRequestRefreshAsync()
+    public Task CallRequestRefreshAsync()
     {
         RefreshRequested?.Invoke();
         var task = RefreshRequestedAsync?.Invoke();
         if (task != null)
-            await task;
+            return task;
+        return Task.CompletedTask;
     }
 }

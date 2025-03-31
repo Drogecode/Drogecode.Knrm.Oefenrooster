@@ -36,6 +36,10 @@ public class MenuController : ControllerBase
             var result = await _menuService.GetAllMenus(customerId, clt);
             return result;
         }
+        catch (OperationCanceledException)
+        {
+            return Ok();
+        }
         catch (Exception ex)
         {
 #if DEBUG

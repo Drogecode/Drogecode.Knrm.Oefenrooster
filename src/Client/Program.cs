@@ -20,7 +20,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 
 builder.Services.AddAuthorizationCore();
-builder.Services.AddScoped<CustomStateProvider>();
 
 builder.Services.AddMudServices(config => { config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft; });
 builder.Services.AddMudTranslations();
@@ -76,6 +75,7 @@ builder.Services.TryAddScoped<ILocalStorageExpireService, LocalStorageExpireServ
 builder.Services.TryAddScoped<ISessionExpireService, SessionExpireService>();
 builder.Services.TryAddScoped<IOfflineService, OfflineService>();
 
+builder.Services.AddScoped<CustomStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
 builder.Services.AddScoped(sp => new HttpClient
 {

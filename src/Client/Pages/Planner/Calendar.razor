@@ -53,8 +53,8 @@
             else
             {
                 @foreach (var ev in _events.Where(x =>
-                                      x.Start.Month == _month.Value.Month &&
-                                      x.Start.Year == _month.Value.Year &&
+                                      (x.Start.Month == _month.Value.Month || x.End?.Month == _month.Value.Month) &&
+                                      (x.Start.Year == _month.Value.Year || x.End?.Year == _month.Value.Year) &&
                                       ((x.End.Equals(DateTime.MinValue) && x.Start >= DateTime.Today) || x.End >= DateTime.Today))
                                   .OrderBy(x => x.Start))
                 {

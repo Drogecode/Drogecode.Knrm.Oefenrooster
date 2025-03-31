@@ -66,7 +66,7 @@ public class UserController : ControllerBase
             return BadRequest();
         }
     }
-    
+
     [HttpGet]
     [Route("all/customer/{customerId:guid}/{includeHidden:bool}")]
     [Authorize(Roles = AccessesNames.AUTH_super_user)]
@@ -116,7 +116,8 @@ public class UserController : ControllerBase
     {
         try
         {
-            var result = await _userService.GetUserById(id, clt);
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var result = await _userService.GetUserById(customerId, id, clt);
             return new GetByIdResponse { User = result, Success = true };
         }
         catch (Exception ex)

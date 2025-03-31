@@ -10,7 +10,8 @@ public static class CustomerMapper
     {
         return new LinkedCustomer()
         {
-            Id = dbLinkUserCustomer.CustomerId,
+            CustomerId = dbLinkUserCustomer.CustomerId,
+            UserId = dbLinkUserCustomer.UserId,
             Name = dbLinkUserCustomer.Customer.Name,
             IsPrimary = dbLinkUserCustomer.IsPrimary,
             IsCurrent = dbLinkUserCustomer.CustomerId == currentCustomerId,

@@ -43,15 +43,16 @@ public class UserService : IUserService
         return result;
     }
 
-    public async Task<DrogeUser?> GetUserById(Guid userId, CancellationToken clt)
+    public async Task<DrogeUser?> GetUserById(Guid customerId, Guid userId, CancellationToken clt)
     {
-        var userObj = await _database.Users
+        var user = await _database.Users
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
             .Include(x => x.LinkedUserAsB!.Where(y => y.DeletedOn == null))
-            .Where(u => u.Id == userId && u.DeletedOn == null)
+            .Where(u => u.CustomerId == customerId && u.Id == userId && u.DeletedOn == null)
+            .Select(x=>x.ToSharedUser(false, false))
             .AsNoTracking()
             .FirstOrDefaultAsync(clt);
-        return userObj?.ToSharedUser(false, false);
+        return user;
     }
 
     public async Task<DrogeUserServer?> GetUserByNameForServer(string? name, CancellationToken clt)

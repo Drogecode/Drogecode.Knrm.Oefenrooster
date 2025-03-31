@@ -227,7 +227,7 @@ public class ScheduleController : ControllerBase
                 await _refreshHub.SendMessage(user.UserId, ItemUpdated.FutureTrainings);
                 if (!string.IsNullOrEmpty(user.CalendarEventId))
                 {
-                    var drogeUser = await _userService.GetUserById(user.UserId, clt);
+                    var drogeUser = await _userService.GetUserById(customerId, user.UserId, clt);
                     if (drogeUser is null) throw new DrogeCodeNullException("No user found");
                     var preText = await _userSettingService.GetStringUserSetting(customerId, drogeUser.Id, SettingName.CalendarPrefix);
                     DrogeFunction? function = null;
@@ -363,7 +363,7 @@ public class ScheduleController : ControllerBase
                 DrogeFunction? function = null;
                 if (body.User.PlannedFunctionId is not null && body.User.UserFunctionId is not null && body.User.UserFunctionId != body.User.PlannedFunctionId)
                     function = await _functionService.GetById(customerId, body.User.PlannedFunctionId.Value, clt);
-                var user = await _userService.GetUserById(body.User.UserId, clt);
+                var user = await _userService.GetUserById(customerId, body.User.UserId, clt);
                 if (user is null) throw new DrogeCodeNullException("No user found");
                 await ToOutlookCalendar(body.User.UserId, user.ExternalId, body.TrainingId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId,
                     function?.Name, clt);
@@ -408,7 +408,7 @@ public class ScheduleController : ControllerBase
             if (result.Success && body.UserId is not null)
             {
                 clt = CancellationToken.None;
-                var user = await _userService.GetUserById(body.UserId.Value, clt);
+                var user = await _userService.GetUserById(customerId, body.UserId.Value, clt);
                 if (user is null) throw new DrogeCodeNullException("No user found");
                 DrogeFunction? function = null;
                 if (body.Training?.PlannedFunctionId is not null && user.UserFunctionId is not null && user.UserFunctionId != body.Training.PlannedFunctionId)

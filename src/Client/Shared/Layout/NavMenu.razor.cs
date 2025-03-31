@@ -9,6 +9,8 @@ using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Client.Services;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 
@@ -27,6 +29,7 @@ public sealed partial class NavMenu : IDisposable
     [Inject, NotNull] private ILinkedCustomerClient? LinkedCustomerClient { get; set; }
     [Inject, NotNull] private ILocalStorageService? LocalStorage { get; set; }
     [Inject, NotNull] private IJSRuntime? JsRuntime { get; set; }
+    [Inject, NotNull] private CustomStateProvider? AuthenticationStateProvider { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
 
@@ -80,15 +83,23 @@ public sealed partial class NavMenu : IDisposable
 
     private string? CustomerIdToName(Guid? customerId)
     {
-        return _linkedCustomers?.FirstOrDefault(x=>x.Id == customerId)?.Name ;
+        return _linkedCustomers?.FirstOrDefault(x => x.CustomerId == customerId)?.Name;
     }
 
     private async Task OnCustomerChange(Guid? customerId)
     {
-        if (customerId == _currentCustomer)
+        var linkedCustomer = _linkedCustomers?.FirstOrDefault(x => x.CustomerId == customerId);
+        if (customerId == _currentCustomer || linkedCustomer is null)
             return;
         _changingCustomer = true;
         StateHasChanged();
+        await AuthenticationStateProvider.SwitchUser(new SwitchUserRequest()
+        {
+            UserId = linkedCustomer.UserId,
+            CustomerId = linkedCustomer.CustomerId
+        });
+        StateHasChanged();
+        Navigation.NavigateTo("/", true);
     }
 
     private async Task SetMenu()
