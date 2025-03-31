@@ -73,7 +73,7 @@ public abstract class BlazorTestBase : TestContext
 
         Services.AddSingleton<ILocalStorageExpireService, LocalStorageExpireService>();
         Services.AddSingleton<ISessionExpireService, SessionExpireService>();
-        Services.AddSingleton<IOfflineService, OfflineService>();
+        Services.AddScoped<IOfflineService, OfflineService>();
 
         Services.AddScoped<CustomStateProvider>();
         Services.AddScoped<AuthenticationStateProvider>(c => c.GetRequiredService<CustomStateProvider>());
