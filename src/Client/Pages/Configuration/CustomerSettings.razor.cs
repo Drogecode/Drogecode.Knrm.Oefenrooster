@@ -17,10 +17,11 @@ public sealed partial class CustomerSettings : IDisposable
     [Inject, NotNull] private IUserGlobalClient? UserGlobalClient { get; set; }
 
     [Parameter] public Guid? Id { get; set; }
+    
+    private readonly CancellationTokenSource _cls = new();
 
     private IEnumerable<DrogeUser> _selectedUsersOther = [];
     private Guid? _selectedUserGlobal;
-    private CancellationTokenSource _cls = new();
     private GetCustomerResponse? _customer;
     private List<DrogeUser>? _usersDifferentCustomer;
     private GetAllUsersWithLinkToCustomerResponse? _linkedUsers;
@@ -80,11 +81,6 @@ public sealed partial class CustomerSettings : IDisposable
         }
     }
 
-    public void Dispose()
-    {
-        _cls.Cancel();
-    }
-
     private async Task Save()
     {
         if (Id is null || !_selectedUsersOther.Any() || _selectedUserGlobal is null)
@@ -126,5 +122,10 @@ public sealed partial class CustomerSettings : IDisposable
             _allowSave = true;
         else
             _allowSave = false;
+    }
+
+    public void Dispose()
+    {
+        _cls.Cancel();
     }
 }

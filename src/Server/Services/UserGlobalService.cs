@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
@@ -27,6 +28,26 @@ public class UserGlobalService : DrogeService, IUserGlobalService
         };
         result.TotalCount = result.GlobalUsers.Count;
         result.Success = true;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<PutResponse> PutGlobalUser(Guid userId, DrogeUserGlobal globalUser, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new PutResponse();
+        var newId = Guid.CreateVersion7();
+        Database.UsersGlobal.Add(new DbUsersGlobal()
+        {
+            Id = newId,
+            Name = globalUser.Name,
+            CreatedOn = DateTime.UtcNow,
+            CreatedBy = userId
+        });
+        result.Success = await Database.SaveChangesAsync(clt) > 0;
+        if (result.Success)
+            result.NewId = newId;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;

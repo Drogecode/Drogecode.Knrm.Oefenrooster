@@ -342,7 +342,11 @@
       "LinkedCustomer": {
         "type": "object",
         "properties": {
-          "id": {
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
             "type": "string",
             "format": "uuid"
           },

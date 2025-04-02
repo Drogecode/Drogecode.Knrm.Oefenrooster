@@ -1,0 +1,25 @@
+﻿@page "/configuration/global-users"
+
+<MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="() => {return OpenGlobalUserDialog(null, true); }">@L["Add new global user"]</MudButton>
+@if (_globalUsers?.GlobalUsers is not null)
+{
+    <MudDataGrid Items="@_globalUsers.GlobalUsers.OrderBy(x => x.Name)" ReadOnly="true" Filterable="false" SortMode="@SortMode.None">
+        <Columns>
+            <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
+            <PropertyColumn Property="x => x.CreatedOn" Title="@L["CreatedOn"]"/>
+            <TemplateColumn>
+                <CellTemplate>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => { OpenGlobalUserDialog(context.Item, false); })"/>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+}
+else if (_globalUsers is not null)
+{
+    @L["Failed to load global users"]
+}
+else
+{
+    <DrogeLoading/>
+}

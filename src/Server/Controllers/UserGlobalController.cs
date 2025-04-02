@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
+﻿using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserGlobal;
 using Microsoft.AspNetCore.Authorization;
@@ -31,6 +32,23 @@ public class UserGlobalController : DrogeController
         catch (Exception ex)
         {
             Logger.LogError(ex, "Exception in GetAll");
+            return BadRequest();
+        }
+    }
+
+    [HttpPut]
+    [Route("")]
+    public async Task<ActionResult<PutResponse>> PutGlobalUser([FromBody] DrogeUserGlobal globalUser, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var result = await _userGlobalService.PutGlobalUser(userId, globalUser, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Exception in PutGlobalUser");
             return BadRequest();
         }
     }

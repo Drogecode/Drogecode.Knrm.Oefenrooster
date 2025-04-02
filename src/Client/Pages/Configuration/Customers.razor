@@ -6,6 +6,7 @@
 @if (_customers is not null)
 {
     <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="() => {return OpenCustomerDialog(null, true); }">@L["Add new customer"]</MudButton>
+    <MudButton StartIcon="@Icons.Material.Filled.Dataset" OnClick="@(() => { Navigation.NavigateTo("/configuration/global-users");})">@L["Global users"]</MudButton>
 
     <MudDataGrid Items="@_customers.Customers?.OrderBy(x => x.Name)" ReadOnly="true" Filterable="false" SortMode="@SortMode.None">
         <Columns>
