@@ -92,12 +92,12 @@ public class MockAuthenticationClient : IAuthenticationClient
         return await CurrentUserInfoAsync();
     }
 
-    public async Task SwitchUserAsync(SwitchUserRequest body)
+    public async Task<bool> SwitchUserAsync(SwitchUserRequest body)
     {
         throw new NotImplementedException();
     }
 
-    public async Task SwitchUserAsync(SwitchUserRequest body, CancellationToken cancellationToken)
+    public async Task<bool> SwitchUserAsync(SwitchUserRequest body, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

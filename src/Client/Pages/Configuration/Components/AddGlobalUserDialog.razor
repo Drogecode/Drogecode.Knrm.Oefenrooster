@@ -1,5 +1,11 @@
 ﻿<MudDialog>
     <DialogContent>
+        @if (GlobalUser is not null)
+        {
+            <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
+                <MudTextField T="string" Label="@L["Name"]" @bind-Value="@GlobalUser.Name" />
+            </MudForm>
+        }
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>

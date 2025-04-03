@@ -36,6 +36,22 @@ public class UserGlobalController : DrogeController
         }
     }
 
+    [HttpGet]
+    [Route("{id:guid}")]
+    public async Task<ActionResult<GetGlobalUserByIdResponse>> GetGlobalUserById(Guid id, CancellationToken clt = default)
+    {
+        try
+        {
+            var result = await _userGlobalService.GetGlobalUserById(id, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Exception in GetGlobalUserById");
+            return BadRequest();
+        }
+    }
+
     [HttpPut]
     [Route("")]
     public async Task<ActionResult<PutResponse>> PutGlobalUser([FromBody] DrogeUserGlobal globalUser, CancellationToken clt = default)
@@ -49,6 +65,23 @@ public class UserGlobalController : DrogeController
         catch (Exception ex)
         {
             Logger.LogError(ex, "Exception in PutGlobalUser");
+            return BadRequest();
+        }
+    }
+    
+    [HttpPatch]
+    [Route("")]
+    public async Task<ActionResult<PatchResponse>> PatchGlobalUser([FromBody] DrogeUserGlobal globalUser, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var result = await _userGlobalService.PatchGlobalUser(userId, globalUser, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Exception in PatchGlobalUser");
             return BadRequest();
         }
     }

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportActionShared;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserGlobal;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Drogecode.Knrm.Oefenrooster.SharedForTests.Services.Interfaces;
@@ -35,6 +36,7 @@ public class TestService : IAsyncLifetime
     internal Guid DefaultCustomerId { get; private set; }
     internal Guid SecondaryCustomerId { get; private set; }
     internal Guid DefaultUserId { get; private set; }
+    internal Guid DefaultGlobalUserId { get; private set; }
     internal Guid DefaultUserRoleId { get; private set; }
     internal Guid DefaultFunction { get; private set; }
     internal Guid DefaultHoliday { get; private set; }
@@ -67,6 +69,7 @@ public class TestService : IAsyncLifetime
     internal readonly MenuController MenuController;
     internal readonly CustomerController CustomerController;
     internal readonly UserLinkCustomerController UserLinkCustomerController;
+    internal readonly UserGlobalController UserGlobalController;
 
     public TestService(
         DataContext dataContext,
@@ -86,10 +89,11 @@ public class TestService : IAsyncLifetime
         UserRoleController userRoleController,
         UserLinkMailsController userLinkMailsController,
         ReportActionSharedController reportActionSharedController,
-        AuditController auditController, 
+        AuditController auditController,
         MenuController menuController,
         CustomerController customerController,
-        UserLinkCustomerController userLinkCustomerController)
+        UserLinkCustomerController userLinkCustomerController,
+        UserGlobalController userGlobalController)
     {
         DataContext = dataContext;
         DateTimeServiceMock = (IDateTimeServiceMock)dateTimeService;
@@ -113,6 +117,7 @@ public class TestService : IAsyncLifetime
         MenuController = menuController;
         CustomerController = customerController;
         UserLinkCustomerController = userLinkCustomerController;
+        UserGlobalController = userGlobalController;
     }
 
     public async Task InitializeAsync()
@@ -146,10 +151,12 @@ public class TestService : IAsyncLifetime
         MockAuthenticatedUser(MenuController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(CustomerController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(UserLinkCustomerController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        
+        MockAuthenticatedUser(UserGlobalController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+
         DefaultFunction = await AddFunction(FUNCTION_DEFAULT, true);
         DefaultUserRoleId = await AddUserRole(USER_ROLE_NAME);
         DefaultUserId = await AddUser(USER_NAME);
+        DefaultGlobalUserId = await AddGlobalUser(USER_NAME);
         DefaultHoliday = await AddHoliday(HOLIDAY_DEFAULT);
         DefaultTraining = await AddTraining(TRAINING_DEFAULT, false);
         DefaultAssignedTraining = await AssignTrainingToUser(DefaultTraining, DefaultUserId, true);
@@ -170,6 +177,17 @@ public class TestService : IAsyncLifetime
         Assert.NotNull(result?.Value?.UserId);
         Assert.True(result.Value.Success);
         return result.Value.UserId ?? throw new Exception("Failed to get UserId for new test user");
+    }
+
+    internal async Task<Guid> AddGlobalUser(string name)
+    {
+        var result = await UserGlobalController.PutGlobalUser(new DrogeUserGlobal
+        {
+            Name = name,
+        });
+        Assert.NotNull(result?.Value?.NewId);
+        Assert.True(result.Value.Success);
+        return result.Value.NewId ?? throw new Exception("Failed to get NewId for new test global user");
     }
 
     internal async Task<Guid> AddFunction(string name, bool isDefault)
@@ -324,7 +342,7 @@ public class TestService : IAsyncLifetime
         {
             RoosterTrainingTypeId = DefaultTrainingType,
             WeekDay = DayOfWeek.Monday,
-            TimeStart =  new TimeOnly(11, 0).ToTimeSpan(),
+            TimeStart = new TimeOnly(11, 0).ToTimeSpan(),
             TimeEnd = new TimeOnly(14, 0).ToTimeSpan(),
             ValidFromDefault = DateTime.Today,
             ValidUntilDefault = DateTime.Today.AddDays(14),
@@ -336,7 +354,7 @@ public class TestService : IAsyncLifetime
         return result.Value!.NewId.Value;
     }
 
-    internal async Task<Guid> AddActionShared(List<string>? types, List<string>? search, DateTime? validUntil = null, DateTime? startDate = null, DateTime? endDate = null )
+    internal async Task<Guid> AddActionShared(List<string>? types, List<string>? search, DateTime? validUntil = null, DateTime? startDate = null, DateTime? endDate = null)
     {
         var body = new ReportActionSharedConfiguration
         {
