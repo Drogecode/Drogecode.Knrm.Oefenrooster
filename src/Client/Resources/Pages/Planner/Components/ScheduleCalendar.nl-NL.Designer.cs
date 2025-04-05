@@ -59,5 +59,23 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Planner.Components 
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verberg oude trainingen.
+        /// </summary>
+        internal static string Hide_old_trainings {
+            get {
+                return ResourceManager.GetString("Hide old trainings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toon oude trainingen.
+        /// </summary>
+        internal static string Show_old_trainings {
+            get {
+                return ResourceManager.GetString("Show old trainings", resourceCulture);
+            }
+        }
     }
 }

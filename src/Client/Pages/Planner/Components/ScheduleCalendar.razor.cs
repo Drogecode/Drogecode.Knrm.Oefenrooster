@@ -40,6 +40,7 @@ public sealed partial class ScheduleCalendar : IDisposable
     private bool _updating;
     private bool _currentMonth;
     private bool _initialized;
+    private bool _showOldMobile;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -59,8 +60,9 @@ public sealed partial class ScheduleCalendar : IDisposable
     private async Task SetMonth(DateTime? dateTime)
     {
         if (dateTime == null) return;
+        _showOldMobile = false;
         _month = dateTime;
-        DateRange dateRange = new DateRange
+        var dateRange = new DateRange
         {
             Start = new DateTime(dateTime.Value.Year, dateTime.Value.Month, 1),
             End = new DateTime(dateTime.Value.Year, dateTime.Value.Month, DateTime.DaysInMonth(dateTime.Value.Year, dateTime.Value.Month))

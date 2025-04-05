@@ -1,4 +1,5 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
+@using MudBlazor.Extensions
 @if (_monthItems != null)
 {
     @foreach (var item in _monthItems.OrderBy(x => x.Order))
@@ -43,8 +44,12 @@
     </div>
     <div class="d-md-none">
         <MonthSelector Month="_month" MonthChanged="SetMonth" CurrentMonth="_currentMonth"/>
+        @if (_month is not null && DateTime.Today.EndOfMonth(CultureInfo.CurrentCulture).CompareTo(_month.Value.EndOfMonth(CultureInfo.CurrentCulture)) >= 0)
+        {
+            <MudButton OnClick="() => { _showOldMobile = !_showOldMobile; }">@(_showOldMobile ? L["Hide old trainings"] : L["Show old trainings"])</MudButton>
+        }
         <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
-            @if (_month == null)
+            @if (_month is null)
             {
                 <DrogeLoading/>
             }
@@ -53,7 +58,7 @@
                 @foreach (var ev in _events.Where(x =>
                                       (x.Start.Month == _month.Value.Month || x.End?.Month == _month.Value.Month) &&
                                       (x.Start.Year == _month.Value.Year || x.End?.Year == _month.Value.Year) &&
-                                      ((x.End.Equals(DateTime.MinValue) && x.Start >= DateTime.Today) || x.End >= DateTime.Today))
+                                      (_showOldMobile || (x.End.Equals(DateTime.MinValue) && x.Start >= DateTime.Today) || x.End >= DateTime.Today))
                                   .OrderBy(x => x.Start))
                 {
                     <div class="flex-1">
