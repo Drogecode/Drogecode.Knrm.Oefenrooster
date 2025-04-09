@@ -296,6 +296,7 @@ public class AuthenticationController : DrogeController
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var linkedUsers = await _userLinkCustomerService.GetAllLinkUserCustomers(userId, customerId, clt);
+            var inSuperUserRole = User.IsInRole(AccessesNames.AUTH_super_user);
             if (!linkedUsers.Success || linkedUsers.UserLinkedCustomers?.Count < 2)
             {
                 Logger.LogWarning("Not enough linked users found for {user} : {success} : {count}", userId, linkedUsers.Success, linkedUsers.UserLinkedCustomers?.Count);
@@ -321,7 +322,7 @@ public class AuthenticationController : DrogeController
             {
                 new("http://schemas.microsoft.com/identity/claims/objectidentifier", linkedUser.Id.ToString() ?? ""),
                 new("http://schemas.microsoft.com/identity/claims/tenantid", linkedUser.CustomerId.ToString()),
-                new("ExternalId", linkedUser.ExternalId ?? throw new AggregateException("ExternalId is null")),
+                new("ExternalId", linkedUser.ExternalId ?? string.Empty),
                 new("ValidFrom", DateTime.UtcNow.AddMinutes(-10).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
                 new("ValidTo", DateTime.UtcNow.AddHours(1).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             };
@@ -330,9 +331,11 @@ public class AuthenticationController : DrogeController
             {
                 claims.Add(new Claim(ClaimTypes.Role, userClaim));
             }
-#if DEBUG
-            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_super_user));
-#endif
+
+            if (inSuperUserRole)
+            {
+                AddSuperUserRoles(claims);
+            }
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -476,10 +479,7 @@ public class AuthenticationController : DrogeController
         var superUsers = _configuration.GetSection("DrogeCode:SuperAdmin").Get<List<Guid>>();
         if (superUsers is not null && superUsers.Contains(userId))
         {
-            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_super_user));
-            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_user_roles));
-            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_basic_access));
-            claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_global_all));
+            AddSuperUserRoles(claims);
         }
 
         var accesses = await _userRoleService.GetAccessForUserByClaims(userId, customerId, subResult.JwtSecurityToken.Claims, clt);
@@ -490,6 +490,14 @@ public class AuthenticationController : DrogeController
 
         await authService.AuditLogin(userId, null, ip, clientVersion, false, clt);
         return claims;
+    }
+
+    private static void AddSuperUserRoles(List<Claim> claims)
+    {
+        claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_super_user));
+        claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_user_roles));
+        claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_basic_access));
+        claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_global_all));
     }
 
     private async Task<Guid> GetCustomerIdByExternalId(string tenantId, CancellationToken clt)

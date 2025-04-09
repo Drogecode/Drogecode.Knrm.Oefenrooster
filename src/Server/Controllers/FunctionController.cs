@@ -90,6 +90,23 @@ public class FunctionController : ControllerBase
     }
 
     [HttpGet]
+    [Route("all/{customerId:guid}")]
+    [Authorize(Roles = AccessesNames.AUTH_super_user)]
+    public async Task<ActionResult<MultipleFunctionsResponse>> GetAllDifferentCustomer(Guid customerId, CancellationToken clt = default)
+    {
+        try
+        {
+            var result = await _functionService.GetAllFunctions(customerId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetAll functions");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
     [Authorize(Roles = AccessesNames.AUTH_configure_user_functions)]
     [Route("{id:guid}")]
     public async Task<ActionResult<GetFunctionResponse>> GetById(Guid id, CancellationToken clt = default)

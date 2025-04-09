@@ -29,15 +29,27 @@
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public List<DrogeFunction>? Functions { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }
+    [Parameter] public Guid? CustomerId { get; set; }
+    [Parameter] public bool DifferentCustomer { get; set; }
 
     private readonly DrogeUser _user = new();
 
 
     private async Task Submit()
     {
-        await UserRepository.AddUserAsync(_user);
+        if (DifferentCustomer)
+        {
+            if (CustomerId is null) return;
+            await UserRepository.AddUserDifferentCustomer(CustomerId.Value, _user);
+        }
+        else
+        {
+            await UserRepository.AddUserAsync(_user);
+        }
+
         if (Refresh is not null)
             await Refresh.CallRequestRefreshAsync();
+
         MudDialog.Close(DialogResult.Ok(true));
     }
 

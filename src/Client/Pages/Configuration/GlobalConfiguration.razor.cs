@@ -198,13 +198,17 @@ public sealed partial class GlobalConfiguration : IDisposable
 
     private Task AddUser()
     {
+        var parameters = new DialogParameters<AddUserDialog>
+        {
+            { x => x.Functions, _functions },
+            { x => x.Refresh, _refreshModel },
+        };
         var options = new DialogOptions()
         {
             MaxWidth = MaxWidth.Medium,
             CloseButton = true,
             FullWidth = true
         };
-        var parameters = new DialogParameters { { "Functions", _functions }, { "Refresh", _refreshModel } };
         return DialogProvider.ShowAsync<AddUserDialog>(L["Add user"], parameters, options);
     }
 

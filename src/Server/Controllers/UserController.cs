@@ -148,9 +148,29 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpPost]
+    [Route("{customerId:guid}")]
+    [Authorize(Roles = AccessesNames.AUTH_super_user)]
+    public async Task<ActionResult<AddUserResponse>> AddUserDifferentCustomer(Guid customerId, [FromBody] DrogeUser user, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            user.Id = Guid.NewGuid();
+            var result = await _userService.AddUser(user, customerId);
+            await _auditService.Log(userId, AuditType.AddUser, customerId, objectKey: user.Id, objectName: user.Name);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in AddUser");
+            return BadRequest();
+        }
+    }
+
     [HttpPut]
     [Route("")]
-    [Authorize(Roles = AccessesNames.AUTH_users_details)]
+    [Authorize(Roles = $"{AccessesNames.AUTH_users_details},{AccessesNames.AUTH_super_user}")]
     public async Task<ActionResult<UpdateUserResponse>> UpdateUser([FromBody] DrogeUser user, CancellationToken clt = default)
     {
         try

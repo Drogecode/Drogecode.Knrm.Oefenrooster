@@ -58,13 +58,18 @@ public class UserRepository
 
     public async Task<bool> UpdateUserAsync(DrogeUser user)
     {
-        var successfull = await _userClient.UpdateUserAsync(user);
-        return successfull.Success;
+        var successful = await _userClient.UpdateUserAsync(user);
+        return successful.Success;
     }
     public async Task<bool> AddUserAsync(DrogeUser user)
     {
-        var successfull = (await _userClient.AddUserAsync(user)).Success;
-        return successfull;
+        var successful = (await _userClient.AddUserAsync(user)).Success;
+        return successful;
+    }
+    public async Task<bool> AddUserDifferentCustomer(Guid customerId, DrogeUser user)
+    {
+        var successful = (await _userClient.AddUserDifferentCustomerAsync(customerId, user)).Success;
+        return successful;
     }
     public async Task<bool> SyncAllUsersAsync()
     {

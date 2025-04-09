@@ -4,7 +4,7 @@
 @if (_customer?.Customer is not null && _usersGlobal?.GlobalUsers is not null)
 {
     <MudText Typo="Typo.h5">@_customer?.Customer?.Name</MudText>
-    
+    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="() => {return AddUser(); }">@L["Add new user"]</MudButton>
     <MudGrid>
         <MudItem xs="12" sm="4">
             <SelectMultipleUsers Users="_usersDifferentCustomer" MultiSelection="false" Label="@L["Users in customer"]" SelectionChanged="SelectionOtherCustomer" Selection="_selectedUsersOther" />

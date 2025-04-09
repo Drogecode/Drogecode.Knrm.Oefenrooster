@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Customer;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserGlobal;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
@@ -15,9 +18,11 @@ public sealed partial class CustomerSettings : IDisposable
     [Inject, NotNull] private ICustomerClient? CustomerClient { get; set; }
     [Inject, NotNull] private ILinkedCustomerClient? LinkedCustomerClient { get; set; }
     [Inject, NotNull] private IUserGlobalClient? UserGlobalClient { get; set; }
+    [Inject, NotNull] private IFunctionClient? FunctionClient { get; set; }
+    [Inject, NotNull] private IDialogService? DialogProvider { get; set; }
 
     [Parameter] public Guid? Id { get; set; }
-    
+
     private readonly CancellationTokenSource _cls = new();
 
     private IEnumerable<DrogeUser> _selectedUsersOther = [];
@@ -26,6 +31,8 @@ public sealed partial class CustomerSettings : IDisposable
     private List<DrogeUser>? _usersDifferentCustomer;
     private GetAllUsersWithLinkToCustomerResponse? _linkedUsers;
     private AllDrogeUserGlobalResponse? _usersGlobal;
+    private List<DrogeFunction>? _functions;
+    private readonly RefreshModel _refreshModel = new();
 
     private bool _allowSave = false;
 
@@ -34,6 +41,8 @@ public sealed partial class CustomerSettings : IDisposable
         if (firstRender)
         {
             if (Id is null) return;
+            _refreshModel.RefreshRequestedAsync += RefreshMe;
+            _functions = (await FunctionClient.GetAllDifferentCustomerAsync(Id.Value, _cls.Token)).Functions;
             await RefreshMe();
             StateHasChanged();
         }
@@ -46,7 +55,7 @@ public sealed partial class CustomerSettings : IDisposable
         _usersDifferentCustomer = await UserRepository.GetAllDifferentCustomerAsync(Id.Value, false, _cls.Token);
         _linkedUsers = await LinkedCustomerClient.GetAllUsersWithLinkToCustomerAsync(Id.Value, _cls.Token);
         _usersGlobal = await UserGlobalClient.GetAllAsync(_cls.Token);
-        
+
         if (_usersDifferentCustomer is not null && _usersDifferentCustomer.Count != 0)
         {
             var linkedDifferent = new List<DrogeUser>();
@@ -63,6 +72,7 @@ public sealed partial class CustomerSettings : IDisposable
                 _usersDifferentCustomer.Remove(linked);
             }
         }
+
         if (_usersGlobal?.GlobalUsers is not null && _usersGlobal.GlobalUsers.Count != 0)
         {
             var linkedDifferent = new List<DrogeUserGlobal>();
@@ -79,6 +89,27 @@ public sealed partial class CustomerSettings : IDisposable
                 _usersGlobal.GlobalUsers.Remove(linked);
             }
         }
+
+        StateHasChanged();
+    }
+
+
+    private Task AddUser()
+    {
+        var parameters = new DialogParameters<AddUserDialog>
+        {
+            { x => x.Functions, _functions },
+            { x => x.Refresh, _refreshModel },
+            { x => x.DifferentCustomer, true },
+            { x => x.CustomerId, Id }
+        };
+        var options = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.Medium,
+            CloseButton = true,
+            FullWidth = true
+        };
+        return DialogProvider.ShowAsync<AddUserDialog>(L["Add user"], parameters, options);
     }
 
     private async Task Save()
@@ -117,6 +148,7 @@ public sealed partial class CustomerSettings : IDisposable
             _selectedUserGlobal = Guid.Empty;
             return;
         }
+
         _selectedUserGlobal = selection;
         if (_selectedUserGlobal is not null && _selectedUsersOther.Any())
             _allowSave = true;
@@ -126,6 +158,7 @@ public sealed partial class CustomerSettings : IDisposable
 
     public void Dispose()
     {
+        _refreshModel.RefreshRequestedAsync -= RefreshMe;
         _cls.Cancel();
     }
 }
