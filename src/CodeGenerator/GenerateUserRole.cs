@@ -16,7 +16,7 @@ public static class GenerateUserRole
         var filePath = "../../../../Server/Mappers/UserRoleMapper.cs";
         SaveToFile(filePath, generatedCode);
         var generatedBlazorPage = GenerateBlazorPage(accessNames);
-        filePath = "../../../../Client/Pages/Configuration/UserRolesEdit.razor";
+        filePath = "../../../../Client/Pages/Configuration/Components/UserRolesList.razor";
         SaveToFile(filePath, generatedBlazorPage);
         var generatedObject = GenerateObject(accessNames);
         filePath = "../../../../Shared/Models/UserRole/DrogeUserRole.cs";
@@ -146,9 +146,6 @@ public static class GenerateUserRole
         sb.AppendLine("*@");
         sb.AppendLine();
         
-        sb.AppendLine("@page \"/configuration/user-roles/edit/{Id:guid}\"");
-        sb.AppendLine("@page \"/configuration/user-roles/add/\"");
-        sb.AppendLine("<PageTitle>@L[\"User role\"]</PageTitle>");
         sb.AppendLine("@if (_userRole?.Role is not null)");
         sb.AppendLine("{");
         sb.AppendLine("    <MudPaper Class=\"pa-4\" MaxWidth=\"800px\">");
@@ -201,21 +198,6 @@ public static class GenerateUserRole
         sb.AppendLine("        </MudButton>");
 
         sb.AppendLine("    </MudPaper>");
-        sb.AppendLine("""
-                          if (_linkedUsers?.LinkedUsers is not null && _users is not null)
-                          {
-                              <MudPaper>
-                                  <MudList T="string" ReadOnly="true">
-                                      <MudText Typo="Typo.h5">@L["Users in this role"]</MudText>
-                                      @foreach (var userId in _linkedUsers.LinkedUsers)
-                                      {
-                                          var userName = _users.FirstOrDefault(x => x.Id == userId)?.Name ?? @LApp["User not found or deleted"];
-                                          <MudListItem T="string">@userName</MudListItem>
-                                      }
-                                  </MudList>
-                              </MudPaper>
-                          }
-                      """);
         sb.AppendLine("}");
         sb.AppendLine("else if (_userRole is null)");
         sb.AppendLine("{");
