@@ -295,6 +295,8 @@ public class AuthenticationController : DrogeController
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var refreshToken =User?.FindFirstValue(REFRESHTOKEN) ?? throw new Exception("REFRESHTOKEN not found");
+            var idToken =User?.FindFirstValue("idToken") ?? throw new Exception("idToken not found");
             var linkedUsers = await _userLinkCustomerService.GetAllLinkUserCustomers(userId, customerId, clt);
             var inSuperUserRole = User.IsInRole(AccessesNames.AUTH_super_user);
             if (!linkedUsers.Success || linkedUsers.UserLinkedCustomers?.Count < 2)
@@ -309,7 +311,7 @@ public class AuthenticationController : DrogeController
                 return false;
             }
 
-            var linkedUser = await _userService.GetUserById(body.CustomerId, body.UserId, clt);
+            var linkedUser = await _userService.GetUserById(body.CustomerId, body.UserId, true, clt);
             if (linkedUser is null)
             {
                 Logger.LogWarning("Linked user {linkedUser} not found for {user}", body.UserId, userId);
@@ -320,12 +322,17 @@ public class AuthenticationController : DrogeController
             var ip = GetRequesterIp();
             var claims = new List<Claim>
             {
+                new(ClaimTypes.Name, linkedUser.Email ?? ""),
+                new("FullName", linkedUser.Name),
+                new(REFRESHTOKEN, refreshToken),
+                new("idToken", idToken),
                 new("http://schemas.microsoft.com/identity/claims/objectidentifier", linkedUser.Id.ToString() ?? ""),
                 new("http://schemas.microsoft.com/identity/claims/tenantid", linkedUser.CustomerId.ToString()),
                 new("ExternalId", linkedUser.ExternalId ?? string.Empty),
                 new("ValidFrom", DateTime.UtcNow.AddMinutes(-10).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
                 new("ValidTo", DateTime.UtcNow.AddHours(1).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             };
+            
             var userClaims = await _userRoleService.GetAccessForUserByUserId(linkedUser.Id, linkedUser.CustomerId, clt);
             foreach (var userClaim in userClaims)
             {

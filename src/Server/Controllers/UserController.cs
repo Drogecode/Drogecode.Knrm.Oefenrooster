@@ -117,7 +117,7 @@ public class UserController : ControllerBase
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var result = await _userService.GetUserById(customerId, id, clt);
+            var result = await _userService.GetUserById(customerId, id, false, clt);
             return new GetByIdResponse { User = result, Success = true };
         }
         catch (Exception ex)

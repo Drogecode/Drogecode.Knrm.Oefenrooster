@@ -5,7 +5,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 public interface IUserService
 {
     Task<MultipleDrogeUsersResponse> GetAllUsers(Guid customerId, bool includeHidden, bool includeLastLogin, CancellationToken clt);
-    Task<DrogeUser?> GetUserById(Guid customerId, Guid userId, CancellationToken clt);
+    Task<DrogeUser?> GetUserById(Guid customerId, Guid userId, bool includePersonal, CancellationToken clt);
     Task<DrogeUser?> GetUserByPreComId(int preComUserId, CancellationToken clt);
     Task<DrogeUserServer?> GetUserByNameForServer(string? name, CancellationToken clt);
     Task<DrogeUserServer?> GetOrSetUserById(Guid? userId, string? externalId, string userName, string userEmail, Guid customerId, bool setLastOnline, CancellationToken clt);

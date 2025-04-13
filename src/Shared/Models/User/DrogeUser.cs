@@ -9,6 +9,7 @@ public class DrogeUser
     public Guid CustomerId { get; set; }
     public string? Buddy { get; set; }
     public string Name { get; set; } = string.Empty;
+    public string? Email { get; set; }
     public List<string>? Versions { get; set; }
     public int? Nr { get; set; }
     public DateTime Created { get; set; }

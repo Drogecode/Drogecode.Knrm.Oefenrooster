@@ -169,7 +169,7 @@ public class DayItemController : ControllerBase
                 if (newd.DayItem?.LinkedUsers is not null)
                     foreach (var user in newd.DayItem.LinkedUsers)
                     {
-                        var drogeUser = await _userService.GetUserById(customerId, user.UserId, clt);
+                        var drogeUser = await _userService.GetUserById(customerId, user.UserId, false, clt);
                         if (drogeUser is null) throw new DrogeCodeNullException("No user found");
                         await ToOutlookCalendar(user, drogeUser.ExternalId, true, newd.DayItem, customerId, clt);
                     }
@@ -208,7 +208,7 @@ public class DayItemController : ControllerBase
                 {
                     if (roosterItemDay.LinkedUsers?.Any(x => x.UserId == user.UserId) is true)
                         continue;
-                    var drogeUser = await _userService.GetUserById(customerId, user.UserId, clt);
+                    var drogeUser = await _userService.GetUserById(customerId, user.UserId, false, clt);
                     if (drogeUser is null) throw new DrogeCodeNullException("No user found");
                     await ToOutlookCalendar(user, drogeUser.ExternalId, false, old.DayItem, customerId, clt);
 
@@ -220,7 +220,7 @@ public class DayItemController : ControllerBase
                 if (newd.DayItem?.LinkedUsers is not null)
                     foreach (var user in newd.DayItem.LinkedUsers)
                     {
-                        var drogeUser = await _userService.GetUserById(customerId, user.UserId, clt);
+                        var drogeUser = await _userService.GetUserById(customerId, user.UserId, false, clt);
                         if (drogeUser is null) throw new DrogeCodeNullException("No user found");
                         await ToOutlookCalendar(user, drogeUser.ExternalId, true, newd.DayItem, customerId, clt);
                     }
@@ -254,7 +254,7 @@ public class DayItemController : ControllerBase
             {
                 foreach (var user in old.DayItem.LinkedUsers)
                 {
-                    var drogeUser = await _userService.GetUserById(customerId, user.UserId, clt);
+                    var drogeUser = await _userService.GetUserById(customerId, user.UserId, false, clt);
                     if (drogeUser is null) throw new DrogeCodeNullException("No user found");
                     await ToOutlookCalendar(user, drogeUser.ExternalId, false, old.DayItem, customerId, clt);
                 }

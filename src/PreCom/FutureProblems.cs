@@ -127,7 +127,7 @@ public class FutureProblems
         var firstProblemHour = 0;
         var i = 0;
         var isToday = _dateTimeService.Today().Equals(date.Date);
-        foreach (var hour in function.OccupancyDays[date])
+        foreach (var hour in function.OccupancyDays[date].Where(x => !x.Key.Contains('_')))
         {
             if (isToday && i < _dateTimeService.Now().Hour)
             {

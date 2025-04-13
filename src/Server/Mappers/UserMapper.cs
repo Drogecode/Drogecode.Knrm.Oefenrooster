@@ -6,16 +6,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
 
 internal static class UserMapper
 {
-    public static DrogeUserServer ToSharedUser(this DbUsers dbUsers, bool includeLastLogin, bool includeHashedPassword)
+    public static DrogeUserServer ToSharedUser(this DbUsers dbUsers, bool includePersonal, bool includeHashedPassword)
     {
         var user = new DrogeUserServer
         {
             Id = dbUsers.Id,
             ExternalId = dbUsers.ExternalId,
             Name = dbUsers.Name,
+            Email = includePersonal ? dbUsers.Email : null,
             Nr = dbUsers.Nr,
             Created = dbUsers.CreatedOn,
-            LastLogin = includeLastLogin ? dbUsers.LastLogin : DateTime.MinValue,
+            LastLogin = includePersonal ? dbUsers.LastLogin : DateTime.MinValue,
             UserFunctionId = dbUsers.UserFunctionId,
             CustomerId = dbUsers.CustomerId,
             SyncedFromSharePoint = dbUsers.SyncedFromSharePoint,
