@@ -9,6 +9,7 @@ public class DbUsers
     [Key] public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
     public string? ExternalId { get; set; }
+    public int? PreComId { get; set; }
     public Guid? UserFunctionId { get; set; }
     [StringLength(50)] public string Name { get; set; }
     [StringLength(150)] public string Email { get; set; }
@@ -48,4 +49,5 @@ public class DbUsers
     public ICollection<DbRoosterAvailable>? TrainingAvailableLastUpdated { get; set; }
     public ICollection<DbUserLastCalendarUpdate>? UserLastCalendarUpdates { get; set; }
     public ICollection<DbLinkUserCustomer>? LinkUserCustomers { get; set; }
+    public ICollection<DbUserPreComEvent>? UserPreComEvent { get; set; }
 }

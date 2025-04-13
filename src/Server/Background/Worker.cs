@@ -1,6 +1,9 @@
+using Drogecode.Knrm.Oefenrooster.PreCom;
 using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Background;
@@ -11,23 +14,26 @@ public class Worker : BackgroundService
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IConfiguration _configuration;
     private readonly IMemoryCache _memoryCache;
+    private readonly IDateTimeService _dateTimeService;
     private CancellationToken _clt;
 
     private const string NEXT_USER_SYNC = "all_usr_sync";
     private int _errorCount = 0;
 
-    public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IConfiguration configuration, IMemoryCache memoryCache)
+    public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IConfiguration configuration, IMemoryCache memoryCache, IDateTimeService dateTimeService)
     {
         _logger = logger;
         _scopeFactory = scopeFactory;
         _configuration = configuration;
         _memoryCache = memoryCache;
+        _dateTimeService = dateTimeService;
     }
 
     protected override async Task ExecuteAsync(CancellationToken clt)
     {
         _clt = clt;
         _memoryCache.Set(NEXT_USER_SYNC, DateTime.SpecifyKind(DateTime.Today.AddDays(1).AddHours(1), DateTimeKind.Utc)); // do not run on startup
+        int count = 0;
         while (!_clt.IsCancellationRequested && _configuration.GetValue<bool>("Drogecode:RunBackgroundService"))
         {
             try
@@ -36,17 +42,28 @@ public class Worker : BackgroundService
                 for (int i = 0; i < sleep; i++)
                 {
                     if (_clt.IsCancellationRequested) return; // run once every second.
+#if DEBUG
+                    await Task.Delay(100, clt);
+#else
                     await Task.Delay(1000, clt);
+#endif
                 }
 
-                var successfull = await SyncSharePoint(clt);
-
-                if (successfull && _errorCount > 0)
+                using var scope = _scopeFactory.CreateScope();
+                var graphService = scope.ServiceProvider.GetRequiredService<IGraphService>();
+                graphService.InitializeGraph();
+                var successfully = await SyncSharePoint(scope, graphService, clt);
+                if (count % 15 == 0)
+                    successfully = await SyncPreComAvailability(scope, clt) && successfully;
+                count++;
+                if (count > 10000)
+                    count = 0;
+                if (successfully && _errorCount > 0)
                 {
                     _errorCount--;
                     _logger.LogInformation("No error in worker, decreasing counter with one `{errorCount}`", _errorCount);
                 }
-                else if (!successfull)
+                else if (!successfully)
                 {
                     _errorCount++;
                     _logger.LogWarning("Error in worker, increasing counter with one `{errorCount}`", _errorCount);
@@ -62,12 +79,8 @@ public class Worker : BackgroundService
         }
     }
 
-    private async Task<bool> SyncSharePoint(CancellationToken clt)
+    private async Task<bool> SyncSharePoint(IServiceScope scope, IGraphService graphService, CancellationToken clt)
     {
-        using var scope = _scopeFactory.CreateScope();
-        var graphService = scope.ServiceProvider.GetRequiredService<IGraphService>();
-        graphService.InitializeGraph();
-
         var result = true;
         result = await SyncSharePointActions(graphService) && result;
         result = await SyncSharePointUsers(scope, graphService) && result;
@@ -119,6 +132,104 @@ public class Worker : BackgroundService
         }
 
         return true;
+    }
+
+    private async Task<bool> SyncPreComAvailability(IServiceScope scope, CancellationToken clt)
+    {
+#if !DEBUG
+        // Not ready for production
+        return true;
+#endif
+        var preComService = scope.ServiceProvider.GetRequiredService<IPreComService>();
+        var userPreComEventService = scope.ServiceProvider.GetRequiredService<IUserPreComEventService>();
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+        var customerSettingService = scope.ServiceProvider.GetRequiredService<ICustomerSettingService>();
+        var preComClient = await preComService.GetPreComClient();
+        if (preComClient is null)
+            return true;
+        var preComWorker = new AvailabilityForUser(preComClient, _logger, _dateTimeService);
+
+        // ToDo: Make work for different users than me
+        // ToDo: Run for multiple days
+        var date = DateTime.Today;
+        var userIds = new List<int> { 37398 };
+        var preComAvailability = await preComWorker.Get(userIds, date);
+        if (preComAvailability?.Users is null)
+            return true;
+        foreach (var user in preComAvailability.Users)
+        {
+            if (user.AvailabilitySets is null || user.UserId is null)
+                continue;
+            var drogeUser = await userService.GetUserByPreComId(user.UserId.Value, clt);
+            if (drogeUser is null)
+            {
+                _logger.LogWarning("No user found with PreCom id `{PreComId}`", user.UserId);
+                continue;
+            }
+
+            var timeZone = await customerSettingService.GetTimeZone(drogeUser.CustomerId);
+            var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
+            var periods = new Dictionary<DateTime, DateTime>();
+            DateTime? start = null;
+            foreach (var availabilitySet in user.AvailabilitySets.OrderBy(x => x.Start))
+            {
+                if (start is null && availabilitySet.Available)
+                {
+                    start = availabilitySet.Start;
+                    continue;
+                }
+
+                if (availabilitySet.Available || start is null)
+                {
+                    continue;
+                }
+
+                var startConverted = TimeZoneInfo.ConvertTimeToUtc(start.Value, zone);
+                var end = TimeZoneInfo.ConvertTimeToUtc(availabilitySet.Start, zone);
+                periods.Add(startConverted, end);
+                start = null;
+            }
+
+            if (start is not null)
+            {
+                var startConverted = TimeZoneInfo.ConvertTimeToUtc(start.Value, zone);
+                var end = TimeZoneInfo.ConvertTimeToUtc(start.Value.AddDays(1).Date, zone);
+                periods.Add(startConverted, end);
+            }
+
+            clt.ThrowIfCancellationRequested();
+            await SyncWithUserCalendar(drogeUser, periods, DateOnly.FromDateTime(date), userPreComEventService, clt);
+        }
+
+        return true;
+    }
+
+    private async Task SyncWithUserCalendar(DrogeUser drogeUser, Dictionary<DateTime, DateTime> periods, DateOnly date, IUserPreComEventService userPreComEventService, CancellationToken clt)
+    {
+        if (periods.Count == 0)
+            return;
+        var userPreComEvents = await userPreComEventService.GetEventsForUserForDay(drogeUser.Id, drogeUser.CustomerId, date, clt);
+        var notFound = new List<int>();
+        for (var i = 0; i < userPreComEvents.Count; i++)
+        {
+            if (periods.Any(x => x.Key.CompareTo(userPreComEvents[i].Start) == 0 && x.Value.CompareTo(userPreComEvents[i].End) == 0))
+            {
+                periods.Remove(userPreComEvents[i].Start);
+                continue;
+            }
+
+            notFound.Add(i);
+        }
+
+        foreach (var indexToRemove in notFound)
+        {
+            await userPreComEventService.RemoveEvent(drogeUser, userPreComEvents[indexToRemove], clt);
+        }
+
+        foreach (var period in periods)
+        {
+            await userPreComEventService.AddEvent(drogeUser, period.Key, period.Value, date, clt);
+        }
     }
 
     private async Task<bool> RunBackgroundTask<TRet>(Func<Task<TRet>> function, string name, CancellationToken clt)

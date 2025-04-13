@@ -55,6 +55,16 @@ public class UserService : IUserService
         return user;
     }
 
+    public async Task<DrogeUser?> GetUserByPreComId(int preComUserId, CancellationToken clt)
+    {
+        var user = await _database.Users
+            .Where(u => u.PreComId == preComUserId && u.DeletedOn == null)
+            .Select(x=>x.ToSharedUser(false, false))
+            .AsNoTracking()
+            .FirstOrDefaultAsync(clt);
+        return user;
+    }
+
     public async Task<DrogeUserServer?> GetUserByNameForServer(string? name, CancellationToken clt)
     {
         if (name is null) return null;

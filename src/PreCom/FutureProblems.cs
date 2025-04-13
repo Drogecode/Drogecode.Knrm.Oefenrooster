@@ -9,13 +9,13 @@ using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.PreCom;
 
-public class PreComWorker
+public class FutureProblems
 {
     private readonly IPreComClient _preComClient;
     private readonly ILogger _logger;
     private IDateTimeService _dateTimeService;
 
-    public PreComWorker(IPreComClient preComClient, ILogger logger, IDateTimeService dateTimeService)
+    public FutureProblems(IPreComClient preComClient, ILogger logger, IDateTimeService dateTimeService)
     {
         _preComClient = preComClient;
         _logger = logger;

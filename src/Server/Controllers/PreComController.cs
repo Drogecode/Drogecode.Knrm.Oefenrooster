@@ -11,6 +11,7 @@ using System.Text.Json;
 using Drogecode.Knrm.Oefenrooster.PreCom;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -23,7 +24,6 @@ public class PreComController : DrogeController
     private readonly IPreComService _preComService;
     private readonly PreComHub _preComHub;
     private readonly IHttpClientFactory _clientFactory;
-    private readonly HttpClient _httpClient;
     private readonly IConfiguration _configuration;
     private readonly IDateTimeService _dateTimeService;
     private readonly IAuditService _auditService;
@@ -33,7 +33,6 @@ public class PreComController : DrogeController
         IPreComService preComService,
         PreComHub preComHub,
         IHttpClientFactory clientFactory,
-        HttpClient httpClient,
         IConfiguration configuration,
         IDateTimeService dateTimeService,
         IAuditService auditService) : base(logger)
@@ -41,7 +40,6 @@ public class PreComController : DrogeController
         _preComService = preComService;
         _preComHub = preComHub;
         _clientFactory = clientFactory;
-        _httpClient = httpClient;
         _configuration = configuration;
         _dateTimeService = dateTimeService;
         _auditService = auditService;
@@ -268,25 +266,19 @@ public class PreComController : DrogeController
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             await _auditService.Log(userId, AuditType.PreComProblems, customerId, nextRunMode.ToString());
-            var preComClient = new PreComClient(_httpClient, "drogecode", Logger);
-            var preComUser = _configuration.GetValue<string>("PreCom:User");
-            var preComPassword = _configuration.GetValue<string>("PreCom:Password");
+            // ReSharper disable once RedundantAssignment
             var whatsAppBearer = _configuration.GetValue<string>("WhatsApp:Bearer");
-            if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
-            {
-                preComUser = KeyVaultHelper.GetSecret("PreComUser", Logger)?.Value;
-                preComPassword = KeyVaultHelper.GetSecret("PreComPassword", Logger)?.Value;
-                if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
-                    return BadRequest();
-            }
+
+            var preComClient = await _preComService.GetPreComClient();
+            if (preComClient is null)
+                return BadRequest();
 
             if (false && string.IsNullOrWhiteSpace(whatsAppBearer))
             {
                 whatsAppBearer = KeyVaultHelper.GetSecret("WhatsAppBearer", Logger)?.Value;
             }
 
-            await preComClient.Login(preComUser, preComPassword);
-            var preComWorker = new PreComWorker(preComClient, Logger, _dateTimeService);
+            var preComWorker = new FutureProblems(preComClient, Logger, _dateTimeService);
             var problems = await preComWorker.Work(nextRunMode);
             if (false && !string.IsNullOrWhiteSpace(whatsAppBearer) && problems.Problems is not null)
             {

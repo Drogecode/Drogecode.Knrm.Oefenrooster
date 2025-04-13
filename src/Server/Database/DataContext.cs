@@ -22,6 +22,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbUserHolidays> UserHolidays { get; set; }
         public DbSet<DbUserOnVersion> UserOnVersions { get; set; }
         public DbSet<DbUserSettings> UserSettings { get; set; }
+        public DbSet<DbUserPreComEvent> UserPreComEvents { get; set; }
         public DbSet<DbUserLinkedMails> UserLinkedMails { get; set; }
         public DbSet<DbUserLastCalendarUpdate> UserLastCalendarUpdates { get; set; }
         public DbSet<DbCustomers> Customers { get; set; }
@@ -133,6 +134,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserLogins>().HasOne(p => p.User).WithMany(g => g.Logins).HasForeignKey(s => s.UserId);
             modelBuilder.Entity<DbUserLogins>().HasOne(p => p.SharedAction).WithMany(g => g.Logins).HasForeignKey(s => s.SharedActionId);
 
+            //UserPreComEvent
+            modelBuilder.Entity<DbUserPreComEvent>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbUserPreComEvent>().HasOne(p => p.User).WithMany(g => g.UserPreComEvent).HasForeignKey(s => s.UserId);
+            modelBuilder.Entity<DbUserPreComEvent>().HasOne(p => p.Customer).WithMany(g => g.UserPreComEvent).HasForeignKey(s => s.CustomerId);
+            
             //Menu
             modelBuilder.Entity<DbMenu>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbMenu>().HasOne(p => p.Customer).WithMany(g => g.Menus).HasForeignKey(s => s.CustomerId);

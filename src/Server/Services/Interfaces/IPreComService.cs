@@ -1,10 +1,12 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+﻿using Drogecode.Knrm.Oefenrooster.PreCom;
+using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 
 public interface IPreComService
 {
+    Task<PreComClient?> GetPreComClient();
     Task<MultiplePreComAlertsResponse> GetAllAlerts(Guid userId, Guid customerId, int take, int skip, CancellationToken clt);
     string AnalyzeAlert(Guid userId, Guid customerId, object body, out DateTime timestamp, out int? priority);
     void WriteAlertToDb(Guid userId, Guid customerId, DateTime? sendTime, string alert, int? priority, string raw, string? ip);

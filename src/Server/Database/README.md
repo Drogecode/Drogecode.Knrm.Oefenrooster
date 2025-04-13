@@ -2,16 +2,16 @@
 
 1. Open: "Package Manager Console"
 2. cd ..\Server
-3. dotnet ef migrations add ReworkLinkingUsersBetweenCustomers -o Database/Migrations --project ./Drogecode.Knrm.Oefenrooster.Server.csproj
+3. dotnet ef migrations add AddUserPreComEvents -o Database/Migrations --project ./Drogecode.Knrm.Oefenrooster.Server.csproj
 4. dotnet ef database update --project ./Drogecode.Knrm.Oefenrooster.Server.csproj
 
 # Revert
 
-dotnet ef database update "20250322093902_bugUserLinkedWrongToCustomergetAllResult"
+dotnet ef database update "20250326201451_ReworkLinkingUsersBetweenCustomers"
 
 # Update tools:
 
-dotnet tool update --global dotnet-ef --version 9.0.3
+dotnet tool update --global dotnet-ef --version 9.0.4
 
 # Create script:
 

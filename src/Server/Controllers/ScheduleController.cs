@@ -592,7 +592,7 @@ public class ScheduleController : ControllerBase
                 if (training is null && trainingId is not null)
                     training = (await _scheduleService.GetTrainingById(planUserId, customerId, trainingId.Value, clt)).Training;
                 var type = await _trainingTypesService.GetById(training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
-                    var preText = await _userSettingService.GetStringUserSetting(customerId, planUserId, SettingName.CalendarPrefix);
+                var preText = await _userSettingService.GetStringUserSetting(customerId, planUserId, SettingName.CalendarPrefix);
                 var text = GetTrainingCalenderText(type.TrainingType?.Name, training?.Name, functionName, preText.Value);
                 if (training is null)
                 {

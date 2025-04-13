@@ -47,4 +47,5 @@ public class DbCustomers
     public ICollection<DbMenu>? Menus { get; set; }
     public ICollection<DbUserLastCalendarUpdate>? UserLastCalendarUpdates { get; set; }
     public ICollection<DbLinkUserCustomer>? LinkUserCustomers { get; set; }
+    public ICollection<DbUserPreComEvent>? UserPreComEvent { get; set; }
 }

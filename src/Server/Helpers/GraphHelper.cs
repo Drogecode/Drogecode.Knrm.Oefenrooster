@@ -453,8 +453,6 @@ public static partial class GraphHelper
             var body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay, attendees);
             var result = await _appClient.Users[externalUserId].Events
                 .PostAsync(body, (requestConfiguration) => { requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Pacific Standard Time\""); });
-
-            var fromGet = await _appClient.Users[externalUserId].Events[result?.Id].GetAsync();
             return result;
         }
         catch (Exception ex)

@@ -46,6 +46,7 @@ public class Startup
         services.AddScoped<IUserLinkCustomerService, UserLinkCustomerService>();
         services.AddScoped<ICustomerSettingService, CustomerSettingService>();
         services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
+        services.AddScoped<IUserPreComEventService, UserPreComEventService>();
 
         services.AddScoped<AuditController>();
         services.AddScoped<DayItemController>();

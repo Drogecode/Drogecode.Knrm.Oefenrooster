@@ -5,6 +5,8 @@ using Drogecode.Knrm.Oefenrooster.Shared.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
+
+// This tool is an assistance for debugging and not intended for deployment to production.
 try
 {
     var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -34,6 +36,8 @@ try
     var problems = await preComWorker.Work(NextRunMode.NextWeek);
     logger.LogInformation(problems.ToString());*/
 
+    var preComWorker = new AvailabilityForUser(preComClient, logger, new DateTimeService());
+    await preComWorker.Get([37398], DateTime.Today);
 
     var userGroups = await preComClient.GetAllUserGroups();
     var groupInfo = await preComClient.GetAllFunctions(userGroups[0].GroupID, DateTime.Today);
@@ -41,8 +45,8 @@ try
     var opstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM opstapper"));
     var aankOpstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM Aank. Opstapper"));
 
-    var userId = opstapper?.Users.FirstOrDefault(x => x.FullName == "HUI Taco Droogers")?.UserID ?? -1;
-    
+    var userId = opstapper?.Users.FirstOrDefault(x => x.FullName == "HUI Taco Droogers")?.UserID ?? -1; //37398
+
     //await preComClient.TestGetA(userId, userGroups[0].GroupID, DateTime.Today, DateTime.Today.AddDays(7));
     //await preComClient.TestGetB(userGroups[0].GroupID, DateTime.Today, DateTime.Today.AddDays(3));
     //await preComClient.TestGetC(DateTime.Today, DateTime.Today.AddDays(3));

@@ -9,12 +9,12 @@ using NSubstitute;
 
 namespace Drogecode.Knrm.Oefenrooster.TestPreCom.Tests;
 
-public class PreComWorkerTests
+public class FutureProblemsTests
 {
     private readonly ILogger _logger;
     private readonly IDateTimeServiceMock _dateTimeServiceMock;
 
-    public PreComWorkerTests(ILoggerProvider loggerProvider)
+    public FutureProblemsTests(ILoggerProvider loggerProvider)
     {
         _logger = loggerProvider.CreateLogger("PreComWorkerTests");
         _dateTimeServiceMock = new DateTimeServiceMock();
@@ -25,7 +25,7 @@ public class PreComWorkerTests
     public async Task NextHourTest()
     {
         var mockClient = MockClient();
-        var worker = new PreComWorker(mockClient, _logger, _dateTimeServiceMock);
+        var worker = new FutureProblems(mockClient, _logger, _dateTimeServiceMock);
         var result = await worker.Work(NextRunMode.NextHour);
         Assert.NotNull(result.Problems);
         result.Problems.Trim().Should().Be("Voor aankomend uur hebben we nog een schipper nodig opstapper nodig aankomend opstapper nodig");
@@ -35,7 +35,7 @@ public class PreComWorkerTests
     public async Task TodayTomorrowTest()
     {
         var mockClient = MockClient();
-        var worker = new PreComWorker(mockClient, _logger, _dateTimeServiceMock);
+        var worker = new FutureProblems(mockClient, _logger, _dateTimeServiceMock);
         var result = await worker.Work(NextRunMode.TodayTomorrow);
         Assert.NotNull(result.Problems);
         result.Problems.Trim().Should().Be("{0}<br />Schipper<br />van 12 tot 16<br />Opstapper<br />van 12 tot 16<br />Aankomend opstapper<br />van 12 tot 16<br />van 22 tot 24<br /><br />{1}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24");
@@ -45,7 +45,7 @@ public class PreComWorkerTests
     public async Task NextWeekTest()
     {
         var mockClient = MockClient();
-        var worker = new PreComWorker(mockClient, _logger, _dateTimeServiceMock);
+        var worker = new FutureProblems(mockClient, _logger, _dateTimeServiceMock);
         var result = await worker.Work(NextRunMode.NextWeek);
         Assert.NotNull(result.Problems);
         result.Problems.Trim().Should().Be("{0}<br />Schipper<br />van 12 tot 16<br />Opstapper<br />van 12 tot 16<br />Aankomend opstapper<br />van 12 tot 16<br />van 22 tot 24<br /><br />{1}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24<br /><br />{2}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24<br /><br />{3}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24<br /><br />{4}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24");

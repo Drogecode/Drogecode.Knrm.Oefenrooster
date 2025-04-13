@@ -48,6 +48,10 @@ public class CustomerSettingService : ICustomerSettingService
 
     public async Task<SettingStringResponse> GetStringCustomerSetting(Guid customerId, SettingName setting, string def)
     {
+        if (setting == SettingName.TimeZone)
+        {
+            throw new DrogeCodeConfigurationException("Use CustomerSettingService.GetTimeZone(Guid customerId) for TimeZone");
+        }
         var response = new SettingStringResponse
         {
             Value = def

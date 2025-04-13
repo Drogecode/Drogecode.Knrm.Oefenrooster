@@ -4,6 +4,8 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 using System.Diagnostics;
 using System.Text.Json;
+using Drogecode.Knrm.Oefenrooster.PreCom;
+using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -11,11 +13,32 @@ public class PreComService : IPreComService
 {
     private readonly ILogger<PreComService> _logger;
     private readonly DataContext _database;
+    private readonly HttpClient _httpClient;
+    private readonly IConfiguration _configuration;
 
-    public PreComService(ILogger<PreComService> logger, DataContext database)
+    public PreComService(ILogger<PreComService> logger, DataContext database, HttpClient httpClient, IConfiguration configuration)
     {
         _logger = logger;
         _database = database;
+        _httpClient = httpClient;
+        _configuration = configuration;
+    }
+
+    public async Task<PreComClient?> GetPreComClient()
+    {
+        var preComClient = new PreComClient(_httpClient, "drogecode", _logger);
+        var preComUser = _configuration.GetValue<string>("PreCom:User");
+        var preComPassword = _configuration.GetValue<string>("PreCom:Password");
+        if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
+        {
+            preComUser = KeyVaultHelper.GetSecret("PreComUser", _logger)?.Value;
+            preComPassword = KeyVaultHelper.GetSecret("PreComPassword", _logger)?.Value;
+            if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
+                return null;
+        }
+        await preComClient.Login(preComUser, preComPassword);
+
+        return preComClient;
     }
 
     public async Task<MultiplePreComAlertsResponse> GetAllAlerts(Guid userId, Guid customerId, int take, int skip, CancellationToken clt)

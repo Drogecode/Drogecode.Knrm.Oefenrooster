@@ -155,6 +155,7 @@ builder.Services.AddScoped<ITrainingTypesService, TrainingTypesService>();
 builder.Services.AddScoped<IUserLastCalendarUpdateService, UserLastCalendarUpdateService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<IUserSettingService, UserSettingService>();
+builder.Services.AddScoped<IUserPreComEventService, UserPreComEventService>();
 builder.Services.AddScoped<ICustomerSettingService, CustomerSettingService>();
 builder.Services.AddScoped<IUserLinkCustomerService, UserLinkCustomerService>();
 

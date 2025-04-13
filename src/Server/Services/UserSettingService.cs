@@ -26,6 +26,10 @@ public class UserSettingService : IUserSettingService
 
     public async Task<SettingStringResponse> GetStringUserSetting(Guid customerId, Guid userId, SettingName setting)
     {
+        if (setting == SettingName.TimeZone)
+        {
+            throw new DrogeCodeConfigurationException("Use CustomerSettingService.GetTimeZone(Guid customerId) for TimeZone");
+        }
         var result = await GetUserSetting(customerId, userId, setting);
         if (result is null)
             return await _customerSettingService.GetStringCustomerSetting(customerId, setting, string.Empty);

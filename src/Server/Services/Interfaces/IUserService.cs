@@ -6,6 +6,7 @@ public interface IUserService
 {
     Task<MultipleDrogeUsersResponse> GetAllUsers(Guid customerId, bool includeHidden, bool includeLastLogin, CancellationToken clt);
     Task<DrogeUser?> GetUserById(Guid customerId, Guid userId, CancellationToken clt);
+    Task<DrogeUser?> GetUserByPreComId(int preComUserId, CancellationToken clt);
     Task<DrogeUserServer?> GetUserByNameForServer(string? name, CancellationToken clt);
     Task<DrogeUserServer?> GetOrSetUserById(Guid? userId, string? externalId, string userName, string userEmail, Guid customerId, bool setLastOnline, CancellationToken clt);
     Task<AddUserResponse> AddUser(DrogeUser user, Guid customerId);
