@@ -8,4 +8,5 @@ public interface IUserSettingService
     Task<SettingStringResponse> GetStringUserSetting(Guid customerId, Guid userId, SettingName setting);
     Task PatchBoolSetting(Guid customerId, Guid userId, SettingName setting, bool value);
     Task PatchStringSetting(Guid customerId, Guid userId, SettingName setting, string value);
+    Task<List<int?>> GetAllUserPreComIdWithBoolSetting(Guid customerId, SettingName setting, bool value, CancellationToken clt);
 }

@@ -15,4 +15,8 @@ public enum SettingName
     /// Type: string
     /// </summary>
     CalendarPrefix = 3,
+    /// <summary>
+    /// Type: bool
+    /// </summary>
+    SyncPreComWithCalendar = 4,
 }

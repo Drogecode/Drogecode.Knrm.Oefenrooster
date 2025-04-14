@@ -43,7 +43,7 @@ public class Worker : BackgroundService
                 {
                     if (_clt.IsCancellationRequested) return; // run once every second.
 #if DEBUG
-                    await Task.Delay(100, clt);
+                    await Task.Delay(1000, clt);
 #else
                     await Task.Delay(1000, clt);
 #endif
@@ -53,7 +53,7 @@ public class Worker : BackgroundService
                 var graphService = scope.ServiceProvider.GetRequiredService<IGraphService>();
                 graphService.InitializeGraph();
                 var successfully = await SyncSharePoint(scope, graphService, clt);
-                if (count % 15 == 0)
+                if (count % 15 == 6) // Every 15 runs, but not directly after restart.
                     successfully = await SyncPreComAvailability(scope, clt) && successfully;
                 count++;
                 if (count > 10000)
@@ -136,26 +136,35 @@ public class Worker : BackgroundService
 
     private async Task<bool> SyncPreComAvailability(IServiceScope scope, CancellationToken clt)
     {
-#if !DEBUG
-        // Not ready for production
-        return true;
-#endif
         var preComService = scope.ServiceProvider.GetRequiredService<IPreComService>();
         var userPreComEventService = scope.ServiceProvider.GetRequiredService<IUserPreComEventService>();
         var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
         var customerSettingService = scope.ServiceProvider.GetRequiredService<ICustomerSettingService>();
+        var userSettingService = scope.ServiceProvider.GetRequiredService<IUserSettingService>();
         var preComClient = await preComService.GetPreComClient();
         if (preComClient is null)
             return true;
         var preComWorker = new AvailabilityForUser(preComClient, _logger, _dateTimeService);
 
-        // ToDo: Make work for different users than me
-        // ToDo: Run for multiple days
         var date = DateTime.Today;
-        var userIds = new List<int> { 37398 };
+        var userIdsWithNull = await userSettingService.GetAllUserPreComIdWithBoolSetting(DefaultSettingsHelper.KnrmHuizenId, SettingName.SyncPreComWithCalendar, true, clt); //new List<int> { 37398 };
+        var userIds = userIdsWithNull.Where(x => x is not null).Select(x => x!.Value).ToList();
+        if (userIds.Count == 0)
+            return true;
+        for (var i = 0; i < 5; i++)
+        {
+            await LoopSyncPreComAvailability(userIds, date.AddDays(i), preComWorker, userService, customerSettingService, userPreComEventService, clt);
+        }
+
+        return true;
+    }
+
+    private async Task LoopSyncPreComAvailability(List<int> userIds, DateTime date, AvailabilityForUser preComWorker, IUserService userService,
+        ICustomerSettingService customerSettingService, IUserPreComEventService userPreComEventService, CancellationToken clt)
+    {
         var preComAvailability = await preComWorker.Get(userIds, date);
         if (preComAvailability?.Users is null)
-            return true;
+            return;
         foreach (var user in preComAvailability.Users)
         {
             if (user.AvailabilitySets is null || user.UserId is null)
@@ -200,8 +209,6 @@ public class Worker : BackgroundService
             clt.ThrowIfCancellationRequested();
             await SyncWithUserCalendar(drogeUser, periods, DateOnly.FromDateTime(date), userPreComEventService, clt);
         }
-
-        return true;
     }
 
     private async Task SyncWithUserCalendar(DrogeUser drogeUser, Dictionary<DateTime, DateTime> periods, DateOnly date, IUserPreComEventService userPreComEventService, CancellationToken clt)

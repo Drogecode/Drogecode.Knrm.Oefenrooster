@@ -1,4 +1,5 @@
 ﻿@page "/user/profile"
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums
 @attribute [Authorize]
 
 <PageTitle>@L["Profile"]</PageTitle>
@@ -9,7 +10,13 @@
     <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
         @if (_settingTrainingToCalendar is not null)
         {
-            <MudSwitch Label="@L["Setting training to calendar"]" Color="Color.Primary" T="bool" Value="@_settingTrainingToCalendar.Value" ValueChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))" />
+            <MudSwitch Label="@L["Setting training to calendar"]" Color="Color.Primary" T="bool" Value="@_settingTrainingToCalendar.Value" ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.TrainingToCalendar))" />
+        }
+    </AuthorizeView>
+    <AuthorizeView Roles="@AccessesNames.AUTH_precom_sync_calendar">
+        @if (_settingPreComSyncCalendar is not null)
+        {
+            <MudSwitch Label="@L["Sync PreCom with outlook calendar"]" Color="Color.Primary" T="bool" Value="@_settingPreComSyncCalendar.Value" ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.SyncPreComWithCalendar))" />
         }
     </AuthorizeView>
     <MudText>

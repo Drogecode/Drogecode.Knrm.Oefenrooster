@@ -7,7 +7,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class CustomerSettingService : ICustomerSettingService
 {
     private readonly ILogger<CustomerSettingService> _logger;
-    private readonly Database.DataContext _database;
+    private readonly DataContext _database;
 
     public CustomerSettingService(ILogger<CustomerSettingService> logger, Database.DataContext database)
     {
@@ -52,6 +52,7 @@ public class CustomerSettingService : ICustomerSettingService
         {
             throw new DrogeCodeConfigurationException("Use CustomerSettingService.GetTimeZone(Guid customerId) for TimeZone");
         }
+
         var response = new SettingStringResponse
         {
             Value = def
@@ -63,6 +64,23 @@ public class CustomerSettingService : ICustomerSettingService
         if (result?.Value is null) return response;
         response.Value = result.Value;
         response.Success = true;
+        return response;
+    }
+
+    public async Task<SettingListIntResponse> GetListIntCustomerSetting(Guid customerId, SettingName setting, List<int> def)
+    {
+        var response = new SettingListIntResponse
+        {
+            Value = def
+        };
+        var result = await _database.CustomerSettings
+            .Where(x => x.CustomerId == customerId && x.Name == setting)
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
+        if (result?.Value is null) return response;
+        var deserialized = System.Text.Json.JsonSerializer.Deserialize<List<int>>(result.Value);
+        if (deserialized is null) return response;
+        response.Value = deserialized;
         return response;
     }
 

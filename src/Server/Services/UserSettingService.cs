@@ -46,6 +46,16 @@ public class UserSettingService : IUserSettingService
         await PatchUserSetting(customerId, userId, setting, value);
     }
 
+    public async Task<List<int?>> GetAllUserPreComIdWithBoolSetting(Guid customerId, SettingName setting, bool value, CancellationToken clt)
+    {
+        var result = await _database.UserSettings
+            .Where(x => x.CustomerId == customerId && x.Name == setting && x.Value == (value ? "true" : "false"))
+            .Include(x=>x.User)
+            .Select(x=>x.User.PreComId)
+            .ToListAsync(clt);
+        return result;
+    }
+
     private async Task<string?> GetUserSetting(Guid customerId, Guid userId, SettingName name)
     {
         var result = await _database.UserSettings.Where(x => x.CustomerId == customerId && x.UserId == userId && x.Name == name).FirstOrDefaultAsync();

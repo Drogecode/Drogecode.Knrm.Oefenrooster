@@ -24,10 +24,12 @@ public sealed partial class Profile : IDisposable
     private RefreshModel _refreshModel = new();
     private readonly CancellationTokenSource _cls = new();
     private bool? _settingTrainingToCalendar;
+    private bool? _settingPreComSyncCalendar;
 
     protected override async Task OnParametersSetAsync()
     {
         _settingTrainingToCalendar = (await UserSettingsClient.GetBoolSettingAsync(SettingName.TrainingToCalendar)).Value;
+        _settingPreComSyncCalendar = (await UserSettingsClient.GetBoolSettingAsync(SettingName.SyncPreComWithCalendar)).Value;
         _updateDetails = await ConfigurationRepository.NewVersionAvailable();
     }
 
@@ -45,10 +47,18 @@ public sealed partial class Profile : IDisposable
         }
     }
 
-    private async Task PatchTrainingToCalendar(bool isChecked)
+    private async Task PatchSetting(bool isChecked, SettingName settingName)
     {
-        _settingTrainingToCalendar = isChecked;
-        await UserSettingsClient.PatchBoolSettingAsync(new PatchSettingBoolRequest(SettingName.TrainingToCalendar, isChecked));
+        switch (settingName)
+        {
+            case SettingName.TrainingToCalendar:
+                _settingTrainingToCalendar = isChecked;
+                break;
+            case SettingName.SyncPreComWithCalendar:
+                _settingPreComSyncCalendar = isChecked;
+                break;
+        }
+        await UserSettingsClient.PatchBoolSettingAsync(new PatchSettingBoolRequest(settingName, isChecked));
     }
 
     private async Task OpenActivationDialog(Guid emailId)

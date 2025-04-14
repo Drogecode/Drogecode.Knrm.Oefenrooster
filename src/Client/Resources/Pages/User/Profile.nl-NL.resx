@@ -54,4 +54,7 @@
     <data name="This will result in a lot of mails" xml:space="preserve">
         <value>Dit gaat je veel mails sturen!</value>
     </data>
+    <data name="Sync PreCom with outlook calendar" xml:space="preserve">
+        <value>PreCom synchroniseren met Outlook-agenda</value>
+    </data>
 </root>

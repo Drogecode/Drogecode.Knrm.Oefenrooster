@@ -122,6 +122,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_precom_manual:
                         drogeUserRole.AUTH_precom_manual = true;
                         break;
+                    case AccessesNames.AUTH_precom_sync_calendar:
+                        drogeUserRole.AUTH_precom_sync_calendar = true;
+                        break;
                 }
             }
 
@@ -201,6 +204,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_precom_problems).Append(',');
             if (userRole.AUTH_precom_manual)
                 sb.Append(AccessesNames.AUTH_precom_manual).Append(',');
+            if (userRole.AUTH_precom_sync_calendar)
+                sb.Append(AccessesNames.AUTH_precom_sync_calendar).Append(',');
 
             dbUserRole.Accesses = sb.ToString().Trim(',');
 

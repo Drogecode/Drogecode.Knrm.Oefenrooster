@@ -65,6 +65,7 @@ public class UserSettingController : DrogeController
             switch (name)
             {
                 case SettingName.TrainingToCalendar:
+                case SettingName.SyncPreComWithCalendar:
                     result = await _userSettingService.GetBoolUserSetting(customerId, userId, name);
                     break;
                 default:
