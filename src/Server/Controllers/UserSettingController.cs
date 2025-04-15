@@ -86,7 +86,6 @@ public class UserSettingController : DrogeController
 
     [HttpPatch]
     [Route("string")]
-    [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
     public async Task<ActionResult> PatchStringSetting([FromBody] PatchSettingStringRequest body, CancellationToken token = default)
     {
         try
@@ -108,7 +107,6 @@ public class UserSettingController : DrogeController
 
     [HttpPatch]
     [Route("bool")]
-    [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
     public async Task<ActionResult> PatchBoolSetting([FromBody] PatchSettingBoolRequest body, CancellationToken token = default)
     {
         try
