@@ -26,7 +26,7 @@ public class AvailabilityForUser(IPreComClient preComClient, ILogger logger, IDa
             {
                 if (!userIds.Contains(preComUser.UserID))
                     continue;
-                if (response.Users.Any(x => x.UserId != null && userIds.Contains(x.UserId.Value)))
+                if (response.Users.Any(x => x.UserId != null && x.UserId == preComUser.UserID))
                     continue;
                 if (response.Users.All(x => x.UserId != preComUser.UserID))
                 {
