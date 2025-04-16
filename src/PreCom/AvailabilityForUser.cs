@@ -4,11 +4,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Drogecode.Knrm.Oefenrooster.PreCom;
 
-public class AvailabilityForUser(IPreComClient preComClient, ILogger logger, IDateTimeService dateTimeService)
+public class AvailabilityForUser(IPreComClient _preComClient, ILogger _logger, IDateTimeService _dateTimeService)
 {
-    private readonly IPreComClient _preComClient = preComClient;
-    private readonly ILogger _logger = logger;
-    private IDateTimeService _dateTimeService = dateTimeService;
 
     public async Task<GetResponse> Get(List<int> userIds, DateTime date)
     {
@@ -16,8 +13,13 @@ public class AvailabilityForUser(IPreComClient preComClient, ILogger logger, IDa
         {
             Users = []
         };
-        var userGroups = await preComClient.GetAllUserGroups();
-        var groupInfo = await preComClient.GetAllFunctions(userGroups[0].GroupID, date);
+        if (userIds.Count == 0)
+        {
+            _logger.LogInformation("List with userIds is empty");
+            return response;
+        }
+        var userGroups = await _preComClient.GetAllUserGroups();
+        var groupInfo = await _preComClient.GetAllFunctions(userGroups[0].GroupID, date);
         if (groupInfo?.ServiceFuntions.Length > 0 != true)
             return response;
         foreach (var function in groupInfo.ServiceFuntions)

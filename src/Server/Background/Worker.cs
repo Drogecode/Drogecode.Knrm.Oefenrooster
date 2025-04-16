@@ -1,6 +1,7 @@
 using Drogecode.Knrm.Oefenrooster.PreCom;
 using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Server.Models.UserPreCom;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
@@ -43,7 +44,7 @@ public class Worker : BackgroundService
                 {
                     if (_clt.IsCancellationRequested) return; // run once every second.
 #if DEBUG
-                    await Task.Delay(1000, clt);
+                    await Task.Delay(100, clt);
 #else
                     await Task.Delay(1000, clt);
 #endif
@@ -147,32 +148,34 @@ public class Worker : BackgroundService
         var preComWorker = new AvailabilityForUser(preComClient, _logger, _dateTimeService);
 
         var date = DateTime.Today;
-        var userIdsWithNull = await userSettingService.GetAllUserPreComIdWithBoolSetting(DefaultSettingsHelper.KnrmHuizenId, SettingName.SyncPreComWithCalendar, true, clt); //new List<int> { 37398 };
-        var userIds = userIdsWithNull.Where(x => x is not null).Select(x => x!.Value).ToList();
-        if (userIds.Count == 0)
+        var userIdsWithNull = await userSettingService.GetAllSyncPreComWithCalendarSetting(DefaultSettingsHelper.KnrmHuizenId, clt); //new List<int> { 37398 };
+        if (userIdsWithNull.Count == 0)
             return true;
+        var itemsSynced = 0;
         for (var i = 0; i < 5; i++)
         {
-            await LoopSyncPreComAvailability(userIds, date.AddDays(i), preComWorker, userService, customerSettingService, userPreComEventService, clt);
+            itemsSynced += await LoopSyncPreComAvailability(userIdsWithNull, date.AddDays(i), preComWorker, userService, customerSettingService, userPreComEventService, clt);
         }
 
+        _logger.LogInformation("Synced `{items}` from PreCom to outlook", itemsSynced);
         return true;
     }
 
-    private async Task LoopSyncPreComAvailability(List<int> userIds, DateTime date, AvailabilityForUser preComWorker, IUserService userService,
+    private async Task<int> LoopSyncPreComAvailability(List<SyncPreComWithCalendarSetting> userIdsWithNull, DateTime date, AvailabilityForUser preComWorker, IUserService userService,
         ICustomerSettingService customerSettingService, IUserPreComEventService userPreComEventService, CancellationToken clt)
     {
+        var userIds = userIdsWithNull.Where(x=>x is { Value: true, UserPreComId: not null }).Select(x=>x.UserPreComId!.Value).ToList();
         var preComAvailability = await preComWorker.Get(userIds, date);
         if (preComAvailability?.Users is null)
-            return;
-        foreach (var user in preComAvailability.Users)
+            return 0;
+        var itemsSynced = 0;
+        foreach (var userSyncPreComWithCalendarSetting in userIdsWithNull.Where(x=> x.UserPreComId is not null))
         {
-            if (user.AvailabilitySets is null || user.UserId is null)
-                continue;
-            var drogeUser = await userService.GetUserByPreComId(user.UserId.Value, clt);
+            var user = preComAvailability.Users.FirstOrDefault(x=>x.UserId == userSyncPreComWithCalendarSetting.UserPreComId!.Value);
+            var drogeUser = await userService.GetUserByPreComId(userSyncPreComWithCalendarSetting.UserPreComId!.Value, clt);
             if (drogeUser is null)
             {
-                _logger.LogWarning("No user found with PreCom id `{PreComId}`", user.UserId);
+                _logger.LogWarning("No user found with PreCom id `{PreComId}`", userSyncPreComWithCalendarSetting.UserPreComId);
                 continue;
             }
 
@@ -180,23 +183,26 @@ public class Worker : BackgroundService
             var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
             var periods = new Dictionary<DateTime, DateTime>();
             DateTime? start = null;
-            foreach (var availabilitySet in user.AvailabilitySets.OrderBy(x => x.Start))
+            if (user?.AvailabilitySets is not null)
             {
-                if (start is null && availabilitySet.Available)
+                foreach (var availabilitySet in user.AvailabilitySets.OrderBy(x => x.Start))
                 {
-                    start = availabilitySet.Start;
-                    continue;
-                }
+                    if (start is null && availabilitySet.Available)
+                    {
+                        start = availabilitySet.Start;
+                        continue;
+                    }
 
-                if (availabilitySet.Available || start is null)
-                {
-                    continue;
-                }
+                    if (availabilitySet.Available || start is null)
+                    {
+                        continue;
+                    }
 
-                var startConverted = TimeZoneInfo.ConvertTimeToUtc(start.Value, zone);
-                var end = TimeZoneInfo.ConvertTimeToUtc(availabilitySet.Start, zone);
-                periods.Add(startConverted, end);
-                start = null;
+                    var startConverted = TimeZoneInfo.ConvertTimeToUtc(start.Value, zone);
+                    var end = TimeZoneInfo.ConvertTimeToUtc(availabilitySet.Start, zone);
+                    periods.Add(startConverted, end);
+                    start = null;
+                }
             }
 
             if (start is not null)
@@ -207,16 +213,18 @@ public class Worker : BackgroundService
             }
 
             clt.ThrowIfCancellationRequested();
-            await SyncWithUserCalendar(drogeUser, periods, DateOnly.FromDateTime(date), userPreComEventService, clt);
+
+            itemsSynced += await SyncWithUserCalendar(drogeUser, periods, DateOnly.FromDateTime(date), userPreComEventService, clt);
         }
+
+        return itemsSynced;
     }
 
-    private async Task SyncWithUserCalendar(DrogeUser drogeUser, Dictionary<DateTime, DateTime> periods, DateOnly date, IUserPreComEventService userPreComEventService, CancellationToken clt)
+    private async Task<int> SyncWithUserCalendar(DrogeUser drogeUser, Dictionary<DateTime, DateTime> periods, DateOnly date, IUserPreComEventService userPreComEventService, CancellationToken clt)
     {
-        if (periods.Count == 0)
-            return;
         var userPreComEvents = await userPreComEventService.GetEventsForUserForDay(drogeUser.Id, drogeUser.CustomerId, date, clt);
         var notFound = new List<int>();
+        var itemsSynced = 0;
         for (var i = 0; i < userPreComEvents.Count; i++)
         {
             if (periods.Any(x => x.Key.CompareTo(userPreComEvents[i].Start) == 0 && x.Value.CompareTo(userPreComEvents[i].End) == 0))
@@ -231,12 +239,16 @@ public class Worker : BackgroundService
         foreach (var indexToRemove in notFound)
         {
             await userPreComEventService.RemoveEvent(drogeUser, userPreComEvents[indexToRemove], clt);
+            itemsSynced++;
         }
 
         foreach (var period in periods)
         {
             await userPreComEventService.AddEvent(drogeUser, period.Key, period.Value, date, clt);
+            itemsSynced++;
         }
+
+        return itemsSynced;
     }
 
     private async Task<bool> RunBackgroundTask<TRet>(Func<Task<TRet>> function, string name, CancellationToken clt)

@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Helpers;
+using Drogecode.Knrm.Oefenrooster.Server.Models.UserPreCom;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Setting;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -30,6 +31,7 @@ public class UserSettingService : IUserSettingService
         {
             throw new DrogeCodeConfigurationException("Use CustomerSettingService.GetTimeZone(Guid customerId) for TimeZone");
         }
+
         var result = await GetUserSetting(customerId, userId, setting);
         if (result is null)
             return await _customerSettingService.GetStringCustomerSetting(customerId, setting, string.Empty);
@@ -46,12 +48,16 @@ public class UserSettingService : IUserSettingService
         await PatchUserSetting(customerId, userId, setting, value);
     }
 
-    public async Task<List<int?>> GetAllUserPreComIdWithBoolSetting(Guid customerId, SettingName setting, bool value, CancellationToken clt)
+    public async Task<List<SyncPreComWithCalendarSetting>> GetAllSyncPreComWithCalendarSetting(Guid customerId, CancellationToken clt)
     {
         var result = await _database.UserSettings
-            .Where(x => x.CustomerId == customerId && x.Name == setting && x.Value == (value ? "true" : "false"))
-            .Include(x=>x.User)
-            .Select(x=>x.User.PreComId)
+            .Where(x => x.CustomerId == customerId && x.Name == SettingName.SyncPreComWithCalendar)
+            .Include(x => x.User)
+            .Select(x => new SyncPreComWithCalendarSetting
+            {
+                UserPreComId = x.User.PreComId,
+                Value = SettingNames.StringToBool(x.Value ?? ""),
+            })
             .ToListAsync(clt);
         return result;
     }

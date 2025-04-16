@@ -37,7 +37,7 @@ try
     logger.LogInformation(problems.ToString());*/
 
     var preComWorker = new AvailabilityForUser(preComClient, logger, new DateTimeService());
-    await preComWorker.Get([37398, 29539], DateTime.Today);
+    var piket = await preComWorker.Get([37398, 29539, 7443], DateTime.Today.AddDays(3));
 
     var userGroups = await preComClient.GetAllUserGroups();
     var groupInfo = await preComClient.GetAllFunctions(userGroups[0].GroupID, DateTime.Today);
