@@ -16,6 +16,7 @@
     {
         if (firstRender)
         {
+            var errorCount = 0;
             while (true)
             {
                 try
@@ -46,11 +47,17 @@
                 }
                 catch (Exception ex)
                 {
+                    errorCount++;
                     DebugHelper.WriteLine(ex);
+                    DebugHelper.WriteLine($"New error count {errorCount}");
+                    errorCount++; // Will be reverted in finally.
                 }
                 finally
                 {
-                    for (int i = 0; i < 30; i++)
+                    var seconds = 30 + (5 * errorCount);
+                    if (errorCount > 0)
+                        errorCount--;
+                    for (var i = 0; i < seconds; i++)
                     {
                         await Task.Delay(1000);
                     }
@@ -58,4 +65,5 @@
             }
         }
     }
+
 }

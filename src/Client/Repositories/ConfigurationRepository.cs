@@ -21,9 +21,17 @@ public class ConfigurationRepository
 
     public async Task<VersionDetailResponse?> NewVersionAvailable()
     {
-        var clientVersion = DefaultSettingsHelper.CURRENT_VERSION;
-        var response = await _configurationClient.NewVersionAvailableAsync(clientVersion);
-        return response;
+        try
+        {
+            var clientVersion = DefaultSettingsHelper.CURRENT_VERSION;
+            var response = await _configurationClient.NewVersionAvailableAsync(clientVersion);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.WriteLine(ex);
+            return null;
+        }
     }
 
     public async Task<bool?> UpdateSpecialDates()

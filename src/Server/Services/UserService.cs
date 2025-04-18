@@ -219,8 +219,10 @@ public class UserService : IUserService
         return PatchLastOnline(userId, null, null, clt);
     }
 
-    public async Task<bool> PatchLastOnline(Guid userId, Guid? customerId, string? clientVersion, CancellationToken clt)
+    public async Task<bool> PatchLastOnline(Guid? userId, Guid? customerId, string? clientVersion, CancellationToken clt)
     {
+        if (userId is null)
+            return false;
         if (clientVersion?.Length > 17 == true)
             clientVersion = clientVersion[..17];
         var cacheKey = "LastOnline_" + userId + clientVersion?.Replace(Environment.NewLine, "");
@@ -248,7 +250,7 @@ public class UserService : IUserService
                 var newUserOnVersion = new DbUserOnVersion
                 {
                     Id = Guid.NewGuid(),
-                    UserId = userId,
+                    UserId = userId.Value,
                     CustomerId = customerId.Value,
                     Version = clientVersion,
                     LastSeenOnThisVersion = DateTime.UtcNow
