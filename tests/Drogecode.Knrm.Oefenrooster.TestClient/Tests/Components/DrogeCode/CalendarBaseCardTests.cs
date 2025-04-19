@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Components.DrogeCode;
 
@@ -50,23 +51,22 @@ public class CalendarBaseCardTests : BlazorTestBase
 
     [Theory]
     [AutoFakeItEasyData]
-    public void OnClickHistoryTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<DateToString> L2)
+    public async Task OnClickHistoryTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<DateToString> L2)
     {
         Localize(L1, L2);
 
         Assert.False(Clicked);
         var training = new TrainingAdvance { DateStart = DateTime.UtcNow };
         var cut = RenderComponent<CalendarBaseCard>(parameter => parameter.Add(p => p.Training, training).Add(p => p.OnClickHistory, ClickButton));
-        cut.Markup.Should().Contain(Icons.Material.Filled.History);
         cut.Markup.Should().NotContain(Icons.Material.Filled.Settings);
-        var d = cut.Find(".DrogeCode-card-header-history");
-        d.Click();
+        cut.WaitForAssertion(() => cut.Markup.Should().Contain(Icons.Material.Filled.History), TimeSpan.FromSeconds(2));
+        await cut.Find(".DrogeCode-card-header-history").ClickAsync(new MouseEventArgs());
         cut.WaitForAssertion(() => Clicked.Should().BeTrue(), TimeSpan.FromSeconds(2));
     }
 
     [Theory]
     [AutoFakeItEasyData]
-    public void OnClickSettingsTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<DateToString> L2)
+    public async Task OnClickSettingsTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<DateToString> L2)
     {
         Localize(L1, L2);
 
@@ -74,15 +74,14 @@ public class CalendarBaseCardTests : BlazorTestBase
         var training = new TrainingAdvance { DateStart = DateTime.UtcNow };
         var cut = RenderComponent<CalendarBaseCard>(parameter => parameter.Add(p => p.Training, training).Add(p => p.OnClickSettings, ClickButton));
         cut.Markup.Should().NotContain(Icons.Material.Filled.History);
-        cut.Markup.Should().Contain(Icons.Material.Filled.Settings);
-        var d = cut.Find(".DrogeCode-card-header-settings");
-        d.Click();
+        cut.WaitForAssertion(() => cut.Markup.Should().Contain(Icons.Material.Filled.Settings));
+        await cut.Find(".DrogeCode-card-header-settings").ClickAsync(new MouseEventArgs());
         cut.WaitForAssertion(() => Clicked.Should().BeTrue(), TimeSpan.FromSeconds(2));
     }
 
     [Theory]
     [AutoFakeItEasyData]
-    public void OnClickHistoryAndSettingsTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<DateToString> L2)
+    public async Task OnClickHistoryAndSettingsTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<DateToString> L2)
     {
         Localize(L1, L2);
 
@@ -90,9 +89,8 @@ public class CalendarBaseCardTests : BlazorTestBase
         var cut = RenderComponent<CalendarBaseCard>(parameter => parameter.Add(p => p.Training, training).Add(p => p.OnClickSettings, ClickButton).Add(p => p.OnClickHistory, ClickButton));
         cut.Markup.Should().NotContain(Icons.Material.Filled.History);
         cut.Markup.Should().NotContain(Icons.Material.Filled.Settings);
-        cut.Markup.Should().Contain(Icons.Material.Filled.MoreVert);
-        var d = cut.Find(".DrogeCode-card-header-more-icons");
-        d.Click();
+        cut.WaitForAssertion(() => cut.Markup.Should().Contain(Icons.Material.Filled.MoreVert), TimeSpan.FromSeconds(2));
+        await cut.Find(".DrogeCode-card-header-more-icons").ClickAsync(new MouseEventArgs());
         cut.WaitForAssertion(() => cut.Markup.Should().Contain(Icons.Material.Filled.History), TimeSpan.FromSeconds(2));
         cut.WaitForAssertion(() => cut.Markup.Should().Contain(Icons.Material.Filled.Settings), TimeSpan.FromSeconds(2));
         cut.WaitForAssertion(() => cut.Markup.Should().NotContain(Icons.Material.Filled.MoreVert), TimeSpan.FromSeconds(2));

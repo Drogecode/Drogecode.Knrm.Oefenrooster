@@ -170,8 +170,14 @@ public class DayItemController : ControllerBase
                     foreach (var user in newd.DayItem.LinkedUsers)
                     {
                         var drogeUser = await _userService.GetUserById(customerId, user.UserId, false, clt);
-                        if (drogeUser is null) throw new DrogeCodeNullException("No user found");
-                        await ToOutlookCalendar(user, drogeUser.ExternalId, true, newd.DayItem, customerId, clt);
+                        if (drogeUser is null)
+                        {
+                            _logger.LogWarning("No user found with id `{userId}`", user.UserId);
+                        }
+                        else
+                        {
+                            await ToOutlookCalendar(user, drogeUser.ExternalId, true, newd.DayItem, customerId, clt);
+                        }
                     }
             }
             return result;
