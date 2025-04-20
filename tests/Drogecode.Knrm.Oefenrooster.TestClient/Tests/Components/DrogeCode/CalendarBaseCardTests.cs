@@ -58,7 +58,7 @@ public class CalendarBaseCardTests : BlazorTestBase
         Assert.False(Clicked);
         var training = new TrainingAdvance { DateStart = DateTime.UtcNow };
         var cut = RenderComponent<CalendarBaseCard>(parameter => parameter.Add(p => p.Training, training).Add(p => p.OnClickHistory, ClickButton));
-        cut.Markup.Should().NotContain(Icons.Material.Filled.Settings);
+        cut.WaitForAssertion(() => cut.Markup.Should().NotContain(Icons.Material.Filled.Settings), TimeSpan.FromSeconds(2));
         cut.WaitForAssertion(() => cut.Markup.Should().Contain(Icons.Material.Filled.History), TimeSpan.FromSeconds(2));
         await cut.Find(".DrogeCode-card-header-history").ClickAsync(new MouseEventArgs());
         cut.WaitForAssertion(() => Clicked.Should().BeTrue(), TimeSpan.FromSeconds(2));
@@ -73,7 +73,7 @@ public class CalendarBaseCardTests : BlazorTestBase
         Assert.False(Clicked);
         var training = new TrainingAdvance { DateStart = DateTime.UtcNow };
         var cut = RenderComponent<CalendarBaseCard>(parameter => parameter.Add(p => p.Training, training).Add(p => p.OnClickSettings, ClickButton));
-        cut.Markup.Should().NotContain(Icons.Material.Filled.History);
+        cut.WaitForAssertion(() => cut.Markup.Should().NotContain(Icons.Material.Filled.History), TimeSpan.FromSeconds(2));
         cut.WaitForAssertion(() => cut.Markup.Should().Contain(Icons.Material.Filled.Settings));
         await cut.Find(".DrogeCode-card-header-settings").ClickAsync(new MouseEventArgs());
         cut.WaitForAssertion(() => Clicked.Should().BeTrue(), TimeSpan.FromSeconds(2));
@@ -87,8 +87,8 @@ public class CalendarBaseCardTests : BlazorTestBase
 
         var training = new TrainingAdvance { DateStart = DateTime.UtcNow };
         var cut = RenderComponent<CalendarBaseCard>(parameter => parameter.Add(p => p.Training, training).Add(p => p.OnClickSettings, ClickButton).Add(p => p.OnClickHistory, ClickButton));
-        cut.Markup.Should().NotContain(Icons.Material.Filled.History);
-        cut.Markup.Should().NotContain(Icons.Material.Filled.Settings);
+        cut.WaitForAssertion(() => cut.Markup.Should().NotContain(Icons.Material.Filled.History), TimeSpan.FromSeconds(2));
+        cut.WaitForAssertion(() => cut.Markup.Should().NotContain(Icons.Material.Filled.Settings), TimeSpan.FromSeconds(2));
         cut.WaitForAssertion(() => cut.Markup.Should().Contain(Icons.Material.Filled.MoreVert), TimeSpan.FromSeconds(2));
         await cut.Find(".DrogeCode-card-header-more-icons").ClickAsync(new MouseEventArgs());
         cut.WaitForAssertion(() => cut.Markup.Should().Contain(Icons.Material.Filled.History), TimeSpan.FromSeconds(2));

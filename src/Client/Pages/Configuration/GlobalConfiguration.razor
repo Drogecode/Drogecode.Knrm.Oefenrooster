@@ -77,6 +77,8 @@
     <MudSwitch Label="setting training to calendar" Color="Color.Primary" T="bool" Value="@(_settingTrainingToCalendar ?? false)" Disabled="@(_settingTrainingToCalendar is null)"
                ValueChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))"/>
     <MudTextField Label="@L["CalenderPrefix"]" T="string" Value="_settingCalenderPrefix" ValueChanged="PatchCalenderPrefix" />
+    <MudTextField Label="@L["PreCom Available calendar text"]" T="string" Value="_preComAvailableText" ValueChanged="PatchPreComAvailableText"
+                  Counter="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT" />
 
     @if (_users != null && _functions != null)
     {

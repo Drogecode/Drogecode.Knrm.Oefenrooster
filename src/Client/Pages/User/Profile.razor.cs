@@ -25,11 +25,13 @@ public sealed partial class Profile : IDisposable
     private readonly CancellationTokenSource _cls = new();
     private bool? _settingTrainingToCalendar;
     private bool? _settingPreComSyncCalendar;
+    private string? _preComAvailableText;
 
     protected override async Task OnParametersSetAsync()
     {
         _settingTrainingToCalendar = (await UserSettingsClient.GetBoolSettingAsync(SettingName.TrainingToCalendar)).Value;
         _settingPreComSyncCalendar = (await UserSettingsClient.GetBoolSettingAsync(SettingName.SyncPreComWithCalendar)).Value;
+        _preComAvailableText = (await UserSettingsClient.GetStringSettingAsync(SettingName.PreComAvailableText)).Value;
         _updateDetails = await ConfigurationRepository.NewVersionAvailable();
     }
 
@@ -59,6 +61,13 @@ public sealed partial class Profile : IDisposable
                 break;
         }
         await UserSettingsClient.PatchBoolSettingAsync(new PatchSettingBoolRequest(settingName, isChecked));
+    }
+    
+    private async Task PatchPreComAvailableText(string newValue)
+    {
+        _preComAvailableText = newValue;
+        var body = new PatchSettingStringRequest(SettingName.PreComAvailableText, newValue);
+        await UserSettingsClient.PatchStringSettingAsync(body);
     }
 
     private async Task OpenActivationDialog(Guid emailId)

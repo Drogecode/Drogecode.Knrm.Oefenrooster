@@ -14,7 +14,6 @@ public class UserPreComEventService(
     IMemoryCache memoryCache,
     IDateTimeService dateTimeService,
     IUserSettingService _userSettingService,
-    ICustomerSettingService _customerSettingService,
     IGraphService _graphService)
     : DrogeService(logger, database, memoryCache, dateTimeService), IUserPreComEventService
 {
@@ -41,8 +40,9 @@ public class UserPreComEventService(
 
     public async Task<bool> AddEvent(DrogeUser drogeUser, DateTime start, DateTime end, DateOnly date, CancellationToken clt)
     {
-        var preText = await _userSettingService.GetStringUserSetting(drogeUser.CustomerId, drogeUser.Id, SettingName.CalendarPrefix);
-        var text = preText.Value + "Piket";
+        var text = (await _userSettingService.GetStringUserSetting(drogeUser.CustomerId, drogeUser.Id, SettingName.PreComAvailableText)).Value;
+        if (string.IsNullOrWhiteSpace(text))
+            text = "Piket";
 
         var newEvent = await _graphService.AddToCalendar(drogeUser.ExternalId, text, start, end, false, []);
         if (newEvent is null)
@@ -55,7 +55,8 @@ public class UserPreComEventService(
             CustomerId = drogeUser.CustomerId,
             Start = start,
             End = end,
-            Date = date
+            Date = date,
+            Text = text
         });
         return await SaveDb(clt) > 0;
     }

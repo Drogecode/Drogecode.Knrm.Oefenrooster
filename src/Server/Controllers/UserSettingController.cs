@@ -35,6 +35,7 @@ public class UserSettingController : DrogeController
             switch (name)
             {
                 case SettingName.CalendarPrefix:
+                case SettingName.PreComAvailableText:
                     result = await _userSettingService.GetStringUserSetting(customerId, userId, name);
                     break;
                 default:

@@ -19,4 +19,8 @@ public enum SettingName
     /// Type: bool
     /// </summary>
     SyncPreComWithCalendar = 4,
+    /// <summary>
+    /// Type: string
+    /// </summary>
+    PreComAvailableText = 5,
 }

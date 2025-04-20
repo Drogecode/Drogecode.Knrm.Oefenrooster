@@ -6,33 +6,40 @@
 <MudText Typo="Typo.h5">@L["Profile"]</MudText>
 
 <MudPaper Class="pa-4" MaxWidth="800px">
-    <CultureSelector />
+    <CultureSelector/>
     <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
         @if (_settingTrainingToCalendar is not null)
         {
-            <MudSwitch Label="@L["Setting training to calendar"]" Color="Color.Primary" T="bool" Value="@_settingTrainingToCalendar.Value" ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.TrainingToCalendar))" />
+            <MudSwitch Label="@L["Setting training to calendar"]" Color="Color.Primary" T="bool" Value="@_settingTrainingToCalendar.Value"
+                       ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.TrainingToCalendar))"/>
         }
     </AuthorizeView>
     <AuthorizeView Roles="@AccessesNames.AUTH_precom_sync_calendar">
         @if (_settingPreComSyncCalendar is not null)
         {
-            <MudSwitch Label="@L["Sync PreCom with outlook calendar"]" Color="Color.Primary" T="bool" Value="@_settingPreComSyncCalendar.Value" ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.SyncPreComWithCalendar))" />
+            <MudSwitch Label="@L["Sync PreCom with outlook calendar"]" Color="Color.Primary" T="bool" Value="@_settingPreComSyncCalendar.Value"
+                       ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.SyncPreComWithCalendar))"/>
+        }
+        @if (_preComAvailableText is not null)
+        {
+            <MudTextField Label="@L["PreCom Available calendar text"]" T="string" Value="_preComAvailableText" ValueChanged="PatchPreComAvailableText"
+                          Counter="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT"/>
         }
     </AuthorizeView>
     <MudText>
         <table class="table-auto">
             <tbody>
+            <tr>
+                <td>@L["Client version:"]</td>
+                <td>@DefaultSettingsHelper.CURRENT_VERSION</td>
+            </tr>
+            @if (_updateDetails is not null)
+            {
                 <tr>
-                    <td>@L["Client version:"]</td>
-                    <td>@DefaultSettingsHelper.CURRENT_VERSION</td>
+                    <td>@L["Server version:"]</td>
+                    <td>@_updateDetails.CurrentVersion</td>
                 </tr>
-                @if (_updateDetails is not null)
-                {
-                    <tr>
-                        <td>@L["Server version:"]</td>
-                        <td>@_updateDetails.CurrentVersion</td>
-                    </tr>
-                }
+            }
             </tbody>
         </table>
     </MudText>
@@ -44,17 +51,18 @@
         {
             <MudDataGrid Items="@_allUserLinkedMailResponse.UserLinkedMails!.OrderBy(x => x.ActivateRequestedOn)" Striped="true" Hover="true">
                 <Columns>
-                    <PropertyColumn Property="x => x.Email" Title="@L["Email"]" />
+                    <PropertyColumn Property="x => x.Email" Title="@L["Email"]"/>
                     <PropertyColumn Property="x => x.IsEnabled" Title="@L["Is enabled"]">
                         <CellTemplate Context="templateContext">
-                            <MudCheckBox T="bool" Disabled="!templateContext.Item.IsActive || templateContext.Item.IsDrogeCodeUser" Value="templateContext.Item.IsEnabled" ValueChanged="(newValue)=>IsEnabledChanged(newValue, templateContext.Item.Id)" />
+                            <MudCheckBox T="bool" Disabled="!templateContext.Item.IsActive || templateContext.Item.IsDrogeCodeUser" Value="templateContext.Item.IsEnabled"
+                                         ValueChanged="(newValue)=>IsEnabledChanged(newValue, templateContext.Item.Id)"/>
                         </CellTemplate>
                     </PropertyColumn>
                     <PropertyColumn Property="x => x.IsActive" Title="@L["Is active"]">
                         <CellTemplate Context="templateContext">
                             @if (templateContext.Item.IsActive)
                             {
-                                <MudIcon Icon="@Icons.Material.Filled.ThumbUp" />
+                                <MudIcon Icon="@Icons.Material.Filled.ThumbUp"/>
                             }
                             else
                             {

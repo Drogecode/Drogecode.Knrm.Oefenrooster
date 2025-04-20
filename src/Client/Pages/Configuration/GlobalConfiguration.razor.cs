@@ -33,6 +33,7 @@ public sealed partial class GlobalConfiguration : IDisposable
     private readonly CancellationTokenSource _cls = new();
 
     private string? _settingCalenderPrefix;
+    private string? _preComAvailableText;
     private bool? _clickedUpdate;
     private bool? _usersSynced;
     private bool? _specialDatesUpdated;
@@ -57,6 +58,7 @@ public sealed partial class GlobalConfiguration : IDisposable
         {
             _settingTrainingToCalendar = (await CustomerSettingsClient.GetBoolSettingAsync(SettingName.TrainingToCalendar, _cls.Token)).Value;
             _settingCalenderPrefix = (await CustomerSettingsClient.GetStringSettingAsync(SettingName.CalendarPrefix, _cls.Token)).Value;
+            _preComAvailableText = (await CustomerSettingsClient.GetStringSettingAsync(SettingName.PreComAvailableText, _cls.Token)).Value;
             _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
             _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
             await SetUser();
@@ -149,6 +151,12 @@ public sealed partial class GlobalConfiguration : IDisposable
     {
         _settingCalenderPrefix = newValue;
         var body = new PatchSettingStringRequest(SettingName.CalendarPrefix, newValue);
+        await CustomerSettingsClient.PatchStringSettingAsync(body);
+    }
+    private async Task PatchPreComAvailableText(string newValue)
+    {
+        _preComAvailableText = newValue;
+        var body = new PatchSettingStringRequest(SettingName.PreComAvailableText, newValue);
         await CustomerSettingsClient.PatchStringSettingAsync(body);
     }
 

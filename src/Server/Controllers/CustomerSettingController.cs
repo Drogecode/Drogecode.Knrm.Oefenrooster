@@ -42,10 +42,11 @@ public class CustomerSettingController : DrogeController
                     };
                     break;
                 case SettingName.CalendarPrefix:
+                case SettingName.PreComAvailableText:
                     result = await _customerSettingService.GetStringCustomerSetting(customerId, name, string.Empty);
                     break;
                 default:
-                    return BadRequest("Not bool");
+                    return BadRequest("Not string");
             }
 
             return result;
