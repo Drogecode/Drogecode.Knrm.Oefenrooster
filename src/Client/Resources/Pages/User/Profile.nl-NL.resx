@@ -57,4 +57,7 @@
     <data name="Sync PreCom with outlook calendar" xml:space="preserve">
         <value>PreCom synchroniseren met Outlook-agenda</value>
     </data>
+    <data name="Delete old PreCom from outlook" xml:space="preserve">
+        <value>Verwijder oude PreCom beschikbaarheid uit Outlook-agenda</value>
+    </data>
 </root>

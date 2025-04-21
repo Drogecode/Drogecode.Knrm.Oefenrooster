@@ -48,12 +48,12 @@ public class UserSettingService : IUserSettingService
         await PatchUserSetting(customerId, userId, setting, value);
     }
 
-    public async Task<List<SyncPreComWithCalendarSetting>> GetAllSyncPreComWithCalendarSetting(Guid customerId, CancellationToken clt)
+    public async Task<List<UserPreComIdAndValue>> GetAllPreComIdAndValue(Guid customerId, SettingName setting, CancellationToken clt)
     {
         var result = await _database.UserSettings
-            .Where(x => x.CustomerId == customerId && x.Name == SettingName.SyncPreComWithCalendar)
+            .Where(x => x.CustomerId == customerId && x.Name == setting)
             .Include(x => x.User)
-            .Select(x => new SyncPreComWithCalendarSetting
+            .Select(x => new UserPreComIdAndValue
             {
                 UserPreComId = x.User.PreComId,
                 Value = SettingNames.StringToBool(x.Value ?? ""),

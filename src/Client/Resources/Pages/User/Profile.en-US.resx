@@ -50,4 +50,7 @@
     <data name="Sync PreCom with outlook calendar" xml:space="preserve">
         <value>Sync PreCom with outlook calendar</value>
     </data>
+    <data name="Delete old PreCom from outlook" xml:space="preserve">
+        <value>Delete old PreCom from outlook</value>
+    </data>
 </root>

@@ -25,12 +25,14 @@ public sealed partial class Profile : IDisposable
     private readonly CancellationTokenSource _cls = new();
     private bool? _settingTrainingToCalendar;
     private bool? _settingPreComSyncCalendar;
+    private bool? _settingSyncPreComDeleteOld;
     private string? _preComAvailableText;
 
     protected override async Task OnParametersSetAsync()
     {
         _settingTrainingToCalendar = (await UserSettingsClient.GetBoolSettingAsync(SettingName.TrainingToCalendar)).Value;
         _settingPreComSyncCalendar = (await UserSettingsClient.GetBoolSettingAsync(SettingName.SyncPreComWithCalendar)).Value;
+        _settingSyncPreComDeleteOld = (await UserSettingsClient.GetBoolSettingAsync(SettingName.SyncPreComDeleteOld)).Value;
         _preComAvailableText = (await UserSettingsClient.GetStringSettingAsync(SettingName.PreComAvailableText)).Value;
         _updateDetails = await ConfigurationRepository.NewVersionAvailable();
     }
@@ -58,6 +60,9 @@ public sealed partial class Profile : IDisposable
                 break;
             case SettingName.SyncPreComWithCalendar:
                 _settingPreComSyncCalendar = isChecked;
+                break;
+            case SettingName.SyncPreComDeleteOld:
+                _settingSyncPreComDeleteOld = isChecked;
                 break;
         }
         await UserSettingsClient.PatchBoolSettingAsync(new PatchSettingBoolRequest(settingName, isChecked));

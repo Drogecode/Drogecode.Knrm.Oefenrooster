@@ -39,7 +39,7 @@ public class UserSettingController : DrogeController
                     result = await _userSettingService.GetStringUserSetting(customerId, userId, name);
                     break;
                 default:
-                    return BadRequest("Not bool");
+                    return BadRequest("Not string");
             }
 
             return result;
@@ -67,6 +67,7 @@ public class UserSettingController : DrogeController
             {
                 case SettingName.TrainingToCalendar:
                 case SettingName.SyncPreComWithCalendar:
+                case SettingName.SyncPreComDeleteOld:
                     result = await _userSettingService.GetBoolUserSetting(customerId, userId, name);
                     break;
                 default:

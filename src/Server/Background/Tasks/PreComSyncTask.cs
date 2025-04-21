@@ -21,30 +21,40 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
         var preComWorker = new AvailabilityForUser(preComClient, _logger, _dateTimeService);
 
         var date = DateTime.Today;
-        var userIdsWithNull = await userSettingService.GetAllSyncPreComWithCalendarSetting(DefaultSettingsHelper.KnrmHuizenId, clt); //new List<int> { 37398 };
+        var userIdsWithNull = await userSettingService.GetAllPreComIdAndValue(DefaultSettingsHelper.KnrmHuizenId, SettingName.SyncPreComWithCalendar, clt); //new List<int> { 37398 };
         if (userIdsWithNull.Count == 0)
             return true;
         var itemsSynced = 0;
         for (var i = 0; i < 5; i++)
         {
-            itemsSynced += await LoopSyncPreComAvailability(userIdsWithNull, date.AddDays(i), preComWorker, userService, customerSettingService, userPreComEventService, clt);
+            // Check future availability
+            itemsSynced += await LoopSyncPreComAvailability(userIdsWithNull, date.AddDays(i), false, preComWorker, userService, customerSettingService, userPreComEventService, clt);
         }
-
+        userIdsWithNull = await userSettingService.GetAllPreComIdAndValue(DefaultSettingsHelper.KnrmHuizenId, SettingName.SyncPreComDeleteOld, clt);
+        if (userIdsWithNull.Count != 0)
+        {
+            // Delete old availability from outlook
+            var usersToDeleteOld = userIdsWithNull.Where(x => x is { UserPreComId: not null, Value: true }).ToList();
+            itemsSynced += await LoopSyncPreComAvailability(usersToDeleteOld, date.AddDays(-7), true, preComWorker, userService, customerSettingService, userPreComEventService, clt);
+        }
         _logger.LogInformation("Synced `{items}` from PreCom to outlook", itemsSynced);
         return true;
     }
 
-    private async Task<int> LoopSyncPreComAvailability(List<SyncPreComWithCalendarSetting> userIdsWithNull, DateTime date, AvailabilityForUser preComWorker, IUserService userService,
+    private async Task<int> LoopSyncPreComAvailability(List<UserPreComIdAndValue> userIdsWithNull, DateTime date, bool onlyDelete, AvailabilityForUser preComWorker, IUserService userService,
         ICustomerSettingService customerSettingService, IUserPreComEventService userPreComEventService, CancellationToken clt)
     {
-        var userIds = userIdsWithNull.Where(x=>x is { Value: true, UserPreComId: not null }).Select(x=>x.UserPreComId!.Value).ToList();
-        var preComAvailability = await preComWorker.Get(userIds, date);
-        if (preComAvailability?.Users is null)
-            return 0;
-        var itemsSynced = 0;
-        foreach (var userSyncPreComWithCalendarSetting in userIdsWithNull.Where(x=> x.UserPreComId is not null))
+        GetResponse? preComAvailability = null;
+        if (!onlyDelete)
         {
-            var user = preComAvailability.Users.FirstOrDefault(x=>x.UserId == userSyncPreComWithCalendarSetting.UserPreComId!.Value);
+            var userIds = userIdsWithNull.Where(x => x is { Value: true, UserPreComId: not null }).Select(x => x.UserPreComId!.Value).ToList();
+            preComAvailability = await preComWorker.Get(userIds, date);
+        }
+
+        var itemsSynced = 0;
+        foreach (var userSyncPreComWithCalendarSetting in userIdsWithNull.Where(x => x.UserPreComId is not null))
+        {
+            var user = preComAvailability?.Users?.FirstOrDefault(x => x.UserId == userSyncPreComWithCalendarSetting.UserPreComId!.Value);
             var drogeUser = await userService.GetUserByPreComId(userSyncPreComWithCalendarSetting.UserPreComId!.Value, clt);
             if (drogeUser is null)
             {

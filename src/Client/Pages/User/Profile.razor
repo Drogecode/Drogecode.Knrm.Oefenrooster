@@ -20,6 +20,11 @@
             <MudSwitch Label="@L["Sync PreCom with outlook calendar"]" Color="Color.Primary" T="bool" Value="@_settingPreComSyncCalendar.Value"
                        ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.SyncPreComWithCalendar))"/>
         }
+        @if (_settingSyncPreComDeleteOld is not null)
+        {
+            <MudSwitch Label="@L["Delete old PreCom from outlook"]" Color="Color.Primary" T="bool" Value="@_settingSyncPreComDeleteOld.Value"
+                       ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.SyncPreComDeleteOld))"/>
+        }
         @if (_preComAvailableText is not null)
         {
             <MudTextField Label="@L["PreCom Available calendar text"]" T="string" Value="_preComAvailableText" ValueChanged="PatchPreComAvailableText"

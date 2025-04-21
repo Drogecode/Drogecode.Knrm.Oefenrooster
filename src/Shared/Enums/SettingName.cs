@@ -23,4 +23,8 @@ public enum SettingName
     /// Type: string
     /// </summary>
     PreComAvailableText = 5,
+    /// <summary>
+    /// Type: bool
+    /// </summary>
+    SyncPreComDeleteOld = 6,
 }

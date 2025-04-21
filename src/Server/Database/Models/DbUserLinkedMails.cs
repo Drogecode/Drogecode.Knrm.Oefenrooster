@@ -12,7 +12,7 @@ public class DbUserLinkedMails
     public Guid UserId { get; set; }
     [StringLength(150)] public string? Email { get; set; }
     [StringLength(DefaultSettingsHelper.LENGTH_MAIL_ACTIVATION)] public string? ActivateKey { get; set; }
-    public DateTime? ActivateRequestedOn { get; set; }
+    public DateTime ActivateRequestedOn { get; set; }
     public int ActivationFailedAttempts { get; set; }
     public bool IsActive { get; set; }
     public bool IsEnabled { get; set; }

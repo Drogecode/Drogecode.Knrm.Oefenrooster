@@ -73,6 +73,8 @@ public class CustomerSettingController : DrogeController
             switch (name)
             {
                 case SettingName.TrainingToCalendar:
+                case SettingName.SyncPreComWithCalendar:
+                case SettingName.SyncPreComDeleteOld:
                     result = await _customerSettingService.GetBoolCustomerSetting(customerId, name);
                     break;
                 default:
