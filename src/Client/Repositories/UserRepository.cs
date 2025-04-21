@@ -10,7 +10,8 @@ public class UserRepository
     private readonly IUserClient _userClient;
     private readonly IOfflineService _offlineService;
 
-    private const string MONTHITEMS = "usr_all_{0}";
+    private const string ALL_USERS = "usr_all_{0}";
+    private const string ALL_USERS_CUSTOMER = "usr_all_{0}_{1}";
     private const string USERID = "usr_{0}";
     private const string CURRENTUSER = "cur_usr";
 
@@ -22,7 +23,7 @@ public class UserRepository
 
     public async Task<List<DrogeUser>?> GetAllUsersAsync(bool includeHidden, bool forceCache, bool cachedAndReplace, CancellationToken clt)
     {
-        var response = await _offlineService.CachedRequestAsync(string.Format(MONTHITEMS, includeHidden),
+        var response = await _offlineService.CachedRequestAsync(string.Format(ALL_USERS, includeHidden),
             async () => await _userClient.GetAllAsync(includeHidden, cachedAndReplace, clt), 
             new ApiCachedRequest { OneCallPerSession = true, ForceCache = forceCache, CachedAndReplace = cachedAndReplace},
             clt: clt);
@@ -31,7 +32,7 @@ public class UserRepository
     
     public async Task<List<DrogeUser>?> GetAllDifferentCustomerAsync(Guid customerId, bool includeHidden, CancellationToken clt)
     {
-        var response = await _offlineService.CachedRequestAsync(string.Format(MONTHITEMS, includeHidden),
+        var response = await _offlineService.CachedRequestAsync(string.Format(ALL_USERS_CUSTOMER, includeHidden, customerId),
             async () => await _userClient.GetAllDifferentCustomerAsync(customerId, includeHidden, clt), 
             new ApiCachedRequest { OneCallPerSession = false},
             clt: clt);

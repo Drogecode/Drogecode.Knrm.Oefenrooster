@@ -26,7 +26,7 @@ public class UserService : IUserService
         var result = new MultipleDrogeUsersResponse { DrogeUsers = new List<DrogeUser>() };
         var dbUsers = await _database.Users
             .Where(u => u.CustomerId == customerId && u.DeletedOn == null && !u.IsSystemUser && (includeHidden || u.UserFunction == null || u.UserFunction.IsActive))
-            .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
+            .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null && y.UserB.DeletedOn == null))
             .ThenInclude(x => x.UserB)
             .Include(x => x.UserOnVersions!.Where(y => includeLastLogin && y.LastSeenOnThisVersion.CompareTo(DateTime.UtcNow.AddYears(-1)) >= 0))
             .OrderBy(x => x.Name)
@@ -49,7 +49,7 @@ public class UserService : IUserService
             .Include(x => x.LinkedUserAsA!.Where(y => y.DeletedOn == null))
             .Include(x => x.LinkedUserAsB!.Where(y => y.DeletedOn == null))
             .Where(u => u.CustomerId == customerId && u.Id == userId && u.DeletedOn == null)
-            .Select(x=>x.ToSharedUser(includePersonal, false))
+            .Select(x => x.ToSharedUser(includePersonal, false))
             .AsNoTracking()
             .FirstOrDefaultAsync(clt);
         return user;
@@ -59,7 +59,7 @@ public class UserService : IUserService
     {
         var user = await _database.Users
             .Where(u => u.PreComId == preComUserId && u.DeletedOn == null)
-            .Select(x=>x.ToSharedUser(false, false))
+            .Select(x => x.ToSharedUser(false, false))
             .AsNoTracking()
             .FirstOrDefaultAsync(clt);
         return user;
