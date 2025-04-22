@@ -151,6 +151,10 @@
             "type": "string",
             "nullable": true
           },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
           "versions": {
             "type": "array",
             "items": {

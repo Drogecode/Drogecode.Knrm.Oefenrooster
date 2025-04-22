@@ -188,6 +188,27 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpDelete]
+    [Route("")]
+    [Authorize(Roles = $"{AccessesNames.AUTH_users_delete},{AccessesNames.AUTH_super_user}")]
+    public async Task<ActionResult<UpdateUserResponse>> DeleteUser([FromBody] DrogeUser user, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            await _userService.MarkUserDeleted(user, userId, customerId, false);
+            var result = await _userService.SaveDb(clt) > 0;
+
+            return new UpdateUserResponse { Success = result };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in DeleteUser");
+            return BadRequest();
+        }
+    }
+
     [HttpPatch]
     [Route("link-user-user")]
     [Authorize(Roles = AccessesNames.AUTH_users_settigns)]
@@ -307,7 +328,7 @@ public class UserController : ControllerBase
 
             if (existingUsers?.Count > 0)
             {
-                await _userService.MarkUsersDeleted(existingUsers, userId, customerId);
+                await _userService.MarkMultipleUsersDeleted(existingUsers, userId, customerId, true);
             }
         }
         else

@@ -53,4 +53,7 @@
     <data name="Delete old PreCom from outlook" xml:space="preserve">
         <value>Delete old PreCom from outlook</value>
     </data>
+    <data name="PreCom Available calendar text" xml:space="preserve">
+        <value>PreCom Available calendar text</value>
+    </data>
 </root>

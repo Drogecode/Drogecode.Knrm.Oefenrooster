@@ -288,6 +288,9 @@
           "autH_users_details": {
             "type": "boolean"
           },
+          "autH_users_delete": {
+            "type": "boolean"
+          },
           "autH_users_counter": {
             "type": "boolean"
           },
@@ -322,6 +325,9 @@
             "type": "boolean"
           },
           "autH_precom_manual": {
+            "type": "boolean"
+          },
+          "autH_precom_sync_calendar": {
             "type": "boolean"
           }
         },

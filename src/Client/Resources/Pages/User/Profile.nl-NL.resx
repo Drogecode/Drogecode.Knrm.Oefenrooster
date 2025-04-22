@@ -60,4 +60,7 @@
     <data name="Delete old PreCom from outlook" xml:space="preserve">
         <value>Verwijder oude PreCom beschikbaarheid uit Outlook-agenda</value>
     </data>
+    <data name="PreCom Available calendar text" xml:space="preserve">
+        <value>PreCom beschikbaar tekst voor calender</value>
+    </data>
 </root>

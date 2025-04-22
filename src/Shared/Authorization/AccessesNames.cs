@@ -38,6 +38,7 @@ public struct AccessesNames
 
     public const string GROUP_USER = "User";
     public const string AUTH_users_details = "users_details";
+    public const string AUTH_users_delete = "users_delete";
     public const string AUTH_users_counter = "users_counter";
     public const string AUTH_users_settigns = "users_settings";
 

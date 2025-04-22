@@ -86,6 +86,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_users_details:
                         drogeUserRole.AUTH_users_details = true;
                         break;
+                    case AccessesNames.AUTH_users_delete:
+                        drogeUserRole.AUTH_users_delete = true;
+                        break;
                     case AccessesNames.AUTH_users_counter:
                         drogeUserRole.AUTH_users_counter = true;
                         break;
@@ -180,6 +183,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_scheduler_description_read).Append(',');
             if (userRole.AUTH_users_details)
                 sb.Append(AccessesNames.AUTH_users_details).Append(',');
+            if (userRole.AUTH_users_delete)
+                sb.Append(AccessesNames.AUTH_users_delete).Append(',');
             if (userRole.AUTH_users_counter)
                 sb.Append(AccessesNames.AUTH_users_counter).Append(',');
             if (userRole.AUTH_users_settigns)

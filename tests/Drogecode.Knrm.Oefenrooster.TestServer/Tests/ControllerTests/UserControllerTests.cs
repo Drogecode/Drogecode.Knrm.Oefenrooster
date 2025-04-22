@@ -67,7 +67,7 @@ public class UserControllerTests : BaseTest
         userB!.LinkedAsB.Should().Contain(x => x.LinkedUserId == userAId);
     }
 
-    [Fact(Skip = "Fails because of an in memory database bug")]
+    [Fact]
     public async Task UnLinkUserUserTest()
     {
         var userAId = await Tester.AddUser("User A");
@@ -90,9 +90,35 @@ public class UserControllerTests : BaseTest
         Assert.True(unLinkUser.Value?.Success);
         var userAa = (await Tester.UserController.GetById(userAId))!.Value!.User;
         var userBb = (await Tester.UserController.GetById(userBId))!.Value!.User;
-        userAa!.LinkedAsA.Should().NotContain(x => x.LinkedUserId == userBId);
-        userBb!.LinkedAsB.Should().NotContain(x => x.LinkedUserId == userAId);
-
+        Assert.Null(userAa?.LinkedAsA);
+        Assert.Null(userBb?.LinkedAsB);
+    }
+    
+    [Fact]
+    public async Task DeleteUserWithLinkTest()
+    {
+        var userAId = await Tester.AddUser("User A");
+        var userBId = await Tester.AddUser("User B");
+        var body = new UpdateLinkUserUserForUserRequest
+        {
+            UserAId = userAId,
+            UserBId = userBId,
+            LinkType = Shared.Enums.UserUserLinkType.Buddy,
+            Add = true
+        };
+        var linkUser = await Tester.UserController.UpdateLinkUserUserForUser(body);
+        Assert.True(linkUser.Value?.Success);
+        var userA = (await Tester.UserController.GetById(userAId))!.Value!.User;
+        var userB = (await Tester.UserController.GetById(userBId))!.Value!.User;
+        userA!.LinkedAsA.Should().Contain(x => x.LinkedUserId == userBId);
+        userB!.LinkedAsB.Should().Contain(x => x.LinkedUserId == userAId);
+        var deleteResponse = await Tester.UserController.DeleteUser(userB);
+        Assert.True(deleteResponse.Value?.Success);
+        var userAa = (await Tester.UserController.GetById(userAId))!.Value!.User;
+        var userBb = (await Tester.UserController.GetById(userBId))!.Value!.User;
+        Assert.NotNull(userAa);
+        Assert.Null(userAa.LinkedAsA);
+        Assert.Null(userBb);
     }
 
     [Fact]

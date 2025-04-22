@@ -1,8 +1,9 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Models.User;
+using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
-public interface IUserService
+public interface IUserService : IDrogeService
 {
     Task<MultipleDrogeUsersResponse> GetAllUsers(Guid customerId, bool includeHidden, bool includeLastLogin, CancellationToken clt);
     Task<DrogeUser?> GetUserById(Guid customerId, Guid userId, bool includePersonal, CancellationToken clt);
@@ -15,5 +16,6 @@ public interface IUserService
     Task<UpdateLinkUserUserForUserResponse> RemoveLinkUserUserForUser(UpdateLinkUserUserForUserRequest body, Guid userId, Guid customerId, CancellationToken clt);
     Task<bool> PatchLastOnline(Guid? userId, Guid? customerId, string? clientVersion, CancellationToken clt);
     Task<bool> PatchLastOnline(Guid userId, CancellationToken clt);
-    Task<bool> MarkUsersDeleted(List<DrogeUser> existingUsers, Guid userId, Guid customerId);
+    Task<bool> MarkUserDeleted(DrogeUser user, Guid userId, Guid customerId, bool onlySyncedFromSharePoint);
+    Task<bool> MarkMultipleUsersDeleted(List<DrogeUser> existingUsers, Guid userId, Guid customerId, bool onlySyncedFromSharePoint);
 }

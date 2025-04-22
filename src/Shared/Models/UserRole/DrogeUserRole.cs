@@ -41,6 +41,7 @@ public class DrogeUserRole
 
     // Group: GROUP_USER
     public bool AUTH_users_details { get; set; }
+    public bool AUTH_users_delete { get; set; }
     public bool AUTH_users_counter { get; set; }
     public bool AUTH_users_settigns { get; set; }
 

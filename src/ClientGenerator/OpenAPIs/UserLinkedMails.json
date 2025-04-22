@@ -386,8 +386,7 @@
           },
           "activateRequestedOn": {
             "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "format": "date-time"
           },
           "activationFailedAttempts": {
             "type": "integer",
