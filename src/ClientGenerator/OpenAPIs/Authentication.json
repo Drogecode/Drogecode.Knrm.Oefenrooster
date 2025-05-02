@@ -133,85 +133,6 @@
         }
       }
     },
-    "/api/Authentication/authenticate-direct/enabled": {
-      "get": {
-        "tags": [
-          "Authentication"
-        ],
-        "operationId": "GetAuthenticateDirectEnabled",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Authentication/authenticate-direct": {
-      "post": {
-        "tags": [
-          "Authentication"
-        ],
-        "operationId": "AuthenticateDirect",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateDirectRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateDirectRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateDirectRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Authentication/current-user-info": {
       "get": {
         "tags": [
@@ -337,24 +258,6 @@
   },
   "components": {
     "schemas": {
-      "AuthenticateDirectRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "password": {
-            "type": "string",
-            "nullable": true
-          },
-          "clientVersion": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "AuthenticateExternalRequest": {
         "type": "object",
         "properties": {

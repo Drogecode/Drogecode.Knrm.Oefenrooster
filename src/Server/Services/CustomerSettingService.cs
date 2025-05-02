@@ -21,12 +21,22 @@ public class CustomerSettingService : ICustomerSettingService
         return new Customer { Id = customer?.Id ?? Guid.Empty };
     }
 
-    public async Task<SettingBoolResponse> GetBoolCustomerSetting(Guid customerId, SettingName setting)
+    public async Task<SettingBoolResponse> GetBoolCustomerSetting(Guid customerId, SettingName setting, bool def, CancellationToken clt)
     {
         var response = new SettingBoolResponse();
-        var result = await GetStringCustomerSetting(customerId, setting, "false");
+        var result = await GetStringCustomerSetting(customerId, setting, def ? "true" : "false", clt);
         response.Value = SettingNames.StringToBool(result.Value);
         response.Success = result.Success;
+        return response;
+    }
+    
+    public async Task<SettingIntResponse> GetIntCustomerSetting(Guid customerId, SettingName setting, int def, CancellationToken clt)
+    {
+        var response = new SettingIntResponse();
+        var result = await GetStringCustomerSetting(customerId, setting, def.ToString(), clt);
+        var intParsed = int.TryParse(result.Value, out int intValue);
+        response.Value = intValue;
+        response.Success = result.Success && intParsed;
         return response;
     }
 
@@ -43,10 +53,14 @@ public class CustomerSettingService : ICustomerSettingService
 
     public async Task PatchBoolSetting(Guid customerId, SettingName setting, bool value)
     {
-        await PatchStringSetting(customerId, SettingName.TrainingToCalendar, value ? "true" : "false");
+        await PatchStringSetting(customerId, setting, value ? "true" : "false");
+    }
+    public async Task PatchIntSetting(Guid customerId, SettingName setting, int value)
+    {
+        await PatchStringSetting(customerId, setting, value.ToString());
     }
 
-    public async Task<SettingStringResponse> GetStringCustomerSetting(Guid customerId, SettingName setting, string def)
+    public async Task<SettingStringResponse> GetStringCustomerSetting(Guid customerId, SettingName setting, string def, CancellationToken clt)
     {
         if (setting == SettingName.TimeZone)
         {
@@ -60,7 +74,7 @@ public class CustomerSettingService : ICustomerSettingService
         var result = await _database.CustomerSettings
             .Where(x => x.CustomerId == customerId && x.Name == setting)
             .AsNoTracking()
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(clt);
         if (result?.Value is null) return response;
         response.Value = result.Value;
         response.Success = true;

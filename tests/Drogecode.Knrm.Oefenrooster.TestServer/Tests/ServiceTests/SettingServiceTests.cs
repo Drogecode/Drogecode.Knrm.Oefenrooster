@@ -21,15 +21,15 @@ public class SettingServiceTests : BaseTest
     [Fact]
     public async Task TrainingToCalendarTest()
     {
-        var value = await _userSettingService.GetBoolUserSetting(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId, SettingName.TrainingToCalendar);
+        var value = await _userSettingService.GetBoolUserSetting(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId, SettingName.TrainingToCalendar, false, CancellationToken.None);
         Assert.False(value.Value);
         await _customerSettingService.PatchBoolSetting(DefaultSettingsHelper.KnrmHuizenId, SettingName.TrainingToCalendar, true); 
-        value = await _userSettingService.GetBoolUserSetting(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId, SettingName.TrainingToCalendar);
+        value = await _userSettingService.GetBoolUserSetting(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId, SettingName.TrainingToCalendar, false, CancellationToken.None);
         Assert.True(value.Value);
         await _userSettingService.PatchBoolSetting(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId, SettingName.TrainingToCalendar, false);
-        value = await _userSettingService.GetBoolUserSetting(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId, SettingName.TrainingToCalendar);
+        value = await _userSettingService.GetBoolUserSetting(DefaultSettingsHelper.KnrmHuizenId, Tester.DefaultUserId, SettingName.TrainingToCalendar, false, CancellationToken.None);
         Assert.False(value.Value);
-        value = (await _customerSettingService.GetBoolCustomerSetting(DefaultSettingsHelper.KnrmHuizenId, SettingName.TrainingToCalendar));
+        value = (await _customerSettingService.GetBoolCustomerSetting(DefaultSettingsHelper.KnrmHuizenId, SettingName.TrainingToCalendar, false, CancellationToken.None));
         Assert.True(value.Value);
     }
 }

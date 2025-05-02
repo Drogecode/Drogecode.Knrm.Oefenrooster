@@ -79,6 +79,7 @@
     <MudTextField Label="@L["CalenderPrefix"]" T="string" Value="_settingCalenderPrefix" ValueChanged="PatchCalenderPrefix" />
     <MudTextField Label="@L["PreCom Available calendar text"]" T="string" Value="_preComAvailableText" ValueChanged="PatchPreComAvailableText"
                   Counter="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT" />
+    <MudNumericField Label="@L["PreCom days in future"]" T="int?" Value="@_preComDaysInFuture" ValueChanged="PatchPreComDaysInFuture" />
 
     @if (_users != null && _functions != null)
     {

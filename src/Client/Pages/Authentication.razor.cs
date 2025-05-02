@@ -29,20 +29,10 @@ public sealed partial class Authentication
         if (firstRender)
         {
             var redirectUrl = $"{Navigation.BaseUri}authentication/login-callback";
-            var directAuthenticationEnabled = await AuthenticationRepository.GetAuthenticateDirectEnabled();
             switch (Action)
             {
                 case "login":
-                    if (directAuthenticationEnabled)
-                    {
-                        _showLogin = true;
-                        StateHasChanged();
-                    }
-                    else
-                    {
-                        await Login(redirectUrl);
-                    }
-
+                    await Login(redirectUrl);
                     break;
                 case "login-callback":
                     await LoginCallback(redirectUrl);
@@ -74,7 +64,7 @@ public sealed partial class Authentication
         //code=0.ATAAVUd12VSwnEqnf9pCpACTZa57pBzB1l5Jm5DDKyRP3eIwAFY.AgABAAIAAAAtyolDObpQQ5VtlI4uGjEPAgDs_wUA9P_0knpzIDaOclMFbZVWvzgkrOGgoKDWAkpTpALiDDTLmgIywpb0VXuMvskBVO3cfWNqd9ROR21fGh706ObeExSAitcGOiy3baOutXSpHfXKTfQ2rGtWuKSxTwdq7YacQ7vs9VKvMjCd1nCXkmG8v_5rJfBDHGlFgGJOrwQ79gnOmOjMT3OLFpoLBswNglns6Y09wmVE_bkEmoB2e7-vbDavshWK0KyUkz6uglcolkCVATAefabAEyt88nOuJRqi9F8tPBmeIznnu3FHKtMMolNoTH4il15oaav7VNvc4ea129_qxixCVcrm6SVvCYkRjKnIr0Rf2sog-MgHp034aCgcbhawUTYe9X1jsvUc7I9MQYjY811vSsMECvO0uzjaZapSkRWFhoc3i1KpyNjpOqn6UkvB7UUe-CzXPaxm4VaordKmEUjG73bp8-sEK1x5KOQ-zhF-DsmVOtR0WToItAC93qJryadYFHngEj3tCqv8oFiCiv2_tWOgkoFeECaKGeFIQx0FUOtcaWfz9Fub4CJfVH6yQOoL-QcyjGnbWfvYx2fRZE8gfy4mmpSBcZafbcf-R3IXMvvnhz1NZksLeZpYrwFPvljVNiVa3n4oU-3gBUZvcccmJxDcquPC_oSdOTnlsX9gfgGQvh8NJLnYa97now27rkvryhhwEbdlGi4NJJrXpAPYVs424RqWgST8B-QmVwohI5tKbfuyiSoM4kOXxY1xZuxano3HbU9mPwcZgh794JfLo1f7SLuLJhRMhH5f-jVsFlwU6vrJb9_GIDbP-kRZm9qkyWvvUgsTx8Tmdkobd5HR9priYAyX6K2fdQF4_yuYZyojCce-90K7CntvSdl4lEq0m8rhgLN7cR4u1ZtHidtyxci0p41Y8smhKMbLPLbyIsBGx7pe55Q
         //&state=WIAge8uGpFQ5RTNLZ9gEy9r0gAB6OgFJBiJOZ9Sn9TomA8a6QXABWfcrv51T3HG3
         //&session_state=524653cd-d523-4038-a704-6e58bb555568
-        var result = await AuthenticationClient.AuthenticateUserAsync(new AuthenticateRequest( code, state, session_state, redirectUrl, DefaultSettingsHelper.CURRENT_VERSION));
+        var result = await AuthenticationClient.AuthenticateUserAsync(new AuthenticateRequest(code, state, session_state, redirectUrl, DefaultSettingsHelper.CURRENT_VERSION));
         if (result)
         {
             await AuthenticationStateProvider.loginCallback();

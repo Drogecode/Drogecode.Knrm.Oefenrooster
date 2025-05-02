@@ -26,7 +26,7 @@ public class CustomerSettingController : DrogeController
     [HttpGet]
     [Route("string/{name}", Order = 0)]
     [Route("training-string/{name}", Order = 1)] // ToDo Remove when all users on v0.5.12 or above
-    public async Task<ActionResult<SettingStringResponse>> GetStringSetting(SettingName name, CancellationToken token = default)
+    public async Task<ActionResult<SettingStringResponse>> GetStringSetting(SettingName name, CancellationToken clt = default)
     {
         try
         {
@@ -43,7 +43,7 @@ public class CustomerSettingController : DrogeController
                     break;
                 case SettingName.CalendarPrefix:
                 case SettingName.PreComAvailableText:
-                    result = await _customerSettingService.GetStringCustomerSetting(customerId, name, string.Empty);
+                    result = await _customerSettingService.GetStringCustomerSetting(customerId, name, string.Empty, clt);
                     break;
                 default:
                     return BadRequest("Not string");
@@ -64,7 +64,7 @@ public class CustomerSettingController : DrogeController
     [HttpGet]
     [Route("bool/{name}", Order = 0)]
     [Route("training-bool/{name}", Order = 1)] // ToDo Remove when all users on v0.5.12 or above
-    public async Task<ActionResult<SettingBoolResponse>> GetBoolSetting(SettingName name, CancellationToken token = default)
+    public async Task<ActionResult<SettingBoolResponse>> GetBoolSetting(SettingName name, CancellationToken clt = default)
     {
         try
         {
@@ -75,7 +75,7 @@ public class CustomerSettingController : DrogeController
                 case SettingName.TrainingToCalendar:
                 case SettingName.SyncPreComWithCalendar:
                 case SettingName.SyncPreComDeleteOld:
-                    result = await _customerSettingService.GetBoolCustomerSetting(customerId, name);
+                    result = await _customerSettingService.GetBoolCustomerSetting(customerId, name, false, clt);
                     break;
                 default:
                     return BadRequest("Not bool");
@@ -89,6 +89,35 @@ public class CustomerSettingController : DrogeController
             Debugger.Break();
 #endif
             Logger.LogError(ex, "Exception in GetBoolSetting");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("int/{name}", Order = 0)]
+    public async Task<ActionResult<SettingIntResponse>> GetIntSetting(SettingName name, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            SettingIntResponse result;
+            switch (name)
+            {
+                case SettingName.PreComDaysInFuture:
+                    result = await _customerSettingService.GetIntCustomerSetting(customerId, name, -2, clt);
+                    break;
+                default:
+                    return BadRequest("Not int");
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            Logger.LogError(ex, "Exception in GetIntSetting");
             return BadRequest();
         }
     }
@@ -131,6 +160,26 @@ public class CustomerSettingController : DrogeController
             Debugger.Break();
 #endif
             Logger.LogError(ex, "Exception in PatchBoolSetting");
+            return BadRequest();
+        }
+    }
+    [HttpPatch]
+    [Route("int")]
+    [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
+    public async Task<ActionResult> PatchIntSetting([FromBody] PatchSettingIntRequest body, CancellationToken token = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            await _customerSettingService.PatchIntSetting(customerId, body.Name, body.Value);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            Logger.LogError(ex, "Exception in PatchIntSetting");
             return BadRequest();
         }
     }

@@ -27,4 +27,8 @@ public enum SettingName
     /// Type: bool
     /// </summary>
     SyncPreComDeleteOld = 6,
+    /// <summary>
+    /// Type: int
+    /// </summary>
+    PreComDaysInFuture = 7,
 }

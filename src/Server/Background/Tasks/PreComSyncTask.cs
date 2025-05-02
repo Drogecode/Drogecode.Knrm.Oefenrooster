@@ -21,15 +21,17 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
         var preComWorker = new AvailabilityForUser(preComClient, _logger, _dateTimeService);
 
         var date = DateTime.Today;
+        var dayCount = await customerSettingService.GetIntCustomerSetting(DefaultSettingsHelper.KnrmHuizenId, SettingName.PreComDaysInFuture, 5, clt);
         var userIdsWithNull = await userSettingService.GetAllPreComIdAndValue(DefaultSettingsHelper.KnrmHuizenId, SettingName.SyncPreComWithCalendar, clt); //new List<int> { 37398 };
         if (userIdsWithNull.Count == 0)
             return true;
         var itemsSynced = 0;
-        for (var i = 0; i < 5; i++)
+        for (var i = 0; i < dayCount.Value; i++)
         {
             // Check future availability
             itemsSynced += await LoopSyncPreComAvailability(userIdsWithNull, date.AddDays(i), false, preComWorker, userService, customerSettingService, userPreComEventService, clt);
         }
+
         userIdsWithNull = await userSettingService.GetAllPreComIdAndValue(DefaultSettingsHelper.KnrmHuizenId, SettingName.SyncPreComDeleteOld, clt);
         if (userIdsWithNull.Count != 0)
         {
@@ -37,6 +39,7 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
             var usersToDeleteOld = userIdsWithNull.Where(x => x is { UserPreComId: not null, Value: true }).ToList();
             itemsSynced += await LoopSyncPreComAvailability(usersToDeleteOld, date.AddDays(-7), true, preComWorker, userService, customerSettingService, userPreComEventService, clt);
         }
+
         _logger.LogInformation("Synced `{items}` from PreCom to outlook", itemsSynced);
         return true;
     }

@@ -165,6 +165,46 @@
         }
       }
     },
+    "/api/CustomerSetting/int/{name}": {
+      "get": {
+        "tags": [
+          "CustomerSetting"
+        ],
+        "operationId": "GetIntSetting",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SettingName"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingIntResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingIntResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingIntResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/CustomerSetting/string": {
       "patch": {
         "tags": [
@@ -228,6 +268,38 @@
           }
         }
       }
+    },
+    "/api/CustomerSetting/int": {
+      "patch": {
+        "tags": [
+          "CustomerSetting"
+        ],
+        "operationId": "PatchIntSetting",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchSettingIntRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchSettingIntRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchSettingIntRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -240,6 +312,19 @@
           },
           "value": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PatchSettingIntRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/SettingName"
+          },
+          "value": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -276,6 +361,26 @@
         },
         "additionalProperties": false
       },
+      "SettingIntResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "value": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "SettingName": {
         "enum": [
           0,
@@ -284,7 +389,8 @@
           3,
           4,
           5,
-          6
+          6,
+          7
         ],
         "type": "integer",
         "format": "int32"

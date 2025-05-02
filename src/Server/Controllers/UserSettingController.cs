@@ -25,7 +25,7 @@ public class UserSettingController : DrogeController
 
     [HttpGet]
     [Route("string/{name}")]
-    public async Task<ActionResult<SettingStringResponse>> GetStringSetting(SettingName name, CancellationToken token = default)
+    public async Task<ActionResult<SettingStringResponse>> GetStringSetting(SettingName name, CancellationToken clt = default)
     {
         try
         {
@@ -36,7 +36,7 @@ public class UserSettingController : DrogeController
             {
                 case SettingName.CalendarPrefix:
                 case SettingName.PreComAvailableText:
-                    result = await _userSettingService.GetStringUserSetting(customerId, userId, name);
+                    result = await _userSettingService.GetStringUserSetting(customerId, userId, name, string.Empty, clt);
                     break;
                 default:
                     return BadRequest("Not string");
@@ -56,7 +56,7 @@ public class UserSettingController : DrogeController
 
     [HttpGet]
     [Route("bool/{name}")]
-    public async Task<ActionResult<SettingBoolResponse>> GetBoolSetting(SettingName name, CancellationToken token = default)
+    public async Task<ActionResult<SettingBoolResponse>> GetBoolSetting(SettingName name, CancellationToken clt = default)
     {
         try
         {
@@ -68,7 +68,7 @@ public class UserSettingController : DrogeController
                 case SettingName.TrainingToCalendar:
                 case SettingName.SyncPreComWithCalendar:
                 case SettingName.SyncPreComDeleteOld:
-                    result = await _userSettingService.GetBoolUserSetting(customerId, userId, name);
+                    result = await _userSettingService.GetBoolUserSetting(customerId, userId, name, false, clt);
                     break;
                 default:
                     return BadRequest("Not bool");

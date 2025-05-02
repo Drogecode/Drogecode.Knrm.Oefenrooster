@@ -34,6 +34,7 @@ public sealed partial class GlobalConfiguration : IDisposable
 
     private string? _settingCalenderPrefix;
     private string? _preComAvailableText;
+    private int? _preComDaysInFuture;
     private bool? _clickedUpdate;
     private bool? _usersSynced;
     private bool? _specialDatesUpdated;
@@ -59,6 +60,7 @@ public sealed partial class GlobalConfiguration : IDisposable
             _settingTrainingToCalendar = (await CustomerSettingsClient.GetBoolSettingAsync(SettingName.TrainingToCalendar, _cls.Token)).Value;
             _settingCalenderPrefix = (await CustomerSettingsClient.GetStringSettingAsync(SettingName.CalendarPrefix, _cls.Token)).Value;
             _preComAvailableText = (await CustomerSettingsClient.GetStringSettingAsync(SettingName.PreComAvailableText, _cls.Token)).Value;
+            _preComDaysInFuture = (await CustomerSettingsClient.GetIntSettingAsync(SettingName.PreComDaysInFuture, _cls.Token)).Value;
             _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
             _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
             await SetUser();
@@ -144,20 +146,27 @@ public sealed partial class GlobalConfiguration : IDisposable
     {
         _settingTrainingToCalendar = isChecked;
         var body = new PatchSettingBoolRequest(SettingName.TrainingToCalendar, isChecked);
-        await CustomerSettingsClient.PatchBoolSettingAsync(body);
+        await CustomerSettingsClient.PatchBoolSettingAsync(body, _cls.Token);
     }
 
     private async Task PatchCalenderPrefix(string newValue)
     {
         _settingCalenderPrefix = newValue;
         var body = new PatchSettingStringRequest(SettingName.CalendarPrefix, newValue);
-        await CustomerSettingsClient.PatchStringSettingAsync(body);
+        await CustomerSettingsClient.PatchStringSettingAsync(body, _cls.Token);
     }
     private async Task PatchPreComAvailableText(string newValue)
     {
         _preComAvailableText = newValue;
         var body = new PatchSettingStringRequest(SettingName.PreComAvailableText, newValue);
-        await CustomerSettingsClient.PatchStringSettingAsync(body);
+        await CustomerSettingsClient.PatchStringSettingAsync(body, _cls.Token);
+    }
+    private async Task PatchPreComDaysInFuture(int? newValue)
+    {
+        if (newValue is null) return;
+        _preComDaysInFuture = newValue;
+        var body = new PatchSettingIntRequest(SettingName.PreComDaysInFuture, newValue.Value);
+        await CustomerSettingsClient.PatchIntSettingAsync(body, _cls.Token);
     }
 
     private async Task UpdateDatabase()

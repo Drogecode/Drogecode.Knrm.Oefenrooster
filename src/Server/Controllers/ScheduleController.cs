@@ -229,7 +229,7 @@ public class ScheduleController : ControllerBase
                 {
                     var drogeUser = await _userService.GetUserById(customerId, user.UserId, false, clt);
                     if (drogeUser is null) throw new DrogeCodeNullException("No user found");
-                    var preText = await _userSettingService.GetStringUserSetting(customerId, drogeUser.Id, SettingName.CalendarPrefix);
+                    var preText = await _userSettingService.GetStringUserSetting(customerId, drogeUser.Id, SettingName.CalendarPrefix, string.Empty, clt);
                     DrogeFunction? function = null;
                     if (user.PlannedFunctionId is not null && user.UserFunctionId is not null && user.UserFunctionId != user.PlannedFunctionId)
                         function = await _functionService.GetById(customerId, user.PlannedFunctionId.Value, clt);
@@ -583,7 +583,7 @@ public class ScheduleController : ControllerBase
         try
         {
             await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(customerId, currentUserId, clt);
-            if (assigned && (await _userSettingService.GetBoolUserSetting(customerId, planUserId, SettingName.TrainingToCalendar)).Value)
+            if (assigned && (await _userSettingService.GetBoolUserSetting(customerId, planUserId, SettingName.TrainingToCalendar, false, clt)).Value)
             {
 #if DEBUG
                 // Be carefully when debugging.
@@ -592,7 +592,7 @@ public class ScheduleController : ControllerBase
                 if (training is null && trainingId is not null)
                     training = (await _scheduleService.GetTrainingById(planUserId, customerId, trainingId.Value, clt)).Training;
                 var type = await _trainingTypesService.GetById(training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
-                var preText = await _userSettingService.GetStringUserSetting(customerId, planUserId, SettingName.CalendarPrefix);
+                var preText = await _userSettingService.GetStringUserSetting(customerId, planUserId, SettingName.CalendarPrefix, string.Empty, clt);
                 var text = GetTrainingCalenderText(type.TrainingType?.Name, training?.Name, functionName, preText.Value);
                 if (training is null)
                 {

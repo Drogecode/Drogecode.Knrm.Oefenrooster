@@ -17,15 +17,15 @@ public class UserSettingService : IUserSettingService
         _customerSettingService = customerSettingService;
     }
 
-    public async Task<SettingBoolResponse> GetBoolUserSetting(Guid customerId, Guid userId, SettingName setting)
+    public async Task<SettingBoolResponse> GetBoolUserSetting(Guid customerId, Guid userId, SettingName setting, bool def, CancellationToken clt)
     {
         var result = await GetUserSetting(customerId, userId, setting);
         if (result is null)
-            return await _customerSettingService.GetBoolCustomerSetting(customerId, setting);
+            return await _customerSettingService.GetBoolCustomerSetting(customerId, setting, def, clt);
         return new SettingBoolResponse() { Value = SettingNames.StringToBool(result) };
     }
 
-    public async Task<SettingStringResponse> GetStringUserSetting(Guid customerId, Guid userId, SettingName setting)
+    public async Task<SettingStringResponse> GetStringUserSetting(Guid customerId, Guid userId, SettingName setting, string def, CancellationToken clt)
     {
         if (setting == SettingName.TimeZone)
         {
@@ -34,7 +34,7 @@ public class UserSettingService : IUserSettingService
 
         var result = await GetUserSetting(customerId, userId, setting);
         if (result is null)
-            return await _customerSettingService.GetStringCustomerSetting(customerId, setting, string.Empty);
+            return await _customerSettingService.GetStringCustomerSetting(customerId, setting, def, clt);
         return new SettingStringResponse() { Value = result };
     }
 

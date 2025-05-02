@@ -14,13 +14,4 @@ public class AuthenticationRepository
         _authenticationClient = authenticationClient;
         _offlineService = offlineService;
     }
-
-    public async Task<bool> GetAuthenticateDirectEnabled(CancellationToken clt = default)
-    {
-        var result = await _offlineService.CachedRequestAsync("auth_dir",
-            async () => await _authenticationClient.GetAuthenticateDirectEnabledAsync(clt),
-            ApiCachedRequestDefaults.LongCache,
-            clt);
-        return result;
-    }
 }

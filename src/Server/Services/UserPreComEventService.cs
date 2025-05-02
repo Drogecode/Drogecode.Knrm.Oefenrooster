@@ -40,7 +40,7 @@ public class UserPreComEventService(
 
     public async Task<bool> AddEvent(DrogeUser drogeUser, DateTime start, DateTime end, DateOnly date, CancellationToken clt)
     {
-        var text = (await _userSettingService.GetStringUserSetting(drogeUser.CustomerId, drogeUser.Id, SettingName.PreComAvailableText)).Value;
+        var text = (await _userSettingService.GetStringUserSetting(drogeUser.CustomerId, drogeUser.Id, SettingName.PreComAvailableText, string.Empty, clt)).Value;
         if (string.IsNullOrWhiteSpace(text))
             text = "Piket";
 
