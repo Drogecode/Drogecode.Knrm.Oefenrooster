@@ -35,6 +35,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{D4FC654B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrogeCode.PreCom", "src\Tools\DrogeCode.PreCom\DrogeCode.PreCom.csproj", "{B54FC790-2CDB-4B32-8F7A-E2F283896D41}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drogecode.Knrm.Oefenrooster.Playwright", "tests\Drogecode.Knrm.Oefenrooster.Playwright\Drogecode.Knrm.Oefenrooster.Playwright.csproj", "{D320CEE8-B3D7-4789-9D8A-730EBA574A47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +91,10 @@ Global
 		{B54FC790-2CDB-4B32-8F7A-E2F283896D41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B54FC790-2CDB-4B32-8F7A-E2F283896D41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B54FC790-2CDB-4B32-8F7A-E2F283896D41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D320CEE8-B3D7-4789-9D8A-730EBA574A47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D320CEE8-B3D7-4789-9D8A-730EBA574A47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D320CEE8-B3D7-4789-9D8A-730EBA574A47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D320CEE8-B3D7-4789-9D8A-730EBA574A47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,6 +109,7 @@ Global
 		{77D16A28-D352-4581-8705-5834FD1B50E9} = {6DE471B8-1129-4FE3-BC60-FCCF71A80409}
 		{328EF45D-0C5E-4DA9-8BC7-05356C2DBD70} = {77D16A28-D352-4581-8705-5834FD1B50E9}
 		{B54FC790-2CDB-4B32-8F7A-E2F283896D41} = {D4FC654B-ED4A-4587-B608-4EBF8805942F}
+		{D320CEE8-B3D7-4789-9D8A-730EBA574A47} = {6DE471B8-1129-4FE3-BC60-FCCF71A80409}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {36F3F586-0B2F-484C-9B32-46210C5E3929}
