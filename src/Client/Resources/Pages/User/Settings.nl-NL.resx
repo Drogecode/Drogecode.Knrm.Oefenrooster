@@ -63,4 +63,7 @@
     <data name="PreCom Available calendar text" xml:space="preserve">
         <value>PreCom beschikbaar tekst voor calender</value>
     </data>
+    <data name="Settings" xml:space="preserve">
+        <value>Instellingen</value>
+    </data>
 </root>

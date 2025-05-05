@@ -136,7 +136,7 @@
     <value>Een moment geduld</value>
   </data>
   <data name="Profile" xml:space="preserve">
-    <value>Profile</value>
+    <value>Profiel</value>
   </data>
   <data name="Removed" xml:space="preserve">
     <value>Verwijderd</value>
@@ -152,5 +152,8 @@
   </data>
   <data name="No access" xml:space="preserve">
     <value>Geen toegang</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Instellingen</value>
   </data>
 </root>

@@ -153,4 +153,7 @@
   <data name="No access" xml:space="preserve">
     <value>No access</value>
   </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
 </root>

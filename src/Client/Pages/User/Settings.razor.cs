@@ -9,9 +9,9 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User;
 
-public sealed partial class Profile : IDisposable
+public sealed partial class Settings : IDisposable
 {
-    [Inject] private IStringLocalizer<Profile> L { get; set; } = default!;
+    [Inject] private IStringLocalizer<Settings> L { get; set; } = default!;
     [Inject] private IDialogService DialogProvider { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private ConfigurationRepository ConfigurationRepository { get; set; } = default!;
