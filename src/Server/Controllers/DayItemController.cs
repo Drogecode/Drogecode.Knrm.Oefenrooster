@@ -32,8 +32,8 @@ public class DayItemController : ControllerBase
         IDayItemService dayItemService,
         IAuditService auditService,
         IUserSettingService userSettingService,
-        IGraphService graphService, 
-        RefreshHub refreshHub, 
+        IGraphService graphService,
+        RefreshHub refreshHub,
         IUserLinkedMailsService userLinkedMailsService,
         IUserService userService)
     {
@@ -50,13 +50,13 @@ public class DayItemController : ControllerBase
 
     [HttpGet]
     [Route("{yearStart:int}/{monthStart:int}/{dayStart:int}/{yearEnd:int}/{monthEnd:int}/{dayEnd:int}/{userId:guid}")]
-    public async Task<ActionResult<GetMultipleDayItemResponse>> GetItems(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, Guid userId, CancellationToken clt = default)
+    public async Task<ActionResult<GetMultipleDayItemResponse>> GetItems(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, Guid userId,
+        CancellationToken clt = default)
     {
         try
         {
-            var result = new GetMultipleDayItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            result = await _dayItemService.GetDayItems(yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, customerId, userId, clt);
+            var result = await _dayItemService.GetDayItems(yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, customerId, userId, clt);
             return result;
         }
         catch (Exception ex)
@@ -80,6 +80,7 @@ public class DayItemController : ControllerBase
                 _logger.LogWarning("GetAllFutureDayItems count to big {0}", count);
                 return BadRequest("Count to big");
             }
+
             var result = new GetMultipleDayItemResponse();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
@@ -89,6 +90,7 @@ public class DayItemController : ControllerBase
                 _logger.LogTrace("Calling hub AllFutureDayItems");
                 await _refreshHub.SendMessage(userId, ItemUpdated.AllFutureDayItems);
             }
+
             return result;
         }
         catch (Exception ex)
@@ -105,7 +107,6 @@ public class DayItemController : ControllerBase
     [Route("{id:guid}")]
     public async Task<ActionResult<GetDayItemResponse>> ById(Guid id, CancellationToken clt = default)
     {
-
         try
         {
             var result = new GetDayItemResponse();
@@ -127,7 +128,6 @@ public class DayItemController : ControllerBase
     [Route("dashboard/{callHub:bool}")]
     public async Task<ActionResult<GetMultipleDayItemResponse>> GetDashboard(bool callHub = false, CancellationToken clt = default)
     {
-
         try
         {
             var result = new GetMultipleDayItemResponse();
@@ -139,6 +139,7 @@ public class DayItemController : ControllerBase
                 _logger.LogTrace("Calling hub DayItemDashboard");
                 await _refreshHub.SendMessage(userId, ItemUpdated.DayItemDashboard);
             }
+
             return result;
         }
         catch (Exception ex)
@@ -150,7 +151,7 @@ public class DayItemController : ControllerBase
             return BadRequest();
         }
     }
-    
+
     [HttpPut]
     [Authorize(Roles = AccessesNames.AUTH_scheduler_dayitem)]
     [Route("")]
@@ -180,6 +181,7 @@ public class DayItemController : ControllerBase
                         }
                     }
             }
+
             return result;
         }
         catch (Exception ex)
@@ -217,9 +219,9 @@ public class DayItemController : ControllerBase
                     var drogeUser = await _userService.GetUserById(customerId, user.UserId, false, clt);
                     if (drogeUser is null) throw new DrogeCodeNullException("No user found");
                     await ToOutlookCalendar(user, drogeUser.ExternalId, false, old.DayItem, customerId, clt);
-
                 }
             }
+
             if (roosterItemDay.LinkedUsers is not null)
             {
                 var newd = await _dayItemService.GetDayItemById(customerId, roosterItemDay.Id, clt);
@@ -231,6 +233,7 @@ public class DayItemController : ControllerBase
                         await ToOutlookCalendar(user, drogeUser.ExternalId, true, newd.DayItem, customerId, clt);
                     }
             }
+
             return result;
         }
         catch (Exception ex)
@@ -265,6 +268,7 @@ public class DayItemController : ControllerBase
                     await ToOutlookCalendar(user, drogeUser.ExternalId, false, old.DayItem, customerId, clt);
                 }
             }
+
             return result;
         }
         catch (Exception ex)

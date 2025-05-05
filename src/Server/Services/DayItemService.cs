@@ -25,7 +25,7 @@ public class DayItemService : IDayItemService
             !.ThenInclude(x=>x.User)
             .Where(x => x.CustomerId == customerId && x.DeletedOn == null
                 && ((x.DateStart >= startDate && x.DateStart <= tillDate) || (x.DateEnd >= startDate && x.DateEnd <= tillDate))
-                && (userId == Guid.Empty || x.LinkUserDayItems == null || x.LinkUserDayItems.Count == 0 || x.LinkUserDayItems.Any(x => x.UserId == userId)))
+                && (userId == Guid.Empty || x.LinkUserDayItems == null || x.LinkUserDayItems.Count == 0 || x.LinkUserDayItems.Any(y => y.UserId == userId)))
             .OrderBy(x => x.DateStart)
             .Select(x => x.ToRoosterItemDay())
             .AsNoTracking()

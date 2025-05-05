@@ -10,16 +10,16 @@ public static class DefaultSettingsHelper
     /// <summary>
     /// Increase to show update button when BUTTON_VERSION is on this number or above.
     /// </summary>
-    public const int UPDATE_VERSION = 7; // Set on: v0.5.13
+    public const int UPDATE_VERSION = 8; // Set on: v0.5.18
     
     // Does not show for versions below v0.5.0
     // Old versions, version when it was last on this UPDATE_VERSION
-    // 6 = v0.5.12
+    // 7 = v0.5.18
     
     /// <summary>
     /// From what UPDATE_VERSION should we show the update button.
     /// </summary>
-    public const int BUTTON_VERSION = 5; // v0.4.32 version when it was last on this UPDATE_VERSION
+    public const int BUTTON_VERSION = 6; // v0.5.12 version when it was last on this UPDATE_VERSION
 
     public static Guid KnrmHuizenId { get; } = new Guid("d9754755-b054-4a9c-a77f-da42a4009365");
     public static Guid SystemUser { get; } = new Guid("b4bcc37b-321a-4027-b02b-30630ad8f75e");

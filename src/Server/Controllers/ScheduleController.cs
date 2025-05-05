@@ -78,6 +78,10 @@ public class ScheduleController : ControllerBase
             var result = await _scheduleService.ScheduleForUserAsync(userId, customerId, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, clt);
             return result;
         }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in ForUser");
@@ -98,6 +102,10 @@ public class ScheduleController : ControllerBase
             var result = await _scheduleService.ScheduleForAllAsync(userId, customerId, forMonth, yearStart, monthStart, dayStart, yearEnd, monthEnd, dayEnd, countPerUser, includeUnAssigned, clt);
             return result;
         }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in ForAll");
@@ -115,6 +123,10 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var result = await _scheduleService.GetTrainingById(userId, customerId, id, clt);
             return result;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
         }
         catch (Exception ex)
         {
@@ -135,6 +147,10 @@ public class ScheduleController : ControllerBase
             GetDescriptionByTrainingIdResponse result = await _scheduleService.GetDescriptionByTrainingId(userId, customerId, id, clt);
             return result;
         }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in GetDescriptionByTrainingId");
@@ -152,6 +168,10 @@ public class ScheduleController : ControllerBase
             var result = await _scheduleService.GetPlannedTrainingById(customerId, id, clt);
             return result;
         }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in GetPlannedTrainingById");
@@ -168,6 +188,10 @@ public class ScheduleController : ControllerBase
             var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var result = await _scheduleService.GetPlannedTrainingForDefaultDate(customerId, date, defaultId, clt);
             return result;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
         }
         catch (Exception ex)
         {
@@ -499,7 +523,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in AllTrainingsForUser");
+            _logger.LogError(ex, "Error in GetUserMonthInfo");
             return BadRequest();
         }
     }
@@ -569,6 +593,10 @@ public class ScheduleController : ControllerBase
             var result = await _scheduleService.DeleteTraining(userId, customerId, id, clt);
             await _auditService.Log(userId, AuditType.DeleteTraining, customerId, null, id);
             return result;
+        }
+        catch (OperationCanceledException)
+        {
+            return Ok();
         }
         catch (Exception ex)
         {
