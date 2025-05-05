@@ -5,6 +5,7 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright;
 public class BaseTest : PageTest
 {
     protected readonly IConfigurationRoot _appSettings;
+    protected readonly string _baseUrl;
 
     protected BaseTest()
     {
@@ -14,5 +15,6 @@ public class BaseTest : PageTest
             .Build();
 
         _appSettings = config;
+        _baseUrl = config.GetValue<string>("BaseUrl")!;
     }
 }

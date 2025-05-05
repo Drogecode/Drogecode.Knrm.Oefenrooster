@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drogecode.Knrm.Oefenrooster.SharedForTests", "tests\Drogecode.Knrm.Oefenrooster.SharedForTests\Drogecode.Knrm.Oefenrooster.SharedForTests.csproj", "{3603CF31-F838-4017-8995-9E48A3B75A57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drogecode.Knrm.Oefenrooster.TestClient", "tests\Drogecode.Knrm.Oefenrooster.TestClient\Drogecode.Knrm.Oefenrooster.TestClient.csproj", "{2F62D9C5-C3D4-4C51-8032-EA471EC07D4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drogecode.Knrm.Oefenrooster.TestPreCom", "tests\Drogecode.Knrm.Oefenrooster.TestPreCom\Drogecode.Knrm.Oefenrooster.TestPreCom.csproj", "{1225672F-4422-4324-A327-C60D1668E15B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drogecode.Knrm.Oefenrooster.TestServer", "tests\Drogecode.Knrm.Oefenrooster.TestServer\Drogecode.Knrm.Oefenrooster.TestServer.csproj", "{06E3B254-ACBF-47DB-8FDD-0D87346A202B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3603CF31-F838-4017-8995-9E48A3B75A57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3603CF31-F838-4017-8995-9E48A3B75A57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3603CF31-F838-4017-8995-9E48A3B75A57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3603CF31-F838-4017-8995-9E48A3B75A57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F62D9C5-C3D4-4C51-8032-EA471EC07D4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F62D9C5-C3D4-4C51-8032-EA471EC07D4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F62D9C5-C3D4-4C51-8032-EA471EC07D4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F62D9C5-C3D4-4C51-8032-EA471EC07D4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1225672F-4422-4324-A327-C60D1668E15B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1225672F-4422-4324-A327-C60D1668E15B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1225672F-4422-4324-A327-C60D1668E15B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1225672F-4422-4324-A327-C60D1668E15B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06E3B254-ACBF-47DB-8FDD-0D87346A202B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06E3B254-ACBF-47DB-8FDD-0D87346A202B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06E3B254-ACBF-47DB-8FDD-0D87346A202B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06E3B254-ACBF-47DB-8FDD-0D87346A202B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
