@@ -23,7 +23,7 @@
                     <div class="mx-3 mt-8">
                         <MudText Typo="Typo.h5">@L["Special days"]</MudText>
                         <MudPaper Elevation="0" Class="p-2">
-                            <div class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+                            <div class="flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
                                 @foreach (var item in _dayItems)
                                 {
                                     var color = DayItemHelper.DayItemTypeColor(item.Type);
@@ -50,7 +50,7 @@
                         @if (_pinnedTrainings.Any())
                         {
                             <MudText Typo="Typo.h5">@L["Pinned trainings"]</MudText>
-                            <MudPaper Elevation="0" Class="flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+                            <MudPaper Elevation="0" Class="flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
                                 @foreach (var training in _pinnedTrainings)
                                 {
                                     <div class="flex-1 min-w-72 max-w-xl">
@@ -71,7 +71,7 @@
                     {
                         @if (_trainings.Trainings.Any())
                         {
-                            <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+                            <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
                                 @foreach (var training in _trainings.Trainings)
                                 {
                                     @if (training.DateEnd.Date >= DateTime.Today)

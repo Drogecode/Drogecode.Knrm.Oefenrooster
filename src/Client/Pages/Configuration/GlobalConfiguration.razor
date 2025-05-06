@@ -134,7 +134,7 @@ else
     private RenderFragment<DrogeUser> UserInfo => user =>
         @<div>
             <MudListItem T="string" OnClick="() => ChangeUser(user)">
-                <div class="flex space-x-4">
+                <div class="flex gap-x-4">
                     <p>@user.Name</p>
                     <DateToString ShowDate="true" ShowTime="true" DateTimeUtc="user.LastLogin"/>
                     @if (user.Versions is not null)

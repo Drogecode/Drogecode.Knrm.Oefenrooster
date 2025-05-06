@@ -1,0 +1,16 @@
+﻿/*
+Do not run preflight, this is bits other parts.
+@import "tailwindcss";
+*/
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+/*@import "tailwindcss/preflight.css" layer(base);*/
+@import "tailwindcss/utilities.css" layer(utilities);
+
+/* plugins */
+@plugin '@tailwindcss/forms';
+
+@source "./tailwindHelper.html";
+@source "../**/*.html";
+@source "../**/*.razor";
+@source "../**/*.razor.cs";
