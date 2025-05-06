@@ -48,7 +48,7 @@
         {
             <MudButton OnClick="() => { _showOldMobile = !_showOldMobile; }">@(_showOldMobile ? L["Hide old trainings"] : L["Show old trainings"])</MudButton>
         }
-        <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap flex-grow-1 gap-4 mx-2 my-4">
+        <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
             @if (_month is null)
             {
                 <DrogeLoading/>
