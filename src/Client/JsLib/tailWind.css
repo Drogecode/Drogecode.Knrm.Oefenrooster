@@ -1,11 +1,13 @@
 ﻿/*
 Do not run preflight, this is bits other parts.
 @import "tailwindcss";
+utilities not in layer(utilities)
+Otherwise MudBlazor will overrule tailwindcss
 */
-@layer theme, base, components, utilities;
+@layer theme, base, components;
 @import "tailwindcss/theme.css" layer(theme);
 /*@import "tailwindcss/preflight.css" layer(base);*/
-@import "tailwindcss/utilities.css" layer(utilities);
+@import "tailwindcss/utilities.css";
 
 /* plugins */
 @plugin '@tailwindcss/forms';
