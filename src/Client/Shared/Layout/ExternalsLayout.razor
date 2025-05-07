@@ -2,17 +2,14 @@
 @inherits LayoutComponentBase
 @inject CustomStateProvider AuthenticationStateProvider
 
-<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" Theme="@_myCustomTheme"/>
-<MudPopoverProvider/>
-<MudDialogProvider/>
-<MudSnackbarProvider/>
-
-<MudLayout>
-    <MudAppBar>
-        <MudSpacer/>
-        <Theming Global="_global" MudThemeProvider="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode"/>
-    </MudAppBar>
-    <MudMainContent>
-        @Body
-    </MudMainContent>
-</MudLayout>
+<AppShell @ref="_appShell" IsDarkMode="_isDarkMode" DarkModeToggle="_darkModeToggle" MyCustomTheme="_myCustomTheme">
+    <MudLayout>
+        <MudAppBar>
+            <MudSpacer/>
+            <Theming Global="_global" MudThemeProvider="_appShell.MudThemeProvider" @bind-IsDarkMode="_isDarkMode"/>
+        </MudAppBar>
+        <MudMainContent>
+            @Body
+        </MudMainContent>
+    </MudLayout>
+</AppShell>

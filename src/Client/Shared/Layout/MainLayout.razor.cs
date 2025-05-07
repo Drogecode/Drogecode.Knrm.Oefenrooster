@@ -18,7 +18,7 @@ public sealed partial class MainLayout : IDisposable
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     private readonly DrogeCodeGlobal _global = new();
-    private MudThemeProvider _mudThemeProvider = new();
+    private AppShell _appShell = new();
     private IDictionary<NotificationMessage, bool>? _messages = null;
     private HubConnection? _hubConnection;
     private readonly CancellationTokenSource _cls = new();

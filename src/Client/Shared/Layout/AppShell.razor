@@ -1,0 +1,7 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums
+@inherits LayoutComponentBase
+<MudThemeProvider @ref="MudThemeProvider" @bind-IsDarkMode="IsDarkMode" Theme="@MyCustomTheme" ObserveSystemThemeChange="DarkModeToggle == DarkLightMode.System"/>
+<MudPopoverProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+@ChildContent
