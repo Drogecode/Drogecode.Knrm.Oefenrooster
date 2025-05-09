@@ -7,21 +7,21 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
     [TestFixture]
     public class LoginTests : BaseTest
     {
-        private string _userName;
-        private string _userPassword;
-        [SetUp]
-        public void SetUp()
-        {
-            _userName = _appSettings.GetValue<string>("Users:Basic:Name")!;
-            _userPassword = _appSettings.GetValue<string>("Users:Basic:Password")!;
-        }
+        private readonly IConfigurationRoot _appSettings;
 
+        [SetUp]
+        public override async Task SetUp()
+        {
+            // Override to prevent auto login.
+           await BaseSetUp(false);
+        }
+        
         [Test]
         public async Task LoginToKeyCloak()
         {
-            await Page.GotoAsync(_baseUrl);
-            await Page.Locator("id=username").FillAsync(_userName);
-            await Page.Locator("id=password").FillAsync(_userPassword);
+            await Page.GotoAsync(BaseUrl);
+            await Page.Locator("id=username").FillAsync(UserName);
+            await Page.Locator("id=password").FillAsync(UserPassword);
             await Page.Locator("id=kc-login").ClickAsync();
             await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Welkom Playwright Basic");
         }
@@ -29,8 +29,8 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
         [Test]
         public async Task LoginWithTestPage()
         {
-            var loginPage = new LoginPage(Page, _baseUrl);
-            await loginPage.Login(_userName, _userPassword);
+            var loginPage = new LoginPage(Page, BaseUrl);
+            await loginPage.Login(UserName, UserPassword);
             await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Welkom Playwright Basic");
         }
     }

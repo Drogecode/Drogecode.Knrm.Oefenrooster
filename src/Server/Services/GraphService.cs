@@ -367,15 +367,15 @@ public class GraphService : IGraphService
         return sharePointUsers;
     }
 
-    public async Task<Event?> AddToCalendar(string? externalUserId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
+    public async Task<Event?> AddToCalendar(string? externalUserId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, FreeBusyStatus showAs, List<UserLinkedMail> attendees)
     {
-        var result = await GraphHelper.AddToCalendar(externalUserId, description, dateStart, dateEnd, isAllDay, _logger, attendees);
+        var result = await GraphHelper.AddToCalendar(externalUserId, description, dateStart, dateEnd, isAllDay, showAs, _logger, attendees);
         return result;
     }
 
-    public async Task PatchCalender(string? externalUserId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
+    public async Task PatchCalender(string? externalUserId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, FreeBusyStatus showAs, List<UserLinkedMail> attendees)
     {
-        await GraphHelper.PatchCalender(externalUserId, eventId, description, dateStart, dateEnd, isAllDay, attendees);
+        await GraphHelper.PatchCalender(externalUserId, eventId, description, dateStart, dateEnd, isAllDay, showAs, attendees);
     }
 
     public async Task DeleteCalendarEvent(string? externalUserId, string calendarEventId, CancellationToken clt)

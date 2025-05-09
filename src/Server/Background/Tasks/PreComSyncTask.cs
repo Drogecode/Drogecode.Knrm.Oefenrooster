@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.PreCom;
+using Drogecode.Knrm.Oefenrooster.Server.Models.Background;
 using Drogecode.Knrm.Oefenrooster.Server.Models.UserPreCom;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -67,8 +68,9 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
 
             var timeZone = await customerSettingService.GetTimeZone(drogeUser.CustomerId);
             var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
-            var periods = new Dictionary<DateTime, DateTime>();
+            var periods = new List<PreComPeriod>();
             DateTime? start = null;
+            var isFullDay = true;
             if (user?.AvailabilitySets is not null)
             {
                 foreach (var availabilitySet in user.AvailabilitySets.OrderBy(x => x.Start))
@@ -84,9 +86,17 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
                         continue;
                     }
 
+                    isFullDay = false;
+
                     var startConverted = TimeZoneInfo.ConvertTimeToUtc(start.Value, zone);
                     var end = TimeZoneInfo.ConvertTimeToUtc(availabilitySet.Start, zone);
-                    periods.Add(startConverted, end);
+                    periods.Add(new PreComPeriod
+                    {
+                        Start = startConverted,
+                        End = end,
+                        Date = DateOnly.FromDateTime(date),
+                        IsFullDay = false
+                    });
                     start = null;
                 }
             }
@@ -95,7 +105,13 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
             {
                 var startConverted = TimeZoneInfo.ConvertTimeToUtc(start.Value, zone);
                 var end = TimeZoneInfo.ConvertTimeToUtc(start.Value.AddDays(1).Date, zone);
-                periods.Add(startConverted, end);
+                periods.Add(new PreComPeriod
+                {
+                    Start = startConverted,
+                    End = end,
+                    Date = DateOnly.FromDateTime(date),
+                    IsFullDay = isFullDay
+                });
             }
 
             clt.ThrowIfCancellationRequested();
@@ -106,16 +122,17 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
         return itemsSynced;
     }
 
-    private async Task<int> SyncWithUserCalendar(DrogeUser drogeUser, Dictionary<DateTime, DateTime> periods, DateOnly date, IUserPreComEventService userPreComEventService, CancellationToken clt)
+    private async Task<int> SyncWithUserCalendar(DrogeUser drogeUser, List<PreComPeriod> periods, DateOnly date, IUserPreComEventService userPreComEventService, CancellationToken clt)
     {
         var userPreComEvents = await userPreComEventService.GetEventsForUserForDay(drogeUser.Id, drogeUser.CustomerId, date, clt);
         var notFound = new List<int>();
         var itemsSynced = 0;
         for (var i = 0; i < userPreComEvents.Count; i++)
         {
-            if (periods.Any(x => x.Key.CompareTo(userPreComEvents[i].Start) == 0 && x.Value.CompareTo(userPreComEvents[i].End) == 0))
+            var period = periods.FirstOrDefault(x => x.Start.CompareTo(userPreComEvents[i].Start) == 0 && x.End.CompareTo(userPreComEvents[i].End) == 0);
+            if (period is not null && period.IsFullDay == userPreComEvents[i].IsFullDay)
             {
-                periods.Remove(userPreComEvents[i].Start);
+                periods.Remove(period);
                 continue;
             }
 
@@ -130,7 +147,7 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
 
         foreach (var period in periods)
         {
-            await userPreComEventService.AddEvent(drogeUser, period.Key, period.Value, date, clt);
+            await userPreComEventService.AddEvent(drogeUser, period, date, clt);
             itemsSynced++;
         }
 

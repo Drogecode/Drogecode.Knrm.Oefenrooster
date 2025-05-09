@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Diagnostics;
 using System.Security.Claims;
+using Microsoft.Graph.Models;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -295,12 +296,12 @@ public class DayItemController : ControllerBase
             _graphService.InitializeGraph();
             if (string.IsNullOrEmpty(user.CalendarEventId))
             {
-                var eventResult = await _graphService.AddToCalendar(externalUserId, text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true, allUserLinkedMail);
+                var eventResult = await _graphService.AddToCalendar(externalUserId, text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true, FreeBusyStatus.Free, allUserLinkedMail);
                 await _dayItemService.PatchCalendarEventId(roosterItemDay.Id, user.UserId, customerId, eventResult.Id, clt);
             }
             else
             {
-                await _graphService.PatchCalender(externalUserId, user.CalendarEventId, text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true, allUserLinkedMail);
+                await _graphService.PatchCalender(externalUserId, user.CalendarEventId, text, roosterItemDay.DateStart.Value, roosterItemDay.DateEnd.Value, true, FreeBusyStatus.Free, allUserLinkedMail);
             }
         }
         else if (!string.IsNullOrEmpty(user.CalendarEventId))

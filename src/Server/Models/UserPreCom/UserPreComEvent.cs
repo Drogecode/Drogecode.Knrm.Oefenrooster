@@ -7,4 +7,5 @@ public class UserPreComEvent
     public string? CalendarEventId { get; set; }
     public DateTime Start { get; set; }
     public DateTime End { get; set; }
+    public bool IsFullDay { get; set; }
 }

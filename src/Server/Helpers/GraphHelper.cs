@@ -443,14 +443,14 @@ public static partial class GraphHelper
         listBase.Users!.Add(user);
     }
 
-    public static async Task<Event?> AddToCalendar(string? externalUserId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, ILogger logger, List<UserLinkedMail> attendees)
+    public static async Task<Event?> AddToCalendar(string? externalUserId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, FreeBusyStatus showAs, ILogger logger, List<UserLinkedMail> attendees)
     {
         try
         {
 #if DEBUG
             Debugger.Break();
 #endif
-            var body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay, attendees);
+            var body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay, showAs, attendees);
             var result = await _appClient.Users[externalUserId].Events
                 .PostAsync(body, (requestConfiguration) => { requestConfiguration.Headers.Add("Prefer", "outlook.timezone=\"Pacific Standard Time\""); });
             return result;
@@ -463,7 +463,7 @@ public static partial class GraphHelper
         return null;
     }
 
-    public static async Task PatchCalender(string? externalUserId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
+    public static async Task PatchCalender(string? externalUserId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, FreeBusyStatus showAs, List<UserLinkedMail> attendees)
     {
         try
         {
@@ -473,7 +473,7 @@ public static partial class GraphHelper
             var fromGet = await _appClient.Users[externalUserId].Events[eventId].GetAsync();
             if (fromGet is not null)
             {
-                var body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay, attendees);
+                var body = GenerateCalendarBody(description, dateStart, dateEnd, isAllDay, showAs, attendees);
                 fromGet.Subject = body.Subject;
                 fromGet.Body = body.Body;
                 fromGet.Start = body.Start;
@@ -492,7 +492,7 @@ public static partial class GraphHelper
         }
     }
 
-    private static Event GenerateCalendarBody(string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
+    private static Event GenerateCalendarBody(string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, FreeBusyStatus showAs, List<UserLinkedMail> attendees)
     {
         var attendeesEvent = new List<Attendee>();
         var organizer = new Recipient();
@@ -527,12 +527,12 @@ public static partial class GraphHelper
             even.Start = new DateTimeTimeZone
             {
                 DateTime = dateStart.ToString("yyyy-MM-ddT00:00:00"),
-                TimeZone = TimeZoneInfo.Local.Id
+                TimeZone = "UTC"
             };
             even.End = new DateTimeTimeZone
             {
                 DateTime = dateEnd.AddDays(1).ToString("yyyy-MM-ddT00:00:00"),
-                TimeZone = TimeZoneInfo.Local.Id
+                TimeZone = "UTC"
             };
         }
         else
@@ -548,6 +548,8 @@ public static partial class GraphHelper
                 TimeZone = "UTC",
             };
         }
+
+        even.ShowAs = showAs;
 
         return even;
     }

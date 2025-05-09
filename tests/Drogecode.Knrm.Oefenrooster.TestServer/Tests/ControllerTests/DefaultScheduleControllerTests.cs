@@ -1,7 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Errors;
-using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Helpers;
+using Drogecode.Knrm.Oefenrooster.SharedForTests.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 

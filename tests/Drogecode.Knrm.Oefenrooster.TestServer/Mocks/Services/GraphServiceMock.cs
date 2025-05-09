@@ -18,27 +18,17 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services
             throw new NotImplementedException();
         }
 
-        public Task<Event?> AddToCalendar(string? externalUserId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
+        public async Task<Event?> AddToCalendar(string? externalUserId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, FreeBusyStatus showAs, List<UserLinkedMail> attendees)
         {
             throw new NotImplementedException();
         }
 
-        public Task PatchCalender(string? externalUserId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
+        public async Task PatchCalender(string? externalUserId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, FreeBusyStatus showAs, List<UserLinkedMail> attendees)
         {
             throw new NotImplementedException();
         }
 
         public Task DeleteCalendarEvent(string? externalUserId, string calendarEventId, CancellationToken clt)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task PatchCalender(Guid userId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, List<UserLinkedMail> attendees)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteCalendarEvent(Guid? userId, string calendarEventId, CancellationToken clt)
         {
             throw new NotImplementedException();
         }

@@ -1,6 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using System.Text.Json;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
+using Drogecode.Knrm.Oefenrooster.SharedForTests.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 

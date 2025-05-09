@@ -13,6 +13,8 @@ using System.Diagnostics;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using Microsoft.Graph.Models;
+using Training = Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Training;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -260,7 +262,7 @@ public class ScheduleController : ControllerBase
                     var text = GetTrainingCalenderText(training.Training.TrainingTypeName, training.Training.Name, function?.Name, preText.Value);
                     var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(10, 0, user.UserId, customerId, clt)).UserLinkedMails ?? [];
                     await _graphService.PatchCalender(drogeUser.ExternalId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime,
-                        allUserLinkedMail);
+                        FreeBusyStatus.Busy, allUserLinkedMail);
                     await _scheduleService.PatchLastSynced(customerId, user);
                     i++;
                 }
@@ -634,7 +636,7 @@ public class ScheduleController : ControllerBase
                 {
                     if (!string.IsNullOrEmpty(text))
                     {
-                        var eventResult = await _graphService.AddToCalendar(externalUserId, text, training.DateStart, training.DateEnd, !training.ShowTime, allUserLinkedMail);
+                        var eventResult = await _graphService.AddToCalendar(externalUserId, text, training.DateStart, training.DateEnd, !training.ShowTime, FreeBusyStatus.Busy, allUserLinkedMail);
                         if (eventResult is not null)
                             await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, eventResult.Id, clt);
                     }
@@ -645,7 +647,7 @@ public class ScheduleController : ControllerBase
                 }
                 else
                 {
-                    await _graphService.PatchCalender(externalUserId, calendarEventId, text, training.DateStart, training.DateEnd, !training.ShowTime, allUserLinkedMail);
+                    await _graphService.PatchCalender(externalUserId, calendarEventId, text, training.DateStart, training.DateEnd, !training.ShowTime, FreeBusyStatus.Busy, allUserLinkedMail);
                 }
             }
             else if (!string.IsNullOrEmpty(calendarEventId))

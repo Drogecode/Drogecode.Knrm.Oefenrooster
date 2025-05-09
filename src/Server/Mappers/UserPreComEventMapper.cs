@@ -13,7 +13,8 @@ public static class UserPreComEventMapper
             UserId = dbUserPreComEvent.UserId,
             CalendarEventId = dbUserPreComEvent.CalendarEventId,
             Start = dbUserPreComEvent.Start,
-            End = dbUserPreComEvent.End
+            End = dbUserPreComEvent.End,
+            IsFullDay = dbUserPreComEvent.IsFullDay
         };
     }
 }
