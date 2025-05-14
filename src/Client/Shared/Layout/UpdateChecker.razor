@@ -21,7 +21,8 @@
             {
                 try
                 {
-                    var user = await AuthenticationStateProvider.Refresh();
+                    await AuthenticationStateProvider.Refresh();
+                    var user = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                     _updateDetails = await ConfigurationRepository.NewVersionAvailable();
                     if (_updateDetails is not null && (_updateDetails.UpdateVersion != DefaultSettingsHelper.UPDATE_VERSION || _updateDetails.ButtonVersion != DefaultSettingsHelper.BUTTON_VERSION) && DefaultSettingsHelper.UPDATE_VERSION <= _updateDetails.ButtonVersion)
                     {

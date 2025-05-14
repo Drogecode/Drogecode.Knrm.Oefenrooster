@@ -8,6 +8,7 @@ public class CustomStateProvider : AuthenticationStateProvider
 {
     private ClaimsIdentity? _currentUser;
     private IAuthenticationClient _authenticationClient;
+    private DateTime _lastModified = DateTime.MinValue;
 
     public CustomStateProvider(IAuthenticationClient authenticationClient)
     {
@@ -21,24 +22,12 @@ public class CustomStateProvider : AuthenticationStateProvider
         {
             identity = await GetCurrentUser();
             if (!identity.IsAuthenticated)
-                return new AuthenticationState(new ClaimsPrincipal(identity));
-            var parsedFrom = DateTime.TryParse(identity.Claims.FirstOrDefault(x => x.Type.Equals("ValidFrom"))?.Value, out var validFrom);
-            var parsedTo = DateTime.TryParse(identity.Claims.FirstOrDefault(x => x.Type.Equals("ValidTo"))?.Value, out var validTo);
-            if (!parsedFrom || !parsedTo)
             {
-                identity = await RefreshInternal();
+                _currentUser = null;
                 return new AuthenticationState(new ClaimsPrincipal(identity));
             }
 
-            var now = DateTime.Now;
-#if DEBUG
-            //now = now.AddMinutes(59).AddSeconds(30);
-#endif
-            if (now.CompareTo(validFrom.AddMinutes(-5)) < 0 || now.CompareTo(validTo) > 0)
-            {
-                identity = await RefreshInternal();
-                return new AuthenticationState(new ClaimsPrincipal(identity));
-            }
+            return new AuthenticationState(new ClaimsPrincipal(await RefreshIfRequired(identity)));
         }
         catch (HttpRequestException ex)
         {
@@ -49,7 +38,7 @@ public class CustomStateProvider : AuthenticationStateProvider
         return new AuthenticationState(new ClaimsPrincipal(identity));
     }
 
-    public async Task loginCallback()
+    public async Task LoginCallback()
     {
         _currentUser = null;
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
@@ -63,11 +52,17 @@ public class CustomStateProvider : AuthenticationStateProvider
         return authState;
     }
 
-    public Task<AuthenticationState> Refresh()
+    public async Task Refresh()
     {
-        var authState = GetAuthenticationStateAsync();
-        NotifyAuthenticationStateChanged(authState);
-        return authState;
+        var oldLastModified = _lastModified;
+
+        var identity = await GetCurrentUser();
+        await RefreshIfRequired(identity);
+        if (oldLastModified != _lastModified)
+        {
+            var authState = GetAuthenticationStateAsync();
+            NotifyAuthenticationStateChanged(authState);
+        }
     }
 
     public async Task Logout()
@@ -81,6 +76,7 @@ public class CustomStateProvider : AuthenticationStateProvider
     {
         if (_currentUser is { IsAuthenticated: true }) return _currentUser;
         var user = await _authenticationClient.CurrentUserInfoAsync();
+        _lastModified = DateTime.UtcNow;
         if (!user.IsAuthenticated)
         {
             _currentUser = new ClaimsIdentity();
@@ -92,14 +88,49 @@ public class CustomStateProvider : AuthenticationStateProvider
         return _currentUser;
     }
 
-    private async Task<ClaimsIdentity> RefreshInternal()
+    private async Task<ClaimsIdentity> RefreshIfRequired(ClaimsIdentity identity)
     {
-        if (await _authenticationClient.RefreshAsync())
+        var parsedFrom = DateTime.TryParse(identity.Claims.FirstOrDefault(x => x.Type.Equals("ValidFrom"))?.Value, out var validFrom);
+        var parsedTo = DateTime.TryParse(identity.Claims.FirstOrDefault(x => x.Type.Equals("ValidTo"))?.Value, out var validTo);
+        if (!parsedFrom || !parsedTo)
         {
-            _currentUser = null;
-            return await GetCurrentUser();
+            identity = await RefreshInternal();
+            return identity;
         }
 
-        return new ClaimsIdentity();
+        var now = DateTime.Now;
+#if DEBUG
+        //now = now.AddMinutes(59).AddSeconds(30);
+#endif
+        if (now.CompareTo(validFrom.AddMinutes(-5)) < 0 || now.CompareTo(validTo) > 0)
+        {
+            identity = await RefreshInternal();
+        }
+
+        return identity;
+    }
+
+    private async Task<ClaimsIdentity> RefreshInternal()
+    {
+        var refreshResponse = await _authenticationClient.RefreshUserAsync();
+        if (!refreshResponse.Success || refreshResponse.State != RefreshState.AuthenticationRefreshed)
+        {
+            DebugHelper.WriteLine("Logged out after failed refresh");
+            _currentUser = null;
+            return new ClaimsIdentity();
+        }
+
+        if (refreshResponse.ForceRefresh) // ToDo: add logic to compare claims
+        {
+            DebugHelper.WriteLine("Should force refresh");
+            _lastModified = DateTime.UtcNow;
+        }
+        else
+        {
+            DebugHelper.WriteLine("State changed but hold refresh");
+        }
+
+        _currentUser = null;
+        return await GetCurrentUser();
     }
 }

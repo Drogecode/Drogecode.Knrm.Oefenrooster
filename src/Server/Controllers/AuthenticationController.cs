@@ -216,8 +216,8 @@ public class AuthenticationController : DrogeController
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var refreshToken =User?.FindFirstValue(REFRESHTOKEN) ?? throw new Exception("REFRESHTOKEN not found");
-            var idToken =User?.FindFirstValue("idToken") ?? throw new Exception("idToken not found");
+            var refreshToken = User?.FindFirstValue(REFRESHTOKEN) ?? throw new Exception("REFRESHTOKEN not found");
+            var idToken = User?.FindFirstValue("idToken") ?? throw new Exception("idToken not found");
             var linkedUsers = await _userLinkCustomerService.GetAllLinkUserCustomers(userId, customerId, clt);
             var inSuperUserRole = User.IsInRole(AccessesNames.AUTH_super_user);
             if (!linkedUsers.Success || linkedUsers.UserLinkedCustomers?.Count < 2)
@@ -253,7 +253,7 @@ public class AuthenticationController : DrogeController
                 new("ValidFrom", DateTime.UtcNow.AddMinutes(-10).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
                 new("ValidTo", DateTime.UtcNow.AddHours(1).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             };
-            
+
             var userClaims = await _userRoleService.GetAccessForUserByUserId(linkedUser.Id, linkedUser.CustomerId, clt);
             foreach (var userClaim in userClaims)
             {
@@ -297,22 +297,51 @@ public class AuthenticationController : DrogeController
 
     [Authorize]
     [HttpPost]
+    [Obsolete("Use RefreshUser")] // ToDo Remove when all users on v0.5.20 or above
     [Route("refresh")]
     public async Task<ActionResult<bool>> Refresh(CancellationToken clt = default)
     {
+        var refresh = (await RefreshUser(clt)).Value;
+        switch (refresh?.State)
+        {
+            case RefreshState.CurrentAuthenticationExpired:
+            case RefreshState.CurrentAuthenticationValid:
+            case RefreshState.NotAuthenticated:
+            case RefreshState.NoRefreshToken:
+            case RefreshState.None:
+                return false;
+            case RefreshState.AuthenticationRefreshed:
+                return false; // Should be true, but disabled for now
+            case null:
+            default:
+                return false;
+        }
+    }
+
+    [Authorize]
+    [HttpPost]
+    [Route("refresh-user")]
+    public async Task<ActionResult<RefreshResponse>> RefreshUser(CancellationToken clt = default)
+    {
+        var response = new RefreshResponse()
+        {
+            Success = false
+        };
         try
         {
             if (User?.Identity?.IsAuthenticated != true)
             {
                 Logger.LogInformation("Refresh request, but user is not authenticated");
-                return false;
+                response.State = RefreshState.NotAuthenticated;
+                return response;
             }
 
             if (User.IsInRole(AccessesNames.AUTH_External))
             {
                 Logger.LogInformation("Refresh request for external user, but external will expire");
                 await HttpContext.SignOutAsync();
-                return false;
+                response.State = RefreshState.CurrentAuthenticationExpired;
+                return response;
             }
 
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
@@ -323,7 +352,8 @@ public class AuthenticationController : DrogeController
             {
                 Logger.LogInformation("Refresh request, but old refresh token is null for user `{userId}` in customer `{customerId}`", userId, customerId);
                 await HttpContext.SignOutAsync();
-                return false;
+                response.State = RefreshState.NoRefreshToken;
+                return response;
             }
 
             var authService = GetAuthenticationService();
@@ -332,18 +362,23 @@ public class AuthenticationController : DrogeController
             {
                 Logger.LogInformation("Refresh request, but refresh failed for user `{userId}` in customer `{customerId}`", userId, customerId);
                 await HttpContext.SignOutAsync();
-                return false;
+                response.State = RefreshState.RefreshFailed;
+                return response;
             }
 
             Logger.LogInformation("Refresh for user `{userId}` in customer `{customerId}` successful", userId, customerId);
             await SetUser(supResult, false, "refresh", clt);
-            return true;
+            response.Success = true;
+            response.ForceRefresh = false; // Set to true to enable.
+            response.State = RefreshState.AuthenticationRefreshed;
+            return response;
         }
         catch (Exception e)
         {
             Logger.LogError(e, "Refresh");
             await HttpContext.SignOutAsync();
-            return false;
+            response.State = RefreshState.None;
+            return response;
         }
     }
 

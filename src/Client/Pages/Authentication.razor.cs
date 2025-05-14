@@ -67,7 +67,7 @@ public sealed partial class Authentication
         var result = await AuthenticationClient.AuthenticateUserAsync(new AuthenticateRequest(code, state, session_state, redirectUrl, DefaultSettingsHelper.CURRENT_VERSION));
         if (result)
         {
-            await AuthenticationStateProvider.loginCallback();
+            await AuthenticationStateProvider.LoginCallback();
             Navigation.NavigateTo("/");
         }
         else

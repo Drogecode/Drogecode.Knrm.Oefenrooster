@@ -65,7 +65,7 @@ public partial class SharedActions : IDisposable
         {
             var body = new AuthenticateExternalRequest(Id, _pwField.Value, DefaultSettingsHelper.CURRENT_VERSION);
             await AuthenticationClient.AuthenticateExternalAsync(body, _cls.Token);
-            await AuthenticationStateProvider.loginCallback();
+            await AuthenticationStateProvider.LoginCallback();
             StateHasChanged();
         }
     }

@@ -112,6 +112,16 @@ public class MockAuthenticationClient : IAuthenticationClient
         throw new NotImplementedException();
     }
 
+    public async Task<RefreshResponse> RefreshUserAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<RefreshResponse> RefreshUserAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<bool> RefreshAsync()
     {
         return true;
