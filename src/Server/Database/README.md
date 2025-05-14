@@ -11,7 +11,7 @@ dotnet ef database update "20250421111402_ActivateRequestedOnNotNull"
 
 # Update tools:
 
-dotnet tool update --global dotnet-ef --version 9.0.4
+dotnet tool update --global dotnet-ef --version 9.0.5
 
 # Create script:
 
