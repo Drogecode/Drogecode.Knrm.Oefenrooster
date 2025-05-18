@@ -1,4 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Server.Repositories;
+using Drogecode.Knrm.Oefenrooster.Server.Repositories.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.SharedForTests.Services;
@@ -47,6 +49,9 @@ public class Startup
         services.AddScoped<ICustomerSettingService, CustomerSettingService>();
         services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
         services.AddScoped<IUserPreComEventService, UserPreComEventService>();
+
+        services.AddScoped<IRoosterDefaultsRepository, RoosterDefaultsRepository>();
+        services.AddScoped<IUserDefaultAvailableRepository, UserDefaultAvailableRepository>();
 
         services.AddScoped<AuditController>();
         services.AddScoped<DayItemController>();
