@@ -8,20 +8,27 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Microsoft.Extensions.Caching.Memory;
 using System.Data;
 using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Server.Repositories.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
-using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class ScheduleService : DrogeService, IScheduleService
 {
+    private readonly IRoosterDefaultsRepository _roosterDefaultsRepository;
+    private readonly IUserDefaultAvailableRepository _userDefaultAvailableRepository;
+
     public ScheduleService(
         ILogger<ScheduleService> logger,
         DataContext database,
         IMemoryCache memoryCache,
-        IDateTimeService dateTimeService) : base(logger, database, memoryCache, dateTimeService)
+        IDateTimeService dateTimeService,
+        IRoosterDefaultsRepository roosterDefaultsRepository,
+        IUserDefaultAvailableRepository userDefaultAvailableRepository) : base(logger, database, memoryCache, dateTimeService)
     {
+        _roosterDefaultsRepository = roosterDefaultsRepository;
+        _userDefaultAvailableRepository = userDefaultAvailableRepository;
     }
 
     public async Task<MultipleTrainingsResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd,
@@ -31,11 +38,8 @@ public class ScheduleService : DrogeService, IScheduleService
         var result = new MultipleTrainingsResponse();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
-        var defaults = await Database.RoosterDefaults.AsNoTracking().Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
-            .AsSingleQuery().ToListAsync(cancellationToken: clt);
-        var defaultAveUser = await Database.UserDefaultAvailables.AsNoTracking().Include(x => x.DefaultGroup)
-            .Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
-            .AsSingleQuery().ToListAsync(cancellationToken: clt);
+        var defaults = await _roosterDefaultsRepository.GetDefaultsForCustomerInSpan(true, customerId, startDate, tillDate, clt);
+        var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerAndUserInSpan(true, customerId, userId, startDate, tillDate, clt);
         var userHolidays = await Database.UserHolidays.AsNoTracking().Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
         var trainings = Database.RoosterTrainings.AsNoTracking().Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).OrderBy(x => x.DateStart);
@@ -246,6 +250,7 @@ public class ScheduleService : DrogeService, IScheduleService
             Logger.LogWarning("No rooster available found `{customerId}` for user `{userId}` with id `{id}`", customerId, avaUser.UserId, avaUser.Id);
             return;
         }
+
         oldAva.LastSyncOn = DateTimeService.UtcNow();
         Database.RoosterAvailables.Update(oldAva);
     }
@@ -362,16 +367,7 @@ public class ScheduleService : DrogeService, IScheduleService
         bool countPerUser, bool includeUnAssigned, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var cacheKey = $"SchedForAll-{customerId}{forMonth}-{yearStart}-{monthStart}-{dayStart}-{yearEnd}-{monthEnd}-{dayEnd}-{countPerUser}-{includeUnAssigned}";
-        MemoryCache.TryGetValue(cacheKey, out ScheduleForAllResponse? result);
-        // Cache will give issues with editing trainings.
-        /*if (result is not null)
-        {
-            sw.Stop();
-            result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
-            return result;
-        }*/
-        result = new ScheduleForAllResponse();
+        var result = new ScheduleForAllResponse();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
         var users = await Database.Users
@@ -381,16 +377,9 @@ public class ScheduleService : DrogeService, IScheduleService
             .Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.UserFunction!.IsActive)
             .Select(x => new { x.Id, x.UserDefaultAvailables, x.UserFunctionId, x.Name, x.LinkedUserAsA, x.ExternalId })
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
-        var defaults = await Database.RoosterDefaults
-            .AsNoTracking()
-            .Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
-            .Select(x => new { x.Id, x.WeekDay, x.ValidFrom, x.ValidUntil, x.TimeZone, x.TimeStart, x.TimeEnd, x.Name, x.ShowTime, x.RoosterTrainingTypeId, x.CountToTrainingTarget })
-            .AsSingleQuery().ToListAsync(cancellationToken: clt);
-        var defaultAveUser = await Database.UserDefaultAvailables
-            .AsNoTracking()
-            .Include(x => x.DefaultGroup)
-            .Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
-            .AsSingleQuery().ToListAsync(cancellationToken: clt);
+
+        var defaults = await _roosterDefaultsRepository.GetDefaultsForCustomerInSpan(true, customerId, startDate, tillDate, clt);
+        var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerInSpan(true, customerId, startDate, tillDate, clt);
         var userHolidays = await Database.UserHolidays
             .AsNoTracking()
             .Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
@@ -404,7 +393,8 @@ public class ScheduleService : DrogeService, IScheduleService
         var availables = await Database.RoosterAvailables
             .AsNoTracking()
             .Include(x => x.User)
-            .ThenInclude(x => x.LinkedUserA).Include(dbRoosterAvailable => dbRoosterAvailable.User).ThenInclude(dbUsers => dbUsers.LinkedUserAsA)
+            .ThenInclude(x => x.LinkedUserA).Include(dbRoosterAvailable => dbRoosterAvailable.User)
+            .ThenInclude(dbUsers => dbUsers.LinkedUserAsA)
             .Where(x => x.CustomerId == customerId && (includeUnAssigned || x.Assigned) && x.Date >= startDate && x.Date <= tillDate)
             .AsSingleQuery().ToListAsync(clt);
 
@@ -414,7 +404,7 @@ public class ScheduleService : DrogeService, IScheduleService
             var defaultsFound = new List<Guid?>();
             var start = scheduleDate.ToDateTime(new TimeOnly(0, 0, 0, 0), DateTimeKind.Utc);
             var end = scheduleDate.ToDateTime(new TimeOnly(23, 59, 59, 999), DateTimeKind.Utc);
-            var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek && x.ValidFrom <= start && x.ValidUntil >= end);
+            var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek && x.ValidFrom <= start && x.ValidUntil >= end).ToList();
             var trainingsToday = trainings.Where(x => x.DateStart >= start && x.DateStart <= end).ToList();
             if (trainingsToday.Count > 0)
             {
@@ -548,10 +538,6 @@ public class ScheduleService : DrogeService, IScheduleService
         result.Success = true;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
-        /*var cacheOptions = new MemoryCacheEntryOptions();
-        cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(3));
-        cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
-        MemoryCache.Set(cacheKey, result, cacheOptions);*/
         return result;
     }
 

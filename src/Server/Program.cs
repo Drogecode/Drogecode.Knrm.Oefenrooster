@@ -18,6 +18,8 @@ using Swashbuckle.AspNetCore.Swagger;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.RateLimiting;
+using Drogecode.Knrm.Oefenrooster.Server.Repositories;
+using Drogecode.Knrm.Oefenrooster.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -131,6 +133,9 @@ builder.Services.AddSingleton<RefreshHub>();
 builder.Services.AddSingleton<ConfigurationHub>();
 builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
 builder.Services.AddScoped<IGraphService, GraphService>();
+
+builder.Services.AddScoped<IRoosterDefaultsRepository, RoosterDefaultsRepository>();
+builder.Services.AddScoped<IUserDefaultAvailableRepository, UserDefaultAvailableRepository>();
 
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IDayItemService, DayItemService>();
