@@ -52,6 +52,7 @@ public class Startup
 
         services.AddScoped<IRoosterDefaultsRepository, RoosterDefaultsRepository>();
         services.AddScoped<IUserDefaultAvailableRepository, UserDefaultAvailableRepository>();
+        services.AddScoped<IUserHolidaysRepository, UserHolidaysRepository>();
 
         services.AddScoped<AuditController>();
         services.AddScoped<DayItemController>();

@@ -49,6 +49,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbLinkUserUser> LinkUserUsers { get; set; }
         public DbSet<DbLinkExchange> LinkExchanges { get; set; }
         public DbSet<DbLinkUserCustomer> LinkUserCustomers { get; set; }
+        public DbSet<DbLinkReportTrainingRoosterTraining> LinkReportTrainingRoosterTrainings { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -241,6 +242,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbLinkUserCustomer>().HasOne(p => p.Customer).WithMany(g => g.LinkUserCustomers).HasForeignKey(s => s.CustomerId).IsRequired();
             modelBuilder.Entity<DbLinkUserCustomer>().HasOne(p => p.LinkedUser).WithMany(g => g.LinkUserCustomers).HasForeignKey(s => s.GlobalUserId).IsRequired();
 
+            // LinkReportTraining <--> RoosterTraining
+            modelBuilder.Entity<DbLinkReportTrainingRoosterTraining>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbLinkReportTrainingRoosterTraining>().HasOne(p => p.Customer).WithMany(g => g.LinkReportTrainingRoosterTrainings).HasForeignKey(s => s.CustomerId).IsRequired();
+            modelBuilder.Entity<DbLinkReportTrainingRoosterTraining>().HasOne(p => p.ReportTraining).WithMany(g => g.LinkReportTrainingRoosterTrainings).HasForeignKey(s => s.ReportTrainingId).IsRequired();
+            modelBuilder.Entity<DbLinkReportTrainingRoosterTraining>().HasOne(p => p.RoosterTraining).WithMany(g => g.LinkReportTrainingRoosterTrainings).HasForeignKey(s => s.RoosterTrainingId).IsRequired();
+            
             // Required data
             SetCustomer(modelBuilder);
             SetDefaultRooster(modelBuilder);

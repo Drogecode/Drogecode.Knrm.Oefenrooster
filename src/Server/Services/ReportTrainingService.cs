@@ -20,7 +20,9 @@ public class ReportTrainingService : IReportTrainingService
     public async Task<MultipleReportTrainingsResponse> GetListTrainingUser(List<Guid?> users, List<string>? types, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var listWhere = _database.ReportTrainings.Include(x => x.Users)
+        var listWhere = _database.ReportTrainings
+            .Include(x => x.Users)
+            .Include(x=>x.LinkReportTrainingRoosterTrainings!.Where(y=>y.DeletedOn == null))
             .Where(x => x.CustomerId == customerId 
                         && x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count
                         && (types == null || !types.Any() || types.Contains(x.Type)));

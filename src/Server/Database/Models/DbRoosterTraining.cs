@@ -25,7 +25,8 @@ public class DbRoosterTraining
     public DbCustomers Customer { get; set; }
     public DbRoosterDefault? RoosterDefault { get; set; }
     public DbRoosterTrainingType? RoosterTrainingType { get; set; }
+    public DbUsers? DeletedByUser { get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
     public ICollection<DbLinkVehicleTraining>? LinkVehicleTrainings { get; set; }
-    public DbUsers? DeletedByUser { get; set; }
+    public ICollection<DbLinkReportTrainingRoosterTraining>? LinkReportTrainingRoosterTrainings { get; set; }
 }

@@ -33,4 +33,5 @@ public class DbReportTraining
 
     public DbCustomers Customer { get; set; }
     public ICollection<DbReportUser>? Users { get; set; }
+    public ICollection<DbLinkReportTrainingRoosterTraining>? LinkReportTrainingRoosterTrainings { get; set; }
 }

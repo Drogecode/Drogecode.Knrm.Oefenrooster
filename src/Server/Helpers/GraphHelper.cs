@@ -197,6 +197,8 @@ public static partial class GraphHelper
                 if (det?.Fields?.AdditionalData == null) continue;
                 var training = new SharePointTraining { Users = new List<SharePointUser>() };
                 training.Id = new Guid(det.ETag!.Split('\"', ',')[1]);
+                if (det.LastModifiedDateTime is not null)
+                    training.LastUpdated = DateTime.SpecifyKind(det.LastModifiedDateTime.Value.DateTime, DateTimeKind.Utc);
                 GetUser(users, det, "SchipperLookupId", SharePointRole.Schipper, training, 0);
                 GetUser(users, det, "Opstapper_x0020_1LookupId", SharePointRole.Opstapper, training, 1);
                 GetUser(users, det, "Opstapper_x0020_2LookupId", SharePointRole.Opstapper, training, 2);

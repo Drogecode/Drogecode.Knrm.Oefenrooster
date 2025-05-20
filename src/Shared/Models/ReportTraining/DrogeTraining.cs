@@ -5,4 +5,5 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
 public class DrogeTraining : SharePointListBase
 {
     public string? TypeTraining { get; set; }
+    public List<Guid>? LinkedTrainings { get; set; }
 }

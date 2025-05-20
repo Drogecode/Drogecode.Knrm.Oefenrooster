@@ -18,6 +18,7 @@ public class ScheduleService : DrogeService, IScheduleService
 {
     private readonly IRoosterDefaultsRepository _roosterDefaultsRepository;
     private readonly IUserDefaultAvailableRepository _userDefaultAvailableRepository;
+    private readonly IUserHolidaysRepository _userHolidaysRepository;
 
     public ScheduleService(
         ILogger<ScheduleService> logger,
@@ -25,10 +26,12 @@ public class ScheduleService : DrogeService, IScheduleService
         IMemoryCache memoryCache,
         IDateTimeService dateTimeService,
         IRoosterDefaultsRepository roosterDefaultsRepository,
-        IUserDefaultAvailableRepository userDefaultAvailableRepository) : base(logger, database, memoryCache, dateTimeService)
+        IUserDefaultAvailableRepository userDefaultAvailableRepository,
+        IUserHolidaysRepository userHolidaysRepository) : base(logger, database, memoryCache, dateTimeService)
     {
         _roosterDefaultsRepository = roosterDefaultsRepository;
         _userDefaultAvailableRepository = userDefaultAvailableRepository;
+        _userHolidaysRepository = userHolidaysRepository;
     }
 
     public async Task<MultipleTrainingsResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd,
@@ -39,9 +42,8 @@ public class ScheduleService : DrogeService, IScheduleService
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
         var defaults = await _roosterDefaultsRepository.GetDefaultsForCustomerInSpan(true, customerId, startDate, tillDate, clt);
-        var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerAndUserInSpan(true, customerId, userId, startDate, tillDate, clt);
-        var userHolidays = await Database.UserHolidays.AsNoTracking().Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
-            .AsSingleQuery().ToListAsync(cancellationToken: clt);
+        var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerInSpan(true, customerId, userId, startDate, tillDate, clt);
+        var userHolidays = await _userHolidaysRepository.GetUserHolidaysForUser(true, customerId, userId, tillDate, startDate, clt);
         var trainings = Database.RoosterTrainings.AsNoTracking().Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).OrderBy(x => x.DateStart);
         var availables = await Database.RoosterAvailables.AsNoTracking().Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
@@ -53,9 +55,8 @@ public class ScheduleService : DrogeService, IScheduleService
             var defaultsFound = new List<Guid?>();
             var start = scheduleDate.ToDateTime(new TimeOnly(0, 0, 0), DateTimeKind.Utc);
             var end = scheduleDate.ToDateTime(new TimeOnly(23, 59, 59), DateTimeKind.Utc);
-            // ReSharper disable once AccessToModifiedClosure
-            var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek && x.ValidFrom <= start && x.ValidUntil >= end);
-            var trainingsToday = trainings.Where(x => x.DateStart >= start && x.DateStart <= end);
+            var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek && x.ValidFrom <= start && x.ValidUntil >= end).ToList();
+            var trainingsToday = trainings.Where(x => x.DateStart >= start && x.DateStart <= end).ToList();
             foreach (var training in trainingsToday)
             {
                 if (training.DeletedOn is null)
@@ -379,11 +380,8 @@ public class ScheduleService : DrogeService, IScheduleService
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
 
         var defaults = await _roosterDefaultsRepository.GetDefaultsForCustomerInSpan(true, customerId, startDate, tillDate, clt);
-        var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerInSpan(true, customerId, startDate, tillDate, clt);
-        var userHolidays = await Database.UserHolidays
-            .AsNoTracking()
-            .Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
-            .AsSingleQuery().ToListAsync(cancellationToken: clt);
+        var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerInSpan(true, customerId, null, startDate, tillDate, clt);
+        var userHolidays = await _userHolidaysRepository.GetUserHolidaysForUser(true, customerId, null, tillDate, startDate, clt);
         var trainings = await Database.RoosterTrainings
             .AsNoTracking()
             .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)

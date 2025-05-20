@@ -81,6 +81,14 @@
                             {
                                 <MudListItem>@L["Minutes"]: @context.Item.TotalMinutes</MudListItem>
                                 <MudListItem>@L["Hours"]: @context.Item.TotalFullHours</MudListItem>
+
+                                @if (context.Item.LinkedTrainings is not null)
+                                {
+                                    foreach (var linkedTraining in context.Item.LinkedTrainings)
+                                    {
+                                        <MudListItem>Link: @linkedTraining</MudListItem>
+                                    }
+                                }
                             }
                         </MudList>
                     </MudCardContent>

@@ -24,8 +24,8 @@ public abstract class BaseRepository
         DateTimeService = dateTimeService;
         
         var cacheOptions = new MemoryCacheEntryOptions();
-        cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(10));
-        cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(45));
+        cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(3));
+        cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(7));
         CacheOptions = cacheOptions;
     }
 }

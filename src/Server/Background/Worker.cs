@@ -88,13 +88,13 @@ public class Worker : BackgroundService
     private async Task<bool> SyncSharePoint(IServiceScope scope, IGraphService graphService, CancellationToken clt)
     {
         var result = true;
-        result = await SyncSharePointActions(graphService) && result;
+        result = await SyncSharePointReports(graphService) && result;
         result = await SyncSharePointUsers(scope, graphService) && result;
         result = await SyncCalendarEvents(scope, graphService, clt) && result;
         return result;
     }
 
-    private async Task<bool> SyncSharePointActions(IGraphService graphService)
+    private async Task<bool> SyncSharePointReports(IGraphService graphService)
     {
         var result = true;
         result = (await RunBackgroundTask(async () => await graphService.SyncSharePointActions(DefaultSettingsHelper.KnrmHuizenId, _clt), "SyncSharePointActions", _clt) && result);

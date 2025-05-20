@@ -6,6 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph.Models;
 using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using IdentityProvider = Drogecode.Knrm.Oefenrooster.Shared.Enums.IdentityProvider;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -170,7 +171,7 @@ public class GraphService : IGraphService
 
         if (sharePointTrainings == null || clt.IsCancellationRequested)
             return false;
-        var dbTrainings = await _database.ReportTrainings
+        var dbTrainingReports = await _database.ReportTrainings
             .Where(x => x.CustomerId == customerId)
             .Include(x => x.Users)
             .ToListAsync(clt);
@@ -181,20 +182,20 @@ public class GraphService : IGraphService
         {
             if (clt.IsCancellationRequested)
                 return false;
-            var dbTraining = dbTrainings.FirstOrDefault(x => x.Id == training.Id);
-            if (dbTraining is null)
+            var dbReport = dbTrainingReports.FirstOrDefault(x => x.Id == training.Id);
+            if (dbReport is null)
             {
-                dbTraining = training.ToDbReportTraining(customerId);
-                await _database.ReportTrainings.AddAsync(dbTraining, clt);
+                dbReport = training.ToDbReportTraining(customerId);
+                await _database.ReportTrainings.AddAsync(dbReport, clt);
                 saveCount++;
             }
-            else if (dbTraining.LastUpdated != training.LastUpdated)
+            else if (dbReport.LastUpdated != training.LastUpdated)
             {
-                dbTraining.UpdateDbReportTraining(training, customerId);
-                _database.ReportTrainings.Update(dbTraining);
-                if (dbTraining.Users is not null)
+                dbReport.UpdateDbReportTraining(training, customerId);
+                _database.ReportTrainings.Update(dbReport);
+                if (dbReport.Users is not null)
                 {
-                    foreach (var user in dbTraining.Users)
+                    foreach (var user in dbReport.Users)
                     {
                         if (user.IsNew)
                             _database.ReportUsers.Add(user);
@@ -204,6 +205,32 @@ public class GraphService : IGraphService
                 }
 
                 saveCount++;
+            }
+            else
+                continue;
+
+            var potentialLinkedTrainings = _database.RoosterTrainings
+                .AsNoTracking()
+                .Where(x => x.CustomerId == customerId && x.DateStart <= training.Start.AddMinutes(30) && x.DateStart >= training.Start.AddMinutes(-30) && x.RoosterAvailables!.Any(y => y.Assigned))
+                .Include(x => x.LinkReportTrainingRoosterTrainings)
+                .Include(x => x.RoosterAvailables!.Where(y => y.Assigned))
+                .AsSingleQuery()
+                .ToList();
+            if (potentialLinkedTrainings.Count != 0)
+            {
+                foreach (var potentialLinked in potentialLinkedTrainings)
+                {
+                    if (potentialLinked.LinkReportTrainingRoosterTrainings is not null && potentialLinked.LinkReportTrainingRoosterTrainings.Any(x => x.ReportTrainingId == dbReport.Id))
+                        continue;
+                    _database.LinkReportTrainingRoosterTrainings.Add(new DbLinkReportTrainingRoosterTraining()
+                    {
+                        Id = Guid.NewGuid(),
+                        CustomerId = customerId,
+                        ReportTrainingId = dbReport.Id,
+                        RoosterTrainingId = potentialLinked.Id
+                    });
+                    saveCount++;
+                }
             }
 
             if (saveCount < 50) continue;
@@ -373,7 +400,8 @@ public class GraphService : IGraphService
         return result;
     }
 
-    public async Task PatchCalender(string? externalUserId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, FreeBusyStatus showAs, List<UserLinkedMail> attendees)
+    public async Task PatchCalender(string? externalUserId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, FreeBusyStatus showAs,
+        List<UserLinkedMail> attendees)
     {
         await GraphHelper.PatchCalender(externalUserId, eventId, description, dateStart, dateEnd, isAllDay, showAs, attendees);
     }

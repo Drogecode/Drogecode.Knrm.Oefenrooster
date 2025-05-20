@@ -207,6 +207,8 @@ public static class ReportActionMapper
             Users = dbTraining.Users?.Select(x => x.ToSharePointUser()).ToList(),
             TotalMinutes = dbTraining.TotalMinutes,
             TotalFullHours = dbTraining.TotalFullHours,
+            
+            LinkedTrainings = dbTraining.LinkReportTrainingRoosterTrainings?.Select(x=>x.RoosterTrainingId).ToList()
         };
     }
 
@@ -325,6 +327,7 @@ public static class ReportActionMapper
         if (!Equals(dbTraining.Boat, spTraining.Boat)) dbTraining.Boat = spTraining.Boat;
         if (!Equals(dbTraining.TotalMinutes, spTraining.TotalMinutes)) dbTraining.TotalMinutes = spTraining.TotalMinutes;
         if (!Equals(dbTraining.TotalFullHours, spTraining.TotalFullHours)) dbTraining.TotalFullHours = spTraining.TotalFullHours;
+        if (!Equals(dbTraining.LastUpdated, spTraining.LastUpdated)) dbTraining.LastUpdated = spTraining.LastUpdated;
 
         if (dbTraining.Users is not null)
         {

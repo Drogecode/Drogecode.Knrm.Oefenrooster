@@ -136,6 +136,7 @@ builder.Services.AddScoped<IGraphService, GraphService>();
 
 builder.Services.AddScoped<IRoosterDefaultsRepository, RoosterDefaultsRepository>();
 builder.Services.AddScoped<IUserDefaultAvailableRepository, UserDefaultAvailableRepository>();
+builder.Services.AddScoped<IUserHolidaysRepository, UserHolidaysRepository>();
 
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IDayItemService, DayItemService>();
