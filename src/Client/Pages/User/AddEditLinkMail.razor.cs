@@ -33,17 +33,20 @@ public partial class AddEditLinkMail : IDisposable
         var putResponse = await UserLinkedMailsClient.PutUserLinkedMailAsync(body, _cls.Token);
         if (putResponse.Success)
         {
-            Navigation.NavigateTo("/user/profile");
+            Navigation.NavigateTo("/user/settings");
             return;
         }
 
         switch (putResponse.Error)
         {
             case PutUserLinkedMailError.MailAlreadyExists:
-                _errors = new[] { L["Mail already exists"].ToString() };
+                _errors = [L["Mail already exists"].ToString()];
                 break;
             case PutUserLinkedMailError.TooMany:
-                _errors = new[] { L["Too many"].ToString() };
+                _errors = [L["Too many"].ToString()];
+                break;
+            default:
+                _errors = [L["Unknown error"].ToString()];
                 break;
         }
         StateHasChanged();

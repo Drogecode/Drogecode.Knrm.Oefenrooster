@@ -51,7 +51,7 @@
     <AuthorizeView Roles="@AccessesNames.AUTH_mail_invite_external" Context="inner">
         <MudAlert Severity="Severity.Warning">@L["This will result in a lot of mails"]</MudAlert>
         <MudText>@L["Mails to invite to your trainings"]</MudText>
-        <MudButton OnClick='(() => Navigation.NavigateTo("/user/profile/link-mail/add"))'>@L["Add link mail"]</MudButton>
+        <MudButton Variant="Variant.Filled" OnClick='(() => Navigation.NavigateTo("/user/settings/link-mail/add"))'>@L["Add link mail"]</MudButton>
         @if (_allUserLinkedMailResponse?.UserLinkedMails is not null && _allUserLinkedMailResponse.UserLinkedMails.Any())
         {
             <MudDataGrid Items="@_allUserLinkedMailResponse.UserLinkedMails!.OrderBy(x => x.ActivateRequestedOn)" Striped="true" Hover="true">
