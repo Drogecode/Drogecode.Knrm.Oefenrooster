@@ -581,14 +581,16 @@ public class ScheduleControllerTests : BaseTest
         Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
     }
 
-    [Fact]
-    public async Task GetPlannedTrainingsForAllDefaultVehicleNotInDbLinkdButLinkedToUserTest()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(69)]
+    public async Task GetPlannedTrainingsForAllDefaultVehicleNotInDbLinkedButLinkedToUserTest(int newVehicleOrder)
     {
         var dateStart = DateTime.Today.AddDays(1).AddHours(21);
         var dateEnd = DateTime.Today.AddDays(1).AddHours(15);
         var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
         var vehicle = await Tester.VehicleController.PutVehicle(new DrogeVehicle()
-            { IsDefault = true, IsActive = true, Name = "GetPlannedTrainingByIdDefaultVehicleNotSelectedButLinkedToUserTest", Code = "xUnit2", Order = 1 });
+            { IsDefault = true, IsActive = true, Name = "GetPlannedTrainingByIdDefaultVehicleNotSelectedButLinkedToUserTest", Code = "xUnit2", Order = newVehicleOrder });
         var body = new PatchAssignedUserRequest
         {
             User = new PlanUser()
@@ -613,14 +615,16 @@ public class ScheduleControllerTests : BaseTest
         Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
     }
 
-    [Fact]
-    public async Task GetPlannedTrainingsForAllDefaultVehicleNotSelectedButLinkedToUserTest()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(69)]
+    public async Task GetPlannedTrainingsForAllDefaultVehicleNotSelectedButLinkedToUserTest(int newVehicleOrder)
     {
         var dateStart = DateTime.Today.AddDays(1).AddHours(21);
         var dateEnd = DateTime.Today.AddDays(1).AddHours(15);
         var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
         var vehicle = await Tester.VehicleController.PutVehicle(new DrogeVehicle()
-            { IsDefault = true, IsActive = true, Name = "GetPlannedTrainingByIdDefaultVehicleNotSelectedButLinkedToUserTest", Code = "xUnit2", Order = 1 });
+            { IsDefault = true, IsActive = true, Name = "GetPlannedTrainingByIdDefaultVehicleNotSelectedButLinkedToUserTest", Code = "xUnit2", Order = newVehicleOrder });
         var linkResponse = await Tester.VehicleController.UpdateLinkVehicleTraining(new DrogeLinkVehicleTraining
             { VehicleId = vehicle.Value!.NewId!.Value, RoosterTrainingId = trainingId, IsSelected = false });
         var body = new PatchAssignedUserRequest
@@ -647,13 +651,15 @@ public class ScheduleControllerTests : BaseTest
         Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
     }
 
-    [Fact]
-    public async Task GetPlannedTrainingByIdDefaultVehicleNotSetTest()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(69)]
+    public async Task GetPlannedTrainingByIdDefaultVehicleNotSetTest(int newVehicleOrder)
     {
         var dateStart = DateTime.Today.AddDays(1).AddHours(21);
         var dateEnd = DateTime.Today.AddDays(1).AddHours(15);
         var defVehAdded = await Tester.VehicleController.PutVehicle(new DrogeVehicle()
-            { Name = "GetPlannedTrainingByIdDefaultVehicleNotSetTest", Code = "xUnit", IsDefault = true, IsActive = true, Order = 69 });
+            { Name = "GetPlannedTrainingByIdDefaultVehicleNotSetTest", Code = "xUnit", IsDefault = true, IsActive = true, Order = newVehicleOrder });
         Assert.NotNull(defVehAdded.Value?.NewId);
         defVehAdded.Value.NewId.Should().NotBe(Guid.Empty);
         var trainingId = await Tester.AddTraining("TrainingsForAll", false, dateStart, dateEnd);
@@ -674,7 +680,77 @@ public class ScheduleControllerTests : BaseTest
         plannedTraining.PlanUsers.Should().HaveCount(1);
         plannedTraining.PlanUsers.Should().Contain(x => x.VehicleId == defVehAdded.Value.NewId);
     }
+    
+    [Theory]
+    [InlineData(1)]
+    [InlineData(69)]
+    public async Task GetPlannedTrainingsDashboardDefaultVehicleNotSelectedButLinkedToUserTest(int newVehicleOrder)
+    {
+        var dateStart = DateTime.Today.AddDays(1).AddHours(21);
+        var dateEnd = DateTime.Today.AddDays(1).AddHours(15);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
+        var vehicle = await Tester.VehicleController.PutVehicle(new DrogeVehicle()
+            { IsDefault = true, IsActive = true, Name = "GetPlannedTrainingByIdDefaultVehicleNotSelectedButLinkedToUserTest", Code = "xUnit2", Order = newVehicleOrder });
+        var linkResponse = await Tester.VehicleController.UpdateLinkVehicleTraining(new DrogeLinkVehicleTraining
+            { VehicleId = vehicle.Value!.NewId!.Value, RoosterTrainingId = trainingId, IsSelected = false });
+        var body = new PatchAssignedUserRequest
+        {
+            User = new PlanUser()
+            {
+                UserId = Tester.DefaultUserId,
+                VehicleId = vehicle.Value!.NewId!.Value,
+                Assigned = true,
+            },
+            TrainingId = trainingId
+        };
+        var patchAssignedUserResult = await Tester.ScheduleController.PatchAssignedUser(body);
+        Assert.True(patchAssignedUserResult?.Value?.Success);
+        var trainingForAll = await Tester.ScheduleController.GetScheduledTrainingsForUser(false, 1000, 0);
+        Assert.NotNull(trainingForAll.Value?.Trainings);
+        Assert.True(trainingForAll.Value.Success);
+        trainingForAll.Value.Trainings.Where(x => x.TrainingId == trainingId).Should().HaveCount(1);
+        var training = trainingForAll.Value.Trainings.FirstOrDefault(x => x.TrainingId == trainingId);
+        Assert.NotNull(training?.PlanUsers);
+        training.PlanUsers.Should().NotBeEmpty();
+        training.PlanUsers.Should().Contain(x => x.VehicleId == Tester.DefaultVehicle);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+    }
 
+    [Theory]
+    [InlineData(1)]
+    [InlineData(69)]
+    public async Task GetPlannedTrainingsDashboardDefaultVehicleNotInDbLinkedButLinkedToUserTest(int newVehicleOrder)
+    {
+        var dateStart = DateTime.Today.AddDays(1).AddHours(21);
+        var dateEnd = DateTime.Today.AddDays(1).AddHours(15);
+        var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
+        var vehicle = await Tester.VehicleController.PutVehicle(new DrogeVehicle()
+            { IsDefault = true, IsActive = true, Name = "GetPlannedTrainingByIdDefaultVehicleNotSelectedButLinkedToUserTest", Code = "xUnit2", Order = newVehicleOrder });
+        var body = new PatchAssignedUserRequest
+        {
+            User = new PlanUser()
+            {
+                UserId = Tester.DefaultUserId,
+                VehicleId = vehicle.Value!.NewId!.Value,
+                Assigned = true,
+            },
+            TrainingId = trainingId
+        };
+        var patchAssignedUserResult = await Tester.ScheduleController.PatchAssignedUser(body);
+        Assert.True(patchAssignedUserResult?.Value?.Success);
+        var trainingForAll = await Tester.ScheduleController.GetScheduledTrainingsForUser(false, 1000, 0);
+        Assert.NotNull(trainingForAll.Value?.Trainings);
+        Assert.True(trainingForAll.Value.Success);
+        trainingForAll.Value.Trainings.Where(x => x.TrainingId == trainingId).Should().HaveCount(1);
+        var training = trainingForAll.Value.Trainings.FirstOrDefault(x => x.TrainingId == trainingId);
+        Assert.NotNull(training?.PlanUsers);
+        training.PlanUsers.Should().NotBeEmpty();
+        training.PlanUsers.Should().Contain(x => x.VehicleId == vehicle.Value.NewId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+    }
+    
     [Fact]
     public async Task GetDescriptionByTrainingIdNoDescriptionTest()
     {

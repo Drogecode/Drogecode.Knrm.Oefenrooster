@@ -950,7 +950,6 @@ public class ScheduleService : DrogeService, IScheduleService
                 continue;
             }
 
-            var defaultVehicle = await GetDefaultVehicleForTraining(customerId, schedule.Training, clt);
             var plan = new PlannedTraining
             {
                 TrainingId = schedule.TrainingId,
@@ -978,6 +977,7 @@ public class ScheduleService : DrogeService, IScheduleService
                         Buddy = a.User?.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB.Name,
                     }).ToList()
             };
+            var defaultVehicle = await GetDefaultVehicleForTraining(customerId, schedule.Training, clt);
             foreach (var user in plan.PlanUsers.Where(x => x.Assigned))
             {
                 Availability? availabilty = user.Availability;
@@ -985,7 +985,8 @@ public class ScheduleService : DrogeService, IScheduleService
                 GetAvailability(defaultAveUser, userHolidays, plan.DateStart, plan.DateEnd, plan.DefaultId, null, ref availabilty, ref setBy);
                 user.Availability = availabilty;
                 user.SetBy = setBy ?? user.SetBy;
-                if (user.VehicleId is null || (user.VehicleId != defaultVehicle && !(schedule.Training.LinkVehicleTrainings?.Any(x => x.VehicleId == user.VehicleId) ?? false)))
+                if (user.VehicleId is null ||
+                    (user.VehicleId != defaultVehicle && !(schedule.Training.LinkVehicleTrainings?.Any(x => x.IsSelected && x.VehicleId == user.VehicleId) ?? false)))
                     user.VehicleId = defaultVehicle;
             }
 
