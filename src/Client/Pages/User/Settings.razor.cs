@@ -26,6 +26,7 @@ public sealed partial class Settings : IDisposable
     private bool? _settingTrainingToCalendar;
     private bool? _settingPreComSyncCalendar;
     private bool? _settingSyncPreComDeleteOld;
+    private bool? _syncPreComWithExternal;
     private string? _preComAvailableText;
 
     protected override async Task OnParametersSetAsync()
@@ -33,6 +34,7 @@ public sealed partial class Settings : IDisposable
         _settingTrainingToCalendar = (await UserSettingsClient.GetBoolSettingAsync(SettingName.TrainingToCalendar)).Value;
         _settingPreComSyncCalendar = (await UserSettingsClient.GetBoolSettingAsync(SettingName.SyncPreComWithCalendar)).Value;
         _settingSyncPreComDeleteOld = (await UserSettingsClient.GetBoolSettingAsync(SettingName.SyncPreComDeleteOld)).Value;
+        _syncPreComWithExternal = (await UserSettingsClient.GetBoolSettingAsync(SettingName.SyncPreComWithExternal)).Value;
         _preComAvailableText = (await UserSettingsClient.GetStringSettingAsync(SettingName.PreComAvailableText)).Value;
         _updateDetails = await ConfigurationRepository.NewVersionAvailable();
     }
@@ -63,6 +65,12 @@ public sealed partial class Settings : IDisposable
                 break;
             case SettingName.SyncPreComDeleteOld:
                 _settingSyncPreComDeleteOld = isChecked;
+                break;
+            case SettingName.SyncPreComWithExternal:
+                _syncPreComWithExternal = isChecked;
+                break;
+            default:
+                DebugHelper.WriteLine($"Setting {settingName} not implemented");
                 break;
         }
         await UserSettingsClient.PatchBoolSettingAsync(new PatchSettingBoolRequest(settingName, isChecked));

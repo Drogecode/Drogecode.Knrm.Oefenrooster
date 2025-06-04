@@ -8,4 +8,5 @@ public class UserPreComEvent
     public DateTime Start { get; set; }
     public DateTime End { get; set; }
     public bool IsFullDay { get; set; }
+    public bool SyncWithExternal { get; set; }
 }

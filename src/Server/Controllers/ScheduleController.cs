@@ -260,7 +260,7 @@ public class ScheduleController : ControllerBase
                     if (user.PlannedFunctionId is not null && user.UserFunctionId is not null && user.UserFunctionId != user.PlannedFunctionId)
                         function = await _functionService.GetById(customerId, user.PlannedFunctionId.Value, clt);
                     var text = GetTrainingCalenderText(training.Training.TrainingTypeName, training.Training.Name, function?.Name, preText.Value);
-                    var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(10, 0, user.UserId, customerId, clt)).UserLinkedMails ?? [];
+                    var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(30, 0, user.UserId, customerId, clt)).UserLinkedMails ?? [];
                     await _graphService.PatchCalender(drogeUser.ExternalId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime,
                         FreeBusyStatus.Busy, allUserLinkedMail);
                     await _scheduleService.PatchLastSynced(customerId, user);
@@ -630,7 +630,7 @@ public class ScheduleController : ControllerBase
                     return;
                 }
 
-                var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(10, 0, planUserId, customerId, clt)).UserLinkedMails ?? [];
+                var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(30, 0, planUserId, customerId, clt)).UserLinkedMails ?? [];
                 _graphService.InitializeGraph();
                 if (string.IsNullOrEmpty(calendarEventId))
                 {

@@ -30,7 +30,7 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
         for (var i = 0; i < dayCount.Value; i++)
         {
             // Check future availability
-            itemsSynced += await LoopSyncPreComAvailability(userIdsWithNull, date.AddDays(i), false, preComWorker, userService, customerSettingService, userPreComEventService, clt);
+            itemsSynced += await LoopSyncPreComAvailability(userIdsWithNull, date.AddDays(i), false, preComWorker, userService, customerSettingService, userPreComEventService, userSettingService, clt);
         }
 
         userIdsWithNull = await userSettingService.GetAllPreComIdAndValue(DefaultSettingsHelper.KnrmHuizenId, SettingName.SyncPreComDeleteOld, clt);
@@ -38,7 +38,7 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
         {
             // Delete old availability from outlook
             var usersToDeleteOld = userIdsWithNull.Where(x => x is { UserPreComId: not null, Value: true }).ToList();
-            itemsSynced += await LoopSyncPreComAvailability(usersToDeleteOld, date.AddDays(-7), true, preComWorker, userService, customerSettingService, userPreComEventService, clt);
+            itemsSynced += await LoopSyncPreComAvailability(usersToDeleteOld, date.AddDays(-7), true, preComWorker, userService, customerSettingService, userPreComEventService, userSettingService, clt);
         }
 
         _logger.LogInformation("Synced `{items}` from PreCom to outlook", itemsSynced);
@@ -46,7 +46,7 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
     }
 
     private async Task<int> LoopSyncPreComAvailability(List<UserPreComIdAndValue> userIdsWithNull, DateTime date, bool onlyDelete, AvailabilityForUser preComWorker, IUserService userService,
-        ICustomerSettingService customerSettingService, IUserPreComEventService userPreComEventService, CancellationToken clt)
+        ICustomerSettingService customerSettingService, IUserPreComEventService userPreComEventService, IUserSettingService userSettingService, CancellationToken clt)
     {
         GetResponse? preComAvailability = null;
         if (!onlyDelete)
@@ -116,21 +116,22 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
 
             clt.ThrowIfCancellationRequested();
 
-            itemsSynced += await SyncWithUserCalendar(drogeUser, periods, DateOnly.FromDateTime(date), userPreComEventService, clt);
+            itemsSynced += await SyncWithUserCalendar(drogeUser, periods, DateOnly.FromDateTime(date), userPreComEventService, userSettingService, clt);
         }
 
         return itemsSynced;
     }
 
-    private async Task<int> SyncWithUserCalendar(DrogeUser drogeUser, List<PreComPeriod> periods, DateOnly date, IUserPreComEventService userPreComEventService, CancellationToken clt)
+    private async Task<int> SyncWithUserCalendar(DrogeUser drogeUser, List<PreComPeriod> periods, DateOnly date, IUserPreComEventService userPreComEventService, IUserSettingService userSettingService, CancellationToken clt)
     {
         var userPreComEvents = await userPreComEventService.GetEventsForUserForDay(drogeUser.Id, drogeUser.CustomerId, date, clt);
+        var syncWithExternal = await userSettingService.GetBoolUserSetting(drogeUser.CustomerId, drogeUser.Id, SettingName.SyncPreComWithExternal, true, clt);
         var notFound = new List<int>();
         var itemsSynced = 0;
         for (var i = 0; i < userPreComEvents.Count; i++)
         {
             var period = periods.FirstOrDefault(x => x.Start.CompareTo(userPreComEvents[i].Start) == 0 && x.End.CompareTo(userPreComEvents[i].End) == 0);
-            if (period is not null && period.IsFullDay == userPreComEvents[i].IsFullDay)
+            if (period is not null && period.IsFullDay == userPreComEvents[i].IsFullDay && userPreComEvents[i].SyncWithExternal == syncWithExternal.Value)
             {
                 periods.Remove(period);
                 continue;
@@ -147,7 +148,7 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
 
         foreach (var period in periods)
         {
-            await userPreComEventService.AddEvent(drogeUser, period, date, clt);
+            await userPreComEventService.AddEvent(drogeUser, period, date, syncWithExternal.Value, clt);
             itemsSynced++;
         }
 

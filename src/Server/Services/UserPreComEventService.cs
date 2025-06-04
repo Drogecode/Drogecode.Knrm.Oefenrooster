@@ -4,6 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Models.Background;
 using Drogecode.Knrm.Oefenrooster.Server.Models.UserPreCom;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph.Models;
@@ -16,6 +17,7 @@ public class UserPreComEventService(
     IMemoryCache memoryCache,
     IDateTimeService dateTimeService,
     IUserSettingService _userSettingService,
+    IUserLinkedMailsService _userLinkedMailsService,
     IGraphService _graphService)
     : DrogeService(logger, database, memoryCache, dateTimeService), IUserPreComEventService
 {
@@ -40,7 +42,7 @@ public class UserPreComEventService(
         return await SaveDb(clt) > 0;
     }
 
-    public async Task<bool> AddEvent(DrogeUser drogeUser, PreComPeriod period, DateOnly date, CancellationToken clt)
+    public async Task<bool> AddEvent(DrogeUser drogeUser, PreComPeriod period, DateOnly date, bool syncWithExternal, CancellationToken clt)
     {
         var text = (await _userSettingService.GetStringUserSetting(drogeUser.CustomerId, drogeUser.Id, SettingName.PreComAvailableText, string.Empty, clt)).Value;
         if (string.IsNullOrWhiteSpace(text))
@@ -53,7 +55,14 @@ public class UserPreComEventService(
             start = period.Date.ToDateTime(new TimeOnly(0, 0, 0));
             end = period.Date.ToDateTime(new TimeOnly(0, 0, 0));
         }
-        var newEvent = await _graphService.AddToCalendar(drogeUser.ExternalId, text, start, end, period.IsFullDay, FreeBusyStatus.Free, []);
+
+        List<UserLinkedMail> attendees = [];
+        if (syncWithExternal)
+        {
+            attendees = (await _userLinkedMailsService.AllUserLinkedMail(30, 0, drogeUser.Id, drogeUser.CustomerId, clt)).UserLinkedMails ?? [];
+        }
+        
+        var newEvent = await _graphService.AddToCalendar(drogeUser.ExternalId, text, start, end, period.IsFullDay, FreeBusyStatus.Free, attendees);
         if (newEvent is null)
             return false;
         Database.UserPreComEvents.Add(new DbUserPreComEvent
@@ -66,7 +75,8 @@ public class UserPreComEventService(
             End = period.End,
             Date = date,
             Text = text,
-            IsFullDay = period.IsFullDay
+            IsFullDay = period.IsFullDay,
+            SyncWithExternal = syncWithExternal
         });
         return await SaveDb(clt) > 0;
     }

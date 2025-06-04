@@ -16,6 +16,7 @@ public class DbUserPreComEvent
     public DateTime End { get; set; }
     public DateOnly Date { get; set; }
     public bool IsFullDay { get; set; }
+    public bool SyncWithExternal { get; set; }
     
     public DbUsers User { get; set; }
     public DbCustomers Customer { get; set; }

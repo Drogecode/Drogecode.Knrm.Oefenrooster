@@ -31,4 +31,8 @@ public enum SettingName
     /// Type: int
     /// </summary>
     PreComDaysInFuture = 7,
+    /// <summary>
+    /// Type: bool
+    /// </summary>
+    SyncPreComWithExternal = 8,
 }

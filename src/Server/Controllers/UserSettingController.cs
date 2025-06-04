@@ -68,7 +68,12 @@ public class UserSettingController : DrogeController
                 case SettingName.TrainingToCalendar:
                 case SettingName.SyncPreComWithCalendar:
                 case SettingName.SyncPreComDeleteOld:
+                    // default false
                     result = await _userSettingService.GetBoolUserSetting(customerId, userId, name, false, clt);
+                    break;
+                case SettingName.SyncPreComWithExternal:
+                    // default true
+                    result = await _userSettingService.GetBoolUserSetting(customerId, userId, name, true, clt);
                     break;
                 default:
                     return BadRequest("Not bool");

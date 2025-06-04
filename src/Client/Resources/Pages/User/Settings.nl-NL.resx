@@ -66,4 +66,7 @@
     <data name="Settings" xml:space="preserve">
         <value>Instellingen</value>
     </data>
+    <data name="Sync PreCom with external calendars, configured below" xml:space="preserve">
+        <value>Synchroniseer PreCom met externe agenda's, hieronder geconfigureerd</value>
+    </data>
 </root>

@@ -59,4 +59,7 @@
     <data name="Settings" xml:space="preserve">
         <value>Settings</value>
     </data>
+    <data name="Sync PreCom with external calendars, configured below" xml:space="preserve">
+        <value>Sync PreCom with external calenders, configured below</value>
+    </data>
 </root>
