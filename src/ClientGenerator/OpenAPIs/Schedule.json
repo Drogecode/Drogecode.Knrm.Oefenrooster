@@ -1259,12 +1259,24 @@
             "format": "uuid",
             "nullable": true
           },
-          "trainingId": {
+          "defaultId": {
             "type": "string",
             "format": "uuid",
             "nullable": true
           },
-          "defaultId": {
+          "countToTrainingTarget": {
+            "type": "boolean"
+          },
+          "isPinned": {
+            "type": "boolean"
+          },
+          "isPermanentPinned": {
+            "type": "boolean"
+          },
+          "showTime": {
+            "type": "boolean"
+          },
+          "trainingId": {
             "type": "string",
             "format": "uuid",
             "nullable": true
@@ -1282,16 +1294,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "countToTrainingTarget": {
-            "type": "boolean"
-          },
           "updated": {
-            "type": "boolean"
-          },
-          "isPinned": {
-            "type": "boolean"
-          },
-          "showTime": {
             "type": "boolean"
           },
           "hasDescription": {
@@ -1396,12 +1399,24 @@
             "format": "uuid",
             "nullable": true
           },
-          "trainingId": {
+          "defaultId": {
             "type": "string",
             "format": "uuid",
             "nullable": true
           },
-          "defaultId": {
+          "countToTrainingTarget": {
+            "type": "boolean"
+          },
+          "isPinned": {
+            "type": "boolean"
+          },
+          "isPermanentPinned": {
+            "type": "boolean"
+          },
+          "showTime": {
+            "type": "boolean"
+          },
+          "trainingId": {
             "type": "string",
             "format": "uuid",
             "nullable": true
@@ -1419,16 +1434,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "countToTrainingTarget": {
-            "type": "boolean"
-          },
           "updated": {
-            "type": "boolean"
-          },
-          "isPinned": {
-            "type": "boolean"
-          },
-          "showTime": {
             "type": "boolean"
           },
           "hasDescription": {
@@ -1462,12 +1468,24 @@
             "format": "uuid",
             "nullable": true
           },
-          "trainingId": {
+          "defaultId": {
             "type": "string",
             "format": "uuid",
             "nullable": true
           },
-          "defaultId": {
+          "countToTrainingTarget": {
+            "type": "boolean"
+          },
+          "isPinned": {
+            "type": "boolean"
+          },
+          "isPermanentPinned": {
+            "type": "boolean"
+          },
+          "showTime": {
+            "type": "boolean"
+          },
+          "trainingId": {
             "type": "string",
             "format": "uuid",
             "nullable": true
@@ -1485,16 +1503,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "countToTrainingTarget": {
-            "type": "boolean"
-          },
           "updated": {
-            "type": "boolean"
-          },
-          "isPinned": {
-            "type": "boolean"
-          },
-          "showTime": {
             "type": "boolean"
           },
           "hasDescription": {

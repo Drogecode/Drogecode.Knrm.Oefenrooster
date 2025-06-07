@@ -14,10 +14,10 @@ public class DbRoosterTrainingType
     public Guid? UpdatedBy { get; set; }
     public DateTime? UpdatedDate { get; set; }
     [StringLength(DefaultSettingsHelper.MAX_LENGTH_DAY_ITEM_TEXT)] public string? Name { get; set; }
-    [StringLength(30)] public string? ColorLight { get; set; }
-    [StringLength(30)] public string? ColorDark { get; set; }
-    [StringLength(30)] public string? TextColorLight { get; set; }
-    [StringLength(30)] public string? TextColorDark { get; set; }
+    [StringLength(60)] public string? ColorLight { get; set; }
+    [StringLength(60)] public string? ColorDark { get; set; }
+    [StringLength(60)] public string? TextColorLight { get; set; }
+    [StringLength(60)] public string? TextColorDark { get; set; }
     public int Order { get; set; }
     public bool CountToTrainingTarget { get; set; }
     public bool IsDefault { get; set; }
