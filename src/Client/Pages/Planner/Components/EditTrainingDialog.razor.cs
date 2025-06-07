@@ -89,6 +89,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
             CountToTrainingTarget = Planner.CountToTrainingTarget,
             IsPinned = Planner.IsPinned,
+            IsPermanentPinned = Planner.IsPermanentPinned,
             ShowTime = Planner.ShowTime,
         };
         _linkVehicleTraining = await VehicleRepository.GetForDefaultAsync(Planner.DefaultId ?? throw new ArgumentNullException("Planner.DefaultId")) ?? [];
@@ -113,6 +114,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             RoosterTrainingTypeId = Planner.RoosterTrainingTypeId,
             CountToTrainingTarget = Planner.CountToTrainingTarget,
             IsPinned = Planner.IsPinned,
+            IsPermanentPinned = Planner.IsPermanentPinned,
             ShowTime = Planner.ShowTime,
         };
     }
@@ -282,6 +284,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 DateEnd = dateEnd,
                 CountToTrainingTarget = _training.CountToTrainingTarget,
                 IsPinned = _training.IsPinned,
+                IsPermanentPinned = _training.IsPermanentPinned,
                 ShowTime = _training.ShowTime,
                 HasDescription = !string.IsNullOrWhiteSpace(_training.Description)
             };
@@ -297,6 +300,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             Planner.DateEnd = dateEnd;
             Planner.CountToTrainingTarget = _training.CountToTrainingTarget;
             Planner.IsPinned = _training.IsPinned;
+            Planner.IsPermanentPinned = _training.IsPermanentPinned;
             Planner.ShowTime = _training.ShowTime;
             Planner.HasDescription = !string.IsNullOrWhiteSpace(_training.Description);
         }

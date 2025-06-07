@@ -17,6 +17,7 @@ public static class RoosterTrainingMapper
             DateEnd = roosterTraining.DateEnd,
             CountToTrainingTarget = roosterTraining.CountToTrainingTarget,
             IsPinned = roosterTraining.IsPinned,
+            IsPermanentPinned = roosterTraining.IsPermanentPinned,
             ShowTime = roosterTraining.ShowTime ?? false,
             HasDescription = !string.IsNullOrWhiteSpace(roosterTraining.Description),
         };
@@ -47,6 +48,7 @@ public static class RoosterTrainingMapper
             DateEnd = roosterTraining.DateEnd,
             CountToTrainingTarget = roosterTraining.CountToTrainingTarget,
             IsPinned = roosterTraining.IsPinned,
+            IsPermanentPinned = roosterTraining.IsPermanentPinned,
             ShowTime = roosterTraining.ShowTime ?? true,
             TrainingTypeName = roosterTraining.RoosterTrainingType?.Name,
             HasDescription = !string.IsNullOrWhiteSpace(roosterTraining.Description),

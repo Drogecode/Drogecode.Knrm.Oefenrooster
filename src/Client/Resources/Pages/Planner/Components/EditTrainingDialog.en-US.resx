@@ -168,4 +168,7 @@
   <data name="Description - Markdown" xml:space="preserve">
     <value>Description - Markdown</value>
   </data>
+  <data name="Ask all users to fill in on the dashboard" xml:space="preserve">
+    <value>Ask all users to fill in on the dashboard</value>
+  </data>
 </root>

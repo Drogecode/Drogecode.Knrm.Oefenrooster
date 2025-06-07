@@ -79,6 +79,7 @@ public class ScheduleService : DrogeService, IScheduleService
                         RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                         CountToTrainingTarget = training.CountToTrainingTarget,
                         IsPinned = training.IsPinned,
+                        IsPermanentPinned = training.IsPermanentPinned,
                         ShowTime = training.ShowTime ?? true,
                         HasDescription = !string.IsNullOrWhiteSpace(training.Description),
                     });
@@ -108,6 +109,7 @@ public class ScheduleService : DrogeService, IScheduleService
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget,
                         IsPinned = false,
+                        IsPermanentPinned = false,
                         ShowTime = def.ShowTime ?? true,
                     });
                 }
@@ -234,6 +236,7 @@ public class ScheduleService : DrogeService, IScheduleService
         oldTraining.DateEnd = patchedTraining.DateEnd;
         oldTraining.CountToTrainingTarget = patchedTraining.CountToTrainingTarget;
         oldTraining.IsPinned = patchedTraining.IsPinned;
+        oldTraining.IsPermanentPinned = patchedTraining.IsPermanentPinned;
         oldTraining.ShowTime = patchedTraining.ShowTime;
         Database.RoosterTrainings.Update(oldTraining);
         result.Success = (await Database.SaveChangesAsync()) > 0;
@@ -272,6 +275,7 @@ public class ScheduleService : DrogeService, IScheduleService
             DateEnd = newTraining.DateEnd,
             CountToTrainingTarget = newTraining.CountToTrainingTarget,
             IsPinned = newTraining.IsPinned,
+            IsPermanentPinned = newTraining.IsPermanentPinned,
             ShowTime = newTraining.ShowTime,
         };
         result.Success = await AddTrainingInternalAsync(customerId, training, token);
@@ -298,6 +302,7 @@ public class ScheduleService : DrogeService, IScheduleService
             DateEnd = training.DateEnd,
             CountToTrainingTarget = training.CountToTrainingTarget,
             IsPinned = training.IsPinned,
+            IsPermanentPinned = training.IsPermanentPinned,
             ShowTime = training.ShowTime
         }, clt);
         if (training.DefaultId is not null && training.DefaultId != Guid.Empty)
@@ -423,6 +428,7 @@ public class ScheduleService : DrogeService, IScheduleService
                             RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                             CountToTrainingTarget = training.CountToTrainingTarget,
                             IsPinned = training.IsPinned,
+                            IsPermanentPinned = training.IsPermanentPinned,
                             ShowTime = training.ShowTime ?? true,
                             HasDescription = !string.IsNullOrWhiteSpace(training.Description),
                         };
@@ -501,6 +507,7 @@ public class ScheduleService : DrogeService, IScheduleService
                         RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                         CountToTrainingTarget = def.CountToTrainingTarget,
                         IsPinned = false,
+                        IsPermanentPinned = false,
                         ShowTime = def.ShowTime ?? true,
                     };
                     if (includeUnAssigned)
@@ -726,6 +733,7 @@ public class ScheduleService : DrogeService, IScheduleService
                     RoosterTrainingTypeId = def.RoosterTrainingTypeId,
                     CountToTrainingTarget = def.CountToTrainingTarget,
                     IsPinned = false,
+                    IsPermanentPinned = false,
                     ShowTime = def.ShowTime ?? true,
                 };
                 foreach (var dbUser in users)
@@ -960,6 +968,7 @@ public class ScheduleService : DrogeService, IScheduleService
                 RoosterTrainingTypeId = schedule.Training.RoosterTrainingTypeId,
                 PlannedFunctionId = schedule.UserFunctionId ?? (await users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken: clt))?.UserFunctionId,
                 IsPinned = schedule.Training.IsPinned,
+                IsPermanentPinned = schedule.Training.IsPermanentPinned,
                 CountToTrainingTarget = schedule.Training.CountToTrainingTarget,
                 IsCreated = true,
                 ShowTime = schedule.Training.ShowTime ?? true,
@@ -1042,8 +1051,8 @@ public class ScheduleService : DrogeService, IScheduleService
         var result = new GetPinnedTrainingsForUserResponse();
         var trainings = await Database.RoosterTrainings
             .Include(i => i.RoosterAvailables!.Where(r => r.CustomerId == customerId && r.UserId == userId))
-            .Where(x => x.CustomerId == customerId && x.IsPinned && x.DeletedOn == null && x.DateStart >= fromDate &&
-                        (x.RoosterAvailables == null || !x.RoosterAvailables.Any(r => r.UserId == userId && r.Available > 0)))
+            .Where(x => x.CustomerId == customerId && (x.IsPinned || x.IsPermanentPinned) && x.DeletedOn == null && x.DateStart >= fromDate &&
+                        (x.IsPermanentPinned || x.RoosterAvailables == null || !x.RoosterAvailables.Any(r => r.UserId == userId && r.Available > 0)))
             .OrderBy(x => x.DateStart)
             .ToListAsync(cancellationToken: token);
         var userHolidays = await Database.UserHolidays.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= fromDate).ToListAsync(cancellationToken: token);
@@ -1069,6 +1078,7 @@ public class ScheduleService : DrogeService, IScheduleService
                 RoosterTrainingTypeId = training.RoosterTrainingTypeId,
                 CountToTrainingTarget = training.CountToTrainingTarget,
                 IsPinned = training.IsPinned,
+                IsPermanentPinned = training.IsPermanentPinned,
                 ShowTime = training.ShowTime ?? true,
                 HasDescription = !string.IsNullOrWhiteSpace(training.Description),
             });

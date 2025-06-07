@@ -127,7 +127,7 @@
     <value>No future trainings</value>
   </data>
   <data name="Pinned trainings" xml:space="preserve">
-    <value>Pinned trainings</value>
+    <value>Important still to be filled in availability</value>
   </data>
   <data name="Planner" xml:space="preserve">
     <value>Planner</value>
@@ -149,5 +149,8 @@
   </data>
   <data name="Load all holidays" xml:space="preserve">
     <value>Load all holidays</value>
+  </data>
+  <data name="Permanent pinned trainings" xml:space="preserve">
+    <value>Interesting trainings</value>
   </data>
 </root>

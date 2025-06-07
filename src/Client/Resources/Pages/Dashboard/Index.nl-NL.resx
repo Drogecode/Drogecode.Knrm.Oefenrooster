@@ -127,7 +127,7 @@
     <value>Geen aankomende oefeningen</value>
   </data>
   <data name="Pinned trainings" xml:space="preserve">
-    <value>Belangrijke nog intevullen beschikbaarheid</value>
+    <value>Belangrijk nog in te vullen beschikbaarheid</value>
   </data>
   <data name="Planner" xml:space="preserve">
     <value>Planning</value>
@@ -149,5 +149,8 @@
   </data>
   <data name="Load all holidays" xml:space="preserve">
     <value>Laad alle vakanties</value>
+  </data>
+  <data name="Permanent pinned trainings" xml:space="preserve">
+    <value>Interessante oefeningen</value>
   </data>
 </root>

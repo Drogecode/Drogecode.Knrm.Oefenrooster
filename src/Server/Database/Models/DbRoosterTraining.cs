@@ -19,6 +19,7 @@ public class DbRoosterTraining
     public Guid? DeletedBy { get; set; }
     public bool CountToTrainingTarget { get; set; }
     public bool IsPinned { get; set; }
+    public bool IsPermanentPinned { get; set; }
     public bool IsLocked { get; set; }
     public bool? ShowTime { get; set; } = true;
 

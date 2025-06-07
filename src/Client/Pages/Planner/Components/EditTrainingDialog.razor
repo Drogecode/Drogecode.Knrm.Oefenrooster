@@ -62,7 +62,9 @@
                 }
                 <MudSwitchM3 T="bool" Label="@L["Count to training target"]" @bind-Value="_training.CountToTrainingTarget"/>
                 <MudDivider/>
-                <MudSwitchM3 T="bool" Label="@L["Pin to dashboard"]" @bind-Value="_training.IsPinned"/>
+                <MudSwitchM3 T="bool" Label="@L["Pin to dashboard"]" @bind-Value="_training.IsPermanentPinned"/>
+                <MudDivider/>
+                <MudSwitchM3 T="bool" Label="@L["Ask all users to fill in on the dashboard"]" @bind-Value="_training.IsPinned"/>
                 @if (Vehicles != null)
                 {
                     <MudText Typo="Typo.h4">@L["Which vehicle?"]</MudText>

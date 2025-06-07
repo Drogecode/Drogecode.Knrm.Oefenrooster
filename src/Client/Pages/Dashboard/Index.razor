@@ -2,6 +2,7 @@
 @attribute [Authorize]
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums
 <PageTitle>Dashboard</PageTitle>
 
 <MudPaper Elevation="0" Class="p-2">
@@ -47,14 +48,27 @@
                 <div class="mx-3 mt-8">
                     @if (_pinnedTrainings is not null)
                     {
-                        @if (_pinnedTrainings.Any())
+                        @if (_pinnedTrainings.Any(x => x.IsPinned && x.SetBy != AvailabilitySetBy.User))
                         {
                             <MudText Typo="Typo.h5">@L["Pinned trainings"]</MudText>
                             <MudPaper Elevation="0" Class="flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
-                                @foreach (var training in _pinnedTrainings)
+                                @foreach (var training in _pinnedTrainings.Where(x => x.IsPinned && x.SetBy != AvailabilitySetBy.User))
                                 {
                                     <div class="flex-1 min-w-72 max-w-xl">
-                                        <CalendarCard Training="training" ShowDate="true" ShowDayOfWeek="true"/>
+                                        <CalendarCard Training="training" ShowDate="true" ShowDayOfWeek="true" ShowSelectAvailability="true"/>
+                                    </div>
+                                }
+                            </MudPaper>
+                        }
+
+                        if (_pinnedTrainings.Any(x => x.IsPermanentPinned))
+                        {
+                            <MudText Typo="Typo.h5">@L["Permanent pinned trainings"]</MudText>
+                            <MudPaper Elevation="0" Class="flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
+                                @foreach (var training in _pinnedTrainings.Where(x => x.IsPermanentPinned))
+                                {
+                                    <div class="flex-1 min-w-72 max-w-xl">
+                                        <CalendarCard Training="training" ShowDate="true" ShowDayOfWeek="true" ShowSelectAvailability="false"/>
                                     </div>
                                 }
                             </MudPaper>
