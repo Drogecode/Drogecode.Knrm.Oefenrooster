@@ -1,7 +1,9 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -11,9 +13,10 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
 public sealed partial class ScheduleTable : IDisposable
 {
-    [Inject] private IStringLocalizer<ScheduleTable> L { get; set; } = default!;
-    [Inject] private ISessionExpireService SessionExpireService { get; set; } = default!;
-    [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<ScheduleTable>? L { get; set; }
+    [Inject, NotNull] private ISessionExpireService? SessionExpireService { get; set; }
+    [Inject, NotNull] private ScheduleRepository? ScheduleRepository { get; set; }
+    [Inject, NotNull] private DayItemRepository? DayItemRepository { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [CascadingParameter] public MainLayout MainLayout { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeUser>? Users { get; set; } = default!;
@@ -28,7 +31,9 @@ public sealed partial class ScheduleTable : IDisposable
     private bool _working;
     private List<PlannedTraining> _events = new();
     private List<UserTrainingCounter>? _userTrainingCounter;
+    private List<RoosterItemDay>? _dayItems;
     private DateTime? _month;
+
     private TableGroupDefinition<DrogeUser> _groupBy = new()
     {
         GroupName = "Group",
@@ -70,9 +75,10 @@ public sealed partial class ScheduleTable : IDisposable
         TrainingWeek scheduleForUser = new();
         var scheduleForAll = await ScheduleRepository.ScheduleForAll(dateRange, true, _cls.Token);
         if (scheduleForAll == null) return;
+        _dayItems = (await DayItemRepository.GetDayItemsAsync(dateRange, Guid.Empty, _cls.Token))?.DayItems;
         _userTrainingCounter = scheduleForAll.UserTrainingCounters;
         var trainingsInRange = scheduleForAll.Planners;
-        if (trainingsInRange != null && trainingsInRange.Count > 0)
+        if (trainingsInRange.Count > 0)
         {
             scheduleForUser.From = DateOnly.FromDateTime(trainingsInRange[0].DateStart);
             foreach (var training in trainingsInRange)

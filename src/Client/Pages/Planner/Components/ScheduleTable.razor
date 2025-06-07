@@ -1,11 +1,11 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 <div>
-    <MonthSelector Month="_month" MonthChanged="SetMonth" />
+    <MonthSelector Month="_month" MonthChanged="SetMonth"/>
     @if (Users != null)
     {
         <MudTable Hover="true" Breakpoint="Breakpoint.None"
-                  Items="@Users.OrderBy(x => Functions?.FirstOrDefault(y => y.Id == x.UserFunctionId)?.Order).ThenBy(x=>x.Name)"
+                  Items="@Users.OrderBy(x => Functions?.FirstOrDefault(y => y.Id == x.UserFunctionId)?.Order).ThenBy(x => x.Name)"
                   GroupBy="@_groupBy"
                   GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
                   GroupFooterClass="mb-4"
@@ -21,7 +21,18 @@
                 {
                     <MudTh Class="@($"trainingType-{item.RoosterTrainingTypeId} !z-20")">
                         @item.DateStart.ToString("dddd")
-                        <DateToString ShowDate="true" ShowTime="@item.ShowTime" DateTimeUtc="item.DateStart" /> @item.Name
+                        <DateToString ShowDate="true" ShowTime="@item.ShowTime" DateTimeUtc="item.DateStart"/> @item.Name
+                        @if (_dayItems is not null)
+                        {
+                            @foreach (var dayItem in _dayItems.Where(x => (x.LinkedUsers == null || !x.LinkedUsers.Any()) && x.DateStart!.Value.Date <= item.DateEnd.Date && x.DateEnd!.Value.Date >= item.DateStart.Date))
+                            {
+                                var color = DayItemHelper.DayItemTypeColor(dayItem.Type);
+                                <div class="flex gap-1">
+                                    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="@color" Size="Size.Small"/>
+                                    <div>@dayItem.Text</div>
+                                </div>
+                            }
+                        }
                     </MudTh>
                 }
             </HeaderContent>
@@ -41,10 +52,10 @@
                         @switch (user?.SetBy)
                         {
                             case AvailabilitySetBy.DefaultAvailable:
-                                <MudIcon Icon="@Icons.Material.Filled.AutoGraph" Class="opacity-75 text-base" />
+                                <MudIcon Icon="@Icons.Material.Filled.AutoGraph" Class="opacity-75 text-base"/>
                                 break;
                             case AvailabilitySetBy.Holiday:
-                                <MudIcon Icon="@Icons.Material.Filled.WbSunny" Class="opacity-75 text-base" />
+                                <MudIcon Icon="@Icons.Material.Filled.WbSunny" Class="opacity-75 text-base"/>
                                 break;
                         }
                         @if (user?.Assigned == true)
@@ -52,7 +63,7 @@
                             @(Vehicles?.FirstOrDefault(x => x.Id == user.VehicleId)?.Code ?? Vehicles?.FirstOrDefault(x => x.IsDefault)?.Code ?? L["Assigned"])
                             if (user.PlannedFunctionId.Equals(_specialFunctionId))
                             {
-                                <MudIcon Icon="@Icons.Material.Filled.HowToReg" Color="Color.Info" Style="font-size:1rem;" />
+                                <MudIcon Icon="@Icons.Material.Filled.HowToReg" Color="Color.Info" Style="font-size:1rem;"/>
                             }
                         }
                     </MudTd>
