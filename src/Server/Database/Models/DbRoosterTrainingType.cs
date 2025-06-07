@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 
@@ -12,11 +13,11 @@ public class DbRoosterTrainingType
     public DateTime CreatedDate { get; set; }
     public Guid? UpdatedBy { get; set; }
     public DateTime? UpdatedDate { get; set; }
-    public string? Name { get; set; }
-    public string? ColorLight { get; set; }
-    public string? ColorDark { get; set; }
-    public string? TextColorLight { get; set; }
-    public string? TextColorDark { get; set; }
+    [StringLength(DefaultSettingsHelper.MAX_LENGTH_DAY_ITEM_TEXT)] public string? Name { get; set; }
+    [StringLength(30)] public string? ColorLight { get; set; }
+    [StringLength(30)] public string? ColorDark { get; set; }
+    [StringLength(30)] public string? TextColorLight { get; set; }
+    [StringLength(30)] public string? TextColorDark { get; set; }
     public int Order { get; set; }
     public bool CountToTrainingTarget { get; set; }
     public bool IsDefault { get; set; }
