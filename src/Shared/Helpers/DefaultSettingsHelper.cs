@@ -17,7 +17,7 @@ public static class DefaultSettingsHelper
     // 7 = v0.5.18
     
     /// <summary>
-    /// From what UPDATE_VERSION should we show the update button.
+    /// From what UPDATE_VERSION we should show the update button.
     /// </summary>
     public const int BUTTON_VERSION = 6; // v0.5.12 version when it was last on this UPDATE_VERSION
 

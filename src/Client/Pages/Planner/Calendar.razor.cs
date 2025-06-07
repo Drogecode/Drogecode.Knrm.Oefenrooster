@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Models.CalendarItems;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Heron.MudCalendar;
@@ -121,6 +122,18 @@ public sealed partial class Calendar : IDisposable
             Text = asTraining.Availability.ToString() ?? "",
         });
         StateHasChanged();
+    }
+
+    private async Task RemainingDaysUnavailable()
+    {
+        foreach (var item in _events.Where(item => item is DrogeCodeCalendarItem))
+        {
+            var calendarItem = item as DrogeCodeCalendarItem;
+            if (calendarItem?.Training is null || calendarItem.Training.SetBy != AvailabilitySetBy.None)
+                continue;
+            calendarItem.Training.Availability = Availability.NotAvailable;
+            calendarItem.Training.SetBy = AvailabilitySetBy.AllUnavailableButton;
+        }
     }
 
     public void Dispose()
