@@ -33,6 +33,7 @@ public struct AccessesNames
     public const string AUTH_scheduler_dayitem = "scheduler_dayitem";
     public const string AUTH_scheduler_monthitem = "scheduler_monthitem";
     public const string AUTH_scheduler_other_user = "scheduler_other";
+    public const string AUTH_scheduler_remaining_days_unavailable = "scheduler_remaining_unavailable";
     public const string AUTH_scheduler_description_edit = "scheduler_description_edit";
     public const string AUTH_scheduler_description_read = "scheduler_description_read";
 

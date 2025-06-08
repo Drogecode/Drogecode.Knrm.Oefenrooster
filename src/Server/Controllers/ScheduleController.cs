@@ -331,6 +331,49 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPatch]
+    [Route("schedule/multiple")]
+    public async Task<ActionResult<PatchResponse>> PatchMultipleSchedulesForUser([FromBody] List<Training> trainings, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var response = new PatchResponse
+            {
+                Success = true,
+                ElapsedMilliseconds = 0,
+            };
+            foreach (var training in trainings)
+            {
+                var result = await _scheduleService.PatchScheduleForUserAsync(userId, customerId, training, clt);
+                if (result.Success == false)
+                    response.Success = false;
+                response.ElapsedMilliseconds += result.ElapsedMilliseconds;
+                
+                if (result is { Success: true, PatchedTraining.Assigned: true })
+                {
+                    await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
+                        JsonSerializer.Serialize(new AuditAssignedUser
+                        {
+                            UserId = userId, Assigned = result.PatchedTraining.Assigned, Availability = result.PatchedTraining.Availability, SetBy = result.PatchedTraining.SetBy,
+                            AuditReason = AuditReason.ChangeAvailability
+                        }),
+                        training.TrainingId);
+                    await _refreshHub.SendMessage(userId, ItemUpdated.FutureTrainings);
+                }
+            }
+
+            await _userService.PatchLastOnline(userId, clt);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in PatchMultipleSchedulesForUser");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
     [Route("schedule")]
     public async Task<ActionResult<PatchScheduleForUserResponse>> PatchScheduleForUser([FromBody] Training training, CancellationToken clt = default)
     {

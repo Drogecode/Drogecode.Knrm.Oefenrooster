@@ -35,6 +35,13 @@ public class ScheduleRepository
         var result = await _scheduleClient.PatchScheduleForUserAsync(training, clt);
         return result.PatchedTraining;
     }
+
+    public async Task<PatchResponse> PatchMultipleSchedulesForUser(List<Training> trainings, CancellationToken clt)
+    {
+        var result = await _scheduleClient.PatchMultipleSchedulesForUserAsync(trainings, clt);
+        return result;
+    }
+    
     public async Task<bool> PatchTraining(PlannedTraining patchedTraining, CancellationToken clt)
     {
         var result = await _scheduleClient.PatchTrainingAsync(patchedTraining, clt);

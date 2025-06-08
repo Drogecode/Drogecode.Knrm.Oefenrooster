@@ -8,6 +8,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Heron.MudCalendar;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
+
 public sealed partial class Calendar : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<Calendar>? L { get; set; }
@@ -26,6 +27,7 @@ public sealed partial class Calendar : IDisposable
     private bool _updating;
     private bool _initialized;
     private bool _currentMonth;
+    private bool _remainingToRedActive;
     private DateTime? _month;
     private DateTime _firstMonth = DateTime.Today;
 
@@ -41,6 +43,7 @@ public sealed partial class Calendar : IDisposable
             StateHasChanged();
         }
     }
+
     private async Task SetMonth(DateTime? dateTime)
     {
         if (dateTime == null) return;
@@ -73,6 +76,7 @@ public sealed partial class Calendar : IDisposable
                 });
             }
         }
+
         _month = PlannerHelper.ForMonth(dateRange);
         if (_month is not null)
         {
@@ -96,6 +100,7 @@ public sealed partial class Calendar : IDisposable
                 }
             }
         }
+
         await SessionExpireService.SetSelectedMonth(_month, _cls.Token);
         _updating = false;
         StateHasChanged();
@@ -108,8 +113,10 @@ public sealed partial class Calendar : IDisposable
         {
             TrainingId = newTraining.Id,
             Name = newTraining.Name,
-            DateStart = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Local).ToUniversalTime(),
-            DateEnd = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null")), DateTimeKind.Local).ToUniversalTime(),
+            DateStart = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeStart ?? throw new ArgumentNullException("StartTime is null")),
+                DateTimeKind.Local).ToUniversalTime(),
+            DateEnd = DateTime.SpecifyKind((newTraining.Date ?? throw new ArgumentNullException("Date is null")) + (newTraining.TimeEnd ?? throw new ArgumentNullException("StartTime is null")),
+                DateTimeKind.Local).ToUniversalTime(),
             RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId,
             ShowTime = newTraining.ShowTime,
             IsPinned = newTraining.IsPinned,
@@ -126,14 +133,31 @@ public sealed partial class Calendar : IDisposable
 
     private async Task RemainingDaysUnavailable()
     {
+        _remainingToRedActive = true;
+        StateHasChanged();
+        List<Training> trainings = new();
         foreach (var item in _events.Where(item => item is DrogeCodeCalendarItem))
         {
             var calendarItem = item as DrogeCodeCalendarItem;
-            if (calendarItem?.Training is null || calendarItem.Training.SetBy != AvailabilitySetBy.None)
+            if (calendarItem?.Training is null || calendarItem.Training.SetBy != AvailabilitySetBy.None || calendarItem.Training.DateEnd <= DateTime.UtcNow)
                 continue;
             calendarItem.Training.Availability = Availability.NotAvailable;
             calendarItem.Training.SetBy = AvailabilitySetBy.AllUnavailableButton;
+            trainings.Add(calendarItem.Training);
         }
+
+        var result = await ScheduleRepository.PatchMultipleSchedulesForUser(trainings, _cls.Token);
+        if (!result.Success)
+        {
+            foreach (var training in trainings)
+            {
+                training.Availability = Availability.None;
+                training.SetBy = AvailabilitySetBy.None;
+            }
+        }
+
+        _remainingToRedActive = false;
+        StateHasChanged();
     }
 
     public void Dispose()

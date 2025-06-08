@@ -65,7 +65,7 @@
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Schedule.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ScheduleClient">
 			<OutputPath>../Clients/ScheduleClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\SharePoint.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="SharePointClient">
 			<OutputPath>../Clients/SharePointClient.g.cs</OutputPath>

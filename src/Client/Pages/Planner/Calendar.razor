@@ -13,8 +13,8 @@
 }
 @if (_initialized)
 {
-    <AuthorizeView Roles="@AccessesNames.AUTH_super_user" Context="inner">
-        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="RemainingDaysUnavailable">@L["Set remaining days unavailable"]</MudButton>
+    <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_remaining_days_unavailable" Context="inner">
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="RemainingDaysUnavailable" Disabled="_remainingToRedActive">@L["Set remaining days unavailable"]</MudButton>
     </AuthorizeView>
     <div class="d-none d-md-flex">
         <MudCalendar Items="_events" MonthCellMinHeight="100" DateRangeChanged="SetCalenderForMonth" Outlined ButtonVariant="Variant.Text" ShowDay="false" ShowWeek="false" CurrentDay="@_firstMonth"

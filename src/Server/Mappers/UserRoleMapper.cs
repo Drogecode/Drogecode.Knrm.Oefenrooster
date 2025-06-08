@@ -77,6 +77,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_scheduler_other_user:
                         drogeUserRole.AUTH_scheduler_other_user = true;
                         break;
+                    case AccessesNames.AUTH_scheduler_remaining_days_unavailable:
+                        drogeUserRole.AUTH_scheduler_remaining_days_unavailable = true;
+                        break;
                     case AccessesNames.AUTH_scheduler_description_edit:
                         drogeUserRole.AUTH_scheduler_description_edit = true;
                         break;
@@ -177,6 +180,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_scheduler_monthitem).Append(',');
             if (userRole.AUTH_scheduler_other_user)
                 sb.Append(AccessesNames.AUTH_scheduler_other_user).Append(',');
+            if (userRole.AUTH_scheduler_remaining_days_unavailable)
+                sb.Append(AccessesNames.AUTH_scheduler_remaining_days_unavailable).Append(',');
             if (userRole.AUTH_scheduler_description_edit)
                 sb.Append(AccessesNames.AUTH_scheduler_description_edit).Append(',');
             if (userRole.AUTH_scheduler_description_read)
