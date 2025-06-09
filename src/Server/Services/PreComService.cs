@@ -6,36 +6,41 @@ using System.Diagnostics;
 using System.Text.Json;
 using Drogecode.Knrm.Oefenrooster.PreCom;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
+using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
-public class PreComService : IPreComService
+public class PreComService : DrogeService, IPreComService
 {
-    private readonly ILogger<PreComService> _logger;
-    private readonly DataContext _database;
     private readonly HttpClient _httpClient;
     private readonly IConfiguration _configuration;
 
-    public PreComService(ILogger<PreComService> logger, DataContext database, HttpClient httpClient, IConfiguration configuration)
+    public PreComService(ILogger<PreComService> logger,
+        DataContext database,
+        IMemoryCache memoryCache,
+        IDateTimeService dateTimeService,
+        HttpClient httpClient,
+        IConfiguration configuration) : base(logger, database, memoryCache, dateTimeService)
     {
-        _logger = logger;
-        _database = database;
         _httpClient = httpClient;
         _configuration = configuration;
     }
 
     public async Task<PreComClient?> GetPreComClient()
     {
-        var preComClient = new PreComClient(_httpClient, "drogecode", _logger);
+        var preComClient = new PreComClient(_httpClient, "drogecode", Logger);
         var preComUser = _configuration.GetValue<string>("PreCom:User");
         var preComPassword = _configuration.GetValue<string>("PreCom:Password");
         if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
         {
-            preComUser = KeyVaultHelper.GetSecret("PreComUser", _logger)?.Value;
-            preComPassword = KeyVaultHelper.GetSecret("PreComPassword", _logger)?.Value;
+            preComUser = KeyVaultHelper.GetSecret("PreComUser", Logger)?.Value;
+            preComPassword = KeyVaultHelper.GetSecret("PreComPassword", Logger)?.Value;
             if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
                 return null;
         }
+
         await preComClient.Login(preComUser, preComPassword);
 
         return preComClient;
@@ -45,7 +50,7 @@ public class PreComService : IPreComService
     {
         var sw = Stopwatch.StartNew();
         var result = new MultiplePreComAlertsResponse { PreComAlerts = new List<PreComAlert>() };
-        var fromDb = _database.PreComAlerts.Where(x => x.CustomerId == customerId && x.UserId == userId).OrderByDescending(x => x.SendTime);
+        var fromDb = Database.PreComAlerts.Where(x => x.CustomerId == customerId && x.UserId == userId).OrderByDescending(x => x.SendTime);
         foreach (var alert in await fromDb.Skip(skip).Take(take).ToListAsync(clt))
         {
             result.PreComAlerts.Add(new PreComAlert
@@ -74,7 +79,7 @@ public class PreComService : IPreComService
         var ser = JsonSerializer.Serialize(body);
         var dataIos = JsonSerializer.Deserialize<NotificationDataBase>(ser, jsonSerializerOptions);
         var dataAndroid = JsonSerializer.Deserialize<NotificationDataAndroid>(ser);
-        _logger.LogInformation($"alert is '{dataIos?._alert}'");
+        Logger.LogInformation($"alert is '{dataIos?._alert}'");
         var alert = dataIos?._alert ?? dataAndroid?.data?.message;
         timestamp = DateTime.SpecifyKind(dataIos?._data?.actionData?.Timestamp ?? DateTime.MinValue, DateTimeKind.Utc);
         if (dataIos is NotificationDataTestWebhookObject)
@@ -98,14 +103,21 @@ public class PreComService : IPreComService
         if (timestamp.Equals(DateTime.MinValue))
             timestamp = DateTime.Now;
 
-        var prioParsed = int.TryParse(dataIos?._data?.priority, out int prio); // Android does not have prio in json.
+        var prioParsed = int.TryParse(dataIos?._data?.priority, out var prio); // Android does not have prio in JSON.
         priority = prioParsed ? prio : null;
         return alert;
     }
 
-    public void WriteAlertToDb(Guid userId, Guid customerId, DateTime? sendTime, string alert, int? priority, string raw, string? ip)
+    public async Task<bool> WriteAlertToDb(Guid userId, Guid customerId, DateTime? sendTime, string alert, int? priority, string raw, string? ip)
     {
-        _database.PreComAlerts.Add(new DbPreComAlert
+        var cacheKey = $"PreComAlert-{userId}-{customerId}-{ip}-{raw.GetHashCode()}";
+        MemoryCache.TryGetValue(cacheKey, out bool? cached);
+        if (cached is true)
+        {
+            Logger.LogInformation("Alert already exists in db for user {UserId} and customer {CustomerId}", userId, customerId);
+            return false;
+        }
+        Database.PreComAlerts.Add(new DbPreComAlert
         {
             UserId = userId,
             CustomerId = customerId,
@@ -115,25 +127,27 @@ public class PreComService : IPreComService
             SendTime = sendTime,
             Ip = ip,
         });
-        _database.SaveChanges();
+        await Database.SaveChangesAsync();
+        MemoryCache.Set(cacheKey, true, TimeSpan.FromMinutes(1));
+        return true;
     }
 
     public async Task<bool> PatchAlertToDb(DbPreComAlert alert)
     {
-        var dbPreComAlert = await _database.PreComAlerts.FirstOrDefaultAsync(x => x.Id == alert.Id);
+        var dbPreComAlert = await Database.PreComAlerts.FirstOrDefaultAsync(x => x.Id == alert.Id);
         if (dbPreComAlert is null) return false;
         dbPreComAlert.Alert = alert.Alert;
         dbPreComAlert.Priority = alert.Priority;
         dbPreComAlert.SendTime = alert.SendTime;
-        _database.PreComAlerts.Update(dbPreComAlert);
-        return await _database.SaveChangesAsync() > 0;
+        Database.PreComAlerts.Update(dbPreComAlert);
+        return await Database.SaveChangesAsync() > 0;
     }
 
     public async Task<PutPreComForwardResponse> PutForward(PreComForward forward, Guid customerId, Guid userId, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new PutPreComForwardResponse();
-        if (await _database.PreComForwards.CountAsync(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null, cancellationToken: clt) > 5)
+        if (await Database.PreComForwards.CountAsync(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null, cancellationToken: clt) > 5)
         {
             sw.Stop();
             result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
@@ -145,8 +159,8 @@ public class PreComService : IPreComService
         forward.CreatedBy = userId;
         if (!string.IsNullOrEmpty(forward.ForwardUrl))
         {
-            await _database.PreComForwards.AddAsync(forward.ToDb(customerId, userId), clt);
-            result.Success = await _database.SaveChangesAsync(clt) > 0;
+            await Database.PreComForwards.AddAsync(forward.ToDb(customerId, userId), clt);
+            result.Success = await Database.SaveChangesAsync(clt) > 0;
         }
 
         if (result.Success)
@@ -164,12 +178,12 @@ public class PreComService : IPreComService
         var sw = Stopwatch.StartNew();
         var result = new PatchPreComForwardResponse();
 
-        var dbForward = await _database.PreComForwards.FirstOrDefaultAsync(x => x.Id == forward.Id && x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null, clt);
+        var dbForward = await Database.PreComForwards.FirstOrDefaultAsync(x => x.Id == forward.Id && x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null, clt);
         if (dbForward is not null && !string.IsNullOrEmpty(forward.ForwardUrl))
         {
             dbForward.ForwardUrl = forward.ForwardUrl;
-            _database.Update(dbForward);
-            result.Success = await _database.SaveChangesAsync(clt) > 0;
+            Database.Update(dbForward);
+            result.Success = await Database.SaveChangesAsync(clt) > 0;
         }
 
         sw.Stop();
@@ -184,7 +198,7 @@ public class PreComService : IPreComService
         {
             PreComForwards = new List<PreComForward>()
         };
-        var dbForwards = _database.PreComForwards.Where(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null);
+        var dbForwards = Database.PreComForwards.Where(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null);
         result.TotalCount = await dbForwards.CountAsync(clt);
         foreach (var forward in await dbForwards.OrderBy(x => x.CreatedOn).Skip(skip).Take(take).ToListAsync(clt))
         {
@@ -199,7 +213,7 @@ public class PreComService : IPreComService
 
     public async Task<PreComForward?> GetForward(Guid forwardId, Guid customerId, CancellationToken clt)
     {
-        var dbForward = await _database.PreComForwards.FirstOrDefaultAsync(x => x.Id == forwardId && x.CustomerId == customerId, clt);
+        var dbForward = await Database.PreComForwards.FirstOrDefaultAsync(x => x.Id == forwardId && x.CustomerId == customerId, clt);
         return dbForward?.ToPreComForward();
     }
 }

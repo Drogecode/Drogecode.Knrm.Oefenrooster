@@ -58,9 +58,9 @@ public class PreComController : DrogeController
             try
             {
                 var alert = _preComService.AnalyzeAlert(userId, customerId, body, out DateTime timestamp, out int? priority);
-                _preComService.WriteAlertToDb(userId, customerId, timestamp, alert, priority, JsonSerializer.Serialize(body), ip);
+                var saved = await _preComService.WriteAlertToDb(userId, customerId, timestamp, alert, priority, JsonSerializer.Serialize(body), ip);
 
-                if (sendToHub)
+                if (saved && sendToHub)
                 {
                     await _preComHub.SendMessage(userId, "PreCom", alert);
                     var forwards = await _preComService.GetAllForwards(30, 0, userId, customerId, clt);
@@ -92,7 +92,7 @@ public class PreComController : DrogeController
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Error in PreComController WebHook `{sendToHub}`", sendToHub);
-                _preComService.WriteAlertToDb(userId, customerId, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body), ip);
+                await _preComService.WriteAlertToDb(userId, customerId, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body), ip);
                 if (sendToHub)
                     await _preComHub.SendMessage(userId, "PreCom", "piep piep");
             }

@@ -10,6 +10,7 @@ public abstract class DrogeService : IDrogeService
     protected readonly DataContext Database;
     protected readonly IMemoryCache MemoryCache;
     protected readonly IDateTimeService DateTimeService;
+    internal MemoryCacheEntryOptions CacheOptions;
 
     public DrogeService(
         ILogger<DrogeService> logger,
@@ -21,6 +22,11 @@ public abstract class DrogeService : IDrogeService
         Database = database;
         MemoryCache = memoryCache;
         DateTimeService = dateTimeService;
+        
+        var cacheOptions = new MemoryCacheEntryOptions();
+        cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(3));
+        cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(7));
+        CacheOptions = cacheOptions;
     }
 
     public async Task<int> SaveDb(CancellationToken clt)
