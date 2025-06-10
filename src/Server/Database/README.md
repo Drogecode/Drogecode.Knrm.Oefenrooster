@@ -11,9 +11,9 @@ dotnet ef database update "20250509160223_PreComPeriodAddIsFullDay"
 
 # Update tools:
 
-dotnet tool update --global dotnet-ef --version 9.0.5
+dotnet tool update --global dotnet-ef --version 9.0.6
 
-# Create script:
+# Create a script:
 
 dotnet ef migrations script
 

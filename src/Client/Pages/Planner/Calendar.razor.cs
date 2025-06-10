@@ -139,8 +139,12 @@ public sealed partial class Calendar : IDisposable
         foreach (var item in _events.Where(item => item is DrogeCodeCalendarItem))
         {
             var calendarItem = item as DrogeCodeCalendarItem;
-            if (calendarItem?.Training is null || calendarItem.Training.SetBy != AvailabilitySetBy.None || calendarItem.Training.DateEnd <= DateTime.UtcNow)
+            if (calendarItem?.Training is null || calendarItem.Training.SetBy != AvailabilitySetBy.None || calendarItem.Training.DateEnd <= DateTime.UtcNow ||
+                _month is null || calendarItem.Start.Month != _month.Value.Month || calendarItem.Start.Year != _month.Value.Year)
+            {
                 continue;
+            }
+
             calendarItem.Training.Availability = Availability.NotAvailable;
             calendarItem.Training.SetBy = AvailabilitySetBy.AllUnavailableButton;
             trainings.Add(calendarItem.Training);

@@ -124,10 +124,9 @@
                             {
                                 <MudText Typo="Typo.h5">@L["Future holidays"]</MudText>
                                 <MudList T="string" ReadOnly="true">
-                                    @foreach (var holiday in _futureHolidays.Holidays)
+                                    @foreach (var holiday in _futureHolidays.Holidays.OrderBy(x => x.ValidFrom).ThenBy(x => x.UserId))
                                     {
                                         var holUser = _users?.FirstOrDefault(x => x.Id == holiday.UserId);
-
                                         @if (holUser is not null)
                                         {
                                             <MudListItem T="string">@holUser.Name : @holiday.Description
