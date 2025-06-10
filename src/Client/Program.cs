@@ -24,7 +24,7 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddMudServices(config => { config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft; });
 builder.Services.AddMudTranslations();
 builder.Services.AddMudExtensions();
-builder.Services.AddMudMarkdownServices().AddMemoryCache();
+builder.Services.AddMudMarkdownServices();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();
 
