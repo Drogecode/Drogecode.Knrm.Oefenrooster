@@ -76,5 +76,14 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.PreCom {
                 return ResourceManager.GetString("ForwardUrl", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aub niet doorsturen naar deze site!.
+        /// </summary>
+        internal static string Please_don_t_forward_to_this_site_ {
+            get {
+                return ResourceManager.GetString("Please don\'t forward to this site.", resourceCulture);
+            }
+        }
     }
 }

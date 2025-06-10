@@ -17,4 +17,7 @@
     <data name="Date" xml:space="preserve">
         <value>Created on</value>
     </data>
+    <data name="Please don't forward to this site." xml:space="preserve">
+        <value>Please don't forward to this site!</value>
+    </data>
 </root>

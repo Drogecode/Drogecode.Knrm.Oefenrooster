@@ -21,7 +21,7 @@
     </MudDataGrid>
     @if (_forwards.TotalCount < 5)
     {
-        <MudButton OnClick="@(() => _forwards.PreComForwards.Add(new PreComForward()))">@LApp["Add"]</MudButton>
+        <MudButton OnClick="@(() => _forwards.PreComForwards?.Add(new PreComForward()))">@LApp["Add"]</MudButton>
     }
 
     @if (_skip > 0 || _forwards.TotalCount > (_count + _skip))

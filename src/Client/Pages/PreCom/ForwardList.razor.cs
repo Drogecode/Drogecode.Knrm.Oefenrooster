@@ -10,6 +10,7 @@ public sealed partial class ForwardList : IDisposable
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
     [Inject, NotNull] private PreComRepository? PreComRepository { get; set; }
     [Inject, NotNull] private IPreComClient? PreComClient { get; set; }
+    [Inject, NotNull] private NavigationManager? Navigation { get; set; }
     private CancellationTokenSource _cls = new();
     private MultiplePreComForwardsResponse? _forwards;
 
@@ -60,7 +61,12 @@ public sealed partial class ForwardList : IDisposable
     async Task CommittedItemChanges(PreComForward item)
     {
         bool success = false;
-        if (item.CreatedOn is null)
+        if (item.ForwardUrl?.Contains(Navigation.BaseUri) == true)
+        {
+            success = false;
+            item.ForwardUrl = L["Please don't forward to this site."];
+        }
+        else if (item.CreatedOn is null)
         {
             if (_forwards?.TotalCount < 5)
             {

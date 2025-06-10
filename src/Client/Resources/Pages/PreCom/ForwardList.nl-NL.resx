@@ -24,4 +24,7 @@
     <data name="Date" xml:space="preserve">
         <value>Aangemaakt op</value>
     </data>
+    <data name="Please don't forward to this site." xml:space="preserve">
+        <value>Aub niet doorsturen naar deze site!</value>
+    </data>
 </root>
