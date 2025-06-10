@@ -70,7 +70,7 @@ public class PreComService : DrogeService, IPreComService
         return result;
     }
 
-    public string AnalyzeAlert(Guid userId, Guid customerId, object body, out DateTime timestamp, out int? priority)
+    public string AnalyzeAlert(Guid userId, Guid customerId, object? body, out DateTime timestamp, out int? priority)
     {
         var jsonSerializerOptions = new JsonSerializerOptions()
         {
@@ -101,7 +101,7 @@ public class PreComService : DrogeService, IPreComService
 
         alert ??= "No alert found by hui.nu webhook";
         if (timestamp.Equals(DateTime.MinValue))
-            timestamp = DateTime.Now;
+            timestamp = DateTimeService.Now();
 
         var prioParsed = int.TryParse(dataIos?._data?.priority, out var prio); // Android does not have prio in JSON.
         priority = prioParsed ? prio : null;

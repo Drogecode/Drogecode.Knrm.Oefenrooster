@@ -77,7 +77,7 @@ public class PreComControllerTests : BaseTest
     }
 
     [Fact]
-    // The webhook test message from when you press WEBHOOKTEST in the app updated march 2024
+    // The webhook test message from when you press WEBHOOKTEST in the app updated March 2024
     public async Task WebHookBodyIsWebhookTest2Test()
     {
         string body = "{\"android_channel_id\":\"chirp\",\"content- available\":\"1\",\"message\":\"PreCom test bericht voor Webhook\",\"messageData\":{\"MsgOutID\":\"135615552\",\"ControlID\":\"f\",\"Timestamp\":\"2024-03-01T20:46:08.2\",\"notId\":\"135615552\",\"soundname\":\"chirp\",\"vibrationPattern\":\"[150,545]\",\"from\":\"788942585741\",\"messageId\":\"0:1694527951397184%af1e7638f9fd7ecd\",\"sentTime\":\"1709322368215\",\"ttl\":2419200}}";
@@ -91,6 +91,21 @@ public class PreComControllerTests : BaseTest
         result.Value.PreComAlerts.Should().NotBeEmpty();
         result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("PreCom test bericht voor Webhook"));
         result.Value.PreComAlerts.Should().Contain(x => x.SendTime.Equals(new DateTime(2024, 03, 01, 19, 46, 08, 215)));
+    }
+
+    [Fact]
+    public async Task WebHookBodyIsNullTest()
+    {
+        Tester.DateTimeServiceMock.SetMockDateTime(new DateTime(2022, 9, 4, 16, 12, 7));
+        await Tester.PreComController.WebHook(Tester.DefaultCustomerId, DefaultSettingsHelperMock.IdTaco, null, false);
+        var result = await Tester.PreComController.AllAlerts(50, 0, CancellationToken.None);
+        Assert.NotNull(result.Value?.PreComAlerts);
+        Assert.True(result.Value.Success);
+        result.Value.PreComAlerts.Should().NotBeNull();
+        result.Value.PreComAlerts.Should().NotBeEmpty();
+        result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("No alert found by hui.nu webhook"));
+        result.Value.PreComAlerts.Should().Contain(x => x.SendTime.Equals(new DateTime(2022, 9, 4, 16, 12, 7)));
+        Tester.DateTimeServiceMock.SetMockDateTime(null);
     }
 
     [Fact]

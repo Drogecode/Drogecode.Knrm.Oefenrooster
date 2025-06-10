@@ -49,7 +49,7 @@ public class PreComController : DrogeController
     [AllowAnonymous]
     [Route("webhook/{customerId:guid}/{userId:guid}")]
     [Route("web-hook/{customerId:guid}/{userId:guid}")]
-    public async Task<IActionResult> WebHook(Guid customerId, Guid userId, [FromBody] object body, bool sendToHub = true, CancellationToken clt = default)
+    public async Task<IActionResult> WebHook(Guid customerId, Guid userId, [FromBody] object? body = null, bool sendToHub = true, CancellationToken clt = default)
     {
         try
         {

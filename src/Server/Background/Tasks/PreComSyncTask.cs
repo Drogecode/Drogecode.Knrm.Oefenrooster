@@ -30,7 +30,8 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
         for (var i = 0; i < dayCount.Value; i++)
         {
             // Check future availability
-            itemsSynced += await LoopSyncPreComAvailability(userIdsWithNull, date.AddDays(i), false, preComWorker, userService, customerSettingService, userPreComEventService, userSettingService, clt);
+            itemsSynced += await LoopSyncPreComAvailability(userIdsWithNull, date.AddDays(i), false, preComWorker, userService, customerSettingService, userPreComEventService, userSettingService,
+                clt);
         }
 
         userIdsWithNull = await userSettingService.GetAllPreComIdAndValue(DefaultSettingsHelper.KnrmHuizenId, SettingName.SyncPreComDeleteOld, clt);
@@ -38,7 +39,8 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
         {
             // Delete old availability from outlook
             var usersToDeleteOld = userIdsWithNull.Where(x => x is { UserPreComId: not null, Value: true }).ToList();
-            itemsSynced += await LoopSyncPreComAvailability(usersToDeleteOld, date.AddDays(-7), true, preComWorker, userService, customerSettingService, userPreComEventService, userSettingService, clt);
+            itemsSynced += await LoopSyncPreComAvailability(usersToDeleteOld, date.AddDays(-7), true, preComWorker, userService, customerSettingService, userPreComEventService, userSettingService,
+                clt);
         }
 
         _logger.LogInformation("Synced `{items}` from PreCom to outlook", itemsSynced);
@@ -81,12 +83,17 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
                         continue;
                     }
 
-                    if (availabilitySet.Available || start is null)
+                    if (availabilitySet.Available)
                     {
                         continue;
                     }
 
                     isFullDay = false;
+
+                    if (start is null)
+                    {
+                        continue;
+                    }
 
                     var startConverted = TimeZoneInfo.ConvertTimeToUtc(start.Value, zone);
                     var end = TimeZoneInfo.ConvertTimeToUtc(availabilitySet.Start, zone);
@@ -122,7 +129,8 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
         return itemsSynced;
     }
 
-    private async Task<int> SyncWithUserCalendar(DrogeUser drogeUser, List<PreComPeriod> periods, DateOnly date, IUserPreComEventService userPreComEventService, IUserSettingService userSettingService, CancellationToken clt)
+    private async Task<int> SyncWithUserCalendar(DrogeUser drogeUser, List<PreComPeriod> periods, DateOnly date, IUserPreComEventService userPreComEventService, IUserSettingService userSettingService,
+        CancellationToken clt)
     {
         var userPreComEvents = await userPreComEventService.GetEventsForUserForDay(drogeUser.Id, drogeUser.CustomerId, date, clt);
         var syncWithExternal = await userSettingService.GetBoolUserSetting(drogeUser.CustomerId, drogeUser.Id, SettingName.SyncPreComWithExternal, true, clt);
