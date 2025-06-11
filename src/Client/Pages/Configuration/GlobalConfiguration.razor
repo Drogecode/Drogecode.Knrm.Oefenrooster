@@ -55,6 +55,16 @@
         <MudText Typo="Typo.body1">Failed: _syncHistorical</MudText>
         break;
 }
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="DeDuplicatePreCom" Disabled="_clickedDeDuplicatePreCom">Delete duplicate pre-com alerts</MudButton>
+@switch (_deDuplicatePreCom?.Success)
+{
+    case true:
+        <MudText Typo="Typo.body1">Done: _deDuplicatePreCom</MudText>
+        break;
+    case false:
+        <MudText Typo="Typo.body1">Failed: _deDuplicatePreCom</MudText>
+        break;
+}
 <AuthorizeView Roles="@AccessesNames.AUTH_super_user" Context="inner">
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="KillDb" Disabled="_clickedSyncHistorical">Kill db</MudButton>
     @switch (_killDb?.Success)

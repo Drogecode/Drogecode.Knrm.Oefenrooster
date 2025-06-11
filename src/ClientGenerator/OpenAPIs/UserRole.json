@@ -279,6 +279,9 @@
           "autH_scheduler_other_user": {
             "type": "boolean"
           },
+          "autH_scheduler_remaining_days_unavailable": {
+            "type": "boolean"
+          },
           "autH_scheduler_description_edit": {
             "type": "boolean"
           },

@@ -23,6 +23,7 @@ public sealed partial class GlobalConfiguration : IDisposable
     [Inject] private ICustomerSettingsClient CustomerSettingsClient { get; set; } = default!;
     [Inject] private ISharePointClient SharePointClient { get; set; } = default!;
     [Inject] private IReportActionClient ReportActionClient { get; set; } = default!;
+    [Inject] private IPreComClient PreComClient { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
     [CascadingParameter] private DrogeCodeGlobal Global { get; set; } = default!;
@@ -40,11 +41,13 @@ public sealed partial class GlobalConfiguration : IDisposable
     private bool? _specialDatesUpdated;
     private bool? _settingTrainingToCalendar;
     private bool _clickedSyncHistorical;
+    private bool _clickedDeDuplicatePreCom;
     private bool _loaded;
     private Guid _userId;
     private GetHistoricalResponse? _syncHistorical;
     private DbCorrectionResponse? _dbCorrection;
     private KillDbResponse? _killDb;
+    private DeleteResponse? _deDuplicatePreCom;
     private HubConnection? _hubConnection;
 
     protected override void OnInitialized()
@@ -155,12 +158,14 @@ public sealed partial class GlobalConfiguration : IDisposable
         var body = new PatchSettingStringRequest(SettingName.CalendarPrefix, newValue);
         await CustomerSettingsClient.PatchStringSettingAsync(body, _cls.Token);
     }
+
     private async Task PatchPreComAvailableText(string newValue)
     {
         _preComAvailableText = newValue;
         var body = new PatchSettingStringRequest(SettingName.PreComAvailableText, newValue);
         await CustomerSettingsClient.PatchStringSettingAsync(body, _cls.Token);
     }
+
     private async Task PatchPreComDaysInFuture(int? newValue)
     {
         if (newValue is null) return;
@@ -210,6 +215,15 @@ public sealed partial class GlobalConfiguration : IDisposable
     private async Task KillDb()
     {
         _killDb = await ReportActionClient.KillDbAsync(_cls.Token);
+        StateHasChanged();
+    }
+
+    private async Task DeDuplicatePreCom()
+    {
+        _clickedDeDuplicatePreCom = true;
+        StateHasChanged();
+        _deDuplicatePreCom = await PreComClient.DeleteDuplicatesAsync(_cls.Token);
+        _clickedDeDuplicatePreCom = false;
         StateHasChanged();
     }
 

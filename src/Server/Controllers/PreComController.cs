@@ -300,6 +300,28 @@ public class PreComController : DrogeController
         }
     }
 
+    [HttpDelete]
+    [Authorize(Roles = AccessesNames.AUTH_precom_problems)]
+    [Route("duplicates")]
+    public async Task<ActionResult<DeleteResponse>> DeleteDuplicates(CancellationToken clt = default)
+    {
+        try
+        {
+            var result = await _preComService.DeleteDuplicates();
+            return result;
+        }
+        catch (Exception ex)
+        {
+            
+            Logger.LogError(ex, "Exception in DeleteDuplicates");
+#if DEBUG
+            Debugger.Break();
+#endif
+            return BadRequest();
+        }
+    }
+    
+
     /*[Route("{**catchAll}")]
     [AllowAnonymous]
     [HttpPost("post", Order = int.MaxValue)]

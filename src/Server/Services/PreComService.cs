@@ -117,6 +117,7 @@ public class PreComService : DrogeService, IPreComService
             Logger.LogInformation("Alert already exists in db for user {UserId} and customer {CustomerId}", userId, customerId);
             return false;
         }
+
         Database.PreComAlerts.Add(new DbPreComAlert
         {
             UserId = userId,
@@ -215,5 +216,47 @@ public class PreComService : DrogeService, IPreComService
     {
         var dbForward = await Database.PreComForwards.FirstOrDefaultAsync(x => x.Id == forwardId && x.CustomerId == customerId, clt);
         return dbForward?.ToPreComForward();
+    }
+
+    public async Task<DeleteResponse> DeleteDuplicates()
+    {
+        var sw = Stopwatch.StartNew();
+        var range = 1000;
+        var deleted = 0;
+        var saved = new List<Guid>();
+        var result = new DeleteResponse()
+        {
+            Success = true
+        };
+        for (var i = 0; i < 10000; i++)
+        {
+            var selection = Database.PreComAlerts.Skip(i * range).Take(range).Select(x => x).OrderBy(x => x.SendTime).ToList();
+            if (selection.Count == 0)
+                break;
+            foreach (var alert in selection)
+            {
+                saved.Add(alert.Id);
+                var duplicates = Database.PreComAlerts.Where(x => x.UserId == alert.UserId && x.CustomerId == alert.CustomerId && x.Id != alert.Id && x.Raw == alert.Raw).ToList();
+                if (duplicates.Count <= 0 || duplicates.Any(x => saved.Contains(x.Id)))
+                    continue;
+                deleted += duplicates.Count;
+                Database.PreComAlerts.RemoveRange(duplicates);
+            }
+        }
+
+        var savedResult = await Database.SaveChangesAsync();
+        if (savedResult > 0)
+        {
+            result.Success = true;
+            Logger.LogInformation("Deleted `{byCounter}` `{bySave}` duplicates", deleted, savedResult);
+        }
+        else
+        {
+            Logger.LogInformation("Nothing deleted `{byCounter}`", deleted);
+        }
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
     }
 }
