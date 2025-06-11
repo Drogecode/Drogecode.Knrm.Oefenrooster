@@ -252,6 +252,7 @@ public class PreComService : DrogeService, IPreComService
         }
         else
         {
+            result.Success = false;
             Logger.LogInformation("Nothing deleted `{byCounter}`", deleted);
         }
 

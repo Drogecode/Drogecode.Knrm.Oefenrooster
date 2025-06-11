@@ -380,10 +380,10 @@ public class ScheduleService : DrogeService, IScheduleService
             .AsNoTracking()
             .Include(x => x.UserDefaultAvailables)
             .Include(x => x.UserFunction)
+            .Include(x => x.LinkedUserAsA.Where(x => x.DeletedOn == null))
             .Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.UserFunction!.IsActive)
             .Select(x => new { x.Id, x.UserDefaultAvailables, x.UserFunctionId, x.Name, x.LinkedUserAsA, x.ExternalId })
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
-
         var defaults = await _roosterDefaultsRepository.GetDefaultsForCustomerInSpan(true, customerId, startDate, tillDate, clt);
         var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerInSpan(true, customerId, null, startDate, tillDate, clt);
         var userHolidays = await _userHolidaysRepository.GetUserHolidaysForUser(true, customerId, null, tillDate, startDate, clt);
@@ -396,8 +396,9 @@ public class ScheduleService : DrogeService, IScheduleService
         var availables = await Database.RoosterAvailables
             .AsNoTracking()
             .Include(x => x.User)
-            .ThenInclude(x => x.LinkedUserA).Include(dbRoosterAvailable => dbRoosterAvailable.User)
-            .ThenInclude(dbUsers => dbUsers.LinkedUserAsA)
+            .ThenInclude(x => x.LinkedUserA)
+            .Include(dbRoosterAvailable => dbRoosterAvailable.User)
+            .ThenInclude(dbUsers => dbUsers.LinkedUserAsA.Where(x => x.DeletedOn == null))
             .Where(x => x.CustomerId == customerId && (includeUnAssigned || x.Assigned) && x.Date >= startDate && x.Date <= tillDate)
             .AsSingleQuery().ToListAsync(clt);
 
@@ -466,7 +467,7 @@ public class ScheduleService : DrogeService, IScheduleService
                                 PlannedFunctionId = avaUser.UserFunctionId ?? user.UserFunctionId,
                                 UserFunctionId = user.UserFunctionId,
                                 VehicleId = avaUser.VehicleId,
-                                Buddy = avaUser.User?.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name,
+                                Buddy = avaUser.User?.LinkedUserAsA?.FirstOrDefault(x => x is { LinkType: UserUserLinkType.Buddy, DeletedOn: null })?.UserB?.Name,
                             });
                             if (countPerUser && training.CountToTrainingTarget && scheduleDate.Month == forMonth && avaUser.Assigned)
                             {
@@ -526,7 +527,7 @@ public class ScheduleService : DrogeService, IScheduleService
                                 Name = user.Name,
                                 PlannedFunctionId = user.UserFunctionId,
                                 UserFunctionId = user.UserFunctionId,
-                                Buddy = user.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB?.Name,
+                                Buddy = user.LinkedUserAsA?.FirstOrDefault(x => x is { LinkType: UserUserLinkType.Buddy, DeletedOn: null })?.UserB?.Name,
                             });
                         }
                     }
@@ -654,7 +655,11 @@ public class ScheduleService : DrogeService, IScheduleService
             var userHolidays = await Database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= dbTraining.DateEnd.AddDays(1) && x.ValidUntil >= dbTraining.DateStart.AddDays(-1))
                 .ToListAsync(cancellationToken: clt);
             var availables = Database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.TrainingId == trainingId);
-            var users = await Database.Users.Include(x => x.UserFunction).Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.UserFunction!.IsActive)
+            var users = await Database.Users
+                .Include(x => x.UserFunction)
+                .Include(x => x.LinkedUserAsA.Where(x => x.DeletedOn == null))
+                .ThenInclude(x=>x.UserB)
+                .Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.UserFunction!.IsActive)
                 .ToListAsync(cancellationToken: clt);
 
             foreach (var user in users)
@@ -671,6 +676,7 @@ public class ScheduleService : DrogeService, IScheduleService
                     d.Name = user.Name;
                     d.UserFunctionId = user.UserFunctionId;
                     d.PlannedFunctionId = avaUser?.UserFunctionId ?? user.UserFunctionId;
+                    d.Buddy = user.LinkedUserAsA?.FirstOrDefault(x => x is { LinkType: UserUserLinkType.Buddy, DeletedOn: null })?.UserB.Name;
                 }
                 else if (!(available is null || setBy is null || setBy == AvailabilitySetBy.None))
                 {
@@ -680,7 +686,7 @@ public class ScheduleService : DrogeService, IScheduleService
                         SetBy = setBy.Value,
                         Name = user.Name,
                         UserId = user.Id,
-                        Buddy = avaUser?.User?.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB.Name,
+                        Buddy = user.LinkedUserAsA?.FirstOrDefault(x => x is { LinkType: UserUserLinkType.Buddy, DeletedOn: null })?.UserB.Name,
                         UserFunctionId = user.UserFunctionId,
                         PlannedFunctionId = avaUser?.UserFunctionId ?? user.UserFunctionId,
                     });
@@ -750,7 +756,7 @@ public class ScheduleService : DrogeService, IScheduleService
                         Name = dbUser.Name,
                         PlannedFunctionId = dbUser.UserFunctionId,
                         UserFunctionId = dbUser.UserFunctionId,
-                        Buddy = dbUser.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB.Name
+                        Buddy = dbUser.LinkedUserAsA?.FirstOrDefault(x => x is { LinkType: UserUserLinkType.Buddy, DeletedOn: null })?.UserB.Name
                     });
                 }
 
@@ -983,7 +989,7 @@ public class ScheduleService : DrogeService, IScheduleService
                         PlannedFunctionId = a.UserFunctionId ?? users.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId,
                         UserFunctionId = users.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId,
                         VehicleId = a.VehicleId,
-                        Buddy = a.User?.LinkedUserAsA?.FirstOrDefault(x => x.LinkType == UserUserLinkType.Buddy)?.UserB.Name,
+                        Buddy = a.User?.LinkedUserAsA?.FirstOrDefault(x => x is { LinkType: UserUserLinkType.Buddy, DeletedOn: null })?.UserB.Name,
                     }).ToList()
             };
             var defaultVehicle = await GetDefaultVehicleForTraining(customerId, schedule.Training, clt);
