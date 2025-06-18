@@ -15,6 +15,7 @@
             <PropertyColumn Property="x => x.Instance" Title="@L["Instance"]"/>
             <PropertyColumn Property="x => x.Domain" Title="@L["Domain"]"/>
             <PropertyColumn Property="x => x.TenantId" Title="@L["TenantId"]"/>
+            <PropertyColumn Property="x => x.GroupId" Title="@L["GroupId"]"/>
             <TemplateColumn>
                 <CellTemplate>
                     <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => { OpenCustomerDialog(context.Item, false); })"/>

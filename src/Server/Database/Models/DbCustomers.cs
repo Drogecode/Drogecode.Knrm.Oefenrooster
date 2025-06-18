@@ -13,6 +13,7 @@ public class DbCustomers
     [StringLength(50)] public string? Instance { get; set; }
     [StringLength(50)] public string? Domain { get; set; }
     [StringLength(50)] public string? TenantId { get; set; }
+    [StringLength(50)] public string? GroupId { get; set; }
     [StringLength(50)] public string? ClientIdServer { get; set; }
     [StringLength(50)] public string? ClientIdLogin { get; set; }
     [StringLength(50)] public string? ClientSecretServer { get; set; }

@@ -82,7 +82,7 @@ public static partial class GraphHelper
         return response.Token;
     }
 
-    public static Task<UserCollectionResponse?> GetUsersAsync()
+    public static Task<UserCollectionResponse?> GetUsersAsync(string? groupId)
     {
         // Ensure client isn't null
         _ = _appClient ??
@@ -114,7 +114,7 @@ public static partial class GraphHelper
         return nextPage;
     }
 
-    public static async Task<DirectoryObjectCollectionResponse?> TaskGetGroupForUser(string userId)
+    public static async Task<DirectoryObjectCollectionResponse?> GetGroupsForUser(string userId)
     {
         // Ensure client isn't null
         _ = _appClient ??

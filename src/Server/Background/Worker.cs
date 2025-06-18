@@ -114,8 +114,9 @@ public class Worker : BackgroundService
         var linkUserRoleService = scope.ServiceProvider.GetRequiredService<ILinkUserRoleService>();
         var auditService = scope.ServiceProvider.GetRequiredService<IAuditService>();
         var functionService = scope.ServiceProvider.GetRequiredService<IFunctionService>();
+        var customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
         var refreshHub = scope.ServiceProvider.GetRequiredService<RefreshHub>();
-        var userController = new UserController(userControllerLogger, userService, userRoleService, linkUserRoleService, auditService, graphService, functionService, refreshHub);
+        var userController = new UserController(userControllerLogger, userService, userRoleService, linkUserRoleService, auditService, graphService, functionService, customerService, refreshHub);
         await userController.InternalSyncAllUsers(DefaultSettingsHelper.SystemUser, DefaultSettingsHelper.KnrmHuizenId, _clt);
 
         _clt.ThrowIfCancellationRequested();

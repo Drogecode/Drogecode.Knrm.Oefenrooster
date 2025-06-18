@@ -42,6 +42,7 @@ public sealed partial class GlobalConfiguration : IDisposable
     private bool? _settingTrainingToCalendar;
     private bool _clickedSyncHistorical;
     private bool _clickedDeDuplicatePreCom;
+    private bool _clickedSyncUsers;
     private bool _loaded;
     private Guid _userId;
     private GetHistoricalResponse? _syncHistorical;
@@ -182,13 +183,17 @@ public sealed partial class GlobalConfiguration : IDisposable
 
     private async Task SyncUsers()
     {
+        _clickedSyncUsers = true;
         _usersSynced = null;
+        StateHasChanged();
         _usersSynced = await UserRepository.SyncAllUsersAsync();
         if (_usersSynced == true)
         {
             _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
-            await RefreshMeAsync();
         }
+
+        _clickedSyncUsers = false;
+        await RefreshMeAsync();
     }
 
     private async Task UpdateSpecialDates()

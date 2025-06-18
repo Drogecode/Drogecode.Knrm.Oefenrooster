@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Helpers;
+using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Setting;
 
@@ -13,12 +14,6 @@ public class CustomerSettingService : ICustomerSettingService
     {
         _logger = logger;
         _database = database;
-    }
-
-    public async Task<Customer> GetByTenantId(string tenantId, CancellationToken clt)
-    {
-        var customer = await _database.Customers.FirstOrDefaultAsync(x => x.TenantId == tenantId, clt);
-        return new Customer { Id = customer?.Id ?? Guid.Empty };
     }
 
     public async Task<SettingBoolResponse> GetBoolCustomerSetting(Guid customerId, SettingName setting, bool def, CancellationToken clt)

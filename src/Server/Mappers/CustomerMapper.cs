@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Customer;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
 
@@ -30,6 +31,16 @@ public static class CustomerMapper
             Domain = dbCustomer.Domain,
             Instance = dbCustomer.Instance,
             TenantId = dbCustomer.TenantId,
+            GroupId = dbCustomer.GroupId,
+        };
+    }
+
+    public static CustomerAuthentication ToCustomerAuthentication(this DbCustomers dbCustomer)
+    {
+        return new CustomerAuthentication()
+        {
+            Id = dbCustomer.Id,
+            GroupId = dbCustomer.GroupId,
         };
     }
 }

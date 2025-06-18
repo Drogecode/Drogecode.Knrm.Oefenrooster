@@ -301,7 +301,7 @@ public class PreComController : DrogeController
     }
 
     [HttpDelete]
-    [Authorize(Roles = AccessesNames.AUTH_precom_problems)]
+    [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
     [Route("duplicates")]
     public async Task<ActionResult<DeleteResponse>> DeleteDuplicates(CancellationToken clt = default)
     {

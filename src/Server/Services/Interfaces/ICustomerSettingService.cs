@@ -5,7 +5,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 
 public interface ICustomerSettingService
 {
-    Task<Customer> GetByTenantId(string externalCustomerId, CancellationToken clt);
     Task<SettingBoolResponse> GetBoolCustomerSetting(Guid customerId, SettingName setting, bool def, CancellationToken clt);
     Task<SettingIntResponse> GetIntCustomerSetting(Guid customerId, SettingName setting, int def, CancellationToken clt);
     Task<string> GetTimeZone(Guid customerId);

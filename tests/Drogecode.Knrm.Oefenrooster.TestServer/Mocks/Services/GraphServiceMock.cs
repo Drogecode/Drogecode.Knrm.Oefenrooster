@@ -64,7 +64,7 @@ namespace Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services
             return;
         }
 
-        public Task<UserCollectionResponse?> ListUsersAsync()
+        public Task<UserCollectionResponse?> ListUsersAsync(string? groupId)
         {
             throw new NotImplementedException();
         }

@@ -109,6 +109,7 @@ public class UserService : DrogeService, IUserService
             userObj.Name = userName;
             userObj.Email = userEmail;
             userObj.DeletedOn = null;
+            userObj.DeletedBy = null;
             if (userObj.UserFunctionId is null || userObj.UserFunctionId == Guid.Empty)
             {
                 var defaultFunction = await Database.UserFunctions.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.IsDefault, cancellationToken: clt);

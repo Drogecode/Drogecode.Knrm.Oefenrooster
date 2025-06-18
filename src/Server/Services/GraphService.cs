@@ -50,15 +50,15 @@ public class GraphService : IGraphService
         GraphHelper.InitializeGraphForAppOnlyAuth(settings);
     }
 
-    public async Task<UserCollectionResponse?> ListUsersAsync()
+    public async Task<UserCollectionResponse?> ListUsersAsync(string? groupId)
     {
         try
         {
-            var userPage = await GraphHelper.GetUsersAsync();
+            var userPage = await GraphHelper.GetUsersAsync(groupId);
 
             if (userPage?.Value == null)
             {
-                Console.WriteLine("No results returned.");
+                _logger.LogWarning("No results returned ListUsersAsync.");
                 return null;
             }
 
@@ -69,12 +69,12 @@ public class GraphService : IGraphService
             // var nextPage = await nextPageRequest.GetAsync();
             var moreAvailable = !string.IsNullOrEmpty(userPage.OdataNextLink);
 
-            Console.WriteLine($"\nMore users available? {moreAvailable}");
+            _logger.LogTrace("More users available? {moreAvailable}", moreAvailable);
             return userPage;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error getting users: {ex.Message}");
+            _logger.LogError("Error getting users: {exMessage}", ex.Message);
             return null;
         }
     }
@@ -83,12 +83,12 @@ public class GraphService : IGraphService
     {
         try
         {
-            var result = await GraphHelper.TaskGetGroupForUser(userId);
+            var result = await GraphHelper.GetGroupsForUser(userId);
             return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error getting user by ID: {ex.Message}");
+            _logger.LogError("Error getting user by ID: {exMessage}", ex.Message);
             return null;
         }
     }

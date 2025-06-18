@@ -24,10 +24,13 @@ public class UserController : ControllerBase
     private readonly IAuditService _auditService;
     private readonly IGraphService _graphService;
     private readonly IFunctionService _functionService;
+    private readonly ICustomerService _customerService;
     private readonly RefreshHub _refreshHub;
+    
+    private bool _syncUsers = false;
 
     public UserController(ILogger<UserController> logger, IUserService userService, IUserRoleService userRoleService, ILinkUserRoleService linkUserRoleService, IAuditService auditService,
-        IGraphService graphService, IFunctionService functionService, RefreshHub refreshHub)
+        IGraphService graphService, IFunctionService functionService, ICustomerService customerService, RefreshHub refreshHub)
     {
         _logger = logger;
         _userService = userService;
@@ -36,6 +39,7 @@ public class UserController : ControllerBase
         _auditService = auditService;
         _graphService = graphService;
         _functionService = functionService;
+        _customerService = customerService;
         _refreshHub = refreshHub;
     }
 
@@ -243,6 +247,9 @@ public class UserController : ControllerBase
     {
         try
         {
+            if (_syncUsers)
+                return Ok(new SyncAllUsersResponse { Success = false });
+            _syncUsers = true;
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             await _auditService.Log(userId, AuditType.SyncAllUsers, customerId);
@@ -254,14 +261,22 @@ public class UserController : ControllerBase
             _logger.LogError(ex, "Exception in SyncAllUsers");
             return Ok(new SyncAllUsersResponse { Success = false });
         }
+        finally
+        {
+            _syncUsers = false;
+        }
     }
 
     internal async Task<SyncAllUsersResponse> InternalSyncAllUsers(Guid userId, Guid customerId, CancellationToken clt = default)
     {
         _graphService.InitializeGraph();
+        var customer = await _customerService.GetCustomerById(customerId, clt);
         var existingUsers = (await _userService.GetAllUsers(customerId, true, false, clt)).DrogeUsers ?? [];
         var functions = (await _functionService.GetAllFunctions(customerId, clt)).Functions ?? [];
-        var users = await _graphService.ListUsersAsync();
+        
+        // ToDo: Improve ListUsers to only select users who are member from the group
+        var users = await _graphService.ListUsersAsync(customer.Customer?.GroupId);
+        
         if (users?.Value is not null)
         {
             while (true)
@@ -270,9 +285,20 @@ public class UserController : ControllerBase
                 {
                     if (!string.IsNullOrEmpty(user.Id) && !string.IsNullOrEmpty(user.DisplayName))
                     {
+                        var groups = await _graphService.GetGroupForUser(user.Id);
+                        if (customer.Customer?.GroupId is not null)
+                        {
+                            if (groups?.Value is not null && groups.Value.All(x => x.Id != customer.Customer.GroupId))
+                            {
+                                _logger.LogInformation("User {userId} is not in group {CustomerGroupId}", user.Id, customer.Customer.GroupId);
+                                continue;
+                            }
+                        }
                         var newUserResponse = await _userService.GetOrSetUserById(null, user.Id, user.DisplayName, user.Mail ?? "not set", customerId, false, clt);
                         if (newUserResponse is null)
+                        {
                             continue;
+                        }
                         if (!newUserResponse.IsNew)
                         {
                             var index = existingUsers.FindIndex(x => x.Id == newUserResponse.Id);
@@ -281,7 +307,6 @@ public class UserController : ControllerBase
                         }
 
                         newUserResponse.SyncedFromSharePoint = true;
-                        var groups = await _graphService.GetGroupForUser(user.Id);
                         if (groups?.Value is not null && functions.Any(x => groups.Value.Any(y => y.Id == x.RoleId.ToString())))
                         {
                             newUserResponse.RoleFromSharePoint = true;

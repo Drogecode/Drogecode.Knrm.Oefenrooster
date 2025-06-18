@@ -24,7 +24,7 @@ public class AuthenticationController : DrogeController
     private readonly IUserRoleService _userRoleService;
     private readonly IUserService _userService;
     private readonly IUserLinkCustomerService _userLinkCustomerService;
-    private readonly ICustomerSettingService _customerSettingService;
+    private readonly ICustomerService _customerService;
     private readonly IReportActionSharedService _reportActionSharedService;
     private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
@@ -39,7 +39,7 @@ public class AuthenticationController : DrogeController
         IUserRoleService userRoleService,
         IUserService userService,
         IUserLinkCustomerService userLinkCustomerService,
-        ICustomerSettingService customerSettingService,
+        ICustomerService customerService,
         IReportActionSharedService reportActionSharedService,
         IConfiguration configuration,
         HttpClient httpClient,
@@ -49,7 +49,7 @@ public class AuthenticationController : DrogeController
         _userRoleService = userRoleService;
         _userService = userService;
         _userLinkCustomerService = userLinkCustomerService;
-        _customerSettingService = customerSettingService;
+        _customerService = customerService;
         _reportActionSharedService = reportActionSharedService;
         _configuration = configuration;
         _httpClient = httpClient;
@@ -422,7 +422,7 @@ public class AuthenticationController : DrogeController
     {
         var authService = GetAuthenticationService();
         var drogeClaims = authService.GetClaims(subResult);
-        var customerId = await GetCustomerIdByExternalId(drogeClaims.TenantId, clt);
+        var customerId = await GetCustomerIdByExternalId(drogeClaims.TenantId, subResult.JwtSecurityToken.Claims, clt);
         var userId = await GetUserIdByExternalId(drogeClaims.ExternalUserId, drogeClaims.FullName, drogeClaims.Email, customerId, clt);
         var ip = GetRequesterIp();
         var claims = new List<Claim>
@@ -463,16 +463,30 @@ public class AuthenticationController : DrogeController
         claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_global_all));
     }
 
-    private async Task<Guid> GetCustomerIdByExternalId(string tenantId, CancellationToken clt)
+    private async Task<Guid> GetCustomerIdByExternalId(string tenantId, IEnumerable<Claim> claims, CancellationToken clt)
     {
-        var user = await _customerSettingService.GetByTenantId(tenantId, clt);
-        if (user is null)
+        var customers = await _customerService.GetByTenantId(tenantId, clt);
+        if (customers is null || customers.Count == 0)
         {
-            Logger.LogWarning("Failed to get or set user by external id");
+            Logger.LogWarning("Failed to get or set customers by external id");
             throw new UnauthorizedAccessException();
         }
 
-        return user.Id;
+        if (customers.Count == 1)
+        {
+            return customers.First().Id;
+        }
+        
+        foreach (var claim in claims.Where(x => x.Type.Equals("groups")))
+        {
+            if (customers.Any(x => x.GroupId?.Equals( claim.Value) == true))
+            {
+                return customers.First(x => x.GroupId?.Equals(claim.Value) == true).Id;
+            }
+        }
+        
+        Logger.LogWarning("Failed to link user to customer");
+        throw new UnauthorizedAccessException();
     }
 
     private async Task<Guid> GetUserIdByExternalId(string externalUserId, string userName, string userEmail, Guid customerId, CancellationToken clt)
