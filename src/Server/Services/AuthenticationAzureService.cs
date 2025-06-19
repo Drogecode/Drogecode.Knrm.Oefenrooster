@@ -64,6 +64,12 @@ public class AuthenticationAzureService : AuthenticationService, IAuthentication
         return AuditLoginShared(userId, sharedActionId, ipAddress, clientVersion, directLogin , clt);
     }
 
+    public string GetTenantId()
+    {
+        var tenantId = _configuration.GetValue<string>("AzureAd:TenantId") ?? throw new DrogeCodeNullException("no tenant id found for azure login");
+        return tenantId;
+    }
+
     private string InternalGetLoginClientSecret()
     {
         var secret = _configuration.GetValue<string>("AzureAd:LoginClientSecret");

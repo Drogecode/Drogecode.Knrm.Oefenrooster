@@ -88,15 +88,32 @@ public static partial class GraphHelper
         _ = _appClient ??
             throw new System.NullReferenceException("Graph has not been initialized for app-only auth");
 
-        var result = _appClient.Users.GetAsync((config) =>
+        Task<UserCollectionResponse?> result;
+        if (string.IsNullOrEmpty(groupId))
         {
-            // Only request specific properties
-            config.QueryParameters.Select = new[] { "displayName", "id", "mail" };
-            // Get at most 25 results
-            config.QueryParameters.Top = 25;
-            // Sort by display name
-            config.QueryParameters.Orderby = new[] { "displayName" };
-        });
+            result = _appClient.Users.GetAsync((config) =>
+            {
+                // Only request specific properties
+                config.QueryParameters.Select = new[] { "displayName", "id", "mail" };
+                // Get at most 25 results
+                config.QueryParameters.Top = 25;
+                // Sort by display name
+                config.QueryParameters.Orderby = new[] { "displayName" };
+            });
+        }
+        else
+        {
+            result = _appClient.Groups[groupId].Members.GraphUser.GetAsync((config) =>
+            {
+                // Only request specific properties
+                config.QueryParameters.Select = new[] { "displayName", "id", "mail" };
+                // Get at most 25 results
+                config.QueryParameters.Top = 25;
+                // Sort by display name
+                config.QueryParameters.Orderby = new[] { "displayName" };
+            });
+        }
+
         return result;
     }
 
@@ -445,7 +462,8 @@ public static partial class GraphHelper
         listBase.Users!.Add(user);
     }
 
-    public static async Task<Event?> AddToCalendar(string? externalUserId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, FreeBusyStatus showAs, ILogger logger, List<UserLinkedMail> attendees)
+    public static async Task<Event?> AddToCalendar(string? externalUserId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, FreeBusyStatus showAs, ILogger logger,
+        List<UserLinkedMail> attendees)
     {
         try
         {
@@ -465,7 +483,8 @@ public static partial class GraphHelper
         return null;
     }
 
-    public static async Task PatchCalender(string? externalUserId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, FreeBusyStatus showAs, List<UserLinkedMail> attendees)
+    public static async Task PatchCalender(string? externalUserId, string eventId, string description, DateTime dateStart, DateTime dateEnd, bool isAllDay, FreeBusyStatus showAs,
+        List<UserLinkedMail> attendees)
     {
         try
         {

@@ -72,7 +72,7 @@ public class AuthenticationController : DrogeController
         }
     }
 
-    private IAuthenticationService GetAuthenticationService()
+    internal IAuthenticationService GetAuthenticationService()
     {
         if (_authService is not null)
             return _authService;

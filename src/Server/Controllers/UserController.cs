@@ -26,7 +26,7 @@ public class UserController : ControllerBase
     private readonly IFunctionService _functionService;
     private readonly ICustomerService _customerService;
     private readonly RefreshHub _refreshHub;
-    
+
     private bool _syncUsers = false;
 
     public UserController(ILogger<UserController> logger, IUserService userService, IUserRoleService userRoleService, ILinkUserRoleService linkUserRoleService, IAuditService auditService,
@@ -273,10 +273,8 @@ public class UserController : ControllerBase
         var customer = await _customerService.GetCustomerById(customerId, clt);
         var existingUsers = (await _userService.GetAllUsers(customerId, true, false, clt)).DrogeUsers ?? [];
         var functions = (await _functionService.GetAllFunctions(customerId, clt)).Functions ?? [];
-        
-        // ToDo: Improve ListUsers to only select users who are member from the group
         var users = await _graphService.ListUsersAsync(customer.Customer?.GroupId);
-        
+
         if (users?.Value is not null)
         {
             while (true)
@@ -294,11 +292,13 @@ public class UserController : ControllerBase
                                 continue;
                             }
                         }
+
                         var newUserResponse = await _userService.GetOrSetUserById(null, user.Id, user.DisplayName, user.Mail ?? "not set", customerId, false, clt);
                         if (newUserResponse is null)
                         {
                             continue;
                         }
+
                         if (!newUserResponse.IsNew)
                         {
                             var index = existingUsers.FindIndex(x => x.Id == newUserResponse.Id);
@@ -347,8 +347,13 @@ public class UserController : ControllerBase
                 }
 
                 if (users.OdataNextLink is not null)
+                {
                     users = await _graphService.NextUsersPage(users);
-                else break;
+                }
+                else
+                {
+                    break;
+                }
             }
 
             if (existingUsers?.Count > 0)

@@ -108,18 +108,37 @@ public class Worker : BackgroundService
         if (nextSync is not null && nextSync.Value.CompareTo(DateTime.UtcNow) > 0)
             return true;
 
+        // Get all scoped objects
         var userControllerLogger = scope.ServiceProvider.GetRequiredService<ILogger<UserController>>();
+        var authenticationControllerLogger = scope.ServiceProvider.GetRequiredService<ILogger<AuthenticationController>>();
         var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
         var userRoleService = scope.ServiceProvider.GetRequiredService<IUserRoleService>();
+        var userLinkCustomerService = scope.ServiceProvider.GetRequiredService<IUserLinkCustomerService>();
         var linkUserRoleService = scope.ServiceProvider.GetRequiredService<ILinkUserRoleService>();
         var auditService = scope.ServiceProvider.GetRequiredService<IAuditService>();
         var functionService = scope.ServiceProvider.GetRequiredService<IFunctionService>();
         var customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
+        var reportActionSharedService = scope.ServiceProvider.GetRequiredService<IReportActionSharedService>();
+        var httpClient = scope.ServiceProvider.GetRequiredService<HttpClient>();
+        var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
         var refreshHub = scope.ServiceProvider.GetRequiredService<RefreshHub>();
-        var userController = new UserController(userControllerLogger, userService, userRoleService, linkUserRoleService, auditService, graphService, functionService, customerService, refreshHub);
-        await userController.InternalSyncAllUsers(DefaultSettingsHelper.SystemUser, DefaultSettingsHelper.KnrmHuizenId, _clt);
 
-        _clt.ThrowIfCancellationRequested();
+        // Get the controllers
+        var authenticationController = new AuthenticationController(authenticationControllerLogger, _memoryCache, userRoleService, userService, userLinkCustomerService, customerService,
+            reportActionSharedService, _configuration, httpClient, dataContext);
+        var userController = new UserController(userControllerLogger, userService, userRoleService, linkUserRoleService, auditService, graphService, functionService, customerService, refreshHub);
+
+        // Get tenant details
+        var authService = authenticationController.GetAuthenticationService();
+        var customersInTenant = await customerService.GetByTenantId(authService.GetTenantId(), _clt);
+
+        foreach (var customer in customersInTenant)
+        {
+            _clt.ThrowIfCancellationRequested();
+            _logger.LogInformation("Syncing users for customer `{customerId}`", customer.Id);
+            await userController.InternalSyncAllUsers(DefaultSettingsHelper.SystemUser, customer.Id, _clt);
+        }
+        
         _memoryCache.Set(NEXT_USER_SYNC, DateTime.SpecifyKind(DateTime.Today.AddDays(1).AddHours(1), DateTimeKind.Utc));
         return true;
     }
@@ -131,8 +150,8 @@ public class Worker : BackgroundService
         var usersToUpdate = await userLastCalendarUpdateService.GetLastUpdateUsers(clt);
         foreach (var user in usersToUpdate)
         {
-            var availables = await scheduleService.GetTrainingsThatRequireCalendarUpdate(user.UserId, user.CustomerId);
-            foreach (var ava in availables)
+            var availabilities = await scheduleService.GetTrainingsThatRequireCalendarUpdate(user.UserId, user.CustomerId);
+            foreach (var ava in availabilities)
             {
                 // ToDo: Sync with calendar
             }

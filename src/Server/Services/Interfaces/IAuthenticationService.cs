@@ -12,4 +12,5 @@ public interface IAuthenticationService
      DrogeClaims GetClaims(AuthenticateUserResult subResult);
      Task<bool> AuditLogin(Guid? userId, Guid? sharedActionId, string ipAddress, string clientVersion, bool directLogin, CancellationToken clt);
      Task<bool> ValidatePassword(string password, string hashedPassword, CancellationToken clt);
+     string GetTenantId();
 }

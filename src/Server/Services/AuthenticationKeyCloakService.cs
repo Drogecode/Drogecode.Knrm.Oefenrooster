@@ -70,6 +70,12 @@ public class AuthenticationKeyCloakService : AuthenticationService, IAuthenticat
     {
         return AuditLoginShared(userId, sharedActionId, ipAddress, clientVersion, directLogin, clt);
     }
+    
+    public string GetTenantId()
+    {
+        var tenantId = _configuration.GetValue<string>("KeyCloak:TenantId") ?? throw new DrogeCodeConfigurationException("no tenant id found for KeyCloak refresh");
+        return tenantId;
+    }
 
     private string InternalGetLoginClientSecret()
     {
