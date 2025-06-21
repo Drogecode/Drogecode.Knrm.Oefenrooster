@@ -35,13 +35,13 @@ public class Worker : BackgroundService
     {
         _clt = clt;
         _memoryCache.Set(NEXT_USER_SYNC, DateTime.SpecifyKind(DateTime.Today.AddDays(1).AddHours(1), DateTimeKind.Utc)); // do not run on startup
-        int count = 0;
+        var count = 0;
         while (!_clt.IsCancellationRequested && _configuration.GetValue<bool>("Drogecode:RunBackgroundService"))
         {
             try
             {
                 var sleep = 60 * (_errorCount * 3 + 1);
-                for (int i = 0; i < sleep; i++)
+                for (var i = 0; i < sleep; i++)
                 {
                     if (_clt.IsCancellationRequested) return; // run once every second.
 #if DEBUG
@@ -58,7 +58,7 @@ public class Worker : BackgroundService
                 if (count % 15 == 6) // Every 15 runs, but not directly after restart.
                 {
                     var preComSyncJob = new PreComSyncTask(_logger, _dateTimeService);
-                    successfully = await preComSyncJob.SyncPreComAvailability(scope, clt) && successfully;
+                    successfully &= await preComSyncJob.SyncPreComAvailability(scope, clt);
                 }
 
                 count++;
@@ -88,17 +88,17 @@ public class Worker : BackgroundService
     private async Task<bool> SyncSharePoint(IServiceScope scope, IGraphService graphService, CancellationToken clt)
     {
         var result = true;
-        result = await SyncSharePointReports(graphService) && result;
-        result = await SyncSharePointUsers(scope, graphService) && result;
-        result = await SyncCalendarEvents(scope, graphService, clt) && result;
+        result &= await SyncSharePointReports(graphService);
+        result &= await SyncSharePointUsers(scope, graphService);
+        result &= await SyncCalendarEvents(scope, graphService, clt);
         return result;
     }
 
     private async Task<bool> SyncSharePointReports(IGraphService graphService)
     {
         var result = true;
-        result = (await RunBackgroundTask(async () => await graphService.SyncSharePointActions(DefaultSettingsHelper.KnrmHuizenId, _clt), "SyncSharePointActions", _clt) && result);
-        result = (await RunBackgroundTask(async () => await graphService.SyncSharePointTrainings(DefaultSettingsHelper.KnrmHuizenId, _clt), "SyncSharePointTrainings", _clt) && result);
+        result &= (await RunBackgroundTask(async () => await graphService.SyncSharePointActions(DefaultSettingsHelper.KnrmHuizenId, _clt), "SyncSharePointActions", _clt));
+        result &= (await RunBackgroundTask(async () => await graphService.SyncSharePointTrainings(DefaultSettingsHelper.KnrmHuizenId, _clt), "SyncSharePointTrainings", _clt));
         return result;
     }
 
