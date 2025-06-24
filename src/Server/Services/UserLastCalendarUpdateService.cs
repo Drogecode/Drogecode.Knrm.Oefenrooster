@@ -48,12 +48,12 @@ public class UserLastCalendarUpdateService : IUserLastCalendarUpdateService
         }
     }
 
-    public async Task<List<DbUserLastCalendarUpdate>> GetLastUpdateUsers(CancellationToken clt)
+    public async Task<List<DbUserLastCalendarUpdate>> GetLastUpdateUsers(int minutesInThePast, int maxMinutesInThePast, CancellationToken clt)
     {
         try
         {
-            var dateNotBefore = _dateTimeService.UtcNow().AddMinutes(-15);
-            var dateNotAfter = _dateTimeService.UtcNow().AddHours(-1);
+            var dateNotBefore = _dateTimeService.UtcNow().AddMinutes(-minutesInThePast);
+            var dateNotAfter = _dateTimeService.UtcNow().AddMinutes(-maxMinutesInThePast);
             var users = await _database.UserLastCalendarUpdates
                 .Where(x => x.LastUpdate <= dateNotBefore && x.LastUpdate >= dateNotAfter)
                 .AsNoTracking()

@@ -1099,7 +1099,8 @@ public class ScheduleService : DrogeService, IScheduleService
         var ava = await Database.RoosterAvailables.Where(x =>
                 x.CustomerId == customerId && x.UserId == userId && x.Training.DeletedOn == null && x.LastUpdateOn != null &&
                 x.LastUpdateOn > compareDate && x.LastUpdateBy == userId &&
-                (x.LastSyncOn == null || x.LastUpdateOn < x.LastSyncOn))
+                (x.LastSyncOn == null || x.LastUpdateOn > x.LastSyncOn))
+            .Include(x=>x.Training)
             .AsNoTracking()
             .ToListAsync();
         return ava;

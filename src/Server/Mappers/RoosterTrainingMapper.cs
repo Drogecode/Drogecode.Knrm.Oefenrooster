@@ -53,7 +53,7 @@ public static class RoosterTrainingMapper
             TrainingTypeName = roosterTraining.RoosterTrainingType?.Name,
             HasDescription = !string.IsNullOrWhiteSpace(roosterTraining.Description),
         };
-        if (roosterTraining?.RoosterAvailables is not null)
+        if (roosterTraining.RoosterAvailables is not null)
         {
             foreach (var ava in roosterTraining.RoosterAvailables)
             {

@@ -30,7 +30,7 @@ public class UserLastCalendarUpdateServiceTests : BaseTest
             Tester.DateTimeServiceMock.SetMockDateTime(dummyDateTime);
             await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(Tester.DefaultCustomerId, Tester.DefaultUserId, CancellationToken.None);
             Tester.DateTimeServiceMock.SetMockDateTime(dummyDateTime.AddMinutes(1));
-            var result = await _userLastCalendarUpdateService.GetLastUpdateUsers(CancellationToken.None);
+            var result = await _userLastCalendarUpdateService.GetLastUpdateUsers(15, 60, CancellationToken.None);
             result.Should().NotBeNull();
             result.Should().BeEmpty();
         }
@@ -49,7 +49,7 @@ public class UserLastCalendarUpdateServiceTests : BaseTest
             Tester.DateTimeServiceMock.SetMockDateTime(dummyDateTime);
             await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(Tester.DefaultCustomerId, Tester.DefaultUserId, CancellationToken.None);
             Tester.DateTimeServiceMock.SetMockDateTime(dummyDateTime.AddMinutes(30));
-            var result = await _userLastCalendarUpdateService.GetLastUpdateUsers(CancellationToken.None);
+            var result = await _userLastCalendarUpdateService.GetLastUpdateUsers(15, 60, CancellationToken.None);
             result.Should().NotBeNull();
             result.Should().NotBeEmpty();
         }
@@ -68,7 +68,7 @@ public class UserLastCalendarUpdateServiceTests : BaseTest
             Tester.DateTimeServiceMock.SetMockDateTime(dummyDateTime);
             await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(Tester.DefaultCustomerId, Tester.DefaultUserId, CancellationToken.None);
             Tester.DateTimeServiceMock.SetMockDateTime(dummyDateTime.AddHours(2));
-            var result = await _userLastCalendarUpdateService.GetLastUpdateUsers(CancellationToken.None);
+            var result = await _userLastCalendarUpdateService.GetLastUpdateUsers(15, 60, CancellationToken.None);
             result.Should().NotBeNull();
             result.Should().BeEmpty();
         }

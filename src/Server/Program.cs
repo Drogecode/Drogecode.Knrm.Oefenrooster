@@ -18,6 +18,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.RateLimiting;
+using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Repositories;
 using Drogecode.Knrm.Oefenrooster.Server.Repositories.Interfaces;
 using Microsoft.AspNetCore.RateLimiting;
@@ -164,6 +165,8 @@ builder.Services.AddScoped<IUserSettingService, UserSettingService>();
 builder.Services.AddScoped<IUserPreComEventService, UserPreComEventService>();
 builder.Services.AddScoped<ICustomerSettingService, CustomerSettingService>();
 builder.Services.AddScoped<IUserLinkCustomerService, UserLinkCustomerService>();
+
+builder.Services.AddScoped<ScheduleController>();
 
 builder.Services.AddHostedService<Worker>();
 

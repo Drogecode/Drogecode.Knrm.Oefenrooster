@@ -35,4 +35,8 @@ public enum SettingName
     /// Type: bool
     /// </summary>
     SyncPreComWithExternal = 8,
+    /// <summary>
+    /// Type: bool
+    /// </summary>
+    DelaySyncingTrainingToOutlook = 9
 }

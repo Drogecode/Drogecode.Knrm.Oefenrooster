@@ -9,7 +9,7 @@ using NSubstitute;
 
 namespace Drogecode.Knrm.Oefenrooster.TestPreCom.Tests;
 
-public class FutureProblemsTests
+public class FutureProblemsTests : IDisposable
 {
     private readonly ILogger _logger;
     private readonly IDateTimeServiceMock _dateTimeServiceMock;
@@ -55,7 +55,6 @@ public class FutureProblemsTests
     {
         var mockClient = Substitute.For<IPreComClient>();
         mockClient.GetAllUserGroups().Returns([new Group { GroupID = 1201 }]);
-
 
         mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today()).Returns(GetGroup(_dateTimeServiceMock.Today()));
         mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(1)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(1)));
@@ -229,5 +228,10 @@ public class FutureProblemsTests
                 },
             ]
         };
+    }
+
+    public void Dispose()
+    {
+        _dateTimeServiceMock.SetMockDateTime(null);
     }
 }

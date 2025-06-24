@@ -32,6 +32,7 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
             // Check future availability
             itemsSynced += await LoopSyncPreComAvailability(userIdsWithNull, date.AddDays(i), false, preComWorker, userService, customerSettingService, userPreComEventService, userSettingService,
                 clt);
+            await Task.Delay(100, clt); // 0.1 s Do not spam PreCom api
         }
 
         userIdsWithNull = await userSettingService.GetAllPreComIdAndValue(DefaultSettingsHelper.KnrmHuizenId, SettingName.SyncPreComDeleteOld, clt);

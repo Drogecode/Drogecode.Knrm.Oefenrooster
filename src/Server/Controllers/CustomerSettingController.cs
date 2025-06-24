@@ -75,6 +75,7 @@ public class CustomerSettingController : DrogeController
                 case SettingName.TrainingToCalendar:
                 case SettingName.SyncPreComWithCalendar:
                 case SettingName.SyncPreComDeleteOld:
+                case SettingName.DelaySyncingTrainingToOutlook:
                     result = await _customerSettingService.GetBoolCustomerSetting(customerId, name, false, clt);
                     break;
                 default:
@@ -163,6 +164,7 @@ public class CustomerSettingController : DrogeController
             return BadRequest();
         }
     }
+
     [HttpPatch]
     [Route("int")]
     [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]

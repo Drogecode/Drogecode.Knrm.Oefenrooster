@@ -32,6 +32,7 @@ public class ScheduleController : ControllerBase
     private readonly IGraphService _graphService;
     private readonly ITrainingTypesService _trainingTypesService;
     private readonly IUserSettingService _userSettingService;
+    private readonly ICustomerSettingService _customerSettingService;
     private readonly IDateTimeService _dateTimeService;
     private readonly IUserService _userService;
     private readonly IVehicleService _vehicleService;
@@ -47,6 +48,7 @@ public class ScheduleController : ControllerBase
         IGraphService graphService,
         ITrainingTypesService trainingTypesService,
         IUserSettingService userSettingService,
+        ICustomerSettingService customerSettingService,
         IDateTimeService dateTimeService,
         IUserService userService,
         IVehicleService vehicleService,
@@ -61,6 +63,7 @@ public class ScheduleController : ControllerBase
         _graphService = graphService;
         _trainingTypesService = trainingTypesService;
         _userSettingService = userSettingService;
+        _customerSettingService = customerSettingService;
         _dateTimeService = dateTimeService;
         _userService = userService;
         _vehicleService = vehicleService;
@@ -349,7 +352,7 @@ public class ScheduleController : ControllerBase
                 if (result.Success == false)
                     response.Success = false;
                 response.ElapsedMilliseconds += result.ElapsedMilliseconds;
-                
+
                 if (result is { Success: true, PatchedTraining.Assigned: true })
                 {
                     await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
@@ -434,8 +437,9 @@ public class ScheduleController : ControllerBase
                     function = await _functionService.GetById(customerId, body.User.PlannedFunctionId.Value, clt);
                 var user = await _userService.GetUserById(customerId, body.User.UserId, false, clt);
                 if (user is null) throw new DrogeCodeNullException("No user found");
+                await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(customerId, userId, clt);
                 await ToOutlookCalendar(body.User.UserId, user.ExternalId, body.TrainingId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId,
-                    function?.Name, clt);
+                    function?.Name, false, clt);
                 await _refreshHub.SendMessage(body.User.UserId, ItemUpdated.FutureTrainings);
             }
 
@@ -482,8 +486,9 @@ public class ScheduleController : ControllerBase
                 DrogeFunction? function = null;
                 if (body.Training?.PlannedFunctionId is not null && user.UserFunctionId is not null && user.UserFunctionId != body.Training.PlannedFunctionId)
                     function = await _functionService.GetById(customerId, body.Training.PlannedFunctionId.Value, clt);
+                await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(customerId, userId, clt);
                 await ToOutlookCalendar(body.UserId.Value, user.ExternalId, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId,
-                    function?.Name, clt);
+                    function?.Name, false, clt);
                 await _refreshHub.SendMessage(body.UserId.Value, ItemUpdated.FutureTrainings);
             }
 
@@ -650,16 +655,20 @@ public class ScheduleController : ControllerBase
         }
     }
 
-    private async Task ToOutlookCalendar(Guid planUserId, string? externalUserId, Guid? trainingId, bool assigned, TrainingAdvance? training, Guid currentUserId, Guid customerId, Guid? availableId,
-        string? calendarEventId, string? functionName, CancellationToken clt)
+    internal async Task ToOutlookCalendar(Guid planUserId, string? externalUserId, Guid? trainingId, bool assigned, TrainingAdvance? training, Guid currentUserId, Guid customerId, Guid? availableId,
+        string? calendarEventId, string? functionName, bool fromBackgroundWorker, CancellationToken clt)
     {
         try
         {
-            await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(customerId, currentUserId, clt);
+            var delay = await _customerSettingService.GetBoolCustomerSetting(customerId, SettingName.DelaySyncingTrainingToOutlook, false, clt);
+            if (delay.Value && !fromBackgroundWorker)
+            {
+                return;
+            }
             if (assigned && (await _userSettingService.GetBoolUserSetting(customerId, planUserId, SettingName.TrainingToCalendar, false, clt)).Value)
             {
 #if DEBUG
-                // Be carefully when debugging.
+                // Be careful when debugging.
                 Debugger.Break();
 #endif
                 if (training is null && trainingId is not null)

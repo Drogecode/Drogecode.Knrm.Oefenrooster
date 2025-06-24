@@ -40,6 +40,7 @@ public sealed partial class GlobalConfiguration : IDisposable
     private bool? _usersSynced;
     private bool? _specialDatesUpdated;
     private bool? _settingTrainingToCalendar;
+    private bool? _delaySyncingTrainingToOutlook;
     private bool _clickedSyncHistorical;
     private bool _clickedDeDuplicatePreCom;
     private bool _clickedSyncUsers;
@@ -62,6 +63,7 @@ public sealed partial class GlobalConfiguration : IDisposable
         if (firstRender)
         {
             _settingTrainingToCalendar = (await CustomerSettingsClient.GetBoolSettingAsync(SettingName.TrainingToCalendar, _cls.Token)).Value;
+            _delaySyncingTrainingToOutlook = (await CustomerSettingsClient.GetBoolSettingAsync(SettingName.DelaySyncingTrainingToOutlook, _cls.Token)).Value;
             _settingCalenderPrefix = (await CustomerSettingsClient.GetStringSettingAsync(SettingName.CalendarPrefix, _cls.Token)).Value;
             _preComAvailableText = (await CustomerSettingsClient.GetStringSettingAsync(SettingName.PreComAvailableText, _cls.Token)).Value;
             _preComDaysInFuture = (await CustomerSettingsClient.GetIntSettingAsync(SettingName.PreComDaysInFuture, _cls.Token)).Value;
@@ -150,6 +152,12 @@ public sealed partial class GlobalConfiguration : IDisposable
     {
         _settingTrainingToCalendar = isChecked;
         var body = new PatchSettingBoolRequest(SettingName.TrainingToCalendar, isChecked);
+        await CustomerSettingsClient.PatchBoolSettingAsync(body, _cls.Token);
+    }
+    private async Task PatchDelaySyncingTrainingToOutlook(bool isChecked)
+    {
+        _delaySyncingTrainingToOutlook = isChecked;
+        var body = new PatchSettingBoolRequest(SettingName.DelaySyncingTrainingToOutlook, isChecked);
         await CustomerSettingsClient.PatchBoolSettingAsync(body, _cls.Token);
     }
 

@@ -2,8 +2,10 @@ using Drogecode.Knrm.Oefenrooster.PreCom;
 using Drogecode.Knrm.Oefenrooster.Server.Background.Jobs;
 using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Models.UserPreCom;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
@@ -138,7 +140,7 @@ public class Worker : BackgroundService
             _logger.LogInformation("Syncing users for customer `{customerId}`", customer.Id);
             await userController.InternalSyncAllUsers(DefaultSettingsHelper.SystemUser, customer.Id, _clt);
         }
-        
+
         _memoryCache.Set(NEXT_USER_SYNC, DateTime.SpecifyKind(DateTime.Today.AddDays(1).AddHours(1), DateTimeKind.Utc));
         return true;
     }
@@ -147,13 +149,30 @@ public class Worker : BackgroundService
     {
         var userLastCalendarUpdateService = scope.ServiceProvider.GetRequiredService<IUserLastCalendarUpdateService>();
         var scheduleService = scope.ServiceProvider.GetRequiredService<IScheduleService>();
-        var usersToUpdate = await userLastCalendarUpdateService.GetLastUpdateUsers(clt);
+        var scheduleController = scope.ServiceProvider.GetRequiredService<ScheduleController>();
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+        var functionService = scope.ServiceProvider.GetRequiredService<IFunctionService>();
+        var usersToUpdate = await userLastCalendarUpdateService.GetLastUpdateUsers(1, 60, clt);
         foreach (var user in usersToUpdate)
         {
             var availabilities = await scheduleService.GetTrainingsThatRequireCalendarUpdate(user.UserId, user.CustomerId);
             foreach (var ava in availabilities)
             {
-                // ToDo: Sync with calendar
+                var thisUser = await userService.GetUserById(ava.CustomerId, ava.UserId, true, clt);
+                if (thisUser is null)
+                {
+                    _logger.LogWarning("User `{userId}` in customer `{customer}` not found", ava.UserId, ava.CustomerId);
+                    continue;
+                }
+                
+                DrogeFunction? function = null;
+                if (ava.UserFunctionId is not null && thisUser.UserFunctionId is not null && thisUser.UserFunctionId != ava.UserFunctionId)
+                {
+                    function = await functionService.GetById(ava.CustomerId, ava.UserFunctionId.Value, clt);
+                }
+                await scheduleController.ToOutlookCalendar(ava.UserId, thisUser.ExternalId, ava.TrainingId, ava.Assigned, ava.Training.ToPlannedTraining(), user.UserId, ava.CustomerId,
+                    ava.Id, ava.CalendarEventId, function?.Name, true, clt);
+                await Task.Delay(100, clt); // 0.1 s Do not spam outlook
             }
         }
 
