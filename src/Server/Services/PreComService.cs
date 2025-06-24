@@ -129,7 +129,7 @@ public class PreComService : DrogeService, IPreComService
             Ip = ip,
         });
         await Database.SaveChangesAsync();
-        MemoryCache.Set(cacheKey, true, TimeSpan.FromMinutes(1));
+        MemoryCache.Set(cacheKey, true, TimeSpan.FromMinutes(5));
         return true;
     }
 

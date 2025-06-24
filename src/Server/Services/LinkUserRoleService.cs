@@ -25,7 +25,9 @@ public class LinkUserRoleService : ILinkUserRoleService
     {
         var sw = Stopwatch.StartNew();
         var result = new GetLinkedUsersByIdResponse();
-        var query = _database.LinkUserRoles.Where(x => x.RoleId == roleId && x.IsSet).Select(x => x.UserId);
+        var query = _database.LinkUserRoles
+            .Where(x => x.RoleId == roleId && x.IsSet)
+            .Select(x => x.UserId);
         result.LinkedUsers = await query.ToListAsync(clt);
         result.TotalCount = await query.CountAsync(clt);
         result.Success = true;

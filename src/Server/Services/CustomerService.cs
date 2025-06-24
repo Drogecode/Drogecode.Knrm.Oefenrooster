@@ -25,6 +25,8 @@ public class CustomerService : DrogeService, ICustomerService
             .Skip(skip)
             .Take(take)
             .Select(x => x.ToCustomer())
+            .OrderBy(x=>x.Name)
+            .ThenBy(x=>x.Id)
             .ToListAsync(clt);
         result.Customers = links;
         result.TotalCount = links.Count;
