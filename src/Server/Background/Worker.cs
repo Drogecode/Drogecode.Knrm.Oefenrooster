@@ -1,12 +1,9 @@
-using Drogecode.Knrm.Oefenrooster.PreCom;
 using Drogecode.Knrm.Oefenrooster.Server.Background.Jobs;
 using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
-using Drogecode.Knrm.Oefenrooster.Server.Models.UserPreCom;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -152,7 +149,7 @@ public class Worker : BackgroundService
         var scheduleController = scope.ServiceProvider.GetRequiredService<ScheduleController>();
         var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
         var functionService = scope.ServiceProvider.GetRequiredService<IFunctionService>();
-        var usersToUpdate = await userLastCalendarUpdateService.GetLastUpdateUsers(1, 60, clt);
+        var usersToUpdate = await userLastCalendarUpdateService.GetLastUpdateUsers(10, 60, clt);
         foreach (var user in usersToUpdate)
         {
             var availabilities = await scheduleService.GetTrainingsThatRequireCalendarUpdate(user.UserId, user.CustomerId);
