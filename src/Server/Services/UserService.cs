@@ -25,7 +25,6 @@ public class UserService : DrogeService, IUserService
             .ThenInclude(x => x.UserB)
             .Include(x => x.UserOnVersions!.Where(y => includeLastLogin && y.LastSeenOnThisVersion.CompareTo(DateTime.UtcNow.AddYears(-1)) >= 0))
             .OrderBy(x => x.Name)
-            .AsSplitQuery()
             .AsNoTracking()
             .ToListAsync(clt);
         foreach (var dbUser in dbUsers)
@@ -46,7 +45,6 @@ public class UserService : DrogeService, IUserService
             .Include(x => x.LinkedUserAsB!.Where(y => y.DeletedOn == null))
             .Where(u => u.CustomerId == customerId && u.Id == userId && u.DeletedOn == null)
             .Select(x => x.ToSharedUser(includePersonal, false))
-            .AsSplitQuery()
             .AsNoTracking()
             .FirstOrDefaultAsync(clt);
         return user;
