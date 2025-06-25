@@ -111,8 +111,6 @@ public sealed partial class GlobalConfiguration : IDisposable
                 switch (type.ConfigurationUpdated)
                 {
                     case ConfigurationUpdated.UsersOnlineChanged:
-                        if (type.ByUserId.Equals(_userId))
-                            break;
                         if (_lastSyncDateTime.CompareTo(DateTime.UtcNow.AddSeconds(-50)) < 1)
                         {
                             _lastSyncDateTime = DateTime.UtcNow;

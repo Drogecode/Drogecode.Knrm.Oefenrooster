@@ -144,12 +144,16 @@ public class Worker : BackgroundService
 
     private async Task<bool> SyncCalendarEvents(IServiceScope scope, IGraphService graphService, CancellationToken clt)
     {
+        var minutesInThePast = 10;
+#if DEBUG
+        minutesInThePast = 1;
+#endif
         var userLastCalendarUpdateService = scope.ServiceProvider.GetRequiredService<IUserLastCalendarUpdateService>();
         var scheduleService = scope.ServiceProvider.GetRequiredService<IScheduleService>();
         var scheduleController = scope.ServiceProvider.GetRequiredService<ScheduleController>();
         var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
         var functionService = scope.ServiceProvider.GetRequiredService<IFunctionService>();
-        var usersToUpdate = await userLastCalendarUpdateService.GetLastUpdateUsers(10, 60, clt);
+        var usersToUpdate = await userLastCalendarUpdateService.GetLastUpdateUsers(minutesInThePast, 60, clt);
         foreach (var user in usersToUpdate)
         {
             var availabilities = await scheduleService.GetTrainingsThatRequireCalendarUpdate(user.UserId, user.CustomerId);
@@ -161,12 +165,13 @@ public class Worker : BackgroundService
                     _logger.LogWarning("User `{userId}` in customer `{customer}` not found", ava.UserId, ava.CustomerId);
                     continue;
                 }
-                
+
                 DrogeFunction? function = null;
                 if (ava.UserFunctionId is not null && thisUser.UserFunctionId is not null && thisUser.UserFunctionId != ava.UserFunctionId)
                 {
                     function = await functionService.GetById(ava.CustomerId, ava.UserFunctionId.Value, clt);
                 }
+
                 await scheduleController.ToOutlookCalendar(ava.UserId, thisUser.ExternalId, ava.TrainingId, ava.Assigned, ava.Training.ToPlannedTraining(), user.UserId, ava.CustomerId,
                     ava.Id, ava.CalendarEventId, function?.Name, true, clt);
                 await Task.Delay(100, clt); // 0.1 s Do not spam outlook

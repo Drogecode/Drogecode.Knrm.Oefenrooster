@@ -59,7 +59,7 @@ public static class RoosterTrainingMapper
             {
                 training.PlanUsers.Add(new PlanUser
                 {
-                    Id = ava.Id,
+                    AvailableId = ava.Id,
                     UserId = ava.UserId,
                     UserFunctionId = ava.User?.UserFunctionId,
                     PlannedFunctionId = ava.UserFunctionId ?? ava.User?.UserFunctionId,

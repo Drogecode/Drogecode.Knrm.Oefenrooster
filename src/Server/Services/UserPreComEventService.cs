@@ -59,7 +59,7 @@ public class UserPreComEventService(
         List<UserLinkedMail> attendees = [];
         if (syncWithExternal)
         {
-            attendees = (await _userLinkedMailsService.AllUserLinkedMail(30, 0, drogeUser.Id, drogeUser.CustomerId, clt)).UserLinkedMails ?? [];
+            attendees = (await _userLinkedMailsService.AllUserLinkedMail(30, 0, drogeUser.Id, drogeUser.CustomerId, true, clt)).UserLinkedMails ?? [];
         }
         
         var newEvent = await _graphService.AddToCalendar(drogeUser.ExternalId, text, start, end, period.IsFullDay, FreeBusyStatus.Free, attendees);

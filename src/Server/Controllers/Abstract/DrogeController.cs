@@ -8,9 +8,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
 [Controller]
 public abstract class DrogeController : ControllerBase
 {
-    internal readonly ILogger Logger;
+    internal readonly ILogger<DrogeController> Logger;
 
-    protected DrogeController(ILogger logger)
+    protected DrogeController(ILogger<DrogeController> logger)
     {
         Logger = logger;
     }

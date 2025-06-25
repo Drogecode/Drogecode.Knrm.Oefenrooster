@@ -8,5 +8,5 @@ public interface IUserLinkedMailsService
     Task<ValidateUserLinkedActivateKeyResponse> ValidateUserLinkedActivateKey(ValidateUserLinkedActivateKeyRequest body, Guid customerId, Guid userId, CancellationToken clt);
     Task<IsEnabledChangedResponse> IsEnabledChanged(IsEnabledChangedRequest body, Guid customerId, Guid userId, CancellationToken clt);
     Task<PatchUserLinkedMailResponse> PatchUserLinkedMail(UserLinkedMail userLinkedMail, Guid customerId, Guid userId, CancellationToken clt);
-    Task<AllUserLinkedMailResponse> AllUserLinkedMail(int take, int skip, Guid userId, Guid customerId, CancellationToken clt);
+    Task<AllUserLinkedMailResponse> AllUserLinkedMail(int take, int skip, Guid userId, Guid customerId, bool cache, CancellationToken clt);
 }

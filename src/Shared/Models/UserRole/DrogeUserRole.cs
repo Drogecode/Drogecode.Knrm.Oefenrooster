@@ -30,6 +30,7 @@ public class DrogeUserRole
     // Group: GROUP_SCHEDULER
     public bool AUTH_scheduler { get; set; }
     public bool AUTH_scheduler_delete { get; set; }
+    public bool AUTH_scheduler_delay_sync { get; set; }
     public bool AUTH_scheduler_in_table_view { get; set; }
     public bool AUTH_scheduler_history { get; set; }
     public bool AUTH_scheduler_edit_past { get; set; }

@@ -24,6 +24,7 @@ public sealed partial class Settings : IDisposable
     private RefreshModel _refreshModel = new();
     private readonly CancellationTokenSource _cls = new();
     private bool? _settingTrainingToCalendar;
+    private bool? _delaySyncingTrainingToOutlook;
     private bool? _settingPreComSyncCalendar;
     private bool? _settingSyncPreComDeleteOld;
     private bool? _syncPreComWithExternal;
@@ -32,6 +33,7 @@ public sealed partial class Settings : IDisposable
     protected override async Task OnParametersSetAsync()
     {
         _settingTrainingToCalendar = (await UserSettingsClient.GetBoolSettingAsync(SettingName.TrainingToCalendar)).Value;
+        _delaySyncingTrainingToOutlook = (await UserSettingsClient.GetBoolSettingAsync(SettingName.DelaySyncingTrainingToOutlook)).Value;
         _settingPreComSyncCalendar = (await UserSettingsClient.GetBoolSettingAsync(SettingName.SyncPreComWithCalendar)).Value;
         _settingSyncPreComDeleteOld = (await UserSettingsClient.GetBoolSettingAsync(SettingName.SyncPreComDeleteOld)).Value;
         _syncPreComWithExternal = (await UserSettingsClient.GetBoolSettingAsync(SettingName.SyncPreComWithExternal)).Value;
@@ -59,6 +61,9 @@ public sealed partial class Settings : IDisposable
         {
             case SettingName.TrainingToCalendar:
                 _settingTrainingToCalendar = isChecked;
+                break;
+            case SettingName.DelaySyncingTrainingToOutlook:
+                _delaySyncingTrainingToOutlook = isChecked;
                 break;
             case SettingName.SyncPreComWithCalendar:
                 _settingPreComSyncCalendar = isChecked;

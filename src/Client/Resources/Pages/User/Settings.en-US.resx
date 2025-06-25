@@ -20,8 +20,8 @@
     <data name="Server version:" xml:space="preserve">
         <value>Server version:</value>
     </data>
-    <data name="Setting training to calendar" xml:space="preserve">
-        <value>Setting training to calendar</value>
+    <data name="Sync training to outlook calendar" xml:space="preserve">
+        <value>Sync training to outlook calendar</value>
     </data>
     <data name="Mails to invite to your trainings" xml:space="preserve">
         <value>Mails to invite to your trainings</value>
@@ -58,5 +58,14 @@
     </data>
     <data name="Sync PreCom with external calendars, configured below" xml:space="preserve">
         <value>Sync PreCom with external calenders, configured below</value>
+    </data>
+    <data name="PreCom" xml:space="preserve">
+        <value>PreCom</value>
+    </data>
+    <data name="Calendar" xml:space="preserve">
+        <value>Calendar</value>
+    </data>
+    <data name="Delay syncing to users with external calendar" xml:space="preserve">
+        <value>Delay syncing to users with external calendar</value>
     </data>
 </root>

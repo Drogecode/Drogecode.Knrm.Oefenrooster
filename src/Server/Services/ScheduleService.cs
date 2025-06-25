@@ -246,16 +246,33 @@ public class ScheduleService : DrogeService, IScheduleService
     }
 
     /// <inheritdoc />
-    public async Task PatchLastSynced(Guid customerId, PlanUser avaUser)
+    public async Task PatchLastSynced(Guid customerId, Guid userId, Guid availableId, CancellationToken clt)
     {
-        var oldAva = await Database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == avaUser.UserId && x.Id == avaUser.Id);
+        var oldAva = await Database.RoosterAvailables
+            .FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Id == availableId, clt);
         if (oldAva == null)
         {
-            Logger.LogWarning("No rooster available found `{customerId}` for user `{userId}` with id `{id}`", customerId, avaUser.UserId, avaUser.Id);
+            Logger.LogWarning("No rooster available found `{customerId}` for user `{userId}` with availableId `{availableId}`", customerId, userId, availableId);
             return;
         }
 
         oldAva.LastSyncOn = DateTimeService.UtcNow();
+        Database.RoosterAvailables.Update(oldAva);
+    }
+    
+    /// <inheritdoc />
+    public async Task PatchAvailableLastChanged(Guid customerId, Guid currentUserId, PlanUser user, CancellationToken clt)
+    {
+        var oldAva = await Database.RoosterAvailables
+            .FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == user.UserId && x.Id == user.AvailableId, clt);
+        if (oldAva == null)
+        {
+            Logger.LogWarning("No rooster available found `{customerId}` for user `{userId}` with availableId `{availableId}`", customerId, user.UserId, user.AvailableId);
+            return;
+        }
+        
+        oldAva.LastUpdateOn = DateTimeService.UtcNow();
+        oldAva.LastUpdateBy = currentUserId;
         Database.RoosterAvailables.Update(oldAva);
     }
 
@@ -1108,7 +1125,7 @@ public class ScheduleService : DrogeService, IScheduleService
 
     public async Task<bool> PatchEventIdForUserAvailible(Guid userId, Guid customerId, Guid? availableId, string? calendarEventId, CancellationToken clt)
     {
-        var ava = await Database.RoosterAvailables.FindAsync(availableId, clt);
+        var ava = await Database.RoosterAvailables.FindAsync(availableId);
         if (ava is null || ava.CustomerId != customerId)
         {
             return false;

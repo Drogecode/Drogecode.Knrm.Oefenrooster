@@ -7,14 +7,23 @@
 
 <MudPaper Class="pa-4" MaxWidth="800px">
     <CultureSelector/>
-    <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
-        @if (_settingTrainingToCalendar is not null)
+    <AuthorizeView Roles="@(AccessesNames.AUTH_scheduler_delay_sync + "," + AccessesNames.AUTH_super_user)">
+        <MudText Typo="Typo.h5">@L["Calendar"]</MudText>
+        @if (_delaySyncingTrainingToOutlook is not null)
         {
-            <MudSwitch Label="@L["Setting training to calendar"]" Color="Color.Primary" T="bool" Value="@_settingTrainingToCalendar.Value"
-                       ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.TrainingToCalendar))"/>
+            <MudSwitch Label="@L["Delay syncing to users with external calendar"]" Color="Color.Primary" T="bool" Value="@_delaySyncingTrainingToOutlook.Value"
+                       ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.DelaySyncingTrainingToOutlook))"/>
         }
+        <AuthorizeView Roles="@AccessesNames.AUTH_super_user" Context="inner"> 
+            @if (_settingTrainingToCalendar is not null)
+            {
+                <MudSwitch Label="@L["Sync training to outlook calendar"]" Color="Color.Primary" T="bool" Value="@_settingTrainingToCalendar.Value"
+                           ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.TrainingToCalendar))"/>
+            }
+        </AuthorizeView>
     </AuthorizeView>
     <AuthorizeView Roles="@AccessesNames.AUTH_precom_sync_calendar">
+        <MudText Typo="Typo.h5">@L["PreCom"]</MudText>
         @if (_settingPreComSyncCalendar is not null)
         {
             <MudSwitch Label="@L["Sync PreCom with outlook calendar"]" Color="Color.Primary" T="bool" Value="@_settingPreComSyncCalendar.Value"

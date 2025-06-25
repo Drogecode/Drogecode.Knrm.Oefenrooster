@@ -1,11 +1,12 @@
 ﻿// ReSharper disable InconsistentNaming
+
 namespace Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
 // When adding a new role, the role should be added to the model, mapper and the UI
 // After editing this file, run "Drogecode.Knrm.Oefenrooster.CodeGenerator" to update related files.
 public struct AccessesNames
 {
-    // Can not be set by configuration
+    // Cannot be set by configuration
     public const string GROUP_NO_READ = "ignore";
     public const string AUTH_super_user = "isSuperGlobalAdmin";
     public const string AUTH_Hide = "do_not_show";
@@ -15,8 +16,8 @@ public struct AccessesNames
     public const string GROUP_GLOBAL = "global";
     public const string AUTH_basic_access = "basic_access";
     public const string AUTH_show_c_footer = "showCfooter";
-    
-    public const string GROUP_CONFIGURATION= "Configuration";
+
+    public const string GROUP_CONFIGURATION = "Configuration";
     public const string AUTH_configure_global_all = "configure_global_all";
     public const string AUTH_configure_training_types = "configure_training-types";
     public const string AUTH_configure_user_roles = "configure_user_roles";
@@ -26,7 +27,8 @@ public struct AccessesNames
 
     public const string GROUP_SCHEDULER = "Scheduler";
     public const string AUTH_scheduler = "scheduler";
-    public const string AUTH_scheduler_delete = "scheduler_del";
+    public const string AUTH_scheduler_delete = "scheduler_delete";
+    public const string AUTH_scheduler_delay_sync = "scheduler_delay_sync";
     public const string AUTH_scheduler_in_table_view = "scheduler_table";
     public const string AUTH_scheduler_history = "scheduler_history";
     public const string AUTH_scheduler_edit_past = "scheduler_past"; // more than 3 days ago.
@@ -51,10 +53,10 @@ public struct AccessesNames
     public const string AUTH_dashboard_Statistics = "full_dashboard_statistics";
     public const string AUTH_dashboard_Statistics_user_tabel = "full_dashboard_statistics_ut";
     public const string AUTH_dashboard_holidays = "dashboard_hol";
-    
+
     public const string GROUP_MAIL = "Mail";
     public const string AUTH_mail_invite_external = "mail_invite_external";
-    
+
     public const string GROUP_PRECOM = "PreCom";
     public const string AUTH_precom_problems = "precom_problems";
     public const string AUTH_precom_manual = "precom_manual";

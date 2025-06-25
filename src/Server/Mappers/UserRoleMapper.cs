@@ -59,6 +59,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_scheduler_delete:
                         drogeUserRole.AUTH_scheduler_delete = true;
                         break;
+                    case AccessesNames.AUTH_scheduler_delay_sync:
+                        drogeUserRole.AUTH_scheduler_delay_sync = true;
+                        break;
                     case AccessesNames.AUTH_scheduler_in_table_view:
                         drogeUserRole.AUTH_scheduler_in_table_view = true;
                         break;
@@ -168,6 +171,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_scheduler).Append(',');
             if (userRole.AUTH_scheduler_delete)
                 sb.Append(AccessesNames.AUTH_scheduler_delete).Append(',');
+            if (userRole.AUTH_scheduler_delay_sync)
+                sb.Append(AccessesNames.AUTH_scheduler_delay_sync).Append(',');
             if (userRole.AUTH_scheduler_in_table_view)
                 sb.Append(AccessesNames.AUTH_scheduler_in_table_view).Append(',');
             if (userRole.AUTH_scheduler_history)

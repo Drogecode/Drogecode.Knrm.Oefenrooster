@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
 using Microsoft.Graph.Models;
 using Training = Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Training;
 
@@ -23,16 +24,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 [ApiExplorerSettings(GroupName = "Schedule")]
-public class ScheduleController : ControllerBase
+public class ScheduleController : DrogeController
 {
     private readonly RefreshHub _refreshHub;
-    private readonly ILogger<ScheduleController> _logger;
     private readonly IScheduleService _scheduleService;
     private readonly IAuditService _auditService;
     private readonly IGraphService _graphService;
     private readonly ITrainingTypesService _trainingTypesService;
     private readonly IUserSettingService _userSettingService;
-    private readonly ICustomerSettingService _customerSettingService;
     private readonly IDateTimeService _dateTimeService;
     private readonly IUserService _userService;
     private readonly IVehicleService _vehicleService;
@@ -48,22 +47,19 @@ public class ScheduleController : ControllerBase
         IGraphService graphService,
         ITrainingTypesService trainingTypesService,
         IUserSettingService userSettingService,
-        ICustomerSettingService customerSettingService,
         IDateTimeService dateTimeService,
         IUserService userService,
         IVehicleService vehicleService,
         IFunctionService functionService,
         IUserLinkedMailsService userLinkedMailsService,
-        IUserLastCalendarUpdateService userLastCalendarUpdateService)
+        IUserLastCalendarUpdateService userLastCalendarUpdateService) : base(logger)
     {
         _refreshHub = refreshHub;
-        _logger = logger;
         _scheduleService = scheduleService;
         _auditService = auditService;
         _graphService = graphService;
         _trainingTypesService = trainingTypesService;
         _userSettingService = userSettingService;
-        _customerSettingService = customerSettingService;
         _dateTimeService = dateTimeService;
         _userService = userService;
         _vehicleService = vehicleService;
@@ -89,7 +85,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in ForUser");
+            Logger.LogError(ex, "Error in ForUser");
             return BadRequest();
         }
     }
@@ -113,7 +109,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in ForAll");
+            Logger.LogError(ex, "Error in ForAll");
             return BadRequest();
         }
     }
@@ -135,7 +131,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in GetTrainingById");
+            Logger.LogError(ex, "Error in GetTrainingById");
             return BadRequest();
         }
     }
@@ -149,7 +145,7 @@ public class ScheduleController : ControllerBase
         {
             var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            GetDescriptionByTrainingIdResponse result = await _scheduleService.GetDescriptionByTrainingId(userId, customerId, id, clt);
+            var result = await _scheduleService.GetDescriptionByTrainingId(userId, customerId, id, clt);
             return result;
         }
         catch (UnauthorizedAccessException)
@@ -158,7 +154,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in GetDescriptionByTrainingId");
+            Logger.LogError(ex, "Error in GetDescriptionByTrainingId");
             return BadRequest();
         }
     }
@@ -179,7 +175,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in GetPlannedTrainingById");
+            Logger.LogError(ex, "Error in GetPlannedTrainingById");
             return BadRequest();
         }
     }
@@ -200,7 +196,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in GetPlannedTrainingForDefaultDate");
+            Logger.LogError(ex, "Error in GetPlannedTrainingForDefaultDate");
             return BadRequest();
         }
     }
@@ -237,7 +233,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in AddTraining");
+            Logger.LogError(ex, "Error in AddTraining");
             return BadRequest();
         }
     }
@@ -250,25 +246,41 @@ public class ScheduleController : ControllerBase
         _graphService.InitializeGraph();
         if (training.Training?.PlanUsers.Count > 0)
         {
+            var delay = await _userSettingService.GetBoolUserSetting(customerId, currentUserId, SettingName.DelaySyncingTrainingToOutlook, false, clt);
             var i = 0;
             foreach (var user in training.Training.PlanUsers)
             {
                 await _refreshHub.SendMessage(user.UserId, ItemUpdated.FutureTrainings);
-                if (!string.IsNullOrEmpty(user.CalendarEventId))
+                if (string.IsNullOrEmpty(user.CalendarEventId))
+                {
+                    continue;
+                }
+                var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(30, 0, user.UserId, customerId, true, clt)).UserLinkedMails ?? [];
+                if (delay.Value && allUserLinkedMail.Any(x=>x is { IsActive: true, IsEnabled: true, IsDrogeCodeUser: false }))
+                {
+                    await _scheduleService.PatchAvailableLastChanged(customerId, currentUserId, user, clt);
+                }
+                else
                 {
                     var drogeUser = await _userService.GetUserById(customerId, user.UserId, false, clt);
-                    if (drogeUser is null) throw new DrogeCodeNullException("No user found");
+                    if (drogeUser is null)
+                    {
+                        Logger.LogError("No user found for user id `{userId}` in customer `{customerId}`", user.UserId, customerId);
+                        throw new DrogeCodeNullException("No user found");
+                    }
                     var preText = await _userSettingService.GetStringUserSetting(customerId, drogeUser.Id, SettingName.CalendarPrefix, string.Empty, clt);
                     DrogeFunction? function = null;
                     if (user.PlannedFunctionId is not null && user.UserFunctionId is not null && user.UserFunctionId != user.PlannedFunctionId)
+                    {
                         function = await _functionService.GetById(customerId, user.PlannedFunctionId.Value, clt);
+                    }
                     var text = GetTrainingCalenderText(training.Training.TrainingTypeName, training.Training.Name, function?.Name, preText.Value);
-                    var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(30, 0, user.UserId, customerId, clt)).UserLinkedMails ?? [];
                     await _graphService.PatchCalender(drogeUser.ExternalId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime,
                         FreeBusyStatus.Busy, allUserLinkedMail);
-                    await _scheduleService.PatchLastSynced(customerId, user);
-                    i++;
+                    await _scheduleService.PatchLastSynced(customerId, user.UserId, user.AvailableId, clt);
                 }
+
+                i++;
             }
 
             if (i > 0)
@@ -276,7 +288,9 @@ public class ScheduleController : ControllerBase
                 var savedCount = await _scheduleService.SaveDb(clt);
                 await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(customerId, currentUserId, clt);
                 if (savedCount < i)
-                    _logger.LogWarning("`{expected}` is less changes than expected `{expectedCount}`.", i, savedCount);
+                {
+                    Logger.LogWarning("`{expected}` is less changes than expected `{expectedCount}`.", i, savedCount);
+                }
             }
         }
     }
@@ -328,7 +342,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in AddTraining");
+            Logger.LogError(ex, "Error in AddTraining");
             return BadRequest();
         }
     }
@@ -371,7 +385,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in PatchMultipleSchedulesForUser");
+            Logger.LogError(ex, "Error in PatchMultipleSchedulesForUser");
             return BadRequest();
         }
     }
@@ -402,7 +416,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in PatchScheduleForUser");
+            Logger.LogError(ex, "Error in PatchScheduleForUser");
             return BadRequest();
         }
     }
@@ -453,7 +467,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in PatchAssignedUser");
+            Logger.LogError(ex, "Error in PatchAssignedUser");
             return BadRequest();
         }
     }
@@ -500,7 +514,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in PutAssignedUser");
+            Logger.LogError(ex, "Error in PutAssignedUser");
             return BadRequest();
         }
     }
@@ -517,7 +531,7 @@ public class ScheduleController : ControllerBase
             var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, take, skip, OrderAscDesc.Asc, clt);
             if (callHub)
             {
-                _logger.LogTrace("Calling hub futureTrainings");
+                Logger.LogTrace("Calling hub futureTrainings");
                 await _refreshHub.SendMessage(userId, ItemUpdated.FutureTrainings);
             }
 
@@ -529,7 +543,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in GetScheduledTrainingsForUser");
+            Logger.LogError(ex, "Error in GetScheduledTrainingsForUser");
             return BadRequest();
         }
     }
@@ -551,7 +565,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in AllTrainingsForUser");
+            Logger.LogError(ex, "Error in AllTrainingsForUser");
             return BadRequest();
         }
     }
@@ -573,7 +587,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in GetUserMonthInfo");
+            Logger.LogError(ex, "Error in GetUserMonthInfo");
             return BadRequest();
         }
     }
@@ -590,7 +604,7 @@ public class ScheduleController : ControllerBase
             var result = await _scheduleService.GetPinnedTrainingsForUser(userId, customerId, fromDate, clt);
             if (callHub)
             {
-                _logger.LogTrace("Calling hub PinnedDashboard");
+                Logger.LogTrace("Calling hub PinnedDashboard");
                 await _refreshHub.SendMessage(userId, ItemUpdated.PinnedDashboard);
             }
 
@@ -602,7 +616,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in GetPinnedTrainingsForUser");
+            Logger.LogError(ex, "Error in GetPinnedTrainingsForUser");
             return BadRequest();
         }
     }
@@ -650,7 +664,7 @@ public class ScheduleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in DeleteTraining");
+            Logger.LogError(ex, "Error in DeleteTraining");
             return BadRequest();
         }
     }
@@ -660,11 +674,13 @@ public class ScheduleController : ControllerBase
     {
         try
         {
-            var delay = await _customerSettingService.GetBoolCustomerSetting(customerId, SettingName.DelaySyncingTrainingToOutlook, false, clt);
-            if (delay.Value && !fromBackgroundWorker)
+            var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(30, 0, planUserId, customerId, true, clt)).UserLinkedMails ?? [];
+            var delay = await _userSettingService.GetBoolUserSetting(customerId, currentUserId, SettingName.DelaySyncingTrainingToOutlook, false, clt);
+            if (delay.Value && !fromBackgroundWorker && allUserLinkedMail.Any(x=>x is { IsActive: true, IsEnabled: true, IsDrogeCodeUser: false }))
             {
                 return;
             }
+
             if (assigned && (await _userSettingService.GetBoolUserSetting(customerId, planUserId, SettingName.TrainingToCalendar, false, clt)).Value)
             {
 #if DEBUG
@@ -678,11 +694,10 @@ public class ScheduleController : ControllerBase
                 var text = GetTrainingCalenderText(type.TrainingType?.Name, training?.Name, functionName, preText.Value);
                 if (training is null)
                 {
-                    _logger.LogWarning("Failed to set a training for trainingId {trainingId}", trainingId);
+                    Logger.LogWarning("Failed to set a training for trainingId {trainingId}", trainingId);
                     return;
                 }
 
-                var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(30, 0, planUserId, customerId, clt)).UserLinkedMails ?? [];
                 _graphService.InitializeGraph();
                 if (string.IsNullOrEmpty(calendarEventId))
                 {
@@ -693,13 +708,21 @@ public class ScheduleController : ControllerBase
                             await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, eventResult.Id, clt);
                     }
                     else
-                        _logger.LogWarning(
+                    {
+                        Logger.LogWarning(
                             "text is null or empty for {customerId} {planUserId} {trainingId} {assigned} {currentUserId} {availableId} {calendarEventId}",
                             customerId, planUserId, trainingId, assigned, currentUserId, availableId, calendarEventId);
+                        
+                    }
                 }
                 else
                 {
                     await _graphService.PatchCalender(externalUserId, calendarEventId, text, training.DateStart, training.DateEnd, !training.ShowTime, FreeBusyStatus.Busy, allUserLinkedMail);
+                    if (availableId is not null)
+                    {
+                        await _scheduleService.PatchLastSynced(customerId, planUserId, availableId.Value, clt);
+                        await _scheduleService.SaveDb(clt);
+                    }
                 }
             }
             else if (!string.IsNullOrEmpty(calendarEventId))
@@ -714,7 +737,7 @@ public class ScheduleController : ControllerBase
 #if DEBUG
             Debugger.Break();
 #endif
-            _logger.LogError(ex, "Exception in ToOutlookCalendar {customerId} {planUserId} {trainingId} {assigned} {currentUserId} {availableId} {calendarEventId} and training is {trainingNullOrNot}",
+            Logger.LogError(ex, "Exception in ToOutlookCalendar {customerId} {planUserId} {trainingId} {assigned} {currentUserId} {availableId} {calendarEventId} and training is {trainingNullOrNot}",
                 customerId, planUserId, trainingId, assigned, currentUserId, availableId, calendarEventId, training is null ? "null" : "not null");
         }
     }

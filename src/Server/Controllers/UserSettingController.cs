@@ -68,6 +68,7 @@ public class UserSettingController : DrogeController
                 case SettingName.TrainingToCalendar:
                 case SettingName.SyncPreComWithCalendar:
                 case SettingName.SyncPreComDeleteOld:
+                case SettingName.DelaySyncingTrainingToOutlook:
                     // default false
                     result = await _userSettingService.GetBoolUserSetting(customerId, userId, name, false, clt);
                     break;

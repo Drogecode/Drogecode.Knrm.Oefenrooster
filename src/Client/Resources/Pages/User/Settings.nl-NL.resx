@@ -27,8 +27,8 @@
     <data name="Server version:" xml:space="preserve">
         <value>Server versie:</value>
     </data>
-    <data name="Setting training to calendar" xml:space="preserve">
-        <value>Instelling training naar calender</value>
+    <data name="Sync training to outlook calendar" xml:space="preserve">
+        <value>Training synchroniseren met Outlook-agenda</value>
     </data>
     <data name="Mails to invite to your trainings" xml:space="preserve">
         <value>Mails die worden uitgenodigd tot jouw oefeningen</value>
@@ -65,5 +65,14 @@
     </data>
     <data name="Sync PreCom with external calendars, configured below" xml:space="preserve">
         <value>Synchroniseer PreCom met externe agenda's, hieronder geconfigureerd</value>
+    </data>
+    <data name="PreCom" xml:space="preserve">
+        <value>PreCom</value>
+    </data>
+    <data name="Calendar" xml:space="preserve">
+        <value>Agenda</value>
+    </data>
+    <data name="Delay syncing to users with external calendar" xml:space="preserve">
+        <value>Vertraagde synchronisatie voor gebruikers met een externe agenda</value>
     </data>
 </root>

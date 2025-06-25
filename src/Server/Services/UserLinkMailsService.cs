@@ -3,18 +3,20 @@ using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
 using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
-public class UserLinkMailsService : IUserLinkedMailsService
+public class UserLinkMailsService : DrogeService, IUserLinkedMailsService
 {
-    private readonly ILogger<UserLinkMailsService> _logger;
-    private readonly DataContext _database;
-
-    public UserLinkMailsService(ILogger<UserLinkMailsService> logger, DataContext database)
+    public UserLinkMailsService(
+        ILogger<ScheduleService> logger,
+        DataContext database,
+        IMemoryCache memoryCache,
+        IDateTimeService dateTimeService) : base(logger, database, memoryCache, dateTimeService)
     {
-        _logger = logger;
-        _database = database;
     }
 
     public async Task<PutUserLinkedMailResponse> PutUserLinkedMail(UserLinkedMail? userLinkedMail, Guid customerId, Guid userId, CancellationToken clt)
@@ -24,10 +26,10 @@ public class UserLinkMailsService : IUserLinkedMailsService
 
         if (userLinkedMail is not null)
         {
-            var dbOld = await _database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Email == userLinkedMail.Email, clt);
+            var dbOld = await Database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Email == userLinkedMail.Email, clt);
             if (dbOld is null)
             {
-                var dbCount = await _database.UserLinkedMails.CountAsync(x => x.CustomerId == customerId && x.UserId == userId, cancellationToken: clt);
+                var dbCount = await Database.UserLinkedMails.CountAsync(x => x.CustomerId == customerId && x.UserId == userId, cancellationToken: clt);
                 if (dbCount > 5)
                     result.Error = PutUserLinkedMailError.TooMany;
                 else
@@ -43,8 +45,8 @@ public class UserLinkMailsService : IUserLinkedMailsService
                         IsActive = false,
                         IsEnabled = false
                     };
-                    await _database.UserLinkedMails.AddAsync(dbLink, clt);
-                    result.Success = await _database.SaveChangesAsync(clt) > 0;
+                    await Database.UserLinkedMails.AddAsync(dbLink, clt);
+                    result.Success = await Database.SaveChangesAsync(clt) > 0;
                     if (result.Success)
                     {
                         result.NewId = dbLink.Id;
@@ -68,7 +70,7 @@ public class UserLinkMailsService : IUserLinkedMailsService
         var sw = Stopwatch.StartNew();
         var result = new ValidateUserLinkedActivateKeyResponse();
 
-        var dbOld = await _database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null && x.Id == body.UserLinkedMailId, clt);
+        var dbOld = await Database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null && x.Id == body.UserLinkedMailId, clt);
         if (dbOld is not null)
         {
             var update = false;
@@ -92,8 +94,8 @@ public class UserLinkMailsService : IUserLinkedMailsService
 
             if (update)
             {
-                _database.UserLinkedMails.Update(dbOld);
-                var saved = await _database.SaveChangesAsync(clt) > 0;
+                Database.UserLinkedMails.Update(dbOld);
+                var saved = await Database.SaveChangesAsync(clt) > 0;
                 if (result.Success && !saved)
                     result.Success = false;
             }
@@ -109,13 +111,13 @@ public class UserLinkMailsService : IUserLinkedMailsService
         var sw = Stopwatch.StartNew();
         var result = new IsEnabledChangedResponse();
 
-        var dbOld = await _database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Id == body.UserLinkedMailId && x.DeletedBy == null && x.IsActive,
+        var dbOld = await Database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Id == body.UserLinkedMailId && x.DeletedBy == null && x.IsActive,
             clt);
         if (dbOld is not null)
         {
             dbOld.IsEnabled = body.IsEnabled;
-            _database.UserLinkedMails.Update(dbOld);
-            result.Success = await _database.SaveChangesAsync(clt) > 0;
+            Database.UserLinkedMails.Update(dbOld);
+            result.Success = await Database.SaveChangesAsync(clt) > 0;
         }
 
         sw.Stop();
@@ -128,7 +130,7 @@ public class UserLinkMailsService : IUserLinkedMailsService
         var sw = Stopwatch.StartNew();
         var result = new PatchUserLinkedMailResponse();
 
-        var dbOld = await _database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Id == userLinkedMail.Id, clt);
+        var dbOld = await Database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Id == userLinkedMail.Id, clt);
         if (dbOld is not null)
         {
             dbOld.Email = userLinkedMail.Email;
@@ -143,18 +145,37 @@ public class UserLinkMailsService : IUserLinkedMailsService
         return result;
     }
 
-    public async Task<AllUserLinkedMailResponse> AllUserLinkedMail(int take, int skip, Guid userId, Guid customerId, CancellationToken clt)
+    public async Task<AllUserLinkedMailResponse> AllUserLinkedMail(int take, int skip, Guid userId, Guid customerId, bool cache, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
-        var result = new AllUserLinkedMailResponse();
+        var cacheKey = $"AllUserLinkedMail-{customerId}{userId}-{take}-{skip}";
+        MemoryCache.TryGetValue(cacheKey, out AllUserLinkedMailResponse? result);
+        if (result is not null && cache)
+        {
+            sw.Stop();
+            result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+            return result;
+        }
 
-        var linksRequest = _database.UserLinkedMails.Where(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null);
-        var userMail = await _database.Users.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == userId && x.DeletedBy == null, cancellationToken: clt);
+        result = new AllUserLinkedMailResponse();
+        var linksRequest = Database.UserLinkedMails.Where(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null);
+        var userMail = await Database.Users.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == userId && x.DeletedBy == null, cancellationToken: clt);
         result.TotalCount = await linksRequest.CountAsync(clt);
-        result.UserLinkedMails = await linksRequest.OrderBy(x=>x.Email).ThenBy(x=>x.ActivateRequestedOn).Skip(skip).Take(take).Select(x => x.ToDrogecode()).ToListAsync(clt);
+        result.UserLinkedMails = await linksRequest
+            .OrderBy(x => x.Email)
+            .ThenBy(x => x.ActivateRequestedOn)
+            .Skip(skip)
+            .Take(take)
+            .Select(x => x.ToDrogecode())
+            .ToListAsync(clt);
         if (userMail is not null)
+        {
             result.UserLinkedMails.Add(new UserLinkedMail() { Email = userMail.Email, IsActive = true, IsEnabled = true, IsDrogeCodeUser = true });
+        }
+
         result.Success = result.UserLinkedMails.Count != 0;
+
+        MemoryCache.Set(cacheKey, result, CacheOptions);
 
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;

@@ -135,7 +135,7 @@ public class UserLinkMailsController : ControllerBase
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var result = await _userLinkedMailsService.AllUserLinkedMail(take, skip, userId, customerId, clt);
+            var result = await _userLinkedMailsService.AllUserLinkedMail(take, skip, userId, customerId, false, clt);
             return result;
         }
         catch (Exception ex)
