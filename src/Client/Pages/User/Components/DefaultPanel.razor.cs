@@ -44,7 +44,7 @@ public sealed partial class DefaultPanel : IDisposable
             CloseButton = true,
             FullWidth = true
         };
-        return _dialogProvider.ShowAsync<GroupDialog>(L["Add group"], parameters, options);
+        return _dialogProvider.ShowAsync<GroupDialog>(L["Add period"], parameters, options);
     }
     
     private async Task OnChange(Availability? value, DefaultUserSchedule? old, Guid defaultId, bool isNew)

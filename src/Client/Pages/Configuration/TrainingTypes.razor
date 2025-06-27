@@ -2,43 +2,41 @@
 @attribute [Authorize(Roles = AccessesNames.AUTH_configure_training_types)]
 
 <PageTitle>@L["Training types"]</PageTitle>
-<MudPaper Elevation="0" Class="p-2">
-    <MudText Typo="Typo.h4">@L["Add and change training type"]</MudText>
-    @if (_trainingTypes is not null)
-    {
-        <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{return OpenTrainingTypeDialog(null, true);}">@L["Add new training type"]</MudButton>
-        <MudTable Items="_trainingTypes.OrderByDescending(x=>x.IsActive).ThenBy(x=>x.Order)">
-            <HeaderContent>
-                <MudTh>@L["Order"]</MudTh>
-                <MudTh>@L["Description"]</MudTh>
-                <MudTh>@L["Color light"]</MudTh>
-                <MudTh>@L["Color dark"]</MudTh>
-                <MudTh>@L["CountToTrainingTarget"]</MudTh>
-                <MudTh>@L["IsDefault"]</MudTh>
-                <MudTh>@L["IsActive"]</MudTh>
-                <MudTh></MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="@L["Order"]">@context.Order</MudTd>
-                <MudTd DataLabel="@L["Description"]">@context.Name</MudTd>
-                <MudTd DataLabel="@L["Color light"]" Style=@($"background-color: {context.ColorLight}; color: {context.TextColorLight};")>
-                    background: @context.ColorLight @(string.IsNullOrEmpty(context.TextColorLight) ? "" : $"text: {context.TextColorLight}")
-                </MudTd>
-                <MudTd DataLabel="@L["Color dark"]"
-                       Style=@($"background-color: {(string.IsNullOrEmpty(context.ColorDark) ? context.ColorLight : context.ColorDark)}; color: {(string.IsNullOrEmpty(context.TextColorDark) ? context.TextColorLight : context.TextColorDark)}")>
-                    @(string.IsNullOrEmpty(context.ColorDark) ? "" : $"background: {context.ColorDark}") @(string.IsNullOrEmpty(context.TextColorDark) ? "" : $"text: {context.TextColorDark}")
-                </MudTd>
-                <MudTd DataLabel="@L["CountToTrainingTarget"]">@context.CountToTrainingTarget</MudTd>
-                <MudTd DataLabel="@L["IsDefault"]">@context.IsDefault</MudTd>
-                <MudTd DataLabel="@L["IsActive"]">@context.IsActive</MudTd>
-                <MudTd>
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{return OpenTrainingTypeDialog(context, false);}" id="@($"edit-trainingtype-{context.Id}")"/>
-                </MudTd>
-            </RowTemplate>
-        </MudTable>
-    }
-    else
-    {
-        <DrogeLoading />
-    }
-</MudPaper>
+<MudText Typo="Typo.h4">@L["Add and change training type"]</MudText>
+@if (_trainingTypes is not null)
+{
+    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{return OpenTrainingTypeDialog(null, true);}">@L["Add new training type"]</MudButton>
+    <MudTable Items="_trainingTypes.OrderByDescending(x=>x.IsActive).ThenBy(x=>x.Order)">
+        <HeaderContent>
+            <MudTh>@L["Order"]</MudTh>
+            <MudTh>@L["Description"]</MudTh>
+            <MudTh>@L["Color light"]</MudTh>
+            <MudTh>@L["Color dark"]</MudTh>
+            <MudTh>@L["CountToTrainingTarget"]</MudTh>
+            <MudTh>@L["IsDefault"]</MudTh>
+            <MudTh>@L["IsActive"]</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="@L["Order"]">@context.Order</MudTd>
+            <MudTd DataLabel="@L["Description"]">@context.Name</MudTd>
+            <MudTd DataLabel="@L["Color light"]" Style=@($"background-color: {context.ColorLight}; color: {context.TextColorLight};")>
+                background: @context.ColorLight @(string.IsNullOrEmpty(context.TextColorLight) ? "" : $"text: {context.TextColorLight}")
+            </MudTd>
+            <MudTd DataLabel="@L["Color dark"]"
+                   Style=@($"background-color: {(string.IsNullOrEmpty(context.ColorDark) ? context.ColorLight : context.ColorDark)}; color: {(string.IsNullOrEmpty(context.TextColorDark) ? context.TextColorLight : context.TextColorDark)}")>
+                @(string.IsNullOrEmpty(context.ColorDark) ? "" : $"background: {context.ColorDark}") @(string.IsNullOrEmpty(context.TextColorDark) ? "" : $"text: {context.TextColorDark}")
+            </MudTd>
+            <MudTd DataLabel="@L["CountToTrainingTarget"]">@context.CountToTrainingTarget</MudTd>
+            <MudTd DataLabel="@L["IsDefault"]">@context.IsDefault</MudTd>
+            <MudTd DataLabel="@L["IsActive"]">@context.IsActive</MudTd>
+            <MudTd>
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{return OpenTrainingTypeDialog(context, false);}" id="@($"edit-trainingtype-{context.Id}")"/>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+else
+{
+    <DrogeLoading/>
+}

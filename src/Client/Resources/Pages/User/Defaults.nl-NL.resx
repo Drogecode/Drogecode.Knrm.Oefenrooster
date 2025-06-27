@@ -117,11 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Add group" xml:space="preserve">
-    <value>Voeg groep toe</value>
+  <data name="Add period" xml:space="preserve">
+    <value>Voeg periode toe</value>
   </data>
-  <data name="Add new group" xml:space="preserve">
-    <value>Voeg nieuwe groep toe</value>
+  <data name="Add new period" xml:space="preserve">
+    <value>Voeg nieuwe periode toe</value>
   </data>
   <data name="Configure your default availability here" xml:space="preserve">
     <value>Stel hier je standaard beschikbaarheid in.</value>
@@ -129,14 +129,14 @@
   <data name="Current setting" xml:space="preserve">
     <value>Huidige instelling</value>
   </data>
-  <data name="Default group name" xml:space="preserve">
+  <data name="Default period name" xml:space="preserve">
     <value>Standaard</value>
   </data>
   <data name="Default schedule" xml:space="preserve">
     <value>Standaard rooster</value>
   </data>
-  <data name="No groups found" xml:space="preserve">
-    <value>Geen groepen gevonden :(</value>
+  <data name="No periods found" xml:space="preserve">
+    <value>Geen periodes gevonden :(</value>
   </data>
   <data name="TimeEnd" xml:space="preserve">
     <value>T/m</value>
@@ -150,7 +150,7 @@
   <data name="Name" xml:space="preserve">
     <value>Naam</value>
   </data>
-  <data name="Edit group" xml:space="preserve">
-    <value>Bewerk groep</value>
+  <data name="Edit period" xml:space="preserve">
+    <value>Bewerk periode</value>
   </data>
 </root>

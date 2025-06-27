@@ -5,7 +5,7 @@
 
 @if (_defaultGroups is not null)
 {
-    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick=" ()=>  { return OpenGroupDialog(null, true);}">@L["Add new group"]</MudButton>
+    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick=" ()=>  { return OpenGroupDialog(null, true);}">@L["Add new period"]</MudButton>
     if (_defaultGroups.Count > 1)
     {
         <MudExpansionPanels>
@@ -24,7 +24,7 @@
     }
     else
     {
-        @L["No groups found"]
+        @L["No periods found"]
     }
 }
 else

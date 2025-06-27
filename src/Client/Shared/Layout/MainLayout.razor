@@ -57,12 +57,14 @@
                             </MudDrawer>
                             <MudMainContent>
                                 <CascadingValue Value="this">
-                                    @Body
+                                    <div Elevation="0" class="m-3">
+                                        @Body
+                                    </div>
                                     <AuthorizeView Roles="@AccessesNames.AUTH_show_c_footer" Context="inner">
                                         <footer class="fixed bottom-0">
-                                        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
-                                            © 2022-2025 Taco Droogers - @DefaultSettingsHelper.CURRENT_VERSION
-                                        </span>
+                                            <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+                                                © 2022-2025 Taco Droogers - @DefaultSettingsHelper.CURRENT_VERSION
+                                            </span>
                                         </footer>
                                     </AuthorizeView>
                                     <UpdateChecker/>

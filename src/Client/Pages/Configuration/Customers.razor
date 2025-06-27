@@ -2,7 +2,6 @@
 @attribute [Authorize(Roles = AccessesNames.AUTH_super_user)]
 
 <PageTitle>@L["Customers"]</PageTitle>
-<MudPaper Elevation="0" Class="p-2">
 @if (_customers is not null)
 {
     <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="() => {return OpenCustomerDialog(null, true); }">@L["Add new customer"]</MudButton>
@@ -29,4 +28,3 @@ else
 {
     <DrogeLoading />
 }
-</MudPaper>

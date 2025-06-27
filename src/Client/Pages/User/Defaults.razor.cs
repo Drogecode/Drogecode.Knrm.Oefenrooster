@@ -25,7 +25,7 @@ public sealed partial class Defaults : IDisposable
         var groupName = group.Name;
         if (group.IsDefault && string.IsNullOrEmpty(group.Name))
         {
-            groupName = L["Default group name"];
+            groupName = L["Default period name"];
         }
         if (group.IsDefault)
             return groupName;
@@ -45,7 +45,7 @@ public sealed partial class Defaults : IDisposable
             CloseButton = true,
             FullWidth = true
         };
-        return DialogProvider.ShowAsync<GroupDialog>(L["Add group"], parameters, options);
+        return DialogProvider.ShowAsync<GroupDialog>(L["Add period"], parameters, options);
     }
 
     private async Task RefreshMeAsync()

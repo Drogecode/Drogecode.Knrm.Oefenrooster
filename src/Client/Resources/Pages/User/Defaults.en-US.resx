@@ -117,11 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Add group" xml:space="preserve">
-    <value>Add group</value>
+  <data name="Add period" xml:space="preserve">
+    <value>Add period</value>
   </data>
-  <data name="Add new group" xml:space="preserve">
-    <value>Add new group</value>
+  <data name="Add new period" xml:space="preserve">
+    <value>Add new period</value>
   </data>
   <data name="Configure your default availability here" xml:space="preserve">
     <value>Configure your default availabilty here.</value>
@@ -129,14 +129,14 @@
   <data name="Current setting" xml:space="preserve">
     <value>Current setting</value>
   </data>
-  <data name="Default group name" xml:space="preserve">
+  <data name="Default period name" xml:space="preserve">
     <value>Default</value>
   </data>
   <data name="Default schedule" xml:space="preserve">
     <value>Default schedule</value>
   </data>
-  <data name="No groups found" xml:space="preserve">
-    <value>No groups found :(</value>
+  <data name="No periods found" xml:space="preserve">
+    <value>No periods found :(</value>
   </data>
   <data name="TimeEnd" xml:space="preserve">
     <value>End time</value>
@@ -150,7 +150,7 @@
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>
-  <data name="Edit group" xml:space="preserve">
-    <value>Edit group</value>
+  <data name="Edit period" xml:space="preserve">
+    <value>Edit period</value>
   </data>
 </root>

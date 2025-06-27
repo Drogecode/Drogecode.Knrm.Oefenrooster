@@ -3,50 +3,54 @@
 @attribute [Authorize(Roles = AccessesNames.AUTH_scheduler_dayitem)]
 <MudAlert Severity="Severity.Info" Variant="Variant.Filled">@LApp["Does not work on mobile"]</MudAlert>
 <PageTitle>@L["Special day"]</PageTitle>
-<MudPaper Elevation="0" Class="p-2">
-    <MudText Typo="Typo.h4">@L["Add or change special day"]</MudText>
-    @if (_items?.DayItems is not null)
+<MudText Typo="Typo.h4">@L["Add or change special day"]</MudText>
+@if (_items?.DayItems is not null)
+{
+    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{return OpenDayItemDialog(null, true);}">@L["Add new special day"]</MudButton>
+    <MudTable Items="_items.DayItems.OrderBy(x=>x.DateStart)">
+        <HeaderContent>
+            <MudTh>@LApp["Description"]</MudTh>
+            <MudTh>@LApp["Type"]</MudTh>
+            <MudTh>@L["Who"]</MudTh>
+            <MudTh>@LApp["From"]</MudTh>
+            <MudTh>@LApp["Till"]</MudTh>
+            <MudTh>@LApp["Edit"]</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="@LApp["Description"]">@context.Text</MudTd>
+            <MudTd DataLabel="@L["Type"]">
+                @{
+                    var color = DayItemHelper.DayItemTypeColor(context.Type);
+                }
+                <div class="d-flex gap-1">
+                    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small"/>
+                    @L[@context.Type.ToString()]
+                </div>
+            </MudTd>
+            <MudTd
+                DataLabel="@L["Who"]">@(context?.LinkedUsers is null || !context.LinkedUsers.Any() ? "" : _users?.FirstOrDefault(x => x.Id == context?.LinkedUsers?.FirstOrDefault()?.UserId)?.Name ?? LApp["User not found or deleted"])</MudTd>
+            <MudTd DataLabel="@LApp["From"]">
+                <DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateStart"/>
+            </MudTd>
+            <MudTd DataLabel="@LApp["Till"]">
+                <DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateEnd"/>
+            </MudTd>
+            <MudTd DataLabel="@LApp["Edit"]">
+                @if (context.Type != CalendarItemType.SpecialDate)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context);}"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{return OpenDayItemDialog(context, false);}"/>
+                }
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+    @if (_skip > 0 || _items.TotalCount > (_count + _skip))
     {
-        <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{return OpenDayItemDialog(null, true);}">@L["Add new special day"]</MudButton>
-        <MudTable Items="_items.DayItems.OrderBy(x=>x.DateStart)">
-            <HeaderContent>
-                <MudTh>@LApp["Description"]</MudTh>
-                <MudTh>@LApp["Type"]</MudTh>
-                <MudTh>@L["Who"]</MudTh>
-                <MudTh>@LApp["From"]</MudTh>
-                <MudTh>@LApp["Till"]</MudTh>
-                <MudTh>@LApp["Edit"]</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="@LApp["Description"]">@context.Text</MudTd>
-                <MudTd DataLabel="@L["Type"]">
-                    @{
-                        var color = DayItemHelper.DayItemTypeColor(context.Type);
-                    }
-                    <div class="d-flex gap-1">
-                        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small" />
-                        @L[@context.Type.ToString()]
-                    </div>
-                </MudTd>
-                <MudTd DataLabel="@L["Who"]">@(context?.LinkedUsers is null || !context.LinkedUsers.Any() ? "" : _users?.FirstOrDefault(x => x.Id == context?.LinkedUsers?.FirstOrDefault()?.UserId)?.Name ?? LApp["User not found or deleted"])</MudTd>
-                <MudTd DataLabel="@LApp["From"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateStart" /></MudTd>
-                <MudTd DataLabel="@LApp["Till"]"><DateToString ShowDate="true" ShowTime="false" DateTimeUtc="@context.DateEnd" /></MudTd>
-                <MudTd DataLabel="@LApp["Edit"]">
-                    @if (context.Type != CalendarItemType.SpecialDate)
-                    {
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="async ()=>{await Delete(context);}" />
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="()=>{return OpenDayItemDialog(context, false);}" />
-                    }
-                </MudTd>
-            </RowTemplate>
-        </MudTable>
-        @if (_skip > 0 || _items.TotalCount > (_count + _skip))
-        {
-            <MudPagination Disabled="_busy" ShowFirstButton="true" ShowLastButton="true" Count="@(Convert.ToInt32(Math.Ceiling((double)_items.TotalCount/(double)_count)))" Selected="_currentPage" SelectedChanged="Next" Class="mt-4" />
-        }
+        <MudPagination Disabled="_busy" ShowFirstButton="true" ShowLastButton="true" Count="@(Convert.ToInt32(Math.Ceiling((double)_items.TotalCount / (double)_count)))" Selected="_currentPage"
+                       SelectedChanged="Next" Class="mt-4"/>
     }
-    else
-    {
-        <DrogeLoading />
-    }
-</MudPaper>
+}
+else
+{
+    <DrogeLoading/>
+}

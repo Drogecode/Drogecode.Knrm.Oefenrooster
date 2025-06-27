@@ -4,159 +4,154 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums
 <PageTitle>Dashboard</PageTitle>
-
-<MudPaper Elevation="0" Class="p-2">
-    <div class="m-3">
-        <MudTabs Rounded="true">
-            <MudTabPanel Text="@L["Planner"]">
-                @if (_name is not null)
+<MudTabs Rounded="true">
+    <MudTabPanel Text="@L["Planner"]">
+        @if (_name is not null)
+        {
+            <div class="inline-flex mx-3 mt-8">
+                <MudText Typo="Typo.h5" data-testid="dashboard-username">@L["Welcome", _name]</MudText>
+                @if (_user?.Nr is not null)
                 {
-                    <div class="inline-flex mx-3 mt-8">
-                        <MudText Typo="Typo.h5" data-testid="dashboard-username">@L["Welcome", _name]</MudText>
-                        @if (_user?.Nr is not null)
+                    <MudText Typo="Typo.subtitle2">@($" ({_user.Nr})")</MudText>
+                }
+            </div>
+        }
+        @if (_dayItems != null && _dayItems.Any())
+        {
+            <div class="mx-3 mt-8">
+                <MudText Typo="Typo.h5">@L["Special days"]</MudText>
+                <MudPaper Elevation="0" Class="p-2">
+                    <div class="flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
+                        @foreach (var item in _dayItems)
                         {
-                            <MudText Typo="Typo.subtitle2">@($" ({_user.Nr})")</MudText>
+                            var color = DayItemHelper.DayItemTypeColor(item.Type);
+                            <MudItem Class="flex-1 min-w-72 max-w-72">
+                                <div class="d-flex gap-1">
+                                    <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small"/>
+                                    <DateToString DateTimeLocal="item.DateStart" @key="@(item.DateStart?.Ticks + DateTime.Today.Day)"/>
+                                    @if (item.DateEnd is not null && !item.DateEnd.Equals(item.DateStart) && item.DateEnd.Value.CompareTo(DateTime.MinValue) != 0 && item.DateEnd.Value.Year >= 5)
+                                    {
+                                        <div> -</div>
+                                        <DateToString DateTimeLocal="item.DateEnd" @key="@(item.DateEnd?.Ticks + DateTime.Today.Day)"/>
+                                    }
+                                    @item.Text
+                                </div>
+                            </MudItem>
                         }
                     </div>
-                }
-                @if (_dayItems != null && _dayItems.Any())
+                </MudPaper>
+            </div>
+        }
+        <div class="mx-3 mt-8">
+            @if (_pinnedTrainings is not null)
+            {
+                @if (_pinnedTrainings.Any(x => x.IsPinned && x.SetBy != AvailabilitySetBy.User))
                 {
-                    <div class="mx-3 mt-8">
-                        <MudText Typo="Typo.h5">@L["Special days"]</MudText>
-                        <MudPaper Elevation="0" Class="p-2">
-                            <div class="flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
-                                @foreach (var item in _dayItems)
-                                {
-                                    var color = DayItemHelper.DayItemTypeColor(item.Type);
-                                    <MudItem Class="flex-1 min-w-72 max-w-72">
-                                        <div class="d-flex gap-1">
-                                            <MudIcon Icon="@Icons.Material.Filled.Circle" Color="color" Size="Size.Small"/>
-                                            <DateToString DateTimeLocal="item.DateStart" @key="@(item.DateStart?.Ticks + DateTime.Today.Day)"/>
-                                            @if (item.DateEnd is not null && !item.DateEnd.Equals(item.DateStart) && item.DateEnd.Value.CompareTo(DateTime.MinValue) != 0 && item.DateEnd.Value.Year >= 5)
-                                            {
-                                                <div> -</div>
-                                                <DateToString DateTimeLocal="item.DateEnd" @key="@(item.DateEnd?.Ticks + DateTime.Today.Day)"/>
-                                            }
-                                            @item.Text
-                                        </div>
-                                    </MudItem>
-                                }
+                    <MudText Typo="Typo.h5">@L["Pinned trainings"]</MudText>
+                    <MudPaper Elevation="0" Class="flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
+                        @foreach (var training in _pinnedTrainings.Where(x => x.IsPinned && x.SetBy != AvailabilitySetBy.User))
+                        {
+                            <div class="flex-1 min-w-72 max-w-xl">
+                                <CalendarCard Training="training" ShowDate="true" ShowDayOfWeek="true" ShowSelectAvailability="true"/>
                             </div>
-                        </MudPaper>
-                    </div>
+                        }
+                    </MudPaper>
                 }
-                <div class="mx-3 mt-8">
-                    @if (_pinnedTrainings is not null)
-                    {
-                        @if (_pinnedTrainings.Any(x => x.IsPinned && x.SetBy != AvailabilitySetBy.User))
-                        {
-                            <MudText Typo="Typo.h5">@L["Pinned trainings"]</MudText>
-                            <MudPaper Elevation="0" Class="flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
-                                @foreach (var training in _pinnedTrainings.Where(x => x.IsPinned && x.SetBy != AvailabilitySetBy.User))
-                                {
-                                    <div class="flex-1 min-w-72 max-w-xl">
-                                        <CalendarCard Training="training" ShowDate="true" ShowDayOfWeek="true" ShowSelectAvailability="true"/>
-                                    </div>
-                                }
-                            </MudPaper>
-                        }
 
-                        if (_pinnedTrainings.Any(x => x.IsPermanentPinned))
+                if (_pinnedTrainings.Any(x => x.IsPermanentPinned))
+                {
+                    <MudText Typo="Typo.h5">@L["Permanent pinned trainings"]</MudText>
+                    <MudPaper Elevation="0" Class="flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
+                        @foreach (var training in _pinnedTrainings.Where(x => x.IsPermanentPinned))
                         {
-                            <MudText Typo="Typo.h5">@L["Permanent pinned trainings"]</MudText>
-                            <MudPaper Elevation="0" Class="flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
-                                @foreach (var training in _pinnedTrainings.Where(x => x.IsPermanentPinned))
-                                {
-                                    <div class="flex-1 min-w-72 max-w-xl">
-                                        <CalendarCard Training="training" ShowDate="true" ShowDayOfWeek="true" ShowSelectAvailability="false"/>
-                                    </div>
-                                }
-                            </MudPaper>
+                            <div class="flex-1 min-w-72 max-w-xl">
+                                <CalendarCard Training="training" ShowDate="true" ShowDayOfWeek="true" ShowSelectAvailability="false"/>
+                            </div>
                         }
-                    }
-                    else if (_loading)
+                    </MudPaper>
+                }
+            }
+            else if (_loading)
+            {
+                <DrogeLoading/>
+            }
+        </div>
+        <div class="mx-3 mt-8">
+            <MudText Typo="Typo.h5">@L["Future trainings"]</MudText>
+            @if (_trainings?.Trainings != null)
+            {
+                @if (_trainings.Trainings.Any())
+                {
+                    <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
+                        @foreach (var training in _trainings.Trainings)
+                        {
+                            @if (training.DateEnd.Date >= DateTime.Today)
+                            {
+                                <div class="flex-1 min-w-72 max-w-xl">
+                                    <IndexCard User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes"
+                                               Vehicles="_vehicles" ShowDayOfWeek="true"/>
+                                </div>
+                            }
+                            else
+                            {
+                                DebugHelper.WriteLine($"Hiding `{training.Name}` training from the past");
+                            }
+                        }
+                    </MudPaper>
+                    @if (_trainings.TotalCount >= _total)
                     {
-                        <DrogeLoading/>
+                        <MudButton OnClick="LoadMore" Color="Color.Primary">@LApp["Load more"]</MudButton>
                     }
-                </div>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h6">@L["No future trainings"]</MudText>
+                }
+            }
+            else if (_loading)
+            {
+                <DrogeLoading/>
+            }
+        </div>
+        <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_holidays">
+            @if (_futureHolidays is not null)
+            {
                 <div class="mx-3 mt-8">
-                    <MudText Typo="Typo.h5">@L["Future trainings"]</MudText>
-                    @if (_trainings?.Trainings != null)
+                    @if (_futureHolidays.Holidays?.Any() == true)
                     {
-                        @if (_trainings.Trainings.Any())
-                        {
-                            <MudPaper Elevation="0" Class="d-flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
-                                @foreach (var training in _trainings.Trainings)
-                                {
-                                    @if (training.DateEnd.Date >= DateTime.Today)
-                                    {
-                                        <div class="flex-1 min-w-72 max-w-xl">
-                                            <IndexCard User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes"
-                                                       Vehicles="_vehicles" ShowDayOfWeek="true"/>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        DebugHelper.WriteLine($"Hiding `{training.Name}` training from the past");
-                                    }
-                                }
-                            </MudPaper>
-                            @if (_trainings.TotalCount >= _total)
+                        <MudText Typo="Typo.h5">@L["Future holidays"]</MudText>
+                        <MudList T="string" ReadOnly="true">
+                            @foreach (var holiday in _futureHolidays.Holidays.OrderBy(x => x.ValidFrom).ThenBy(x => x.UserId))
                             {
-                                <MudButton OnClick="LoadMore" Color="Color.Primary">@LApp["Load more"]</MudButton>
+                                var holUser = _users?.FirstOrDefault(x => x.Id == holiday.UserId);
+                                @if (holUser is not null)
+                                {
+                                    <MudListItem T="string">@holUser.Name : @holiday.Description
+                                        <MudText Typo="Typo.subtitle2">
+                                            (@LApp["from"]: @holiday.ValidFrom?.ToNiceString(LDateToString, isUtc: false, showtime: false) @LApp["till"]: @holiday.ValidUntil?.ToNiceString(LDateToString, isUtc: false, showtime: false))
+                                        </MudText>
+                                    </MudListItem>
+                                }
                             }
-                        }
-                        else
-                        {
-                            <MudText Typo="Typo.h6">@L["No future trainings"]</MudText>
-                        }
+                        </MudList>
                     }
-                    else if (_loading)
+                    @if (!_allHolidays && _futureHolidays.TotalCount > (_futureHolidays?.Holidays?.Count ?? 0))
                     {
-                        <DrogeLoading/>
+                        <MudButton OnClick="LoadYearHolidays">@L["Load all holidays"]</MudButton>
                     }
                 </div>
-                <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_holidays">
-                    @if (_futureHolidays is not null)
-                    {
-                        <div class="mx-3 mt-8">
-                            @if (_futureHolidays.Holidays?.Any() == true)
-                            {
-                                <MudText Typo="Typo.h5">@L["Future holidays"]</MudText>
-                                <MudList T="string" ReadOnly="true">
-                                    @foreach (var holiday in _futureHolidays.Holidays.OrderBy(x => x.ValidFrom).ThenBy(x => x.UserId))
-                                    {
-                                        var holUser = _users?.FirstOrDefault(x => x.Id == holiday.UserId);
-                                        @if (holUser is not null)
-                                        {
-                                            <MudListItem T="string">@holUser.Name : @holiday.Description
-                                                <MudText Typo="Typo.subtitle2">
-                                                    (@LApp["from"]: @holiday.ValidFrom?.ToNiceString(LDateToString, isUtc: false, showtime: false) @LApp["till"]: @holiday.ValidUntil?.ToNiceString(LDateToString, isUtc: false, showtime: false))
-                                                </MudText>
-                                            </MudListItem>
-                                        }
-                                    }
-                                </MudList>
-                            }
-                            @if (!_allHolidays && _futureHolidays.TotalCount > (_futureHolidays?.Holidays?.Count ?? 0))
-                            {
-                                <MudButton OnClick="LoadYearHolidays">@L["Load all holidays"]</MudButton>
-                            }
-                        </div>
-                    }
-                </AuthorizeView>
-            </MudTabPanel>
-            <MudTabPanel Text="@L["Actions"]">
-                <ActionsTab User="@_user" Users="@_users" Functions="@_functions" EnableOptions="true"/>
-            </MudTabPanel>
-            <MudTabPanel Text="@L["Trainings"]">
-                <TrainingsTab User="@_user" Users="@_users" Functions="@_functions"/>
-            </MudTabPanel>
-            <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_Statistics">
-                <MudTabPanel Text="@L["Statistics"]">
-                    <StatisticsTab User="@_user" Users="@_users" Functions="@_functions"/>
-                </MudTabPanel>
-            </AuthorizeView>
-        </MudTabs>
-    </div>
-</MudPaper>
+            }
+        </AuthorizeView>
+    </MudTabPanel>
+    <MudTabPanel Text="@L["Actions"]">
+        <ActionsTab User="@_user" Users="@_users" Functions="@_functions" EnableOptions="true"/>
+    </MudTabPanel>
+    <MudTabPanel Text="@L["Trainings"]">
+        <TrainingsTab User="@_user" Users="@_users" Functions="@_functions"/>
+    </MudTabPanel>
+    <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_Statistics">
+        <MudTabPanel Text="@L["Statistics"]">
+            <StatisticsTab User="@_user" Users="@_users" Functions="@_functions"/>
+        </MudTabPanel>
+    </AuthorizeView>
+</MudTabs>
