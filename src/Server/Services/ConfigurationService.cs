@@ -67,7 +67,7 @@ public class ConfigurationService : IConfigurationService
         {
             foreach (var alert in dbAlerts)
             {
-                var message = _preComService.AnalyzeAlert(alert.UserId.Value, alert.CustomerId.Value, JsonSerializer.Deserialize<object>(alert.Raw), out DateTime timestamp, out int? priority);
+                var message = _preComService.AnalyzeAlert(alert.UserId.Value, alert.CustomerId.Value, JsonSerializer.Deserialize<object>(alert.Raw), string.Empty, out DateTime timestamp, out int? priority);
                 alert.Alert = message;
                 alert.Priority = priority;
                 alert.SendTime = timestamp;

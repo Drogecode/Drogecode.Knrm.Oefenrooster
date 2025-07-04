@@ -422,7 +422,7 @@ public class AuthenticationController : DrogeController
     {
         var authService = GetAuthenticationService();
         var drogeClaims = authService.GetClaims(subResult);
-        var customerId = await GetCustomerIdByExternalId(drogeClaims.TenantId, subResult.JwtSecurityToken.Claims, clt);
+        var customerId = await GetCustomerIdByExternalId(drogeClaims.TenantId, subResult.JwtSecurityToken?.Claims, clt);
         var userId = await GetUserIdByExternalId(drogeClaims.ExternalUserId, drogeClaims.FullName, drogeClaims.Email, customerId, clt);
         var ip = GetRequesterIp();
         var claims = new List<Claim>
@@ -463,12 +463,18 @@ public class AuthenticationController : DrogeController
         claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_global_all));
     }
 
-    private async Task<Guid> GetCustomerIdByExternalId(string tenantId, IEnumerable<Claim> claims, CancellationToken clt)
+    private async Task<Guid> GetCustomerIdByExternalId(string tenantId, IEnumerable<Claim>? claims, CancellationToken clt)
     {
         var customers = await _customerService.GetByTenantId(tenantId, clt);
         if (customers is null || customers.Count == 0)
         {
             Logger.LogWarning("Failed to get or set customers by external id");
+            throw new UnauthorizedAccessException();
+        }
+
+        if (claims is null)
+        {
+            Logger.LogWarning("No claims while authorization.");
             throw new UnauthorizedAccessException();
         }
 

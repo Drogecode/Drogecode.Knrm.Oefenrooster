@@ -28,6 +28,8 @@ public class PreComController : DrogeController
     private readonly IDateTimeService _dateTimeService;
     private readonly IAuditService _auditService;
 
+    private readonly Random _random = new();
+
     public PreComController(
         ILogger<PreComController> logger,
         IPreComService preComService,
@@ -49,7 +51,7 @@ public class PreComController : DrogeController
     [AllowAnonymous]
     [Route("webhook/{customerId:guid}/{userId:guid}")]
     [Route("web-hook/{customerId:guid}/{userId:guid}")]
-    public async Task<IActionResult> WebHook(Guid customerId, Guid userId, [FromBody] object? body = null, bool sendToHub = true, CancellationToken clt = default)
+    public async Task<IActionResult> WebHook(Guid customerId, Guid userId, [FromBody] object? body = null, bool testMode = false, CancellationToken clt = default)
     {
         try
         {
@@ -57,10 +59,24 @@ public class PreComController : DrogeController
             var ip = GetRequesterIp();
             try
             {
-                var alert = _preComService.AnalyzeAlert(userId, customerId, body, out DateTime timestamp, out int? priority);
-                var saved = await _preComService.WriteAlertToDb(userId, customerId, timestamp, alert, priority, JsonSerializer.Serialize(body), ip);
+                if (!testMode)
+                {
+                    // Sleep to prevent all webhooks to run on the same time.
+                    var sleepFor = _random.Next(0, 1500);
+                    await Task.Delay(sleepFor, clt);
+                }
 
-                if (saved && sendToHub)
+                var alert = _preComService.AnalyzeAlert(userId, customerId, body, ip, out var timestamp, out var priority);
+                if (alert.Equals(CacheHelper.FOUND_IN_CACHE))
+                {
+                    // Found in cache, do not save to prevent duplicate
+                    Logger.LogInformation("Found in cache, do not save to prevent duplicate");
+                    return Ok();
+                }
+                
+                await _preComService.WriteAlertToDb(userId, customerId, timestamp, alert, priority, JsonSerializer.Serialize(body), ip);
+
+                if (!testMode)
                 {
                     await _preComHub.SendMessage(userId, "PreCom", alert);
                     var forwards = await _preComService.GetAllForwards(30, 0, userId, customerId, clt);
@@ -83,7 +99,7 @@ public class PreComController : DrogeController
                             }
                             catch (Exception ex)
                             {
-                                Logger.LogError(ex, "Error in PreComController WebHook forward `{sendToHub}`", sendToHub);
+                                Logger.LogError(ex, "Error in PreComController WebHook forward `{testMode}`", testMode);
                             }
                         }
                     }
@@ -91,9 +107,9 @@ public class PreComController : DrogeController
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error in PreComController WebHook `{sendToHub}`", sendToHub);
+                Logger.LogError(ex, "Error in PreComController WebHook `{testMode}`", testMode);
                 await _preComService.WriteAlertToDb(userId, customerId, DateTime.UtcNow, ex.Message, -1, body is null ? "body is null" : JsonSerializer.Serialize(body), ip);
-                if (sendToHub)
+                if (!testMode)
                     await _preComHub.SendMessage(userId, "PreCom", "piep piep");
             }
 
@@ -312,7 +328,6 @@ public class PreComController : DrogeController
         }
         catch (Exception ex)
         {
-            
             Logger.LogError(ex, "Exception in DeleteDuplicates");
 #if DEBUG
             Debugger.Break();
@@ -320,7 +335,7 @@ public class PreComController : DrogeController
             return BadRequest();
         }
     }
-    
+
 
     /*[Route("{**catchAll}")]
     [AllowAnonymous]

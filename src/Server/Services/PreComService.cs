@@ -70,22 +70,31 @@ public class PreComService : DrogeService, IPreComService
         return result;
     }
 
-    public string AnalyzeAlert(Guid userId, Guid customerId, object? body, out DateTime timestamp, out int? priority)
+    public string AnalyzeAlert(Guid userId, Guid customerId, object? body, string? ip, out DateTime timestamp, out int? priority)
     {
+        var ser = JsonSerializer.Serialize(body);
+        var cacheKey = $"PreComAlert-{userId}-{customerId}-{ip}-{ser.GetHashCode()}";
+        MemoryCache.TryGetValue(cacheKey, out bool? cached);
+        if (cached is true && !string.IsNullOrEmpty(ip))
+        {
+            Logger.LogInformation("Alert already exists in db for user {UserId} and customer {CustomerId}", userId, customerId);
+            timestamp = DateTimeService.UtcNow();
+            priority = null;
+            return CacheHelper.FOUND_IN_CACHE;
+        }
+        
         var jsonSerializerOptions = new JsonSerializerOptions()
         {
             Converters = { new PreComConverter() }
         };
-        var ser = JsonSerializer.Serialize(body);
         var dataIos = JsonSerializer.Deserialize<NotificationDataBase>(ser, jsonSerializerOptions);
         var dataAndroid = JsonSerializer.Deserialize<NotificationDataAndroid>(ser);
         Logger.LogInformation($"alert is '{dataIos?._alert}'");
         var alert = dataIos?._alert ?? dataAndroid?.data?.message;
         timestamp = DateTime.SpecifyKind(dataIos?._data?.actionData?.Timestamp ?? DateTime.MinValue, DateTimeKind.Utc);
-        if (dataIos is NotificationDataTestWebhookObject)
+        if (dataIos is NotificationDataTestWebhookObject testWebhookData)
         {
-            NotificationDataTestWebhookObject? testWebhookData = (NotificationDataTestWebhookObject)dataIos;
-            alert ??= testWebhookData?.message;
+            alert ??= testWebhookData.message;
             if (timestamp == DateTime.MinValue && testWebhookData?.messageData?.sentTime is not null)
             {
                 timestamp = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
@@ -105,19 +114,12 @@ public class PreComService : DrogeService, IPreComService
 
         var prioParsed = int.TryParse(dataIos?._data?.priority, out var prio); // Android does not have prio in JSON.
         priority = prioParsed ? prio : null;
+        MemoryCache.Set(cacheKey, true, TimeSpan.FromMinutes(5));
         return alert;
     }
 
-    public async Task<bool> WriteAlertToDb(Guid userId, Guid customerId, DateTime? sendTime, string alert, int? priority, string raw, string? ip)
+    public async Task WriteAlertToDb(Guid userId, Guid customerId, DateTime? sendTime, string alert, int? priority, string raw, string? ip)
     {
-        var cacheKey = $"PreComAlert-{userId}-{customerId}-{ip}-{raw.GetHashCode()}";
-        MemoryCache.TryGetValue(cacheKey, out bool? cached);
-        if (cached is true)
-        {
-            Logger.LogInformation("Alert already exists in db for user {UserId} and customer {CustomerId}", userId, customerId);
-            return false;
-        }
-
         Database.PreComAlerts.Add(new DbPreComAlert
         {
             UserId = userId,
@@ -129,8 +131,6 @@ public class PreComService : DrogeService, IPreComService
             Ip = ip,
         });
         await Database.SaveChangesAsync();
-        MemoryCache.Set(cacheKey, true, TimeSpan.FromMinutes(5));
-        return true;
     }
 
     public async Task<bool> PatchAlertToDb(DbPreComAlert alert)
