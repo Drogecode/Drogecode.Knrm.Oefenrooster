@@ -29,7 +29,7 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
         [Test]
         public async Task LoginWithTestPage()
         {
-            await TestContext.Progress.WriteLineAsync("Starting LoginTest");
+            TestContext.WriteLine($"Starting LoginTest: {BaseUrl.Length}, {UserName.Length}, {UserPassword.Length}");
             var loginPage = new LoginPage(Page, BaseUrl);
             await loginPage.Login(UserName, UserPassword);
             await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic");
