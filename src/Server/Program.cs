@@ -162,7 +162,9 @@ builder.Services.AddScoped<IUserPreComEventService, UserPreComEventService>();
 builder.Services.AddScoped<ICustomerSettingService, CustomerSettingService>();
 builder.Services.AddScoped<IUserLinkCustomerService, UserLinkCustomerService>();
 
+builder.Services.AddScoped<UserController>();
 builder.Services.AddScoped<ScheduleController>();
+builder.Services.AddScoped<AuthenticationController>();
 
 builder.Services.AddHostedService<Worker>();
 

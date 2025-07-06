@@ -107,25 +107,12 @@ public class Worker : BackgroundService
         if (nextSync is not null && nextSync.Value.CompareTo(DateTime.UtcNow) > 0)
             return true;
 
-        // Get all scoped objects
-        var userControllerLogger = scope.ServiceProvider.GetRequiredService<ILogger<UserController>>();
-        var authenticationControllerLogger = scope.ServiceProvider.GetRequiredService<ILogger<AuthenticationController>>();
-        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
-        var userRoleService = scope.ServiceProvider.GetRequiredService<IUserRoleService>();
-        var userLinkCustomerService = scope.ServiceProvider.GetRequiredService<IUserLinkCustomerService>();
-        var linkUserRoleService = scope.ServiceProvider.GetRequiredService<ILinkUserRoleService>();
-        var auditService = scope.ServiceProvider.GetRequiredService<IAuditService>();
-        var functionService = scope.ServiceProvider.GetRequiredService<IFunctionService>();
+        // Get scoped objects
         var customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
-        var reportActionSharedService = scope.ServiceProvider.GetRequiredService<IReportActionSharedService>();
-        var httpClient = scope.ServiceProvider.GetRequiredService<HttpClient>();
-        var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-        var refreshHub = scope.ServiceProvider.GetRequiredService<RefreshHub>();
 
         // Get the controllers
-        var authenticationController = new AuthenticationController(authenticationControllerLogger, _memoryCache, userRoleService, userService, userLinkCustomerService, customerService,
-            reportActionSharedService, _configuration, httpClient, dataContext);
-        var userController = new UserController(userControllerLogger, userService, userRoleService, linkUserRoleService, auditService, graphService, functionService, customerService, refreshHub);
+        var authenticationController = scope.ServiceProvider.GetRequiredService<AuthenticationController>();
+        var userController = scope.ServiceProvider.GetRequiredService<UserController>();
 
         // Get tenant details
         var authService = authenticationController.GetAuthenticationService();

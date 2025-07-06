@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
 using System.Text.Json;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -21,6 +22,8 @@ public class UserController : ControllerBase
     private readonly IUserService _userService;
     private readonly IUserRoleService _userRoleService;
     private readonly ILinkUserRoleService _linkUserRoleService;
+    private readonly IUserLinkCustomerService _userLinkCustomerService;
+    private readonly IUserGlobalService _userGlobalService;
     private readonly IAuditService _auditService;
     private readonly IGraphService _graphService;
     private readonly IFunctionService _functionService;
@@ -29,13 +32,15 @@ public class UserController : ControllerBase
 
     private bool _syncUsers = false;
 
-    public UserController(ILogger<UserController> logger, IUserService userService, IUserRoleService userRoleService, ILinkUserRoleService linkUserRoleService, IAuditService auditService,
-        IGraphService graphService, IFunctionService functionService, ICustomerService customerService, RefreshHub refreshHub)
+    public UserController(ILogger<UserController> logger, IUserService userService, IUserRoleService userRoleService, ILinkUserRoleService linkUserRoleService, IUserLinkCustomerService userLinkCustomerService,
+       IUserGlobalService userGlobalService, IAuditService auditService, IGraphService graphService, IFunctionService functionService, ICustomerService customerService, RefreshHub refreshHub)
     {
         _logger = logger;
         _userService = userService;
         _userRoleService = userRoleService;
         _linkUserRoleService = linkUserRoleService;
+        _userLinkCustomerService = userLinkCustomerService;
+        _userGlobalService = userGlobalService;
         _auditService = auditService;
         _graphService = graphService;
         _functionService = functionService;
@@ -274,6 +279,7 @@ public class UserController : ControllerBase
         var existingUsers = (await _userService.GetAllUsers(customerId, true, false, clt)).DrogeUsers ?? [];
         var functions = (await _functionService.GetAllFunctions(customerId, clt)).Functions ?? [];
         var users = await _graphService.ListUsersAsync(customer.Customer?.GroupId);
+        var customersInTenant = await _customerService.GetByTenantId(customer.Customer?.TenantId, clt);
 
         if (users?.Value is not null)
         {
@@ -319,6 +325,40 @@ public class UserController : ControllerBase
                         else
                         {
                             newUserResponse.RoleFromSharePoint = false;
+                        }
+
+                        var allLinkedCustomers = await _userLinkCustomerService.GetAllLinkUserCustomers(newUserResponse.Id, customerId, clt);
+                        if (groups?.Value is not null && customersInTenant.Any(x => x.Id != customerId && groups.Value.Any(y => y.Id == x.GroupId?.ToString())))
+                        {
+                            foreach (var customerInTenant in customersInTenant.Where(x => x.Id != customerId && groups.Value.Any(y => y.Id == x.GroupId?.ToString())))
+                            {
+                                if (allLinkedCustomers.UserLinkedCustomers?.Any(x => x.CustomerId == customerInTenant.Id && x.SetBySync) == true)
+                                {
+                                    allLinkedCustomers.UserLinkedCustomers.Remove(allLinkedCustomers.UserLinkedCustomers.First(x => x.CustomerId == customerInTenant.Id && x.SetBySync));
+                                    continue;
+                                }
+
+                                if (allLinkedCustomers.UserLinkedCustomers?.Any(x => x.CustomerId == customerInTenant.Id) == true)
+                                {
+                                    var link = allLinkedCustomers.UserLinkedCustomers.First(x => x.CustomerId == customerInTenant.Id);
+                                    link.SetBySync = true;
+                                    await _userLinkCustomerService.LinkUserToCustomer(newUserResponse.Id, customerId, new LinkUserToCustomerRequest()
+                                    {
+                                        CustomerId = customerId,
+                                        UserId = newUserResponse.Id,
+                                        GlobalUserId = link.GlobalUserId,
+                                        IsActive = true,
+                                        SetBySync = true
+                                    }, clt);
+                                    continue;
+                                }
+                                await _userLinkCustomerService.LinkUserToCustomer(newUserResponse.Id, customerId, new LinkUserToCustomerRequest()
+                                {
+                                    CustomerId = customerId,
+                                    UserId = newUserResponse.Id,
+                                    GlobalUserId = allLinkedCustomers.UserLinkedCustomers.
+                                }, clt);
+                            }
                         }
 
                         var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(newUserResponse.Id, clt);

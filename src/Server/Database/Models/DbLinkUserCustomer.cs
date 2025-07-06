@@ -12,6 +12,7 @@ public class DbLinkUserCustomer
     public Guid GlobalUserId { get; set; }
     public bool IsPrimary { get; set; }
     public bool IsActive { get; set; }
+    public bool SetBySync { get; set; }
     public int Order { get; set; }
     public Guid LinkedBy { get; set; }
     public DateTime LinkedOn { get; set; }
