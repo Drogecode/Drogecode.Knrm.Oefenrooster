@@ -37,6 +37,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrogeCode.PreCom", "src\Too
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drogecode.Knrm.Oefenrooster.Playwright", "tests\Drogecode.Knrm.Oefenrooster.Playwright\Drogecode.Knrm.Oefenrooster.Playwright.csproj", "{D320CEE8-B3D7-4789-9D8A-730EBA574A47}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFiles", "SolutionFiles", "{89D0653E-3612-441C-9004-E5058C5377DE}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\docker-image.yml = .github\workflows\docker-image.yml
+		.github\workflows\on-push.yml = .github\workflows\on-push.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
