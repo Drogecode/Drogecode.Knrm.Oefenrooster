@@ -15,7 +15,9 @@ public abstract class BaseTest : PageTest
     {
         var config = new ConfigurationBuilder()
             .AddJsonFile("appSettings.json", optional: false)
+#if DEBUG
             .AddJsonFile("appsettings.withsecrets.json", optional: true)
+#endif
             .Build();
 
         _appSettings = config;
