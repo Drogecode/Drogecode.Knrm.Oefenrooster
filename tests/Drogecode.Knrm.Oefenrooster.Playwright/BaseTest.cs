@@ -24,7 +24,7 @@ public abstract class BaseTest : PageTest
         {
             BaseUrl += '/';
         }
-        TestContext.Out.WriteLine($"BaseUrl = `{BaseUrl}`");
+        Console.WriteLine($"BaseUrl = `{BaseUrl}`");
     }
 
     [SetUp]
