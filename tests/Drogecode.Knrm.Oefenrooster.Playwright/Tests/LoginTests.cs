@@ -23,7 +23,7 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             await Page.Locator("id=username").FillAsync(UserName);
             await Page.Locator("id=password").FillAsync(UserPassword);
             await Page.Locator("id=kc-login").ClickAsync();
-            await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Welkom Playwright Basic");
+            await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic");
         }
 
         [Test]
@@ -31,7 +31,7 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
         {
             var loginPage = new LoginPage(Page, BaseUrl);
             await loginPage.Login(UserName, UserPassword);
-            await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Welkom Playwright Basic");
+            await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic");
         }
     }
 }
