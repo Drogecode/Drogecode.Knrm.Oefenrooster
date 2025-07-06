@@ -18,18 +18,24 @@ public class UserDefaultAvailableRepository : BaseRepository, IUserDefaultAvaila
 
     public async Task<List<DbUserDefaultAvailable>> GetUserDefaultAvailableForCustomerInSpan(bool cache, Guid customerId, Guid? userId, DateTime tillDate, DateTime startDate, CancellationToken clt)
     {
-       var cacheKey = $"DefaultAvaCusUsSpan-{customerId}-{userId}-{tillDate}-{startDate}";
-       MemoryCache.TryGetValue(cacheKey, out List<DbUserDefaultAvailable>? result);
-       if (result is not null && cache)
-           return result;
-       
-       result = await Database.UserDefaultAvailables.AsNoTracking()
-           .Include(x => x.DefaultGroup)
-           .Where(x => x.CustomerId == customerId && (userId == null || x.UserId == userId) && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
-           .AsSingleQuery()
-           .ToListAsync(cancellationToken: clt);
-       
-       MemoryCache.Set(cacheKey, result, CacheOptions);
-       return result;
+        List<DbUserDefaultAvailable>? result;
+        var cacheKey = $"DefaultAvaCusUsSpan-{customerId}-{userId}-{tillDate}-{startDate}";
+        if (cache)
+        {
+            MemoryCache.TryGetValue(cacheKey, out result);
+            if (result is not null)
+            {
+                return result;
+            }
+        }
+
+        result = await Database.UserDefaultAvailables.AsNoTracking()
+            .Include(x => x.DefaultGroup)
+            .Where(x => x.CustomerId == customerId && (userId == null || x.UserId == userId) && x.ValidFrom <= startDate && x.ValidUntil >= tillDate)
+            .AsSingleQuery()
+            .ToListAsync(cancellationToken: clt);
+
+        MemoryCache.Set(cacheKey, result, CacheOptions);
+        return result;
     }
 }

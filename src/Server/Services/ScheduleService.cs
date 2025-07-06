@@ -1,16 +1,16 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+using Drogecode.Knrm.Oefenrooster.Server.Repositories.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Data;
 using System.Diagnostics;
-using Drogecode.Knrm.Oefenrooster.Server.Repositories.Interfaces;
-using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -42,7 +42,9 @@ public class ScheduleService : DrogeService, IScheduleService
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
         var defaults = await _roosterDefaultsRepository.GetDefaultsForCustomerInSpan(true, customerId, startDate, tillDate, clt);
-        var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerInSpan(true, customerId, userId, startDate, tillDate, clt);
+        
+        // Get default availability for user, do not check cache.
+        var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerInSpan(false, customerId, userId, startDate, tillDate, clt);
         var userHolidays = await _userHolidaysRepository.GetUserHolidaysForUser(true, customerId, userId, tillDate, startDate, clt);
         var trainings = Database.RoosterTrainings.AsNoTracking().Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).OrderBy(x => x.DateStart);
         var availables = await Database.RoosterAvailables.AsNoTracking().Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate)

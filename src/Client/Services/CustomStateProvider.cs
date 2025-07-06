@@ -1,6 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
-using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
+using System.Security.Claims;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Services;
 

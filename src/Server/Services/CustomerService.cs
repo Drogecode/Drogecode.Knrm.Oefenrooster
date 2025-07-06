@@ -1,11 +1,11 @@
-﻿using System.Diagnostics;
-using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Customer;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 

@@ -1,16 +1,16 @@
 ﻿using Blazored.LocalStorage;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
+using Drogecode.Knrm.Oefenrooster.Client.Services;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Menu;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
-using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
 using System.Security.Claims;
-using Drogecode.Knrm.Oefenrooster.Client.Services;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 

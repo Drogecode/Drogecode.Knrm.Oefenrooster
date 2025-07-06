@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,6 @@ using Microsoft.Identity.Web.Resource;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
-using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 

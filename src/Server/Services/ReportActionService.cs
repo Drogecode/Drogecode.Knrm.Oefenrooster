@@ -1,7 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Extensions;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint;
 using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;

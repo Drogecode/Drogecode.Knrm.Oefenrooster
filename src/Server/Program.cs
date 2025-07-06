@@ -1,6 +1,9 @@
 using Drogecode.Knrm.Oefenrooster.Server.Background;
+using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Server.Repositories;
+using Drogecode.Knrm.Oefenrooster.Server.Repositories.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Shared.Services;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
@@ -17,19 +20,9 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Diagnostics;
 using System.Text;
-using System.Threading.RateLimiting;
-using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using Drogecode.Knrm.Oefenrooster.Server.Repositories;
-using Drogecode.Knrm.Oefenrooster.Server.Repositories.Interfaces;
-using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 Console.WriteLine("Start oefenrooster");
-
-builder.Host.UseDefaultServiceProvider(options =>
-{
-    options.ValidateScopes = true;
-});
 
 // Add services to the container.
 builder.Configuration
@@ -123,7 +116,10 @@ builder.Services.AddResponseCompression(opts =>
         new[] { "application/octet-stream" });
 });
 
-builder.Services.AddDbContextPool<DataContext>(options => { options.UseNpgsql(dbConnectionString); });
+builder.Services.AddDbContextPool<DataContext>(options =>
+{
+    options.UseNpgsql(dbConnectionString);
+});
 builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
 {
     ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"],

@@ -1,5 +1,4 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
-using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;

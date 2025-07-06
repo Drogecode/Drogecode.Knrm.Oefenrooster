@@ -11,4 +11,5 @@ https://www.zeta-resource-editor.com can be used to edit all files and make sure
 This program does not detect new localization files, don't forget to add those.
 
 ## Rider
+
 Or use Rider, no need to explain.

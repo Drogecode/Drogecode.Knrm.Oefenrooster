@@ -1,5 +1,4 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
+﻿using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;

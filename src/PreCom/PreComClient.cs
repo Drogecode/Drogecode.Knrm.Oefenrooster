@@ -1,9 +1,9 @@
-﻿using Drogecode.Knrm.Oefenrooster.PreCom.Models;
+﻿using Drogecode.Knrm.Oefenrooster.PreCom.Interfaces;
+using Drogecode.Knrm.Oefenrooster.PreCom.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
-using Drogecode.Knrm.Oefenrooster.PreCom.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.PreCom;
 

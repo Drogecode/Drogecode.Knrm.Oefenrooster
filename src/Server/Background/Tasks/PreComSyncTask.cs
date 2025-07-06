@@ -5,7 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
-namespace Drogecode.Knrm.Oefenrooster.Server.Background.Jobs;
+namespace Drogecode.Knrm.Oefenrooster.Server.Background.Tasks;
 
 public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
 {

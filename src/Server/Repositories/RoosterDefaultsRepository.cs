@@ -23,7 +23,7 @@ public class RoosterDefaultsRepository : BaseRepository, IRoosterDefaultsReposit
         if (result is not null && cache)
             return result;
         
-        result = await Database.RoosterDefaults.AsNoTracking().Where(x => x.CustomerId == customerId && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
+        result = await Database.RoosterDefaults.AsNoTracking().Where(x => x.CustomerId == customerId && x.ValidFrom <= startDate && x.ValidUntil >= tillDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
         
         MemoryCache.Set(cacheKey, result, CacheOptions);

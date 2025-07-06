@@ -1,4 +1,4 @@
-using Drogecode.Knrm.Oefenrooster.Server.Background.Jobs;
+using Drogecode.Knrm.Oefenrooster.Server.Background.Tasks;
 using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;

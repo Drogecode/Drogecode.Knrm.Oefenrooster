@@ -1,5 +1,5 @@
-﻿using System.Net.Http.Headers;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using System.Net.Http.Headers;
 
 namespace Drogecode.Knrm.Oefenrooster.PreCom;
 

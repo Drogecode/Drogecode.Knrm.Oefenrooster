@@ -13,7 +13,7 @@ public sealed partial class DefaultPanel : IDisposable
     [Parameter][EditorRequired] public DefaultGroup Group { get; set; } = default!;
     private RefreshModel _refreshModel = new();
     private CancellationTokenSource _cls = new();
-    private List<DefaultSchedule>? _defaultSchedules { get; set; }
+    private List<DefaultSchedule>? _defaultSchedules;
     private bool _updating;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -47,7 +47,7 @@ public sealed partial class DefaultPanel : IDisposable
         return _dialogProvider.ShowAsync<GroupDialog>(L["Add period"], parameters, options);
     }
     
-    private async Task OnChange(Availability? value, DefaultUserSchedule? old, Guid defaultId, bool isNew)
+    private async Task OnChange(Availability? value, DefaultUserSchedule? old, Guid defaultId)
     {
         if (_updating) return;
         _updating = true;
@@ -61,10 +61,6 @@ public sealed partial class DefaultPanel : IDisposable
             if (patched is not null)
             {
                 old.UserDefaultAvailableId = patched.UserDefaultAvailableId;
-            }
-            if (isNew)
-            {
-                await RefreshMeAsync();
             }
         }
         _updating = false;

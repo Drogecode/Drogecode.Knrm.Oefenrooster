@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
+using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
@@ -8,13 +9,12 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph.Models;
 using Microsoft.Identity.Web.Resource;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
-using Microsoft.Graph.Models;
 using Training = Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Training;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;

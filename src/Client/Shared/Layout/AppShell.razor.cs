@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 

@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.JSInterop;
 using MudBlazor.Services;
+using MudBlazor.Translations;
 using MudExtensions.Services;
 using System.Globalization;
-using MudBlazor.Translations;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

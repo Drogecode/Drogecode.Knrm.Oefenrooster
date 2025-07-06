@@ -3,10 +3,10 @@ using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph.Models;
 using Microsoft.Identity.Web.Resource;
 using System.Diagnostics;
 using System.Security.Claims;
-using Microsoft.Graph.Models;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 

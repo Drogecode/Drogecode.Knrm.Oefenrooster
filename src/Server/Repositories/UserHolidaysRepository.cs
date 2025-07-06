@@ -25,7 +25,7 @@ public class UserHolidaysRepository : BaseRepository, IUserHolidaysRepository
        
         result = await Database.UserHolidays
             .AsNoTracking()
-            .Where(x => x.CustomerId == customerId && (userId == null || x.UserId == userId) && x.ValidFrom <= tillDate && x.ValidUntil >= startDate)
+            .Where(x => x.CustomerId == customerId && (userId == null || x.UserId == userId) && x.ValidFrom <= startDate && x.ValidUntil >= tillDate)
             .AsSingleQuery()
             .ToListAsync(cancellationToken: clt);
        

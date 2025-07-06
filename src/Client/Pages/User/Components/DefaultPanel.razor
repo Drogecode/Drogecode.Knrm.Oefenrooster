@@ -37,7 +37,7 @@
             <TemplateColumn Title="@L["Current setting"]">
                 <CellTemplate>
                     @{
-                        DefaultUserSchedule userSchedule = context.Item.UserSchedules?.FirstOrDefault() ?? new DefaultUserSchedule();
+                        var userSchedule = context.Item.UserSchedules?.FirstOrDefault() ?? new DefaultUserSchedule();
                     }
                     @LApp[userSchedule?.Availability.ToString() ?? "None"]
                 </CellTemplate>
@@ -45,13 +45,7 @@
         </Columns>
         <ChildRowContent>
             @{
-                bool isNew = false;
-                DefaultUserSchedule? userSchedule = context.Item.UserSchedules?.FirstOrDefault();
-                if (userSchedule is null)
-                {
-                    userSchedule = new DefaultUserSchedule();
-                    isNew = true;
-                }
+                var userSchedule = context.Item.UserSchedules?.FirstOrDefault() ?? new DefaultUserSchedule();
             }
             <MudCard>
                 <MudCardHeader>
@@ -60,7 +54,7 @@
                     </CardHeaderContent>
                 </MudCardHeader>
                 <MudCardContent>
-                    <MudSelect T="Availability?" Variant="Variant.Text" Value="userSchedule.Availability" ValueChanged="async (e) => await OnChange(e, userSchedule, context.Item.Id, isNew)" AdornmentColor="@PlannerHelper.ColorAvailabilty(userSchedule?.Availability)">
+                    <MudSelect T="Availability?" Variant="Variant.Text" Value="userSchedule.Availability" ValueChanged="async (e) => await OnChange(e, userSchedule, context.Item.Id)" AdornmentColor="@PlannerHelper.ColorAvailabilty(userSchedule?.Availability)" Disabled="_updating">
                         <MudSelectItem T="Availability?" Value="Availability.None">@LApp["None"]</MudSelectItem>
                         <MudSelectItem T="Availability?" Value="Availability.Available">@LApp["Available"]</MudSelectItem>
                         <MudSelectItem T="Availability?" Value="Availability.NotAvailable">@LApp["NotAvailable"]</MudSelectItem>

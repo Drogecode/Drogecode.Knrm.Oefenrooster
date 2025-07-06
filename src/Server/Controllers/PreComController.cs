@@ -1,17 +1,16 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
+﻿using Drogecode.Knrm.Oefenrooster.PreCom;
+using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
+using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
+using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
-using Drogecode.Knrm.Oefenrooster.PreCom;
-using Drogecode.Knrm.Oefenrooster.Server.Helpers;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
