@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Drogecode.Knrm.Oefenrooster.PreCom;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
