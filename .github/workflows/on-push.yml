@@ -24,10 +24,15 @@ jobs:
       Playwright:Users:Basic:Password: ${{ secrets.playwright_Users_Basic_Password }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
       - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
       - name: Install dependencies
         run: dotnet restore ./Drogecode.Knrm.Oefenrooster.sln
       - name: Build
