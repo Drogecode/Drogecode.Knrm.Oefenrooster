@@ -24,8 +24,8 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             await Expect(Page.Locator("id=username")).ToBeEmptyAsync();
             await Expect(Page.Locator("id=password")).ToBeEmptyAsync();
             await Expect(Page.Locator("id=kc-login")).ToBeEnabledAsync();
-            await Page.Locator("id=username").FillAsync(UserName);
-            await Page.Locator("id=password").FillAsync(UserPassword);
+            await Page.FillAsync("input[name='username']", UserName);
+            await Page.FillAsync("input[name='password']", UserPassword);
             await Page.Locator("id=kc-login").ClickAsync();
             await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic");
         }
