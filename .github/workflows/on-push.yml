@@ -44,4 +44,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-debug
-          path: tests/Drogecode.Knrm.Oefenrooster.Playwright/playwright-debug/
+          path: ./tests/Drogecode.Knrm.Oefenrooster.Playwright/bin/Release/net9.0/playwright-debug
