@@ -45,14 +45,14 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             catch (Exception ex)
             {
                 // Dump page for debugging
-                Console.WriteLine("‼️ Error during login or authorization");
+                await TestContext.Out.WriteLineAsync("‼️ Error during login or authorization");
                 var html = await Page.ContentAsync();
                 var path = "playwright-debug";
                 Directory.CreateDirectory(path);
                 await File.WriteAllTextAsync(Path.Combine(path, "page.html"), html);
                 await Page.ScreenshotAsync(new() { Path = Path.Combine(path, "screenshot.png") });
                 await File.WriteAllLinesAsync(Path.Combine(path, "console.log"), logs);
-                Console.WriteLine($"❌ Debug written to: {Path.GetFullPath(path)}");
+                await TestContext.Out.WriteLineAsync($"❌ Debug written to: {Path.GetFullPath(path)}");
                 await TestContext.Out.WriteLineAsync($"Page URL: {Page.Url}");
                 await TestContext.Out.WriteLineAsync(html);
 
