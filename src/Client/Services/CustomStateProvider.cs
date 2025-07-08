@@ -105,7 +105,7 @@ public class CustomStateProvider : AuthenticationStateProvider
         // If parsing fails or the dates are invalid (e.g., DateTime.MinValue), refresh.
         if (!parsedFrom || !parsedTo || validFrom == default || validTo == default)
         {
-            DebugHelper.WriteLine($"⚠️ Failed to parse ValidFrom/ValidTo. From='{validFromClaim}', To='{validToClaim}'");
+            DebugHelper.WriteLine($"⚠️ Failed to parse ValidFrom/ValidTo. From='{parsedFrom}-{validFromClaim}', To='{parsedTo}-{validToClaim}'");
             identity = await RefreshInternal();
             return identity;
         }

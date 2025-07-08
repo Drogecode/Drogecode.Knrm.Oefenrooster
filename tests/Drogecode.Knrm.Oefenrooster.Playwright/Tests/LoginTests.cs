@@ -54,7 +54,7 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
                 await File.WriteAllLinesAsync(Path.Combine(path, "console.log"), logs);
                 await TestContext.Out.WriteLineAsync($"❌ Debug written to: {Path.GetFullPath(path)}");
                 await TestContext.Out.WriteLineAsync($"Page URL: {Page.Url}");
-                await TestContext.Out.WriteLineAsync(html);
+                await TestContext.Out.WriteLineAsync(html[..Math.Min(html.Length, 1000)]);
 
                 throw new Exception("Login or authorization failed. Debug output saved.", ex);
             }
