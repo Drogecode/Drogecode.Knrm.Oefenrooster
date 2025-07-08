@@ -90,10 +90,22 @@ public class CustomStateProvider : AuthenticationStateProvider
 
     private async Task<ClaimsIdentity> RefreshIfRequired(ClaimsIdentity identity)
     {
-        var parsedFrom = DateTime.TryParse(identity.Claims.FirstOrDefault(x => x.Type.Equals("ValidFrom"))?.Value, out var validFrom);
-        var parsedTo = DateTime.TryParse(identity.Claims.FirstOrDefault(x => x.Type.Equals("ValidTo"))?.Value, out var validTo);
-        if (!parsedFrom || !parsedTo)
+        if (!identity.IsAuthenticated)
         {
+            DebugHelper.WriteLine("❌ Identity not authenticated.");
+            return await RefreshInternal();
+        }
+
+        var validFromClaim = identity.Claims.FirstOrDefault(x => x.Type.Equals("ValidFrom"))?.Value;
+        var validToClaim = identity.Claims.FirstOrDefault(x => x.Type.Equals("ValidTo"))?.Value;
+
+        var parsedFrom = DateTime.TryParse(validFromClaim, out var validFrom);
+        var parsedTo = DateTime.TryParse(validToClaim, out var validTo);
+
+        // If parsing fails or the dates are invalid (e.g., DateTime.MinValue), refresh.
+        if (!parsedFrom || !parsedTo || validFrom == default || validTo == default)
+        {
+            DebugHelper.WriteLine($"⚠️ Failed to parse ValidFrom/ValidTo. From='{validFromClaim}', To='{validToClaim}'");
             identity = await RefreshInternal();
             return identity;
         }
@@ -102,8 +114,19 @@ public class CustomStateProvider : AuthenticationStateProvider
 #if DEBUG
         //now = now.AddMinutes(59).AddSeconds(30);
 #endif
-        if (now.CompareTo(validFrom.AddMinutes(-5)) < 0 || now.CompareTo(validTo) > 0)
+
+        // Check for underflow/overflow when adding minutes
+        try
         {
+            if (now < validFrom.AddMinutes(-5) || now > validTo)
+            {
+                DebugHelper.WriteLine($"⏰ Token expired or not yet valid. Now={now}, From={validFrom}, To={validTo}");
+                identity = await RefreshInternal();
+            }
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            DebugHelper.WriteLine($"❌ DateTime overflow: {ex.Message}");
             identity = await RefreshInternal();
         }
 
