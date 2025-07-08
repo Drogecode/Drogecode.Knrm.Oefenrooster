@@ -20,6 +20,8 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
         [Test]
         public async Task LoginToKeyCloak()
         {
+            try
+            {
             Page.SetDefaultTimeout(60000); // 60 seconds
             await TestContext.Out.WriteLineAsync($"Starting LoginTest: {BaseUrl.Length}, {UserName.Length}, {UserPassword.Length}");
             await Page.GotoAsync(BaseUrl);
@@ -36,6 +38,23 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             await Expect(Page.GetByText("No access")).ToHaveCountAsync(0);
             await Expect(Page.GetByText("Geen toegang")).ToHaveCountAsync(0);
             await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic");
+            }
+            catch (Exception ex)
+            {
+                // Dump page for debugging
+                var html = await Page.ContentAsync();
+                var path = "playwright-debug";
+
+                Directory.CreateDirectory(path);
+                await File.WriteAllTextAsync(Path.Combine(path, "page.html"), html);
+                await Page.ScreenshotAsync(new() { Path = Path.Combine(path, "screenshot.png") });
+
+                Console.WriteLine("‼️ Error during login or authorization");
+                await TestContext.Out.WriteLineAsync($"Page URL: {Page.Url}");
+                await TestContext.Out.WriteLineAsync(html);
+
+                throw new Exception("Login or authorization failed. Debug output saved.", ex);
+            }
         }
 
         [Test]
@@ -44,14 +63,6 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             var loginPage = new LoginPage(Page, BaseUrl);
             await loginPage.Login(UserName, UserPassword);
             await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic");
-        }
-        
-        [TearDown]
-        public async Task TearDown()
-        {
-            var html = await Page.ContentAsync();
-            await TestContext.Out.WriteLineAsync("🔍 Full page HTML:");
-            await TestContext.Out.WriteLineAsync(html);
         }
     }
 }
