@@ -36,9 +36,6 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             await Expect(Page.GetByText("No access")).ToHaveCountAsync(0);
             await Expect(Page.GetByText("Geen toegang")).ToHaveCountAsync(0);
             await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic");
-            var html = await Page.ContentAsync();
-            await TestContext.Out.WriteLineAsync("🔍 Full page HTML:");
-            await TestContext.Out.WriteLineAsync(html);
         }
 
         [Test]
@@ -47,6 +44,14 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             var loginPage = new LoginPage(Page, BaseUrl);
             await loginPage.Login(UserName, UserPassword);
             await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic");
+        }
+        
+        [TearDown]
+        public async Task TearDown()
+        {
+            var html = await Page.ContentAsync();
+            await TestContext.Out.WriteLineAsync("🔍 Full page HTML:");
+            await TestContext.Out.WriteLineAsync(html);
         }
     }
 }
