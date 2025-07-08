@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Playwright.Pages;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Playwright;
 
 namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
 {
@@ -29,6 +30,7 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             await Page.FillAsync("input[name='username']", UserName);
             await Page.FillAsync("input[name='password']", UserPassword);
             await Page.Locator("id=kc-login").ClickAsync();
+            await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
             var html = await Page.ContentAsync();
             await TestContext.Out.WriteLineAsync("🔍 Full page HTML:");
             await TestContext.Out.WriteLineAsync(html);
