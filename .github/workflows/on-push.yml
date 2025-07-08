@@ -36,6 +36,6 @@ jobs:
       - name: Build
         run: dotnet build ./Drogecode.Knrm.Oefenrooster.sln --configuration Release --no-restore
       - name: Install Playwright Browsers
-        run: pwsh ./tests/Drogecode.Knrm.Oefenrooster.Playwright/bin/Debug/net9.0/playwright.ps1 install
+        run: pwsh ./tests/Drogecode.Knrm.Oefenrooster.Playwright/bin/Release/net9.0/playwright.ps1 install
       - name: Test
         run: dotnet test ./Drogecode.Knrm.Oefenrooster.sln --configuration Release --no-restore
