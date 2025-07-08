@@ -31,14 +31,14 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             await Page.FillAsync("input[name='password']", UserPassword);
             await Page.Locator("id=kc-login").ClickAsync();
             await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-            var html = await Page.ContentAsync();
-            await TestContext.Out.WriteLineAsync("🔍 Full page HTML:");
-            await TestContext.Out.WriteLineAsync(html);
             await Expect(Page.GetByText("Invalid username or password.")).ToHaveCountAsync(0);
             await Expect(Page.GetByText("Dit is de landingspagina voor de vrijwilligers van KNRM Huizen & Huizer Reddingsbrigade.")).ToHaveCountAsync(0);
             await Expect(Page.GetByText("No access")).ToHaveCountAsync(0);
             await Expect(Page.GetByText("Geen toegang")).ToHaveCountAsync(0);
             await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic");
+            var html = await Page.ContentAsync();
+            await TestContext.Out.WriteLineAsync("🔍 Full page HTML:");
+            await TestContext.Out.WriteLineAsync(html);
         }
 
         [Test]
