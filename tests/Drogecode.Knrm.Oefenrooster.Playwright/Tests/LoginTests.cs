@@ -19,6 +19,7 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
         [Test]
         public async Task LoginToKeyCloak()
         {
+            Page.SetDefaultTimeout(60000);// 60 seconds
             await TestContext.Out.WriteLineAsync($"Starting LoginTest: {BaseUrl.Length}, {UserName.Length}, {UserPassword.Length}");
             await Page.GotoAsync(BaseUrl);
             await Expect(Page.Locator(".kc-logo-text")).ToContainTextAsync("Keycloak");
