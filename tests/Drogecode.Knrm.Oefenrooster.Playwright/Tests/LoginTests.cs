@@ -13,13 +13,13 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
         public override async Task SetUp()
         {
             // Override to prevent auto login.
-           await BaseSetUp(false);
+            await BaseSetUp(false);
         }
-        
+
         [Test]
         public async Task LoginToKeyCloak()
         {
-            Page.SetDefaultTimeout(60000);// 60 seconds
+            Page.SetDefaultTimeout(60000); // 60 seconds
             await TestContext.Out.WriteLineAsync($"Starting LoginTest: {BaseUrl.Length}, {UserName.Length}, {UserPassword.Length}");
             await Page.GotoAsync(BaseUrl);
             await Expect(Page.Locator(".kc-logo-text")).ToContainTextAsync("Keycloak");
@@ -29,6 +29,9 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             await Page.FillAsync("input[name='username']", UserName);
             await Page.FillAsync("input[name='password']", UserPassword);
             await Page.Locator("id=kc-login").ClickAsync();
+            var html = await Page.ContentAsync();
+            await TestContext.Out.WriteLineAsync("🔍 Full page HTML:");
+            await TestContext.Out.WriteLineAsync(html);
             await Expect(Page.GetByText("Invalid username or password.")).ToHaveCountAsync(0);
             await Expect(Page.GetByText("Dit is de landingspagina voor de vrijwilligers van KNRM Huizen & Huizer Reddingsbrigade.")).ToHaveCountAsync(0);
             await Expect(Page.GetByText("No access")).ToHaveCountAsync(0);
