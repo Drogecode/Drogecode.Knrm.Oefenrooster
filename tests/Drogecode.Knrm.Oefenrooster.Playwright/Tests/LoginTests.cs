@@ -19,6 +19,7 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
         [Test]
         public async Task LoginToKeyCloak()
         {
+            await TestContext.Out.WriteLineAsync($"Starting LoginTest: {BaseUrl.Length}, {UserName.Length}, {UserPassword.Length}");
             await Page.GotoAsync(BaseUrl);
             await Expect(Page.Locator(".kc-logo-text")).ToContainTextAsync("Keycloak");
             await Expect(Page.Locator("id=username")).ToBeEmptyAsync();
@@ -27,13 +28,13 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             await Page.FillAsync("input[name='username']", UserName);
             await Page.FillAsync("input[name='password']", UserPassword);
             await Page.Locator("id=kc-login").ClickAsync();
+            await Expect(Page.GetByText("Invalid username or password.")).ToHaveCountAsync(0);
             await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic");
         }
 
         [Test]
         public async Task LoginWithTestPage()
         {
-            await TestContext.Out.WriteLineAsync($"Starting LoginTest: {BaseUrl.Length}, {UserName.Length}, {UserPassword.Length}");
             var loginPage = new LoginPage(Page, BaseUrl);
             await loginPage.Login(UserName, UserPassword);
             await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic");
