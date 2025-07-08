@@ -20,6 +20,10 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
         public async Task LoginToKeyCloak()
         {
             await Page.GotoAsync(BaseUrl);
+            await Expect(Page.Locator(".kc-logo-text")).ToContainTextAsync("Keycloak");
+            await Expect(Page.Locator("id=username")).ToBeEmptyAsync();
+            await Expect(Page.Locator("id=password")).ToBeEmptyAsync();
+            await Expect(Page.Locator("id=kc-login")).ToBeEnabledAsync();
             await Page.Locator("id=username").FillAsync(UserName);
             await Page.Locator("id=password").FillAsync(UserPassword);
             await Page.Locator("id=kc-login").ClickAsync();
