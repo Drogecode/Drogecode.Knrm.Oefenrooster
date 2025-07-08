@@ -39,7 +39,8 @@ public abstract class BaseTest : PageTest
         UserPassword = ReadSetting("Playwright:Users:Basic:Password");
         if (login)
         {
-            var loginPage = new LoginPage(Page, BaseUrl);
+            await Page.GotoAsync(BaseUrl);
+            var loginPage = new LoginPage(Page);
             await loginPage.Login(UserName, UserPassword);
         }
     }

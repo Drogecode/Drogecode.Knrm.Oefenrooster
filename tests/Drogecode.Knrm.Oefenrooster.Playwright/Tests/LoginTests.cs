@@ -63,7 +63,8 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
         [Test]
         public async Task LoginWithTestPage()
         {
-            var loginPage = new LoginPage(Page, BaseUrl);
+            await Page.GotoAsync(BaseUrl);
+            var loginPage = new LoginPage(Page);
             await loginPage.Login(UserName, UserPassword);
             await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic");
         }
