@@ -45,7 +45,6 @@ jobs:
             --no-restore \
             --logger "trx;LogFileName=test_results.trx" \
             --results-directory ./tests/Drogecode.Knrm.Oefenrooster.Playwright/bin/Release/net9.0/playwright-debug
-            --env Playwright:Users:Basic:Name=$Playwright:Users:Basic:Name
       - name: Upload Playwright debug artifacts (on failure)
         if: failure()
         uses: actions/upload-artifact@v4

@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Playwright.Pages;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Playwright;
 using NUnit.Framework.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.Playwright;
@@ -9,6 +10,7 @@ public abstract class BaseTest : PageTest
     private readonly IConfigurationRoot _appSettings;
     private List<string> _consoleLogs = new();
     protected readonly string BaseUrl;
+    protected readonly LocatorAssertionsToContainTextOptions _timeout = new() { Timeout = 30000 };
 
     protected string UserName;
     protected string UserPassword;
