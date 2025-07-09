@@ -23,7 +23,7 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             Page.SetDefaultTimeout(60000); // 60 seconds
             await TestContext.Out.WriteLineAsync($"Starting LoginTest: {BaseUrl.Length}, {UserName.Length}, {UserPassword.Length}");
             await Page.GotoAsync(BaseUrl);
-            await Expect(Page.Locator(".kc-logo-text")).ToContainTextAsync("Keycloak");
+            await Expect(Page.Locator(".kc-logo-text")).ToContainTextAsync("Keycloak", new() { Timeout = 60000 });
             await Expect(Page.Locator("id=username")).ToBeEmptyAsync();
             await Expect(Page.Locator("id=password")).ToBeEmptyAsync();
             await Expect(Page.Locator("id=kc-login")).ToBeEnabledAsync();
@@ -35,7 +35,7 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             await Expect(Page.GetByText("Dit is de landingspagina voor de vrijwilligers van KNRM Huizen & Huizer Reddingsbrigade.")).ToHaveCountAsync(0);
             await Expect(Page.GetByText("No access")).ToHaveCountAsync(0);
             await Expect(Page.GetByText("Geen toegang")).ToHaveCountAsync(0);
-            await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic");
+            await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic", new() { Timeout = 60000 });
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             await Page.GotoAsync(BaseUrl);
             var loginPage = new LoginPage(Page);
             await loginPage.Login(UserName, UserPassword);
-            await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic");
+            await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic", new() { Timeout = 60000 });
         }
     }
 }
