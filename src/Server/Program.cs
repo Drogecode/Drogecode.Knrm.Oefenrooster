@@ -20,6 +20,8 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Diagnostics;
 using System.Text;
+using Drogecode.Knrm.Oefenrooster.Server.Managers;
+using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 Console.WriteLine("Start oefenrooster");
@@ -161,6 +163,8 @@ builder.Services.AddScoped<IUserSettingService, UserSettingService>();
 builder.Services.AddScoped<IUserPreComEventService, UserPreComEventService>();
 builder.Services.AddScoped<ICustomerSettingService, CustomerSettingService>();
 builder.Services.AddScoped<IUserLinkCustomerService, UserLinkCustomerService>();
+
+builder.Services.AddScoped<IUserSyncManager, UserSyncManager>();
 
 builder.Services.AddScoped<UserController>();
 builder.Services.AddScoped<ScheduleController>();

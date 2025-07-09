@@ -11,6 +11,7 @@ public static class CustomerMapper
     {
         return new LinkedCustomer
         {
+            Id = dbLinkUserCustomer.Id,
             CustomerId = dbLinkUserCustomer.CustomerId,
             UserId = dbLinkUserCustomer.UserId,
             GlobalUserId = dbLinkUserCustomer.GlobalUserId,

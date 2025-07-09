@@ -1,6 +1,7 @@
 using Drogecode.Knrm.Oefenrooster.Server.Background.Tasks;
 using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
@@ -112,7 +113,7 @@ public class Worker : BackgroundService
 
         // Get the controllers
         var authenticationController = scope.ServiceProvider.GetRequiredService<AuthenticationController>();
-        var userController = scope.ServiceProvider.GetRequiredService<UserController>();
+        var userSyncManager = scope.ServiceProvider.GetRequiredService<IUserSyncManager>();
 
         // Get tenant details
         var authService = authenticationController.GetAuthenticationService();
@@ -122,7 +123,8 @@ public class Worker : BackgroundService
         {
             _clt.ThrowIfCancellationRequested();
             _logger.LogInformation("Syncing users for customer `{customerId}`", customer.Id);
-            await userController.InternalSyncAllUsers(DefaultSettingsHelper.SystemUser, customer.Id, _clt);
+            await userSyncManager.SyncAllUsers(DefaultSettingsHelper.SystemUser, customer.Id, _clt);
+            await Task.Delay(100, _clt);
         }
 
         _memoryCache.Set(NEXT_USER_SYNC, DateTime.SpecifyKind(DateTime.Today.AddDays(1).AddHours(1), DateTimeKind.Utc));

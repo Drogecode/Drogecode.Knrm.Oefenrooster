@@ -2,6 +2,7 @@
 
 public class LinkedCustomer
 {
+    public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
     public Guid UserId { get; set; }
     public Guid GlobalUserId { get; set; }

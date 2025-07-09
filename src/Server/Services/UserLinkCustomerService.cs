@@ -77,7 +77,7 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
         return result;
     }
 
-    public async Task<LinkUserToCustomerResponse> LinkUserToCustomer(Guid userId, Guid customerId, LinkUserToCustomerRequest body, CancellationToken clt)
+    public async Task<LinkUserToCustomerResponse> LinkUserToCustomer(Guid userId, LinkUserToCustomerRequest body, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new LinkUserToCustomerResponse();

@@ -5,6 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.UserGlobal;
 using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Server.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -48,6 +49,26 @@ public class UserGlobalService : DrogeService, IUserGlobalService
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         result.Success = true;
         return result;
+    }
+
+    public async Task<DrogeUserGlobal> GetOrCreateGlobalUserByExternalId(DrogeUserServer user, CancellationToken clt)
+    {
+        var globalUser = await Database.UsersGlobal.Where(x => x.ExternalId == user.ExternalId).Select(x=>x.ToDrogeUserGlobal()).FirstOrDefaultAsync(clt);
+        if (globalUser is not null)
+        {
+            return globalUser;
+        }
+
+        var dbGlobalUer = new DbUsersGlobal
+        {
+            Id = Guid.CreateVersion7(),
+            ExternalId = user.ExternalId,
+            CreatedOn = DateTimeService.UtcNow(),
+            Name = user.Name
+        };
+        await Database.UsersGlobal.AddAsync(dbGlobalUer, clt);
+        await Database.SaveChangesAsync(clt);
+        return dbGlobalUer.ToDrogeUserGlobal();
     }
 
     public async Task<PutResponse> PutGlobalUser(Guid userId, DrogeUserGlobal globalUser, CancellationToken clt)
