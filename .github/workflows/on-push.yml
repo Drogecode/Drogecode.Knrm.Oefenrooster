@@ -18,6 +18,8 @@ jobs:
     strategy:
       matrix:
         dotnet-version: [ '9.0.x' ]
+    container:
+      image: mcr.microsoft.com/playwright/dotnet:v1.53.0-noble
     env:
       Playwright:BaseUrl: ${{ secrets.playwright_BaseUrl }}
       Playwright:Users:Basic:Name: ${{ secrets.playwright_Users_Basic_Name }}
@@ -35,10 +37,14 @@ jobs:
         run: dotnet restore ./Drogecode.Knrm.Oefenrooster.sln
       - name: Build
         run: dotnet build ./Drogecode.Knrm.Oefenrooster.sln --configuration Release --no-restore
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - name: Test
-        run: dotnet test ./Drogecode.Knrm.Oefenrooster.sln --configuration Release --no-restore
+      - name: Run tests
+        run: |
+          mkdir -p ./tests/Drogecode.Knrm.Oefenrooster.Playwright/bin/Release/net9.0/playwright-debug
+          dotnet test ./Drogecode.Knrm.Oefenrooster.sln \
+            --configuration Release \
+            --no-restore \
+            --logger "trx;LogFileName=test_results.trx" \
+            --results-directory ./tests/Drogecode.Knrm.Oefenrooster.Playwright/bin/Release/net9.0/playwright-debug
       - name: Upload Playwright debug artifacts (on failure)
         if: failure()
         uses: actions/upload-artifact@v4
