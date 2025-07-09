@@ -21,7 +21,7 @@ public abstract class BaseTest : PageTest
             .Build();
 
         _appSettings = config;
-        BaseUrl = ReadSetting("Playwright:BaseUrl")!;
+        BaseUrl = ReadSetting("Playwright__BaseUrl")!;
         if (!BaseUrl.EndsWith('/'))
         {
             BaseUrl += '/';
@@ -61,8 +61,8 @@ public abstract class BaseTest : PageTest
 
     protected async Task BaseSetUp(bool login)
     {
-        UserName = ReadSetting("Playwright:Users:Basic:Name");
-        UserPassword = ReadSetting("Playwright:Users:Basic:Password");
+        UserName = ReadSetting("Playwright__Users__Basic__Name");
+        UserPassword = ReadSetting("Playwright__Users__Basic__Password");
         Page.Console += (_, msg) => _consoleLogs.Add($"[{msg.Type}] {msg.Text}");
         if (login)
         {
@@ -77,6 +77,7 @@ public abstract class BaseTest : PageTest
         var setting = Environment.GetEnvironmentVariable(variableName);
         if (!string.IsNullOrEmpty(setting))
             return setting;
+        variableName = variableName.Replace("__", ":");
         setting = _appSettings.GetValue<string>(variableName);
         if (!string.IsNullOrEmpty(setting))
             return setting;
