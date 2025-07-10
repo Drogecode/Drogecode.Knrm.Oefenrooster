@@ -77,7 +77,7 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
         return result;
     }
 
-    public async Task<LinkUserToCustomerResponse> LinkUserToCustomer(Guid userId, Guid customerId, LinkUserToCustomerRequest body, CancellationToken clt)
+    public async Task<LinkUserToCustomerResponse> LinkUserToCustomer(Guid userId, LinkUserToCustomerRequest body, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new LinkUserToCustomerResponse();
@@ -91,11 +91,16 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
         if (links.Any(x => x.CustomerId == body.CustomerId))
         {
             var link = links.First(x => x.CustomerId == body.CustomerId);
-            if (link.IsActive != body.IsActive)
+            if (link.SetBySync && !body.SetBySync)
+            {
+                Logger.LogWarning("Not allowed to edit link that is set by sync `{user}` `{customer}` `{isActive}`", body.UserId, body.CustomerId, body.IsActive);
+            }
+            else if (link.IsActive != body.IsActive || link.SetBySync != body.SetBySync)
             {
                 link.IsActive = body.IsActive;
                 link.LinkedBy = userId;
                 link.LinkedOn = DateTime.UtcNow;
+                link.SetBySync = body.SetBySync;
                 Database.LinkUserCustomers.Update(link);
             }
             else
@@ -134,6 +139,7 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
                 CustomerId = body.CustomerId,
                 IsPrimary = false,
                 IsActive = true,
+                SetBySync = body.SetBySync,
                 Order = links.OrderByDescending(x => x.Order).FirstOrDefault()?.Order ?? 0 + 10,
                 LinkedBy = userId,
                 LinkedOn = DateTime.UtcNow

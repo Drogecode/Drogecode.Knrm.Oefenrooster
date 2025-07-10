@@ -73,7 +73,9 @@ public class UserLinkCustomerController : DrogeController
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var response = await _userLinkCustomerService.LinkUserToCustomer(userId, customerId, body, clt);
+            body.SetBySync = false;
+            body.SetBySync = false;
+            var response = await _userLinkCustomerService.LinkUserToCustomer(userId, body, clt);
             return response;
         }
         catch (Exception ex)

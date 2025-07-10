@@ -49,7 +49,7 @@ public class CustomerService : DrogeService, ICustomerService
         return result;
     }
 
-    public async Task<List<CustomerAuthentication>> GetByTenantId(string tenantId, CancellationToken clt)
+    public async Task<List<CustomerAuthentication>> GetByTenantId(string? tenantId, CancellationToken clt)
     {
         var customers = await Database.Customers
             .Where(x => x.TenantId == tenantId)

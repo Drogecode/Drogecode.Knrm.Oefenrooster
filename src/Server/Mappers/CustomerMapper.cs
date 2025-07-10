@@ -9,20 +9,23 @@ public static class CustomerMapper
 {
     public static LinkedCustomer ToLinkedCustomer(this DbLinkUserCustomer dbLinkUserCustomer, Guid currentCustomerId)
     {
-        return new LinkedCustomer()
+        return new LinkedCustomer
         {
+            Id = dbLinkUserCustomer.Id,
             CustomerId = dbLinkUserCustomer.CustomerId,
             UserId = dbLinkUserCustomer.UserId,
+            GlobalUserId = dbLinkUserCustomer.GlobalUserId,
             Name = dbLinkUserCustomer.Customer.Name,
             IsPrimary = dbLinkUserCustomer.IsPrimary,
             IsCurrent = dbLinkUserCustomer.CustomerId == currentCustomerId,
+            SetBySync = dbLinkUserCustomer.SetBySync,
             Order = dbLinkUserCustomer.Order,
         };
     }
 
     public static Customer ToCustomer(this DbCustomers dbCustomer)
     {
-        return new Customer()
+        return new Customer
         {
             Id = dbCustomer.Id,
             Name = dbCustomer.Name,
@@ -37,7 +40,7 @@ public static class CustomerMapper
 
     public static CustomerAuthentication ToCustomerAuthentication(this DbCustomers dbCustomer)
     {
-        return new CustomerAuthentication()
+        return new CustomerAuthentication
         {
             Id = dbCustomer.Id,
             GroupId = dbCustomer.GroupId,

@@ -63,17 +63,14 @@ public sealed partial class NavMenu : IDisposable
         if (firstRender)
         {
             _userMenuSettings = (await LocalStorage.GetItemAsync<UserMenuSettings>("userMenuSettings")) ?? new UserMenuSettings();
-            // Can not use the object directly because it freezes the page.
+            // Cannot use the object directly because it freezes the page.
             _useFullLinkExpanded = _userMenuSettings.UseFullLinkExpanded;
             _configurationExpanded = _userMenuSettings.ConfigurationExpanded;
-            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user))
+            var linkedCustomers = await LinkedCustomerClient.GetAllCustomersLinkedToMeAsync();
+            if (linkedCustomers?.UserLinkedCustomers?.Count > 1)
             {
-                var linkedCustomers = await LinkedCustomerClient.GetAllCustomersLinkedToMeAsync();
-                if (linkedCustomers?.UserLinkedCustomers?.Count > 1)
-                {
-                    _linkedCustomers = linkedCustomers.UserLinkedCustomers;
-                    _currentCustomer = linkedCustomers.CurrentCustomerId;
-                }
+                _linkedCustomers = linkedCustomers.UserLinkedCustomers;
+                _currentCustomer = linkedCustomers.CurrentCustomerId;
             }
 
             await SetMenu();
@@ -90,7 +87,11 @@ public sealed partial class NavMenu : IDisposable
     {
         var linkedCustomer = _linkedCustomers?.FirstOrDefault(x => x.CustomerId == customerId);
         if (customerId == _currentCustomer || linkedCustomer is null)
+        {
+            DebugHelper.WriteLine("Already in this customer");
             return;
+        }
+
         _changingCustomer = true;
         StateHasChanged();
         await AuthenticationStateProvider.SwitchUser(new SwitchUserRequest()
@@ -98,7 +99,6 @@ public sealed partial class NavMenu : IDisposable
             UserId = linkedCustomer.UserId,
             CustomerId = linkedCustomer.CustomerId
         });
-        StateHasChanged();
         Navigation.NavigateTo("/", true);
     }
 

@@ -7,7 +7,8 @@ public interface IUserService : IDrogeService
 {
     Task<MultipleDrogeUsersResponse> GetAllUsers(Guid customerId, bool includeHidden, bool includeLastLogin, CancellationToken clt);
     Task<DrogeUser?> GetUserById(Guid customerId, Guid userId, bool includePersonal, CancellationToken clt);
-    Task<DrogeUser?> GetUserByPreComId(int preComUserId, CancellationToken clt);
+    Task<DrogeUser?> GetUserByPreComId(int preComUserId, Guid customerId, CancellationToken clt);
+    Task<DrogeUser?> GetUserByExternalId(string externalId, Guid customerId, CancellationToken clt);
     Task<DrogeUserServer?> GetUserByNameForServer(string? name, CancellationToken clt);
     Task<DrogeUserServer?> GetOrSetUserById(Guid? userId, string? externalId, string userName, string userEmail, Guid customerId, bool setLastOnline, CancellationToken clt);
     Task<AddUserResponse> AddUser(DrogeUser user, Guid customerId);

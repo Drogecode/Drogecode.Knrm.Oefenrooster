@@ -30,6 +30,8 @@ public static class DefaultSettingsHelper
     public static Guid DefaultRoosterSaturdayMorning { get; } = new Guid("2bdaccc0-e9f7-40c1-ae76-d9ed66e4a978");
     public static Guid NwiId { get; } = new Guid("4589535c-9064-4448-bc01-3b5a00e9410d");
 
+    public const int MAX_LENGTH_USER_NAME = 50;
+    public const int MAX_LENGTH_USER_EMAIL = 150;
     public const int MAX_LENGTH_TRAINING_TITLE = 50;
     public const int MAX_LENGTH_TRAINING_DESCRIPTION = 1000;
     public const int MAX_LENGTH_TRAINING_GROUP_NAME = 30;

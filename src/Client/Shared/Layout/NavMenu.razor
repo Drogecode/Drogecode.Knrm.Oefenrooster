@@ -1,18 +1,16 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.Menu
 <MudNavMenu>
-    <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
-        @if (_linkedCustomers is not null)
-        {
-            <div class="m-2">
-                <MudSelect T="Guid?" Value="@_currentCustomer" ValueChanged="OnCustomerChange" ToStringFunc="CustomerIdToName" Disabled="@(_changingCustomer)">
-                    @foreach (var customer in _linkedCustomers.OrderBy(x => x.Name))
-                    {
-                        <MudSelectItem T="Guid?" Value="@customer.CustomerId" Disabled="@(_currentCustomer == customer.CustomerId)">@customer.Name</MudSelectItem>
-                    }
-                </MudSelect>
-            </div>
-        }
-    </AuthorizeView>
+    @if (_linkedCustomers is not null)
+    {
+        <div class="m-2">
+            <MudSelect T="Guid?" Value="@_currentCustomer" ValueChanged="OnCustomerChange" ToStringFunc="CustomerIdToName" Disabled="@(_changingCustomer)">
+                @foreach (var customer in _linkedCustomers.OrderBy(x => x.Name))
+                {
+                    <MudSelectItem T="Guid?" Value="@customer.CustomerId" Disabled="@(_currentCustomer == customer.CustomerId)">@customer.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </div>
+    }
     <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/" Match="NavLinkMatch.All">@L["Dashboard"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.CalendarMonth" Href="@_uriCalendar" Match="NavLinkMatch.Prefix">@LApp["Availability"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.EditCalendar" Href="@_uriSchedule" Match="NavLinkMatch.Prefix" data-testid="nav-schedule">@L["Schedule"]</MudNavLink>
@@ -24,8 +22,8 @@
     </AuthorizeView>
     <AuthorizeView
         Roles="@(AccessesNames.AUTH_configure_training_types + ", " + AccessesNames.AUTH_super_user + ", " + AccessesNames.AUTH_scheduler_monthitem + ", " + AccessesNames.AUTH_configure_default_schedule + ", " +
-                 AccessesNames.AUTH_scheduler_dayitem + ", " + AccessesNames.AUTH_configure_vehicles + ", " + AccessesNames.AUTH_configure_user_functions + ", " + AccessesNames.AUTH_configure_user_roles + ", " +
-                 AccessesNames.AUTH_configure_global_all)">
+               AccessesNames.AUTH_scheduler_dayitem + ", " + AccessesNames.AUTH_configure_vehicles + ", " + AccessesNames.AUTH_configure_user_functions + ", " + AccessesNames.AUTH_configure_user_roles + ", " +
+               AccessesNames.AUTH_configure_global_all)">
         <MudNavGroup Title="@L["Configuration"]" Expanded="@_configurationExpanded" ExpandedChanged="ConfigurationExpandedChanged">
             <AuthorizeView Roles="@AccessesNames.AUTH_configure_training_types" Context="inner">
                 <MudNavLink Icon="@Icons.Material.Filled.DirectionsRun" Href="/configuration/training-types" Match="NavLinkMatch.Prefix">@L["Training types"]</MudNavLink>
