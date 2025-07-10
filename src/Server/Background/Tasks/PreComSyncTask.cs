@@ -62,7 +62,7 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
         foreach (var userSyncPreComWithCalendarSetting in userIdsWithNull.Where(x => x.UserPreComId is not null))
         {
             var user = preComAvailability?.Users?.FirstOrDefault(x => x.UserId == userSyncPreComWithCalendarSetting.UserPreComId!.Value);
-            var drogeUser = await userService.GetUserByPreComId(userSyncPreComWithCalendarSetting.UserPreComId!.Value, clt);
+            var drogeUser = await userService.GetUserByPreComId(userSyncPreComWithCalendarSetting.UserPreComId!.Value, DefaultSettingsHelper.KnrmHuizenId, clt);
             if (drogeUser is null)
             {
                 _logger.LogWarning("No user found with PreCom id `{PreComId}`", userSyncPreComWithCalendarSetting.UserPreComId);

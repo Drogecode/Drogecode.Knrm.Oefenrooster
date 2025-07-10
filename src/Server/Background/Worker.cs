@@ -119,16 +119,25 @@ public class Worker : BackgroundService
         var authService = authenticationController.GetAuthenticationService();
         var customersInTenant = await customerService.GetByTenantId(authService.GetTenantId(), _clt);
 
+        var response = true;
         foreach (var customer in customersInTenant)
         {
-            _clt.ThrowIfCancellationRequested();
-            _logger.LogInformation("Syncing users for customer `{customerId}`", customer.Id);
-            await userSyncManager.SyncAllUsers(DefaultSettingsHelper.SystemUser, customer.Id, _clt);
-            await Task.Delay(100, _clt);
+            try
+            {
+                _clt.ThrowIfCancellationRequested();
+                _logger.LogInformation("Syncing users for customer `{customerId}`", customer.Id);
+                await userSyncManager.SyncAllUsers(DefaultSettingsHelper.SystemUser, customer.Id, _clt);
+                await Task.Delay(100, _clt);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while syncing {customer}", customer.Id);
+                response = false;
+            }
         }
 
         _memoryCache.Set(NEXT_USER_SYNC, DateTime.SpecifyKind(DateTime.Today.AddDays(1).AddHours(1), DateTimeKind.Utc));
-        return true;
+        return response;
     }
 
     private async Task<bool> SyncCalendarEvents(IServiceScope scope, IGraphService graphService, CancellationToken clt)

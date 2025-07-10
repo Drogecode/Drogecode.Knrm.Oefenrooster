@@ -139,31 +139,36 @@ public class UserSyncManager : DrogeManager, IUserSyncManager
     private async Task LinkUserToGlobalUser(Guid customerId, DrogeUserServer newUserResponse, DirectoryObjectCollectionResponse? groups, List<CustomerAuthentication> customersInTenant,
         CancellationToken clt)
     {
+        if (newUserResponse.ExternalId is null)
+        {
+            _logger.LogWarning("external id should not be null while linking user to global user `{userId}`", newUserResponse.Id);
+            return;
+        }
         var allLinkedCustomers = await _userLinkCustomerService.GetAllLinkUserCustomers(newUserResponse.Id, customerId, clt);
         if (groups?.Value is not null && customersInTenant.Any(x => x.Id != customerId && groups.Value.Any(y => y.Id == x.GroupId?.ToString())))
         {
             var globalUser = await _userGlobalService.GetOrCreateGlobalUserByExternalId(newUserResponse, clt);
             foreach (var customerInTenant in customersInTenant.Where(x => groups.Value.Any(y => y.Id == x.GroupId?.ToString())))
             {
-                if (allLinkedCustomers.UserLinkedCustomers?.Any(x => x.CustomerId == customerInTenant.Id && x.SetBySync) == true)
-                {
-                    allLinkedCustomers.UserLinkedCustomers.Remove(allLinkedCustomers.UserLinkedCustomers.First(x => x.CustomerId == customerInTenant.Id && x.SetBySync));
-                    continue;
-                }
-
                 if (allLinkedCustomers.UserLinkedCustomers?.Any(x => x.CustomerId == customerInTenant.Id) == true)
                 {
                     var link = allLinkedCustomers.UserLinkedCustomers.First(x => x.CustomerId == customerInTenant.Id);
                     allLinkedCustomers.UserLinkedCustomers.Remove(link);
-                    await _userLinkCustomerService.LinkUserToCustomer(newUserResponse.Id, new LinkUserToCustomerRequest
-                    {
-                        CustomerId = customerInTenant.Id,
-                        UserId = newUserResponse.Id,
-                        GlobalUserId = globalUser.Id,
-                        IsActive = true,
-                        SetBySync = true
-                    }, clt);
                 }
+                var otherUser =await _userService.GetUserByExternalId(newUserResponse.ExternalId, customerInTenant.Id, clt);
+                if (otherUser is null)
+                {
+                    _logger.LogWarning("No user found with external id `{externalId}` in customer `{customerId}`", newUserResponse.ExternalId, customerInTenant.Id);
+                    return;
+                }
+                await _userLinkCustomerService.LinkUserToCustomer(newUserResponse.Id, new LinkUserToCustomerRequest
+                {
+                    CustomerId = customerInTenant.Id,
+                    UserId = otherUser.Id,
+                    GlobalUserId = globalUser.Id,
+                    IsActive = true,
+                    SetBySync = true
+                }, clt);
             }
 
             if (allLinkedCustomers.UserLinkedCustomers?.Any(x => x.SetBySync) != true)

@@ -44,9 +44,14 @@ public class CustomStateProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 
-    public Task<AuthenticationState> SwitchUser(SwitchUserRequest body)
+    public async Task<AuthenticationState> SwitchUser(SwitchUserRequest body)
     {
-        _authenticationClient.SwitchUserAsync(body);
+        await _authenticationClient.SwitchUserAsync(body);
+        return await UpdateAuthState();
+    }
+    
+    private Task<AuthenticationState> UpdateAuthState()
+    {
         var authState = GetAuthenticationStateAsync();
         NotifyAuthenticationStateChanged(authState);
         return authState;

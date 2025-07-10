@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 
@@ -11,8 +12,8 @@ public class DbUsers
     [StringLength(50)] public string? ExternalId { get; set; }
     public int? PreComId { get; set; }
     public Guid? UserFunctionId { get; set; }
-    [StringLength(50)] public string Name { get; set; }
-    [StringLength(150)] public string Email { get; set; }
+    [StringLength(DefaultSettingsHelper.MAX_LENGTH_USER_NAME)] public string Name { get; set; }
+    [StringLength(DefaultSettingsHelper.MAX_LENGTH_USER_EMAIL)] public string Email { get; set; }
     public int? Nr { get; set; }
     public DateTime CreatedOn { get; set; }
     public DateTime LastLogin { get; set; }
