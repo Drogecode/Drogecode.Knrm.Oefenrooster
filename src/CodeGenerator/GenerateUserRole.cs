@@ -178,8 +178,12 @@ public static class GenerateUserRole
             }
             else if (!group.Equals("GROUP_NO_READ"))
             {
+                sb.AppendLine("        <div>");
+                sb.AppendLine("            <MudTooltip><ChildContent>");
                 sb.AppendLine(
-                    $"        <MudSwitch Label=\"@L[\"{fieldValue}\"]\" Color=\"Color.Primary\" T=\"bool\" Value=\"@_userRole.Role.{accessName}\" ValueChanged=\"@(isChecked => {{ _userRole.Role.{accessName} = isChecked; _saved = null; }})\"/>");
+                    $"                <MudSwitch Label=\"@L[\"{fieldValue}\"]\" Color=\"Color.Primary\" T=\"bool\" Value=\"@_userRole.Role.{accessName}\" ValueChanged=\"@(isChecked => {{ _userRole.Role.{accessName} = isChecked; _saved = null; }})\"/>");
+                sb.AppendLine($"            </ChildContent><TooltipContent><MudText Typo=\"Typo.h6\">@L[\"{fieldValue}\"]</MudText><MudText Typo=\"Typo.body2\">@L[\"{fieldValue}-body\"]</MudText></TooltipContent></MudTooltip>");
+                sb.AppendLine("        </div>");
             }
         }
 
