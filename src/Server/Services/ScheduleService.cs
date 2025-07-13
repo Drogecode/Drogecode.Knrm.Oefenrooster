@@ -45,7 +45,7 @@ public class ScheduleService : DrogeService, IScheduleService
         
         // Get default availability for user, do not check cache.
         var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerInSpan(false, customerId, userId, startDate, tillDate, clt);
-        var userHolidays = await _userHolidaysRepository.GetUserHolidaysForUser(true, customerId, userId, tillDate, startDate, clt);
+        var userHolidays = await _userHolidaysRepository.GetUserHolidaysForUser(false, customerId, userId, tillDate, startDate, clt);
         var trainings = Database.RoosterTrainings
             .AsNoTracking()
             .Include(x=>x.LinkReportTrainingRoosterTrainings)
