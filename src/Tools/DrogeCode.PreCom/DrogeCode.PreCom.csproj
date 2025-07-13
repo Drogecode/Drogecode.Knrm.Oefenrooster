@@ -9,28 +9,11 @@
 
     <ItemGroup>
       <Content Update="appsettings.json">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-      <Content Update="appsettings.development.json">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-      <None Remove="appsettings.json" />
-      <Content Include="appsettings.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <None Remove="appsettings.development.json" />
-      <Content Include="appsettings.development.json">
+      <None Update="appsettings.development.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <Content Update="appsettings.development.json">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

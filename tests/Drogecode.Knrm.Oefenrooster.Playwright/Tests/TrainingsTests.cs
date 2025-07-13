@@ -10,6 +10,6 @@ public class TrainingsTests : BaseTest
     {
         await Expect(Page.GetByTestId("nav-add-training")).ToBeHiddenAsync();
         await Page.GetByTestId("nav-schedule").ClickAsync();
-        await Expect(Page.GetByTestId("nav-add-training")).ToContainTextAsync("Oefening");
+        await Expect(Page.GetByTestId("nav-add-training")).ToContainTextAsync("Oefening", _timeout);
     }
 }

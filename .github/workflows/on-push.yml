@@ -18,9 +18,17 @@ jobs:
     strategy:
       matrix:
         dotnet-version: [ '9.0.x' ]
-
+    container:
+      image: mcr.microsoft.com/playwright/dotnet:v1.53.0-noble
+    env:
+      Playwright__BaseUrl: ${{ secrets.playwright_BaseUrl }}
+      Playwright__Users__Basic__Name: ${{ secrets.playwright_Users_Basic_Name }}
+      Playwright__Users__Basic__Password: ${{ secrets.playwright_Users_Basic_Password }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
       - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
         uses: actions/setup-dotnet@v4
         with:
@@ -28,6 +36,18 @@ jobs:
       - name: Install dependencies
         run: dotnet restore ./Drogecode.Knrm.Oefenrooster.sln
       - name: Build
-        run: dotnet build ./src/Server/Drogecode.Knrm.Oefenrooster.Server.csproj --configuration Release --no-restore
-      - name: Test
-        run: dotnet test ./Drogecode.Knrm.Oefenrooster.GitHubActionTests.sln --configuration Release --no-restore
+        run: dotnet build ./Drogecode.Knrm.Oefenrooster.sln --configuration Release --no-restore
+      - name: Run tests
+        run: |
+          mkdir -p ./tests/Drogecode.Knrm.Oefenrooster.Playwright/bin/Release/net9.0/playwright-debug
+          dotnet test ./Drogecode.Knrm.Oefenrooster.sln \
+            --configuration Release \
+            --no-restore \
+            --logger "trx;LogFileName=test_results.trx" \
+            --results-directory ./tests/Drogecode.Knrm.Oefenrooster.Playwright/bin/Release/net9.0/playwright-debug
+      - name: Upload Playwright debug artifacts (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-debug
+          path: ./tests/Drogecode.Knrm.Oefenrooster.Playwright/bin/Release/net9.0/playwright-debug
