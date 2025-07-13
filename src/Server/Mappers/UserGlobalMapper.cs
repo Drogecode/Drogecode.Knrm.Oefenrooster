@@ -10,6 +10,7 @@ public static class UserGlobalMapper
         return new DrogeUserGlobal
         {
             Id = dbUsersGlobal.Id,
+            ExternalId = dbUsersGlobal.ExternalId,
             Name = dbUsersGlobal.Name,
             CreatedOn = dbUsersGlobal.CreatedOn,
             CreatedBy = dbUsersGlobal.CreatedBy

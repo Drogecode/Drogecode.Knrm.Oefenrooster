@@ -258,7 +258,13 @@
           "autH_scheduler": {
             "type": "boolean"
           },
+          "autH_scheduler_add": {
+            "type": "boolean"
+          },
           "autH_scheduler_delete": {
+            "type": "boolean"
+          },
+          "autH_scheduler_delay_sync": {
             "type": "boolean"
           },
           "autH_scheduler_in_table_view": {

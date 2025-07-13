@@ -3,7 +3,7 @@ using Drogecode.Knrm.Oefenrooster.PreCom.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Text;
 
@@ -13,13 +13,13 @@ public class FutureProblems
 {
     private readonly IPreComClient _preComClient;
     private readonly ILogger _logger;
-    private IDateTimeService _dateTimeService;
+    private IDateTimeProvider _dateTimeProvider;
 
-    public FutureProblems(IPreComClient preComClient, ILogger logger, IDateTimeService dateTimeService)
+    public FutureProblems(IPreComClient preComClient, ILogger logger, IDateTimeProvider dateTimeProvider)
     {
         _preComClient = preComClient;
         _logger = logger;
-        _dateTimeService = dateTimeService;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public async Task<GetProblemsResponse> Work(NextRunMode nextRunMode)
@@ -30,16 +30,16 @@ public class FutureProblems
         };
         //var schedulerAppointments = await preComClient.GetUserSchedulerAppointments(_dateTimeService.Today(), _dateTimeService.Today().AddDays(7));
         var userGroups = await _preComClient.GetAllUserGroups();
-        var groupInfo = await _preComClient.GetAllFunctions(userGroups[0].GroupID, _dateTimeService.Today());
+        var groupInfo = await _preComClient.GetAllFunctions(userGroups[0].GroupID, _dateTimeProvider.Today());
         var schipper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM schipper"));
         var opstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM opstapper"));
         var aankOpstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM Aank. Opstapper"));
         switch (nextRunMode)
         {
             case NextRunMode.NextHour:
-                var requestSchipper = schipper?.OccupancyDays[_dateTimeService.Today()][$"Hour{_dateTimeService.Now().Hour - 1}"];
-                var requestOpstapper = opstapper?.OccupancyDays[_dateTimeService.Today()][$"Hour{_dateTimeService.Now().Hour - 1}"];
-                var requestAlgemeen = aankOpstapper?.OccupancyDays[_dateTimeService.Today()][$"Hour{_dateTimeService.Now().Hour - 1}"];
+                var requestSchipper = schipper?.OccupancyDays[_dateTimeProvider.Today()][$"Hour{_dateTimeProvider.Now().Hour - 1}"];
+                var requestOpstapper = opstapper?.OccupancyDays[_dateTimeProvider.Today()][$"Hour{_dateTimeProvider.Now().Hour - 1}"];
+                var requestAlgemeen = aankOpstapper?.OccupancyDays[_dateTimeProvider.Today()][$"Hour{_dateTimeProvider.Now().Hour - 1}"];
                 if (requestSchipper == true || requestOpstapper == true || requestAlgemeen == true)
                 {
                     var problems = new StringBuilder();
@@ -55,17 +55,17 @@ public class FutureProblems
 
                 break;
             case NextRunMode.TodayTomorrow:
-                var twoDays = await _preComClient.GetOccupancyLevels(userGroups[0].GroupID, _dateTimeService.Today(), _dateTimeService.Today().AddDays(2));
-                var today = twoDays.ContainsKey(_dateTimeService.Today()) && twoDays[_dateTimeService.Today()] == -1;
-                var tomorrow = twoDays.ContainsKey(_dateTimeService.Today().AddDays(1)) && twoDays[_dateTimeService.Today().AddDays(1)] == -1;
+                var twoDays = await _preComClient.GetOccupancyLevels(userGroups[0].GroupID, _dateTimeProvider.Today(), _dateTimeProvider.Today().AddDays(2));
+                var today = twoDays.ContainsKey(_dateTimeProvider.Today()) && twoDays[_dateTimeProvider.Today()] == -1;
+                var tomorrow = twoDays.ContainsKey(_dateTimeProvider.Today().AddDays(1)) && twoDays[_dateTimeProvider.Today().AddDays(1)] == -1;
                 if (today)
-                    await GetMissingForDate(response, userGroups[0].GroupID, _dateTimeService.Today());
+                    await GetMissingForDate(response, userGroups[0].GroupID, _dateTimeProvider.Today());
                 if (tomorrow)
-                    await GetMissingForDate(response, userGroups[0].GroupID, _dateTimeService.Today().AddDays(1));
+                    await GetMissingForDate(response, userGroups[0].GroupID, _dateTimeProvider.Today().AddDays(1));
 
                 break;
             case NextRunMode.NextWeek:
-                var eightDays = await _preComClient.GetOccupancyLevels(userGroups[0].GroupID, _dateTimeService.Today(), _dateTimeService.Today().AddDays(8));
+                var eightDays = await _preComClient.GetOccupancyLevels(userGroups[0].GroupID, _dateTimeProvider.Today(), _dateTimeProvider.Today().AddDays(8));
                 foreach (var day in eightDays.Where(day => day.Value == -1))
                 {
                     await GetMissingForDate(response, userGroups[0].GroupID, day.Key);
@@ -126,10 +126,10 @@ public class FutureProblems
         var last = false;
         var firstProblemHour = 0;
         var i = 0;
-        var isToday = _dateTimeService.Today().Equals(date.Date);
+        var isToday = _dateTimeProvider.Today().Equals(date.Date);
         foreach (var hour in function.OccupancyDays[date].Where(x => !x.Key.Contains('_')))
         {
-            if (isToday && i < _dateTimeService.Now().Hour)
+            if (isToday && i < _dateTimeProvider.Now().Hour)
             {
                 i++;
                 continue;

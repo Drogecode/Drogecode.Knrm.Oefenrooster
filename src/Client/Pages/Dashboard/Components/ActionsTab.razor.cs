@@ -19,7 +19,6 @@ public sealed partial class ActionsTab : IDisposable
     [Inject, NotNull] private ReportActionRepository? ReportActionRepository { get; set; }
     [Inject, NotNull] private IReportActionSharedClient? ReportActionSharedClient { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
-    [Parameter] public DrogeUser? User { get; set; }
     [Parameter] public Guid? SharedId { get; set; }
     [Parameter] public List<DrogeUser>? Users { get; set; }
     [Parameter] public List<DrogeFunction>? Functions { get; set; }

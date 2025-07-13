@@ -5,7 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Helpers.JsonConverters;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using System.Text.Json;
@@ -20,9 +20,9 @@ public class PreComService : DrogeService, IPreComService
     public PreComService(ILogger<PreComService> logger,
         DataContext database,
         IMemoryCache memoryCache,
-        IDateTimeService dateTimeService,
+        IDateTimeProvider dateTimeProvider,
         HttpClient httpClient,
-        IConfiguration configuration) : base(logger, database, memoryCache, dateTimeService)
+        IConfiguration configuration) : base(logger, database, memoryCache, dateTimeProvider)
     {
         _httpClient = httpClient;
         _configuration = configuration;
@@ -78,7 +78,7 @@ public class PreComService : DrogeService, IPreComService
         if (cached is true && !string.IsNullOrEmpty(ip))
         {
             Logger.LogInformation("Alert already exists in db for user {UserId} and customer {CustomerId}", userId, customerId);
-            timestamp = DateTimeService.UtcNow();
+            timestamp = DateTimeProvider.UtcNow();
             priority = null;
             return CacheHelper.FOUND_IN_CACHE;
         }
@@ -110,7 +110,7 @@ public class PreComService : DrogeService, IPreComService
 
         alert ??= "No alert found by hui.nu webhook";
         if (timestamp.Equals(DateTime.MinValue))
-            timestamp = DateTimeService.Now();
+            timestamp = DateTimeProvider.Now();
 
         var prioParsed = int.TryParse(dataIos?._data?.priority, out var prio); // Android does not have prio in JSON.
         priority = prioParsed ? prio : null;

@@ -7,7 +7,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Data;
 using System.Diagnostics;
@@ -24,10 +24,10 @@ public class ScheduleService : DrogeService, IScheduleService
         ILogger<ScheduleService> logger,
         DataContext database,
         IMemoryCache memoryCache,
-        IDateTimeService dateTimeService,
+        IDateTimeProvider dateTimeProvider,
         IRoosterDefaultsRepository roosterDefaultsRepository,
         IUserDefaultAvailableRepository userDefaultAvailableRepository,
-        IUserHolidaysRepository userHolidaysRepository) : base(logger, database, memoryCache, dateTimeService)
+        IUserHolidaysRepository userHolidaysRepository) : base(logger, database, memoryCache, dateTimeProvider)
     {
         _roosterDefaultsRepository = roosterDefaultsRepository;
         _userDefaultAvailableRepository = userDefaultAvailableRepository;
@@ -162,7 +162,7 @@ public class ScheduleService : DrogeService, IScheduleService
         var sw = Stopwatch.StartNew();
         training.Updated = false;
         var result = new PatchScheduleForUserResponse();
-        if (training.DateStart.CompareTo(DateTimeService.UtcNow()) >= 0)
+        if (training.DateStart.CompareTo(DateTimeProvider.UtcNow()) >= 0)
         {
             result.PatchedTraining = training;
             var dbTraining = await CreateAndGetTraining(userId, customerId, training, clt);
@@ -220,15 +220,18 @@ public class ScheduleService : DrogeService, IScheduleService
         return dbTraining;
     }
 
-    public async Task<PatchTrainingResponse> PatchTraining(Guid customerId, PlannedTraining patchedTraining, bool inRoleEditPast, CancellationToken token)
+    public async Task<PatchTrainingResponse> PatchTraining(Guid customerId, PlannedTraining patchedTraining, bool inRoleEditPast, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new PatchTrainingResponse();
-        var oldTraining = await Database.RoosterTrainings.FindAsync(new object?[] { patchedTraining.TrainingId }, cancellationToken: token);
+        var oldTraining = await Database.RoosterTrainings
+            .Include(x=>x.RoosterAvailables)
+            .Where(x=>x.Id == patchedTraining.TrainingId )
+            .FirstOrDefaultAsync(clt);
         if (oldTraining == null) return result;
         if (patchedTraining.Name?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)
             throw new DrogeCodeToLongException();
-        if (!inRoleEditPast && oldTraining.DateEnd < DateTimeService.UtcNow().AddDays(AccessesSettings.AUTH_scheduler_edit_past_days - 1))
+        if (!inRoleEditPast && oldTraining.DateEnd < DateTimeProvider.UtcNow().AddDays(AccessesSettings.AUTH_scheduler_edit_past_days - 1))
             throw new UnauthorizedAccessException();
 
         oldTraining.RoosterTrainingTypeId = patchedTraining.RoosterTrainingTypeId;
@@ -240,8 +243,16 @@ public class ScheduleService : DrogeService, IScheduleService
         oldTraining.IsPinned = patchedTraining.IsPinned;
         oldTraining.IsPermanentPinned = patchedTraining.IsPermanentPinned;
         oldTraining.ShowTime = patchedTraining.ShowTime;
+        if (oldTraining.RoosterAvailables is not null)
+        {
+            foreach (var available in oldTraining.RoosterAvailables)
+            {
+                available.Date = patchedTraining.DateStart;
+            }
+        }
+
         Database.RoosterTrainings.Update(oldTraining);
-        result.Success = (await Database.SaveChangesAsync()) > 0;
+        result.Success = (await Database.SaveChangesAsync(clt)) > 0;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
@@ -258,7 +269,7 @@ public class ScheduleService : DrogeService, IScheduleService
             return;
         }
 
-        oldAva.LastSyncOn = DateTimeService.UtcNow();
+        oldAva.LastSyncOn = DateTimeProvider.UtcNow();
         Database.RoosterAvailables.Update(oldAva);
     }
     
@@ -273,7 +284,7 @@ public class ScheduleService : DrogeService, IScheduleService
             return;
         }
         
-        oldAva.LastUpdateOn = DateTimeService.UtcNow();
+        oldAva.LastUpdateOn = DateTimeProvider.UtcNow();
         oldAva.LastUpdateBy = currentUserId;
         Database.RoosterAvailables.Update(oldAva);
     }
@@ -281,8 +292,10 @@ public class ScheduleService : DrogeService, IScheduleService
     public async Task<AddTrainingResponse> AddTrainingAsync(Guid customerId, PlannedTraining newTraining, Guid trainingId, CancellationToken token)
     {
         var sw = Stopwatch.StartNew();
-        var result = new AddTrainingResponse();
-        result.NewId = trainingId;
+        var result = new AddTrainingResponse
+        {
+            NewId = trainingId
+        };
         var training = new Training
         {
             TrainingId = trainingId,
@@ -372,7 +385,7 @@ public class ScheduleService : DrogeService, IScheduleService
             Date = training.DateStart,
             Available = training.Availability,
             SetBy = training.SetBy,
-            LastUpdateOn = DateTimeService.UtcNow(),
+            LastUpdateOn = DateTimeProvider.UtcNow(),
             LastUpdateBy = userId
         });
         return (await Database.SaveChangesAsync()) > 0;
@@ -381,8 +394,9 @@ public class ScheduleService : DrogeService, IScheduleService
     private async Task<bool> PatchAvailableInternalAsync(Guid userId, DbRoosterAvailable available, Training training)
     {
         available.Available = training.Availability;
+        available.Date = training.DateStart;
         available.SetBy = training.SetBy;
-        available.LastUpdateOn = DateTimeService.UtcNow();
+        available.LastUpdateOn = DateTimeProvider.UtcNow();
         available.LastUpdateBy = userId;
         Database.RoosterAvailables.Update(available);
         return (await Database.SaveChangesAsync()) > 0;
@@ -410,6 +424,7 @@ public class ScheduleService : DrogeService, IScheduleService
             .AsNoTracking()
             .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
             .Include(x => x.LinkVehicleTrainings)
+            .Include(x=>x.LinkReportTrainingRoosterTrainings)
             .OrderBy(x => x.DateStart)
             .AsSingleQuery().ToListAsync(clt);
         var availables = await Database.RoosterAvailables
@@ -451,6 +466,7 @@ public class ScheduleService : DrogeService, IScheduleService
                             IsPermanentPinned = training.IsPermanentPinned,
                             ShowTime = training.ShowTime ?? true,
                             HasDescription = !string.IsNullOrWhiteSpace(training.Description),
+                            LinkedReports = training.LinkReportTrainingRoosterTrainings?.Count ?? 0
                         };
                         foreach (var user in users)
                         {
@@ -867,7 +883,7 @@ public class ScheduleService : DrogeService, IScheduleService
         ava.UserFunctionId = body.User.PlannedFunctionId;
         ava.VehicleId = body.User.VehicleId;
         ava.LastUpdateBy = userId;
-        ava.LastUpdateOn = DateTimeService.UtcNow();
+        ava.LastUpdateOn = DateTimeProvider.UtcNow();
         clt.ThrowIfCancellationRequested();
         clt = CancellationToken.None;
         Database.RoosterAvailables.Update(ava);
@@ -926,7 +942,7 @@ public class ScheduleService : DrogeService, IScheduleService
                     SetBy = AvailabilitySetBy.None,
                     Assigned = body.Assigned,
                     LastUpdateBy = userId,
-                    LastUpdateOn = DateTimeService.UtcNow()
+                    LastUpdateOn = DateTimeProvider.UtcNow()
                 };
                 Database.RoosterAvailables.Add(ava);
                 await Database.SaveChangesAsync(clt);
@@ -936,7 +952,7 @@ public class ScheduleService : DrogeService, IScheduleService
         {
             ava.Assigned = body.Assigned;
             ava.LastUpdateBy = userId;
-            ava.LastUpdateOn = DateTimeService.UtcNow();
+            ava.LastUpdateOn = DateTimeProvider.UtcNow();
             if (body.Assigned)
                 ava.UserFunctionId = body.FunctionId;
             else
@@ -1114,7 +1130,7 @@ public class ScheduleService : DrogeService, IScheduleService
 
     public async Task<List<DbRoosterAvailable>> GetTrainingsThatRequireCalendarUpdate(Guid userId, Guid customerId)
     {
-        var compareDate = DateTimeService.UtcNow().AddDays(-1);
+        var compareDate = DateTimeProvider.UtcNow().AddDays(-1);
         var ava = await Database.RoosterAvailables.Where(x =>
                 x.CustomerId == customerId && x.UserId == userId && x.Training.DeletedOn == null && x.LastUpdateOn != null &&
                 x.LastUpdateOn > compareDate && x.LastUpdateBy == userId &&
@@ -1134,7 +1150,7 @@ public class ScheduleService : DrogeService, IScheduleService
         }
 
         ava.CalendarEventId = calendarEventId;
-        ava.LastSyncOn = DateTimeService.UtcNow();
+        ava.LastSyncOn = DateTimeProvider.UtcNow();
         Database.RoosterAvailables.Update(ava);
         return (await Database.SaveChangesAsync(clt) > 0);
     }
@@ -1144,14 +1160,14 @@ public class ScheduleService : DrogeService, IScheduleService
         var training = await Database.RoosterTrainings.Include(x => x.RoosterAvailables).FirstOrDefaultAsync(x => x.Id == trainingId, clt);
         if (training?.CustomerId == customerId)
         {
-            training.DeletedOn = DateTimeService.UtcNow();
+            training.DeletedOn = DateTimeProvider.UtcNow();
             training.DeletedBy = userId;
             if (training.RoosterAvailables?.Any() == true)
             {
                 foreach (var trainingRoosterAvailable in training.RoosterAvailables)
                 {
                     trainingRoosterAvailable.LastUpdateBy = userId;
-                    trainingRoosterAvailable.LastUpdateOn = DateTimeService.UtcNow();
+                    trainingRoosterAvailable.LastUpdateOn = DateTimeProvider.UtcNow();
                 }
             }
 

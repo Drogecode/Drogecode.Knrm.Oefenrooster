@@ -5,7 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -24,7 +24,7 @@ public class PreComController : DrogeController
     private readonly PreComHub _preComHub;
     private readonly IHttpClientFactory _clientFactory;
     private readonly IConfiguration _configuration;
-    private readonly IDateTimeService _dateTimeService;
+    private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IAuditService _auditService;
 
     private readonly Random _random = new();
@@ -35,14 +35,14 @@ public class PreComController : DrogeController
         PreComHub preComHub,
         IHttpClientFactory clientFactory,
         IConfiguration configuration,
-        IDateTimeService dateTimeService,
+        IDateTimeProvider dateTimeProvider,
         IAuditService auditService) : base(logger)
     {
         _preComService = preComService;
         _preComHub = preComHub;
         _clientFactory = clientFactory;
         _configuration = configuration;
-        _dateTimeService = dateTimeService;
+        _dateTimeProvider = dateTimeProvider;
         _auditService = auditService;
     }
 
@@ -293,7 +293,7 @@ public class PreComController : DrogeController
                 whatsAppBearer = KeyVaultHelper.GetSecret("WhatsAppBearer", Logger)?.Value;
             }
 
-            var preComWorker = new FutureProblems(preComClient, Logger, _dateTimeService);
+            var preComWorker = new FutureProblems(preComClient, Logger, _dateTimeProvider);
             var problems = await preComWorker.Work(nextRunMode);
             if (false && !string.IsNullOrWhiteSpace(whatsAppBearer) && problems.Problems is not null)
             {

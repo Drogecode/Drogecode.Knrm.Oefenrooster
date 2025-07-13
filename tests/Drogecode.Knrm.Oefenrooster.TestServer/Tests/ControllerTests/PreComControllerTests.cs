@@ -96,7 +96,7 @@ public class PreComControllerTests : BaseTest
     [Fact]
     public async Task WebHookBodyIsNullTest()
     {
-        Tester.DateTimeServiceMock.SetMockDateTime(new DateTime(2022, 9, 4, 16, 12, 7));
+        Tester.DateTimeProviderMock.SetMockDateTime(new DateTime(2022, 9, 4, 16, 12, 7));
         await Tester.PreComController.WebHook(Tester.DefaultCustomerId, DefaultSettingsHelperMock.IdTaco, null, true);
         var result = await Tester.PreComController.AllAlerts(50, 0, CancellationToken.None);
         Assert.NotNull(result.Value?.PreComAlerts);
@@ -105,7 +105,7 @@ public class PreComControllerTests : BaseTest
         result.Value.PreComAlerts.Should().NotBeEmpty();
         result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("No alert found by hui.nu webhook"));
         result.Value.PreComAlerts.Should().Contain(x => x.SendTime.Equals(new DateTime(2022, 9, 4, 16, 12, 7)));
-        Tester.DateTimeServiceMock.SetMockDateTime(null);
+        Tester.DateTimeProviderMock.SetMockDateTime(null);
     }
 
     [Fact]

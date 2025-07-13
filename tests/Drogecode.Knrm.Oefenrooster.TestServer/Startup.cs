@@ -1,9 +1,12 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Server.Managers;
+using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Repositories;
 using Drogecode.Knrm.Oefenrooster.Server.Repositories.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
-using Drogecode.Knrm.Oefenrooster.SharedForTests.Services;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
+using Drogecode.Knrm.Oefenrooster.SharedForTests.Providers;
 using Drogecode.Knrm.Oefenrooster.TestServer.Mocks.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +21,7 @@ public class Startup
         services.AddMemoryCache();
         services.AddDbContext<DataContext>(c => c.UseInMemoryDatabase("MyXunitDb"));
 
-        services.AddScoped<IDateTimeService, DateTimeServiceMock>();
+        services.AddScoped<IDateTimeProvider, DateTimeProviderMock>();
 
         services.AddHttpClient();
         services.AddScoped<IDayItemService, DayItemService>();
@@ -49,6 +52,9 @@ public class Startup
         services.AddScoped<ICustomerSettingService, CustomerSettingService>();
         services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
         services.AddScoped<IUserPreComEventService, UserPreComEventService>();
+        
+        services.AddScoped<IAuthenticationManager, AuthenticationManager>();
+        services.AddScoped<IUserSyncManager, UserSyncManager>();
 
         services.AddScoped<IRoosterDefaultsRepository, RoosterDefaultsRepository>();
         services.AddScoped<IUserDefaultAvailableRepository, UserDefaultAvailableRepository>();

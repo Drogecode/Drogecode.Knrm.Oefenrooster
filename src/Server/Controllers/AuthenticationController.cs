@@ -1,6 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
 using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
-using Drogecode.Knrm.Oefenrooster.Server.Services;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
 using IAuthenticationService = Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces.IAuthenticationService;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
@@ -25,9 +25,8 @@ public class AuthenticationController : DrogeController
     private readonly IUserLinkCustomerService _userLinkCustomerService;
     private readonly ICustomerService _customerService;
     private readonly IReportActionSharedService _reportActionSharedService;
+    private readonly IAuthenticationManager _authenticationManager;
     private readonly IConfiguration _configuration;
-    private readonly HttpClient _httpClient;
-    private readonly DataContext _database;
     private IAuthenticationService? _authService;
 
     private const string REFRESHTOKEN = "RefreshToken";
@@ -40,9 +39,8 @@ public class AuthenticationController : DrogeController
         IUserLinkCustomerService userLinkCustomerService,
         ICustomerService customerService,
         IReportActionSharedService reportActionSharedService,
-        IConfiguration configuration,
-        HttpClient httpClient,
-        DataContext database) : base(logger)
+        IAuthenticationManager authenticationManager,
+        IConfiguration configuration) : base(logger)
     {
         _memoryCache = memoryCache;
         _userRoleService = userRoleService;
@@ -50,9 +48,8 @@ public class AuthenticationController : DrogeController
         _userLinkCustomerService = userLinkCustomerService;
         _customerService = customerService;
         _reportActionSharedService = reportActionSharedService;
+        _authenticationManager = authenticationManager;
         _configuration = configuration;
-        _httpClient = httpClient;
-        _database = database;
     }
 
     [HttpGet]
@@ -61,7 +58,7 @@ public class AuthenticationController : DrogeController
     {
         try
         {
-            var authService = GetAuthenticationService();
+            var authService = _authenticationManager.GetAuthenticationService();
             return await authService.GetLoginSecrets();
         }
         catch (Exception e)
@@ -69,27 +66,6 @@ public class AuthenticationController : DrogeController
             Logger.LogError(e, "GetLoginSecrets");
             return BadRequest();
         }
-    }
-
-    internal IAuthenticationService GetAuthenticationService()
-    {
-        if (_authService is not null)
-            return _authService;
-        var identityProvider = _configuration.GetValue<IdentityProvider>("IdentityProvider");
-        switch (identityProvider)
-        {
-            case IdentityProvider.Azure:
-                _authService = new AuthenticationAzureService(Logger, _memoryCache, _configuration, _httpClient, _database);
-                break;
-            case IdentityProvider.KeyCloak:
-                _authService = new AuthenticationKeyCloakService(Logger, _memoryCache, _configuration, _httpClient, _database);
-                break;
-            case IdentityProvider.None:
-            default:
-                throw new ArgumentOutOfRangeException($"identityProvider: `{identityProvider}` is not supported");
-        }
-
-        return _authService;
     }
 
     [HttpPost]
@@ -107,7 +83,7 @@ public class AuthenticationController : DrogeController
 
             _memoryCache.Remove(body.State);
 
-            var authService = GetAuthenticationService();
+            var authService = _authenticationManager.GetAuthenticationService();
             var supResult = await authService.AuthenticateUser(found, body.Code, body.State, body.SessionState, body.RedirectUrl, clt);
             if (supResult.Success is not true || supResult.JwtSecurityToken is null)
                 return false;
@@ -136,7 +112,7 @@ public class AuthenticationController : DrogeController
 
             var passwordCorrect = await _reportActionSharedService.AuthenticateExternal(body, clt);
             if (!passwordCorrect.Success) return false;
-            var authService = GetAuthenticationService();
+            var authService = _authenticationManager.GetAuthenticationService();
             var ip = GetRequesterIp();
             var claims = new List<Claim>
             {
@@ -238,7 +214,7 @@ public class AuthenticationController : DrogeController
                 return false;
             }
 
-            var authService = GetAuthenticationService();
+            var authService = _authenticationManager.GetAuthenticationService();
             var ip = GetRequesterIp();
             var claims = new List<Claim>
             {
@@ -355,7 +331,7 @@ public class AuthenticationController : DrogeController
                 return response;
             }
 
-            var authService = GetAuthenticationService();
+            var authService = _authenticationManager.GetAuthenticationService();
             var supResult = await authService.Refresh(oldRefreshToken, clt);
             if (supResult.Success is not true || supResult.JwtSecurityToken is null)
             {
@@ -419,7 +395,7 @@ public class AuthenticationController : DrogeController
 
     private async Task<IEnumerable<Claim>> GetClaimsList(AuthenticateUserResult subResult, string clientVersion, CancellationToken clt)
     {
-        var authService = GetAuthenticationService();
+        var authService = _authenticationManager.GetAuthenticationService();
         var drogeClaims = authService.GetClaims(subResult);
         var customerId = await GetCustomerIdByExternalId(drogeClaims.TenantId, subResult.JwtSecurityToken?.Claims, clt);
         var userId = await GetUserIdByExternalId(drogeClaims.ExternalUserId, drogeClaims.FullName, drogeClaims.Email, customerId, clt);

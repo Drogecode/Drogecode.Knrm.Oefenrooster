@@ -3,11 +3,11 @@ using Drogecode.Knrm.Oefenrooster.Server.Models.Background;
 using Drogecode.Knrm.Oefenrooster.Server.Models.UserPreCom;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Background.Tasks;
 
-public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
+public class PreComSyncTask(ILogger _logger, IDateTimeProvider dateTimeProvider)
 {
     public async Task<bool> SyncPreComAvailability(IServiceScope scope, CancellationToken clt)
     {
@@ -19,7 +19,7 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
         var preComClient = await preComService.GetPreComClient();
         if (preComClient is null)
             return true;
-        var preComWorker = new AvailabilityForUser(preComClient, _logger, _dateTimeService);
+        var preComWorker = new AvailabilityForUser(preComClient, _logger, dateTimeProvider);
 
         var date = DateTime.Today;
         var dayCount = await customerSettingService.GetIntCustomerSetting(DefaultSettingsHelper.KnrmHuizenId, SettingName.PreComDaysInFuture, 5, clt);
@@ -62,7 +62,7 @@ public class PreComSyncTask(ILogger _logger, IDateTimeService _dateTimeService)
         foreach (var userSyncPreComWithCalendarSetting in userIdsWithNull.Where(x => x.UserPreComId is not null))
         {
             var user = preComAvailability?.Users?.FirstOrDefault(x => x.UserId == userSyncPreComWithCalendarSetting.UserPreComId!.Value);
-            var drogeUser = await userService.GetUserByPreComId(userSyncPreComWithCalendarSetting.UserPreComId!.Value, clt);
+            var drogeUser = await userService.GetUserByPreComId(userSyncPreComWithCalendarSetting.UserPreComId!.Value, DefaultSettingsHelper.KnrmHuizenId, clt);
             if (drogeUser is null)
             {
                 _logger.LogWarning("No user found with PreCom id `{PreComId}`", userSyncPreComWithCalendarSetting.UserPreComId);

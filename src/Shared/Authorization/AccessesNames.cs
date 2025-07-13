@@ -27,6 +27,7 @@ public struct AccessesNames
 
     public const string GROUP_SCHEDULER = "Scheduler";
     public const string AUTH_scheduler = "scheduler";
+    public const string AUTH_scheduler_add = "scheduler_add";
     public const string AUTH_scheduler_delete = "scheduler_delete";
     public const string AUTH_scheduler_delay_sync = "scheduler_delay_sync";
     public const string AUTH_scheduler_in_table_view = "scheduler_table";

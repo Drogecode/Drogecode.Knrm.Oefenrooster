@@ -1,10 +1,10 @@
 using Drogecode.Knrm.Oefenrooster.Server.Background.Tasks;
 using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Background;
@@ -15,19 +15,19 @@ public class Worker : BackgroundService
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IConfiguration _configuration;
     private readonly IMemoryCache _memoryCache;
-    private readonly IDateTimeService _dateTimeService;
+    private readonly IDateTimeProvider _dateTimeProvider;
     private CancellationToken _clt;
 
     private const string NEXT_USER_SYNC = "all_usr_sync";
     private int _errorCount = 0;
 
-    public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IConfiguration configuration, IMemoryCache memoryCache, IDateTimeService dateTimeService)
+    public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IConfiguration configuration, IMemoryCache memoryCache, IDateTimeProvider dateTimeProvider)
     {
         _logger = logger;
         _scopeFactory = scopeFactory;
         _configuration = configuration;
         _memoryCache = memoryCache;
-        _dateTimeService = dateTimeService;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     protected override async Task ExecuteAsync(CancellationToken clt)
@@ -51,12 +51,17 @@ public class Worker : BackgroundService
                 }
 
                 using var scope = _scopeFactory.CreateScope();
+                var authenticationManager = scope.ServiceProvider.GetRequiredService<IAuthenticationManager>();
+                var authService = authenticationManager.GetAuthenticationService();
+                var tenantId = authService.GetTenantId();
+                
                 var graphService = scope.ServiceProvider.GetRequiredService<IGraphService>();
                 graphService.InitializeGraph();
-                var successfully = await SyncSharePoint(scope, graphService, clt);
-                if (count % 15 == 6) // Every 15 runs, but not directly after restart.
+                
+                var successfully = await SyncSharePoint(scope, graphService, tenantId, clt);
+                if (tenantId.Equals(DefaultSettingsHelper.KnrmHuizenId.ToString()) && count % 15 == 6) // Every 15 runs, but not directly after restart.
                 {
-                    var preComSyncJob = new PreComSyncTask(_logger, _dateTimeService);
+                    var preComSyncJob = new PreComSyncTask(_logger, _dateTimeProvider);
                     successfully &= await preComSyncJob.SyncPreComAvailability(scope, clt);
                 }
 
@@ -84,10 +89,14 @@ public class Worker : BackgroundService
         }
     }
 
-    private async Task<bool> SyncSharePoint(IServiceScope scope, IGraphService graphService, CancellationToken clt)
+    private async Task<bool> SyncSharePoint(IServiceScope scope, IGraphService graphService, string tenantId, CancellationToken clt)
     {
         var result = true;
-        result &= await SyncSharePointReports(graphService);
+        if (tenantId.Equals(DefaultSettingsHelper.KnrmHuizenId.ToString()))
+        {
+            result &= await SyncSharePointReports(graphService);
+        }
+
         result &= await SyncSharePointUsers(scope, graphService);
         result &= await SyncCalendarEvents(scope, graphService, clt);
         return result;
@@ -107,39 +116,36 @@ public class Worker : BackgroundService
         if (nextSync is not null && nextSync.Value.CompareTo(DateTime.UtcNow) > 0)
             return true;
 
-        // Get all scoped objects
-        var userControllerLogger = scope.ServiceProvider.GetRequiredService<ILogger<UserController>>();
-        var authenticationControllerLogger = scope.ServiceProvider.GetRequiredService<ILogger<AuthenticationController>>();
-        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
-        var userRoleService = scope.ServiceProvider.GetRequiredService<IUserRoleService>();
-        var userLinkCustomerService = scope.ServiceProvider.GetRequiredService<IUserLinkCustomerService>();
-        var linkUserRoleService = scope.ServiceProvider.GetRequiredService<ILinkUserRoleService>();
-        var auditService = scope.ServiceProvider.GetRequiredService<IAuditService>();
-        var functionService = scope.ServiceProvider.GetRequiredService<IFunctionService>();
+        // Get scoped objects
         var customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
-        var reportActionSharedService = scope.ServiceProvider.GetRequiredService<IReportActionSharedService>();
-        var httpClient = scope.ServiceProvider.GetRequiredService<HttpClient>();
-        var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-        var refreshHub = scope.ServiceProvider.GetRequiredService<RefreshHub>();
 
-        // Get the controllers
-        var authenticationController = new AuthenticationController(authenticationControllerLogger, _memoryCache, userRoleService, userService, userLinkCustomerService, customerService,
-            reportActionSharedService, _configuration, httpClient, dataContext);
-        var userController = new UserController(userControllerLogger, userService, userRoleService, linkUserRoleService, auditService, graphService, functionService, customerService, refreshHub);
+        // Get the managers
+        var authenticationManager = scope.ServiceProvider.GetRequiredService<IAuthenticationManager>();
+        var userSyncManager = scope.ServiceProvider.GetRequiredService<IUserSyncManager>();
 
         // Get tenant details
-        var authService = authenticationController.GetAuthenticationService();
+        var authService = authenticationManager.GetAuthenticationService();
         var customersInTenant = await customerService.GetByTenantId(authService.GetTenantId(), _clt);
 
+        var response = true;
         foreach (var customer in customersInTenant)
         {
-            _clt.ThrowIfCancellationRequested();
-            _logger.LogInformation("Syncing users for customer `{customerId}`", customer.Id);
-            await userController.InternalSyncAllUsers(DefaultSettingsHelper.SystemUser, customer.Id, _clt);
+            try
+            {
+                _clt.ThrowIfCancellationRequested();
+                _logger.LogInformation("Syncing users for customer `{customerId}`", customer.Id);
+                await userSyncManager.SyncAllUsers(DefaultSettingsHelper.SystemUser, customer.Id, _clt);
+                await Task.Delay(100, _clt);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while syncing {customer}", customer.Id);
+                response = false;
+            }
         }
 
         _memoryCache.Set(NEXT_USER_SYNC, DateTime.SpecifyKind(DateTime.Today.AddDays(1).AddHours(1), DateTimeKind.Utc));
-        return true;
+        return response;
     }
 
     private async Task<bool> SyncCalendarEvents(IServiceScope scope, IGraphService graphService, CancellationToken clt)
@@ -191,7 +197,6 @@ public class Worker : BackgroundService
         }
         catch (Exception ex)
         {
-            _errorCount++;
             _logger.LogError(ex, "Error in background service `{name}` {errorCount}`", name, _errorCount);
             clt.ThrowIfCancellationRequested();
             return false;

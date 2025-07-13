@@ -1,5 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -7,13 +7,13 @@ public class UserLastCalendarUpdateService : IUserLastCalendarUpdateService
 {
     private readonly ILogger<UserLastCalendarUpdateService> _logger;
     private readonly DataContext _database;
-    private readonly IDateTimeService _dateTimeService;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
-    public UserLastCalendarUpdateService(ILogger<UserLastCalendarUpdateService> logger, DataContext database, IDateTimeService dateTimeService)
+    public UserLastCalendarUpdateService(ILogger<UserLastCalendarUpdateService> logger, DataContext database, IDateTimeProvider dateTimeProvider)
     {
         _logger = logger;
         _database = database;
-        _dateTimeService = dateTimeService;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public async Task<bool> AddOrUpdateLastUpdateUser(Guid customerId, Guid userId, CancellationToken clt)
@@ -28,13 +28,13 @@ public class UserLastCalendarUpdateService : IUserLastCalendarUpdateService
                     Id = Guid.CreateVersion7(),
                     CustomerId = customerId,
                     UserId = userId,
-                    LastUpdate = _dateTimeService.UtcNow(),
+                    LastUpdate = _dateTimeProvider.UtcNow(),
                 };
                 _database.UserLastCalendarUpdates.Add(userLastCalendar);
             }
             else
             {
-                userLastCalendar.LastUpdate = _dateTimeService.UtcNow();
+                userLastCalendar.LastUpdate = _dateTimeProvider.UtcNow();
                 _database.UserLastCalendarUpdates.Update(userLastCalendar);
             }
 
@@ -52,8 +52,8 @@ public class UserLastCalendarUpdateService : IUserLastCalendarUpdateService
     {
         try
         {
-            var dateNotBefore = _dateTimeService.UtcNow().AddMinutes(-minutesInThePast);
-            var dateNotAfter = _dateTimeService.UtcNow().AddMinutes(-maxMinutesInThePast);
+            var dateNotBefore = _dateTimeProvider.UtcNow().AddMinutes(-minutesInThePast);
+            var dateNotAfter = _dateTimeProvider.UtcNow().AddMinutes(-maxMinutesInThePast);
             var users = await _database.UserLastCalendarUpdates
                 .Where(x => x.LastUpdate <= dateNotBefore && x.LastUpdate >= dateNotAfter)
                 .AsNoTracking()

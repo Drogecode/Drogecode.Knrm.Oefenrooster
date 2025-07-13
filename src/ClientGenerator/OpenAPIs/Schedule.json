@@ -1388,6 +1388,10 @@
           "trainingTypeName": {
             "type": "string",
             "nullable": true
+          },
+          "linkedReports": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

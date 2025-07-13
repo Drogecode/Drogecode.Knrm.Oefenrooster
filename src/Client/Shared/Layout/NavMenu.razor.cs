@@ -3,7 +3,6 @@ using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Menu;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
@@ -46,6 +45,7 @@ public sealed partial class NavMenu : IDisposable
     private bool _useFullLinkExpanded;
     private bool _configurationExpanded;
     private bool _changingCustomer;
+    private bool _addingTraining;
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,17 +63,14 @@ public sealed partial class NavMenu : IDisposable
         if (firstRender)
         {
             _userMenuSettings = (await LocalStorage.GetItemAsync<UserMenuSettings>("userMenuSettings")) ?? new UserMenuSettings();
-            // Can not use the object directly because it freezes the page.
+            // Cannot use the object directly because it freezes the page.
             _useFullLinkExpanded = _userMenuSettings.UseFullLinkExpanded;
             _configurationExpanded = _userMenuSettings.ConfigurationExpanded;
-            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user))
+            var linkedCustomers = await LinkedCustomerClient.GetAllCustomersLinkedToMeAsync();
+            if (linkedCustomers?.UserLinkedCustomers?.Count > 1)
             {
-                var linkedCustomers = await LinkedCustomerClient.GetAllCustomersLinkedToMeAsync();
-                if (linkedCustomers?.UserLinkedCustomers?.Count > 1)
-                {
-                    _linkedCustomers = linkedCustomers.UserLinkedCustomers;
-                    _currentCustomer = linkedCustomers.CurrentCustomerId;
-                }
+                _linkedCustomers = linkedCustomers.UserLinkedCustomers;
+                _currentCustomer = linkedCustomers.CurrentCustomerId;
             }
 
             await SetMenu();
@@ -90,7 +87,11 @@ public sealed partial class NavMenu : IDisposable
     {
         var linkedCustomer = _linkedCustomers?.FirstOrDefault(x => x.CustomerId == customerId);
         if (customerId == _currentCustomer || linkedCustomer is null)
+        {
+            DebugHelper.WriteLine("Already in this customer");
             return;
+        }
+
         _changingCustomer = true;
         StateHasChanged();
         await AuthenticationStateProvider.SwitchUser(new SwitchUserRequest()
@@ -98,7 +99,6 @@ public sealed partial class NavMenu : IDisposable
             UserId = linkedCustomer.UserId,
             CustomerId = linkedCustomer.CustomerId
         });
-        StateHasChanged();
         Navigation.NavigateTo("/", true);
     }
 
@@ -116,24 +116,35 @@ public sealed partial class NavMenu : IDisposable
 
     private async Task AddTraining()
     {
-        var trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
-        var vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
-        var parameters = new DialogParameters<EditTrainingDialog>
+        if (_addingTraining) return;
+        try
         {
-            { x => x.Planner, null },
-            { x => x.Refresh, null },
-            { x => x.Vehicles, vehicles },
-            { x => x.Global, Global },
-            { x => x.TrainingTypes, trainingTypes }
-        };
-        var options = new DialogOptions
+            _addingTraining = true;
+            StateHasChanged();
+            var trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
+            var vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
+            var parameters = new DialogParameters<EditTrainingDialog>
+            {
+                { x => x.Planner, null },
+                { x => x.Refresh, null },
+                { x => x.Vehicles, vehicles },
+                { x => x.Global, Global },
+                { x => x.TrainingTypes, trainingTypes }
+            };
+            var options = new DialogOptions
+            {
+                MaxWidth = MaxWidth.Medium,
+                CloseButton = true,
+                FullWidth = true,
+                BackdropClick = false
+            };
+            await DialogProvider.ShowAsync<EditTrainingDialog>(L["Add training"], parameters, options);
+        }
+        finally
         {
-            MaxWidth = MaxWidth.Medium,
-            CloseButton = true,
-            FullWidth = true,
-            BackdropClick = false
-        };
-        await DialogProvider.ShowAsync<EditTrainingDialog>(L["Add training"], parameters, options);
+            _addingTraining = false;
+            StateHasChanged();
+        }
     }
 
     private async Task UseFullLinksExpandedChanged(bool newValue)

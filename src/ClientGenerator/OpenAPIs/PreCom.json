@@ -31,11 +31,11 @@
             }
           },
           {
-            "name": "sendToHub",
+            "name": "testMode",
             "in": "query",
             "schema": {
               "type": "boolean",
-              "default": true
+              "default": false
             }
           }
         ],
@@ -85,11 +85,11 @@
             }
           },
           {
-            "name": "sendToHub",
+            "name": "testMode",
             "in": "query",
             "schema": {
               "type": "boolean",
-              "default": true
+              "default": false
             }
           }
         ],

@@ -44,9 +44,14 @@ public class CustomStateProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 
-    public Task<AuthenticationState> SwitchUser(SwitchUserRequest body)
+    public async Task SwitchUser(SwitchUserRequest body)
     {
-        _authenticationClient.SwitchUserAsync(body);
+        await _authenticationClient.SwitchUserAsync(body);
+        await UpdateAuthState();
+    }
+
+    private Task<AuthenticationState> UpdateAuthState()
+    {
         var authState = GetAuthenticationStateAsync();
         NotifyAuthenticationStateChanged(authState);
         return authState;
@@ -60,8 +65,7 @@ public class CustomStateProvider : AuthenticationStateProvider
         await RefreshIfRequired(identity);
         if (oldLastModified != _lastModified)
         {
-            var authState = GetAuthenticationStateAsync();
-            NotifyAuthenticationStateChanged(authState);
+            await UpdateAuthState();
         }
     }
 
@@ -69,7 +73,7 @@ public class CustomStateProvider : AuthenticationStateProvider
     {
         await _authenticationClient.LogoutAsync();
         _currentUser = null;
-        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+        await UpdateAuthState();
     }
 
     private async Task<ClaimsIdentity> GetCurrentUser()

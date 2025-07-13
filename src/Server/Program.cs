@@ -5,8 +5,8 @@ using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Server.Repositories;
 using Drogecode.Knrm.Oefenrooster.Server.Repositories.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
-using Drogecode.Knrm.Oefenrooster.Shared.Services;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using HealthChecks.UI.Client;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -20,6 +20,8 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Diagnostics;
 using System.Text;
+using Drogecode.Knrm.Oefenrooster.Server.Managers;
+using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 Console.WriteLine("Start oefenrooster");
@@ -128,7 +130,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddSingleton<PreComHub>();
 builder.Services.AddSingleton<RefreshHub>();
 builder.Services.AddSingleton<ConfigurationHub>();
-builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
+builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 builder.Services.AddScoped<IGraphService, GraphService>();
 
 builder.Services.AddScoped<IRoosterDefaultsRepository, RoosterDefaultsRepository>();
@@ -162,7 +164,12 @@ builder.Services.AddScoped<IUserPreComEventService, UserPreComEventService>();
 builder.Services.AddScoped<ICustomerSettingService, CustomerSettingService>();
 builder.Services.AddScoped<IUserLinkCustomerService, UserLinkCustomerService>();
 
+builder.Services.AddScoped<IAuthenticationManager, AuthenticationManager>();
+builder.Services.AddScoped<IUserSyncManager, UserSyncManager>();
+
+builder.Services.AddScoped<UserController>();
 builder.Services.AddScoped<ScheduleController>();
+builder.Services.AddScoped<AuthenticationController>();
 
 builder.Services.AddHostedService<Worker>();
 

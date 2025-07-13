@@ -3,7 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Customer;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 
@@ -12,8 +12,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class CustomerService : DrogeService, ICustomerService
 {
 
-    public CustomerService(ILogger<CustomerService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeService dateTimeService) : base(logger, database,
-        memoryCache, dateTimeService)
+    public CustomerService(ILogger<CustomerService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeProvider dateTimeProvider) : base(logger, database,
+        memoryCache, dateTimeProvider)
     {
     }
 
@@ -49,7 +49,7 @@ public class CustomerService : DrogeService, ICustomerService
         return result;
     }
 
-    public async Task<List<CustomerAuthentication>> GetByTenantId(string tenantId, CancellationToken clt)
+    public async Task<List<CustomerAuthentication>> GetByTenantId(string? tenantId, CancellationToken clt)
     {
         var customers = await Database.Customers
             .Where(x => x.TenantId == tenantId)

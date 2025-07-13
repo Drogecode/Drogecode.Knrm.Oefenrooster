@@ -2,7 +2,7 @@
 
 1. Open: "Package Manager Console"
 2. cd ..\Server
-3. dotnet ef migrations add AddGroupIdToCustomer -o Database/Migrations --project ./Drogecode.Knrm.Oefenrooster.Server.csproj
+3. dotnet ef migrations add GlobalUserExternalId -o Database/Migrations --project ./Drogecode.Knrm.Oefenrooster.Server.csproj
 4. dotnet ef database update --project ./Drogecode.Knrm.Oefenrooster.Server.csproj
 
 # Revert
@@ -11,7 +11,7 @@ dotnet ef database update "20250509160223_PreComPeriodAddIsFullDay"
 
 # Update tools:
 
-dotnet tool update --global dotnet-ef --version 9.0.6
+dotnet tool update --global dotnet-ef --version 9.0.7
 
 # Create a script:
 

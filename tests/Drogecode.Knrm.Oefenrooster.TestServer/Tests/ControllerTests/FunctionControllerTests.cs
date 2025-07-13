@@ -1,6 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 

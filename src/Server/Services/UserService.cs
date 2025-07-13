@@ -3,15 +3,16 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Models.User;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class UserService : DrogeService, IUserService
 {
-    public UserService(ILogger<UserService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeService dateTimeService) : base(logger, database, memoryCache, dateTimeService)
+    public UserService(ILogger<UserService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeProvider dateTimeProvider) : base(logger, database, memoryCache, dateTimeProvider)
     {
     }
 
@@ -50,10 +51,20 @@ public class UserService : DrogeService, IUserService
         return user;
     }
 
-    public async Task<DrogeUser?> GetUserByPreComId(int preComUserId, CancellationToken clt)
+    public async Task<DrogeUser?> GetUserByPreComId(int preComUserId, Guid customerId, CancellationToken clt)
     {
         var user = await Database.Users
-            .Where(u => u.PreComId == preComUserId && u.DeletedOn == null)
+            .Where(u => u.CustomerId == customerId && u.PreComId == preComUserId && u.DeletedOn == null)
+            .Select(x => x.ToSharedUser(false, false))
+            .AsNoTracking()
+            .FirstOrDefaultAsync(clt);
+        return user;
+    }
+
+    public async Task<DrogeUser?> GetUserByExternalId(string externalId, Guid customerId, CancellationToken clt)
+    {
+        var user = await Database.Users
+            .Where(u => u.CustomerId == customerId && u.ExternalId == externalId && u.DeletedOn == null)
             .Select(x => x.ToSharedUser(false, false))
             .AsNoTracking()
             .FirstOrDefaultAsync(clt);
@@ -77,9 +88,21 @@ public class UserService : DrogeService, IUserService
             throw new ArgumentException("Both userId and externalId are null");
         DbUsers? userObj;
         if (userId is null)
-            userObj = await Database.Users.FirstOrDefaultAsync(u => u.ExternalId == externalId, cancellationToken: clt);
+            userObj = await Database.Users.FirstOrDefaultAsync(u => u.CustomerId == customerId && u.ExternalId == externalId, cancellationToken: clt);
         else
-            userObj = await Database.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken: clt);
+            userObj = await Database.Users.FirstOrDefaultAsync(u => u.CustomerId == customerId && u.Id == userId, cancellationToken: clt);
+        if (userName.Length > DefaultSettingsHelper.MAX_LENGTH_USER_NAME)
+        {
+            Logger.LogWarning("User name {UserName} is too long, truncating to {MaxLength}", userName, DefaultSettingsHelper.MAX_LENGTH_USER_NAME);
+            userName = userName[..DefaultSettingsHelper.MAX_LENGTH_USER_NAME];
+        }
+
+        if (userEmail.Length > DefaultSettingsHelper.MAX_LENGTH_USER_EMAIL)
+        {
+            Logger.LogWarning("User email {userEmail} is too long, truncating to {MaxLength}", userEmail, DefaultSettingsHelper.MAX_LENGTH_USER_EMAIL);
+            userEmail = userEmail[..DefaultSettingsHelper.MAX_LENGTH_USER_EMAIL];
+        }
+
         if (userObj is null)
         {
             isNew = true;
@@ -97,7 +120,7 @@ public class UserService : DrogeService, IUserService
                 newUser.ExternalId = externalId;
             Database.Users.Add(newUser);
             await Database.SaveChangesAsync(clt);
-            userObj = await Database.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken: clt);
+            userObj = await Database.Users.FirstOrDefaultAsync(u => u.CustomerId == customerId && u.Id == userId, cancellationToken: clt);
         }
 
         if (userObj is not null)
@@ -136,6 +159,12 @@ public class UserService : DrogeService, IUserService
 
     public async Task<bool> UpdateUser(DrogeUser user, Guid userId, Guid customerId)
     {
+        if (user.Name.Length > DefaultSettingsHelper.MAX_LENGTH_USER_NAME)
+        {
+            Logger.LogWarning("User name {UserName} is too long, truncating to {MaxLength}", user.Name, DefaultSettingsHelper.MAX_LENGTH_USER_NAME);
+            user.Name = user.Name[..DefaultSettingsHelper.MAX_LENGTH_USER_NAME];
+        }
+
         var oldVersion = await Database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null && !u.IsSystemUser);
         if (oldVersion is not null)
         {

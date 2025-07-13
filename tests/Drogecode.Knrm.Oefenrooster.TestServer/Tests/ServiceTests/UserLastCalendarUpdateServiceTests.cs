@@ -27,16 +27,16 @@ public class UserLastCalendarUpdateServiceTests : BaseTest
         try
         {
             var dummyDateTime = new DateTime(2020, 9, 4, 12, 8, 1);
-            Tester.DateTimeServiceMock.SetMockDateTime(dummyDateTime);
+            Tester.DateTimeProviderMock.SetMockDateTime(dummyDateTime);
             await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(Tester.DefaultCustomerId, Tester.DefaultUserId, CancellationToken.None);
-            Tester.DateTimeServiceMock.SetMockDateTime(dummyDateTime.AddMinutes(1));
+            Tester.DateTimeProviderMock.SetMockDateTime(dummyDateTime.AddMinutes(1));
             var result = await _userLastCalendarUpdateService.GetLastUpdateUsers(15, 60, CancellationToken.None);
             result.Should().NotBeNull();
             result.Should().BeEmpty();
         }
         finally
         {
-            Tester.DateTimeServiceMock.SetMockDateTime(null);
+            Tester.DateTimeProviderMock.SetMockDateTime(null);
         }
     }
 
@@ -46,16 +46,16 @@ public class UserLastCalendarUpdateServiceTests : BaseTest
         try
         {
             var dummyDateTime = new DateTime(2020, 9, 4, 12, 8, 1);
-            Tester.DateTimeServiceMock.SetMockDateTime(dummyDateTime);
+            Tester.DateTimeProviderMock.SetMockDateTime(dummyDateTime);
             await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(Tester.DefaultCustomerId, Tester.DefaultUserId, CancellationToken.None);
-            Tester.DateTimeServiceMock.SetMockDateTime(dummyDateTime.AddMinutes(30));
+            Tester.DateTimeProviderMock.SetMockDateTime(dummyDateTime.AddMinutes(30));
             var result = await _userLastCalendarUpdateService.GetLastUpdateUsers(15, 60, CancellationToken.None);
             result.Should().NotBeNull();
             result.Should().NotBeEmpty();
         }
         finally
         {
-            Tester.DateTimeServiceMock.SetMockDateTime(null);
+            Tester.DateTimeProviderMock.SetMockDateTime(null);
         }
     }
 
@@ -65,16 +65,16 @@ public class UserLastCalendarUpdateServiceTests : BaseTest
         try
         {
             var dummyDateTime = new DateTime(2020, 9, 4, 12, 8, 1, DateTimeKind.Utc);
-            Tester.DateTimeServiceMock.SetMockDateTime(dummyDateTime);
+            Tester.DateTimeProviderMock.SetMockDateTime(dummyDateTime);
             await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(Tester.DefaultCustomerId, Tester.DefaultUserId, CancellationToken.None);
-            Tester.DateTimeServiceMock.SetMockDateTime(dummyDateTime.AddHours(2));
+            Tester.DateTimeProviderMock.SetMockDateTime(dummyDateTime.AddHours(2));
             var result = await _userLastCalendarUpdateService.GetLastUpdateUsers(15, 60, CancellationToken.None);
             result.Should().NotBeNull();
             result.Should().BeEmpty();
         }
         finally
         {
-            Tester.DateTimeServiceMock.SetMockDateTime(null);
+            Tester.DateTimeProviderMock.SetMockDateTime(null);
         }
     }
 }

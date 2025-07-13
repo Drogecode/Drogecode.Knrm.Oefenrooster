@@ -1,10 +1,10 @@
 ﻿using Drogecode.Knrm.Oefenrooster.PreCom.Interfaces;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Drogecode.Knrm.Oefenrooster.PreCom;
 
-public class AvailabilityForUser(IPreComClient _preComClient, ILogger _logger, IDateTimeService _dateTimeService)
+public class AvailabilityForUser(IPreComClient _preComClient, ILogger _logger, IDateTimeProvider dateTimeProvider)
 {
 
     public async Task<GetResponse> Get(List<int> userIds, DateTime date)

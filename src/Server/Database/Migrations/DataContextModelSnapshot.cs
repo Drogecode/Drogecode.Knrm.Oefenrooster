@@ -18,7 +18,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.6")
+                .HasAnnotation("ProductVersion", "9.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -239,6 +239,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("SetBySync")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -2222,7 +2225,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .HasColumnType("character varying(150)");
 
                     b.Property<string>("ExternalId")
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("HashedPassword")
                         .HasMaxLength(200)
@@ -2260,9 +2264,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("UserFunctionId");
+
+                    b.HasIndex(new[] { "CustomerId" }, "IX_Users_CustomerId");
 
                     b.ToTable("Users");
 
@@ -2300,12 +2304,19 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("ExternalId")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex(new[] { "ExternalId" }, "UX_UsersGlobal_ExternalId")
+                        .IsUnique();
 
                     b.ToTable("UsersGlobal");
 

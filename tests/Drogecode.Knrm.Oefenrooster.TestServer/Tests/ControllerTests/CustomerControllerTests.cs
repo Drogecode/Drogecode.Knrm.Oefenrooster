@@ -16,7 +16,7 @@ public class CustomerControllerTests : BaseTest
         Assert.NotNull(result?.Value?.Customers);
         Assert.True(result.Value.Success);
         result.Value.Customers.Should().NotBeEmpty();
-        result.Value.Customers.Should().HaveCountGreaterOrEqualTo(2);
+        result.Value.Customers.Should().HaveCountGreaterThanOrEqualTo(2);
         result.Value.Customers.Should().Contain(x => x.Id == Tester.DefaultCustomerId);
         result.Value.Customers.Should().Contain(x => x.Id == Tester.SecondaryCustomerId);
     }

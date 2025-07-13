@@ -5,7 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Models.UserPreCom;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph.Models;
 
@@ -15,11 +15,11 @@ public class UserPreComEventService(
     ILogger<CustomerService> logger,
     DataContext database,
     IMemoryCache memoryCache,
-    IDateTimeService dateTimeService,
+    IDateTimeProvider dateTimeProvider,
     IUserSettingService _userSettingService,
     IUserLinkedMailsService _userLinkedMailsService,
     IGraphService _graphService)
-    : DrogeService(logger, database, memoryCache, dateTimeService), IUserPreComEventService
+    : DrogeService(logger, database, memoryCache, dateTimeProvider), IUserPreComEventService
 {
     public async Task<List<UserPreComEvent>> GetEventsForUserForDay(Guid userId, Guid customerId, DateOnly date, CancellationToken clt)
     {

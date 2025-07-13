@@ -1,0 +1,8 @@
+﻿<div>
+    @if (Training.LinkedReports > 0)
+    {
+        <div @onclick:stopPropagation="true" @onclick:preventDefault="true">
+            <MudChip T="string" OnClick="@OpenReportsDialog" Icon="@Icons.Material.Filled.Description" Color="Color.Secondary">@LApp["Report"]</MudChip>
+        </div>
+    }
+</div>

@@ -3,7 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Errors;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -11,13 +11,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class DefaultScheduleService : IDefaultScheduleService
 {
     private readonly ILogger<DefaultScheduleService> _logger;
-    private readonly IDateTimeService _dateTimeService;
+    private readonly IDateTimeProvider _dateTimeProvider;
     private readonly Database.DataContext _database;
 
-    public DefaultScheduleService(ILogger<DefaultScheduleService> logger, IDateTimeService dateTimeService, Database.DataContext database)
+    public DefaultScheduleService(ILogger<DefaultScheduleService> logger, IDateTimeProvider dateTimeProvider, Database.DataContext database)
     {
         _logger = logger;
-        _dateTimeService = dateTimeService;
+        _dateTimeProvider = dateTimeProvider;
         _database = database;
     }
 
@@ -44,7 +44,7 @@ public class DefaultScheduleService : IDefaultScheduleService
                 CustomerId = customerId,
                 UserId = userId,
                 IsDefault = true,
-                ValidFrom = _dateTimeService.UtcNow(),
+                ValidFrom = _dateTimeProvider.UtcNow(),
                 ValidUntil = DateTime.MaxValue,
             };
             _database.UserDefaultGroups.Add(newDefaultGroup);
@@ -81,7 +81,7 @@ public class DefaultScheduleService : IDefaultScheduleService
             .ToListAsync();
         foreach (var dbDefault in dbDefaults)
         {
-            var userDefaults = dbDefault.UserDefaultAvailables?.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidUntil >= _dateTimeService.UtcNow() && x.DefaultGroupId == groupId)
+            var userDefaults = dbDefault.UserDefaultAvailables?.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidUntil >= _dateTimeProvider.UtcNow() && x.DefaultGroupId == groupId)
                 .OrderBy(x => x.ValidUntil);
             var innerList = new List<DefaultUserSchedule>();
             if (userDefaults is not null)
@@ -229,9 +229,9 @@ public class DefaultScheduleService : IDefaultScheduleService
 
         var userDefault = dbDefault.UserDefaultAvailables?.FirstOrDefault(y => y.UserId == userId && y.Id == body.UserDefaultAvailableId && y.DefaultGroupId == body.GroupId);
         var allActiveUserDefaults = await _database.UserDefaultAvailables.Where(y =>
-                y.UserId == userId && y.DefaultGroupId == body.GroupId && y.RoosterDefaultId == body.DefaultId && y.ValidFrom <= _dateTimeService.UtcNow() && y.ValidUntil >= _dateTimeService.UtcNow())
+                y.UserId == userId && y.DefaultGroupId == body.GroupId && y.RoosterDefaultId == body.DefaultId && y.ValidFrom <= _dateTimeProvider.UtcNow() && y.ValidUntil >= _dateTimeProvider.UtcNow())
             .ToListAsync();
-        var validFrom = dbGroup?.ValidFrom ?? body.ValidFromUser ?? _dateTimeService.UtcNow();
+        var validFrom = dbGroup?.ValidFrom ?? body.ValidFromUser ?? _dateTimeProvider.UtcNow();
         var validUntil = dbGroup?.ValidUntil ?? body.ValidUntilUser ?? DateTime.MaxValue;
         if (validFrom.Kind == DateTimeKind.Unspecified)
             validFrom = validFrom.DateTimeWithZone(dbDefault.Customer.TimeZone).ToUniversalTime();
@@ -243,13 +243,13 @@ public class DefaultScheduleService : IDefaultScheduleService
             foreach (var wrongDefault in allActiveUserDefaults)
             {
                 if (wrongDefault.Id.Equals(body.UserDefaultAvailableId)) continue;
-                wrongDefault.ValidUntil = _dateTimeService.UtcNow().AddDays(-1);
+                wrongDefault.ValidUntil = _dateTimeProvider.UtcNow().AddDays(-1);
                 _database.UserDefaultAvailables.Update(wrongDefault);
                 _logger.LogWarning("Fixed wrong default rooster with Id `{Id}` for `{User}`", wrongDefault.Id, userId);
             }
         }
 
-        if (userDefault?.ValidFrom?.Date.CompareTo(_dateTimeService.UtcNow().Date) >= 0)
+        if (userDefault?.ValidFrom?.Date.CompareTo(_dateTimeProvider.UtcNow().Date) >= 0)
         {
             userDefault.DefaultGroupId = body.GroupId;
             userDefault.Available = body.Availability;
@@ -262,10 +262,10 @@ public class DefaultScheduleService : IDefaultScheduleService
         {
             if (userDefault is not null)
             {
-                userDefault.ValidUntil = _dateTimeService.UtcNow().AddDays(-1);
+                userDefault.ValidUntil = _dateTimeProvider.UtcNow().AddDays(-1);
                 userDefault.DefaultGroupId = body.GroupId;
                 _database.UserDefaultAvailables.Update(userDefault);
-                validFrom = _dateTimeService.UtcNow();
+                validFrom = _dateTimeProvider.UtcNow();
             }
 
             userDefault = new DbUserDefaultAvailable

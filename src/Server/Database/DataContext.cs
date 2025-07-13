@@ -78,11 +78,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 .UsingEntity<DbLinkUserUser>(
                     l => l.HasOne<DbUsers>(e => e.UserA).WithMany(e => e.LinkedUserAsA).HasForeignKey(e => e.UserAId),
                     r => r.HasOne<DbUsers>(e => e.UserB).WithMany(e => e.LinkedUserAsB).HasForeignKey(e => e.UserBId));
-
+            
             // UsersGlobal
             modelBuilder.Entity<DbUsersGlobal>(e => { e.Property(en => en.Id).IsRequired(); });
 
-            //UserFunctions
+            //UserFunctionsd
             modelBuilder.Entity<DbUserFunctions>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserFunctions>(e => { e.Property(en => en.Name).IsRequired(); });
             modelBuilder.Entity<DbUserFunctions>(e => { e.Property(en => en.Order).IsRequired(); });

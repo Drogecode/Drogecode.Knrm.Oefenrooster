@@ -3,7 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 
@@ -13,8 +13,8 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
 {
     public readonly IUserService _userService;
 
-    public UserLinkCustomerService(ILogger<CustomerService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeService dateTimeService, IUserService userService) : base(logger, database,
-        memoryCache, dateTimeService)
+    public UserLinkCustomerService(ILogger<CustomerService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeProvider dateTimeProvider, IUserService userService) : base(logger, database,
+        memoryCache, dateTimeProvider)
     {
         _userService = userService;
     }
@@ -77,7 +77,7 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
         return result;
     }
 
-    public async Task<LinkUserToCustomerResponse> LinkUserToCustomer(Guid userId, Guid customerId, LinkUserToCustomerRequest body, CancellationToken clt)
+    public async Task<LinkUserToCustomerResponse> LinkUserToCustomer(Guid userId, LinkUserToCustomerRequest body, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new LinkUserToCustomerResponse();
@@ -91,11 +91,16 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
         if (links.Any(x => x.CustomerId == body.CustomerId))
         {
             var link = links.First(x => x.CustomerId == body.CustomerId);
-            if (link.IsActive != body.IsActive)
+            if (link.SetBySync && !body.SetBySync)
+            {
+                Logger.LogWarning("Not allowed to edit link that is set by sync `{user}` `{customer}` `{isActive}`", body.UserId, body.CustomerId, body.IsActive);
+            }
+            else if (link.IsActive != body.IsActive || link.SetBySync != body.SetBySync)
             {
                 link.IsActive = body.IsActive;
                 link.LinkedBy = userId;
                 link.LinkedOn = DateTime.UtcNow;
+                link.SetBySync = body.SetBySync;
                 Database.LinkUserCustomers.Update(link);
             }
             else
@@ -134,6 +139,7 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
                 CustomerId = body.CustomerId,
                 IsPrimary = false,
                 IsActive = true,
+                SetBySync = body.SetBySync,
                 Order = links.OrderByDescending(x => x.Order).FirstOrDefault()?.Order ?? 0 + 10,
                 LinkedBy = userId,
                 LinkedOn = DateTime.UtcNow

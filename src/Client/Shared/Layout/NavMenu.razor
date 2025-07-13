@@ -1,18 +1,16 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.Menu
 <MudNavMenu>
-    <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
-        @if (_linkedCustomers is not null)
-        {
-            <div class="m-2">
-                <MudSelect T="Guid?" Value="@_currentCustomer" ValueChanged="OnCustomerChange" ToStringFunc="CustomerIdToName" Disabled="@(_changingCustomer)">
-                    @foreach (var customer in _linkedCustomers.OrderBy(x => x.Name))
-                    {
-                        <MudSelectItem T="Guid?" Value="@customer.CustomerId" Disabled="@(_currentCustomer == customer.CustomerId)">@customer.Name</MudSelectItem>
-                    }
-                </MudSelect>
-            </div>
-        }
-    </AuthorizeView>
+    @if (_linkedCustomers is not null)
+    {
+        <div class="m-2">
+            <MudSelect T="Guid?" Value="@_currentCustomer" ValueChanged="OnCustomerChange" ToStringFunc="CustomerIdToName" Disabled="@(_changingCustomer)">
+                @foreach (var customer in _linkedCustomers.OrderBy(x => x.Name))
+                {
+                    <MudSelectItem T="Guid?" Value="@customer.CustomerId" Disabled="@(_currentCustomer == customer.CustomerId)">@customer.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </div>
+    }
     <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/" Match="NavLinkMatch.All">@L["Dashboard"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.CalendarMonth" Href="@_uriCalendar" Match="NavLinkMatch.Prefix">@LApp["Availability"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.EditCalendar" Href="@_uriSchedule" Match="NavLinkMatch.Prefix" data-testid="nav-schedule">@L["Schedule"]</MudNavLink>
@@ -67,16 +65,18 @@
          (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriSchedule.Substring(1)) && !Navigation.Uri.EndsWith("Table")))
     {
         <MudList T="string">
+            @*<AuthorizeView Roles="@AccessesNames.AUTH_scheduler_add"> ToDo: uncomment this when the right is published and all users that require this roll have this roll enabled*@
             <MudListItem T="string" OnClick="AddTraining" Class="cursor-pointer" data-testid="nav-add-training">
                 <AvatarContent>
                     <MudAvatar>
-                        <MudIcon Icon="@Icons.Material.Filled.Add" data-testid="nav-add-training-icon"/>
+                        <MudIcon Icon="@Icons.Material.Filled.Add" data-testid="nav-add-training-icon" Disabled="_addingTraining"/>
                     </MudAvatar>
                 </AvatarContent>
                 <ChildContent>
                     @L["Training"]
                 </ChildContent>
             </MudListItem>
+            @*</AuthorizeView>*@
         </MudList>
     }
 </MudNavMenu>

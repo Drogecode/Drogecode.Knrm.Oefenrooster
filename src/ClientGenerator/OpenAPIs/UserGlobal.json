@@ -213,6 +213,10 @@
             "type": "string",
             "nullable": true
           },
+          "externalId": {
+            "type": "string",
+            "nullable": true
+          },
           "createdOn": {
             "type": "string",
             "format": "date-time"

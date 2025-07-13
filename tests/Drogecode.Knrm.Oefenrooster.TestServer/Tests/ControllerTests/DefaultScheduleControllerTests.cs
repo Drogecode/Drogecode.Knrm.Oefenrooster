@@ -95,24 +95,24 @@ public class DefaultScheduleControllerTests : BaseTest
     [Fact]
     public async Task PatchExistingStartedInPastTest()
     {
-        Tester.DateTimeServiceMock.SetMockDateTime(DateTime.Now.AddDays(-5));
+        Tester.DateTimeProviderMock.SetMockDateTime(DateTime.Now.AddDays(-5));
         var body = new PatchDefaultUserSchedule
         {
             DefaultId = Tester.DefaultDefaultSchedule,
             Availability = Availability.Available,
-            ValidFromUser = Tester.DateTimeServiceMock.Today(),
-            ValidUntilUser = Tester.DateTimeServiceMock.Today().AddDays(7),
+            ValidFromUser = Tester.DateTimeProviderMock.Today(),
+            ValidUntilUser = Tester.DateTimeProviderMock.Today().AddDays(7),
         };
         var resultOrignal = await Tester.DefaultScheduleController.PatchDefaultScheduleForUser(body);
         Assert.NotNull(resultOrignal?.Value?.Patched?.UserDefaultAvailableId);
-        Tester.DateTimeServiceMock.SetMockDateTime(null);
+        Tester.DateTimeProviderMock.SetMockDateTime(null);
         body = new PatchDefaultUserSchedule
         {
             UserDefaultAvailableId = resultOrignal!.Value!.Patched!.UserDefaultAvailableId,
             DefaultId = Tester.DefaultDefaultSchedule,
             Availability = Availability.Available,
-            ValidFromUser = Tester.DateTimeServiceMock.Today(),
-            ValidUntilUser = Tester.DateTimeServiceMock.Today().AddDays(7),
+            ValidFromUser = Tester.DateTimeProviderMock.Today(),
+            ValidUntilUser = Tester.DateTimeProviderMock.Today().AddDays(7),
         };
         var resultPatched = await Tester.DefaultScheduleController.PatchDefaultScheduleForUser(body);
         Assert.NotNull(resultPatched?.Value?.Patched?.UserDefaultAvailableId);
@@ -126,8 +126,8 @@ public class DefaultScheduleControllerTests : BaseTest
         {
             DefaultId = Tester.DefaultDefaultSchedule,
             Availability = Availability.Available,
-            ValidFromUser = Tester.DateTimeServiceMock.Today().AddDays(7),
-            ValidUntilUser = Tester.DateTimeServiceMock.Today().AddDays(14),
+            ValidFromUser = Tester.DateTimeProviderMock.Today().AddDays(7),
+            ValidUntilUser = Tester.DateTimeProviderMock.Today().AddDays(14),
         };
         var resultOrignal = await Tester.DefaultScheduleController.PatchDefaultScheduleForUser(body);
         Assert.NotNull(resultOrignal?.Value?.Patched?.UserDefaultAvailableId);
@@ -136,8 +136,8 @@ public class DefaultScheduleControllerTests : BaseTest
             UserDefaultAvailableId = resultOrignal!.Value!.Patched!.UserDefaultAvailableId,
             DefaultId = Tester.DefaultDefaultSchedule,
             Availability = Availability.Maybe,
-            ValidFromUser = Tester.DateTimeServiceMock.Today().AddDays(7),
-            ValidUntilUser = Tester.DateTimeServiceMock.Today().AddDays(19),
+            ValidFromUser = Tester.DateTimeProviderMock.Today().AddDays(7),
+            ValidUntilUser = Tester.DateTimeProviderMock.Today().AddDays(19),
         };
         var resultPatched = await Tester.DefaultScheduleController.PatchDefaultScheduleForUser(body);
         Assert.NotNull(resultPatched?.Value?.Patched?.UserDefaultAvailableId);
