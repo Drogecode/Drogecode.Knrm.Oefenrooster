@@ -45,7 +45,7 @@ public class ScheduleService : DrogeService, IScheduleService
         
         // Get default availability for user, do not check cache.
         var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerInSpan(false, customerId, userId, startDate, tillDate, clt);
-        var userHolidays = await _userHolidaysRepository.GetUserHolidaysForUser(true, customerId, userId, tillDate, startDate, clt);
+        var userHolidays = await _userHolidaysRepository.GetUserHolidaysForUser(false, customerId, userId, tillDate, startDate, clt);
         var trainings = Database.RoosterTrainings.AsNoTracking().Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).OrderBy(x => x.DateStart);
         var availables = await Database.RoosterAvailables.AsNoTracking().Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate)
             .AsSingleQuery().ToListAsync(cancellationToken: clt);
