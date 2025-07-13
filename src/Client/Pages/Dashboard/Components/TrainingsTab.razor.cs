@@ -119,6 +119,11 @@ public sealed partial class TrainingsTab : IDisposable
         StateHasChanged();
     }
 
+    private bool IsExpanded(DrogeTraining arg)
+    {
+        return _reportTrainings?.TotalCount == 1;
+    }
+
     public void Dispose()
     {
         _cls.Cancel();

@@ -27,7 +27,7 @@
     {
         <MudDataGrid Items="@_reportTrainings.Trainings" ReadOnly="true" Filterable="false" SortMode="@SortMode.None">
             <Columns>
-                <HierarchyColumn T="DrogeTraining"/>
+                <HierarchyColumn T="DrogeTraining" InitiallyExpandedFunc="IsExpanded"/>
                 <TemplateColumn Title="@L["Start"]">
                     <CellTemplate>
                         @if (ReportSettingsHelper.TrainingDifferentStart.Contains(context.Item?.Type ?? string.Empty))
