@@ -69,6 +69,11 @@ Changes to this file may cause incorrect behavior and will be lost if the code i
         </div>
         <div>
             <MudTooltip><ChildContent>
+                <MudSwitch Label="@L["scheduler_add"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_scheduler_add" ValueChanged="@(isChecked => { _userRole.Role.AUTH_scheduler_add = isChecked; _saved = null; })"/>
+            </ChildContent><TooltipContent><MudText Typo="Typo.h6">@L["scheduler_add"]</MudText><MudText Typo="Typo.body2">@L["scheduler_add-body"]</MudText></TooltipContent></MudTooltip>
+        </div>
+        <div>
+            <MudTooltip><ChildContent>
                 <MudSwitch Label="@L["scheduler_delete"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_scheduler_delete" ValueChanged="@(isChecked => { _userRole.Role.AUTH_scheduler_delete = isChecked; _saved = null; })"/>
             </ChildContent><TooltipContent><MudText Typo="Typo.h6">@L["scheduler_delete"]</MudText><MudText Typo="Typo.body2">@L["scheduler_delete-body"]</MudText></TooltipContent></MudTooltip>
         </div>

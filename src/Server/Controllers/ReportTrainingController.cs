@@ -42,13 +42,12 @@ public class ReportTrainingController : ControllerBase
         try
         {
             if (count > 50) return Forbid();
-            var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var users = new List<Guid?>() { userId };
 
             var result = await _reportTrainingService.GetListTrainingUser(users, null, userId, count, skip, customerId, clt);
-            _logger.LogInformation("Loading trainings {count} skipping {skip} for user {userName}", count, skip, userName);
+            _logger.LogInformation("Loading trainings {count} skipping {skip} for user {userId}", count, skip, userId);
             return result;
         }
         catch (Exception ex)
@@ -64,10 +63,15 @@ public class ReportTrainingController : ControllerBase
     {
         try
         {
-            if (count > 50) return Forbid();
-            var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            
+            if (count > 50)
+            {
+                _logger.LogWarning("GetLastTrainings request but count is too high {count} by user {userId}", count, userId);
+                return Forbid();
+            }
+            
             var usersAsList = System.Text.Json.JsonSerializer.Deserialize<List<Guid?>>(users);
             if (usersAsList is null)
                 return BadRequest("users is null");
@@ -81,6 +85,31 @@ public class ReportTrainingController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception in GetLastTrainings");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("training/{trainingId:guid}/{count:int}/{skip:int}")]
+    public async Task<ActionResult<MultipleReportTrainingsResponse>> GetReportsLinkedToTraining(Guid trainingId, int count, int skip, CancellationToken clt = default)
+    {
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+
+            if (count > 50)
+            {
+                _logger.LogWarning("GetReportsLinkedToTraining request but count is too high {count} by user {userId}", count, userId);
+                return Forbid();
+            }
+            
+            var result = await _reportTrainingService.GetReportsLinkedToTraining(userId, customerId, trainingId, count, skip, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetReportsLinkedToTraining");
             return BadRequest();
         }
     }

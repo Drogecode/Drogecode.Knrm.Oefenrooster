@@ -144,10 +144,10 @@
         </AuthorizeView>
     </MudTabPanel>
     <MudTabPanel Text="@L["Actions"]">
-        <ActionsTab User="@_user" Users="@_users" Functions="@_functions" EnableOptions="true"/>
+        <ActionsTab Users="@_users" Functions="@_functions" EnableOptions="true"/>
     </MudTabPanel>
     <MudTabPanel Text="@L["Trainings"]">
-        <TrainingsTab User="@_user" Users="@_users" Functions="@_functions"/>
+        <TrainingsTab Users="@_users" Functions="@_functions"/>
     </MudTabPanel>
     <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_Statistics">
         <MudTabPanel Text="@L["Statistics"]">

@@ -179,27 +179,27 @@ public class ScheduleControllerTests : BaseTest
     [Fact]
     public async Task GetScheduledTrainingsForUserTest()
     {
-        Tester.DateTimeServiceMock.SetMockDateTime(DateTime.Today.AddMonths(12));
+        Tester.DateTimeProviderMock.SetMockDateTime(DateTime.Today.AddMonths(12));
         var dateStart = DateTime.Today.AddMonths(12).AddHours(21);
         var dateEnd = DateTime.Today.AddMonths(12).AddHours(15);
         var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
         var trainings = await Tester.ScheduleController.GetScheduledTrainingsForUser();
         Assert.NotNull(trainings?.Value?.Trainings);
         trainings.Value.Trainings.Should().Contain(x => x.TrainingId == trainingId);
-        Tester.DateTimeServiceMock.SetMockDateTime(null);
+        Tester.DateTimeProviderMock.SetMockDateTime(null);
     }
 
     [Fact]
     public async Task GetScheduledTrainingsForUserButNotInPastTest()
     {
-        Tester.DateTimeServiceMock.SetMockDateTime(DateTime.Today.AddMonths(12).AddDays(2));
+        Tester.DateTimeProviderMock.SetMockDateTime(DateTime.Today.AddMonths(12).AddDays(2));
         var dateStart = DateTime.Today.AddMonths(12).AddHours(21);
         var dateEnd = DateTime.Today.AddMonths(12).AddHours(15);
         var trainingId = await PrepareAssignedTraining(dateStart, dateEnd, true);
         var trainings = await Tester.ScheduleController.GetScheduledTrainingsForUser();
         Assert.NotNull(trainings?.Value?.Trainings);
         trainings.Value.Trainings.Should().NotContain(x => x.TrainingId == trainingId);
-        Tester.DateTimeServiceMock.SetMockDateTime(null);
+        Tester.DateTimeProviderMock.SetMockDateTime(null);
     }
 
     [Fact]

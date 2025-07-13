@@ -1,8 +1,8 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+﻿using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 
-namespace Drogecode.Knrm.Oefenrooster.Shared.Services;
+namespace Drogecode.Knrm.Oefenrooster.Shared.Providers;
 
-public class DateTimeService : IDateTimeService
+public class DateTimeProvider : IDateTimeProvider
 {
     public DateTime Now()
     {

@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Drogecode.Knrm.Oefenrooster.PreCom;
-using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using Drogecode.Knrm.Oefenrooster.Shared.Services;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -36,7 +35,7 @@ try
     var problems = await preComWorker.Work(NextRunMode.NextWeek);
     logger.LogInformation(problems.ToString());*/
 
-    var preComWorker = new AvailabilityForUser(preComClient, logger, new DateTimeService());
+    var preComWorker = new AvailabilityForUser(preComClient, logger, new DateTimeProvider());
     var piket = await preComWorker.Get([37398, 29539, 7443], DateTime.Today.AddDays(3));
 
     var userGroups = await preComClient.GetAllUserGroups();

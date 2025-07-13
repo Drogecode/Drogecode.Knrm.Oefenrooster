@@ -3,7 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 
@@ -13,8 +13,8 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
 {
     public readonly IUserService _userService;
 
-    public UserLinkCustomerService(ILogger<CustomerService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeService dateTimeService, IUserService userService) : base(logger, database,
-        memoryCache, dateTimeService)
+    public UserLinkCustomerService(ILogger<CustomerService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeProvider dateTimeProvider, IUserService userService) : base(logger, database,
+        memoryCache, dateTimeProvider)
     {
         _userService = userService;
     }

@@ -2,8 +2,8 @@
 using Drogecode.Knrm.Oefenrooster.PreCom.Interfaces;
 using Drogecode.Knrm.Oefenrooster.PreCom.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
-using Drogecode.Knrm.Oefenrooster.SharedForTests.Services;
-using Drogecode.Knrm.Oefenrooster.SharedForTests.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.SharedForTests.Providers;
+using Drogecode.Knrm.Oefenrooster.SharedForTests.Providers.Interfaces;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
@@ -12,20 +12,20 @@ namespace Drogecode.Knrm.Oefenrooster.TestPreCom.Tests;
 public class FutureProblemsTests : IDisposable
 {
     private readonly ILogger _logger;
-    private readonly IDateTimeServiceMock _dateTimeServiceMock;
+    private readonly IDateTimeProviderMock _dateTimeProviderMock;
 
     public FutureProblemsTests(ILoggerProvider loggerProvider)
     {
         _logger = loggerProvider.CreateLogger("PreComWorkerTests");
-        _dateTimeServiceMock = new DateTimeServiceMock();
-        _dateTimeServiceMock.SetMockDateTime(new DateTime(2022, 3, 18, 12, 2, 1));
+        _dateTimeProviderMock = new DateTimeProviderMock();
+        _dateTimeProviderMock.SetMockDateTime(new DateTime(2022, 3, 18, 12, 2, 1));
     }
 
     [Fact]
     public async Task NextHourTest()
     {
         var mockClient = MockClient();
-        var worker = new FutureProblems(mockClient, _logger, _dateTimeServiceMock);
+        var worker = new FutureProblems(mockClient, _logger, _dateTimeProviderMock);
         var result = await worker.Work(NextRunMode.NextHour);
         Assert.NotNull(result.Problems);
         result.Problems.Trim().Should().Be("Voor aankomend uur hebben we nog een schipper nodig opstapper nodig aankomend opstapper nodig");
@@ -35,7 +35,7 @@ public class FutureProblemsTests : IDisposable
     public async Task TodayTomorrowTest()
     {
         var mockClient = MockClient();
-        var worker = new FutureProblems(mockClient, _logger, _dateTimeServiceMock);
+        var worker = new FutureProblems(mockClient, _logger, _dateTimeProviderMock);
         var result = await worker.Work(NextRunMode.TodayTomorrow);
         Assert.NotNull(result.Problems);
         result.Problems.Trim().Should().Be("{0}<br />Schipper<br />van 12 tot 16<br />Opstapper<br />van 12 tot 16<br />Aankomend opstapper<br />van 12 tot 16<br />van 22 tot 24<br /><br />{1}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24");
@@ -45,7 +45,7 @@ public class FutureProblemsTests : IDisposable
     public async Task NextWeekTest()
     {
         var mockClient = MockClient();
-        var worker = new FutureProblems(mockClient, _logger, _dateTimeServiceMock);
+        var worker = new FutureProblems(mockClient, _logger, _dateTimeProviderMock);
         var result = await worker.Work(NextRunMode.NextWeek);
         Assert.NotNull(result.Problems);
         result.Problems.Trim().Should().Be("{0}<br />Schipper<br />van 12 tot 16<br />Opstapper<br />van 12 tot 16<br />Aankomend opstapper<br />van 12 tot 16<br />van 22 tot 24<br /><br />{1}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24<br /><br />{2}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24<br /><br />{3}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24<br /><br />{4}<br />Schipper<br />van 8 tot 16<br />Opstapper<br />van 2 tot 16<br />Aankomend opstapper<br />van 0 tot 2<br />van 8 tot 16<br />van 22 tot 24");
@@ -56,48 +56,48 @@ public class FutureProblemsTests : IDisposable
         var mockClient = Substitute.For<IPreComClient>();
         mockClient.GetAllUserGroups().Returns([new Group { GroupID = 1201 }]);
 
-        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today()).Returns(GetGroup(_dateTimeServiceMock.Today()));
-        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(1)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(1)));
-        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(2)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(2)));
-        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(3)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(3)));
-        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(4)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(4)));
-        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(5)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(5)));
-        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(6)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(6)));
-        mockClient.GetAllFunctions(1201, _dateTimeServiceMock.Today().AddDays(7)).Returns(GetGroup(_dateTimeServiceMock.Today().AddDays(7)));
-        mockClient.GetOccupancyLevels(1201, _dateTimeServiceMock.Today(), _dateTimeServiceMock.Today().AddDays(8)).Returns(new Dictionary<DateTime, int>()
+        mockClient.GetAllFunctions(1201, _dateTimeProviderMock.Today()).Returns(GetGroup(_dateTimeProviderMock.Today()));
+        mockClient.GetAllFunctions(1201, _dateTimeProviderMock.Today().AddDays(1)).Returns(GetGroup(_dateTimeProviderMock.Today().AddDays(1)));
+        mockClient.GetAllFunctions(1201, _dateTimeProviderMock.Today().AddDays(2)).Returns(GetGroup(_dateTimeProviderMock.Today().AddDays(2)));
+        mockClient.GetAllFunctions(1201, _dateTimeProviderMock.Today().AddDays(3)).Returns(GetGroup(_dateTimeProviderMock.Today().AddDays(3)));
+        mockClient.GetAllFunctions(1201, _dateTimeProviderMock.Today().AddDays(4)).Returns(GetGroup(_dateTimeProviderMock.Today().AddDays(4)));
+        mockClient.GetAllFunctions(1201, _dateTimeProviderMock.Today().AddDays(5)).Returns(GetGroup(_dateTimeProviderMock.Today().AddDays(5)));
+        mockClient.GetAllFunctions(1201, _dateTimeProviderMock.Today().AddDays(6)).Returns(GetGroup(_dateTimeProviderMock.Today().AddDays(6)));
+        mockClient.GetAllFunctions(1201, _dateTimeProviderMock.Today().AddDays(7)).Returns(GetGroup(_dateTimeProviderMock.Today().AddDays(7)));
+        mockClient.GetOccupancyLevels(1201, _dateTimeProviderMock.Today(), _dateTimeProviderMock.Today().AddDays(8)).Returns(new Dictionary<DateTime, int>()
         {
             {
-                _dateTimeServiceMock.Today(), -1
+                _dateTimeProviderMock.Today(), -1
             },
             {
-                _dateTimeServiceMock.Today().AddDays(1), -1
+                _dateTimeProviderMock.Today().AddDays(1), -1
             },
             {
-                _dateTimeServiceMock.Today().AddDays(2), -1
+                _dateTimeProviderMock.Today().AddDays(2), -1
             },
             {
-                _dateTimeServiceMock.Today().AddDays(3), 1
+                _dateTimeProviderMock.Today().AddDays(3), 1
             },
             {
-                _dateTimeServiceMock.Today().AddDays(4), -1
+                _dateTimeProviderMock.Today().AddDays(4), -1
             },
             {
-                _dateTimeServiceMock.Today().AddDays(5), 1
+                _dateTimeProviderMock.Today().AddDays(5), 1
             },
             {
-                _dateTimeServiceMock.Today().AddDays(6), -1
+                _dateTimeProviderMock.Today().AddDays(6), -1
             },
             {
-                _dateTimeServiceMock.Today().AddDays(7), 1
+                _dateTimeProviderMock.Today().AddDays(7), 1
             }
         });
-        mockClient.GetOccupancyLevels(1201, _dateTimeServiceMock.Today(), _dateTimeServiceMock.Today().AddDays(2)).Returns(new Dictionary<DateTime, int>()
+        mockClient.GetOccupancyLevels(1201, _dateTimeProviderMock.Today(), _dateTimeProviderMock.Today().AddDays(2)).Returns(new Dictionary<DateTime, int>()
         {
             {
-                _dateTimeServiceMock.Today(), -1
+                _dateTimeProviderMock.Today(), -1
             },
             {
-                _dateTimeServiceMock.Today().AddDays(1), -1
+                _dateTimeProviderMock.Today().AddDays(1), -1
             }
         });
         return mockClient;
@@ -232,6 +232,6 @@ public class FutureProblemsTests : IDisposable
 
     public void Dispose()
     {
-        _dateTimeServiceMock.SetMockDateTime(null);
+        _dateTimeProviderMock.SetMockDateTime(null);
     }
 }

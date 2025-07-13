@@ -6,7 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Graph.Models;
@@ -32,7 +32,7 @@ public class ScheduleController : DrogeController
     private readonly IGraphService _graphService;
     private readonly ITrainingTypesService _trainingTypesService;
     private readonly IUserSettingService _userSettingService;
-    private readonly IDateTimeService _dateTimeService;
+    private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IUserService _userService;
     private readonly IVehicleService _vehicleService;
     private readonly IFunctionService _functionService;
@@ -47,7 +47,7 @@ public class ScheduleController : DrogeController
         IGraphService graphService,
         ITrainingTypesService trainingTypesService,
         IUserSettingService userSettingService,
-        IDateTimeService dateTimeService,
+        IDateTimeProvider dateTimeProvider,
         IUserService userService,
         IVehicleService vehicleService,
         IFunctionService functionService,
@@ -60,7 +60,7 @@ public class ScheduleController : DrogeController
         _graphService = graphService;
         _trainingTypesService = trainingTypesService;
         _userSettingService = userSettingService;
-        _dateTimeService = dateTimeService;
+        _dateTimeProvider = dateTimeProvider;
         _userService = userService;
         _vehicleService = vehicleService;
         _functionService = functionService;
@@ -316,8 +316,14 @@ public class ScheduleController : DrogeController
     {
         try
         {
+            const bool saveNewTraining = true; // User.IsInRole(AccessesNames.AUTH_scheduler_add); // ToDo: uncomment when in the future
             var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            if (!saveNewTraining && newTraining.DefaultId is null)
+            {
+                Logger.LogWarning("User `{userId}` is not allowed to add training.", userId);
+                return Unauthorized();
+            }
             var trainingId = Guid.NewGuid();
             var result = await _scheduleService.AddTrainingAsync(customerId, newTraining, trainingId, clt);
             if (false && result.Success) // Not sure if required
@@ -527,7 +533,7 @@ public class ScheduleController : DrogeController
         {
             var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var fromDate = _dateTimeService.Today().ToUniversalTime();
+            var fromDate = _dateTimeProvider.Today().ToUniversalTime();
             var result = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, fromDate, take, skip, OrderAscDesc.Asc, clt);
             if (callHub)
             {

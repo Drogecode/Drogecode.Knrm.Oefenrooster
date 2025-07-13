@@ -1,7 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 using MudBlazor;
 using ZXing;
 

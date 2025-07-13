@@ -2,7 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 
@@ -11,8 +11,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class VehicleService :DrogeService,  IVehicleService
 {
 
-    public VehicleService(ILogger<VehicleService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeService dateTimeService, IUserService userService) : base(logger, database,
-        memoryCache, dateTimeService)
+    public VehicleService(ILogger<VehicleService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeProvider dateTimeProvider, IUserService userService) : base(logger, database,
+        memoryCache, dateTimeProvider)
     {
     }
 

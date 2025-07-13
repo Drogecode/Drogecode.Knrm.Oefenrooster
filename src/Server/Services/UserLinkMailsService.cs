@@ -3,7 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 
@@ -15,7 +15,7 @@ public class UserLinkMailsService : DrogeService, IUserLinkedMailsService
         ILogger<ScheduleService> logger,
         DataContext database,
         IMemoryCache memoryCache,
-        IDateTimeService dateTimeService) : base(logger, database, memoryCache, dateTimeService)
+        IDateTimeProvider dateTimeProvider) : base(logger, database, memoryCache, dateTimeProvider)
     {
     }
 

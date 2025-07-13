@@ -214,6 +214,10 @@
             "type": "string",
             "nullable": true
           },
+          "externalId": {
+            "type": "string",
+            "nullable": true
+          },
           "createdOn": {
             "type": "string",
             "format": "date-time"
@@ -318,6 +322,9 @@
           },
           "createNew": {
             "type": "boolean"
+          },
+          "setBySync": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -346,11 +353,19 @@
       "LinkedCustomer": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
           "customerId": {
             "type": "string",
             "format": "uuid"
           },
           "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "globalUserId": {
             "type": "string",
             "format": "uuid"
           },
@@ -362,6 +377,9 @@
             "type": "boolean"
           },
           "isCurrent": {
+            "type": "boolean"
+          },
+          "setBySync": {
             "type": "boolean"
           },
           "order": {

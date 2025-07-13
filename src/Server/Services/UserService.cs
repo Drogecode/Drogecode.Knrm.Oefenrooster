@@ -3,7 +3,7 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Models.User;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
@@ -12,7 +12,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
 public class UserService : DrogeService, IUserService
 {
-    public UserService(ILogger<UserService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeService dateTimeService) : base(logger, database, memoryCache, dateTimeService)
+    public UserService(ILogger<UserService> logger, DataContext database, IMemoryCache memoryCache, IDateTimeProvider dateTimeProvider) : base(logger, database, memoryCache, dateTimeProvider)
     {
     }
 

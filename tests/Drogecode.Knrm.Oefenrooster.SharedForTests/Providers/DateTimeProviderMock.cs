@@ -1,8 +1,8 @@
-﻿using Drogecode.Knrm.Oefenrooster.SharedForTests.Services.Interfaces;
+﻿using Drogecode.Knrm.Oefenrooster.SharedForTests.Providers.Interfaces;
 
-namespace Drogecode.Knrm.Oefenrooster.SharedForTests.Services;
+namespace Drogecode.Knrm.Oefenrooster.SharedForTests.Providers;
 
-public class DateTimeServiceMock : IDateTimeServiceMock
+public class DateTimeProviderMock : IDateTimeProviderMock
 {
     private DateTime? _mockDateTime;
     public void SetMockDateTime(DateTime? dateTime)

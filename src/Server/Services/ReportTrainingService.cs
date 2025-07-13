@@ -22,8 +22,8 @@ public class ReportTrainingService : IReportTrainingService
         var sw = Stopwatch.StartNew();
         var listWhere = _database.ReportTrainings
             .Include(x => x.Users)
-            .Include(x=>x.LinkReportTrainingRoosterTrainings!.Where(y=>y.DeletedOn == null))
-            .Where(x => x.CustomerId == customerId 
+            .Include(x => x.LinkReportTrainingRoosterTrainings!.Where(y => y.DeletedOn == null))
+            .Where(x => x.CustomerId == customerId
                         && x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count
                         && (types == null || !types.Any() || types.Contains(x.Type)));
         var sharePointActionsUser = new MultipleReportTrainingsResponse
@@ -37,6 +37,23 @@ public class ReportTrainingService : IReportTrainingService
         return sharePointActionsUser;
     }
 
+    public async Task<MultipleReportTrainingsResponse> GetReportsLinkedToTraining(Guid userId, Guid customerId, Guid trainingId, int count, int skip, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var listWhere = _database.ReportTrainings
+            .Include(x => x.Users)
+            .Include(x => x.LinkReportTrainingRoosterTrainings!.Where(y => y.DeletedOn == null))
+            .Where(x => x.CustomerId == customerId && x.LinkReportTrainingRoosterTrainings != null && x.LinkReportTrainingRoosterTrainings.Any(x => x.RoosterTrainingId == trainingId));
+        var sharePointActionsUser = new MultipleReportTrainingsResponse
+        {
+            Trainings = await listWhere.OrderByDescending(x => x.Start).Skip(skip).Take(count).Select(x => x.ToDrogeTraining()).ToListAsync(clt),
+            TotalCount = await listWhere.CountAsync(clt),
+            Success = true,
+        };
+        sw.Stop();
+        sharePointActionsUser.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return sharePointActionsUser;
+    }
 
     public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(AnalyzeTrainingRequest trainingRequest, Guid customerId, string timeZone, CancellationToken clt)
     {
@@ -116,6 +133,7 @@ public class ReportTrainingService : IReportTrainingService
                     result.Success = true;
                     result.TotalCount = await boats.CountAsync(clt);
                 }
+
                 break;
             case DistinctReport.None:
             case DistinctReport.Prio:

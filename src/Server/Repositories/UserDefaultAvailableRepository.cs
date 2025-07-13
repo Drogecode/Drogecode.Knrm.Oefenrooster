@@ -1,7 +1,7 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Repositories.Abstract;
 using Drogecode.Knrm.Oefenrooster.Server.Repositories.Interfaces;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Repositories;
@@ -12,7 +12,7 @@ public class UserDefaultAvailableRepository : BaseRepository, IUserDefaultAvaila
         ILogger<RoosterDefaultsRepository> logger,
         DataContext database,
         IMemoryCache memoryCache,
-        IDateTimeService dateTimeService) : base(logger, database, memoryCache, dateTimeService)
+        IDateTimeProvider dateTimeProvider) : base(logger, database, memoryCache, dateTimeProvider)
     {
     }
 

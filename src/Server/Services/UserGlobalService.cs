@@ -2,7 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserGlobal;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using Drogecode.Knrm.Oefenrooster.Server.Models.User;
@@ -15,7 +15,7 @@ public class UserGlobalService : DrogeService, IUserGlobalService
         ILogger<ScheduleService> logger,
         DataContext database,
         IMemoryCache memoryCache,
-        IDateTimeService dateTimeService) : base(logger, database, memoryCache, dateTimeService)
+        IDateTimeProvider dateTimeProvider) : base(logger, database, memoryCache, dateTimeProvider)
     {
     }
 
@@ -63,7 +63,7 @@ public class UserGlobalService : DrogeService, IUserGlobalService
         {
             Id = Guid.CreateVersion7(),
             ExternalId = user.ExternalId,
-            CreatedOn = DateTimeService.UtcNow(),
+            CreatedOn = DateTimeProvider.UtcNow(),
             Name = user.Name
         };
         await Database.UsersGlobal.AddAsync(dbGlobalUer, clt);

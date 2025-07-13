@@ -1,0 +1,13 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components
+<MudDialog Visible="@Visible">
+    <DialogContent>
+        @if (Training is not null)
+        {
+            <TrainingsTab DrogeTrainingId="@Training.TrainingId"/>
+        }
+        else
+        {
+            <DrogeLoading />
+        }
+    </DialogContent>
+</MudDialog>

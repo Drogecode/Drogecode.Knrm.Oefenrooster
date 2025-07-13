@@ -1,4 +1,6 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
@@ -9,14 +11,15 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 
 public sealed partial class TrainingsTab : IDisposable
 {
-    [Inject] private IStringLocalizer<TrainingsTab> L { get; set; } = default!;
-    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private IStringLocalizer<DateToString> LDateToString { get; set; } = default!;
-    [Inject] private ReportTrainingRepository ReportTrainingRepository { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<TrainingsTab>? L { get; set; }
+    [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
+    [Inject, NotNull] private IStringLocalizer<DateToString>? LDateToString { get; set; } 
+    [Inject, NotNull] private IReportTrainingClient? ReportTrainingClient { get; set; }
+    [Inject, NotNull] private ReportTrainingRepository? ReportTrainingRepository { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
-    [Parameter] [EditorRequired] public DrogeUser User { get; set; } = default!;
-    [Parameter] [EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
-    [Parameter] [EditorRequired] public List<DrogeFunction> Functions { get; set; } = default!;
+    [Parameter] public List<DrogeUser>? Users { get; set; }
+    [Parameter] public List<DrogeFunction>? Functions { get; set; }
+    [Parameter] public Guid? DrogeTrainingId { get; set; }
     private MultipleReportTrainingsResponse? _reportTrainings;
     private CancellationTokenSource _cls = new();
     private IEnumerable<DrogeUser> _selectedUsersTraining = new List<DrogeUser>();
@@ -55,7 +58,14 @@ public sealed partial class TrainingsTab : IDisposable
 
     private async Task UpdateReportTrainings(int skip)
     {
-        _reportTrainings = await ReportTrainingRepository.GetLastTraining(_selectedUsersTraining, _selectedTrainingTypes, _count, skip, _cls.Token);
+        if (DrogeTrainingId is not null)
+        {
+            _reportTrainings = await ReportTrainingClient.GetReportsLinkedToTrainingAsync(DrogeTrainingId.Value, _count, skip, _cls.Token);
+        }
+        else
+        {
+            _reportTrainings = await ReportTrainingRepository.GetLastTraining(_selectedUsersTraining, _selectedTrainingTypes, _count, skip, _cls.Token);
+        }
     }
 
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)

@@ -16,15 +16,16 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportActionShared;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserGlobal;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Drogecode.Knrm.Oefenrooster.SharedForTests.Helpers;
-using Drogecode.Knrm.Oefenrooster.SharedForTests.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.SharedForTests.Providers.Interfaces;
 using Drogecode.Knrm.Oefenrooster.TestServer.Seeds;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Services;
 
 public class TestService : IAsyncLifetime
 {
-    internal readonly IDateTimeServiceMock DateTimeServiceMock;
+    internal readonly IDateTimeProviderMock DateTimeProviderMock;
     internal const string USER_NAME = "xUnit user";
     internal const string USER_ROLE_NAME = "xUnit user role";
     internal const string FUNCTION_DEFAULT = "xUnit default function";
@@ -74,7 +75,7 @@ public class TestService : IAsyncLifetime
 
     public TestService(
         DataContext dataContext,
-        IDateTimeService dateTimeService,
+        IDateTimeProvider dateTimeProvider,
         ScheduleController scheduleController,
         UserController userController,
         FunctionController functionController,
@@ -97,7 +98,7 @@ public class TestService : IAsyncLifetime
         UserGlobalController userGlobalController)
     {
         DataContext = dataContext;
-        DateTimeServiceMock = (IDateTimeServiceMock)dateTimeService;
+        DateTimeProviderMock = (IDateTimeProviderMock)dateTimeProvider;
 
         ScheduleController = scheduleController;
         UserController = userController;
@@ -123,7 +124,7 @@ public class TestService : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        DateTimeServiceMock.SetMockDateTime(null);
+        DateTimeProviderMock.SetMockDateTime(null);
         DefaultCustomerId = Guid.NewGuid();
         SecondaryCustomerId = Guid.NewGuid();
         SeedCustomer.Seed(DataContext, DefaultCustomerId);
@@ -220,8 +221,8 @@ public class TestService : IAsyncLifetime
         var result = await HolidayController.PutHolidayForUser(new Holiday
         {
             Description = description,
-            ValidFrom = DateTimeServiceMock.Today().AddDays(from),
-            ValidUntil = DateTimeServiceMock.Today().AddDays(until),
+            ValidFrom = DateTimeProviderMock.Today().AddDays(from),
+            ValidUntil = DateTimeProviderMock.Today().AddDays(until),
         });
         Assert.NotNull(result?.Value?.Put?.Id);
         return result!.Value!.Put!.Id;
@@ -229,8 +230,8 @@ public class TestService : IAsyncLifetime
 
     internal async Task<Guid> AddTraining(string name, bool countToTrainingTarget, DateTime? dateStart = null, DateTime? dateEnd = null, bool isPinned = false, string? description = null)
     {
-        dateStart ??= DateTimeServiceMock.Today().AddHours(12).AddMinutes(50);
-        dateEnd ??= DateTimeServiceMock.Today().AddHours(13).AddMinutes(40);
+        dateStart ??= DateTimeProviderMock.Today().AddHours(12).AddMinutes(50);
+        dateEnd ??= DateTimeProviderMock.Today().AddHours(13).AddMinutes(40);
         var body = new PlannedTraining
         {
             Name = name,

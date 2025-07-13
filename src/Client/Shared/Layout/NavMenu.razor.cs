@@ -3,7 +3,6 @@ using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Menu;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
@@ -46,6 +45,7 @@ public sealed partial class NavMenu : IDisposable
     private bool _useFullLinkExpanded;
     private bool _configurationExpanded;
     private bool _changingCustomer;
+    private bool _addingTraining;
 
     protected override async Task OnInitializedAsync()
     {
@@ -116,24 +116,35 @@ public sealed partial class NavMenu : IDisposable
 
     private async Task AddTraining()
     {
-        var trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
-        var vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
-        var parameters = new DialogParameters<EditTrainingDialog>
+        if (_addingTraining) return;
+        try
         {
-            { x => x.Planner, null },
-            { x => x.Refresh, null },
-            { x => x.Vehicles, vehicles },
-            { x => x.Global, Global },
-            { x => x.TrainingTypes, trainingTypes }
-        };
-        var options = new DialogOptions
+            _addingTraining = true;
+            StateHasChanged();
+            var trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
+            var vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
+            var parameters = new DialogParameters<EditTrainingDialog>
+            {
+                { x => x.Planner, null },
+                { x => x.Refresh, null },
+                { x => x.Vehicles, vehicles },
+                { x => x.Global, Global },
+                { x => x.TrainingTypes, trainingTypes }
+            };
+            var options = new DialogOptions
+            {
+                MaxWidth = MaxWidth.Medium,
+                CloseButton = true,
+                FullWidth = true,
+                BackdropClick = false
+            };
+            await DialogProvider.ShowAsync<EditTrainingDialog>(L["Add training"], parameters, options);
+        }
+        finally
         {
-            MaxWidth = MaxWidth.Medium,
-            CloseButton = true,
-            FullWidth = true,
-            BackdropClick = false
-        };
-        await DialogProvider.ShowAsync<EditTrainingDialog>(L["Add training"], parameters, options);
+            _addingTraining = false;
+            StateHasChanged();
+        }
     }
 
     private async Task UseFullLinksExpandedChanged(bool newValue)

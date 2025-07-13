@@ -1,7 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.TestServer.Tests.ControllerTests;
 
@@ -87,13 +86,13 @@ public class HolidayControllerTests : BaseTest
     public async Task GetAllFutureTest()
     {
         var mockedDateTime = new DateTime(2024, 9, 4, 15, 0, 0);
-        Tester.DateTimeServiceMock.SetMockDateTime(mockedDateTime.AddDays(-10));
+        Tester.DateTimeProviderMock.SetMockDateTime(mockedDateTime.AddDays(-10));
         var newHoliday1 = await Tester.AddHoliday("GetAllFutureTest1", 11, 20);
         var newHoliday2 = await Tester.AddHoliday("GetAllFutureTest2", 3, 15);
         var newHoliday3 = await Tester.AddHoliday("GetAllFutureTest3", 6, 8);
         var newHoliday4 = await Tester.AddHoliday("GetAllFutureTest4", 50, 60);
         var newHoliday5 = await Tester.AddHoliday("GetAllFutureTest5", 30, 50);
-        Tester.DateTimeServiceMock.SetMockDateTime(mockedDateTime);
+        Tester.DateTimeProviderMock.SetMockDateTime(mockedDateTime);
         var result = await Tester.HolidayController.GetAllFuture(30, false);
         Assert.NotNull(result?.Value?.Holidays);
         result.Value.Holidays.Should().NotContain(x => x.Id == Tester.DefaultHoliday);
@@ -119,7 +118,7 @@ public class HolidayControllerTests : BaseTest
     public async Task DeleteFullPastTest()
     {
         var mockedDateTime = new DateTime(2024, 9, 4, 15, 0, 0);
-        Tester.DateTimeServiceMock.SetMockDateTime(mockedDateTime);
+        Tester.DateTimeProviderMock.SetMockDateTime(mockedDateTime);
         var holiday = new Holiday
         {
             Description = "DeleteFullPastTest",
@@ -129,7 +128,7 @@ public class HolidayControllerTests : BaseTest
         var resultPut = await Tester.HolidayController.PutHolidayForUser(holiday);
         Assert.NotNull(resultPut?.Value?.Put);
         Assert.True(resultPut.Value.Success);
-        Tester.DateTimeServiceMock.SetMockDateTime(mockedDateTime.AddDays(10));
+        Tester.DateTimeProviderMock.SetMockDateTime(mockedDateTime.AddDays(10));
         var result = await Tester.HolidayController.Delete(resultPut.Value.Put.Id);
         Assert.NotNull(result?.Value?.Success);
         Assert.False(result!.Value!.Success);
@@ -144,7 +143,7 @@ public class HolidayControllerTests : BaseTest
     public async Task DeleteStartPastTest()
     {
         var mockedDateTime = new DateTime(2024, 9, 4, 15, 0, 0);
-        Tester.DateTimeServiceMock.SetMockDateTime(mockedDateTime);
+        Tester.DateTimeProviderMock.SetMockDateTime(mockedDateTime);
         var holiday = new Holiday
         {
             Description = "DeleteStartPastTest",
@@ -154,7 +153,7 @@ public class HolidayControllerTests : BaseTest
         var resultPut = await Tester.HolidayController.PutHolidayForUser(holiday);
         Assert.NotNull(resultPut?.Value?.Put);
         Assert.True(resultPut.Value.Success);
-        Tester.DateTimeServiceMock.SetMockDateTime(mockedDateTime.AddDays(10));
+        Tester.DateTimeProviderMock.SetMockDateTime(mockedDateTime.AddDays(10));
         var result = await Tester.HolidayController.Delete(resultPut.Value.Put.Id);
         Assert.NotNull(result?.Value?.Success);
         Assert.True(result.Value.Success);

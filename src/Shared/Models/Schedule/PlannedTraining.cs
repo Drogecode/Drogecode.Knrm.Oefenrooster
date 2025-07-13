@@ -7,4 +7,5 @@ public class PlannedTraining : TrainingAdvance
     public List<PlanUser> PlanUsers { get; set; } = [];
     public bool IsCreated { get; set; }
     public string? TrainingTypeName { get; set; }
+    public int LinkedReports { get; set; }
 }

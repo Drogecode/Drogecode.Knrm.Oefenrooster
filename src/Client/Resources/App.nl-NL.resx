@@ -225,4 +225,7 @@
   <data name="Type" xml:space="preserve">
     <value>Type</value>
   </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Raporten</value>
+  </data>
 </root>

@@ -225,6 +225,10 @@
           "tenantId": {
             "type": "string",
             "nullable": true
+          },
+          "groupId": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

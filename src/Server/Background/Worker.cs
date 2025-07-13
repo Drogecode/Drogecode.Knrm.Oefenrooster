@@ -1,11 +1,10 @@
 using Drogecode.Knrm.Oefenrooster.Server.Background.Tasks;
 using Drogecode.Knrm.Oefenrooster.Server.Controllers;
-using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
-using Drogecode.Knrm.Oefenrooster.Shared.Services.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Background;
@@ -16,19 +15,19 @@ public class Worker : BackgroundService
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IConfiguration _configuration;
     private readonly IMemoryCache _memoryCache;
-    private readonly IDateTimeService _dateTimeService;
+    private readonly IDateTimeProvider _dateTimeProvider;
     private CancellationToken _clt;
 
     private const string NEXT_USER_SYNC = "all_usr_sync";
     private int _errorCount = 0;
 
-    public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IConfiguration configuration, IMemoryCache memoryCache, IDateTimeService dateTimeService)
+    public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IConfiguration configuration, IMemoryCache memoryCache, IDateTimeProvider dateTimeProvider)
     {
         _logger = logger;
         _scopeFactory = scopeFactory;
         _configuration = configuration;
         _memoryCache = memoryCache;
-        _dateTimeService = dateTimeService;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     protected override async Task ExecuteAsync(CancellationToken clt)
@@ -62,7 +61,7 @@ public class Worker : BackgroundService
                 var successfully = await SyncSharePoint(scope, graphService, tenantId, clt);
                 if (tenantId.Equals(DefaultSettingsHelper.KnrmHuizenId.ToString()) && count % 15 == 6) // Every 15 runs, but not directly after restart.
                 {
-                    var preComSyncJob = new PreComSyncTask(_logger, _dateTimeService);
+                    var preComSyncJob = new PreComSyncTask(_logger, _dateTimeProvider);
                     successfully &= await preComSyncJob.SyncPreComAvailability(scope, clt);
                 }
 
@@ -198,7 +197,6 @@ public class Worker : BackgroundService
         }
         catch (Exception ex)
         {
-            _errorCount++;
             _logger.LogError(ex, "Error in background service `{name}` {errorCount}`", name, _errorCount);
             clt.ThrowIfCancellationRequested();
             return false;

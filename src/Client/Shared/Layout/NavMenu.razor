@@ -65,16 +65,18 @@
          (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriSchedule.Substring(1)) && !Navigation.Uri.EndsWith("Table")))
     {
         <MudList T="string">
+            @*<AuthorizeView Roles="@AccessesNames.AUTH_scheduler_add"> ToDo: uncomment this when the right is published and all users that require this roll have this roll enabled*@
             <MudListItem T="string" OnClick="AddTraining" Class="cursor-pointer" data-testid="nav-add-training">
                 <AvatarContent>
                     <MudAvatar>
-                        <MudIcon Icon="@Icons.Material.Filled.Add"/>
+                        <MudIcon Icon="@Icons.Material.Filled.Add" Disabled="_addingTraining"/>
                     </MudAvatar>
                 </AvatarContent>
                 <ChildContent>
                     @L["Training"]
                 </ChildContent>
             </MudListItem>
+            @*</AuthorizeView>*@
         </MudList>
     }
 </MudNavMenu>

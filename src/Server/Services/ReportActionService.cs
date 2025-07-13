@@ -232,6 +232,7 @@ public class ReportActionService : IReportActionService
     {
         var sw = Stopwatch.StartNew();
         var result = new KillDbResponse();
+        result.KillCount += await _database.LinkReportTrainingRoosterTrainings.ExecuteDeleteAsync(clt);
         result.KillCount += await _database.ReportUsers.ExecuteDeleteAsync(clt);
         result.KillCount += await _database.ReportActions.ExecuteDeleteAsync(clt);
         result.KillCount += await _database.ReportTrainings.ExecuteDeleteAsync(clt);
