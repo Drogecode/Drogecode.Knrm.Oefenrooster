@@ -220,11 +220,14 @@ public class ScheduleService : DrogeService, IScheduleService
         return dbTraining;
     }
 
-    public async Task<PatchTrainingResponse> PatchTraining(Guid customerId, PlannedTraining patchedTraining, bool inRoleEditPast, CancellationToken token)
+    public async Task<PatchTrainingResponse> PatchTraining(Guid customerId, PlannedTraining patchedTraining, bool inRoleEditPast, CancellationToken clt)
     {
         var sw = Stopwatch.StartNew();
         var result = new PatchTrainingResponse();
-        var oldTraining = await Database.RoosterTrainings.FindAsync(new object?[] { patchedTraining.TrainingId }, cancellationToken: token);
+        var oldTraining = await Database.RoosterTrainings
+            .Include(x=>x.RoosterAvailables)
+            .Where(x=>x.Id == patchedTraining.TrainingId )
+            .FirstOrDefaultAsync(clt);
         if (oldTraining == null) return result;
         if (patchedTraining.Name?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)
             throw new DrogeCodeToLongException();
@@ -240,8 +243,16 @@ public class ScheduleService : DrogeService, IScheduleService
         oldTraining.IsPinned = patchedTraining.IsPinned;
         oldTraining.IsPermanentPinned = patchedTraining.IsPermanentPinned;
         oldTraining.ShowTime = patchedTraining.ShowTime;
+        if (oldTraining.RoosterAvailables is not null)
+        {
+            foreach (var available in oldTraining.RoosterAvailables)
+            {
+                available.Date = patchedTraining.DateStart;
+            }
+        }
+
         Database.RoosterTrainings.Update(oldTraining);
-        result.Success = (await Database.SaveChangesAsync()) > 0;
+        result.Success = (await Database.SaveChangesAsync(clt)) > 0;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
@@ -381,6 +392,7 @@ public class ScheduleService : DrogeService, IScheduleService
     private async Task<bool> PatchAvailableInternalAsync(Guid userId, DbRoosterAvailable available, Training training)
     {
         available.Available = training.Availability;
+        available.Date = training.DateStart;
         available.SetBy = training.SetBy;
         available.LastUpdateOn = DateTimeService.UtcNow();
         available.LastUpdateBy = userId;

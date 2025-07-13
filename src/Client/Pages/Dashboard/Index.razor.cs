@@ -82,15 +82,20 @@ public sealed partial class Index : IDisposable
         {
             _name = _userClaims.Identities.FirstOrDefault()!.Claims.FirstOrDefault(x => x.Type.Equals("FullName"))?.Value ?? string.Empty;
             if (!Guid.TryParse(_userClaims.Identities.FirstOrDefault()!.Claims.FirstOrDefault(x => x.Type.Equals("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value, out _userId))
+            {
+                DebugHelper.WriteLine("Dashboard - Failed to get user id");
                 return false;
+            }
         }
         else
         {
             // Should never happen.
+            DebugHelper.WriteLine("Dashboard - Failed to get user claims");
             return false;
         }
 
         _user = await UserRepository.GetCurrentUserAsync();
+        StateHasChanged();
         return true;
     }
 
