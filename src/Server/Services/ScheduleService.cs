@@ -46,9 +46,16 @@ public class ScheduleService : DrogeService, IScheduleService
         // Get default availability for user, do not check cache.
         var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerInSpan(false, customerId, userId, startDate, tillDate, clt);
         var userHolidays = await _userHolidaysRepository.GetUserHolidaysForUser(true, customerId, userId, tillDate, startDate, clt);
-        var trainings = Database.RoosterTrainings.AsNoTracking().Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate).OrderBy(x => x.DateStart);
-        var availables = await Database.RoosterAvailables.AsNoTracking().Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate)
-            .AsSingleQuery().ToListAsync(cancellationToken: clt);
+        var trainings = Database.RoosterTrainings
+            .AsNoTracking()
+            .Include(x=>x.LinkReportTrainingRoosterTrainings)
+            .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
+            .OrderBy(x => x.DateStart);
+        var availables = await Database.RoosterAvailables
+            .AsNoTracking()
+            .Where(x => x.CustomerId == customerId && x.UserId == userId && x.Date >= startDate && x.Date <= tillDate)
+            .AsSingleQuery()
+            .ToListAsync(cancellationToken: clt);
 
         var scheduleDate = DateOnly.FromDateTime(startDate);
         var till = DateOnly.FromDateTime(tillDate);
@@ -84,6 +91,7 @@ public class ScheduleService : DrogeService, IScheduleService
                         IsPermanentPinned = training.IsPermanentPinned,
                         ShowTime = training.ShowTime ?? true,
                         HasDescription = !string.IsNullOrWhiteSpace(training.Description),
+                        LinkedReports = training.LinkReportTrainingRoosterTrainings?.Count ?? 0
                     });
                 }
 
@@ -982,7 +990,9 @@ public class ScheduleService : DrogeService, IScheduleService
             .Include(i => i.Training)
             .ThenInclude(i => i.RoosterAvailables!.Where(y => y.User!.DeletedOn == null))
             .Include(i => i.Training)
-            .ThenInclude(i => i.LinkVehicleTrainings);
+            .ThenInclude(i => i.LinkVehicleTrainings)
+            .Include(i => i.Training)
+            .ThenInclude(i => i.LinkReportTrainingRoosterTrainings);
         var users = Database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
         result.TotalCount = await scheduled.CountAsync(clt);
         var schedules = order switch
@@ -1014,6 +1024,7 @@ public class ScheduleService : DrogeService, IScheduleService
                 IsCreated = true,
                 ShowTime = schedule.Training.ShowTime ?? true,
                 HasDescription = !string.IsNullOrWhiteSpace(schedule.Training.Description),
+                LinkedReports = schedule.Training.LinkReportTrainingRoosterTrainings?.Count ?? 0,
                 PlanUsers = schedule.Training.RoosterAvailables!.Select(a =>
                     new PlanUser
                     {
