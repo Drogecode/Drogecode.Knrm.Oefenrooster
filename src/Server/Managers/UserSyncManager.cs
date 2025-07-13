@@ -12,7 +12,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Managers;
 
 public class UserSyncManager : DrogeManager, IUserSyncManager
 {
-    private readonly ILogger<UserSyncManager> _logger;
     private readonly IUserService _userService;
     private readonly IUserRoleService _userRoleService;
     private readonly ILinkUserRoleService _linkUserRoleService;
@@ -24,9 +23,8 @@ public class UserSyncManager : DrogeManager, IUserSyncManager
 
     public UserSyncManager(ILogger<UserSyncManager> logger, IUserService userService, IUserRoleService userRoleService, ILinkUserRoleService linkUserRoleService,
         IUserLinkCustomerService userLinkCustomerService,
-        IUserGlobalService userGlobalService, IGraphService graphService, IFunctionService functionService, ICustomerService customerService)
+        IUserGlobalService userGlobalService, IGraphService graphService, IFunctionService functionService, ICustomerService customerService) : base(logger)
     {
-        _logger = logger;
         _userService = userService;
         _userRoleService = userRoleService;
         _linkUserRoleService = linkUserRoleService;
@@ -111,7 +109,7 @@ public class UserSyncManager : DrogeManager, IUserSyncManager
         {
             if (groups?.Value is not null && groups.Value.All(x => x.Id != customer.Customer.GroupId))
             {
-                _logger.LogInformation("User {userId} is not in group {CustomerGroupId}", user.Id, customer.Customer.GroupId);
+                Logger.LogInformation("User {userId} is not in group {CustomerGroupId}", user.Id, customer.Customer.GroupId);
                 return false;
             }
         }
@@ -141,7 +139,7 @@ public class UserSyncManager : DrogeManager, IUserSyncManager
     {
         if (newUserResponse.ExternalId is null)
         {
-            _logger.LogWarning("external id should not be null while linking user to global user `{userId}`", newUserResponse.Id);
+            Logger.LogWarning("external id should not be null while linking user to global user `{userId}`", newUserResponse.Id);
             return;
         }
         var allLinkedCustomers = await _userLinkCustomerService.GetAllLinkUserCustomers(newUserResponse.Id, customerId, clt);
@@ -158,7 +156,7 @@ public class UserSyncManager : DrogeManager, IUserSyncManager
                 var otherUser =await _userService.GetUserByExternalId(newUserResponse.ExternalId, customerInTenant.Id, clt);
                 if (otherUser is null)
                 {
-                    _logger.LogWarning("No user found with external id `{externalId}` in customer `{customerId}`", newUserResponse.ExternalId, customerInTenant.Id);
+                    Logger.LogWarning("No user found with external id `{externalId}` in customer `{customerId}`", newUserResponse.ExternalId, customerInTenant.Id);
                     return;
                 }
                 await _userLinkCustomerService.LinkUserToCustomer(newUserResponse.Id, new LinkUserToCustomerRequest

@@ -52,10 +52,15 @@ public class Worker : BackgroundService
                 }
 
                 using var scope = _scopeFactory.CreateScope();
+                var authenticationManager = scope.ServiceProvider.GetRequiredService<IAuthenticationManager>();
+                var authService = authenticationManager.GetAuthenticationService();
+                var tenantId = authService.GetTenantId();
+                
                 var graphService = scope.ServiceProvider.GetRequiredService<IGraphService>();
                 graphService.InitializeGraph();
-                var successfully = await SyncSharePoint(scope, graphService, clt);
-                if (count % 15 == 6) // Every 15 runs, but not directly after restart.
+                
+                var successfully = await SyncSharePoint(scope, graphService, tenantId, clt);
+                if (tenantId.Equals(DefaultSettingsHelper.KnrmHuizenId.ToString()) && count % 15 == 6) // Every 15 runs, but not directly after restart.
                 {
                     var preComSyncJob = new PreComSyncTask(_logger, _dateTimeService);
                     successfully &= await preComSyncJob.SyncPreComAvailability(scope, clt);
@@ -85,10 +90,14 @@ public class Worker : BackgroundService
         }
     }
 
-    private async Task<bool> SyncSharePoint(IServiceScope scope, IGraphService graphService, CancellationToken clt)
+    private async Task<bool> SyncSharePoint(IServiceScope scope, IGraphService graphService, string tenantId, CancellationToken clt)
     {
         var result = true;
-        result &= await SyncSharePointReports(graphService);
+        if (tenantId.Equals(DefaultSettingsHelper.KnrmHuizenId.ToString()))
+        {
+            result &= await SyncSharePointReports(graphService);
+        }
+
         result &= await SyncSharePointUsers(scope, graphService);
         result &= await SyncCalendarEvents(scope, graphService, clt);
         return result;
@@ -111,12 +120,12 @@ public class Worker : BackgroundService
         // Get scoped objects
         var customerService = scope.ServiceProvider.GetRequiredService<ICustomerService>();
 
-        // Get the controllers
-        var authenticationController = scope.ServiceProvider.GetRequiredService<AuthenticationController>();
+        // Get the managers
+        var authenticationManager = scope.ServiceProvider.GetRequiredService<IAuthenticationManager>();
         var userSyncManager = scope.ServiceProvider.GetRequiredService<IUserSyncManager>();
 
         // Get tenant details
-        var authService = authenticationController.GetAuthenticationService();
+        var authService = authenticationManager.GetAuthenticationService();
         var customersInTenant = await customerService.GetByTenantId(authService.GetTenantId(), _clt);
 
         var response = true;
