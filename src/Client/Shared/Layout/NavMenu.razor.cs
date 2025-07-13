@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
+using System.Web;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 
@@ -178,10 +179,10 @@ public sealed partial class NavMenu : IDisposable
             switch (menu.AddLoginHint)
             {
                 case '&':
-                    url = $"{menu.Url}&login_hint={loginHint}";
+                    url = $"{menu.Url}&login_hint={HttpUtility.UrlEncode(loginHint)}";
                     break;
                 case '?':
-                    url = $"{menu.Url}?login_hint={loginHint}";
+                    url = $"{menu.Url}?login_hint={HttpUtility.UrlEncode(loginHint)}";
                     break;
             }
         }
