@@ -989,7 +989,9 @@ public class ScheduleService : DrogeService, IScheduleService
             .Include(i => i.Training)
             .ThenInclude(i => i.RoosterAvailables!.Where(y => y.User!.DeletedOn == null))
             .Include(i => i.Training)
-            .ThenInclude(i => i.LinkVehicleTrainings);
+            .ThenInclude(i => i.LinkVehicleTrainings)
+            .Include(i => i.Training)
+            .ThenInclude(i => i.LinkReportTrainingRoosterTrainings);
         var users = Database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
         result.TotalCount = await scheduled.CountAsync(clt);
         var schedules = order switch
@@ -1021,6 +1023,7 @@ public class ScheduleService : DrogeService, IScheduleService
                 IsCreated = true,
                 ShowTime = schedule.Training.ShowTime ?? true,
                 HasDescription = !string.IsNullOrWhiteSpace(schedule.Training.Description),
+                LinkedReports = schedule.Training.LinkReportTrainingRoosterTrainings?.Count ?? 0,
                 PlanUsers = schedule.Training.RoosterAvailables!.Select(a =>
                     new PlanUser
                     {
