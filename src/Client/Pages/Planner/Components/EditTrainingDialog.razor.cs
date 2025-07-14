@@ -32,7 +32,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private bool _canEdit;
     private bool _showPadlock;
     private bool _editOld;
-    private bool _isTaco;
+    private bool _saving;
 #if DEBUG
     private const bool IS_DEBUG = true;
 #else
@@ -122,7 +122,6 @@ public sealed partial class EditTrainingDialog : IDisposable
     private async Task SetRoleBasedVariables()
     {
         _editOld = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_edit_past);
-        _isTaco = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user);
 
         if (_training?.IsNew ?? true)
         {
@@ -202,57 +201,68 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private async Task OnSubmit()
     {
-        await _form.Validate();
-        if (!_form.IsValid || _training == null || !_canEdit)
+        if (_saving) return;
+        _saving = true;
+        StateHasChanged();
+        try
         {
-            DebugHelper.WriteLine($"Failed to save {!_form.IsValid} || {_training == null} || {!_canEdit}");
-            await AuditClient.PostLogAsync(new PostLogRequest { Message = $"Failed to save {!_form.IsValid} || {_training == null} || {!_canEdit}" });
-            return;
-        }
-
-        if (_training.TimeStart >= _training.TimeEnd) return;
-
-        if (_training.IsNew || _training.IsNewFromDefault)
-        {
-            await UpdatePlannerObject();
-            if (Planner is null)
+            await _form.Validate();
+            if (!_form.IsValid || _training == null || !_canEdit)
             {
-                DebugHelper.WriteLine("Planner should not be null");
-                await AuditClient.PostLogAsync(new PostLogRequest { Message = "Planner should not be null" });
+                DebugHelper.WriteLine($"Failed to save {!_form.IsValid} || {_training == null} || {!_canEdit}");
+                await AuditClient.PostLogAsync(new PostLogRequest { Message = $"Failed to save {!_form.IsValid} || {_training == null} || {!_canEdit}" });
                 return;
             }
 
-            var newId = await ScheduleRepository.AddTraining(Planner, _cls.Token);
-            if (_linkVehicleTraining is not null && _linkVehicleTraining.Count != 0)
-            {
-                foreach (var link in _linkVehicleTraining)
-                {
-                    link.RoosterTrainingId = newId;
-                    await VehicleRepository.UpdateLinkVehicleTrainingAsync(link);
-                }
-            }
+            if (_training.TimeStart >= _training.TimeEnd) return;
 
-            _training.Id = newId;
-            if (Refresh is not null)
-                await Refresh.CallRequestRefreshAsync();
-            if (_training.IsNew)
-                await Global.CallNewTrainingAddedAsync(_training);
-            _training.IsNew = false;
-            _training.IsNewFromDefault = false;
-            Planner.TrainingId = newId;
+            if (_training.IsNew || _training.IsNewFromDefault)
+            {
+                await UpdatePlannerObject();
+                if (Planner is null)
+                {
+                    DebugHelper.WriteLine("Planner should not be null");
+                    await AuditClient.PostLogAsync(new PostLogRequest { Message = "Planner should not be null" });
+                    return;
+                }
+
+                var newId = await ScheduleRepository.AddTraining(Planner, _cls.Token);
+                if (_linkVehicleTraining is not null && _linkVehicleTraining.Count != 0)
+                {
+                    foreach (var link in _linkVehicleTraining)
+                    {
+                        link.RoosterTrainingId = newId;
+                        await VehicleRepository.UpdateLinkVehicleTrainingAsync(link);
+                    }
+                }
+
+                _training.Id = newId;
+                if (Refresh is not null)
+                    await Refresh.CallRequestRefreshAsync();
+                if (_training.IsNew)
+                    await Global.CallNewTrainingAddedAsync(_training);
+                _training.IsNew = false;
+                _training.IsNewFromDefault = false;
+                Planner.TrainingId = newId;
+            }
+            else if (Planner is not null)
+            {
+                await UpdatePlannerObject();
+                await ScheduleRepository.PatchTraining(Planner, _cls.Token);
+                if (Refresh is not null)
+                    await Refresh.CallRequestRefreshAsync();
+            }
+            else
+            {
+                DebugHelper.WriteLine("Failed to save Planner is null");
+                await AuditClient.PostLogAsync(new PostLogRequest { Message = "Failed to save Planner is null" });
+                return;
+            }
         }
-        else if (Planner is not null)
+        finally
         {
-            await UpdatePlannerObject();
-            await ScheduleRepository.PatchTraining(Planner, _cls.Token);
-            if (Refresh is not null)
-                await Refresh.CallRequestRefreshAsync();
-        }
-        else
-        {
-            DebugHelper.WriteLine("Failed to save Planner is null");
-            await AuditClient.PostLogAsync(new PostLogRequest { Message = "Failed to save Planner is null" });
-            return;
+            _saving = false;
+            StateHasChanged();
         }
 
         MudDialog?.Close(DialogResult.Ok(true));

@@ -10,12 +10,16 @@ public class Settings
 
     public static Settings LoadSettings(IConfiguration configuration, ILogger logger)
     {
-        return new Settings
+        var settings = new Settings
         {
             ClientId = configuration.GetValue<string>("AzureAd:ClientId"),
             ClientSecret = InternalGetClientSecret(configuration, logger),
             TenantId = configuration.GetValue<string>("AzureAd:TenantId")
         };
+        if (string.IsNullOrWhiteSpace(settings.ClientId)) throw new DrogeCodeConfigurationException("no client id found for azure login");
+        if (string.IsNullOrWhiteSpace(settings.ClientSecret)) throw new DrogeCodeConfigurationException("no client secret found for azure login");
+        if (string.IsNullOrWhiteSpace(settings.TenantId)) throw new DrogeCodeConfigurationException("no tenant id found for azure login");
+        return settings;
     }
 
     private static string InternalGetClientSecret(IConfiguration configuration, ILogger logger)

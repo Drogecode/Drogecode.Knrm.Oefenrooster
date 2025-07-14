@@ -11,10 +11,6 @@ function AddVisibilityWatcher(dotNet) {
     });
 }
 
-function ColorschemeFix () : void{
-    window.open('/colorscheme-fix.html')
-}
-
 function EventQueue(eventName) {
     if (queuedUpCalls.indexOf(eventName) != -1) {
         return;

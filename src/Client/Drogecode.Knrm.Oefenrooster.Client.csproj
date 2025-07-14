@@ -11,9 +11,6 @@
 	<ItemGroup>
 	  <Content Remove="Pages\Planner\Components\CalendarBaseCard.razor" />
 	  <Content Remove="wwwroot\js\LocalStorageAccessor.ts" />
-	  <Content Update="wwwroot\colorscheme-fix.html">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
