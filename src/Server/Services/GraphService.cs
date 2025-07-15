@@ -7,6 +7,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Graph.Models;
 using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using IdentityProvider = Drogecode.Knrm.Oefenrooster.Shared.Enums.IdentityProvider;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -209,9 +210,11 @@ public class GraphService : IGraphService
             else
                 continue;
 
+            var differentStart = ReportSettingsHelper.TrainingDifferentStart.Contains(training.Type ?? string.Empty);
+            var start = differentStart ? training.Commencement : training.Start;
             var potentialLinkedTrainings = _database.RoosterTrainings
-                .AsNoTracking()
-                .Where(x => x.CustomerId == customerId && x.DateStart <= training.Start.AddMinutes(30) && x.DateStart >= training.Start.AddMinutes(-30) && x.RoosterAvailables!.Any(y => y.Assigned))
+                .AsNoTracking() 
+                .Where(x => x.CustomerId == customerId && x.DateStart <= start.AddMinutes(30) && x.DateStart >= start.AddMinutes(-30) && x.RoosterAvailables!.Any(y => y.Assigned))
                 .Include(x => x.LinkReportTrainingRoosterTrainings)
                 .Include(x => x.RoosterAvailables!.Where(y => y.Assigned))
                 .AsSingleQuery()
