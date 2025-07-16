@@ -293,6 +293,10 @@
           "hasDescription": {
             "type": "boolean"
           },
+          "linkedReports": {
+            "type": "integer",
+            "format": "int32"
+          },
           "availability": {
             "$ref": "#/components/schemas/Availability"
           },

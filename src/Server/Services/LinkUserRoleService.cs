@@ -15,9 +15,13 @@ public class LinkUserRoleService : ILinkUserRoleService
         _database = database;
     }
 
-    public async Task<List<Guid>> GetLinkUserRolesAsync(Guid userId, CancellationToken clt)
+    public async Task<List<Guid>> GetLinkUserRolesAsync(Guid userId, bool onlyExternal, CancellationToken clt)
     {
-        var links = await _database.LinkUserRoles.Where(x => x.UserId == userId && x.IsSet).Select(x => x.RoleId).ToListAsync(clt);
+        var links = await _database.LinkUserRoles
+            .AsNoTracking()
+            .Where(x => x.UserId == userId && x.IsSet && (!onlyExternal || x.SetExternal))
+            .Select(x => x.RoleId)
+            .ToListAsync(clt);
         return links;
     }
 
@@ -36,7 +40,7 @@ public class LinkUserRoleService : ILinkUserRoleService
         return result;
     }
 
-    public async Task<bool> LinkUserToRoleAsync(Guid userId, DrogeUserRole? role, bool isSet, bool setExternal, CancellationToken clt)
+    public async Task<bool> LinkUserToRoleAsync(Guid userId, DrogeUserRoleBasic? role, bool isSet, bool setExternal, bool modifySetByExternal, CancellationToken clt)
     {
         if (role is null) return false;
         var link = await _database.LinkUserRoles.FirstOrDefaultAsync(x => x.UserId == userId && x.RoleId == role.Id, cancellationToken: clt);
@@ -53,7 +57,7 @@ public class LinkUserRoleService : ILinkUserRoleService
                 SetExternal = setExternal
             });
         }
-        else if (link.IsSet != isSet || link.SetExternal != setExternal)
+        else if ((link.IsSet != isSet || link.SetExternal != setExternal) && (modifySetByExternal || !link.SetExternal))
         {
             link.IsSet = isSet;
             link.SetExternal = setExternal;

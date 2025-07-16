@@ -7,6 +7,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -155,6 +156,26 @@ public class UserService : DrogeService, IUserService
             return null;
         sharedUser.IsNew = isNew;
         return sharedUser;
+    }
+
+    public async Task<MultipleLinkedUserRolesResponse> GeRolesForUserById(Guid customerId, Guid userId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new MultipleLinkedUserRolesResponse();
+
+        var roles = await Database.Users
+            .Include(x => x.LinkUserRoles)
+            !.ThenInclude(x => x.Role)
+            .Where(x => x.CustomerId == customerId && x.Id == userId && x.DeletedOn == null && !x.IsSystemUser && x.LinkUserRoles != null && x.LinkUserRoles.Any(lur=>lur.IsSet))
+            .Select(x => x.ToDrogeUserRoleLinked())
+            .FirstOrDefaultAsync(clt);
+        result.Roles = roles;
+        result.TotalCount = roles?.Count ?? -2;
+        result.Success = result.TotalCount >= 0;
+
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
     }
 
     public async Task<bool> UpdateUser(DrogeUser user, Guid userId, Guid customerId)

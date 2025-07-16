@@ -1,5 +1,6 @@
 ﻿@page "/planner/user/{Id:guid}"
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole
 
 @if (_trainings is not null && _user is not null && _functions is not null)
 {
@@ -41,11 +42,25 @@
                 <DrogeLoading/>
             }
         </MudTabPanel>
-        <AuthorizeView Roles="@AccessesNames.AUTH_users_settigns">
+        <AuthorizeView Roles="@AccessesNames.AUTH_users_settings">
             <MudTabPanel Text="@L["Settings"]">
                 <MudPaper Class="pa-4" MaxWidth="500px">
+                    
+                    <AuthorizeView Roles="@AccessesNames.AUTH_users_add_role" Context="inner">
+                        @if (_userRoles?.Roles is not null && _userLinkRoles?.Roles is not null)
+                        {
+                            <MudSelectExtended T="Guid?" Label="@L["Roles"]" MultiSelection="true" SelectedValues="_userRolesForUser" SelectedValuesChanged="UserRolesChanged"
+                                               MultiSelectionTextFunc="@(new Func<List<Guid?>, string>(GetSelectedRolesText))" AnchorOrigin="Origin.BottomCenter"
+                                               Disabled="_updatingRoles">
+                                @foreach (var role in _userRoles.Roles.OrderBy(x => x.Name))
+                                {
+                                    <MudSelectItemExtended T="Guid?" Value="@role.Id" Disabled="_userLinkRoles.Roles.Any(x=>x.Id == role.Id && x.SetExternal)">@role.Name</MudSelectItemExtended>
+                                }
+                            </MudSelectExtended>
+                        }
+                    </AuthorizeView>
                     <MudSelect T="Guid?" Label="@L["Function"]" Value="_user.UserFunctionId" ValueChanged="UserFunctionChanged" Disabled="@_user.RoleFromSharePoint"
-                               AnchorOrigin="Origin.BottomCenter">
+                               AnchorOrigin="Origin.BottomLeft">
                         @foreach (var function in _functions.Where(x => !x.TrainingOnly).OrderBy(x => x.Order))
                         {
                             <MudSelectItem T="Guid?" Value="@function.Id">@function.Name</MudSelectItem>

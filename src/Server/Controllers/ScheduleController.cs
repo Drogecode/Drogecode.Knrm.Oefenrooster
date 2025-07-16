@@ -435,7 +435,7 @@ public class ScheduleController : DrogeController
         {
             var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var inRoleEditOther = User.IsInRole(AccessesNames.AUTH_scheduler_other_user);
+            var inRoleEditOther = User.IsInRole(AccessesNames.AUTH_scheduler_other);
             if (!inRoleEditOther && !userId.Equals(body.User?.UserId))
                 return Unauthorized();
             var result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
@@ -486,7 +486,7 @@ public class ScheduleController : DrogeController
         {
             var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var inRoleEditOther = User.IsInRole(AccessesNames.AUTH_scheduler_other_user);
+            var inRoleEditOther = User.IsInRole(AccessesNames.AUTH_scheduler_other);
             if (!inRoleEditOther && !userId.Equals(body.UserId))
                 return Unauthorized();
             var result = await _scheduleService.PutAssignedUserAsync(userId, customerId, body, clt);

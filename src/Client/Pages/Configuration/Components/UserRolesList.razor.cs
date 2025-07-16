@@ -18,6 +18,7 @@ public sealed partial class UserRolesList : IDisposable
     private bool? _saved ;
     private bool _editName ;
     private bool _isNew;
+    private bool _isSaving;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -45,34 +46,43 @@ public sealed partial class UserRolesList : IDisposable
     }
     private async Task Submit()
     {
-        if (string.IsNullOrWhiteSpace(_userRole?.Role?.Name))
-        {
-            _saved = false;
-            StateHasChanged();
-            return;
-        }
-
-        _editName = false;
+        if (_isSaving) return;
+        _isSaving = true;
         StateHasChanged();
-        if (_isNew)
+        try
         {
-            var newResult = await UserRoleClient.NewUserRoleAsync(_userRole?.Role, _cls.Token);
-            if (newResult.NewId is not null)
+            if (string.IsNullOrWhiteSpace(_userRole?.Role?.Name))
             {
-                _saved = newResult.Success;
-                _userRole!.Role!.Id = newResult.NewId.Value;
+                _saved = false;
+                StateHasChanged();
+                return;
+            }
+
+            _editName = false;
+            StateHasChanged();
+            if (_isNew)
+            {
+                var newResult = await UserRoleClient.NewUserRoleAsync(_userRole?.Role, _cls.Token);
+                if (newResult.NewId is not null)
+                {
+                    _saved = newResult.Success;
+                    _userRole!.Role!.Id = newResult.NewId.Value;
+                }
+                else
+                {
+                    _saved = false;
+                }
             }
             else
             {
-                _saved = false;
+                _saved = (await UserRoleClient.PatchUserRoleAsync(_userRole?.Role, _cls.Token)).Success;
             }
         }
-        else
+        finally
         {
-            _saved = (await UserRoleClient.PatchUserRoleAsync(_userRole?.Role, _cls.Token)).Success;
+            _isSaving = false;
+            StateHasChanged();
         }
-
-        StateHasChanged();
     }
 
     public void Dispose()

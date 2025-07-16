@@ -4,21 +4,31 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 
 public sealed partial class UserDetails : IDisposable
 {
-    [Inject] private IStringLocalizer<UserDetails> L { get; set; } = default!;
-    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private UserRepository _userRepository { get; set; } = default!;
-    [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
-    [Inject] private TrainingTypesRepository _trainingTypesRepository { get; set; } = default!;
-    [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
-    [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<UserDetails>? L { get; set; }
+    [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
+    [Inject, NotNull] private UserRepository? UserRepository { get; set; }
+    [Inject, NotNull] private IUserClient? UserClient { get; set; }
+    [Inject, NotNull] private ScheduleRepository? ScheduleRepository { get; set; }
+    [Inject, NotNull] private TrainingTypesRepository? TrainingTypesRepository { get; set; }
+    [Inject, NotNull] private FunctionRepository? FunctionRepository { get; set; }
+    [Inject, NotNull] private VehicleRepository? VehicleRepository { get; set; }
+    [Inject, NotNull] private IUserRoleClient? UserRoleClient { get; set; }
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public Guid? Id { get; set; }
     private CancellationTokenSource _cls = new();
     private DrogeUser? _user;
+    private MultipleDrogeUserRolesBasicResponse? _userRoles;
+    private MultipleLinkedUserRolesResponse? _userLinkRoles;
+    private List<Guid?>? _userRolesForUser;
     private DrogeFunction? _userFunction;
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
@@ -28,6 +38,7 @@ public sealed partial class UserDetails : IDisposable
     private List<PlannerTrainingType>? _trainingTypes;
     private IEnumerable<DrogeUser> _selectedUsersAction;
     private bool _updatingSelection;
+    private bool _updatingRoles;
     private const int TAKE = 15;
     private int _total = TAKE;
     private int _skip;
@@ -36,19 +47,19 @@ public sealed partial class UserDetails : IDisposable
     {
         if (firstRender)
         {
-            _users = await _userRepository.GetAllUsersAsync(false, false, false, _cls.Token);
-            _functions = await _functionRepository.GetAllFunctionsAsync(false, _cls.Token);
-            _vehicles = await _vehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
-            _trainingTypes = await _trainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
+            _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
+            _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
+            _vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
+            _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
             if (Id is not null)
             {
-                _user = await _userRepository.GetById(Id.Value, false);
+                _user = await UserRepository.GetById(Id.Value, false);
                 if (_user?.LinkedAsA is not null)
                 {
                     var newList = new List<DrogeUser>();
                     foreach (var linkedUser in _user.LinkedAsA.Where(x => x.LinkType == UserUserLinkType.Buddy))
                     {
-                        var linked = await _userRepository.GetById(linkedUser.LinkedUserId, false);
+                        var linked = await UserRepository.GetById(linkedUser.LinkedUserId, false);
                         if (linked is not null)
                             newList.Add(linked);
                     }
@@ -58,10 +69,29 @@ public sealed partial class UserDetails : IDisposable
                 else
                     _selectedUsersAction = [];
 
-                _trainings = await _scheduleRepository.AllTrainingsForUser(Id.Value, TAKE, _skip * TAKE, _cls.Token);
+                _trainings = await ScheduleRepository.AllTrainingsForUser(Id.Value, TAKE, _skip * TAKE, _cls.Token);
                 StateHasChanged();
                 _userFunction = _functions?.FirstOrDefault(x => x.Id == _user?.UserFunctionId);
-                _userMonthInfo = await _scheduleRepository.GetUserMonthInfo(Id.Value, _cls.Token);
+                _userMonthInfo = await ScheduleRepository.GetUserMonthInfo(Id.Value, _cls.Token);
+
+                if (AuthenticationState is not null)
+                {
+                    var authState = await AuthenticationState;
+                    var user = authState?.User;
+                    if (user?.IsInRole(AccessesNames.AUTH_users_add_role) ?? false)
+                    {
+                        _userRoles = await UserRoleClient.GetAllBasicAsync(_cls.Token);
+                        _userLinkRoles = await UserClient.GetRolesForUserByIdAsync(Id.Value, _cls.Token);
+                        _userRolesForUser = [];
+                        if (_userLinkRoles?.Roles is not null)
+                        {
+                            foreach (var role in _userLinkRoles.Roles.Where(x=>x.IsSet))
+                            {
+                                _userRolesForUser.Add(role.Id);
+                            }
+                        }
+                    }
+                }
             }
 
             StateHasChanged();
@@ -73,7 +103,82 @@ public sealed partial class UserDetails : IDisposable
         if (_user is null || newFunction is null)
             return;
         _user.UserFunctionId = newFunction;
-        await _userRepository.UpdateUserAsync(_user);
+        await UserRepository.UpdateUserAsync(_user);
+    }
+
+    private string GetSelectedRolesText(List<Guid?> roleIds)
+    {
+        var result = string.Empty;
+        foreach (var roleId in roleIds)
+        {
+            result += $"{_userRoles?.Roles?.FirstOrDefault(x => x.Id == roleId)?.Name}, ";
+        }
+
+        return result.TrimEnd(',', ' ');
+    }
+
+    private async Task UserRolesChanged(IEnumerable<Guid?>? userRoles)
+    {
+        DebugHelper.WriteLine($"UserRolesChanged - {userRoles?.Count()} roles");
+        if (_updatingRoles || Id is null)
+            return;
+        _updatingRoles = true;
+        StateHasChanged();
+        try
+        {
+            _userRolesForUser ??= [];
+            var newRolesAsList = (userRoles ??= []).ToList();
+            var removedRoles = new List<Guid?>();
+            foreach (var oldRole in _userRolesForUser)
+            {
+                if (newRolesAsList.Contains(oldRole))
+                {
+                    DebugHelper.WriteLine($"UserRolesChanged - ignore role {oldRole}");
+                    newRolesAsList.Remove(oldRole);
+                }
+                else
+                {
+                    DebugHelper.WriteLine($"UserRolesChanged - Unlinking role {oldRole}");
+                    var drogeUserRoleLinked = _userLinkRoles?.Roles?.FirstOrDefault(x => x.Id == oldRole);
+                    if (drogeUserRoleLinked is null)
+                    {
+                        DebugHelper.WriteLine($"UserRolesChanged - Role {oldRole} not found");
+                        continue;
+                    }
+                    drogeUserRoleLinked.IsSet = false;
+                    await UserRoleClient.LinkUserToRoleAsync(Id.Value, drogeUserRoleLinked, _cls.Token);
+                    removedRoles.Add(oldRole);
+                    _userLinkRoles!.Roles!.Remove(drogeUserRoleLinked);
+                }
+            }
+
+            foreach (var removedRole in removedRoles)
+            {
+                _userRolesForUser.Remove(removedRole);
+            }
+
+            foreach (var newRole in newRolesAsList)
+            {
+                DebugHelper.WriteLine($"UserRolesChanged - Linking role {newRole}");
+                var drogeUserRoleBasic = _userRoles?.Roles?.FirstOrDefault(x => x.Id == newRole);
+                if (drogeUserRoleBasic is null)
+                {
+                    DebugHelper.WriteLine($"UserRolesChanged - Role {newRole} not found");
+                    continue;
+                }
+                var drogeUserRoleLinked = drogeUserRoleBasic.ToDrogeUserRoleLinked();
+                drogeUserRoleLinked.IsSet = true;
+                drogeUserRoleLinked.SetExternal = false;
+                await UserRoleClient.LinkUserToRoleAsync(Id.Value, drogeUserRoleLinked, _cls.Token);
+                _userRolesForUser.Add(newRole);
+                _userLinkRoles?.Roles?.Add(drogeUserRoleLinked);
+            }
+        }
+        finally
+        {
+            _updatingRoles = false;
+            StateHasChanged();
+        }
     }
 
     private async Task OnSelectionChanged(IEnumerable<DrogeUser> selection)
@@ -92,14 +197,14 @@ public sealed partial class UserDetails : IDisposable
             {
                 body.UserBId = oldSelected.Id;
                 body.Add = false;
-                await _userRepository.UpdateLinkUserUserForUserAsync(body, _cls.Token);
+                await UserRepository.UpdateLinkUserUserForUserAsync(body, _cls.Token);
             }
 
             foreach (var newSelected in selection)
             {
                 body.UserBId = newSelected.Id;
                 body.Add = true;
-                await _userRepository.UpdateLinkUserUserForUserAsync(body, _cls.Token);
+                await UserRepository.UpdateLinkUserUserForUserAsync(body, _cls.Token);
             }
 
             _selectedUsersAction = selection;
@@ -118,13 +223,13 @@ public sealed partial class UserDetails : IDisposable
         if (_user is null)
             return;
         _user.Nr = newNumber;
-        await _userRepository.UpdateUserAsync(_user);
+        await UserRepository.UpdateUserAsync(_user);
     }
 
     private async Task LoadMore()
     {
         _skip++;
-        var newTrainings = (await _scheduleRepository.AllTrainingsForUser(Id.Value, TAKE, _skip * TAKE, _cls.Token));
+        var newTrainings = (await ScheduleRepository.AllTrainingsForUser(Id.Value, TAKE, _skip * TAKE, _cls.Token));
         if (_trainings is null || newTrainings is null || newTrainings.TotalCount != _trainings.TotalCount)
         {
             _trainings = newTrainings;
@@ -136,6 +241,7 @@ public sealed partial class UserDetails : IDisposable
             _trainings.Trainings.AddRange(newTrainings.Trainings);
             _total += TAKE;
         }
+
         StateHasChanged();
     }
 

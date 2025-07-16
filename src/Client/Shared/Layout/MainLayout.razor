@@ -45,9 +45,9 @@
                                 </MudBadge>
                             </AuthorizeView>
                             <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft" TransformOrigin="@Origin.TopLeft"
-                                     AriaLabel="@L["User menu dropdown"]">
-                                <MudMenuItem Href="/user/settings">@L["Settings"]</MudMenuItem>
-                                <MudMenuItem Href="/authentication/logout">@L["Logout"]</MudMenuItem>
+                                     AriaLabel="@L["User menu dropdown"]" data-testid="top-menu-settings">
+                                <MudMenuItem Href="/user/settings" data-testid="user-settings">@L["Settings"]</MudMenuItem>
+                                <MudMenuItem Href="/authentication/logout" data-testid="user-logout">@L["Logout"]</MudMenuItem>
                             </MudMenu>
                             <Theming Global="_global" MudThemeProvider="_appShell.MudThemeProvider" @bind-IsDarkMode="_isDarkMode" @bind-DarkModeToggle="_darkModeToggle"/>
                         </MudAppBar>

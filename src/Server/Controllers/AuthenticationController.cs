@@ -437,6 +437,8 @@ public class AuthenticationController : DrogeController
         claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_basic_access));
         claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_configure_global_all));
         claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_users_details));
+        claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_users_add_role));
+        claims.Add(new Claim(ClaimTypes.Role, AccessesNames.AUTH_users_settings));
     }
 
     private async Task<Guid> GetCustomerIdByExternalId(string tenantId, IEnumerable<Claim>? claims, CancellationToken clt)

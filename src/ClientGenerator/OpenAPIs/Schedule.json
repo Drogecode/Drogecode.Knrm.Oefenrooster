@@ -1375,6 +1375,10 @@
           "hasDescription": {
             "type": "boolean"
           },
+          "linkedReports": {
+            "type": "integer",
+            "format": "int32"
+          },
           "planUsers": {
             "type": "array",
             "items": {
@@ -1388,10 +1392,6 @@
           "trainingTypeName": {
             "type": "string",
             "nullable": true
-          },
-          "linkedReports": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1519,6 +1519,10 @@
           "hasDescription": {
             "type": "boolean"
           },
+          "linkedReports": {
+            "type": "integer",
+            "format": "int32"
+          },
           "availability": {
             "$ref": "#/components/schemas/Availability"
           },
@@ -1587,6 +1591,10 @@
           },
           "hasDescription": {
             "type": "boolean"
+          },
+          "linkedReports": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

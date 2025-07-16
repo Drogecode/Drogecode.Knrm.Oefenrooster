@@ -80,8 +80,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_scheduler_monthitem:
                         drogeUserRole.AUTH_scheduler_monthitem = true;
                         break;
-                    case AccessesNames.AUTH_scheduler_other_user:
-                        drogeUserRole.AUTH_scheduler_other_user = true;
+                    case AccessesNames.AUTH_scheduler_self:
+                        drogeUserRole.AUTH_scheduler_self = true;
+                        break;
+                    case AccessesNames.AUTH_scheduler_other:
+                        drogeUserRole.AUTH_scheduler_other = true;
                         break;
                     case AccessesNames.AUTH_scheduler_remaining_days_unavailable:
                         drogeUserRole.AUTH_scheduler_remaining_days_unavailable = true;
@@ -101,8 +104,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_users_counter:
                         drogeUserRole.AUTH_users_counter = true;
                         break;
-                    case AccessesNames.AUTH_users_settigns:
-                        drogeUserRole.AUTH_users_settigns = true;
+                    case AccessesNames.AUTH_users_settings:
+                        drogeUserRole.AUTH_users_settings = true;
+                        break;
+                    case AccessesNames.AUTH_users_add_role:
+                        drogeUserRole.AUTH_users_add_role = true;
                         break;
                     case AccessesNames.AUTH_action_history_full:
                         drogeUserRole.AUTH_action_history_full = true;
@@ -188,8 +194,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_scheduler_dayitem).Append(',');
             if (userRole.AUTH_scheduler_monthitem)
                 sb.Append(AccessesNames.AUTH_scheduler_monthitem).Append(',');
-            if (userRole.AUTH_scheduler_other_user)
-                sb.Append(AccessesNames.AUTH_scheduler_other_user).Append(',');
+            if (userRole.AUTH_scheduler_self)
+                sb.Append(AccessesNames.AUTH_scheduler_self).Append(',');
+            if (userRole.AUTH_scheduler_other)
+                sb.Append(AccessesNames.AUTH_scheduler_other).Append(',');
             if (userRole.AUTH_scheduler_remaining_days_unavailable)
                 sb.Append(AccessesNames.AUTH_scheduler_remaining_days_unavailable).Append(',');
             if (userRole.AUTH_scheduler_description_edit)
@@ -202,8 +210,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_users_delete).Append(',');
             if (userRole.AUTH_users_counter)
                 sb.Append(AccessesNames.AUTH_users_counter).Append(',');
-            if (userRole.AUTH_users_settigns)
-                sb.Append(AccessesNames.AUTH_users_settigns).Append(',');
+            if (userRole.AUTH_users_settings)
+                sb.Append(AccessesNames.AUTH_users_settings).Append(',');
+            if (userRole.AUTH_users_add_role)
+                sb.Append(AccessesNames.AUTH_users_add_role).Append(',');
             if (userRole.AUTH_action_history_full)
                 sb.Append(AccessesNames.AUTH_action_history_full).Append(',');
             if (userRole.AUTH_training_history_full)

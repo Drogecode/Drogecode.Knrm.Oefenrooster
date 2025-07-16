@@ -131,6 +131,36 @@
         }
       }
     },
+    "/api/UserRole/all/basic": {
+      "get": {
+        "tags": [
+          "UserRole"
+        ],
+        "operationId": "GetAllBasic",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleDrogeUserRolesBasicResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleDrogeUserRolesBasicResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleDrogeUserRolesBasicResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/UserRole/{id}": {
       "get": {
         "tags": [
@@ -212,6 +242,66 @@
           }
         }
       }
+    },
+    "/api/UserRole/link/{userToLink}": {
+      "patch": {
+        "tags": [
+          "UserRole"
+        ],
+        "operationId": "LinkUserToRoleAsync",
+        "parameters": [
+          {
+            "name": "userToLink",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeUserRoleLinked"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeUserRoleLinked"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrogeUserRoleLinked"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -282,7 +372,10 @@
           "autH_scheduler_monthitem": {
             "type": "boolean"
           },
-          "autH_scheduler_other_user": {
+          "autH_scheduler_self": {
+            "type": "boolean"
+          },
+          "autH_scheduler_other": {
             "type": "boolean"
           },
           "autH_scheduler_remaining_days_unavailable": {
@@ -303,7 +396,10 @@
           "autH_users_counter": {
             "type": "boolean"
           },
-          "autH_users_settigns": {
+          "autH_users_settings": {
+            "type": "boolean"
+          },
+          "autH_users_add_role": {
             "type": "boolean"
           },
           "autH_action_history_full": {
@@ -337,6 +433,48 @@
             "type": "boolean"
           },
           "autH_precom_sync_calendar": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrogeUserRoleBasic": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "externalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrogeUserRoleLinked": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "externalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "setExternal": {
+            "type": "boolean"
+          },
+          "isSet": {
             "type": "boolean"
           }
         },
@@ -389,6 +527,33 @@
         },
         "additionalProperties": false
       },
+      "MultipleDrogeUserRolesBasicResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrogeUserRoleBasic"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "MultipleDrogeUserRolesResponse": {
         "type": "object",
         "properties": {
@@ -433,6 +598,22 @@
             "type": "string",
             "format": "uuid",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PatchResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
           }
         },
         "additionalProperties": false

@@ -34,6 +34,7 @@ public sealed partial class ScheduleDialog : IDisposable
     private bool _showWoeps;
     private bool _canEdit;
     private bool _authEditOtherUser;
+    private bool _authEditSelf;
     private bool _showPadlock;
     private bool _isLoading = true;
     private int _vehicleCount;
@@ -82,7 +83,8 @@ public sealed partial class ScheduleDialog : IDisposable
             {
                 var authState = await AuthenticationState;
                 user = authState?.User;
-                _authEditOtherUser = user?.IsInRole(AccessesNames.AUTH_scheduler_other_user) ?? false;
+                _authEditOtherUser = user?.IsInRole(AccessesNames.AUTH_scheduler_other) ?? false;
+                _authEditSelf = user?.IsInRole(AccessesNames.AUTH_scheduler_self) ?? false;
                 if (!_authEditOtherUser)
                 {
                     var dbUser = await _userRepository.GetCurrentUserAsync();

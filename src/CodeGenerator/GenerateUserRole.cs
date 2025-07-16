@@ -181,14 +181,14 @@ public static class GenerateUserRole
                 sb.AppendLine("        <div>");
                 sb.AppendLine("            <MudTooltip><ChildContent>");
                 sb.AppendLine(
-                    $"                <MudSwitch Label=\"@L[\"{fieldValue}\"]\" Color=\"Color.Primary\" T=\"bool\" Value=\"@_userRole.Role.{accessName}\" ValueChanged=\"@(isChecked => {{ _userRole.Role.{accessName} = isChecked; _saved = null; }})\"/>");
+                    $"                <MudSwitch Label=\"@L[\"{fieldValue}\"]\" Color=\"Color.Primary\" T=\"bool\" Value=\"@_userRole.Role.{accessName}\" ValueChanged=\"@(isChecked => {{ _userRole.Role.{accessName} = isChecked; _saved = null; }})\" Disabled=\"_isSaving\"/>");
                 sb.AppendLine($"            </ChildContent><TooltipContent><MudText Typo=\"Typo.h6\">@L[\"{fieldValue}\"]</MudText><MudText Typo=\"Typo.body2\">@L[\"{fieldValue}-body\"]</MudText></TooltipContent></MudTooltip>");
                 sb.AppendLine("        </div>");
             }
         }
 
         // Submit button
-        sb.AppendLine("        <MudButton Color=\"Color.Primary\" OnClick=\"Submit\">");
+        sb.AppendLine("        <MudButton Color=\"Color.Primary\" OnClick=\"Submit\" Disabled=\"_isSaving\">");
         sb.AppendLine("            @LApp[\"Submit\"]");
         sb.AppendLine("            @switch (_saved)");
         sb.AppendLine("            {");
@@ -228,14 +228,8 @@ public static class GenerateUserRole
         sb.AppendLine("namespace Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;");
         sb.AppendLine("#nullable enable");
         sb.AppendLine();
-        sb.AppendLine("public class DrogeUserRole");
+        sb.AppendLine("public class DrogeUserRole : DrogeUserRoleBasic");
         sb.AppendLine("{");
-
-        // Add basic properties (Id, ExternalId, and Name)
-        sb.AppendLine("    public Guid Id { get; set; }");
-        sb.AppendLine("    public string? ExternalId { get; set; }");
-        sb.AppendLine("    public string? Name { get; set; }");
-        sb.AppendLine();
 
         // Add a property for each AUTH constant in AccessesNames
         var group = string.Empty;

@@ -8,12 +8,8 @@
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 #nullable enable
 
-public class DrogeUserRole
+public class DrogeUserRole : DrogeUserRoleBasic
 {
-    public Guid Id { get; set; }
-    public string? ExternalId { get; set; }
-    public string? Name { get; set; }
-
 
     // Group: GROUP_GLOBAL
     public bool AUTH_basic_access { get; set; }
@@ -37,7 +33,8 @@ public class DrogeUserRole
     public bool AUTH_scheduler_edit_past { get; set; }
     public bool AUTH_scheduler_dayitem { get; set; }
     public bool AUTH_scheduler_monthitem { get; set; }
-    public bool AUTH_scheduler_other_user { get; set; }
+    public bool AUTH_scheduler_self { get; set; }
+    public bool AUTH_scheduler_other { get; set; }
     public bool AUTH_scheduler_remaining_days_unavailable { get; set; }
     public bool AUTH_scheduler_description_edit { get; set; }
     public bool AUTH_scheduler_description_read { get; set; }
@@ -46,7 +43,8 @@ public class DrogeUserRole
     public bool AUTH_users_details { get; set; }
     public bool AUTH_users_delete { get; set; }
     public bool AUTH_users_counter { get; set; }
-    public bool AUTH_users_settigns { get; set; }
+    public bool AUTH_users_settings { get; set; }
+    public bool AUTH_users_add_role { get; set; }
 
     // Group: GROUP_DASHBOARD
     public bool AUTH_action_history_full { get; set; }

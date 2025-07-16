@@ -59,7 +59,7 @@
                     {
                         <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="py-2">
                             <MudItem Class="max-md:order-2 md:order-1" xs="12" sm="@(_colmn1 * 2)" md="@_colmn1">
-                                @if (_authEditOtherUser || user.UserId.Equals(_currentUserId))
+                                @if (_authEditOtherUser || ( _authEditSelf && user.UserId.Equals(_currentUserId)))
                                 {
                                     <MudButtonGroup Variant="Variant.Text">
                                         <MudButton Disabled="@(!_canEdit)" StartIcon="@Icons.Material.Filled.KeyboardArrowDown" Variant="Variant.Filled"
@@ -152,11 +152,11 @@
                         <MudText Typo="Typo.h6">
                             @function.Name
                         </MudText>
-                        @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availability == Oefenrooster.Shared.Enums.Availability.Available && x.UserFunctionId == function.Id).OrderBy(x => x.Name))
+                        @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availability == Availability.Available && x.UserFunctionId == function.Id).OrderBy(x => x.Name))
                         {
                             <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                                 <MudItem xs="@_colmn1">
-                                    @if (_authEditOtherUser || user.UserId.Equals(_currentUserId))
+                                    @if (_authEditOtherUser || ( _authEditSelf && user.UserId.Equals(_currentUserId)))
                                     {
                                         <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Filled" OnClick="@(() => CheckChanged(true, user, function.Id))"
                                                        Color="GetColor(user.Availability)" Tag="user"/>
@@ -198,7 +198,7 @@
                             {
                                 <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                                     <MudItem xs="@_colmn1">
-                                        @if (_authEditOtherUser || user.UserId.Equals(_currentUserId))
+                                        @if (_authEditOtherUser || ( _authEditSelf && user.UserId.Equals(_currentUserId)))
                                         {
                                             <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Filled" OnClick="@(() => CheckChanged(true, user, function.Id))"
                                                            Color="GetColor(user.Availability)" Tag="user"/>
@@ -223,7 +223,7 @@
                                 @if (Planner.PlanUsers.Any(x => x.UserId == user.Id)) continue;
                                 <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                                     <MudItem xs="@_colmn1">
-                                        @if (_authEditOtherUser || user.Id.Equals(_currentUserId))
+                                        @if (_authEditOtherUser || ( _authEditSelf && user.Id.Equals(_currentUserId)))
                                         {
                                             <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Filled" OnClick="@(() => CheckChanged(true, user, function.Id))" Tag="user"/>
                                         }

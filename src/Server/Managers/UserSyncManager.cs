@@ -189,8 +189,8 @@ public class UserSyncManager : DrogeManager, IUserSyncManager
 
     private async Task LinkUserToRoles(Guid customerId, DrogeUserServer newUserResponse, DirectoryObjectCollectionResponse? groups, CancellationToken clt)
     {
-        var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(newUserResponse.Id, clt);
-        var roles = await _userRoleService.GetAll(customerId, clt);
+        var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(newUserResponse.Id, true, clt);
+        var roles = await _userRoleService.GetAllBasic(customerId, clt);
         if (groups?.Value is not null && roles.Roles is not null && roles.Roles.Count != 0)
         {
             foreach (var group in groups.Value.Where(x => roles.Roles.Any(y => y.ExternalId?.ToString().Equals(x.Id) == true)))
@@ -199,14 +199,14 @@ public class UserSyncManager : DrogeManager, IUserSyncManager
                 var role = roles.Roles.FirstOrDefault(x => x.ExternalId?.Equals(group.Id) == true);
                 if (role is null) continue;
                 linkedRoles.Remove(role.Id);
-                await _linkUserRoleService.LinkUserToRoleAsync(newUserResponse.Id, role, true, true, clt);
+                await _linkUserRoleService.LinkUserToRoleAsync(newUserResponse.Id, role, true, true, true, clt);
             }
 
             foreach (var linkedRole in linkedRoles)
             {
                 var role = roles.Roles.FirstOrDefault(x => x.Id.Equals(linkedRole));
                 if (role is null) continue;
-                await _linkUserRoleService.LinkUserToRoleAsync(newUserResponse.Id, role, false, true, clt);
+                await _linkUserRoleService.LinkUserToRoleAsync(newUserResponse.Id, role, false, true, true, clt);
             }
         }
     }

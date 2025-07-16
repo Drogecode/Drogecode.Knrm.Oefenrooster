@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 
@@ -9,6 +10,7 @@ public interface IUserRoleService
     Task<List<string>> GetAccessForUserByClaims(Guid userId, Guid customerId, IEnumerable<Claim> claims, CancellationToken clt);
     Task<List<string>> GetAccessForUserByUserId(Guid userId, Guid customerId, CancellationToken clt);
     Task<MultipleDrogeUserRolesResponse> GetAll(Guid customerId, CancellationToken clt);
+    Task<MultipleDrogeUserRolesBasicResponse> GetAllBasic(Guid customerId, CancellationToken clt);
     Task<GetUserRoleResponse> GetById(Guid id, Guid userId, Guid customerId, CancellationToken clt);
     Task<UpdateUserRoleResponse> PatchUserRole(DrogeUserRole userRole, Guid userId, Guid customerId, CancellationToken clt);
 }

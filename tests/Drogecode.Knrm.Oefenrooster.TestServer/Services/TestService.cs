@@ -132,7 +132,7 @@ public class TestService : IAsyncLifetime
 
         var defaultRoles = new List<string>
         {
-            AccessesNames.AUTH_scheduler_other_user,
+            AccessesNames.AUTH_scheduler_other,
         };
         MockAuthenticatedUser(ScheduleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(UserController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
@@ -210,7 +210,7 @@ public class TestService : IAsyncLifetime
         var result = await UserRoleController.NewUserRole(new DrogeUserRole
         {
             Name = name,
-            AUTH_scheduler_other_user = true,
+            AUTH_scheduler_other = true,
         });
         Assert.NotNull(result?.Value?.NewId);
         return result.Value.NewId.Value;

@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
 

@@ -10,18 +10,18 @@ public sealed partial class UserRoles : IDisposable
     [Inject, NotNull] private IUserRoleClient? UserRoleClient { get; set; }
     [Inject, NotNull] private NavigationManager? Navigation { get; set; }
     private readonly CancellationTokenSource _cls = new();
-    private MultipleDrogeUserRolesResponse? _userRoles;
+    private MultipleDrogeUserRolesBasicResponse? _userRoles;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _userRoles = await UserRoleClient.GetAllAsync(_cls.Token);
+            _userRoles = await UserRoleClient.GetAllBasicAsync(_cls.Token);
             StateHasChanged();
         }
     }
 
-    private void ClickUserRole(DrogeUserRole userRole)
+    private void ClickUserRole(DrogeUserRoleBasic userRole)
     {
         Navigation.NavigateTo($"/configuration/user-roles/edit/{userRole.Id}");
     }

@@ -144,4 +144,7 @@
   <data name="User number" xml:space="preserve">
     <value>Bemannings nummer</value>
   </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Rollen</value>
+  </data>
 </root>

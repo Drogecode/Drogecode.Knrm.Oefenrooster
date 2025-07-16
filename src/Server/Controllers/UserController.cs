@@ -122,6 +122,23 @@ public class UserController : ControllerBase
             return BadRequest();
         }
     }
+    
+    [HttpGet]
+    [Route("{id:guid}/roles")]
+    public async Task<ActionResult<MultipleLinkedUserRolesResponse>> GetRolesForUserById(Guid id, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var result = await _userService.GeRolesForUserById(customerId, id, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetById");
+            return BadRequest();
+        }
+    }
 
     [HttpPost]
     [Route("")]
@@ -207,7 +224,7 @@ public class UserController : ControllerBase
 
     [HttpPatch]
     [Route("link-user-user")]
-    [Authorize(Roles = AccessesNames.AUTH_users_settigns)]
+    [Authorize(Roles = AccessesNames.AUTH_users_settings)]
     public async Task<ActionResult<UpdateLinkUserUserForUserResponse>> UpdateLinkUserUserForUser([FromBody] UpdateLinkUserUserForUserRequest body, CancellationToken clt = default)
     {
         try

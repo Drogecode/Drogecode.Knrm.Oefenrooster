@@ -35,7 +35,8 @@ public struct AccessesNames
     public const string AUTH_scheduler_edit_past = "scheduler_past"; // more than 3 days ago.
     public const string AUTH_scheduler_dayitem = "scheduler_dayitem";
     public const string AUTH_scheduler_monthitem = "scheduler_monthitem";
-    public const string AUTH_scheduler_other_user = "scheduler_other";
+    public const string AUTH_scheduler_self = "scheduler_self";
+    public const string AUTH_scheduler_other = "scheduler_other";
     public const string AUTH_scheduler_remaining_days_unavailable = "scheduler_remaining_unavailable";
     public const string AUTH_scheduler_description_edit = "scheduler_description_edit";
     public const string AUTH_scheduler_description_read = "scheduler_description_read";
@@ -44,7 +45,8 @@ public struct AccessesNames
     public const string AUTH_users_details = "users_details";
     public const string AUTH_users_delete = "users_delete";
     public const string AUTH_users_counter = "users_counter";
-    public const string AUTH_users_settigns = "users_settings";
+    public const string AUTH_users_settings = "users_settings";
+    public const string AUTH_users_add_role = "users_add_role";
 
     public const string GROUP_DASHBOARD = "Dashboard";
     public const string AUTH_action_history_full = "full_action_history";

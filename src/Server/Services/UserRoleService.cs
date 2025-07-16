@@ -2,19 +2,23 @@
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 using System.Diagnostics;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
-public class UserRoleService : IUserRoleService
+public class UserRoleService : DrogeService, IUserRoleService
 {
-    private readonly ILogger<UserRoleService> _logger;
-    private readonly DataContext _database;
     private readonly ILinkUserRoleService _linkUserRoleService;
 
-    public UserRoleService(ILogger<UserRoleService> logger, DataContext database, ILinkUserRoleService linkUserRoleService)
+    public UserRoleService(ILogger<UserRoleService> logger, 
+        DataContext database, 
+        IMemoryCache memoryCache, 
+        IDateTimeProvider dateTimeProvider, 
+        ILinkUserRoleService linkUserRoleService)
+        : base(logger, database, memoryCache, dateTimeProvider)
     {
-        _logger = logger;
-        _database = database;
         _linkUserRoleService = linkUserRoleService;
     }
 
@@ -24,8 +28,8 @@ public class UserRoleService : IUserRoleService
         var result = new NewUserRoleResponse();
         var newId = Guid.NewGuid();
         userRole.Id = newId;
-        _database.UserRoles.Add(userRole.ToDb(customerId));
-        result.Success = await _database.SaveChangesAsync(clt) > 0;
+        Database.UserRoles.Add(userRole.ToDb(customerId));
+        result.Success = await Database.SaveChangesAsync(clt) > 0;
         if (result.Success)
             result.NewId = userRole.Id;
 
@@ -36,40 +40,32 @@ public class UserRoleService : IUserRoleService
 
     public async Task<List<string>> GetAccessForUserByClaims(Guid userId, Guid customerId, IEnumerable<Claim> claims, CancellationToken clt)
     {
-        var result = new List<string>();
-        var roles = await _database.UserRoles.Where(x => x.CustomerId == customerId).ToListAsync(clt);
-        var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(userId, clt);
+        var roles = await Database.UserRoles.Where(x => x.CustomerId == customerId).ToListAsync(clt);
+        var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(userId, true, clt);
         foreach (var claim in claims.Where(x => x.Type.Equals("groups")))
         {
             var role = roles.FirstOrDefault(x => string.CompareOrdinal(x.ExternalId, claim.Value) == 0);
             if (role is null) continue;
-            await _linkUserRoleService.LinkUserToRoleAsync(userId, role.ToDrogeUserRole(), true, true, clt);
+            await _linkUserRoleService.LinkUserToRoleAsync(userId, role.ToDrogeUserRole(), true, true, true, clt);
             linkedRoles.Remove(role.Id);
-            var accesses = role.Accesses?.Split(',');
-            if (accesses is null) continue;
-            foreach (var access in accesses)
-            {
-                if (!result.Contains(access))
-                    result.Add(access);
-            }
         }
 
         foreach (var linkedRole in linkedRoles)
         {
             var role = roles.FirstOrDefault(x => x.Id == linkedRole);
-            await _linkUserRoleService.LinkUserToRoleAsync(userId, role.ToDrogeUserRole(), false, true, clt);
+            await _linkUserRoleService.LinkUserToRoleAsync(userId, role.ToDrogeUserRole(), false, false, true, clt);
         }
 
-        return result;
+        return await GetAccessForUserByUserId(userId, customerId, clt); // including access from roles linked by user.
     }
 
     public async Task<List<string>> GetAccessForUserByUserId(Guid userId, Guid customerId, CancellationToken clt)
     {
         var result = new List<string>();
-        var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(userId, clt);
+        var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(userId, false, clt);
         foreach (var linkedRole in linkedRoles)
         {
-            var accesses = await _database.UserRoles.Where(x => x.Id == linkedRole).Select(x => x.Accesses).FirstOrDefaultAsync(clt);
+            var accesses = await Database.UserRoles.Where(x => x.Id == linkedRole).Select(x => x.Accesses).FirstOrDefaultAsync(clt);
             if (accesses is null) continue;
             foreach (var access in accesses.Split(','))
             {
@@ -86,8 +82,24 @@ public class UserRoleService : IUserRoleService
         var sw = Stopwatch.StartNew();
         var result = new MultipleDrogeUserRolesResponse();
 
-        var roles = await _database.UserRoles.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x => x.ToDrogeUserRole()).ToListAsync(clt);
+        var roles = await Database.UserRoles.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x => x.ToDrogeUserRole()).ToListAsync(clt);
         result.Roles = roles;
+        result.TotalCount = roles.Count;
+        result.Success = true;
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<MultipleDrogeUserRolesBasicResponse> GetAllBasic(Guid customerId, CancellationToken clt)
+    {
+        var sw = Stopwatch.StartNew();
+        var result = new MultipleDrogeUserRolesBasicResponse();
+
+        var roles = await Database.UserRoles.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x => x.ToDrogeUserRoleBasic()).ToListAsync(clt);
+        result.Roles = roles;
+        result.TotalCount = roles.Count;
+        result.Success = true;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
@@ -98,7 +110,7 @@ public class UserRoleService : IUserRoleService
         var sw = Stopwatch.StartNew();
         var result = new GetUserRoleResponse();
 
-        var role = await _database.UserRoles.Where(x => x.CustomerId == customerId && x.Id == id).Select(x => x.ToDrogeUserRole()).FirstOrDefaultAsync(clt);
+        var role = await Database.UserRoles.Where(x => x.CustomerId == customerId && x.Id == id).Select(x => x.ToDrogeUserRole()).FirstOrDefaultAsync(clt);
         if (role is not null)
         {
             result.Role = role;
@@ -115,15 +127,15 @@ public class UserRoleService : IUserRoleService
         var sw = Stopwatch.StartNew();
         var result = new UpdateUserRoleResponse();
 
-        var role = await _database.UserRoles.Where(x => x.CustomerId == customerId && x.Id == userRole.Id).FirstOrDefaultAsync(clt);
+        var role = await Database.UserRoles.Where(x => x.CustomerId == customerId && x.Id == userRole.Id).FirstOrDefaultAsync(clt);
         if (role is not null)
         {
             var updated = userRole.ToDb(customerId);
             role.Accesses = updated.Accesses;
             role.Name = updated.Name;
             role.ExternalId = updated.ExternalId;
-            _database.UserRoles.Update(role);
-            result.Success = await _database.SaveChangesAsync(clt) > 0;
+            Database.UserRoles.Update(role);
+            result.Success = await Database.SaveChangesAsync(clt) > 0;
         }
 
         sw.Stop();

@@ -11,6 +11,7 @@ public interface IUserService : IDrogeService
     Task<DrogeUser?> GetUserByExternalId(string externalId, Guid customerId, CancellationToken clt);
     Task<DrogeUserServer?> GetUserByNameForServer(string? name, CancellationToken clt);
     Task<DrogeUserServer?> GetOrSetUserById(Guid? userId, string? externalId, string userName, string userEmail, Guid customerId, bool setLastOnline, CancellationToken clt);
+    Task<MultipleLinkedUserRolesResponse> GeRolesForUserById(Guid customerId, Guid userId, CancellationToken clt);
     Task<AddUserResponse> AddUser(DrogeUser user, Guid customerId);
     Task<bool> UpdateUser(DrogeUser user, Guid userId, Guid customerId);
     Task<UpdateLinkUserUserForUserResponse> UpdateLinkUserUserForUser(UpdateLinkUserUserForUserRequest body, Guid userId, Guid customerId, CancellationToken clt);

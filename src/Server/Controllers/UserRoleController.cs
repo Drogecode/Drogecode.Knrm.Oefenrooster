@@ -54,9 +54,26 @@ public class UserRoleController : ControllerBase
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _userRoleService.GetAll(customerId, clt);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetAll");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Authorize(Roles = $"{AccessesNames.AUTH_configure_user_roles},{AccessesNames.AUTH_users_add_role}")]
+    [Route("all/basic")]
+    public async Task<ActionResult<MultipleDrogeUserRolesBasicResponse>> GetAllBasic(CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var result = await _userRoleService.GetAllBasic(customerId, clt);
             return result;
         }
         catch (Exception ex)
@@ -84,7 +101,7 @@ public class UserRoleController : ControllerBase
             return BadRequest();
         }
     }
-    
+
     [HttpGet]
     [Authorize(Roles = AccessesNames.AUTH_configure_user_roles)]
     [Route("{id:guid}/users")]
@@ -102,7 +119,7 @@ public class UserRoleController : ControllerBase
             return BadRequest();
         }
     }
-    
+
 
     [HttpPatch]
     [Authorize(Roles = AccessesNames.AUTH_configure_user_roles)]
@@ -115,6 +132,23 @@ public class UserRoleController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
             var result = await _userRoleService.PatchUserRole(userRole, userId, customerId, clt);
             return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in PatchUserRole");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
+    [Authorize(Roles = AccessesNames.AUTH_users_add_role)]
+    [Route("link/{userToLink:guid}")]
+    public async Task<ActionResult<PatchResponse>> LinkUserToRoleAsync([FromBody] DrogeUserRoleLinked userRole, Guid userToLink, CancellationToken clt = default)
+    {
+        try
+        {
+            var result = await _linkUserRoleService.LinkUserToRoleAsync(userToLink, userRole, userRole.IsSet, userRole.SetExternal, false, clt);
+            return new PatchResponse { Success = result };
         }
         catch (Exception ex)
         {
