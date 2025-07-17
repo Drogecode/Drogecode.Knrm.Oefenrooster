@@ -68,4 +68,7 @@
     <data name="Delay syncing to users with external calendar" xml:space="preserve">
         <value>Delay syncing to users with external calendar</value>
     </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Delete</value>
+    </data>
 </root>

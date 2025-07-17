@@ -147,4 +147,26 @@ public class UserLinkMailsController : ControllerBase
             return BadRequest();
         }
     }
+
+    [HttpDelete]
+    [Route("{id:guid}")]
+    public async Task<ActionResult<DeleteResponse>> DeleteUserLinkMail(Guid id, CancellationToken clt = default)
+    {
+
+        try
+        {
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var response = await _userLinkedMailsService.DeleteUserLinkMail(userId, customerId, id, clt);
+            return response;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            _logger.LogError(ex, "Exception in DeleteUserLinkMail");
+            return BadRequest();
+        }
+    }
 }

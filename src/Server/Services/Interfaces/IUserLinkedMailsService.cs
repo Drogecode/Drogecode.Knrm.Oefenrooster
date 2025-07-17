@@ -9,4 +9,5 @@ public interface IUserLinkedMailsService
     Task<IsEnabledChangedResponse> IsEnabledChanged(IsEnabledChangedRequest body, Guid customerId, Guid userId, CancellationToken clt);
     Task<PatchUserLinkedMailResponse> PatchUserLinkedMail(UserLinkedMail userLinkedMail, Guid customerId, Guid userId, CancellationToken clt);
     Task<AllUserLinkedMailResponse> AllUserLinkedMail(int take, int skip, Guid userId, Guid customerId, bool cache, CancellationToken clt);
+    Task<DeleteResponse> DeleteUserLinkMail(Guid userId, Guid customerId, Guid id, CancellationToken clt);
 }

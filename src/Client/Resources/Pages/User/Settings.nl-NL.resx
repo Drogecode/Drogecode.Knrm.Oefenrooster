@@ -75,4 +75,7 @@
     <data name="Delay syncing to users with external calendar" xml:space="preserve">
         <value>Vertraagde synchronisatie voor gebruikers met een externe agenda</value>
     </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Verwijder</value>
+    </data>
 </root>

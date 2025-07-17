@@ -32,6 +32,7 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
             await Expect(Page.GetByText("Invalid username or password.")).ToHaveCountAsync(0);
             await Expect(Page.GetByText("Dit is de landingspagina voor de vrijwilligers van KNRM Huizen & Huizer Reddingsbrigade.")).ToHaveCountAsync(0);
+            await Expect(Page.GetByText("Er is iets fout gegaan, laat het Taco weten. Anders wordt het niet opgelost.")).ToBeHiddenAsync();
             await Expect(Page.GetByText("No access")).ToHaveCountAsync(0);
             await Expect(Page.GetByText("Geen toegang")).ToHaveCountAsync(0);
             await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic", _timeout);
@@ -44,6 +45,18 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
             var loginPage = new LoginPage(Page);
             await loginPage.Login(UserName, UserPassword);
             await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic", _timeout);
+        }
+        
+        [Test]
+        public async Task LogoutTest()
+        {
+            await Page.GotoAsync(BaseUrl);
+            var loginPage = new LoginPage(Page);
+            await loginPage.Login(UserName, UserPassword);
+            await Expect(Page.GetByTestId("dashboard-username")).ToContainTextAsync("Playwright Basic", _timeout);
+            await loginPage.Logout();
+            await Expect(Page.GetByText("Er is iets fout gegaan, laat het Taco weten. Anders wordt het niet opgelost.")).ToBeHiddenAsync();
+            await Expect(Page.GetByText("Dit is de landingspagina voor de vrijwilligers van KNRM Huizen & Huizer Reddingsbrigade.")).ToBeVisibleAsync();
         }
     }
 }

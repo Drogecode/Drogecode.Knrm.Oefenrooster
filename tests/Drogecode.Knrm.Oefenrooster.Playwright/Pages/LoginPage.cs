@@ -16,4 +16,10 @@ public class LoginPage
         await _page.FillAsync("input[name='password']", password);
         await _page.Locator("id=kc-login").ClickAsync();
     }
+    
+    public async Task Logout()
+    {
+        await _page.GetByTestId("top-menu-settings").Locator("button").ClickAsync();
+        await _page.GetByTestId("user-logout").ClickAsync();
+    }
 }

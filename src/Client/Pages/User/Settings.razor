@@ -88,6 +88,14 @@
                             }
                         </CellTemplate>
                     </PropertyColumn>
+                    <PropertyColumn Property="x =>x" Title="@L["Delete"]">
+                        <CellTemplate>
+                            @if (!context.Item.IsDrogeCodeUser)
+                            {
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await DeleteMailLink(context.Item); })" />
+                            }
+                        </Celltemplate>
+                    </PropertyColumn>
                 </Columns>
             </MudDataGrid>
         }

@@ -29,7 +29,7 @@ public class UserLinkMailsService : DrogeService, IUserLinkedMailsService
             var dbOld = await Database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Email == userLinkedMail.Email, clt);
             if (dbOld is null)
             {
-                var dbCount = await Database.UserLinkedMails.CountAsync(x => x.CustomerId == customerId && x.UserId == userId, cancellationToken: clt);
+                var dbCount = await Database.UserLinkedMails.CountAsync(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedOn == null, cancellationToken: clt);
                 if (dbCount > 5)
                     result.Error = PutUserLinkedMailError.TooMany;
                 else
@@ -52,6 +52,19 @@ public class UserLinkMailsService : DrogeService, IUserLinkedMailsService
                         result.NewId = dbLink.Id;
                         result.ActivateKey = dbLink.ActivateKey;
                     }
+                }
+            }
+            else if (dbOld.DeletedOn is not null)
+            {
+                dbOld.DeletedOn = null;
+                dbOld.DeletedBy = null;
+                dbOld.ActivateKey = SecretHelper.CreateSecret(11);
+                Database.UserLinkedMails.Update(dbOld);
+                result.Success = await Database.SaveChangesAsync(clt) > 0;
+                if (result.Success)
+                {
+                    result.NewId = dbOld.Id;
+                    result.ActivateKey = dbOld.ActivateKey;
                 }
             }
             else
@@ -130,7 +143,7 @@ public class UserLinkMailsService : DrogeService, IUserLinkedMailsService
         var sw = StopwatchProvider.StartNew();
         var result = new PatchUserLinkedMailResponse();
 
-        var dbOld = await Database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Id == userLinkedMail.Id, clt);
+        var dbOld = await Database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Id == userLinkedMail.Id && x.DeletedOn == null, clt);
         if (dbOld is not null)
         {
             dbOld.Email = userLinkedMail.Email;
@@ -158,8 +171,8 @@ public class UserLinkMailsService : DrogeService, IUserLinkedMailsService
         }
 
         result = new AllUserLinkedMailResponse();
-        var linksRequest = Database.UserLinkedMails.Where(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null);
-        var userMail = await Database.Users.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == userId && x.DeletedBy == null, cancellationToken: clt);
+        var linksRequest = Database.UserLinkedMails.Where(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedOn == null);
+        var userMail = await Database.Users.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == userId && x.DeletedOn == null, cancellationToken: clt);
         result.TotalCount = await linksRequest.CountAsync(clt);
         result.UserLinkedMails = await linksRequest
             .OrderBy(x => x.Email)
@@ -177,6 +190,25 @@ public class UserLinkMailsService : DrogeService, IUserLinkedMailsService
 
         MemoryCache.Set(cacheKey, result, CacheOptions);
 
+        sw.Stop();
+        result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return result;
+    }
+
+    public async Task<DeleteResponse> DeleteUserLinkMail(Guid userId, Guid customerId, Guid id, CancellationToken clt)
+    {
+        var sw = StopwatchProvider.StartNew();
+        var result = new DeleteResponse();
+        
+        var dbOld = await Database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId&& x.Id == id && x.DeletedOn == null, clt);
+        if (dbOld is not null)
+        {
+            dbOld.DeletedOn = DateTime.UtcNow;
+            dbOld.DeletedBy = userId;
+            Database.UserLinkedMails.Update(dbOld);
+            result.Success = await Database.SaveChangesAsync(clt) > 0;
+        }
+        
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;

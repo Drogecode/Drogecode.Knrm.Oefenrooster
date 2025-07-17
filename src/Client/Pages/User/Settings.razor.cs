@@ -47,7 +47,7 @@ public sealed partial class Settings : IDisposable
         {
             if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_mail_invite_external))
             {
-                _allUserLinkedMailResponse = await UserLinkedMailsClient.AllUserLinkedMailAsync(10, 0);
+                _allUserLinkedMailResponse = await UserLinkedMailsClient.AllUserLinkedMailAsync(30, 0);
             }
 
             _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
@@ -78,9 +78,10 @@ public sealed partial class Settings : IDisposable
                 DebugHelper.WriteLine($"Setting {settingName} not implemented");
                 break;
         }
+
         await UserSettingsClient.PatchBoolSettingAsync(new PatchSettingBoolRequest(settingName, isChecked));
     }
-    
+
     private async Task PatchPreComAvailableText(string newValue)
     {
         _preComAvailableText = newValue;
@@ -113,11 +114,17 @@ public sealed partial class Settings : IDisposable
         }
     }
 
+    private async Task DeleteMailLink(UserLinkedMail contextItem)
+    {
+        await UserLinkedMailsClient.DeleteUserLinkMailAsync(contextItem.Id, _cls.Token);
+        await RefreshMeAsync();
+    }
+
     private async Task RefreshMeAsync()
     {
         if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_mail_invite_external))
         {
-            _allUserLinkedMailResponse = await UserLinkedMailsClient.AllUserLinkedMailAsync(10, 0);
+            _allUserLinkedMailResponse = await UserLinkedMailsClient.AllUserLinkedMailAsync(30, 0);
         }
 
         StateHasChanged();
