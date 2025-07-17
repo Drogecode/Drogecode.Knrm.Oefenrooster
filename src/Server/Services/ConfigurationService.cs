@@ -1,7 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Nager.Holiday;
-using System.Diagnostics;
 using System.Text.Json;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -57,7 +56,7 @@ public class ConfigurationService : IConfigurationService
 
     public async Task<DbCorrectionResponse> DbCorrection(CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new DbCorrectionResponse();
         var success = true;
         var count = 0;

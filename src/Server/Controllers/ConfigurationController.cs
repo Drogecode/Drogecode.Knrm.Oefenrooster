@@ -45,7 +45,7 @@ public class ConfigurationController : ControllerBase
     {
         try
         {
-            var sw = Stopwatch.StartNew();
+            var sw = StopwatchProvider.StartNew();
             var result = new UpgradeDatabaseResponse { Success = false };
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
@@ -71,15 +71,16 @@ public class ConfigurationController : ControllerBase
     {
         try
         {
-            var sw = Stopwatch.StartNew();
+            var sw = StopwatchProvider.StartNew();
 
             Guid? userId = null;
             Guid? customerId = null;
-            if (User?.Identity?.IsAuthenticated  == true)
+            if (User?.Identity?.IsAuthenticated == true)
             {
                 userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
                 customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             }
+
             var response = new VersionDetailResponse
             {
                 NewVersionAvailable = string.Compare(DefaultSettingsHelper.CURRENT_VERSION, clientVersion, StringComparison.OrdinalIgnoreCase) != 0,
@@ -88,7 +89,7 @@ public class ConfigurationController : ControllerBase
                 ButtonVersion = DefaultSettingsHelper.BUTTON_VERSION,
             };
             await _userService.PatchLastOnline(userId, customerId, clientVersion, clt);
-            await _configurationHub.SendMessage(new ConfigurationUpdatedHub { ConfigurationUpdated = ConfigurationUpdated.UsersOnlineChanged, ByUserId = userId});
+            await _configurationHub.SendMessage(new ConfigurationUpdatedHub { ConfigurationUpdated = ConfigurationUpdated.UsersOnlineChanged, ByUserId = userId });
             sw.Stop();
             response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
             return Ok(response);
@@ -107,7 +108,7 @@ public class ConfigurationController : ControllerBase
     {
         try
         {
-            var sw = Stopwatch.StartNew();
+            var sw = StopwatchProvider.StartNew();
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             using var holidayClient = new HolidayClient();
             var currentYear = DateTime.Now.Year;
@@ -155,6 +156,47 @@ public class ConfigurationController : ControllerBase
         {
             _logger.LogError(ex, "Exception in DbCorrection");
             return new DbCorrectionResponse { Success = false };
+        }
+    }
+
+    [HttpGet]
+    [Route("performance/setting")]
+    [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
+    public async Task<ActionResult<GetPerformanceSettingResponse>> GetPerformanceSetting(CancellationToken clt = default)
+    {
+        try
+        {
+            return new GetPerformanceSettingResponse
+            {
+                PerformanceEnabled = StopwatchProvider.UseRealStopwatch,
+                Success = true
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in GetPerformanceSetting");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
+    [Route("performance/setting")]
+    [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
+    public async Task<ActionResult<PatchResponse>> PatchPerformanceSetting([FromBody] PatchPerformanceSettingRequest body, CancellationToken clt = default)
+    {
+        try
+        {
+            var response = new PatchResponse
+            {
+                Success = StopwatchProvider.UseRealStopwatch != body.PerformanceEnabled
+            };
+            StopwatchProvider.UseRealStopwatch = body.PerformanceEnabled;
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception in PatchPerformanceSetting");
+            return BadRequest();
         }
     }
 }

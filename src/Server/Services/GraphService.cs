@@ -251,7 +251,7 @@ public class GraphService : IGraphService
 
     public async Task<MultipleSharePointActionsResponse> GetListActionsUser(List<Guid?> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var keyActions = string.Format(SP_ACTIONS, customerId);
         await ShouldUpdateCacheSharePointActions(customerId, keyActions);
         _memoryCache.TryGetValue<List<SharePointAction>>(keyActions, out var sharePointActions);
@@ -311,7 +311,7 @@ public class GraphService : IGraphService
 
     public async Task<MultipleSharePointTrainingsResponse> GetListTrainingUser(List<Guid?> users, Guid userId, int count, int skip, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var keyTrainings = string.Format(SP_TRAININGS, customerId);
         await ShouldUpdateCacheSharePointTrainings(customerId, keyTrainings);
         _memoryCache.TryGetValue<List<SharePointTraining>>(keyTrainings, out var sharePointTrainings);
@@ -417,7 +417,7 @@ public class GraphService : IGraphService
     public async Task<GetHistoricalResponse> SyncHistorical(Guid customerId, CancellationToken clt)
     {
         clt = CancellationToken.None; // Ignore CancellationToken
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var spUsers = await GetAllSharePointUsers(customerId, clt);
 
         var l2006 = new Guid("fbc090f0-b144-47b3-bede-f962b59c02c2");

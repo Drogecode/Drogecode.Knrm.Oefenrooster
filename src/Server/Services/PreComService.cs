@@ -48,7 +48,7 @@ public class PreComService : DrogeService, IPreComService
 
     public async Task<MultiplePreComAlertsResponse> GetAllAlerts(Guid userId, Guid customerId, int take, int skip, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultiplePreComAlertsResponse { PreComAlerts = new List<PreComAlert>() };
         var fromDb = Database.PreComAlerts.Where(x => x.CustomerId == customerId && x.UserId == userId).OrderByDescending(x => x.SendTime);
         foreach (var alert in await fromDb.Skip(skip).Take(take).ToListAsync(clt))
@@ -146,7 +146,7 @@ public class PreComService : DrogeService, IPreComService
 
     public async Task<PutPreComForwardResponse> PutForward(PreComForward forward, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PutPreComForwardResponse();
         if (await Database.PreComForwards.CountAsync(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null, cancellationToken: clt) > 5)
         {
@@ -176,7 +176,7 @@ public class PreComService : DrogeService, IPreComService
 
     public async Task<PatchPreComForwardResponse> PatchForward(PreComForward forward, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PatchPreComForwardResponse();
 
         var dbForward = await Database.PreComForwards.FirstOrDefaultAsync(x => x.Id == forward.Id && x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null, clt);
@@ -194,7 +194,7 @@ public class PreComService : DrogeService, IPreComService
 
     public async Task<MultiplePreComForwardsResponse> GetAllForwards(int take, int skip, Guid userId, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultiplePreComForwardsResponse
         {
             PreComForwards = new List<PreComForward>()
@@ -220,7 +220,7 @@ public class PreComService : DrogeService, IPreComService
 
     public async Task<DeleteResponse> DeleteDuplicates()
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var range = 1000;
         var deleted = 0;
         var saved = new List<Guid>();

@@ -16,7 +16,7 @@ public class TrainingTypesService : ITrainingTypesService
 
     public async Task<PutTrainingTypeResponse> PostTrainingType(Guid userId, Guid customerId, PlannerTrainingType plannerTrainingType, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var newId = Guid.NewGuid();
         plannerTrainingType.SecureColors();
         var dbType = plannerTrainingType.ToDb();
@@ -42,7 +42,7 @@ public class TrainingTypesService : ITrainingTypesService
 
     public async Task<MultiplePlannerTrainingTypesResponse> GetTrainingTypes(Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultiplePlannerTrainingTypesResponse { PlannerTrainingTypes = new List<PlannerTrainingType>() };
         var typesFromDb = await _database.RoosterTrainingTypes.Where(x => x.CustomerId == customerId).ToListAsync(cancellationToken: clt);
         foreach (var type in typesFromDb)
@@ -58,7 +58,7 @@ public class TrainingTypesService : ITrainingTypesService
 
     public async Task<GetTraininTypeByIdResponse> GetById(Guid id, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetTraininTypeByIdResponse();
         var typeFromDb = await _database.RoosterTrainingTypes.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == id, cancellationToken: clt);
         if (typeFromDb is not null)
@@ -74,7 +74,7 @@ public class TrainingTypesService : ITrainingTypesService
 
     public async Task<PatchTrainingTypeResponse> PatchTrainingType(Guid userId, Guid customerId, PlannerTrainingType plannerTrainingType, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PatchTrainingTypeResponse();
         var typeFromDb = await _database.RoosterTrainingTypes.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == plannerTrainingType.Id, cancellationToken: clt);
         plannerTrainingType.SecureColors();

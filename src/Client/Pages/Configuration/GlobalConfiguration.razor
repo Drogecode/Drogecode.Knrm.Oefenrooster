@@ -87,6 +87,8 @@
                ValueChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))"/>
     <MudSwitch Label="delay syncing" Color="Color.Primary" T="bool" Value="@(_delaySyncingTrainingToOutlook ?? false)" Disabled="@(_delaySyncingTrainingToOutlook is null)"
                ValueChanged="@(async (isChecked) => await PatchDelaySyncingTrainingToOutlook(isChecked))"/>
+    <MudSwitch Label="Performance enabled" Color="Color.Primary" T="bool" Value="@(_performanceEnabled ?? false)" Disabled="@(_performanceEnabled is null)"
+               ValueChanged="@(async (isChecked) => await PatchPerformanceEnabled(isChecked))"/>
     <MudTextField Label="@L["CalenderPrefix"]" T="string" Value="_settingCalenderPrefix" ValueChanged="PatchCalenderPrefix" />
     <MudTextField Label="@L["PreCom Available calendar text"]" T="string" Value="_preComAvailableText" ValueChanged="PatchPreComAvailableText"
                   Counter="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT" />

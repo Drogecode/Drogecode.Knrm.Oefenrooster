@@ -1,7 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
-using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -17,7 +16,7 @@ public class DayItemService : IDayItemService
 
     public async Task<GetMultipleDayItemResponse> GetDayItems(int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
         var dayItems = await _database.RoosterItemDays
@@ -42,7 +41,7 @@ public class DayItemService : IDayItemService
 
     public async Task<GetMultipleDayItemResponse> GetAllFutureDayItems(Guid customerId, int count, int skip, bool forAllUsers, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var startDate = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
         var dayItems = _database.RoosterItemDays
             .Include(x => x.LinkUserDayItems)
@@ -66,7 +65,7 @@ public class DayItemService : IDayItemService
 
     public async Task<GetMultipleDayItemResponse> GetDayItemDashboard(Guid userId, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetMultipleDayItemResponse();
 
         var todayUtc = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
@@ -101,7 +100,7 @@ public class DayItemService : IDayItemService
 
     public async Task<GetDayItemResponse> GetDayItemById(Guid customerId, Guid id, CancellationToken clt = default)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetDayItemResponse();
         var dayItem = await _database.RoosterItemDays
             .Include(x => x.LinkUserDayItems)
@@ -124,7 +123,7 @@ public class DayItemService : IDayItemService
 
     public async Task<PutDayItemResponse> PutDayItem(RoosterItemDay roosterItemDay, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PutDayItemResponse();
         var dbItem = roosterItemDay.ToDbRoosterItemDay();
         dbItem.Id = Guid.NewGuid();
@@ -153,7 +152,7 @@ public class DayItemService : IDayItemService
 
     public async Task<PatchDayItemResponse> PatchDayItem(RoosterItemDay roosterItemDay, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PatchDayItemResponse();
         var dayItem = await _database.RoosterItemDays.Include(x => x.LinkUserDayItems).FirstOrDefaultAsync(x => x.Id == roosterItemDay.Id && x.CustomerId == customerId && x.DeletedOn == null);
         if (dayItem is null)

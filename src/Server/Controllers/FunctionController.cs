@@ -114,7 +114,7 @@ public class FunctionController : ControllerBase
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var sw = Stopwatch.StartNew();
+            var sw = StopwatchProvider.StartNew();
             var result = new GetFunctionResponse
             {
                 Function = await _functionService.GetById(customerId, id, clt),

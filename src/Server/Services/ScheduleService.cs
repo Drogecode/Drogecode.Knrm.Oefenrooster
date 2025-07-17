@@ -37,7 +37,7 @@ public class ScheduleService : DrogeService, IScheduleService
     public async Task<MultipleTrainingsResponse> ScheduleForUserAsync(Guid userId, Guid customerId, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd,
         CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultipleTrainingsResponse();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
@@ -167,7 +167,7 @@ public class ScheduleService : DrogeService, IScheduleService
 
     public async Task<PatchScheduleForUserResponse> PatchScheduleForUserAsync(Guid userId, Guid customerId, Training training, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         training.Updated = false;
         var result = new PatchScheduleForUserResponse();
         if (training.DateStart.CompareTo(DateTimeProvider.UtcNow()) >= 0)
@@ -230,7 +230,7 @@ public class ScheduleService : DrogeService, IScheduleService
 
     public async Task<PatchTrainingResponse> PatchTraining(Guid customerId, PlannedTraining patchedTraining, bool inRoleEditPast, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PatchTrainingResponse();
         var oldTraining = await Database.RoosterTrainings
             .Include(x=>x.RoosterAvailables)
@@ -299,7 +299,7 @@ public class ScheduleService : DrogeService, IScheduleService
 
     public async Task<AddTrainingResponse> AddTrainingAsync(Guid customerId, PlannedTraining newTraining, Guid trainingId, CancellationToken token)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new AddTrainingResponse
         {
             NewId = trainingId
@@ -413,7 +413,7 @@ public class ScheduleService : DrogeService, IScheduleService
     public async Task<ScheduleForAllResponse> ScheduleForAllAsync(Guid userId, Guid customerId, int forMonth, int yearStart, int monthStart, int dayStart, int yearEnd, int monthEnd, int dayEnd,
         bool countPerUser, bool includeUnAssigned, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new ScheduleForAllResponse();
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
@@ -641,7 +641,7 @@ public class ScheduleService : DrogeService, IScheduleService
 
     public async Task<GetTrainingByIdResponse> GetTrainingById(Guid userId, Guid customerId, Guid trainingId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetTrainingByIdResponse();
         var dbTraining = await Database.RoosterTrainings
             .Include(x => x.RoosterAvailables)
@@ -658,7 +658,7 @@ public class ScheduleService : DrogeService, IScheduleService
 
     public async Task<GetDescriptionByTrainingIdResponse> GetDescriptionByTrainingId(Guid userId, Guid customerId, Guid trainingId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetDescriptionByTrainingIdResponse();
         var description = await Database.RoosterTrainings.Where(x => x.Id == trainingId && x.DeletedOn == null)
             .Select(x => x.Description)
@@ -676,7 +676,7 @@ public class ScheduleService : DrogeService, IScheduleService
 
     public async Task<GetPlannedTrainingResponse> GetPlannedTrainingById(Guid customerId, Guid trainingId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetPlannedTrainingResponse();
         var dbTraining = await Database.RoosterTrainings
             .Include(x => x.RoosterAvailables!.Where(y => y.User!.DeletedOn == null))
@@ -744,7 +744,7 @@ public class ScheduleService : DrogeService, IScheduleService
 
     public async Task<GetPlannedTrainingResponse> GetPlannedTrainingForDefaultDate(Guid customerId, DateTime date, Guid defaultId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         date = DateTime.SpecifyKind(date, DateTimeKind.Utc);
         var result = new GetPlannedTrainingResponse();
         var dbTraining = await Database.RoosterTrainings
@@ -980,7 +980,7 @@ public class ScheduleService : DrogeService, IScheduleService
     public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime? fromDate, int take, int skip, OrderAscDesc order,
         CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetScheduledTrainingsForUserResponse();
         var userHolidays = await Database.UserHolidays.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= fromDate).ToListAsync(cancellationToken: clt);
         var defaultAveUser = await Database.UserDefaultAvailables.Include(x => x.DefaultGroup).Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= fromDate)
@@ -1062,7 +1062,7 @@ public class ScheduleService : DrogeService, IScheduleService
 
     public async Task<GetUserMonthInfoResponse> GetUserMonthInfo(Guid userId, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetUserMonthInfoResponse();
 
         var scheduled = Database.RoosterAvailables

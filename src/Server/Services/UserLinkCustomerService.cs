@@ -21,7 +21,7 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
 
     public async Task<GetAllUsersWithLinkToCustomerResponse> GetAllUsersWithLinkToCustomer(Guid currentCustomerId, Guid linkedCustomerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetAllUsersWithLinkToCustomerResponse();
         var links = await Database.LinkUserCustomers
             .Include(x => x.Customer)
@@ -48,7 +48,7 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
 
     public async Task<GetAllUserLinkCustomersResponse> GetAllLinkUserCustomers(Guid userId, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetAllUserLinkCustomersResponse();
         var globalUsers = await Database.LinkUserCustomers
             .Where(x => x.UserId == userId && x.IsActive)
@@ -79,7 +79,7 @@ public class UserLinkCustomerService : DrogeService, IUserLinkCustomerService
 
     public async Task<LinkUserToCustomerResponse> LinkUserToCustomer(Guid userId, LinkUserToCustomerRequest body, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new LinkUserToCustomerResponse();
         var links = await Database.LinkUserCustomers.Where(x => x.GlobalUserId == body.GlobalUserId).ToListAsync(clt);
         var globalUser = await Database.UsersGlobal.FirstOrDefaultAsync(x => x.Id == body.GlobalUserId, clt);

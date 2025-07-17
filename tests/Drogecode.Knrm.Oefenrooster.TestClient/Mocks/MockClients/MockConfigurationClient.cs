@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration;
 using Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients.Interfaces;
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
@@ -56,6 +57,26 @@ public class MockConfigurationClient : IMockConfigurationClient
     }
 
     public async Task<DbCorrectionResponse> DbCorrectionAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<GetPerformanceSettingResponse> GetPerformanceSettingAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<GetPerformanceSettingResponse> GetPerformanceSettingAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<PatchResponse> PatchPerformanceSettingAsync(PatchPerformanceSettingRequest body)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<PatchResponse> PatchPerformanceSettingAsync(PatchPerformanceSettingRequest body, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

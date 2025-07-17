@@ -35,7 +35,7 @@ public class UserLinkCustomerControllerTests : BaseTest
     public async Task GetUserLinkCustomerTest()
     {
         var globalUserId = SeedUserGlobal.Seed(Tester.DataContext);
-        await UserLinkCustomerController(DefaultSettingsHelperMock.IdTaco, globalUserId);
+        await UserLinkCustomerController(DefaultSettingsHelperMock.IdDefaultUserForTests, globalUserId);
         var getAllResult = await Tester.UserLinkCustomerController.GetAllCustomersLinkedToMe();
         Assert.NotNull(getAllResult?.Value?.UserLinkedCustomers);
         Assert.True(getAllResult.Value.Success);

@@ -19,7 +19,7 @@ public class UserService : DrogeService, IUserService
 
     public async Task<MultipleDrogeUsersResponse> GetAllUsers(Guid customerId, bool includeHidden, bool includeLastLogin, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultipleDrogeUsersResponse { DrogeUsers = new List<DrogeUser>() };
         var dbUsers = await Database.Users
             .Where(u => u.CustomerId == customerId && u.DeletedOn == null && !u.IsSystemUser && (includeHidden || u.UserFunction == null || u.UserFunction.IsActive))
@@ -160,7 +160,7 @@ public class UserService : DrogeService, IUserService
 
     public async Task<MultipleLinkedUserRolesResponse> GeRolesForUserById(Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultipleLinkedUserRolesResponse();
 
         var roles = await Database.Users
@@ -205,7 +205,7 @@ public class UserService : DrogeService, IUserService
     public async Task<UpdateLinkUserUserForUserResponse> UpdateLinkUserUserForUser(UpdateLinkUserUserForUserRequest body, Guid userId, Guid customerId, CancellationToken clt)
     {
         var result = new UpdateLinkUserUserForUserResponse();
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
 
         var userA = await Database.Users.Include(x => x.LinkedUserAsA!.Where(y => y.DeletedBy == null)).Include(x => x.LinkedUserAsB!.Where(y => y.DeletedBy == null))
             .FirstOrDefaultAsync(x => x.Id == body.UserAId && x.CustomerId == customerId && x.DeletedBy == null);
@@ -245,7 +245,7 @@ public class UserService : DrogeService, IUserService
     public async Task<UpdateLinkUserUserForUserResponse> RemoveLinkUserUserForUser(UpdateLinkUserUserForUserRequest body, Guid userId, Guid customerId, CancellationToken clt)
     {
         var result = new UpdateLinkUserUserForUserResponse();
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var link = await Database.LinkUserUsers.Where(x => x.UserAId == body.UserAId && x.UserBId == body.UserBId && x.DeletedOn == null).FirstOrDefaultAsync(clt);
         if (link is not null)
         {

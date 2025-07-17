@@ -29,7 +29,7 @@ public static class SeedReportTraining
             Commencement = start.AddMinutes(5),
             End = start.AddMinutes(121),
             Boat = "xUnit boat",
-            Users = new List<DbReportUser> { new DbReportUser { DrogeCodeId = DefaultSettingsHelperMock.IdTaco } },
+            Users = new List<DbReportUser> { new DbReportUser { DrogeCodeId = DefaultSettingsHelperMock.IdDefaultUserForTests } },
         });
         start = start.AddDays(1);
         dataContext.ReportTrainings.Add(new DbReportTraining
@@ -41,7 +41,7 @@ public static class SeedReportTraining
             Commencement = start.AddMinutes(5),
             End = start.AddMinutes(121),
             Boat = "xUnit boat",
-            Users = new List<DbReportUser> { new DbReportUser { DrogeCodeId = DefaultSettingsHelperMock.IdTaco } },
+            Users = new List<DbReportUser> { new DbReportUser { DrogeCodeId = DefaultSettingsHelperMock.IdDefaultUserForTests } },
         });
         start = start.AddMonths(1);
         dataContext.ReportTrainings.Add(new DbReportTraining
@@ -53,7 +53,7 @@ public static class SeedReportTraining
             Commencement = start.AddMinutes(5),
             End = start.AddMinutes(121),
             Boat = "xUnit boat",
-            Users = new List<DbReportUser> { new DbReportUser { DrogeCodeId = DefaultSettingsHelperMock.IdTaco } },
+            Users = new List<DbReportUser> { new DbReportUser { DrogeCodeId = DefaultSettingsHelperMock.IdDefaultUserForTests } },
         });
     }
 }

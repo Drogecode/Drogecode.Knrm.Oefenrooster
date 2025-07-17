@@ -134,26 +134,26 @@ public class TestService : IAsyncLifetime
         {
             AccessesNames.AUTH_scheduler_other,
         };
-        MockAuthenticatedUser(ScheduleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(UserController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(FunctionController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(HolidayController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(TrainingTypesController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(DayItemController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(MonthItemController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(PreComController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(VehicleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(DefaultScheduleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(ReportActionSharedController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(ReportActionController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(ReportTrainingController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(UserRoleController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(UserLinkMailsController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(AuditController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(MenuController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(CustomerController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(UserLinkCustomerController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
-        MockAuthenticatedUser(UserGlobalController, DefaultSettingsHelperMock.IdTaco, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(UserController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(FunctionController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(HolidayController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(TrainingTypesController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(DayItemController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(MonthItemController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(PreComController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(VehicleController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(DefaultScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(ReportActionSharedController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(ReportActionController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(ReportTrainingController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(UserRoleController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(UserLinkMailsController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(AuditController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(MenuController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(CustomerController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(UserLinkCustomerController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(UserGlobalController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
 
         DefaultFunction = await AddFunction(FUNCTION_DEFAULT, true);
         DefaultUserRoleId = await AddUserRole(USER_ROLE_NAME);
@@ -360,7 +360,7 @@ public class TestService : IAsyncLifetime
     {
         var body = new ReportActionSharedConfiguration
         {
-            SelectedUsers = [DefaultSettingsHelperMock.IdTaco],
+            SelectedUsers = [DefaultSettingsHelperMock.IdDefaultUserForTests],
             Types = types,
             Search = search,
             ValidUntil = validUntil,

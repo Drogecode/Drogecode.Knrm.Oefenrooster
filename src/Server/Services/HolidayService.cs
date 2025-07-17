@@ -21,7 +21,7 @@ public class HolidayService : IHolidayService
 
     public async Task<MultipleHolidaysResponse> GetAllHolidaysForUser(Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultipleHolidaysResponse();
         var list = new List<Holiday>();
         var dbHolidays = _database.UserHolidays.Where(y => y.CustomerId == customerId && y.UserId == userId);
@@ -47,7 +47,7 @@ public class HolidayService : IHolidayService
 
     public async Task<MultipleHolidaysResponse> GetAllHolidaysForFuture(Guid customerId, Guid userId, int days, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultipleHolidaysResponse();
         var list = new List<Holiday>();
         var dbHolidays = _database.UserHolidays.Where(y => y.CustomerId == customerId && y.ValidUntil >= _dateTimeProvider.UtcNow());

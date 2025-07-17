@@ -160,13 +160,17 @@ public sealed partial class UserDetails : IDisposable
             foreach (var newRole in newRolesAsList)
             {
                 DebugHelper.WriteLine($"UserRolesChanged - Linking role {newRole}");
-                var drogeUserRoleBasic = _userRoles?.Roles?.FirstOrDefault(x => x.Id == newRole);
-                if (drogeUserRoleBasic is null)
+                var drogeUserRoleLinked = _userLinkRoles?.Roles?.FirstOrDefault(x => x.Id == newRole);
+                if (drogeUserRoleLinked is null)
                 {
-                    DebugHelper.WriteLine($"UserRolesChanged - Role {newRole} not found");
-                    continue;
+                    var drogeUserRoleBasic = _userRoles?.Roles?.FirstOrDefault(x => x.Id == newRole);
+                    if (drogeUserRoleBasic is null)
+                    {
+                        DebugHelper.WriteLine($"UserRolesChanged - Role {newRole} not found");
+                        continue;
+                    }
+                    drogeUserRoleLinked = drogeUserRoleBasic.ToDrogeUserRoleLinked();
                 }
-                var drogeUserRoleLinked = drogeUserRoleBasic.ToDrogeUserRoleLinked();
                 drogeUserRoleLinked.IsSet = true;
                 drogeUserRoleLinked.SetExternal = false;
                 await UserRoleClient.LinkUserToRoleAsync(Id.Value, drogeUserRoleLinked, _cls.Token);

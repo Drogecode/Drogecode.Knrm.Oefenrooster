@@ -18,7 +18,7 @@ public class VehicleService :DrogeService,  IVehicleService
 
     public async Task<MultipleVehicleResponse> GetAllVehicles(Guid customerId)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultipleVehicleResponse()
         {
             DrogeVehicles = []
@@ -47,7 +47,7 @@ public class VehicleService :DrogeService,  IVehicleService
 
     public async Task<MultipleVehicleTrainingLinkResponse> GetForTraining(Guid customerId, Guid trainingId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultipleVehicleTrainingLinkResponse
         {
             DrogeLinkVehicleTrainingLinks = []
@@ -71,7 +71,7 @@ public class VehicleService :DrogeService,  IVehicleService
 
     public async Task<MultipleVehicleTrainingLinkResponse> GetForDefault(Guid customerId, Guid defaultId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultipleVehicleTrainingLinkResponse
         {
             DrogeLinkVehicleTrainingLinks = []
@@ -105,7 +105,7 @@ public class VehicleService :DrogeService,  IVehicleService
 
     public async Task<PutResponse> PutVehicle(DrogeVehicle vehicle, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PutResponse();
         vehicle.Id = Guid.NewGuid();
         var dbVehicle = vehicle.ToDb();
@@ -126,7 +126,7 @@ public class VehicleService :DrogeService,  IVehicleService
 
     public async Task<PatchResponse> PatchVehicle(DrogeVehicle vehicle, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PatchResponse();
 
         var oldVehicle = await Database.Vehicles.Where(x => x.CustomerId == customerId && x.Id == vehicle.Id && x.DeletedOn == null).FirstOrDefaultAsync(clt);
@@ -148,7 +148,7 @@ public class VehicleService :DrogeService,  IVehicleService
 
     public async Task<DrogeLinkVehicleTrainingResponse> UpdateLinkVehicleTraining(Guid customerId, DrogeLinkVehicleTraining link)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new DrogeLinkVehicleTrainingResponse();
         var foundLinks = await Database.LinkVehicleTraining.Where(x => x.CustomerId == customerId && x.VehicleId == link.VehicleId && x.RoosterTrainingId == link.RoosterTrainingId).ToListAsync();
         if (foundLinks.Count == 0)

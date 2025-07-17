@@ -1,6 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
-using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -36,7 +35,7 @@ public class AuditService : IAuditService
     public async Task<GetTrainingAuditResponse> GetTrainingAudit(Guid customerId, Guid userId, int count, int skip, Guid trainingId, CancellationToken clt)
     {
         var response = new GetTrainingAuditResponse();
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var audits = _database.Audits
             .Where(x => x.CustomerId == customerId && x.AuditType == AuditType.PatchAssignedUser && (trainingId.Equals(Guid.Empty) || x.ObjectKey == trainingId))
             .AsNoTracking()

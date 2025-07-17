@@ -97,7 +97,7 @@ public class ReportActionControllerTests : BaseTest
     {
         var request = new AnalyzeActionRequest()
         {
-            Users = new List<Guid?> { DefaultSettingsHelperMock.IdTaco },
+            Users = new List<Guid?> { DefaultSettingsHelperMock.IdDefaultUserForTests },
         };
         var getResult = await Tester.ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);
@@ -142,12 +142,12 @@ public class ReportActionControllerTests : BaseTest
             End = start.AddMinutes(121),
             Boat = "xUnit boat",
             Prio = "Prio 1",
-            Users = new List<DbReportUser> { new() { DrogeCodeId = DefaultSettingsHelperMock.IdTaco }, new() { DrogeCodeId = otherUser } },
+            Users = new List<DbReportUser> { new() { DrogeCodeId = DefaultSettingsHelperMock.IdDefaultUserForTests }, new() { DrogeCodeId = otherUser } },
         });
         await Tester.DataContext.SaveChangesAsync();
         var request = new AnalyzeActionRequest()
         {
-            Users = new List<Guid?> { otherUser, DefaultSettingsHelperMock.IdTaco },
+            Users = new List<Guid?> { otherUser, DefaultSettingsHelperMock.IdDefaultUserForTests },
         };
         var getResult = await Tester.ReportActionController.AnalyzeYearChartsAll(request);
         Assert.NotNull(getResult.Value?.Years);

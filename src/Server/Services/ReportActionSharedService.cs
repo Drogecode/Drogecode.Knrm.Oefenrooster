@@ -20,7 +20,7 @@ public class ReportActionSharedService : IReportActionSharedService
 
     public async Task<MultipleReportActionShareConfigurationResponse> GetAllReportActionSharedConfiguration(Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var query = _database.ReportActionShares.Where(x=>x.CustomerId == customerId && x.ValidUntil >= DateTime.UtcNow).Select(x=>x.ToDrogecode());
         var result = new MultipleReportActionShareConfigurationResponse
         {
@@ -36,7 +36,7 @@ public class ReportActionSharedService : IReportActionSharedService
 
     public async Task<PutReportActionSharedResponse> PutReportActionShared(ReportActionSharedConfiguration sharedConfiguration, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PutReportActionSharedResponse();
         var password = SecretHelper.CreateSecret(22);
         sharedConfiguration.Id = Guid.NewGuid();
@@ -80,7 +80,7 @@ public class ReportActionSharedService : IReportActionSharedService
 
     public async Task<DeleteResponse> DeleteReportActionSharedConfiguration(Guid itemId, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new DeleteResponse();
         var reportActionShared = await _database.ReportActionShares.Where(x => x.CustomerId == customerId && x.Id == itemId).FirstOrDefaultAsync(clt);
         if (reportActionShared is not null)

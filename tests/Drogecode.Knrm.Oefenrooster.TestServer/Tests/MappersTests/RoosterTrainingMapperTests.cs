@@ -25,7 +25,7 @@ public class RoosterTrainingMapperTests : BaseTest
                 new()
                 {
                     Id = Guid.NewGuid(),
-                    UserId = DefaultSettingsHelperMock.IdTaco,
+                    UserId = DefaultSettingsHelperMock.IdDefaultUserForTests,
                     VehicleId = Tester.DefaultVehicle
                 }
             },
@@ -43,7 +43,7 @@ public class RoosterTrainingMapperTests : BaseTest
         mapped.Should().NotBeNull();
         mapped.Name.Should().Be(name);
         mapped.PlanUsers.Should().HaveCount(1);
-        var taco = mapped.PlanUsers.FirstOrDefault(x => x.UserId == DefaultSettingsHelperMock.IdTaco);
+        var taco = mapped.PlanUsers.FirstOrDefault(x => x.UserId == DefaultSettingsHelperMock.IdDefaultUserForTests);
         taco.Should().NotBeNull();
         taco!.VehicleId.Should().Be(Tester.DefaultVehicle);
         taco.Name.Should().Be("Some dude");

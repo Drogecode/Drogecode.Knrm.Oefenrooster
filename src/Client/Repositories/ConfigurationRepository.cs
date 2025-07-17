@@ -44,4 +44,16 @@ public class ConfigurationRepository
         var response = await _configurationClient.DbCorrectionAsync(clt);
         return response;
     }
+
+    public async Task<GetPerformanceSettingResponse> GetPerformanceSettingAsync(CancellationToken clt)
+    {
+        var response = await _configurationClient.GetPerformanceSettingAsync(clt);
+        return response;
+    }
+
+    public async Task<BaseResponse> PatchPerformanceSettingAsync(PatchPerformanceSettingRequest body, CancellationToken clt)
+    {
+        var response = await _configurationClient.PatchPerformanceSettingAsync(body, clt);
+        return response;
+    }
 }

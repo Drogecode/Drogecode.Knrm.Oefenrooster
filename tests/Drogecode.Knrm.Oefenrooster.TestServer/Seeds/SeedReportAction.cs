@@ -32,7 +32,7 @@ public static class SeedReportAction
             Boat = "xUnit boat",
             Prio = "Prio 69",
             Type = "KNRM Hulpverlening",
-            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelperMock.IdTaco}},
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelperMock.IdDefaultUserForTests}},
         });
         start = start.AddDays(1);
         dataContext.ReportActions.Add(new DbReportAction
@@ -47,7 +47,7 @@ public static class SeedReportAction
             Boat = "xUnit boat",
             Prio = "Prio 1",
             Type = "HRB Hulpverlening",
-            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelperMock.IdTaco}},
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelperMock.IdDefaultUserForTests}},
         });
         start = start.AddMonths(1);
         dataContext.ReportActions.Add(new DbReportAction
@@ -62,7 +62,7 @@ public static class SeedReportAction
             Boat = "xUnit boat",
             Prio = "Prio 1",
             Type = "",// empty
-            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelperMock.IdTaco}},
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelperMock.IdDefaultUserForTests}},
         });
         start = start.AddMonths(1);
         dataContext.ReportActions.Add(new DbReportAction
@@ -77,7 +77,7 @@ public static class SeedReportAction
             Boat = "Nicolaas",
             Prio = "Prio 1",
             Type = "Boot uitgemeld",
-            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelperMock.IdTaco}},
+            Users = new List<DbReportUser>{new DbReportUser{DrogeCodeId = DefaultSettingsHelperMock.IdDefaultUserForTests}},
         });
     }
 }

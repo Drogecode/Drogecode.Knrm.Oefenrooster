@@ -27,7 +27,7 @@ public class LinkUserRoleService : ILinkUserRoleService
 
     public async Task<GetLinkedUsersByIdResponse> GetLinkedUsersById(Guid roleId, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetLinkedUsersByIdResponse();
         var query = _database.LinkUserRoles
             .Where(x => x.RoleId == roleId && x.IsSet)

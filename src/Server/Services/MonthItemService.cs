@@ -19,7 +19,7 @@ public class MonthItemService : IMonthItemService
 
     public async Task<GetMonthItemResponse> GetById(Guid customerId, Guid id, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var monthItem = await _database.RoosterItemMonths.Where(x => x.CustomerId == customerId && x.Id == id && x.DeletedOn == null)
             .Select(DbSelectItem()).FirstOrDefaultAsync(clt);
         var result = new GetMonthItemResponse
@@ -34,7 +34,7 @@ public class MonthItemService : IMonthItemService
 
     public async Task<GetMultipleMonthItemResponse> GetItems(int year, int month, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var monthItems = await _database.RoosterItemMonths.Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.Month == month && (x.Year == null || x.Year == 0 || x.Year == year))
             .Select(DbSelectItem()).ToListAsync(clt);
         var result = new GetMultipleMonthItemResponse
@@ -49,7 +49,7 @@ public class MonthItemService : IMonthItemService
 
     public async Task<GetMultipleMonthItemResponse> GetAllItems(int take, int skip, bool includeExpired, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var now = DateTime.UtcNow;
         var dbCall = _database.RoosterItemMonths.Where(x =>
             x.CustomerId == customerId && x.DeletedOn == null && (includeExpired || ((x.Year == null || x.Year == 0 || x.Year > now.Year || (x.Year == now.Year && x.Month >= now.Month)))));
@@ -67,7 +67,7 @@ public class MonthItemService : IMonthItemService
 
     public async Task<PutMonthItemResponse> PutItem(RoosterItemMonth roosterItemMonth, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PutMonthItemResponse();
         var dbItem = roosterItemMonth.ToDbRoosterItemMonth();
         dbItem.Id = Guid.NewGuid();
@@ -84,7 +84,7 @@ public class MonthItemService : IMonthItemService
 
     public async Task<PatchMonthItemResponse> PatchItem(RoosterItemMonth roosterItemMonth, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PatchMonthItemResponse();
 
         if (roosterItemMonth is not null)

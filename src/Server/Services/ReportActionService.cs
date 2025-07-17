@@ -20,7 +20,7 @@ public class ReportActionService : IReportActionService
     public async Task<MultipleReportActionsResponse> GetListActionsUser(List<Guid> users, List<string>? types, List<string>? search, int count, int skip, Guid customerId,
         bool minimal, DateTime? startDate, DateTime? endDate, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var listWhere = _database.ReportActions.Include(x => x.Users)
             .Where(x => x.CustomerId == customerId
                         && (startDate == null || x.Start > startDate)
@@ -49,7 +49,7 @@ public class ReportActionService : IReportActionService
 
     public async Task<AnalyzeYearChartAllResponse> AnalyzeYearChartsAll(AnalyzeActionRequest actionRequest, Guid customerId, string timeZone, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var allReports = await _database.ReportActions
             .Where(x => x.CustomerId == customerId
                         && (actionRequest.Prio == null || !actionRequest.Prio.Any() || actionRequest.Prio.Contains(x.Prio))
@@ -109,7 +109,7 @@ public class ReportActionService : IReportActionService
 
     public async Task<DistinctResponse> Distinct(DistinctReport column, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new DistinctResponse();
 
         switch (column)
@@ -178,7 +178,7 @@ public class ReportActionService : IReportActionService
 
     public async Task<AnalyzeHoursResult> AnalyzeHours(int year, string type, List<string>? boats, string timeZone, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new AnalyzeHoursResult
         {
             UserCounters = []
@@ -230,7 +230,7 @@ public class ReportActionService : IReportActionService
 
     public async Task<KillDbResponse> KillDb(Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new KillDbResponse();
         result.KillCount += await _database.LinkReportTrainingRoosterTrainings.ExecuteDeleteAsync(clt);
         result.KillCount += await _database.ReportUsers.ExecuteDeleteAsync(clt);

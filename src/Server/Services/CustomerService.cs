@@ -5,7 +5,6 @@ using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Customer;
 using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
-using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -19,7 +18,7 @@ public class CustomerService : DrogeService, ICustomerService
 
     public async Task<GetAllCustomersResponse> GetAllCustomers(int take, int skip, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetAllCustomersResponse();
         var links = await Database.Customers
             .Skip(skip)
@@ -38,7 +37,7 @@ public class CustomerService : DrogeService, ICustomerService
 
     public async Task<GetCustomerResponse> GetCustomerById(Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetCustomerResponse
         {
             Customer = await Database.Customers.Where(x => x.Id == customerId).Select(x => x.ToCustomer()).FirstOrDefaultAsync(clt)
@@ -61,7 +60,7 @@ public class CustomerService : DrogeService, ICustomerService
 
     public async Task<PutResponse> PutNewCustomer(Customer customer, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PutResponse();
         var newId = Guid.CreateVersion7();
         Database.Customers.Add(new DbCustomers
@@ -86,7 +85,7 @@ public class CustomerService : DrogeService, ICustomerService
 
     public async Task<PatchResponse> PatchCustomer(Customer customer, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PatchResponse();
         var dbCustomer = await Database.Customers.FirstOrDefaultAsync(x => x.Id == customer.Id, clt);
         if (dbCustomer is not null)

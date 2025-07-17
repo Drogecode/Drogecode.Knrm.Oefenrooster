@@ -260,7 +260,7 @@ public class DefaultScheduleControllerTests : BaseTest
         user = scheduledTraining.Value.Training.PlanUsers.FirstOrDefault(x => x.UserId == Tester.DefaultUserId);
         user.Should().NotBeNull();
         user!.Availability.Should().Be(Availability.Available);
-        Tester.MockAuthenticatedUser(Tester.DefaultScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.DefaultScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
 }

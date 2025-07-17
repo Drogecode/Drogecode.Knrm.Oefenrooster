@@ -23,7 +23,7 @@ public class DefaultScheduleService : IDefaultScheduleService
 
     public async Task<GetAllDefaultGroupsResponse> GetAllDefaultGroupsForUser(Guid customerId, Guid userId)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var response = new GetAllDefaultGroupsResponse();
         var list = new List<DefaultGroup>();
 
@@ -69,7 +69,7 @@ public class DefaultScheduleService : IDefaultScheduleService
 
     public async Task<MultipleDefaultSchedulesResponse> GetAllDefaultsForUser(Guid customerId, Guid userId, Guid groupId)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var response = new MultipleDefaultSchedulesResponse();
         var list = new List<DefaultSchedule>();
         var group = await _database.UserDefaultGroups.FindAsync(groupId);
@@ -114,7 +114,7 @@ public class DefaultScheduleService : IDefaultScheduleService
 
     public async Task<PutGroupResponse> PutGroup(DefaultGroup body, Guid customerId, Guid userId)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PutGroupResponse();
 
         var dbDefault = await _database.UserDefaultGroups.FirstOrDefaultAsync(x => x.Id == body.Id);
@@ -141,7 +141,7 @@ public class DefaultScheduleService : IDefaultScheduleService
 
     public async Task<PutDefaultScheduleResponse> PutDefaultSchedule(DefaultSchedule body, Guid customerId, Guid userId)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PutDefaultScheduleResponse();
 
         var dbDefault = await _database.RoosterDefaults.FirstOrDefaultAsync(x => x.Id == body.Id);
@@ -167,7 +167,7 @@ public class DefaultScheduleService : IDefaultScheduleService
 
     public async Task<PatchDefaultScheduleResponse> PatchDefaultSchedule(DefaultSchedule body, Guid customerId, Guid userId)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PatchDefaultScheduleResponse();
 
         var dbDefault = await _database.RoosterDefaults.FirstOrDefaultAsync(x => x.Id == body.Id);
@@ -199,7 +199,7 @@ public class DefaultScheduleService : IDefaultScheduleService
 
     public async Task<GetAllDefaultScheduleResponse> GetAllDefaultSchedule(Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetAllDefaultScheduleResponse
         {
             DefaultSchedules = await _database.RoosterDefaults.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x => x.ToDefaultSchedule(null)).ToListAsync(clt)
@@ -214,7 +214,7 @@ public class DefaultScheduleService : IDefaultScheduleService
 
     public async Task<PatchDefaultScheduleForUserResponse> PatchDefaultScheduleForUser(PatchDefaultUserSchedule body, Guid customerId, Guid userId)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PatchDefaultScheduleForUserResponse();
         DbRoosterDefault? dbDefault = DbQuery(body, userId);
 

@@ -17,7 +17,7 @@ public class MenuService : IMenuService
 
     public async Task<MultipleMenuResponse> GetAllMenus(Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultipleMenuResponse();
 
         var dbMenus = _database.Menus.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x => x.ToDrogeMenu());

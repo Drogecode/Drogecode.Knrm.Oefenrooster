@@ -21,7 +21,7 @@ public class UserLinkMailsService : DrogeService, IUserLinkedMailsService
 
     public async Task<PutUserLinkedMailResponse> PutUserLinkedMail(UserLinkedMail? userLinkedMail, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PutUserLinkedMailResponse();
 
         if (userLinkedMail is not null)
@@ -67,7 +67,7 @@ public class UserLinkMailsService : DrogeService, IUserLinkedMailsService
 
     public async Task<ValidateUserLinkedActivateKeyResponse> ValidateUserLinkedActivateKey(ValidateUserLinkedActivateKeyRequest body, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new ValidateUserLinkedActivateKeyResponse();
 
         var dbOld = await Database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.DeletedBy == null && x.Id == body.UserLinkedMailId, clt);
@@ -108,7 +108,7 @@ public class UserLinkMailsService : DrogeService, IUserLinkedMailsService
 
     public async Task<IsEnabledChangedResponse> IsEnabledChanged(IsEnabledChangedRequest body, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new IsEnabledChangedResponse();
 
         var dbOld = await Database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Id == body.UserLinkedMailId && x.DeletedBy == null && x.IsActive,
@@ -127,7 +127,7 @@ public class UserLinkMailsService : DrogeService, IUserLinkedMailsService
 
     public async Task<PatchUserLinkedMailResponse> PatchUserLinkedMail(UserLinkedMail userLinkedMail, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PatchUserLinkedMailResponse();
 
         var dbOld = await Database.UserLinkedMails.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Id == userLinkedMail.Id, clt);
@@ -147,7 +147,7 @@ public class UserLinkMailsService : DrogeService, IUserLinkedMailsService
 
     public async Task<AllUserLinkedMailResponse> AllUserLinkedMail(int take, int skip, Guid userId, Guid customerId, bool cache, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var cacheKey = $"AllUserLinkedMail-{customerId}{userId}-{take}-{skip}";
         MemoryCache.TryGetValue(cacheKey, out AllUserLinkedMailResponse? result);
         if (result is not null && cache)

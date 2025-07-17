@@ -21,7 +21,7 @@ public class UserGlobalService : DrogeService, IUserGlobalService
 
     public async Task<AllDrogeUserGlobalResponse> GetAllUserGlobals(CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new AllDrogeUserGlobalResponse
         {
             GlobalUsers = await Database.UsersGlobal.Where(x => x.DeletedOn == null).Select(x => x.ToDrogeUserGlobal()).ToListAsync(clt)
@@ -35,7 +35,7 @@ public class UserGlobalService : DrogeService, IUserGlobalService
 
     public async Task<GetGlobalUserByIdResponse> GetGlobalUserById(Guid globalUserId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetGlobalUserByIdResponse();
         var globalUser = await Database.UsersGlobal.Where(x => x.Id == globalUserId).Select(x=>x.ToDrogeUserGlobal()).FirstOrDefaultAsync(clt);
         if (globalUser is null)
@@ -73,7 +73,7 @@ public class UserGlobalService : DrogeService, IUserGlobalService
 
     public async Task<PutResponse> PutGlobalUser(Guid userId, DrogeUserGlobal globalUser, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PutResponse();
         var newId = Guid.CreateVersion7();
         Database.UsersGlobal.Add(new DbUsersGlobal()
@@ -93,7 +93,7 @@ public class UserGlobalService : DrogeService, IUserGlobalService
 
     public async Task<PatchResponse> PatchGlobalUser(Guid userId, DrogeUserGlobal globalUser, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PatchResponse();
         var old = await Database.UsersGlobal.FirstOrDefaultAsync(x => x.Id == globalUser.Id, clt);
         if (old is null)

@@ -127,6 +127,6 @@ public class UserControllerTests : BaseTest
     {
         var user = await Tester.UserController.GetCurrentUser();
         Assert.NotNull(user?.Value?.DrogeUser);
-        user.Value.DrogeUser.Id.Should().Be(DefaultSettingsHelperMock.IdTaco);
+        user.Value.DrogeUser.Id.Should().Be(DefaultSettingsHelperMock.IdDefaultUserForTests);
     }
 }

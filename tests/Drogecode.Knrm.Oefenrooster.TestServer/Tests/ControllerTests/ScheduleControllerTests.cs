@@ -287,7 +287,7 @@ public class ScheduleControllerTests : BaseTest
     [Fact]
     public async Task DeleteTraining_NotInForUserTest()
     {
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId, new List<string> { AccessesNames.AUTH_scheduler_edit_past });
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId, new List<string> { AccessesNames.AUTH_scheduler_edit_past });
         var trainingId = await Tester.AddTraining("DeleteTraining_NotInForUser", false, new DateTime(2020, 9, 4, 12, 0, 0), new DateTime(2020, 9, 4, 14, 0, 0));
         var training = await Tester.ScheduleController.GetTrainingById(trainingId);
         await Tester.ScheduleController.PutAssignedUser(new OtherScheduleUserRequest
@@ -305,13 +305,13 @@ public class ScheduleControllerTests : BaseTest
         trainings = await Tester.ScheduleController.ForUser(2020, 9, 1, 2020, 9, 30);
         Assert.NotNull(trainings?.Value?.Trainings);
         trainings.Value.Trainings.Should().NotContain(x => x.TrainingId == trainingId);
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
 
     [Fact]
     public async Task DeleteTraining_NotInForAllTest()
     {
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId, new List<string> { AccessesNames.AUTH_scheduler_edit_past });
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId, new List<string> { AccessesNames.AUTH_scheduler_edit_past });
         var trainingId = await Tester.AddTraining("DeleteTraining_NotInForAll", false, new DateTime(2020, 9, 4, 12, 0, 0), new DateTime(2020, 9, 4, 14, 0, 0));
         var training = await Tester.ScheduleController.GetTrainingById(trainingId);
         var trainings = await Tester.ScheduleController.ForAll(9, 2020, 8, 28, 2020, 10, 2, false);
@@ -322,7 +322,7 @@ public class ScheduleControllerTests : BaseTest
         trainings = await Tester.ScheduleController.ForAll(9, 2020, 8, 28, 2020, 10, 2, false);
         Assert.NotNull(trainings?.Value?.Planners);
         trainings.Value.Planners.Should().NotContain(x => x.TrainingId == trainingId);
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
 
     [Fact]
@@ -357,7 +357,7 @@ public class ScheduleControllerTests : BaseTest
         trainings = await Tester.ScheduleController.GetPinnedTrainingsForUser();
         Assert.NotNull(trainings?.Value?.Trainings);
         trainings.Value.Trainings.Should().NotContain(x => x.TrainingId == trainingId);
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
         trainings = await Tester.ScheduleController.GetPinnedTrainingsForUser();
         Assert.NotNull(trainings?.Value?.Trainings);
         trainings.Value.Trainings.Should().Contain(x => x.TrainingId == trainingId);
@@ -405,8 +405,8 @@ public class ScheduleControllerTests : BaseTest
         var planUser = trainingFromAll.PlanUsers.FirstOrDefault(x => x.UserId == Tester.DefaultUserId);
         Assert.NotNull(planUser?.VehicleId);
         planUser!.VehicleId.Should().Be(Tester.DefaultVehicle);
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
-        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
 
     [Fact]
@@ -432,8 +432,8 @@ public class ScheduleControllerTests : BaseTest
         Assert.NotNull(planUser?.VehicleId);
         planUser!.VehicleId.Should().Be(Tester.DefaultVehicle);
 
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
-        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
 
     [Fact]
@@ -457,8 +457,8 @@ public class ScheduleControllerTests : BaseTest
         planUser.Should().NotBeNull();
         planUser!.VehicleId.Should().Be(Tester.DefaultVehicle);
 
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
-        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
 
     [Fact]
@@ -476,8 +476,8 @@ public class ScheduleControllerTests : BaseTest
         Assert.NotNull(userFromTraining);
         userFromTraining.Name.Should().Be(TestService.USER_NAME);
         userFromTraining.UserFunctionId.Should().Be(Tester.DefaultFunction);
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
-        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
 
     [Fact]
@@ -516,7 +516,7 @@ public class ScheduleControllerTests : BaseTest
         Assert.True(patchResult.Value?.Success);
         var patchTraining = (await Tester.ScheduleController.GetPlannedTrainingById(newTrainingId)).Value!.Training!;
         patchTraining.Name.Should().Be("isPatched");
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
 
     [Fact]
@@ -538,8 +538,8 @@ public class ScheduleControllerTests : BaseTest
         Assert.NotEmpty(training.PlanUsers);
         training.PlanUsers.Should().Contain(x => x.UserId == Tester.DefaultUserId);
         training.PlanUsers.Should().Contain(x => x.UserId == user1);
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
-        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
 
     [Fact]
@@ -563,8 +563,8 @@ public class ScheduleControllerTests : BaseTest
         training.PlanUsers.Should().NotContain(x => x.UserId == user1);
         var user = training.PlanUsers.FirstOrDefault(x => x.UserId == Tester.DefaultUserId);
         user!.VehicleId.Should().Be(Tester.DefaultVehicle);
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
-        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
 
     [Fact]
@@ -577,8 +577,8 @@ public class ScheduleControllerTests : BaseTest
         Assert.NotNull(training.Value?.Training);
         training.Value.Training.PlanUsers.Should().HaveCount(1);
         training.Value.Training.PlanUsers.Should().Contain(x => x.VehicleId == null);
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
-        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
 
     [Theory]
@@ -611,8 +611,8 @@ public class ScheduleControllerTests : BaseTest
         Assert.NotNull(training?.PlanUsers);
         training.PlanUsers.Should().NotBeEmpty();
         training.PlanUsers.Should().Contain(x => x.VehicleId == vehicle.Value.NewId);
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
-        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
 
     [Theory]
@@ -647,8 +647,8 @@ public class ScheduleControllerTests : BaseTest
         Assert.NotNull(training?.PlanUsers);
         training.PlanUsers.Should().NotBeEmpty();
         training.PlanUsers.Should().Contain(x => x.VehicleId == Tester.DefaultVehicle);
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
-        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
 
     [Theory]
@@ -713,8 +713,8 @@ public class ScheduleControllerTests : BaseTest
         Assert.NotNull(training?.PlanUsers);
         training.PlanUsers.Should().NotBeEmpty();
         training.PlanUsers.Should().Contain(x => x.VehicleId == Tester.DefaultVehicle);
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
-        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
 
     [Theory]
@@ -747,8 +747,8 @@ public class ScheduleControllerTests : BaseTest
         Assert.NotNull(training?.PlanUsers);
         training.PlanUsers.Should().NotBeEmpty();
         training.PlanUsers.Should().Contain(x => x.VehicleId == vehicle.Value.NewId);
-        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
-        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdTaco, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
+        Tester.MockAuthenticatedUser(Tester.VehicleController, DefaultSettingsHelperMock.IdDefaultUserForTests, Tester.DefaultCustomerId);
     }
     
     [Fact]

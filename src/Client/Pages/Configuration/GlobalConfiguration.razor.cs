@@ -41,6 +41,7 @@ public sealed partial class GlobalConfiguration : IDisposable
     private bool? _specialDatesUpdated;
     private bool? _settingTrainingToCalendar;
     private bool? _delaySyncingTrainingToOutlook;
+    private bool? _performanceEnabled;
     private bool _clickedSyncHistorical;
     private bool _clickedDeDuplicatePreCom;
     private bool _clickedSyncUsers;
@@ -67,6 +68,7 @@ public sealed partial class GlobalConfiguration : IDisposable
             _settingCalenderPrefix = (await CustomerSettingsClient.GetStringSettingAsync(SettingName.CalendarPrefix, _cls.Token)).Value;
             _preComAvailableText = (await CustomerSettingsClient.GetStringSettingAsync(SettingName.PreComAvailableText, _cls.Token)).Value;
             _preComDaysInFuture = (await CustomerSettingsClient.GetIntSettingAsync(SettingName.PreComDaysInFuture, _cls.Token)).Value;
+            _performanceEnabled = (await ConfigurationRepository.GetPerformanceSettingAsync( _cls.Token)).PerformanceEnabled;
             _users = await UserRepository.GetAllUsersAsync(true, true, false, _cls.Token);
             _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
             await SetUser();
@@ -277,5 +279,12 @@ public sealed partial class GlobalConfiguration : IDisposable
         _refreshModel.RefreshRequestedAsync -= RefreshMeAsync;
         Global.VisibilityChangeAsync -= VisibilityChanged;
         _cls.Cancel();
+    }
+
+    private async Task PatchPerformanceEnabled(bool isChecked)
+    {
+        await ConfigurationRepository.PatchPerformanceSettingAsync(new PatchPerformanceSettingRequest() { PerformanceEnabled = isChecked }, _cls.Token);
+        _performanceEnabled = isChecked;
+        StateHasChanged();
     }
 }

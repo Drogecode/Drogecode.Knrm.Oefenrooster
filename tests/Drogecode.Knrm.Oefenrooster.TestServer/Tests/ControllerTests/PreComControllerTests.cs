@@ -16,7 +16,7 @@ public class PreComControllerTests : BaseTest
     {
         string body = "{\"_data\":{\"actionData\":{\"MsgOutID\":\"129660402\",\"ControlID\":\"f\",\"Timestamp\":\"2023-06-15T11:50:07.203\"},\"remote\":true,\"notificationId\":\"29A12538-536D-4546-B3C0-188C32521BA8\",\"priority\":\"10\"},\"_remoteNotificationCompleteCallbackCalled\":false,\"_isRemote\":true,\"_notificationId\":\"29A12538-536D-4546-B3C0-188C32521BA8\",\"_alert\":\"Nee!!! \",\"_sound\":\"pager.caf\",\"_contentAvailable\":1}";
         var asObject = JsonSerializer.Deserialize<object>(body);
-        await Tester.PreComController.WebHook(Tester.DefaultCustomerId, DefaultSettingsHelperMock.IdTaco, asObject, true);
+        await Tester.PreComController.WebHook(Tester.DefaultCustomerId, DefaultSettingsHelperMock.IdDefaultUserForTests, asObject, true);
 
         var result = await Tester.PreComController.AllAlerts(50, 0, CancellationToken.None);
         Assert.NotNull(result?.Value?.PreComAlerts);
@@ -32,7 +32,7 @@ public class PreComControllerTests : BaseTest
     {
         string body = "{\"_data\":{\"actionData\":{\"MsgOutID\":\"133556490\",\"ControlID\":\"g\",\"Timestamp\":\"2023-08-11T15:17:43.373\"},\"remote\":true,\"notificationId\":\"BBC7FAFF-AD81-40C8-BE37-C2CE8CD4EE8F\",\"priority\":\"10\"},\"_remoteNotificationCompleteCallbackCalled\":false,\"_isRemote\":true,\"_notificationId\":\"BBC7FAFF-AD81-40C8-BE37-C2CE8CD4EE8F\",\"_alert\":\"Uitruk voorstel:\\r\\nKNRM schipper: 1\\r\\nHUI Mark van den Brink\\r\\nKNRM opstapper: 1\\r\\nHUI Ferry Mol\\r\\nKNRM algemeen: 2\\r\\nHUI Laurens Klijn,\\r\\nHUI Ruben de Ronde\\r\\n\\r\\nNiet ingedeeld:\\r\\nHUI Laurens van Slooten\\r\\n\\r\\nHUI PRIO 2 MARITIEME HULPVERLENING\",\"_sound\":{\"name\":\"pager.caf\",\"volume\":1,\"critical\":0},\"_contentAvailable\":1}";
         var asObject = JsonSerializer.Deserialize<object>(body);
-        await Tester.PreComController.WebHook(Tester.DefaultCustomerId, DefaultSettingsHelperMock.IdTaco, asObject, true);
+        await Tester.PreComController.WebHook(Tester.DefaultCustomerId, DefaultSettingsHelperMock.IdDefaultUserForTests, asObject, true);
 
         var result = await Tester.PreComController.AllAlerts(50, 0, CancellationToken.None);
         Assert.NotNull(result?.Value?.PreComAlerts);
@@ -48,7 +48,7 @@ public class PreComControllerTests : BaseTest
     {
         string body = "{\"data\":{\"android_channel_id\":\"vibrate\",\"content-available\":\"1\",\"message\":\"U bent ingedeeld als KNRM Aank. Opstapper\\r\\n\\r\\nPrio 1, Vaartuig motor / stuur problemen, HUI\",\"messageData\":{\"MsgOutID\":\"149048711\",\"ControlID\":\"g\",\"Timestamp\":\"2024-04-05T13:25:19.21\"},\"notId\":\"149048711\",\"soundname\":\"\",\"vibrationPattern\":\"[500,500,500,500,500,500]\"},\"from\":\"788942585741\",\"messageId\":\"0:1712323519628673%af1e7638f9fd7ecd\",\"sentTime\":1712323519591,\"ttl\":2419200}";
         var asObject = JsonSerializer.Deserialize<object>(body);
-        await Tester.PreComController.WebHook(Tester.DefaultCustomerId, DefaultSettingsHelperMock.IdTaco, asObject, true);
+        await Tester.PreComController.WebHook(Tester.DefaultCustomerId, DefaultSettingsHelperMock.IdDefaultUserForTests, asObject, true);
 
         var result = await Tester.PreComController.AllAlerts(50, 0, CancellationToken.None);
         Assert.NotNull(result?.Value?.PreComAlerts);
@@ -65,7 +65,7 @@ public class PreComControllerTests : BaseTest
     {
         string body = "{\"android_channel_id\":\"chirp\",\"content- available\":\"1\",\"message\":\"PreCom test bericht voor Webhook\",\"messageData\":{\"MsgOutID\":\"135615552\",\"ControlID\":\"f\",\"Timestamp\":\"1695417214488\",\"notId\":\"135615552\",\"soundname\":\"chirp\",\"vibrationPattern\":\"[150,545]\",\"from\":\"788942585741\",\"messageId\":\"0:1694527951397184%af1e7638f9fd7ecd\",\"sentTime\":1694527951377,\"ttl\":2419200}}";
         var asObject = JsonSerializer.Deserialize<object>(body);
-        await Tester.PreComController.WebHook(Tester.DefaultCustomerId, DefaultSettingsHelperMock.IdTaco, asObject, true);
+        await Tester.PreComController.WebHook(Tester.DefaultCustomerId, DefaultSettingsHelperMock.IdDefaultUserForTests, asObject, true);
 
         var result = await Tester.PreComController.AllAlerts(50, 0, CancellationToken.None);
         Assert.NotNull(result?.Value?.PreComAlerts);
@@ -82,7 +82,7 @@ public class PreComControllerTests : BaseTest
     {
         string body = "{\"android_channel_id\":\"chirp\",\"content- available\":\"1\",\"message\":\"PreCom test bericht voor Webhook\",\"messageData\":{\"MsgOutID\":\"135615552\",\"ControlID\":\"f\",\"Timestamp\":\"2024-03-01T20:46:08.2\",\"notId\":\"135615552\",\"soundname\":\"chirp\",\"vibrationPattern\":\"[150,545]\",\"from\":\"788942585741\",\"messageId\":\"0:1694527951397184%af1e7638f9fd7ecd\",\"sentTime\":\"1709322368215\",\"ttl\":2419200}}";
         var asObject = JsonSerializer.Deserialize<object>(body);
-        await Tester.PreComController.WebHook(Tester.DefaultCustomerId, DefaultSettingsHelperMock.IdTaco, asObject, true);
+        await Tester.PreComController.WebHook(Tester.DefaultCustomerId, DefaultSettingsHelperMock.IdDefaultUserForTests, asObject, true);
 
         var result = await Tester.PreComController.AllAlerts(50, 0, CancellationToken.None);
         Assert.NotNull(result.Value?.PreComAlerts);
@@ -97,7 +97,7 @@ public class PreComControllerTests : BaseTest
     public async Task WebHookBodyIsNullTest()
     {
         Tester.DateTimeProviderMock.SetMockDateTime(new DateTime(2022, 9, 4, 16, 12, 7));
-        await Tester.PreComController.WebHook(Tester.DefaultCustomerId, DefaultSettingsHelperMock.IdTaco, null, true);
+        await Tester.PreComController.WebHook(Tester.DefaultCustomerId, DefaultSettingsHelperMock.IdDefaultUserForTests, null, true);
         var result = await Tester.PreComController.AllAlerts(50, 0, CancellationToken.None);
         Assert.NotNull(result.Value?.PreComAlerts);
         Assert.True(result.Value.Success);

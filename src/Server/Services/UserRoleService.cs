@@ -24,7 +24,7 @@ public class UserRoleService : DrogeService, IUserRoleService
 
     public async Task<NewUserRoleResponse> NewUserRole(DrogeUserRole userRole, Guid userId, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new NewUserRoleResponse();
         var newId = Guid.NewGuid();
         userRole.Id = newId;
@@ -79,7 +79,7 @@ public class UserRoleService : DrogeService, IUserRoleService
 
     public async Task<MultipleDrogeUserRolesResponse> GetAll(Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultipleDrogeUserRolesResponse();
 
         var roles = await Database.UserRoles.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x => x.ToDrogeUserRole()).ToListAsync(clt);
@@ -93,7 +93,7 @@ public class UserRoleService : DrogeService, IUserRoleService
 
     public async Task<MultipleDrogeUserRolesBasicResponse> GetAllBasic(Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultipleDrogeUserRolesBasicResponse();
 
         var roles = await Database.UserRoles.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x => x.ToDrogeUserRoleBasic()).ToListAsync(clt);
@@ -107,7 +107,7 @@ public class UserRoleService : DrogeService, IUserRoleService
 
     public async Task<GetUserRoleResponse> GetById(Guid id, Guid userId, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new GetUserRoleResponse();
 
         var role = await Database.UserRoles.Where(x => x.CustomerId == customerId && x.Id == id).Select(x => x.ToDrogeUserRole()).FirstOrDefaultAsync(clt);
@@ -124,7 +124,7 @@ public class UserRoleService : DrogeService, IUserRoleService
 
     public async Task<UpdateUserRoleResponse> PatchUserRole(DrogeUserRole userRole, Guid userId, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new UpdateUserRoleResponse();
 
         var role = await Database.UserRoles.Where(x => x.CustomerId == customerId && x.Id == userRole.Id).FirstOrDefaultAsync(clt);

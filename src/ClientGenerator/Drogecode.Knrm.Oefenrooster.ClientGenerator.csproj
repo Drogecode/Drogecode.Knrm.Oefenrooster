@@ -25,7 +25,7 @@
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Configuration.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ConfigurationClient">
 			<OutputPath>../Clients/ConfigurationClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration,Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\CustomerSettings.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="CustomerSettingsClient">
 			<OutputPath>../Clients/CustomerSettingsClient.g.cs</OutputPath>

@@ -11,7 +11,7 @@ public class FunctionService : IFunctionService
     private const string FUNC_BY_ID = "func_{0}";
 
     private readonly ILogger<FunctionService> _logger;
-    private readonly Database.DataContext _database;
+    private readonly DataContext _database;
     private readonly IMemoryCache _memoryCache;
 
     public FunctionService(ILogger<FunctionService> logger, Database.DataContext database, IMemoryCache memoryCache)
@@ -37,7 +37,7 @@ public class FunctionService : IFunctionService
 
     public async Task<AddFunctionResponse> AddFunction(DrogeFunction function, Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new AddFunctionResponse();
         function.Id = Guid.NewGuid();
         var functions = await _database.UserFunctions.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x => x.Order).ToListAsync(clt);
@@ -63,7 +63,7 @@ public class FunctionService : IFunctionService
 
     public async Task<PatchResponse> PatchFunction(Guid customerId, DrogeFunction function, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new PatchResponse();
 
         var oldFunction = await _database.UserFunctions.FirstOrDefaultAsync(x => x.Id == function.Id && x.CustomerId == customerId, clt);
@@ -88,7 +88,7 @@ public class FunctionService : IFunctionService
 
     public async Task<MultipleFunctionsResponse> GetAllFunctions(Guid customerId, CancellationToken clt)
     {
-        var sw = Stopwatch.StartNew();
+        var sw = StopwatchProvider.StartNew();
         var result = new MultipleFunctionsResponse { Functions = new List<DrogeFunction>() };
         var functions = await _database.UserFunctions
             .Where(x => x.CustomerId == customerId)

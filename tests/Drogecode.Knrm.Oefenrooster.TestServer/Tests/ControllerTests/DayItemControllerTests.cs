@@ -83,10 +83,10 @@ public class DayItemControllerTests: BaseTest
     {
         var usr = await Tester.AddUser("GetAllFutureDayItems");
         var new1 = await Tester.AddCalendarDayItem("GetAllFutureDay_1", DateTime.Today);
-        var new2 = await Tester.AddCalendarDayItem("GetAllFutureDay_2", DateTime.Today.AddDays(20), null, DefaultSettingsHelperMock.IdTaco);
+        var new2 = await Tester.AddCalendarDayItem("GetAllFutureDay_2", DateTime.Today.AddDays(20), null, DefaultSettingsHelperMock.IdDefaultUserForTests);
         var new3 = await Tester.AddCalendarDayItem("GetAllFutureDay_3", DateTime.Today.AddDays(30));
         var new4 = await Tester.AddCalendarDayItem("GetAllFutureDay_4", DateTime.Today.AddMonths(30));
-        var new5 = await Tester.AddCalendarDayItem("GetAllFutureDay_5", DateTime.Today.AddDays(-10), null, DefaultSettingsHelperMock.IdTaco);
+        var new5 = await Tester.AddCalendarDayItem("GetAllFutureDay_5", DateTime.Today.AddDays(-10), null, DefaultSettingsHelperMock.IdDefaultUserForTests);
         var new6 = await Tester.AddCalendarDayItem("GetAllFutureDay_6", DateTime.Today.AddDays(-20), null, usr);
         var new7 = await Tester.AddCalendarDayItem("GetAllFutureDay_7", DateTime.Today.AddMonths(-20), null, Tester.DefaultUserId);
         var result = await Tester.DayItemController.GetAllFuture(30, 0, true);
@@ -106,10 +106,10 @@ public class DayItemControllerTests: BaseTest
     {
         var usr = await Tester.AddUser("GetAllFutureDayItemsForUser");
         var new1 = await Tester.AddCalendarDayItem("GetAllFutureDayForUser_1", DateTime.Today);
-        var new2 = await Tester.AddCalendarDayItem("GetAllFutureDayForUser_2", DateTime.Today.AddDays(20), null, DefaultSettingsHelperMock.IdTaco);
+        var new2 = await Tester.AddCalendarDayItem("GetAllFutureDayForUser_2", DateTime.Today.AddDays(20), null, DefaultSettingsHelperMock.IdDefaultUserForTests);
         var new3 = await Tester.AddCalendarDayItem("GetAllFutureDayForUser_3", DateTime.Today.AddDays(30));
         var new4 = await Tester.AddCalendarDayItem("GetAllFutureDayForUser_4", DateTime.Today.AddMonths(30));
-        var new5 = await Tester.AddCalendarDayItem("GetAllFutureDayForUser_5", DateTime.Today.AddDays(-10), null, DefaultSettingsHelperMock.IdTaco);
+        var new5 = await Tester.AddCalendarDayItem("GetAllFutureDayForUser_5", DateTime.Today.AddDays(-10), null, DefaultSettingsHelperMock.IdDefaultUserForTests);
         var new6 = await Tester.AddCalendarDayItem("GetAllFutureDayForUser_6", DateTime.Today.AddDays(-20), null, usr);
         var new7 = await Tester.AddCalendarDayItem("GetAllFutureDayForUser_7", DateTime.Today.AddMonths(-20), null, Tester.DefaultUserId);
         var result = await Tester.DayItemController.GetAllFuture(30, 0, false);
@@ -131,11 +131,11 @@ public class DayItemControllerTests: BaseTest
         var new2 = await Tester.AddCalendarDayItem("GetDayItemDashboard_2", DateTime.Today.AddHours(-1));
         var new3 = await Tester.AddCalendarDayItem("GetDayItemDashboard_3", DateTime.Today.AddDays(8));
         var new4 = await Tester.AddCalendarDayItem("GetDayItemDashboard_4", DateTime.Today.AddDays(26));
-        var new5 = await Tester.AddCalendarDayItem("GetDayItemDashboard_5", DateTime.Today.AddDays(20), null, DefaultSettingsHelperMock.IdTaco);
-        var new6 = await Tester.AddCalendarDayItem("GetDayItemDashboard_6", DateTime.Today.AddDays(-10), null, DefaultSettingsHelperMock.IdTaco);
+        var new5 = await Tester.AddCalendarDayItem("GetDayItemDashboard_5", DateTime.Today.AddDays(20), null, DefaultSettingsHelperMock.IdDefaultUserForTests);
+        var new6 = await Tester.AddCalendarDayItem("GetDayItemDashboard_6", DateTime.Today.AddDays(-10), null, DefaultSettingsHelperMock.IdDefaultUserForTests);
         var new7 = await Tester.AddCalendarDayItem("GetDayItemDashboard_7", DateTime.Today.AddDays(-10), null, Tester.DefaultUserId);
-        var new8 = await Tester.AddCalendarDayItem("GetDayItemDashboard_8", DateTime.Today.AddDays(-10), DateTime.Today.AddDays(10), DefaultSettingsHelperMock.IdTaco);
-        var new9 = await Tester.AddCalendarDayItem("GetDayItemDashboard_9", DateTime.Today.AddDays(-10), DateTime.Today, DefaultSettingsHelperMock.IdTaco);
+        var new8 = await Tester.AddCalendarDayItem("GetDayItemDashboard_8", DateTime.Today.AddDays(-10), DateTime.Today.AddDays(10), DefaultSettingsHelperMock.IdDefaultUserForTests);
+        var new9 = await Tester.AddCalendarDayItem("GetDayItemDashboard_9", DateTime.Today.AddDays(-10), DateTime.Today, DefaultSettingsHelperMock.IdDefaultUserForTests);
         var result = await Tester.DayItemController.GetDashboard();
         Assert.NotNull(result?.Value?.DayItems);
         Assert.NotEmpty(result.Value.DayItems);
