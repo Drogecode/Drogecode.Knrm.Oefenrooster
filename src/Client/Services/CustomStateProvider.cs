@@ -1,7 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 using System.Security.Claims;
-
 namespace Drogecode.Knrm.Oefenrooster.Client.Services;
 
 public class CustomStateProvider : AuthenticationStateProvider
@@ -71,9 +70,20 @@ public class CustomStateProvider : AuthenticationStateProvider
 
     public async Task Logout()
     {
-        await _authenticationClient.LogoutAsync();
         _currentUser = null;
-        await UpdateAuthState();
+        await _authenticationClient.LogoutAsync();
+        await UpdateLogOutState();
+    }
+    private Task<AuthenticationState> UpdateLogOutState()
+    {
+        var authState = LogOutState();
+        NotifyAuthenticationStateChanged(authState);
+        return authState;
+    }
+
+    private async Task<AuthenticationState> LogOutState()
+    {
+        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
     }
 
     private async Task<ClaimsIdentity> GetCurrentUser()
