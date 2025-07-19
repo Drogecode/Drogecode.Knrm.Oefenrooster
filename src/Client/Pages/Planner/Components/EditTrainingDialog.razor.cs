@@ -5,6 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
@@ -33,6 +34,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private bool _showPadlock;
     private bool _editOld;
     private bool _saving;
+    private bool _descriptionToLong;
 #if DEBUG
     private const bool IS_DEBUG = true;
 #else
@@ -387,5 +389,19 @@ public sealed partial class EditTrainingDialog : IDisposable
     public void Dispose()
     {
         _cls.Cancel();
+    }
+
+    private void DescriptionChanged(string? newDescription)
+    {
+        _training!.Description = newDescription;
+        
+        if (newDescription is not null && newDescription?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION)
+        {
+            _descriptionToLong = true;
+        }
+        else
+        {
+            _descriptionToLong = false;
+        }
     }
 }

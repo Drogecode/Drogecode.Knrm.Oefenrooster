@@ -171,4 +171,7 @@
   <data name="Ask all users to fill in on the dashboard" xml:space="preserve">
     <value>Vraag alle gebruikers om in te vullen op het dashboard</value>
   </data>
+  <data name="Description to long {0}/{1}" xml:space="preserve">
+    <value>Omschrijving is te lang {0}/{1}</value>
+  </data>
 </root>

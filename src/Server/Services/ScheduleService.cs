@@ -11,6 +11,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Data;
 using System.Diagnostics;
+using Ganss.Xss;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -42,13 +43,13 @@ public class ScheduleService : DrogeService, IScheduleService
         var startDate = (new DateTime(yearStart, monthStart, dayStart, 0, 0, 0)).ToUniversalTime();
         var tillDate = (new DateTime(yearEnd, monthEnd, dayEnd, 23, 59, 59, 999)).ToUniversalTime();
         var defaults = await _roosterDefaultsRepository.GetDefaultsForCustomerInSpan(true, customerId, startDate, tillDate, clt);
-        
+
         // Get default availability for user, do not check cache.
         var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerInSpan(false, customerId, userId, startDate, tillDate, clt);
         var userHolidays = await _userHolidaysRepository.GetUserHolidaysForUser(false, customerId, userId, tillDate, startDate, clt);
         var trainings = Database.RoosterTrainings
             .AsNoTracking()
-            .Include(x=>x.LinkReportTrainingRoosterTrainings)
+            .Include(x => x.LinkReportTrainingRoosterTrainings)
             .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
             .OrderBy(x => x.DateStart);
         var availables = await Database.RoosterAvailables
@@ -232,9 +233,10 @@ public class ScheduleService : DrogeService, IScheduleService
     {
         var sw = StopwatchProvider.StartNew();
         var result = new PatchTrainingResponse();
+        var sanitizer = new HtmlSanitizer();
         var oldTraining = await Database.RoosterTrainings
-            .Include(x=>x.RoosterAvailables)
-            .Where(x=>x.Id == patchedTraining.TrainingId )
+            .Include(x => x.RoosterAvailables)
+            .Where(x => x.Id == patchedTraining.TrainingId)
             .FirstOrDefaultAsync(clt);
         if (oldTraining == null) return result;
         if (patchedTraining.Name?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)
@@ -243,8 +245,8 @@ public class ScheduleService : DrogeService, IScheduleService
             throw new UnauthorizedAccessException();
 
         oldTraining.RoosterTrainingTypeId = patchedTraining.RoosterTrainingTypeId;
-        oldTraining.Name = patchedTraining.Name;
-        oldTraining.Description = patchedTraining.Description;
+        oldTraining.Name = sanitizer.Sanitize(patchedTraining.Name ?? string.Empty);
+        oldTraining.Description = sanitizer.Sanitize(patchedTraining.Description ?? string.Empty);
         oldTraining.DateStart = patchedTraining.DateStart;
         oldTraining.DateEnd = patchedTraining.DateEnd;
         oldTraining.CountToTrainingTarget = patchedTraining.CountToTrainingTarget;
@@ -280,7 +282,7 @@ public class ScheduleService : DrogeService, IScheduleService
         oldAva.LastSyncOn = DateTimeProvider.UtcNow();
         Database.RoosterAvailables.Update(oldAva);
     }
-    
+
     /// <inheritdoc />
     public async Task PatchAvailableLastChanged(Guid customerId, Guid currentUserId, PlanUser user, CancellationToken clt)
     {
@@ -291,7 +293,7 @@ public class ScheduleService : DrogeService, IScheduleService
             Logger.LogWarning("No rooster available found `{customerId}` for user `{userId}` with availableId `{availableId}`", customerId, user.UserId, user.AvailableId);
             return;
         }
-        
+
         oldAva.LastUpdateOn = DateTimeProvider.UtcNow();
         oldAva.LastUpdateBy = currentUserId;
         Database.RoosterAvailables.Update(oldAva);
@@ -304,13 +306,14 @@ public class ScheduleService : DrogeService, IScheduleService
         {
             NewId = trainingId
         };
+        var sanitizer = new HtmlSanitizer();
         var training = new Training
         {
             TrainingId = trainingId,
             DefaultId = newTraining.DefaultId,
             RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId,
-            Name = newTraining.Name,
-            Description = newTraining.Description,
+            Name = sanitizer.Sanitize(newTraining.Name ?? string.Empty),
+            Description = sanitizer.Sanitize(newTraining.Description ?? string.Empty),
             DateStart = newTraining.DateStart,
             DateEnd = newTraining.DateEnd,
             CountToTrainingTarget = newTraining.CountToTrainingTarget,
@@ -432,7 +435,7 @@ public class ScheduleService : DrogeService, IScheduleService
             .AsNoTracking()
             .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
             .Include(x => x.LinkVehicleTrainings)
-            .Include(x=>x.LinkReportTrainingRoosterTrainings)
+            .Include(x => x.LinkReportTrainingRoosterTrainings)
             .OrderBy(x => x.DateStart)
             .AsSingleQuery().ToListAsync(clt);
         var availables = await Database.RoosterAvailables
@@ -701,7 +704,7 @@ public class ScheduleService : DrogeService, IScheduleService
             var users = await Database.Users
                 .Include(x => x.UserFunction)
                 .Include(x => x.LinkedUserAsA.Where(x => x.DeletedOn == null))
-                .ThenInclude(x=>x.UserB)
+                .ThenInclude(x => x.UserB)
                 .Where(x => x.CustomerId == customerId && x.DeletedOn == null && x.UserFunction!.IsActive)
                 .ToListAsync(cancellationToken: clt);
 
@@ -1146,7 +1149,7 @@ public class ScheduleService : DrogeService, IScheduleService
                 x.CustomerId == customerId && x.UserId == userId && x.Training.DeletedOn == null && x.LastUpdateOn != null &&
                 x.LastUpdateOn > compareDate && x.LastUpdateBy == userId &&
                 (x.LastSyncOn == null || x.LastUpdateOn > x.LastSyncOn))
-            .Include(x=>x.Training)
+            .Include(x => x.Training)
             .AsNoTracking()
             .ToListAsync();
         return ava;

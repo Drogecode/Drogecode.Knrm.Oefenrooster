@@ -34,6 +34,7 @@
 		<PackageReference Include="MudBlazor" Version="8.9.0" />
 		<PackageReference Include="MudBlazor.Markdown" Version="8.9.0" />
 		<PackageReference Include="MudBlazor.Translations" Version="2.5.0" />
+		<PackageReference Include="Tizzani.MudBlazor.HtmlEditor" Version="2.3.0" />
 	</ItemGroup>
 
 	<ItemGroup>

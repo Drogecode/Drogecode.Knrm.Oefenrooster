@@ -33,7 +33,7 @@ public static class DefaultSettingsHelper
     public const int MAX_LENGTH_USER_NAME = 50;
     public const int MAX_LENGTH_USER_EMAIL = 150;
     public const int MAX_LENGTH_TRAINING_TITLE = 50;
-    public const int MAX_LENGTH_TRAINING_DESCRIPTION = 1000;
+    public const int MAX_LENGTH_TRAINING_DESCRIPTION = 5000;
     public const int MAX_LENGTH_TRAINING_GROUP_NAME = 30;
     public const int MAX_LENGTH_TRAINING_TYPE_NAME = 30;
     public const int MAX_LENGTH_MONTH_ITEM_TEXT = 150;

@@ -171,4 +171,7 @@
   <data name="Ask all users to fill in on the dashboard" xml:space="preserve">
     <value>Ask all users to fill in on the dashboard</value>
   </data>
+  <data name="Description to long {0}/{1}" xml:space="preserve">
+    <value>Description to long {0}/{1}</value>
+  </data>
 </root>
