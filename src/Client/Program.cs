@@ -12,6 +12,10 @@ using MudBlazor.Services;
 using MudBlazor.Translations;
 using MudExtensions.Services;
 using System.Globalization;
+using Drogecode.Knrm.Oefenrooster.Client.Policies.Handlers;
+using Drogecode.Knrm.Oefenrooster.Client.Policies.Requirements;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -19,7 +23,12 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 
-builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<IAuthorizationHandler, LicenseHandler>();
+builder.Services.AddAuthorizationCore(options =>
+{
+    options.AddPolicy(nameof(Licenses.DashboardTabs), policy =>
+        policy.Requirements.Add(new LicenseRequirement(Licenses.DashboardTabs)));
+});
 
 builder.Services.AddMudServices(config => { config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft; });
 builder.Services.AddMudTranslations();
@@ -38,6 +47,7 @@ builder.Services.TryAddScoped<ICustomerSettingsClient, CustomerSettingsClient>()
 builder.Services.TryAddScoped<IDefaultScheduleClient, DefaultScheduleClient>();
 builder.Services.TryAddScoped<IFunctionClient, FunctionClient>();
 builder.Services.TryAddScoped<IMenuClient, MenuClient>();
+builder.Services.TryAddScoped<ILicenseClient, LicenseClient>();
 builder.Services.TryAddScoped<IHolidayClient, HolidayClient>();
 builder.Services.TryAddScoped<ILinkedCustomerClient, LinkedCustomerClient>();
 builder.Services.TryAddScoped<IPreComClient, PreComClient>();
@@ -61,6 +71,7 @@ builder.Services.TryAddScoped<ConfigurationRepository>();
 builder.Services.TryAddScoped<CustomerSettingRepository>();
 builder.Services.TryAddScoped<DefaultScheduleRepository>();
 builder.Services.TryAddScoped<FunctionRepository>();
+builder.Services.TryAddScoped<LicenseRepository>();
 builder.Services.TryAddScoped<HolidayRepository>();
 builder.Services.TryAddScoped<MenuRepository>();
 builder.Services.TryAddScoped<PreComRepository>();

@@ -3,7 +3,7 @@
 public class ApiCachedRequest
 {
     /// <summary>
-    /// Will be deleted from localstorge when this time has passed. UTC
+    /// Will be deleted from local storge when this time has passed. UTC
     /// </summary>
     public DateTime ExpireLocalStorage { get; set; } = DateTime.UtcNow.AddDays(7);
 
@@ -18,7 +18,7 @@ public class ApiCachedRequest
     public bool OneCallPerSession { get; set; } = false;
 
     /// <summary>
-    /// One call per cache, but not expired.
+    /// One call per local storage cache, but not expired.
     /// </summary>
     public bool OneCallPerCache { get; set; } = false;
 

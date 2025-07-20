@@ -39,7 +39,7 @@ public class OfflineService : IOfflineService
                     return sessionResult;
             }
 
-            if (request is { CachedAndReplace: true, ForceCache: false })
+            if ((request.CachedAndReplace || request.OneCallPerCache) && !request.ForceCache)
             {
                 var cacheResult = await _localStorageExpireService.GetItemAsync<TRes?>(cacheKey, clt);
                 if (cacheResult is not null)

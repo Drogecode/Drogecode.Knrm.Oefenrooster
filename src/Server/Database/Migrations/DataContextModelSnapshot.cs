@@ -155,6 +155,33 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLicenses", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("License")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Licenses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f9b05a44-e0bb-42a5-9660-085d82337a60"),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            License = 1
+                        });
+                });
+
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkExchange", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2483,6 +2510,17 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLicenses", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("Licenses")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbLinkExchange", b =>
                 {
                     b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
@@ -3099,6 +3137,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("Audits");
 
                     b.Navigation("CustomerSettings");
+
+                    b.Navigation("Licenses");
 
                     b.Navigation("LinkExchanges");
 

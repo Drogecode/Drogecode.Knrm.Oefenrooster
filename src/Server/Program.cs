@@ -22,6 +22,10 @@ using System.Diagnostics;
 using System.Text;
 using Drogecode.Knrm.Oefenrooster.Server.Managers;
 using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
+using Drogecode.Knrm.Oefenrooster.Server.Policies.Handlers;
+using Drogecode.Knrm.Oefenrooster.Server.Policies.Requirements;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 Console.WriteLine("Start oefenrooster");
@@ -144,6 +148,7 @@ builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
+builder.Services.AddScoped<ILicenseService, LicenseService>();
 builder.Services.AddScoped<IHolidayService, HolidayService>();
 builder.Services.AddScoped<ILinkUserRoleService, LinkUserRoleService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
@@ -171,7 +176,15 @@ builder.Services.AddScoped<UserController>();
 builder.Services.AddScoped<ScheduleController>();
 builder.Services.AddScoped<AuthenticationController>();
 
+builder.Services.AddScoped<IAuthorizationHandler, LicenseHandler>();
+
 builder.Services.AddHostedService<Worker>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(nameof(Licenses.DashboardTabs), policy =>
+        policy.Requirements.Add(new LicenseRequirement(Licenses.DashboardTabs)));
+});
 
 #if DEBUG
 // Only run in debug because it fails on the azure app service! (and is not necessary)
@@ -201,7 +214,8 @@ var groupNames = new List<string>
     "CustomerSettings",
     "UserSettings",
     "LinkedCustomer",
-    "Customer"
+    "Customer",
+    "License"
 };
 var runningInContainers = string.Equals(builder.Configuration["DOTNET_RUNNING_IN_CONTAINER"], "true");
 if (!runningInContainers)

@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
@@ -26,6 +27,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbUserLinkedMails> UserLinkedMails { get; set; }
         public DbSet<DbUserLastCalendarUpdate> UserLastCalendarUpdates { get; set; }
         public DbSet<DbCustomers> Customers { get; set; }
+        public DbSet<DbLicenses> Licenses { get; set; }
         public DbSet<DbCustomerSettings> CustomerSettings { get; set; }
         public DbSet<DbRoosterDefault> RoosterDefaults { get; set; }
         public DbSet<DbRoosterItemDay> RoosterItemDays { get; set; }
@@ -63,6 +65,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbCustomers>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbCustomers>(e => { e.Property(en => en.Name).IsRequired(); });
             modelBuilder.Entity<DbCustomers>(e => { e.Property(en => en.Created).IsRequired(); });
+            
+            // Licenses
+            modelBuilder.Entity<DbLicenses>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbLicenses>(e => { e.Property(en => en.License).IsRequired(); });
+            modelBuilder.Entity<DbLicenses>().HasOne(p => p.Customer).WithMany(g => g.Licenses).HasForeignKey(s => s.CustomerId).IsRequired();
 
             // CustomerSettings
             modelBuilder.Entity<DbCustomerSettings>(e => { e.Property(en => en.Id).IsRequired(); });
@@ -259,6 +266,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             SetSystemUsers(modelBuilder);
             SetMenus(modelBuilder);
             SetUserGlobal(modelBuilder);
+            SetLicenses(modelBuilder);
         }
 
         private static Guid IdTaco { get; } = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461");
@@ -1033,6 +1041,15 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Name = "Taco Droogers",
                 CreatedOn = new DateTime(1992, 9, 4, 1, 4, 8, DateTimeKind.Utc),
                 CreatedBy = DefaultSettingsHelper.SystemUser
+            }));
+        }
+        private void SetLicenses(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DbLicenses>(e => e.HasData(new DbLicenses
+            {
+                Id = new Guid("f9b05a44-e0bb-42a5-9660-085d82337a60"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                License = Shared.Authorization.Licenses.DashboardTabs
             }));
         }
 
