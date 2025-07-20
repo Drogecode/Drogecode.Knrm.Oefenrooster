@@ -47,6 +47,19 @@
 	</ItemGroup>
 	
 	<Import Project="JsLib/tailwindcss.targets" />
+
+	<Target Name="CopyQuillFiles" AfterTargets="Build">
+		<ItemGroup>
+			<QuillJs Include="JsLib/node_modules/quill/dist/quill.js" />
+			<QuillCoreJs Include="JsLib/node_modules/quill/dist/quill.core.js" />
+			<QuillCss Include="JsLib/node_modules/quill/dist/quill.snow.css" />
+			<QuillCss Include="JsLib/node_modules/quill/dist/quill.bubble.css" />
+			<QuillCss Include="JsLib/node_modules/quill/dist/quill.core.css" />
+		</ItemGroup>
+		<Copy SourceFiles="@(QuillJs)" DestinationFolder="wwwroot/js/npm/quill/" SkipUnchangedFiles="true" />
+		<Copy SourceFiles="@(QuillCoreJs)" DestinationFolder="wwwroot/js/npm/quill/" SkipUnchangedFiles="true" />
+		<Copy SourceFiles="@(QuillCss)" DestinationFolder="wwwroot/js/npm/quill/" SkipUnchangedFiles="true" />
+	</Target>
 	
 	<ItemGroup>
 	  <UpToDateCheckInput Remove="Pages\Planner\Components\CalendarBaseCard.razor" />
