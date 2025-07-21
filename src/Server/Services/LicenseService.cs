@@ -20,7 +20,13 @@ public class LicenseService : DrogeService, ILicenseService
         var sw = StopwatchProvider.StartNew();
         var response = new GetAllLicensesResponse();
 
-        var licenses = await Database.Licenses.Where(x => x.CustomerId == customerId).Select(x=>x.ToLicense()).ToListAsync(clt);
+        var licenses = await Database.Licenses
+            .AsNoTracking()
+            .Where(x => x.CustomerId == customerId
+                        && (x.ValidFrom == null || x.ValidFrom <= DateTimeProvider.UtcNow())
+                        && (x.ValidUntil == null || x.ValidUntil >= DateTimeProvider.UtcNow()))
+            .Select(x => x.ToLicense())
+            .ToListAsync(clt);
         if (licenses.Count != 0)
         {
             response.Licenses = licenses;

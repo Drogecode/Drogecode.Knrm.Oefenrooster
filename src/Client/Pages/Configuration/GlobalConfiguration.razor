@@ -45,7 +45,7 @@
         break;
 }
 
-<AuthorizeView Roles="@nameof(Licenses.SharePointReports)">
+<AuthorizeView Roles="@nameof(Licenses.LicenseSharePointReports)">
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RunSyncHistorical" Disabled="_clickedSyncHistorical">Run sync historical reports</MudButton>
     @switch (_syncHistorical?.Success)
     {
@@ -57,7 +57,7 @@
             break;
     }
 </AuthorizeView>
-<AuthorizeView Roles="@nameof(Licenses.PreCom)">
+<AuthorizeView Roles="@nameof(Licenses.LicensePreCom)">
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="DeDuplicatePreCom" Disabled="_clickedDeDuplicatePreCom">Delete duplicate pre-com alerts</MudButton>
     @switch (_deDuplicatePreCom?.Success)
     {
@@ -70,7 +70,7 @@
     }
 </AuthorizeView>
 <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
-    <AuthorizeView Roles="@nameof(Licenses.SharePointReports)" Context="inner">
+    <AuthorizeView Roles="@nameof(Licenses.LicenseSharePointReports)" Context="inner">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="KillDb" Disabled="_clickedSyncHistorical">Kill db</MudButton>
         @switch (_killDb?.Success)
         {
@@ -98,7 +98,7 @@
                ValueChanged="@(async (isChecked) => await PatchPerformanceEnabled(isChecked))"/>
     <MudTextField Label="@L["CalenderPrefix"]" T="string" Value="_settingCalenderPrefix" ValueChanged="PatchCalenderPrefix"/>
 
-    <AuthorizeView Roles="@nameof(Licenses.PreCom)">
+    <AuthorizeView Roles="@nameof(Licenses.LicensePreCom)">
         <MudTextField Label="@L["PreCom Available calendar text"]" T="string" Value="_preComAvailableText" ValueChanged="PatchPreComAvailableText"
                       Counter="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT"/>
         <MudNumericField Label="@L["PreCom days in future"]" T="int?" Value="@_preComDaysInFuture" ValueChanged="PatchPreComDaysInFuture"/>

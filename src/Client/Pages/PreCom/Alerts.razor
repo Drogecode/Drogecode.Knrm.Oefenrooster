@@ -1,7 +1,7 @@
 ﻿@page "/precom/alerts"
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom
-@attribute [Authorize (Roles = nameof(Licenses.PreCom))]
+@attribute [Authorize (Roles = nameof(Licenses.LicensePreCom))]
 <AuthorizeView Roles="@AccessesNames.AUTH_precom_problems">
     <MudText Typo="Typo.h5">@L["PreCom problems"]</MudText>
     <MudSelect T="NextRunMode" ValueChanged="Problems" Disabled="_loadingProblems">

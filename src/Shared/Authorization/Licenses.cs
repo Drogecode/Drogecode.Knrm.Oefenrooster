@@ -3,6 +3,6 @@
 public enum Licenses
 {
     None = 0,
-    SharePointReports = 1,
-    PreCom = 2
+    LicenseSharePointReports = 1,
+    LicensePreCom = 2
 }

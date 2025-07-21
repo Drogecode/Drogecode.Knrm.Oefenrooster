@@ -16,7 +16,7 @@
     <MudNavLink Icon="@Icons.Material.Filled.EditCalendar" Href="@_uriSchedule" Match="NavLinkMatch.Prefix" data-testid="nav-schedule">@L["Schedule"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.AutoGraph" Href="/user/defaults" Match="NavLinkMatch.Prefix">@L["Defaults"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.WbSunny" Href="/user/vacations" Match="NavLinkMatch.Prefix">@L["Vacations"]</MudNavLink>
-    <AuthorizeView Roles="@nameof(Licenses.PreCom)">
+    <AuthorizeView Roles="@nameof(Licenses.LicensePreCom)">
         <MudNavLink Icon="@Icons.Material.Filled.SecurityUpdateWarning" Href="/precom/alerts" Match="NavLinkMatch.Prefix">@L["PreCom alerts"]</MudNavLink>
     </AuthorizeView>
     <AuthorizeView Roles="@AccessesNames.AUTH_users_details">

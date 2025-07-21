@@ -10,6 +10,8 @@ public class DbLicenses
     [Key] public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
     public Licenses License { get; set; }
+    public DateTime? ValidFrom { get; set; }
+    public DateTime? ValidUntil { get; set; }
     
     public DbCustomers Customer { get; set; }
 }

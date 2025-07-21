@@ -55,6 +55,7 @@ public class TestService : IAsyncLifetime
     internal readonly ScheduleController ScheduleController;
     internal readonly UserController UserController;
     internal readonly FunctionController FunctionController;
+    internal readonly LicenseController LicenseController;
     internal readonly HolidayController HolidayController;
     internal readonly TrainingTypesController TrainingTypesController;
     internal readonly DayItemController DayItemController;
@@ -79,6 +80,7 @@ public class TestService : IAsyncLifetime
         ScheduleController scheduleController,
         UserController userController,
         FunctionController functionController,
+        LicenseController licenseController,
         HolidayController holidayController,
         TrainingTypesController trainingTypesController,
         DayItemController dayItemController,
@@ -103,6 +105,7 @@ public class TestService : IAsyncLifetime
         ScheduleController = scheduleController;
         UserController = userController;
         FunctionController = functionController;
+        LicenseController = licenseController;       
         HolidayController = holidayController;
         TrainingTypesController = trainingTypesController;
         DayItemController = dayItemController;
@@ -137,6 +140,7 @@ public class TestService : IAsyncLifetime
         MockAuthenticatedUser(ScheduleController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(UserController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(FunctionController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(LicenseController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(HolidayController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(TrainingTypesController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(DayItemController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);

@@ -237,6 +237,14 @@ public class AuthenticationController : DrogeController
             {
                 claims.Add(new Claim(ClaimTypes.Role, userClaim));
             }
+            var licenses = await _licenseService.GetAllLicensesForCustomer(linkedUser.CustomerId, clt);
+            if (licenses.Licenses is not null && licenses.Licenses.Count > 0)
+            {
+                foreach (var license in licenses.Licenses)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, license.License.ToString()));
+                }
+            }
 
             if (inSuperUserRole)
             {

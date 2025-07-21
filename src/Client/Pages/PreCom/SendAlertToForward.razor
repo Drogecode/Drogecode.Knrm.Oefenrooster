@@ -1,7 +1,7 @@
 ﻿@page "/precom/send/forward"
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom
 @attribute [Authorize(Roles = $"{AccessesNames.AUTH_precom_manual}")]
-@attribute [Authorize(Roles = $"{nameof(Licenses.PreCom)}")]
+@attribute [Authorize(Roles = $"{nameof(Licenses.LicensePreCom)}")]
 <MudText Typo="Typo.h5">@L["Send alert to forward"]</MudText>
 
 <SelectMultipleUsers MultiSelection="false" Users="@_users" Functions="@_functions" Selection="@_selectedUsers" SelectionChanged="OnSelectionChanged"></SelectMultipleUsers>
