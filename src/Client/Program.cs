@@ -12,10 +12,6 @@ using MudBlazor.Services;
 using MudBlazor.Translations;
 using MudExtensions.Services;
 using System.Globalization;
-using Drogecode.Knrm.Oefenrooster.Client.Policies.Handlers;
-using Drogecode.Knrm.Oefenrooster.Client.Policies.Requirements;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-using Microsoft.AspNetCore.Authorization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -23,14 +19,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 
-builder.Services.AddScoped<IAuthorizationHandler, LicenseHandler>();
-builder.Services.AddAuthorizationCore(options =>
-{
-    options.AddPolicy(nameof(Licenses.SharePointReports), policy =>
-        policy.Requirements.Add(new LicenseRequirement(Licenses.SharePointReports)));
-    options.AddPolicy(nameof(Licenses.PreCom), policy =>
-        policy.Requirements.Add(new LicenseRequirement(Licenses.PreCom)));
-});
+builder.Services.AddAuthorizationCore();
 
 builder.Services.AddMudServices(config => { config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft; });
 builder.Services.AddMudTranslations();

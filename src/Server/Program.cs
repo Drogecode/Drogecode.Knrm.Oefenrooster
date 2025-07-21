@@ -5,7 +5,6 @@ using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Server.Repositories;
 using Drogecode.Knrm.Oefenrooster.Server.Repositories.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
-using Drogecode.Knrm.Oefenrooster.Shared.Providers;
 using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using HealthChecks.UI.Client;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
@@ -22,10 +21,6 @@ using System.Diagnostics;
 using System.Text;
 using Drogecode.Knrm.Oefenrooster.Server.Managers;
 using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
-using Drogecode.Knrm.Oefenrooster.Server.Policies.Handlers;
-using Drogecode.Knrm.Oefenrooster.Server.Policies.Requirements;
-using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 Console.WriteLine("Start oefenrooster");
@@ -176,17 +171,8 @@ builder.Services.AddScoped<UserController>();
 builder.Services.AddScoped<ScheduleController>();
 builder.Services.AddScoped<AuthenticationController>();
 
-builder.Services.AddScoped<IAuthorizationHandler, LicenseHandler>();
-
 builder.Services.AddHostedService<Worker>();
-
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy(nameof(Licenses.SharePointReports), policy =>
-        policy.Requirements.Add(new LicenseRequirement(Licenses.SharePointReports)));
-    options.AddPolicy(nameof(Licenses.PreCom), policy =>
-        policy.Requirements.Add(new LicenseRequirement(Licenses.PreCom)));
-});
+builder.Services.AddAuthorization();
 
 #if DEBUG
 // Only run in debug because it fails on the azure app service! (and is not necessary)

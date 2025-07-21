@@ -14,7 +14,7 @@
             <MudSwitch Label="@L["Delay syncing to users with external calendar"]" Color="Color.Primary" T="bool" Value="@_delaySyncingTrainingToOutlook.Value"
                        ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.DelaySyncingTrainingToOutlook))"/>
         }
-        <AuthorizeView Roles="@AccessesNames.AUTH_super_user" Context="inner"> 
+        <AuthorizeView Roles="@AccessesNames.AUTH_super_user" Context="inner">
             @if (_settingTrainingToCalendar is not null)
             {
                 <MudSwitch Label="@L["Sync training to outlook calendar"]" Color="Color.Primary" T="bool" Value="@_settingTrainingToCalendar.Value"
@@ -22,28 +22,30 @@
             }
         </AuthorizeView>
     </AuthorizeView>
-    <AuthorizeView Policy="@nameof(Licenses.PreCom)" Roles="@AccessesNames.AUTH_precom_sync_calendar">
-        <MudText Typo="Typo.h5">@L["PreCom"]</MudText>
-        @if (_settingPreComSyncCalendar is not null)
-        {
-            <MudSwitch Label="@L["Sync PreCom with outlook calendar"]" Color="Color.Primary" T="bool" Value="@_settingPreComSyncCalendar.Value"
-                       ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.SyncPreComWithCalendar))"/>
-        }
-        @if (_settingSyncPreComDeleteOld is not null)
-        {
-            <MudSwitch Label="@L["Delete old PreCom from outlook"]" Color="Color.Primary" T="bool" Value="@_settingSyncPreComDeleteOld.Value"
-                       ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.SyncPreComDeleteOld))"/>
-        }
-        @if (_syncPreComWithExternal is not null)
-        {
-            <MudSwitch Label="@L["Sync PreCom with external calendars, configured below"]" Color="Color.Primary" T="bool" Value="@_syncPreComWithExternal.Value"
-                       ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.SyncPreComWithExternal))"/>
-        }
-        @if (_preComAvailableText is not null)
-        {
-            <MudTextField Label="@L["PreCom Available calendar text"]" T="string" Value="_preComAvailableText" ValueChanged="PatchPreComAvailableText"
-                          Counter="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT"/>
-        }
+    <AuthorizeView Roles="@AccessesNames.AUTH_precom_sync_calendar">
+        <AuthorizeView Roles="@nameof(Licenses.PreCom)" Context="inner">
+            <MudText Typo="Typo.h5">@L["PreCom"]</MudText>
+            @if (_settingPreComSyncCalendar is not null)
+            {
+                <MudSwitch Label="@L["Sync PreCom with outlook calendar"]" Color="Color.Primary" T="bool" Value="@_settingPreComSyncCalendar.Value"
+                           ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.SyncPreComWithCalendar))"/>
+            }
+            @if (_settingSyncPreComDeleteOld is not null)
+            {
+                <MudSwitch Label="@L["Delete old PreCom from outlook"]" Color="Color.Primary" T="bool" Value="@_settingSyncPreComDeleteOld.Value"
+                           ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.SyncPreComDeleteOld))"/>
+            }
+            @if (_syncPreComWithExternal is not null)
+            {
+                <MudSwitch Label="@L["Sync PreCom with external calendars, configured below"]" Color="Color.Primary" T="bool" Value="@_syncPreComWithExternal.Value"
+                           ValueChanged="@(async (isChecked) => await PatchSetting(isChecked, SettingName.SyncPreComWithExternal))"/>
+            }
+            @if (_preComAvailableText is not null)
+            {
+                <MudTextField Label="@L["PreCom Available calendar text"]" T="string" Value="_preComAvailableText" ValueChanged="PatchPreComAvailableText"
+                              Counter="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT"/>
+            }
+        </AuthorizeView>
     </AuthorizeView>
     <MudText>
         <table class="table-auto">
@@ -92,7 +94,7 @@
                         <CellTemplate>
                             @if (!context.Item.IsDrogeCodeUser)
                             {
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await DeleteMailLink(context.Item); })" />
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(async () => { await DeleteMailLink(context.Item); })"/>
                             }
                         </Celltemplate>
                     </PropertyColumn>

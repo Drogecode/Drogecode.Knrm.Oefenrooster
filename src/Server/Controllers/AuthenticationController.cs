@@ -21,6 +21,7 @@ public class AuthenticationController : DrogeController
 {
     private readonly IMemoryCache _memoryCache;
     private readonly IUserRoleService _userRoleService;
+    private readonly ILicenseService _licenseService;
     private readonly IUserService _userService;
     private readonly IUserLinkCustomerService _userLinkCustomerService;
     private readonly ICustomerService _customerService;
@@ -35,6 +36,7 @@ public class AuthenticationController : DrogeController
         ILogger<AuthenticationController> logger,
         IMemoryCache memoryCache,
         IUserRoleService userRoleService,
+        ILicenseService licenseService,
         IUserService userService,
         IUserLinkCustomerService userLinkCustomerService,
         ICustomerService customerService,
@@ -44,6 +46,7 @@ public class AuthenticationController : DrogeController
     {
         _memoryCache = memoryCache;
         _userRoleService = userRoleService;
+        _licenseService = licenseService;
         _userService = userService;
         _userLinkCustomerService = userLinkCustomerService;
         _customerService = customerService;
@@ -425,6 +428,14 @@ public class AuthenticationController : DrogeController
         {
             claims.Add(new Claim(ClaimTypes.Role, access));
         }
+        var licenses = await _licenseService.GetAllLicensesForCustomer(customerId, clt);
+        if (licenses.Licenses is not null && licenses.Licenses.Count > 0)
+        {
+            foreach (var license in licenses.Licenses)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, license.License.ToString()));
+            }
+        }
 
         await authService.AuditLogin(userId, null, ip, clientVersion, false, clt);
         return claims;
@@ -461,15 +472,15 @@ public class AuthenticationController : DrogeController
         {
             return customers.First().Id;
         }
-        
+
         foreach (var claim in claims.Where(x => x.Type.Equals("groups")))
         {
-            if (customers.Any(x => x.GroupId?.Equals( claim.Value) == true))
+            if (customers.Any(x => x.GroupId?.Equals(claim.Value) == true))
             {
                 return customers.First(x => x.GroupId?.Equals(claim.Value) == true).Id;
             }
         }
-        
+
         Logger.LogWarning("Failed to link user to customer");
         throw new UnauthorizedAccessException();
     }

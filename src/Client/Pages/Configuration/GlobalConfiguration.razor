@@ -45,7 +45,7 @@
         break;
 }
 
-<AuthorizeView Policy="@nameof(Licenses.SharePointReports)">
+<AuthorizeView Roles="@nameof(Licenses.SharePointReports)">
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RunSyncHistorical" Disabled="_clickedSyncHistorical">Run sync historical reports</MudButton>
     @switch (_syncHistorical?.Success)
     {
@@ -57,7 +57,7 @@
             break;
     }
 </AuthorizeView>
-<AuthorizeView Policy="@nameof(Licenses.PreCom)">
+<AuthorizeView Roles="@nameof(Licenses.PreCom)">
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="DeDuplicatePreCom" Disabled="_clickedDeDuplicatePreCom">Delete duplicate pre-com alerts</MudButton>
     @switch (_deDuplicatePreCom?.Success)
     {
@@ -69,21 +69,23 @@
             break;
     }
 </AuthorizeView>
-<AuthorizeView Roles="@AccessesNames.AUTH_super_user" Policy="@nameof(Licenses.SharePointReports)">
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="KillDb" Disabled="_clickedSyncHistorical">Kill db</MudButton>
-    @switch (_killDb?.Success)
-    {
-        case true:
-            <MudText Typo="Typo.body1">
-                Done: KillDb @_killDb.KillCount
-            </MudText>
-            break;
-        case false:
-            <MudText Typo="Typo.body1">
-                Failed: KillDb @_killDb.KillCount
-            </MudText>
-            break;
-    }
+<AuthorizeView Roles="@AccessesNames.AUTH_super_user">
+    <AuthorizeView Roles="@nameof(Licenses.SharePointReports)" Context="inner">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="KillDb" Disabled="_clickedSyncHistorical">Kill db</MudButton>
+        @switch (_killDb?.Success)
+        {
+            case true:
+                <MudText Typo="Typo.body1">
+                    Done: KillDb @_killDb.KillCount
+                </MudText>
+                break;
+            case false:
+                <MudText Typo="Typo.body1">
+                    Failed: KillDb @_killDb.KillCount
+                </MudText>
+                break;
+        }
+    </AuthorizeView>
 </AuthorizeView>
 
 @if (_loaded)
@@ -96,7 +98,7 @@
                ValueChanged="@(async (isChecked) => await PatchPerformanceEnabled(isChecked))"/>
     <MudTextField Label="@L["CalenderPrefix"]" T="string" Value="_settingCalenderPrefix" ValueChanged="PatchCalenderPrefix"/>
 
-    <AuthorizeView Policy="@nameof(Licenses.PreCom)">
+    <AuthorizeView Roles="@nameof(Licenses.PreCom)">
         <MudTextField Label="@L["PreCom Available calendar text"]" T="string" Value="_preComAvailableText" ValueChanged="PatchPreComAvailableText"
                       Counter="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_PRE_COM_AVAILABLE_TEXT"/>
         <MudNumericField Label="@L["PreCom days in future"]" T="int?" Value="@_preComDaysInFuture" ValueChanged="PatchPreComDaysInFuture"/>
