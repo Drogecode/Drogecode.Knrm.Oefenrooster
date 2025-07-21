@@ -40,7 +40,7 @@ jobs:
       - name: Run tests
         run: |
           mkdir -p ./tests/Drogecode.Knrm.Oefenrooster.Playwright/bin/Release/net9.0/playwright-debug
-          dotnet test ./Drogecode.Knrm.Oefenrooster.sln \
+          dotnet test ./Drogecode.Knrm.Oefenrooster.GitHubActionTests.sln \
             --configuration Release \
             --no-restore \
             --logger "trx;LogFileName=test_results.trx" \
