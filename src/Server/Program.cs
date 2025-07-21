@@ -182,8 +182,10 @@ builder.Services.AddHostedService<Worker>();
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(nameof(Licenses.DashboardTabs), policy =>
-        policy.Requirements.Add(new LicenseRequirement(Licenses.DashboardTabs)));
+    options.AddPolicy(nameof(Licenses.SharePointReports), policy =>
+        policy.Requirements.Add(new LicenseRequirement(Licenses.SharePointReports)));
+    options.AddPolicy(nameof(Licenses.PreCom), policy =>
+        policy.Requirements.Add(new LicenseRequirement(Licenses.PreCom)));
 });
 
 #if DEBUG

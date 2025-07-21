@@ -1,5 +1,6 @@
 ﻿@page "/precom/forward-list"
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom
+@attribute [Authorize (Policy = nameof(Licenses.PreCom))]
 @if (_forwards is not null)
 {
     <MudDataGrid T="PreComForward" Items="_forwards.PreComForwards" Striped="true" Hover="true" ReadOnly="false" EditTrigger="@DataGridEditTrigger.Manual"

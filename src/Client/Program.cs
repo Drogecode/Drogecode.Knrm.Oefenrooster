@@ -26,8 +26,10 @@ builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 builder.Services.AddScoped<IAuthorizationHandler, LicenseHandler>();
 builder.Services.AddAuthorizationCore(options =>
 {
-    options.AddPolicy(nameof(Licenses.DashboardTabs), policy =>
-        policy.Requirements.Add(new LicenseRequirement(Licenses.DashboardTabs)));
+    options.AddPolicy(nameof(Licenses.SharePointReports), policy =>
+        policy.Requirements.Add(new LicenseRequirement(Licenses.SharePointReports)));
+    options.AddPolicy(nameof(Licenses.PreCom), policy =>
+        policy.Requirements.Add(new LicenseRequirement(Licenses.PreCom)));
 });
 
 builder.Services.AddMudServices(config => { config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft; });

@@ -126,6 +126,7 @@ public class PreComController : DrogeController
 
     [HttpGet]
     [Route("{take:int}/{skip:int}")]
+    [Authorize (Policy = nameof(Licenses.PreCom))]
     public async Task<ActionResult<MultiplePreComAlertsResponse>> AllAlerts(int take, int skip, CancellationToken clt = default)
     {
         try
@@ -147,6 +148,7 @@ public class PreComController : DrogeController
 
     [HttpPut]
     [Route("forwards")]
+    [Authorize (Policy = nameof(Licenses.PreCom))]
     public async Task<ActionResult<PutPreComForwardResponse>> PutForward([FromBody] PreComForward forward, CancellationToken clt = default)
     {
         try
@@ -168,6 +170,7 @@ public class PreComController : DrogeController
 
     [HttpPatch]
     [Route("forwards")]
+    [Authorize (Policy = nameof(Licenses.PreCom))]
     public async Task<ActionResult<PatchPreComForwardResponse>> PatchForward([FromBody] PreComForward forward, CancellationToken clt = default)
     {
         try
@@ -189,6 +192,7 @@ public class PreComController : DrogeController
 
     [HttpGet]
     [Route("forwards/{take:int}/{skip:int}")]
+    [Authorize (Policy = nameof(Licenses.PreCom))]
     public async Task<ActionResult<MultiplePreComForwardsResponse>> AllForwards(int take, int skip, CancellationToken clt = default)
     {
         try
@@ -210,7 +214,7 @@ public class PreComController : DrogeController
 
 
     [HttpGet]
-    [Authorize(Roles = AccessesNames.AUTH_precom_manual)]
+    [Authorize(Roles = AccessesNames.AUTH_precom_manual, Policy = nameof(Licenses.PreCom))]
     [Route("forwards/{userId:guid}/{take:int}/{skip:int}")]
     public async Task<ActionResult<MultiplePreComForwardsResponse>> AllForwardsForUser(Guid userId, int take, int skip, CancellationToken clt = default)
     {
@@ -231,7 +235,7 @@ public class PreComController : DrogeController
     }
 
     [HttpPost]
-    [Authorize(Roles = AccessesNames.AUTH_precom_manual)]
+    [Authorize(Roles = AccessesNames.AUTH_precom_manual, Policy = nameof(Licenses.PreCom))]
     [Route("forward")]
     public async Task<ActionResult<bool>> PostForward([FromBody] PostForwardRequest body, CancellationToken clt = default)
     {
@@ -272,7 +276,7 @@ public class PreComController : DrogeController
     }
 
     [HttpGet]
-    [Authorize(Roles = AccessesNames.AUTH_precom_problems)]
+    [Authorize(Roles = AccessesNames.AUTH_precom_problems, Policy = nameof(Licenses.PreCom))]
     [Route("problems")]
     public async Task<ActionResult<GetProblemsResponse>> GetProblems(NextRunMode nextRunMode, CancellationToken clt = default)
     {
@@ -316,7 +320,7 @@ public class PreComController : DrogeController
     }
 
     [HttpDelete]
-    [Authorize(Roles = AccessesNames.AUTH_configure_global_all)]
+    [Authorize(Roles = AccessesNames.AUTH_configure_global_all, Policy = nameof(Licenses.PreCom))]
     [Route("duplicates")]
     public async Task<ActionResult<DeleteResponse>> DeleteDuplicates(CancellationToken clt = default)
     {

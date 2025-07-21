@@ -1049,7 +1049,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             {
                 Id = new Guid("f9b05a44-e0bb-42a5-9660-085d82337a60"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                License = Shared.Authorization.Licenses.DashboardTabs
+                License = Shared.Authorization.Licenses.SharePointReports
             }));
         }
 

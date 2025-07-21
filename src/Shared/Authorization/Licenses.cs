@@ -3,5 +3,6 @@
 public enum Licenses
 {
     None = 0,
-    DashboardTabs = 1
+    SharePointReports = 1,
+    PreCom = 2
 }

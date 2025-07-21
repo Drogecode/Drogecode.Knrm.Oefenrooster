@@ -4,7 +4,7 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums
 <PageTitle>Dashboard</PageTitle>
-<AuthorizeView Policy="@nameof(Licenses.DashboardTabs)">
+<AuthorizeView Policy="@nameof(Licenses.SharePointReports)">
     <Authorized>
         <MudTabs Rounded="true">
             <MudTabPanel Text="@L["Planner"]">
