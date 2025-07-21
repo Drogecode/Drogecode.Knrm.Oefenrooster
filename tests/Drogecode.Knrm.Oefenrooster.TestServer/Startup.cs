@@ -30,6 +30,7 @@ public class Startup
         services.AddScoped<IConfigurationService, ConfigurationService>();
         services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<IFunctionService, FunctionService>();
+        services.AddScoped<ILicenseService, LicenseService>();
         services.AddScoped<IHolidayService, HolidayService>();
         services.AddScoped<IMenuService, MenuService>();
         services.AddScoped<ILinkUserRoleService, LinkUserRoleService>();
@@ -66,6 +67,7 @@ public class Startup
         services.AddScoped<ConfigurationController>();
         services.AddScoped<CustomerController>();
         services.AddScoped<FunctionController>();
+        services.AddScoped<LicenseController>();
         services.AddScoped<HolidayController>();
         services.AddScoped<MenuController>();
         services.AddScoped<PreComController>();

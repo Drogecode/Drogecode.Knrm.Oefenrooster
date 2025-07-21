@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Drogecode.Knrm.Oefenrooster.Server.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250720214326_AddLicenses")]
+    partial class AddLicenses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,12 +170,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Property<int>("License")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("ValidFrom")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("ValidUntil")
-                        .HasColumnType("timestamp with time zone");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
@@ -185,12 +182,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Id = new Guid("f9b05a44-e0bb-42a5-9660-085d82337a60"),
                             CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
                             License = 1
-                        },
-                        new
-                        {
-                            Id = new Guid("863b743c-a634-48b5-b507-f32edd94f2a5"),
-                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
-                            License = 2
                         });
                 });
 

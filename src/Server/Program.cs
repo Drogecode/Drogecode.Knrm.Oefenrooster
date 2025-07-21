@@ -5,7 +5,6 @@ using Drogecode.Knrm.Oefenrooster.Server.Hubs;
 using Drogecode.Knrm.Oefenrooster.Server.Repositories;
 using Drogecode.Knrm.Oefenrooster.Server.Repositories.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Services;
-using Drogecode.Knrm.Oefenrooster.Shared.Providers;
 using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using HealthChecks.UI.Client;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
@@ -144,6 +143,7 @@ builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IDefaultScheduleService, DefaultScheduleService>();
 builder.Services.AddScoped<IFunctionService, FunctionService>();
+builder.Services.AddScoped<ILicenseService, LicenseService>();
 builder.Services.AddScoped<IHolidayService, HolidayService>();
 builder.Services.AddScoped<ILinkUserRoleService, LinkUserRoleService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
@@ -172,6 +172,7 @@ builder.Services.AddScoped<ScheduleController>();
 builder.Services.AddScoped<AuthenticationController>();
 
 builder.Services.AddHostedService<Worker>();
+builder.Services.AddAuthorization();
 
 #if DEBUG
 // Only run in debug because it fails on the azure app service! (and is not necessary)
@@ -201,7 +202,8 @@ var groupNames = new List<string>
     "CustomerSettings",
     "UserSettings",
     "LinkedCustomer",
-    "Customer"
+    "Customer",
+    "License"
 };
 var runningInContainers = string.Equals(builder.Configuration["DOTNET_RUNNING_IN_CONTAINER"], "true");
 if (!runningInContainers)

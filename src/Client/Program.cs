@@ -38,6 +38,7 @@ builder.Services.TryAddScoped<ICustomerSettingsClient, CustomerSettingsClient>()
 builder.Services.TryAddScoped<IDefaultScheduleClient, DefaultScheduleClient>();
 builder.Services.TryAddScoped<IFunctionClient, FunctionClient>();
 builder.Services.TryAddScoped<IMenuClient, MenuClient>();
+builder.Services.TryAddScoped<ILicenseClient, LicenseClient>();
 builder.Services.TryAddScoped<IHolidayClient, HolidayClient>();
 builder.Services.TryAddScoped<ILinkedCustomerClient, LinkedCustomerClient>();
 builder.Services.TryAddScoped<IPreComClient, PreComClient>();
@@ -61,6 +62,7 @@ builder.Services.TryAddScoped<ConfigurationRepository>();
 builder.Services.TryAddScoped<CustomerSettingRepository>();
 builder.Services.TryAddScoped<DefaultScheduleRepository>();
 builder.Services.TryAddScoped<FunctionRepository>();
+builder.Services.TryAddScoped<LicenseRepository>();
 builder.Services.TryAddScoped<HolidayRepository>();
 builder.Services.TryAddScoped<MenuRepository>();
 builder.Services.TryAddScoped<PreComRepository>();

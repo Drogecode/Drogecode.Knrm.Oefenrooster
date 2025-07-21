@@ -1,9 +1,10 @@
 ﻿@page "/precom/send/forward"
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom
 @attribute [Authorize(Roles = $"{AccessesNames.AUTH_precom_manual}")]
+@attribute [Authorize(Roles = $"{nameof(Licenses.LicensePreCom)}")]
 <MudText Typo="Typo.h5">@L["Send alert to forward"]</MudText>
 
-<SelectMultipleUsers MultiSelection="false" Users="@_users" Functions="@_functions" Selection="@_selectedUsers" SelectionChanged="OnSelectionChanged" ></SelectMultipleUsers>
+<SelectMultipleUsers MultiSelection="false" Users="@_users" Functions="@_functions" Selection="@_selectedUsers" SelectionChanged="OnSelectionChanged"></SelectMultipleUsers>
 
 @if (_forwards is not null)
 {
@@ -16,6 +17,6 @@
 }
 @if (_selectedForward is not null)
 {
-    <MudTextField T="string?" Label="@L["Message"]" @bind-value="@_message" />
+    <MudTextField T="string?" Label="@L["Message"]" @bind-value="@_message"/>
     <MudButton OnClick="SendMessage" Disabled="_isSending">@L["Send"]</MudButton>
 }

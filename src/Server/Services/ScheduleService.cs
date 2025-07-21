@@ -666,7 +666,7 @@ public class ScheduleService : DrogeService, IScheduleService
         var description = await Database.RoosterTrainings.Where(x => x.Id == trainingId && x.DeletedOn == null)
             .Select(x => x.Description)
             .FirstOrDefaultAsync(clt);
-        if (description is not null)
+        if (!string.IsNullOrEmpty(description))
         {
             result.Description = description;
             result.Success = true;
