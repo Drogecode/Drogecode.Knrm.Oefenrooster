@@ -77,5 +77,14 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Components.DrogeCode {
                 return ResourceManager.GetString("Copy", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fout bij kopiëren.
+        /// </summary>
+        internal static string Error_copying {
+            get {
+                return ResourceManager.GetString("Error copying", resourceCulture);
+            }
+        }
     }
 }
