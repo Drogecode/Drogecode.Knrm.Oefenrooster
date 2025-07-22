@@ -12,7 +12,7 @@ public class LicenseControllerTests : BaseTest
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        SeedLicense.Seed(Tester.DataContext, Tester.DefaultCustomerId, Licenses.LicenseSharePointReports);
+        SeedLicense.Seed(Tester.DataContext, Tester.DefaultCustomerId, Licenses.L_SharePointReports);
     }
 
     [Fact]
@@ -22,55 +22,55 @@ public class LicenseControllerTests : BaseTest
         Assert.NotNull(result?.Value?.Licenses);
         Assert.True(result.Value.Success);
         Assert.NotEmpty(result.Value.Licenses);
-        result.Value.Licenses.Should().Contain(x => x.License == Licenses.LicenseSharePointReports);
-        result.Value.Licenses.Should().NotContain(x => x.License == Licenses.LicensePreCom);
+        result.Value.Licenses.Should().Contain(x => x.License == Licenses.L_SharePointReports);
+        result.Value.Licenses.Should().NotContain(x => x.License == Licenses.L_PreCom);
     }
 
     [Fact]
     public async Task GetAllLicensesOneWithFromTillInTimeTest()
     {
-        SeedLicense.Seed(Tester.DataContext, Tester.DefaultCustomerId, Licenses.LicensePreCom, DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(5));
+        SeedLicense.Seed(Tester.DataContext, Tester.DefaultCustomerId, Licenses.L_PreCom, DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(5));
         var result = await Tester.LicenseController.GetLicenseForCurrentCustomer();
         Assert.NotNull(result?.Value?.Licenses);
         Assert.True(result.Value.Success);
         Assert.NotEmpty(result.Value.Licenses);
-        result.Value.Licenses.Should().Contain(x => x.License == Licenses.LicenseSharePointReports);
-        result.Value.Licenses.Should().Contain(x => x.License == Licenses.LicensePreCom);
+        result.Value.Licenses.Should().Contain(x => x.License == Licenses.L_SharePointReports);
+        result.Value.Licenses.Should().Contain(x => x.License == Licenses.L_PreCom);
     }
     
     [Fact]
     public async Task GetAllLicensesButNotValidTest()
     {
-        SeedLicense.Seed(Tester.DataContext, Tester.DefaultCustomerId, Licenses.LicensePreCom, DateTime.UtcNow.AddDays(5), DateTime.UtcNow.AddDays(10));
+        SeedLicense.Seed(Tester.DataContext, Tester.DefaultCustomerId, Licenses.L_PreCom, DateTime.UtcNow.AddDays(5), DateTime.UtcNow.AddDays(10));
         var result = await Tester.LicenseController.GetLicenseForCurrentCustomer();
         Assert.NotNull(result?.Value?.Licenses);
         Assert.True(result.Value.Success);
         Assert.NotEmpty(result.Value.Licenses);
-        result.Value.Licenses.Should().Contain(x => x.License == Licenses.LicenseSharePointReports);
-        result.Value.Licenses.Should().NotContain(x => x.License == Licenses.LicensePreCom);
+        result.Value.Licenses.Should().Contain(x => x.License == Licenses.L_SharePointReports);
+        result.Value.Licenses.Should().NotContain(x => x.License == Licenses.L_PreCom);
     }
     
     [Fact]
     public async Task GetAllLicensesButOneExpiredTest()
     {
-        SeedLicense.Seed(Tester.DataContext, Tester.DefaultCustomerId, Licenses.LicensePreCom, DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(-1));
+        SeedLicense.Seed(Tester.DataContext, Tester.DefaultCustomerId, Licenses.L_PreCom, DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(-1));
         var result = await Tester.LicenseController.GetLicenseForCurrentCustomer();
         Assert.NotNull(result?.Value?.Licenses);
         Assert.True(result.Value.Success);
         Assert.NotEmpty(result.Value.Licenses);
-        result.Value.Licenses.Should().Contain(x => x.License == Licenses.LicenseSharePointReports);
-        result.Value.Licenses.Should().NotContain(x => x.License == Licenses.LicensePreCom);
+        result.Value.Licenses.Should().Contain(x => x.License == Licenses.L_SharePointReports);
+        result.Value.Licenses.Should().NotContain(x => x.License == Licenses.L_PreCom);
     }
     
     [Fact]
     public async Task GetAllLicensesButFromTillReversedTest()
     {
-        SeedLicense.Seed(Tester.DataContext, Tester.DefaultCustomerId, Licenses.LicensePreCom, DateTime.UtcNow.AddDays(5), DateTime.UtcNow.AddDays(-5));
+        SeedLicense.Seed(Tester.DataContext, Tester.DefaultCustomerId, Licenses.L_PreCom, DateTime.UtcNow.AddDays(5), DateTime.UtcNow.AddDays(-5));
         var result = await Tester.LicenseController.GetLicenseForCurrentCustomer();
         Assert.NotNull(result?.Value?.Licenses);
         Assert.True(result.Value.Success);
         Assert.NotEmpty(result.Value.Licenses);
-        result.Value.Licenses.Should().Contain(x => x.License == Licenses.LicenseSharePointReports);
-        result.Value.Licenses.Should().NotContain(x => x.License == Licenses.LicensePreCom);
+        result.Value.Licenses.Should().Contain(x => x.License == Licenses.L_SharePointReports);
+        result.Value.Licenses.Should().NotContain(x => x.License == Licenses.L_PreCom);
     }
 }

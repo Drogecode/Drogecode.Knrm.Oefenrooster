@@ -1049,13 +1049,13 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             {
                 Id = new Guid("f9b05a44-e0bb-42a5-9660-085d82337a60"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                License = Shared.Authorization.Licenses.LicenseSharePointReports
+                License = Shared.Authorization.Licenses.L_SharePointReports
             }));
             modelBuilder.Entity<DbLicenses>(e => e.HasData(new DbLicenses
             {
                 Id = new Guid("863b743c-a634-48b5-b507-f32edd94f2a5"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                License = Shared.Authorization.Licenses.LicensePreCom
+                License = Shared.Authorization.Licenses.L_PreCom
             }));
         }
         #endregion

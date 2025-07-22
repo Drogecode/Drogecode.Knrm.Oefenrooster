@@ -4,7 +4,7 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums
 <PageTitle>Dashboard</PageTitle>
-<AuthorizeView Roles="@nameof(Licenses.LicenseSharePointReports)">
+<AuthorizeView Roles="@nameof(Licenses.L_SharePointReports)">
     <Authorized>
         <MudTabs Rounded="true">
             <MudTabPanel Text="@L["Planner"]">
@@ -152,10 +152,17 @@
                                     var holUser = _users?.FirstOrDefault(x => x.Id == holiday.UserId);
                                     @if (holUser is not null)
                                     {
-                                        <MudListItem T="string">@holUser.Name : @holiday.Description
+                                        <MudListItem T="string">
+                                            @holUser.Name : @holiday.Description
                                             <MudText Typo="Typo.subtitle2">
                                                 (@LApp["from"]: @holiday.ValidFrom?.ToNiceString(LDateToString, isUtc: false, showtime: false) @LApp["till"]: @holiday.ValidUntil?.ToNiceString(LDateToString, isUtc: false, showtime: false))
                                             </MudText>
+                                            @if (holiday.ValidFrom <= DateTime.UtcNow && holiday.ValidUntil >= DateTime.UtcNow)
+                                            {
+                                                <MudText Typo="Typo.subtitle2">
+                                                    @LApp[(holiday.Availability ?? Availability.NotAvailable).ToString()]
+                                                </MudText>
+                                            }
                                         </MudListItem>
                                     }
                                 }

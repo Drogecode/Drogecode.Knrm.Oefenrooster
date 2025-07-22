@@ -1,8 +1,10 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+﻿// ReSharper disable InconsistentNaming
+namespace Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 
+// Add L_ to prevent conflicts with role access names.
 public enum Licenses
 {
     None = 0,
-    LicenseSharePointReports = 1,
-    LicensePreCom = 2
+    L_SharePointReports = 1,
+    L_PreCom = 2
 }

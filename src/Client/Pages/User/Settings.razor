@@ -23,7 +23,7 @@
         </AuthorizeView>
     </AuthorizeView>
     <AuthorizeView Roles="@AccessesNames.AUTH_precom_sync_calendar">
-        <AuthorizeView Roles="@nameof(Licenses.LicensePreCom)" Context="inner">
+        <AuthorizeView Roles="@nameof(Licenses.L_PreCom)" Context="inner">
             <MudText Typo="Typo.h5">@L["PreCom"]</MudText>
             @if (_settingPreComSyncCalendar is not null)
             {
