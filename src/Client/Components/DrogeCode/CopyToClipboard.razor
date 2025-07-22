@@ -12,18 +12,25 @@
 else if (TrustedHtmlText is not null)
 {
     <div>@((MarkupString)TrustedHtmlText)</div>
-    <div><MudButton OnClick='() => CopyTextToClipboard(TrustedHtmlText.Replace("<br />", "\r"))'>@L["Copy"]</MudButton></div>
+    <div>
+        <MudButton OnClick='() => CopyTextToClipboard(TrustedHtmlText.Replace("<br />", "\r"))'>@L["Copy"]</MudButton>
+    </div>
 }
 
 <script>
     window.clipboardCopy = {
         copyText: function (text, message) {
-            navigator.clipboard.writeText(text).then(function () {
+            const plainText = text
+                .replace(/<br\s*\/?>/gi, '\n')
+                .replace(/<\/p>|<\/div>/gi, '\n')
+                .replace(/<[^>]*>/g, '')
+                .replace(/\n\s*\n/g, '\n\n');
+
+            navigator.clipboard.writeText(plainText).then(function () {
                 alert(message);
-            })
-                .catch(function (error) {
-                    alert(error);
-                });
+            }).catch(function (error) {
+                alert(error);
+            });
         }
     };
 </script>
