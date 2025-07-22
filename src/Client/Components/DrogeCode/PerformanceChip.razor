@@ -1,0 +1,6 @@
+﻿@if (ElapsedMilliseconds > -2)
+{
+    <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
+        <MudChip T="string">@ElapsedMilliseconds</MudChip>
+    </AuthorizeView>
+}

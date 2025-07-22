@@ -90,6 +90,10 @@ public sealed partial class UserDetails : IDisposable
                                 _userRolesForUser.Add(role.Id);
                             }
                         }
+                        else if (_userLinkRoles is not null)
+                        {
+                            _userLinkRoles.Roles = [];
+                        }
                     }
                 }
             }
