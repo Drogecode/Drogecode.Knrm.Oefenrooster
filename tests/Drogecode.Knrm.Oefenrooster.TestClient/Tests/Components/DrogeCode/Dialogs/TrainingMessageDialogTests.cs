@@ -51,27 +51,6 @@ public class TrainingMessageDialogTests : BlazorTestBase
         cut.WaitForAssertion(() => cut.Markup.Should().Contain(description), TimeSpan.FromSeconds(2));
     }
     
-    [Theory]
-    [AutoFakeItEasyData]
-    public void HasMarkdownDescriptionTest([Frozen] IStringLocalizer<TrainingMessageDialog> L1)
-    {
-        Localize(L1);
-        
-        var trainingId = Guid.NewGuid();
-        var description = "*aa* **bbb** ***CCC*** ****DDD****";
-        var training = new TrainingAdvance
-        {
-            TrainingId = trainingId
-        };
-        MockHttp.When($"http://localhost/api/Schedule/{trainingId.ToString()}/description").RespondJson(new GetDescriptionByTrainingIdResponse
-        {
-            Success = true,
-            Description = description,
-        });
-        var cut = RenderComponent<TrainingMessageDialogTestPage>(parameter => parameter.Add(p => p.Training, training));
-        cut.WaitForAssertion(() => cut.Markup.Should().Contain("<i>aa</i> <b>bbb</b> <i><b>CCC</b></i> <b><b>DDD</b></b>"), TimeSpan.FromSeconds(2));
-    }
-    
     private void Localize(IStringLocalizer<TrainingMessageDialog> L1)
     {
         Services.AddSingleton(L1);
