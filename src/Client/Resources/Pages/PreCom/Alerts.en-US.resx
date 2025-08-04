@@ -156,4 +156,7 @@
   <data name="No problems found" xml:space="preserve">
     <value>No problems found</value>
   </data>
+  <data name="NextSunday" xml:space="preserve">
+    <value>Until next Sunday</value>
+  </data>
 </root>

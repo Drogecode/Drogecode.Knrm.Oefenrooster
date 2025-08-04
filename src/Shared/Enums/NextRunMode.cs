@@ -6,4 +6,5 @@ public enum NextRunMode
     NextHour = 1,
     TodayTomorrow = 2,
     NextWeek = 3,
+    NextSunday = 4,
 }

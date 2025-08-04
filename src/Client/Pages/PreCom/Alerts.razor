@@ -8,6 +8,7 @@
         <MudSelectItem Value="NextRunMode.None" Disabled="true">@L["Select option"]</MudSelectItem>
         @*<MudSelectItem Value="NextRunMode.NextHour">@NextRunMode.NextHour</MudSelectItem>*@
         <MudSelectItem Value="NextRunMode.TodayTomorrow">@L[NextRunMode.TodayTomorrow.ToString()]</MudSelectItem>
+        <MudSelectItem Value="NextRunMode.NextSunday">@L[NextRunMode.NextSunday.ToString()]</MudSelectItem>
         <MudSelectItem Value="NextRunMode.NextWeek">@L[NextRunMode.NextWeek.ToString()]</MudSelectItem>
     </MudSelect>
     @if (!string.IsNullOrWhiteSpace(_problemText))

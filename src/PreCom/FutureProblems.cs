@@ -72,6 +72,16 @@ public class FutureProblems
                 }
 
                 break;
+            case NextRunMode.NextSunday:
+                var untilSunday = await _preComClient.GetOccupancyLevels(
+                    userGroups[0].GroupID, _dateTimeProvider.Today(), _dateTimeProvider.Today().AddDays(8 - (int)_dateTimeProvider.Today().DayOfWeek)
+                );
+                foreach (var day in untilSunday.Where(day => day.Value == -1))
+                {
+                    await GetMissingForDate(response, userGroups[0].GroupID, day.Key);
+                }
+
+                break;
         }
 
         if (response.Problems is not null)

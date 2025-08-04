@@ -156,4 +156,7 @@
   <data name="No problems found" xml:space="preserve">
     <value>Geen problemen gevonden, selecteer een langere termijn</value>
   </data>
+  <data name="NextSunday" xml:space="preserve">
+    <value>Tot en met aankomende zondag</value>
+  </data>
 </root>
