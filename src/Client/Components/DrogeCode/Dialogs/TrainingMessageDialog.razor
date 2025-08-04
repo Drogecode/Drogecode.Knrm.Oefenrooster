@@ -1,8 +1,9 @@
-﻿<MudDialog Visible="@Visible">
+﻿@using Tizzani.MudBlazor.HtmlEditor
+<MudDialog Visible="@Visible">
     <DialogContent>
         @if (_description?.Description is not null)
         {
-            <MudMarkdown Value="@_description.Description" />
+            <MudHtmlViewer Html="@_description.Description" Borderless="true"/>
         }
         else if (_description is not null)
         {
@@ -10,7 +11,7 @@
         }
         else
         {
-            <DrogeLoading />
+            <DrogeLoading/>
         }
     </DialogContent>
 </MudDialog>
