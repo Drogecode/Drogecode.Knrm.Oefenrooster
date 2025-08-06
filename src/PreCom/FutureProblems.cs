@@ -133,70 +133,57 @@ public class FutureProblems
     {
         if (function?.OccupancyDays[date] is null) return string.Empty;
         var result = new StringBuilder();
+        var start = DateTime.MinValue;
+        var end = DateTime.MinValue;
         var last = false;
-        var firstProblemHour = 0;
-        var i = 0;
         var isToday = _dateTimeProvider.Today().Equals(date.Date);
-        foreach (var hour in function.OccupancyDays[date].Where(x => !x.Key.Contains('_')))
+        var availabilitySets = new List<AvailabilitySet>();
+        foreach (var hourKey in function.OccupancyDays[date])
         {
-            if (isToday && i < _dateTimeProvider.Now().Hour)
+            var subInfo = hourKey.Key[4..].Split('_');
+            var hour = int.Parse(subInfo[0]);
+            var minute = int.Parse(subInfo.Length > 1 ? subInfo[1] : "0");
+            availabilitySets!.Add(new AvailabilitySet
             {
-                i++;
+                Start = date.AddHours(hour).AddMinutes(minute),
+                Available = hourKey.Value ?? false
+            });
+        }
+
+        foreach (var availabilitySet in availabilitySets.OrderBy(x => x.Start))
+        {
+            if (false && isToday && availabilitySet.Start < _dateTimeProvider.Now())
+            {
+                // Ignore server time is not .Now()
                 continue;
             }
 
-            if (hour.Value == true)
+            if (availabilitySet.Available == true)
             {
                 if (!last)
                 {
                     last = true;
-                    firstProblemHour = i;
+                    start = availabilitySet.Start;
                 }
             }
             else
             {
-                last = AddProblemText();
+                AddProblemText(start, availabilitySet.Start);;
             }
-
-            i++;
+            end = availabilitySet.Start;
         }
 
-        AddProblemText();
+        AddProblemText(start, end.AddMinutes(15));
         return result.ToString();
 
-        bool AddProblemText()
+        void AddProblemText(DateTime start, DateTime end)
         {
             if (last)
             {
                 last = false;
-                result.Append($"van {firstProblemHour} tot {i}<br />");
+                var endText = string.Equals(end.ToShortTimeString(), "00:00") ? "24" : end.ToHourWithOptionalMinutes();
+                result.Append($"van {start.ToHourWithOptionalMinutes()} tot {endText}<br />");
             }
-
-            return last;
-        }
-    }
-
-    private async Task SendMessage(Group[] userGroups)
-    {
-        if (false)
-        {
-            // Does not work
-            await _preComClient.SendMessage(new MsgSend
-            {
-                SendBy = 37398, //7457,
-                CalculateGroupID = userGroups[0].GroupID,
-                ValidFrom = DateTime.Now,
-                Message = "test",
-                Priority = true,
-                Receivers = new List<MsgReceivers>
-                {
-                    new MsgReceivers
-                    {
-                        ID = 37398,
-                        Type = 0,
-                    }
-                }
-            });
         }
     }
 }

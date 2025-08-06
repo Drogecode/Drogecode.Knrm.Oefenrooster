@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Drogecode.Knrm.Oefenrooster.PreCom;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -30,22 +31,28 @@ try
     var preComUser = config.GetValue<string>("PreCom:User");
     var preComPassword = config.GetValue<string>("PreCom:Password");
 
-    await preComClient.Login(preComUser, preComPassword);
-    /*var preComWorker = new PreComWorker(preComClient, logger, new DateTimeService());
-    var problems = await preComWorker.Work(NextRunMode.NextWeek);
-    logger.LogInformation(problems.ToString());*/
+    if (true)
+    {
+        await preComClient.Login(preComUser, preComPassword);
+        var futureProblems = new FutureProblems(preComClient, logger, new DateTimeProvider());
+        var problems = await futureProblems.Work(NextRunMode.NextWeek);
+        logger.LogInformation(problems.ToString());
+    }
 
-    var preComWorker = new AvailabilityForUser(preComClient, logger, new DateTimeProvider());
-    var piket = await preComWorker.Get([37398, 29539, 7443], DateTime.Today.AddDays(3));
+    if (false)
+    {
+        var preComWorker = new AvailabilityForUser(preComClient, logger, new DateTimeProvider());
+        var piket = await preComWorker.Get([37398, 29539, 7443], DateTime.Today.AddDays(3));
 
-    var userGroups = await preComClient.GetAllUserGroups();
-    var groupInfo = await preComClient.GetAllFunctions(userGroups[0].GroupID, DateTime.Today);
-    var schipper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM schipper"));
-    var opstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM opstapper"));
-    var aankOpstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM Aank. Opstapper"));
+        var userGroups = await preComClient.GetAllUserGroups();
+        var groupInfo = await preComClient.GetAllFunctions(userGroups[0].GroupID, DateTime.Today);
+        var schipper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM schipper"));
+        var opstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM opstapper"));
+        var aankOpstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM Aank. Opstapper"));
 
-    var userId = opstapper?.Users.FirstOrDefault(x => x.FullName == "HUI Taco Droogers")?.UserID ?? -1; //37398
-
+        var userId = opstapper?.Users.FirstOrDefault(x => x.FullName == "HUI Taco Droogers")?.UserID ?? -1; //37398
+    }
+    
     //await preComClient.TestGetA(userId, userGroups[0].GroupID, DateTime.Today, DateTime.Today.AddDays(7));
     //await preComClient.TestGetB(userGroups[0].GroupID, DateTime.Today, DateTime.Today.AddDays(3));
     //await preComClient.TestGetC(DateTime.Today, DateTime.Today.AddDays(3));
