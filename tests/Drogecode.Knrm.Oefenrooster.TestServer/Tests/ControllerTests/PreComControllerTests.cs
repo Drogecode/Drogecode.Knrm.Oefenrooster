@@ -39,7 +39,7 @@ public class PreComControllerTests : BaseTest
         Assert.True(result.Value.Success);
         result.Value.PreComAlerts.Should().NotBeNull();
         result.Value.PreComAlerts.Should().NotBeEmpty();
-        result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("Uitruk voorstel:\r\nKNRM schipper: 1\r\nHUI Mark van den Brink\r\nKNRM opstapper: 1\r\nHUI Ferry Mol\r\nKNRM algemeen: 2\r\nHUI Laurens Klijn,\r\nHUI Ruben de Ronde\r\n\r\nNiet ingedeeld:\r\nHUI Laurens van Slooten\r\n\r\nHUI PRIO 2 MARITIEME HULPVERLENING"));
+        result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("Uitruk voorstel:\nKNRM schipper: 1\nHUI Mark van den Brink\nKNRM opstapper: 1\nHUI Ferry Mol\nKNRM algemeen: 2\nHUI Laurens Klijn,\nHUI Ruben de Ronde\n\nNiet ingedeeld:\nHUI Laurens van Slooten\n\nHUI PRIO 2 MARITIEME HULPVERLENING"));
         result.Value.PreComAlerts.Should().Contain(x => x.SendTime.Equals(new DateTime(2023, 08, 11, 15, 17, 43, 373)));
     }
 
@@ -55,7 +55,7 @@ public class PreComControllerTests : BaseTest
         Assert.True(result.Value.Success);
         result.Value.PreComAlerts.Should().NotBeNull();
         result.Value.PreComAlerts.Should().NotBeEmpty();
-        result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("U bent ingedeeld als KNRM Aank. Opstapper\r\n\r\nPrio 1, Vaartuig motor / stuur problemen, HUI"));
+        result.Value.PreComAlerts.Should().Contain(x => x.Alert.Equals("U bent ingedeeld als KNRM Aank. Opstapper\n\nPrio 1, Vaartuig motor / stuur problemen, HUI"));
         result.Value.PreComAlerts.Should().Contain(x => x.SendTime.Equals(new DateTime(2024, 04, 05, 13, 25, 19, 591)));
     }
 
