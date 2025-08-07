@@ -7,8 +7,8 @@ using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom;
 using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
-using System.Diagnostics;
 using System.Text.Json;
+using Ganss.Xss;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -46,9 +46,10 @@ public class PreComService : DrogeService, IPreComService
         return preComClient;
     }
 
-    public async Task<MultiplePreComAlertsResponse> GetAllAlerts(Guid userId, Guid customerId, int take, int skip, CancellationToken clt)
+    public async Task<MultiplePreComAlertsResponse> GetAllAlerts(Guid userId, Guid customerId, int take, int skip, bool includeRaw, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
+        var sanitizer = new HtmlSanitizer();
         var result = new MultiplePreComAlertsResponse { PreComAlerts = new List<PreComAlert>() };
         var fromDb = Database.PreComAlerts.Where(x => x.CustomerId == customerId && x.UserId == userId).OrderByDescending(x => x.SendTime);
         foreach (var alert in await fromDb.Skip(skip).Take(take).ToListAsync(clt))
@@ -56,10 +57,10 @@ public class PreComService : DrogeService, IPreComService
             result.PreComAlerts.Add(new PreComAlert
             {
                 Id = alert.Id,
-                Alert = alert.Alert,
+                Alert = sanitizer.Sanitize(alert.Alert ?? string.Empty),
                 SendTime = alert.SendTime,
                 Priority = alert.Priority,
-                RawJson = alert.Raw,
+                RawJson = includeRaw ? sanitizer.Sanitize(alert.Raw ?? string.Empty) : string.Empty,
             });
         }
 
@@ -82,7 +83,7 @@ public class PreComService : DrogeService, IPreComService
             priority = null;
             return CacheHelper.FOUND_IN_CACHE;
         }
-        
+
         var jsonSerializerOptions = new JsonSerializerOptions()
         {
             Converters = { new PreComConverter() }

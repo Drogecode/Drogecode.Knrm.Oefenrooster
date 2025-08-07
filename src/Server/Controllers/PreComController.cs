@@ -133,7 +133,8 @@ public class PreComController : DrogeController
         {
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var result = await _preComService.GetAllAlerts(userId, customerId, take, skip, clt);
+            var includeRaw = User.IsInRole(AccessesNames.AUTH_super_user);
+            var result = await _preComService.GetAllAlerts(userId, customerId, take, skip, includeRaw, clt);
             return result;
         }
         catch (Exception ex)

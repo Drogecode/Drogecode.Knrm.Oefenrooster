@@ -2,6 +2,8 @@
 
 public static class DefaultSettingsHelper
 {
+    // I still have to implement a way to force updating. The button is now an annoyance but does not force updating.
+    
     /// <summary>
     /// Current version, set by tag while compiling release code.
     /// </summary>

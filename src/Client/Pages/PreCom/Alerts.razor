@@ -1,7 +1,7 @@
 ﻿@page "/precom/alerts"
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom
-@attribute [Authorize (Roles = nameof(Licenses.L_PreCom))]
+@attribute [Authorize(Roles = nameof(Licenses.L_PreCom))]
 <AuthorizeView Roles="@AccessesNames.AUTH_precom_problems">
     <MudText Typo="Typo.h5">@L["PreCom problems"]</MudText>
     <MudSelect T="NextRunMode" ValueChanged="Problems" Disabled="_loadingProblems">
@@ -27,33 +27,51 @@
 <MudText Typo="Typo.h5">@L["PreCom alerts"]</MudText>
 @if (_alerts?.PreComAlerts is not null)
 {
-    <MudDataGrid Items="@_alerts.PreComAlerts.OrderByDescending(x => x.SendTime)"
-                 ReadOnly="true" EditMode="@DataGridEditMode.Cell">
-        <Columns>
-            <HierarchyColumn T="PreComAlert"/>
-            <PropertyColumn Property="x => x.Priority" Title="Nr"/>
-            <PropertyColumn Property="x => x.SendTime" Title="@L["SendTime"]">
-                <CellTemplate>
-                    <DateToString DateTimeUtc="context.Item.SendTime" ShowDate="true" ShowTime="true"/>
-                </CellTemplate>
-            </PropertyColumn>
-            <PropertyColumn Property="x => x.Alert" Title="@L["Alert"]"/>
-        </Columns>
-        <ChildRowContent>
-            <MudCard>
-                <MudCardHeader>
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h6">@context.Item.Alert</MudText>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                <MudCardContent>
-                    <pre>
+    <AuthorizeView Roles="@AccessesNames.AUTH_super_user" Context="inner">
+        <Authorized>
+            <MudDataGrid Items="@_alerts.PreComAlerts.OrderByDescending(x => x.SendTime)"
+                         ReadOnly="true" EditMode="@DataGridEditMode.Cell" SortMode="SortMode.None">
+                <Columns>
+                    <HierarchyColumn T="PreComAlert"/>
+                    <PropertyColumn Property="x => x.Priority" Title="Nr"/>
+                    <PropertyColumn Property="x => x.SendTime" Title="@L["SendTime"]">
+                        <CellTemplate>
+                            <DateToString DateTimeUtc="context.Item.SendTime" ShowDate="true" ShowTime="true"/>
+                        </CellTemplate>
+                    </PropertyColumn>
+                    <PropertyColumn Property="x => x.Alert" Title="@L["Alert"]"/>
+                </Columns>
+                <ChildRowContent>
+                    <MudCard>
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6">@context.Item.Alert</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <pre>
                         @(JsonPrettify(context.Item.RawJson))
                     </pre>
-                </MudCardContent>
-            </MudCard>
-        </ChildRowContent>
-    </MudDataGrid>
+                        </MudCardContent>
+                    </MudCard>
+                </ChildRowContent>
+            </MudDataGrid>
+        </Authorized>
+        <NotAuthorized>
+            <MudDataGrid Items="@_alerts.PreComAlerts.OrderByDescending(x => x.SendTime)"
+                         ReadOnly="true" EditMode="@DataGridEditMode.Cell" SortMode="SortMode.None">
+                <Columns>
+                    <PropertyColumn Property="x => x.Priority" Title="Nr"/>
+                    <PropertyColumn Property="x => x.SendTime" Title="@L["SendTime"]">
+                        <CellTemplate>
+                            <DateToString DateTimeUtc="context.Item.SendTime" ShowDate="true" ShowTime="true"/>
+                        </CellTemplate>
+                    </PropertyColumn>
+                    <PropertyColumn Property="x => x.Alert" Title="@L["Alert"]"/>
+                </Columns>
+            </MudDataGrid>
+        </NotAuthorized>
+    </AuthorizeView>
     @if (_alerts.TotalCount > _count)
     {
         <MudPagination Disabled="_bussy" ShowFirstButton="true" ShowLastButton="true" Count="@(Convert.ToInt32(Math.Ceiling((double)_alerts.TotalCount / (double)_count)))" Selected="_currentPage"
