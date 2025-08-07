@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
@@ -19,7 +20,7 @@ public static class RoosterTrainingMapper
             IsPinned = roosterTraining.IsPinned,
             IsPermanentPinned = roosterTraining.IsPermanentPinned,
             ShowTime = roosterTraining.ShowTime ?? false,
-            HasDescription = !string.IsNullOrWhiteSpace(roosterTraining.Description),
+            HasDescription = !roosterTraining.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
         };
         if (roosterTraining?.RoosterAvailables is not null && userId is not null)
         {
@@ -51,7 +52,7 @@ public static class RoosterTrainingMapper
             IsPermanentPinned = roosterTraining.IsPermanentPinned,
             ShowTime = roosterTraining.ShowTime ?? true,
             TrainingTypeName = roosterTraining.RoosterTrainingType?.Name,
-            HasDescription = !string.IsNullOrWhiteSpace(roosterTraining.Description),
+            HasDescription = !roosterTraining.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
         };
         if (roosterTraining.RoosterAvailables is not null)
         {

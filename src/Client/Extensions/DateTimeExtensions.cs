@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Extensions;
 
-public static partial class DateTimeExtension
+public static partial class DateTimeExtensions
 {
     public static string ToNiceString(this DateTime dateTime, IStringLocalizer<DateToString> localizer, bool isUtc = true, bool showDayOfWeek = false, bool showDate = true, bool showtime = true)
     {

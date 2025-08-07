@@ -4,7 +4,7 @@ using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Extensions;
 
-public class DateTimeExtensionTests
+public class DateTimeExtensionsTests
 {
     [Theory]
     [AutoFakeItEasyData]

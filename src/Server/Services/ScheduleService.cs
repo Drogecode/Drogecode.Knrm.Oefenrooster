@@ -91,7 +91,7 @@ public class ScheduleService : DrogeService, IScheduleService
                         IsPinned = training.IsPinned,
                         IsPermanentPinned = training.IsPermanentPinned,
                         ShowTime = training.ShowTime ?? true,
-                        HasDescription = !string.IsNullOrWhiteSpace(training.Description),
+                        HasDescription = !training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
                         LinkedReports = training.LinkReportTrainingRoosterTrainings?.Count ?? 0
                     });
                 }
@@ -476,7 +476,7 @@ public class ScheduleService : DrogeService, IScheduleService
                             IsPinned = training.IsPinned,
                             IsPermanentPinned = training.IsPermanentPinned,
                             ShowTime = training.ShowTime ?? true,
-                            HasDescription = !string.IsNullOrWhiteSpace(training.Description),
+                            HasDescription = !training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
                             LinkedReports = training.LinkReportTrainingRoosterTrainings?.Count ?? 0
                         };
                         foreach (var user in users)
@@ -1026,7 +1026,7 @@ public class ScheduleService : DrogeService, IScheduleService
                 CountToTrainingTarget = schedule.Training.CountToTrainingTarget,
                 IsCreated = true,
                 ShowTime = schedule.Training.ShowTime ?? true,
-                HasDescription = !string.IsNullOrWhiteSpace(schedule.Training.Description),
+                HasDescription = !schedule.Training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
                 LinkedReports = schedule.Training.LinkReportTrainingRoosterTrainings?.Count ?? 0,
                 PlanUsers = schedule.Training.RoosterAvailables!.Select(a =>
                     new PlanUser
@@ -1135,7 +1135,7 @@ public class ScheduleService : DrogeService, IScheduleService
                 IsPinned = training.IsPinned,
                 IsPermanentPinned = training.IsPermanentPinned,
                 ShowTime = training.ShowTime ?? true,
-                HasDescription = !string.IsNullOrWhiteSpace(training.Description),
+                HasDescription = !training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
             });
         }
 

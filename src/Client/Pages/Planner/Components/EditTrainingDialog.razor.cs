@@ -5,6 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
@@ -298,7 +299,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 IsPinned = _training.IsPinned,
                 IsPermanentPinned = _training.IsPermanentPinned,
                 ShowTime = _training.ShowTime,
-                HasDescription = !string.IsNullOrWhiteSpace(_training.Description)
+                HasDescription = !_training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false
             };
         }
         else
@@ -314,7 +315,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             Planner.IsPinned = _training.IsPinned;
             Planner.IsPermanentPinned = _training.IsPermanentPinned;
             Planner.ShowTime = _training.ShowTime;
-            Planner.HasDescription = !string.IsNullOrWhiteSpace(_training.Description);
+            Planner.HasDescription = !_training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false;
         }
     }
 
