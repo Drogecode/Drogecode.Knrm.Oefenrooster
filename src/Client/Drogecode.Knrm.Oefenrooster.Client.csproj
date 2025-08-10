@@ -9,11 +9,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Remove="Pages\Planner\Components\CalendarBaseCard.razor" />
-	  <Content Remove="wwwroot\js\LocalStorageAccessor.ts" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Blazor-ApexCharts" Version="6.0.1" />
 		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 		<PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
@@ -27,14 +22,14 @@
 		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.8" />
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.8" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="9.0.8" />
-		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.8.3">
+		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.9.2">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="MudBlazor" Version="8.11.0" />
 		<PackageReference Include="MudBlazor.Markdown" Version="8.11.0" />
 		<PackageReference Include="MudBlazor.Translations" Version="2.5.0" />
-		<PackageReference Include="Tizzani.MudBlazor.HtmlEditor" Version="2.3.0" />
+		<PackageReference Include="MudExRichTextEditor" Version="8.5.2" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -47,194 +42,9 @@
 	</ItemGroup>
 	
 	<Import Project="JsLib/tailwindcss.targets" />
-
-	<Target Name="CopyQuillFiles" AfterTargets="Build">
-		<ItemGroup>
-			<QuillJs Include="JsLib/node_modules/quill/dist/quill.js" />
-			<QuillCoreJs Include="JsLib/node_modules/quill/dist/quill.core.js" />
-			<QuillCss Include="JsLib/node_modules/quill/dist/quill.snow.css" />
-			<QuillCss Include="JsLib/node_modules/quill/dist/quill.bubble.css" />
-			<QuillCss Include="JsLib/node_modules/quill/dist/quill.core.css" />
-		</ItemGroup>
-		<Copy SourceFiles="@(QuillJs)" DestinationFolder="wwwroot/js/npm/quill/" SkipUnchangedFiles="true" />
-		<Copy SourceFiles="@(QuillCoreJs)" DestinationFolder="wwwroot/js/npm/quill/" SkipUnchangedFiles="true" />
-		<Copy SourceFiles="@(QuillCss)" DestinationFolder="wwwroot/js/npm/quill/" SkipUnchangedFiles="true" />
-	</Target>
-	
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="Pages\Planner\Components\CalendarBaseCard.razor" />
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <_ContentIncludedByDefault Remove="Pages\Planner\Components\CalendarBaseCard.razor" />
-	  <_ContentIncludedByDefault Remove="Components\DrogeCode\DataGrid\DateTimeTemplate.razor" />
-	</ItemGroup>
 	
 	<ItemGroup>
 	  <Folder Include="wwwroot\Images\PreCom\" />
 	</ItemGroup>
 	
-	<ItemGroup>
-	  <EmbeddedResource Update="Resources\Components\DrogeCode\CopyToClipboard.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>CopyToClipboard.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\PreCom\ForwardList.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>ForwardList.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Configuration\Components\MonthItemDialog.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>MonthItemDialog.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Configuration\Components\MonthItemDialog.en-US.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>MonthItemDialog.en-US.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Planner\Components\ScheduleCalendar.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>ScheduleCalendar.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Dashboard\Components\StatisticsTab.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>ChartsTab.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Configuration\UserRolesEdit.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>UserRolesEdit.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\User\AddEditLinkMail.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>AddEditLinkMail.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\User\Components\ActivateEmailDialog.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>ActivateEmailDialog.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Configuration\DefaultConfig.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>DefaultConfig.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Configuration\Vehicle.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>Vehicle.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Configuration\UserFunctions.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>UserFunctions.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Configuration\UserRoles.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>UserRoles.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Dashboard\Components\Dialogs\ShareActionDialog.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>ShareActionDialog.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Components\DrogeCode\Dialogs\TrainingMessageDialog.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>TrainingMessageDialog.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Components\DrogeCode\ReadMoreChip.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>ReadMoreChip.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Pages\Planner\Calendar.nl-NL.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>Calendar.nl-NL.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <Compile Update="Resources\Components\DrogeCode\CopyToClipboard.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>CopyToClipboard.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Pages\PreCom\ForwardList.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>ForwardList.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Pages\Configuration\Components\MonthItemDialog.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>MonthItemDialog.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Pages\Configuration\Components\MonthItemDialog.en-US.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>MonthItemDialog.en-US.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Pages\Planner\Components\ScheduleCalendar.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>ScheduleCalendar.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Pages\Dashboard\Components\StatisticsTab.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>StatisticsTab.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Pages\Configuration\UserRolesEdit.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>UserRolesEdit.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Pages\User\AddEditLinkMail.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>AddEditLinkMail.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Pages\User\Components\ActivateEmailDialog.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>ActivateEmailDialog.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Pages\Configuration\DefaultConfig.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>DefaultConfig.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Pages\Configuration\Vehicle.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Vehicle.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Pages\Configuration\UserFunctions.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>UserFunctions.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Pages\Configuration\UserRoles.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>UserRoles.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Pages\Dashboard\Components\Dialogs\ShareActionDialog.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>ShareActionDialog.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Components\DrogeCode\Dialogs\TrainingMessageDialog.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>TrainingMessageDialog.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Components\DrogeCode\ReadMoreChip.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>ReadMoreChip.nl-NL.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Resources\Pages\Planner\Calendar.nl-NL.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Calendar.nl-NL.resx</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <TypeScriptCompile Remove="wwwroot\js\empty.ts" />
-	</ItemGroup>
-
 </Project>

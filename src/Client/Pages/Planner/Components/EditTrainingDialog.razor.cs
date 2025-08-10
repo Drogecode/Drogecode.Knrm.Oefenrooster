@@ -7,6 +7,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using MudExRichTextEditor;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
@@ -43,6 +44,7 @@ public sealed partial class EditTrainingDialog : IDisposable
 #endif
     private string[] _errors = Array.Empty<string>();
     [AllowNull] private MudForm _form = null!;
+    private MudExRichTextEdit? _editor;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

@@ -1,0 +1,14 @@
+﻿@using MudBlazor.Extensions.Core
+@using MudExRichTextEditor
+@if (!string.IsNullOrEmpty(Text))
+{
+    <div>
+        <MudExRichTextEdit @ref="@_editor"
+                           ReadOnly="true"
+                           Value="@Text"
+                           BackgroundColor="MudExColor.Inherit">
+            <ToolbarContent>
+            </ToolbarContent>
+        </MudExRichTextEdit>
+    </div>
+}

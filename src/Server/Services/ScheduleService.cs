@@ -234,6 +234,7 @@ public class ScheduleService : DrogeService, IScheduleService
         var sw = StopwatchProvider.StartNew();
         var result = new PatchTrainingResponse();
         var sanitizer = new HtmlSanitizer();
+        sanitizer.AllowedAttributes.Add("data-list");
         var oldTraining = await Database.RoosterTrainings
             .Include(x => x.RoosterAvailables)
             .Where(x => x.Id == patchedTraining.TrainingId)

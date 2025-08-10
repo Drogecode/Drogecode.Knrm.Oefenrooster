@@ -1,5 +1,6 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
-@using Tizzani.MudBlazor.HtmlEditor
+﻿@using MudExRichTextEditor.Types
+@using MudExRichTextEditor
+
 <MudDialog>
     <TitleContent>
         @if (_showPadlock)
@@ -33,9 +34,41 @@
                 <MudTextField Label="@L["Name"]" @bind-Value="@_training.Name" Counter="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE"
                               Immediate="true" data-testid="training-name"/>
                 <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_description_edit">
-                    <MudHtmlEditor Html="@_training.Description" HtmlChanged="DescriptionChanged">
-                        <MudHtmlToolbarOptions InsertImage="false" Align="false" Indent="false" HorizontalRule="false" CodeBlock="false"/>
-                    </MudHtmlEditor>
+                    <MudExRichTextEdit @ref="@_editor"
+                                       ReadOnly="false"
+                                       Height="444"
+                                       Class="m-2"
+                                       Placeholder="Edit html"
+                                       ValueHtmlBehavior="GetHtmlBehavior.InnerHtml"
+                                       @bind-Value="@_training.Description">
+                        <ToolbarContent>
+                            <select class="ql-header">
+                                <option selected=""></option>
+                                <option value="1"></option>
+                                <option value="2"></option>
+                                <option value="3"></option>
+                                <option value="4"></option>
+                                <option value="5"></option>
+                            </select>
+                            <span class="ql-formats">
+                                <button class="ql-bold"></button>
+                                <button class="ql-italic"></button>
+                                <button class="ql-underline"></button>
+                                <button class="ql-strike"></button>
+                            </span>
+                            <span class="ql-formats">
+                                <select class="ql-color"></select>
+                                <select class="ql-background"></select>
+                            </span>
+                            <span class="ql-formats">
+                                <button class="ql-list" value="ordered"></button>
+                                <button class="ql-list" value="bullet"></button>
+                            </span>
+                            <span class="ql-formats">
+                                <button class="ql-link"></button>
+                            </span>
+                        </ToolbarContent>
+                    </MudExRichTextEdit>
                     @if (_descriptionToLong)
                     {
                         <MudAlert Severity="Severity.Warning">@L["Description to long {0}/{1}", _training.Description?.Length ?? -1, DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION]</MudAlert>

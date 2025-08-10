@@ -1,9 +1,10 @@
-﻿@using Tizzani.MudBlazor.HtmlEditor
+﻿@using MudExRichTextEditor
+@using Drogecode.Knrm.Oefenrooster.Client.Components.MudExRichText
 <MudDialog Visible="@Visible">
     <DialogContent>
         @if (_description?.Description is not null)
         {
-            <MudHtmlViewer Html="@_description.Description" Borderless="true"/>
+            <MudExRichTextReader Text="@_description.Description"/>
         }
         else if (_description is not null)
         {
