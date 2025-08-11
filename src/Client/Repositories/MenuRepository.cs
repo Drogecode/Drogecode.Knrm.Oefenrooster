@@ -16,12 +16,20 @@ public class MenuRepository
         _menuClient = menuClient;
         _offlineService = offlineService;
     }
-    
+
     public async Task<List<DrogeMenu>?> GetAllAsync(bool forceCache, bool cachedAndReplace, CancellationToken clt)
     {
         var response = await _offlineService.CachedRequestAsync(string.Format(MENUS),
-            async () => await _menuClient.GetAllAsync(clt), 
-            new ApiCachedRequest { OneCallPerSession = true, ForceCache = forceCache, CachedAndReplace = cachedAndReplace},
+            async () => await _menuClient.GetAllAsync(clt),
+            new ApiCachedRequest
+            {
+                OneCallPerSession = true,
+                OneCallPerCache = true,
+                ForceCache = forceCache,
+                CachedAndReplace = cachedAndReplace,
+                ExpireSession = DateTime.UtcNow.AddDays(1),
+                ExpireLocalStorage = DateTime.UtcNow.AddDays(30)
+            },
             clt: clt);
         return response?.Menus?.ToList();
     }

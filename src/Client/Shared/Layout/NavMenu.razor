@@ -60,7 +60,7 @@
     @if (_menuItems is not null)
     {
         var menuItems = _menuItems.ToList();
-        @CustomerMenu(menuItems)
+        @CustomerMenu((menuItems, 0))
     }
     <MudDivider/>
     @if (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriCalendar.Substring(1)) ||
@@ -84,26 +84,25 @@
 </MudNavMenu>
 
 @code{
-
-    private RenderFragment<List<DrogeMenu>> CustomerMenu => menuItems =>
-        @<div>
+    private RenderFragment<(List<DrogeMenu> menuItems, int depth)> CustomerMenu => value =>
+        @<div id="@($"menu-depth-{value.depth}")">
             @{
                 DrogeMenu prev = null;
             }
             @while (true)
             {
-                var menu = menuItems.FirstOrDefault();
+                var menu = value.menuItems.FirstOrDefault();
                 if (menu is null || !menu.IsGroup && prev is not null && !menu.ParentId.Equals(prev.ParentId)) break;
-                menuItems.Remove(menu);
+                value.menuItems.Remove(menu);
                 try
                 {
                     if (menu.IsGroup)
                     {
                         <MudNavGroup Title="@menu.Text" Expanded="@_useFullLinkExpanded" ExpandedChanged="UseFullLinksExpandedChanged">
                             @{
-                                var subMenu = menuItems.ToList();
+                                var subMenu = value.menuItems.ToList();
                             }
-                            @CustomerMenu(subMenu)
+                            @CustomerMenu((subMenu, value.depth + 1))
                         </MudNavGroup>
                     }
                     else

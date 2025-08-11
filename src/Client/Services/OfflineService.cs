@@ -30,7 +30,10 @@ public class OfflineService : IOfflineService
             if (clt.IsCancellationRequested) return default(TRes);
             request ??= new ApiCachedRequest();
             if (request.CachedAndReplace)
-                _ = Task.Run(function);
+            {
+                var requestCopy = request;
+                _ = Task.Run(async () => await RunSaveAndReturn(cacheKey, function, requestCopy, clt), clt);
+            }
 
             if ((request.CachedAndReplace || request.OneCallPerSession) && !request.ForceCache)
             {
@@ -48,11 +51,7 @@ public class OfflineService : IOfflineService
 
             if (!request.CachedAndReplace)
             {
-                var result = await function();
-                await _localStorageExpireService.SetItemAsync(cacheKey, result, request.ExpireLocalStorage, clt);
-                if (request.OneCallPerSession)
-                    await _sessionStorageExpireService.SetItemAsync(cacheKey, result, request.ExpireSession, clt);
-                return result;
+                return await RunSaveAndReturn(cacheKey, function, request, clt);
             }
         }
         catch (HttpRequestException)
@@ -108,13 +107,23 @@ public class OfflineService : IOfflineService
         return default(TRes);
     }
 
+    private async Task<TRes> RunSaveAndReturn<TRes>(string cacheKey, Func<Task<TRes>> function, ApiCachedRequest request, CancellationToken clt)
+    {
+        var result = await function();
+        await _localStorageExpireService.SetItemAsync(cacheKey, result, request.ExpireLocalStorage, clt);
+        if (request.OneCallPerSession)
+            await _sessionStorageExpireService.SetItemAsync(cacheKey, result, request.ExpireSession, clt);
+        return result;
+    }
+
     public async Task<bool> SetUser()
     {
         var authState = await _customStateProvider.GetAuthenticationStateAsync();
         var userClaims = authState.User;
         if (userClaims?.Identity?.IsAuthenticated ?? false)
         {
-            if (!Guid.TryParse(userClaims.Identities.FirstOrDefault()!.Claims.FirstOrDefault(x => x.Type.Equals("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value, out var userId))
+            if (!Guid.TryParse(userClaims.Identities.FirstOrDefault()!.Claims.FirstOrDefault(x => x.Type.Equals("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value,
+                    out var userId))
                 return false;
             _userId = userId;
         }
@@ -123,6 +132,7 @@ public class OfflineService : IOfflineService
             // Should never happen.
             return false;
         }
+
         return true;
     }
 }

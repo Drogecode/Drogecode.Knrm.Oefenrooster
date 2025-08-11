@@ -61,22 +61,25 @@ public sealed partial class NavMenu : IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (!firstRender)
         {
-            _userMenuSettings = (await LocalStorage.GetItemAsync<UserMenuSettings>("userMenuSettings")) ?? new UserMenuSettings();
-            // Cannot use the object directly because it freezes the page.
-            _useFullLinkExpanded = _userMenuSettings.UseFullLinkExpanded;
-            _configurationExpanded = _userMenuSettings.ConfigurationExpanded;
-            var linkedCustomers = await LinkedCustomerClient.GetAllCustomersLinkedToMeAsync();
-            if (linkedCustomers?.UserLinkedCustomers?.Count > 1)
-            {
-                _linkedCustomers = linkedCustomers.UserLinkedCustomers;
-                _currentCustomer = linkedCustomers.CurrentCustomerId;
-            }
-
-            await SetMenu();
-            StateHasChanged();
+            return;
         }
+
+        _userMenuSettings = (await LocalStorage.GetItemAsync<UserMenuSettings>("userMenuSettings")) ?? new UserMenuSettings();
+        // Cannot use the object directly because it freezes the page.
+        _useFullLinkExpanded = _userMenuSettings.UseFullLinkExpanded;
+        _configurationExpanded = _userMenuSettings.ConfigurationExpanded;
+        _menuItems = await MenuRepository.GetAllAsync(false, false, _cls.Token);
+        var linkedCustomers = await LinkedCustomerClient.GetAllCustomersLinkedToMeAsync();
+        if (linkedCustomers?.UserLinkedCustomers?.Count > 1)
+        {
+            _linkedCustomers = linkedCustomers.UserLinkedCustomers;
+            _currentCustomer = linkedCustomers.CurrentCustomerId;
+        }
+
+        await SetMenu();
+        StateHasChanged();
     }
 
     private string? CustomerIdToName(Guid? customerId)
