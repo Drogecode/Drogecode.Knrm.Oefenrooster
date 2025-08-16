@@ -38,6 +38,8 @@ public class DrogeUserRole : DrogeUserRoleBasic
     public bool AUTH_scheduler_remaining_days_unavailable { get; set; }
     public bool AUTH_scheduler_description_edit { get; set; }
     public bool AUTH_scheduler_description_read { get; set; }
+    public bool AUTH_scheduler_rate_read { get; set; }
+    public bool AUTH_scheduler_rate_edit { get; set; }
 
     // Group: GROUP_USER
     public bool AUTH_users_details { get; set; }
@@ -45,6 +47,7 @@ public class DrogeUserRole : DrogeUserRoleBasic
     public bool AUTH_users_counter { get; set; }
     public bool AUTH_users_settings { get; set; }
     public bool AUTH_users_add_role { get; set; }
+    public bool AUTH_users_rate_read { get; set; }
 
     // Group: GROUP_DASHBOARD
     public bool AUTH_action_history_full { get; set; }

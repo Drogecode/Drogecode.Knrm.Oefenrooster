@@ -12,16 +12,17 @@ public static class DefaultSettingsHelper
     /// <summary>
     /// Increase to show the update button when BUTTON_VERSION is on this number or above.
     /// </summary>
-    public const int UPDATE_VERSION = 9; // Set on: v0.5.28
+    public const int UPDATE_VERSION = 10; // Set on: v0.5.38
     
     // Does not show for versions below v0.5.0
     // Old versions, version when it was last on this UPDATE_VERSION
-    // 8 = v0.5.28
+    // 9 = v0.5.38
     
     /// <summary>
     /// From what UPDATE_VERSION we should show the update button.
     /// </summary>
-    public const int BUTTON_VERSION = 7; // v0.5.18 version when it was last on this UPDATE_VERSION
+    public const int BUTTON_VERSION = 8; // v0.5.28 version when it was last on this UPDATE_VERSION
+    // 8 = v0.5.28
     // 7 = v0.5.18
     // 6 = v0.5.12
     // 5 = v0.4.32
@@ -38,6 +39,11 @@ public static class DefaultSettingsHelper
     public const int MAX_LENGTH_TRAINING_DESCRIPTION = 5000;
     public const int MAX_LENGTH_TRAINING_GROUP_NAME = 30;
     public const int MAX_LENGTH_TRAINING_TYPE_NAME = 30;
+    public const int MAX_LENGTH_TRAINING_TARGET_SET_NAME = 30;
+    public const int MAX_LENGTH_TRAINING_TARGET_SUBJECT_NAME = 30;
+    public const int MAX_LENGTH_TRAINING_TARGET_NAME = 30;
+    public const int MAX_LENGTH_TRAINING_TARGET_DESCRIPTION = 5000;
+    public const int MAX_LENGTH_TRAINING_TARGET_URL = 300;
     public const int MAX_LENGTH_MONTH_ITEM_TEXT = 150;
     public const int MAX_LENGTH_DAY_ITEM_TEXT = 50;
     public const int MAX_LENGTH_HOLIDAY_NAME = 50;

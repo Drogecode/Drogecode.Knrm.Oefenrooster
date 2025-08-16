@@ -47,6 +47,7 @@ builder.Services.TryAddScoped<IReportActionClient, ReportActionClient>();
 builder.Services.TryAddScoped<IReportTrainingClient, ReportTrainingClient>();
 builder.Services.TryAddScoped<IScheduleClient, ScheduleClient>();
 builder.Services.TryAddScoped<ISharePointClient, SharePointClient>();
+builder.Services.TryAddScoped<ITrainingTargetClient, TrainingTargetClient>();
 builder.Services.TryAddScoped<ITrainingTypesClient, TrainingTypesClient>();
 builder.Services.TryAddScoped<IUserClient, UserClient>();
 builder.Services.TryAddScoped<IUserGlobalClient, UserGlobalClient>();

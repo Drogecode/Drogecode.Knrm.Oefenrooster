@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
@@ -16,6 +17,7 @@ public sealed partial class Audit : IDisposable
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [Parameter] public List<DrogeUser>? _users { get; set; }
 
+    private AuditType _auditType = AuditType.PatchAssignedUser;
     private GetTrainingAuditResponse? _trainingAudits = null;
     private readonly CancellationTokenSource _cls = new();
     private bool _busy;

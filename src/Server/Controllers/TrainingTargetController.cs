@@ -1,0 +1,51 @@
+﻿using System.Diagnostics;
+using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Server.Controllers.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web.Resource;
+
+namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
+
+[Authorize(Roles = AccessesNames.AUTH_super_user)] // ToDo: Change to AUTH_basic_access when development is done
+[ApiController]
+[Route("api/[controller]")]
+[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+[ApiExplorerSettings(GroupName = "TrainingTarget")]
+public class TrainingTargetController : DrogeController
+{
+    private readonly ITrainingTargetService _trainingTargetService;
+    public TrainingTargetController(ILogger<TrainingTargetController> logger, ITrainingTargetService trainingTargetService) : base(logger)
+    {
+        _trainingTargetService = trainingTargetService;
+    }
+    
+    [HttpGet]
+    [Route("all/{count:int}/{skip:int}")]
+    [Route("all/{subjectId:guid}/{count:int}/{skip:int}")]
+    public async Task<ActionResult<AllTrainingTargetsResponse>> AllTrainingTargets(int count, int skip, Guid? subjectId = null, CancellationToken clt = default)
+    {
+        try
+        {
+            if (count > 50)
+            {
+                Logger.LogWarning("AllTrainingTargets count to big {0}", count);
+                return BadRequest("Count to big");
+            }
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var response = await _trainingTargetService.AllTrainingTargets(count, skip, subjectId, customerId, clt);
+            return response;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            Logger.LogError(ex, "Exception in AllTrainingTargets");
+            return BadRequest();
+        }
+    }
+    
+}

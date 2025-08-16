@@ -132,6 +132,16 @@ Changes to this file may cause incorrect behavior and will be lost if the code i
                 <MudSwitch Label="@L["scheduler_description_read"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_scheduler_description_read" ValueChanged="@(isChecked => { _userRole.Role.AUTH_scheduler_description_read = isChecked; _saved = null; })" Disabled="_isSaving"/>
             </ChildContent><TooltipContent><MudText Typo="Typo.h6">@L["scheduler_description_read"]</MudText><MudText Typo="Typo.body2">@L["scheduler_description_read-body"]</MudText></TooltipContent></MudTooltip>
         </div>
+        <div>
+            <MudTooltip><ChildContent>
+                <MudSwitch Label="@L["scheduler_rate_read"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_scheduler_rate_read" ValueChanged="@(isChecked => { _userRole.Role.AUTH_scheduler_rate_read = isChecked; _saved = null; })" Disabled="_isSaving"/>
+            </ChildContent><TooltipContent><MudText Typo="Typo.h6">@L["scheduler_rate_read"]</MudText><MudText Typo="Typo.body2">@L["scheduler_rate_read-body"]</MudText></TooltipContent></MudTooltip>
+        </div>
+        <div>
+            <MudTooltip><ChildContent>
+                <MudSwitch Label="@L["scheduler_rate_edit"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_scheduler_rate_edit" ValueChanged="@(isChecked => { _userRole.Role.AUTH_scheduler_rate_edit = isChecked; _saved = null; })" Disabled="_isSaving"/>
+            </ChildContent><TooltipContent><MudText Typo="Typo.h6">@L["scheduler_rate_edit"]</MudText><MudText Typo="Typo.body2">@L["scheduler_rate_edit-body"]</MudText></TooltipContent></MudTooltip>
+        </div>
         <MudText Typo="Typo.h6">@L["User"]</MudText>
         <div>
             <MudTooltip><ChildContent>
@@ -157,6 +167,11 @@ Changes to this file may cause incorrect behavior and will be lost if the code i
             <MudTooltip><ChildContent>
                 <MudSwitch Label="@L["users_add_role"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_users_add_role" ValueChanged="@(isChecked => { _userRole.Role.AUTH_users_add_role = isChecked; _saved = null; })" Disabled="_isSaving"/>
             </ChildContent><TooltipContent><MudText Typo="Typo.h6">@L["users_add_role"]</MudText><MudText Typo="Typo.body2">@L["users_add_role-body"]</MudText></TooltipContent></MudTooltip>
+        </div>
+        <div>
+            <MudTooltip><ChildContent>
+                <MudSwitch Label="@L["users_rate_read"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_users_rate_read" ValueChanged="@(isChecked => { _userRole.Role.AUTH_users_rate_read = isChecked; _saved = null; })" Disabled="_isSaving"/>
+            </ChildContent><TooltipContent><MudText Typo="Typo.h6">@L["users_rate_read"]</MudText><MudText Typo="Typo.body2">@L["users_rate_read-body"]</MudText></TooltipContent></MudTooltip>
         </div>
         <MudText Typo="Typo.h6">@L["Dashboard"]</MudText>
         <div>

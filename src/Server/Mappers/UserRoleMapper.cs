@@ -95,6 +95,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_scheduler_description_read:
                         drogeUserRole.AUTH_scheduler_description_read = true;
                         break;
+                    case AccessesNames.AUTH_scheduler_rate_read:
+                        drogeUserRole.AUTH_scheduler_rate_read = true;
+                        break;
+                    case AccessesNames.AUTH_scheduler_rate_edit:
+                        drogeUserRole.AUTH_scheduler_rate_edit = true;
+                        break;
                     case AccessesNames.AUTH_users_details:
                         drogeUserRole.AUTH_users_details = true;
                         break;
@@ -109,6 +115,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                         break;
                     case AccessesNames.AUTH_users_add_role:
                         drogeUserRole.AUTH_users_add_role = true;
+                        break;
+                    case AccessesNames.AUTH_users_rate_read:
+                        drogeUserRole.AUTH_users_rate_read = true;
                         break;
                     case AccessesNames.AUTH_action_history_full:
                         drogeUserRole.AUTH_action_history_full = true;
@@ -204,6 +213,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_scheduler_description_edit).Append(',');
             if (userRole.AUTH_scheduler_description_read)
                 sb.Append(AccessesNames.AUTH_scheduler_description_read).Append(',');
+            if (userRole.AUTH_scheduler_rate_read)
+                sb.Append(AccessesNames.AUTH_scheduler_rate_read).Append(',');
+            if (userRole.AUTH_scheduler_rate_edit)
+                sb.Append(AccessesNames.AUTH_scheduler_rate_edit).Append(',');
             if (userRole.AUTH_users_details)
                 sb.Append(AccessesNames.AUTH_users_details).Append(',');
             if (userRole.AUTH_users_delete)
@@ -214,6 +227,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_users_settings).Append(',');
             if (userRole.AUTH_users_add_role)
                 sb.Append(AccessesNames.AUTH_users_add_role).Append(',');
+            if (userRole.AUTH_users_rate_read)
+                sb.Append(AccessesNames.AUTH_users_rate_read).Append(',');
             if (userRole.AUTH_action_history_full)
                 sb.Append(AccessesNames.AUTH_action_history_full).Append(',');
             if (userRole.AUTH_training_history_full)
