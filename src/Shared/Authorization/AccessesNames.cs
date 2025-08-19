@@ -39,8 +39,12 @@ public struct AccessesNames
     public const string AUTH_scheduler_remaining_days_unavailable = "scheduler_remaining_unavailable";
     public const string AUTH_scheduler_description_edit = "scheduler_description_edit";
     public const string AUTH_scheduler_description_read = "scheduler_description_read";
-    public const string AUTH_scheduler_rate_read = "scheduler_rate_read";
-    public const string AUTH_scheduler_rate_edit = "scheduler_rate_edit";
+    public const string AUTH_scheduler_target_set = "WIP_scheduler_target_set"; // ToDo: Remove WIP_ when ready
+    
+    public const string GROUP_TARGET = "Target";
+    public const string AUTH_target_read = "WIP_target_read"; // ToDo: Remove WIP_ when ready
+    public const string AUTH_target_edit = "WIP_target_edit"; // ToDo: Remove WIP_ when ready
+    public const string AUTH_target_user_read = "WIP_target_user_read"; // ToDo: Remove WIP_ when ready
 
     public const string GROUP_USER = "User";
     public const string AUTH_users_details = "users_details";
@@ -48,7 +52,6 @@ public struct AccessesNames
     public const string AUTH_users_counter = "users_counter";
     public const string AUTH_users_settings = "users_settings";
     public const string AUTH_users_add_role = "users_add_role";
-    public const string AUTH_users_rate_read = "users_rate_read";
     
     public const string GROUP_DASHBOARD = "Dashboard";
     public const string AUTH_action_history_full = "full_action_history";

@@ -10,9 +10,10 @@ public class DbTrainingTargetSets
     [Key] public Guid Id { get; set; }
     [StringLength(DefaultSettingsHelper.MAX_LENGTH_TRAINING_TARGET_SET_NAME)]public string? Name { get; set; }
     public List<Guid> TrainingTargetIds { get; set; } = [];
-    public DateTime? ValidFrom { get; set; }
-    public DateTime? ValidUntil { get; set; }
+    public DateTime CreatedOn { get; set; }
     public Guid CreatedBy { get; set; }
+    public DateTime? DeletedOn { get; set; }
+    public Guid? DeletedBy { get; set; }
     
     public ICollection<DbRoosterTraining>? RoosterTrainings { get; set; }
 }

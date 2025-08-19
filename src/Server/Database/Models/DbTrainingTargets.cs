@@ -15,8 +15,10 @@ public class DbTrainingTargets
     [StringLength(DefaultSettingsHelper.MAX_LENGTH_TRAINING_TARGET_NAME)]public string? Name { get; set; }
     [StringLength(DefaultSettingsHelper.MAX_LENGTH_TRAINING_TARGET_DESCRIPTION)]public string? Description { get; set; }
     [StringLength(DefaultSettingsHelper.MAX_LENGTH_TRAINING_TARGET_URL)]public string? Url { get; set; }
-    public DateTime? ValidFrom { get; set; }
-    public DateTime? ValidUntil { get; set; }
+    public DateTime CreatedOn { get; set; }
+    public Guid CreatedBy { get; set; }
+    public DateTime? DeletedOn { get; set; }
+    public Guid? DeletedBy { get; set; }
     
     public DbCustomers Customer { get; set; }
     public DbTrainingTargetSubjects Subject { get; set; }

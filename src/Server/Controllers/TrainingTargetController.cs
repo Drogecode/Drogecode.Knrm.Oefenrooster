@@ -9,7 +9,7 @@ using Microsoft.Identity.Web.Resource;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
-[Authorize(Roles = AccessesNames.AUTH_super_user)] // ToDo: Change to AUTH_basic_access when development is done
+[Authorize(Roles = AccessesNames.AUTH_basic_access)] // ToDo: Change to AUTH_basic_access when development is done
 [ApiController]
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
@@ -23,6 +23,7 @@ public class TrainingTargetController : DrogeController
     }
     
     [HttpGet]
+    [Authorize(Roles = AccessesNames.AUTH_scheduler_target_set)]
     [Route("all/{count:int}/{skip:int}")]
     [Route("all/{subjectId:guid}/{count:int}/{skip:int}")]
     public async Task<ActionResult<AllTrainingTargetsResponse>> AllTrainingTargets(int count, int skip, Guid? subjectId = null, CancellationToken clt = default)

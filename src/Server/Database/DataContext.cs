@@ -1097,7 +1097,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Id = TrainingTargetSubjectDefault,
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Order = 10,
-                Name = "Algemene kennis"
+                Name = "Algemene kennis",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
             }));
             modelBuilder.Entity<DbTrainingTargetSubjects>(e => e.HasData(new DbTrainingTargetSubjects
             {
@@ -1105,7 +1107,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 ParentId = TrainingTargetSubjectDefault,
                 Order = 10,
-                Name = "Touwhandelingen"
+                Name = "Touwhandelingen",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
             }));
         }
 
@@ -1120,7 +1124,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Name = "De paalsteek",
                 Type = TrainingTargetType.Knowledge,
                 Url = "https://kompas.knrm.nl/Algemene-kennis/Touwhandelingen/Touwhandelingen-paalsteek",
-                ValidFrom = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
             }));
             modelBuilder.Entity<DbTrainingTargets>(e => e.HasData(new DbTrainingTargets
             {
@@ -1131,7 +1136,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Name = "Een paalsteek leggen",
                 Type = TrainingTargetType.Exercise,
                 Url = "https://kompas.knrm.nl/Algemene-kennis/Touwhandelingen/Touwhandelingen-paalsteek-leggen",
-                ValidFrom = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
             }));
         }
 

@@ -70,6 +70,7 @@ builder.Services.TryAddScoped<PreComRepository>();
 builder.Services.TryAddScoped<ReportActionRepository>();
 builder.Services.TryAddScoped<ReportTrainingRepository>();
 builder.Services.TryAddScoped<ScheduleRepository>();
+builder.Services.TryAddScoped<TrainingTargetRepository>();
 builder.Services.TryAddScoped<TrainingTypesRepository>();
 builder.Services.TryAddScoped<UserRepository>();
 builder.Services.TryAddScoped<VehicleRepository>();

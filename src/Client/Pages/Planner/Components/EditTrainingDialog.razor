@@ -30,7 +30,7 @@
         }
         else
         {
-            <AuthorizeView Roles=@($"{AccessesNames.AUTH_scheduler_rate_edit},{AccessesNames.AUTH_scheduler_description_edit}")>
+            <AuthorizeView Roles=@($"{AccessesNames.AUTH_scheduler_target_set},{AccessesNames.AUTH_scheduler_description_edit}")>
                 <Authorized>
                     <MudTabs Rounded="true">
                         <MudTabPanel Text="@L["Basic"]">
@@ -41,9 +41,9 @@
                                 @DescriptionTab
                             </MudTabPanel>
                         </AuthorizeView>
-                        <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_rate_edit" Context="inner">
-                            <MudTabPanel Text="@L["Description"]">
-                                @DescriptionTab
+                        <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_target_set" Context="inner">
+                            <MudTabPanel Text="@L["Targets"]">
+                                @TargetEditTab
                             </MudTabPanel>
                         </AuthorizeView>
                     </MudTabs>
@@ -136,7 +136,7 @@
                                ReadOnly="false"
                                Height="444"
                                Class="m-2"
-                               Placeholder="Edit html"
+                               Placeholder="@L["Description"]"
                                ValueHtmlBehavior="GetHtmlBehavior.InnerHtml"
                                @bind-Value="@_training.Description">
                 <ToolbarContent>
@@ -174,9 +174,17 @@
             }
         </div>;
 
-    private RenderFragment RateEditTab =>
+    private RenderFragment TargetEditTab =>
         @<div Elevation="0" class="m-3">
-            
+            @if (_trainingTargets is not null)
+            {
+                <MudList T="string">
+                    @foreach (var trainingTarget in _trainingTargets)
+                    {
+                        <MudListItem T="string" Text="@trainingTarget.Name"/>
+                    }
+                </MudList>
+            }
         </div>;
 
 }

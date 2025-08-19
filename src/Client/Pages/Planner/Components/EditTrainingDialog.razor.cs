@@ -7,17 +7,19 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 using MudExRichTextEditor;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
 public sealed partial class EditTrainingDialog : IDisposable
 {
-    [Inject] private IStringLocalizer<EditTrainingDialog> L { get; set; } = default!;
-    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
-    [Inject] private VehicleRepository VehicleRepository { get; set; } = default!;
-    [Inject] private IAuditClient AuditClient { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<EditTrainingDialog>? L { get; set; }
+    [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
+    [Inject, NotNull] private ScheduleRepository? ScheduleRepository { get; set; }
+    [Inject, NotNull] private VehicleRepository? VehicleRepository { get; set; }
+    [Inject, NotNull] private IAuditClient? AuditClient { get; set; }
+    [Inject, NotNull] private TrainingTargetRepository? TrainingTargetRepository { get; set; }
     [CascadingParameter] IMudDialogInstance? MudDialog { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
@@ -27,6 +29,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     [Parameter] public DrogeCodeGlobal Global { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
+    private List<TrainingTarget>? _trainingTargets;
     private EditTraining? _training;
     private PlannerTrainingType? _currentTrainingType;
     private bool _success;
@@ -69,6 +72,10 @@ public sealed partial class EditTrainingDialog : IDisposable
             }
 
             _currentTrainingType = TrainingTypes?.FirstOrDefault(x => x.Id == _training?.RoosterTrainingTypeId);
+            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user))
+            {
+                _trainingTargets = await TrainingTargetRepository.AllTrainingTargetsAsync(30, 0, _cls.Token);
+            }
 
             await SetRoleBasedVariables();
 

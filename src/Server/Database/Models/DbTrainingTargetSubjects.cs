@@ -12,6 +12,10 @@ public class DbTrainingTargetSubjects
     public Guid? ParentId { get; set; }
     public int Order { get; set; }
     [StringLength(DefaultSettingsHelper.MAX_LENGTH_TRAINING_TARGET_SUBJECT_NAME)] public string? Name { get; set; }
+    public DateTime CreatedOn { get; set; }
+    public Guid CreatedBy { get; set; }
+    public DateTime? DeletedOn { get; set; }
+    public Guid? DeletedBy { get; set; }
     
     public DbCustomers Customer { get; set; }
     public DbTrainingTargetSubjects? Parent { get; set; }

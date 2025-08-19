@@ -16,8 +16,8 @@ public static class TrainingTargetMapper
             Url = trainingTarget.Url,
             Order = trainingTarget.Order,
             Type = trainingTarget.Type,
-            ValidFrom = trainingTarget.ValidFrom,
-            ValidUntil = trainingTarget.ValidUntil
+            CreatedOn = trainingTarget.CreatedOn,
+            CreatedBy = trainingTarget.CreatedBy,
         };
     }
     
@@ -32,8 +32,8 @@ public static class TrainingTargetMapper
             Url = dbTrainingTarget.Url,
             Order = dbTrainingTarget.Order,
             Type = dbTrainingTarget.Type,
-            ValidFrom = dbTrainingTarget.ValidFrom,
-            ValidUntil = dbTrainingTarget.ValidUntil
+            CreatedOn = dbTrainingTarget.CreatedOn,
+            CreatedBy = dbTrainingTarget.CreatedBy,
         };
     }
 }

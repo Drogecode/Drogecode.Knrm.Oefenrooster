@@ -11,6 +11,6 @@ public class TrainingTarget
     public string? Url { get; set; }
     public int Order { get; set; }
     public TrainingTargetType Type { get; set; }
-    public DateTime? ValidFrom { get; set; }
-    public DateTime? ValidUntil { get; set; }
+    public DateTime CreatedOn { get; set; }
+    public Guid CreatedBy { get; set; }
 }

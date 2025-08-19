@@ -86,7 +86,7 @@ public class OfflineService : IOfflineService
         }
         catch (JsonException)
         {
-            // The object definition could be changed with an update. Deleting old version and retrying again to get latest version.
+            // The object definition could be changed with an update. Deleting the old version and retrying again to get the latest version.
             DebugHelper.WriteLine($"JsonException for {cacheKey}, Deleting");
             await _localStorageExpireService.DeleteItemAsync(cacheKey, clt);
             request ??= new ApiCachedRequest();
