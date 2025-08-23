@@ -31,7 +31,7 @@ try
     var preComUser = config.GetValue<string>("PreCom:User");
     var preComPassword = config.GetValue<string>("PreCom:Password");
 
-    if (true)
+    if (false)
     {
         await preComClient.Login(preComUser, preComPassword);
         var futureProblems = new FutureProblems(preComClient, logger, new DateTimeProvider());
@@ -51,6 +51,11 @@ try
         var aankOpstapper = groupInfo.ServiceFuntions.FirstOrDefault(x => x.Label.Equals("KNRM Aank. Opstapper"));
 
         var userId = opstapper?.Users.FirstOrDefault(x => x.FullName == "HUI Taco Droogers")?.UserID ?? -1; //37398
+    }
+
+    if (true)
+    {
+        var receivers = await preComClient.GetReceivers();
     }
     
     //await preComClient.TestGetA(userId, userGroups[0].GroupID, DateTime.Today, DateTime.Today.AddDays(7));

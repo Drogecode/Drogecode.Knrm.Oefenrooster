@@ -6,6 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 
@@ -182,7 +183,7 @@ public class UserService : DrogeService, IUserService
     {
         if (user.Name.Length > DefaultSettingsHelper.MAX_LENGTH_USER_NAME)
         {
-            Logger.LogWarning("User name {UserName} is too long, truncating to {MaxLength}", user.Name, DefaultSettingsHelper.MAX_LENGTH_USER_NAME);
+            Logger.LogWarning("User name {UserName} is too long, truncating to {MaxLength}", user.Name.CleanStringForLogging(), DefaultSettingsHelper.MAX_LENGTH_USER_NAME);
             user.Name = user.Name[..DefaultSettingsHelper.MAX_LENGTH_USER_NAME];
         }
 
