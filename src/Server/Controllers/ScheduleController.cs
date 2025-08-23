@@ -709,6 +709,7 @@ public class ScheduleController : DrogeController
                 {
                     if (!string.IsNullOrEmpty(text))
                     {
+                        Logger.LogInformation("Creating event for user `{userId}` for training `{trainingId}`", planUserId, trainingId);
                         var eventResult = await _graphService.AddToCalendar(externalUserId, text, training.DateStart, training.DateEnd, !training.ShowTime, FreeBusyStatus.Busy, allUserLinkedMail);
                         if (eventResult is not null)
                             await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, eventResult.Id, clt);
@@ -723,6 +724,7 @@ public class ScheduleController : DrogeController
                 }
                 else
                 {
+                    Logger.LogInformation("Patching event for user `{userId}` for training `{trainingId}`", planUserId, trainingId);
                     await _graphService.PatchCalender(externalUserId, calendarEventId, text, training.DateStart, training.DateEnd, !training.ShowTime, FreeBusyStatus.Busy, allUserLinkedMail);
                     if (availableId is not null)
                     {
