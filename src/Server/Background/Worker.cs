@@ -161,8 +161,8 @@ public class Worker : BackgroundService
         var scheduleController = scope.ServiceProvider.GetRequiredService<ScheduleController>();
         var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
         var functionService = scope.ServiceProvider.GetRequiredService<IFunctionService>();
-        var usersToUpdate = await userLastCalendarUpdateService.GetLastUpdateUsers(minutesInThePast, 120, clt);
-        _logger.LogInformation("users to update: `{usersToUpdate}`", usersToUpdate.Count);
+        var usersToUpdate = await userLastCalendarUpdateService.GetLastUpdateUsers(minutesInThePast, 45, clt);
+        _logger.LogDebug("users to update: `{usersToUpdate}`", usersToUpdate.Count);
         foreach (var user in usersToUpdate)
         {
             var availabilities = await scheduleService.GetTrainingsThatRequireCalendarUpdate(user.UserId, user.CustomerId);
