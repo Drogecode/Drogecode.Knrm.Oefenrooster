@@ -39,6 +39,7 @@ public class Worker : BackgroundService
         {
             try
             {
+                _logger.LogDebug("Start worker run");
                 var sleep = 60 * (_errorCount * 3 + 1);
                 for (var i = 0; i < sleep; i++)
                 {
@@ -78,6 +79,7 @@ public class Worker : BackgroundService
                     _errorCount++;
                     _logger.LogWarning("Error in worker, increasing counter with one `{errorCount}`", _errorCount);
                 }
+                _logger.LogDebug("Finish worker run");
             }
             catch (Exception ex)
             {
@@ -159,10 +161,12 @@ public class Worker : BackgroundService
         var scheduleController = scope.ServiceProvider.GetRequiredService<ScheduleController>();
         var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
         var functionService = scope.ServiceProvider.GetRequiredService<IFunctionService>();
-        var usersToUpdate = await userLastCalendarUpdateService.GetLastUpdateUsers(minutesInThePast, 60, clt);
+        var usersToUpdate = await userLastCalendarUpdateService.GetLastUpdateUsers(minutesInThePast, 45, clt);
+        _logger.LogDebug("users to update: `{usersToUpdate}`", usersToUpdate.Count);
         foreach (var user in usersToUpdate)
         {
             var availabilities = await scheduleService.GetTrainingsThatRequireCalendarUpdate(user.UserId, user.CustomerId);
+            _logger.LogInformation("availabilities to sync to calender events: `{availabilitiesCount}` for user `{user}`", availabilities.Count, user.UserId);
             foreach (var ava in availabilities)
             {
                 var thisUser = await userService.GetUserById(ava.CustomerId, ava.UserId, true, clt);

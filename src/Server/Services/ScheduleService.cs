@@ -1147,8 +1147,9 @@ public class ScheduleService : DrogeService, IScheduleService
     {
         var compareDate = DateTimeProvider.UtcNow().AddDays(-1);
         var ava = await Database.RoosterAvailables.Where(x =>
-                x.CustomerId == customerId && x.UserId == userId && x.Training.DeletedOn == null && x.LastUpdateOn != null &&
-                x.LastUpdateOn > compareDate && x.LastUpdateBy == userId &&
+                x.CustomerId == customerId && x.Training.DeletedOn == null && 
+                x.LastUpdateOn != null && x.LastUpdateOn > compareDate && 
+                x.LastUpdateBy == userId &&
                 (x.LastSyncOn == null || x.LastUpdateOn > x.LastSyncOn))
             .Include(x => x.Training)
             .AsNoTracking()
