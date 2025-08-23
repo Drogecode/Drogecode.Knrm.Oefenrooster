@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Blazor-ApexCharts" Version="6.0.1" />
+		<PackageReference Include="Blazor-ApexCharts" Version="6.0.2" />
 		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 		<PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
 		<PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="8.2.4" />
@@ -28,7 +28,7 @@
 		</PackageReference>
 		<PackageReference Include="MudBlazor" Version="8.11.0" />
 		<PackageReference Include="MudBlazor.Markdown" Version="8.11.0" />
-		<PackageReference Include="MudBlazor.Translations" Version="2.5.0" />
+		<PackageReference Include="MudBlazor.Translations" Version="2.6.0" />
 		<PackageReference Include="MudExRichTextEditor" Version="8.5.2" />
 	</ItemGroup>
 

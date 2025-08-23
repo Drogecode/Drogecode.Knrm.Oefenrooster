@@ -36,4 +36,32 @@ public static class TrainingTargetMapper
             CreatedBy = dbTrainingTarget.CreatedBy,
         };
     }
+    public static TrainingSubject ToTrainingTargetSubjects(this DbTrainingTargetSubjects dbTrainingTargetSubject)
+    {
+        var subject = new TrainingSubject
+        {
+            Id = dbTrainingTargetSubject.Id,
+            Name = dbTrainingTargetSubject.Name,
+            Order = dbTrainingTargetSubject.Order,
+            CreatedOn = dbTrainingTargetSubject.CreatedOn,
+            CreatedBy = dbTrainingTargetSubject.CreatedBy,
+        };
+        if (dbTrainingTargetSubject.Children?.Any() == true)
+        {
+            subject.TrainingSubjects ??= [];
+            foreach (var trainingTarget in dbTrainingTargetSubject.Children)
+            {
+                subject.TrainingSubjects.Add(trainingTarget.ToTrainingTargetSubjects());
+            }
+        }
+        if (dbTrainingTargetSubject.TrainingTargets?.Any() == true)
+        {
+            subject.TrainingTargets ??= [];
+            foreach (var trainingTarget in dbTrainingTargetSubject.TrainingTargets)
+            {
+                subject.TrainingTargets.Add(trainingTarget.ToTrainingTarget());
+            }
+        }
+        return subject;
+    }
 }

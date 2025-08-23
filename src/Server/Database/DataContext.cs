@@ -1088,13 +1088,14 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             }));
         }
 
-        private static readonly Guid TrainingTargetSubjectDefault = new Guid("b0a94df1-f7cf-4408-86a4-cc4af0702f1b");
+        private static readonly Guid TrainingTargetSubjectAlgemeneKennis = new Guid("b0a94df1-f7cf-4408-86a4-cc4af0702f1b");
+        private static readonly Guid TrainingTargetSubjectTouwhandelingen = new Guid("15b7f98c-8c47-47b3-9dd6-f9c92810aaa6");
 
         private void SetTrainingTargetSubjects(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DbTrainingTargetSubjects>(e => e.HasData(new DbTrainingTargetSubjects
             {
-                Id = TrainingTargetSubjectDefault,
+                Id = TrainingTargetSubjectAlgemeneKennis,
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
                 Order = 10,
                 Name = "Algemene kennis",
@@ -1103,9 +1104,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             }));
             modelBuilder.Entity<DbTrainingTargetSubjects>(e => e.HasData(new DbTrainingTargetSubjects
             {
-                Id = new Guid("15b7f98c-8c47-47b3-9dd6-f9c92810aaa6"),
+                Id = TrainingTargetSubjectTouwhandelingen,
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                ParentId = TrainingTargetSubjectDefault,
+                ParentId = TrainingTargetSubjectAlgemeneKennis,
                 Order = 10,
                 Name = "Touwhandelingen",
                 CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
@@ -1119,7 +1120,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             {
                 Id = new Guid("55accb54-6a0a-449d-bd77-33aea502c355"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                SubjectId = TrainingTargetSubjectDefault,
+                SubjectId = TrainingTargetSubjectTouwhandelingen,
                 Order = 10,
                 Name = "De paalsteek",
                 Type = TrainingTargetType.Knowledge,
@@ -1131,7 +1132,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             {
                 Id = new Guid("5d0e590e-b955-43be-bd46-0edf84472a2b"),
                 CustomerId = DefaultSettingsHelper.KnrmHuizenId,
-                SubjectId = TrainingTargetSubjectDefault,
+                SubjectId = TrainingTargetSubjectTouwhandelingen,
                 Order = 20,
                 Name = "Een paalsteek leggen",
                 Type = TrainingTargetType.Exercise,

@@ -18,11 +18,17 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         var sw = StopwatchProvider.StartNew();
         var response = new AllTrainingTargetsResponse();
 
-        var trainingTargets = Database.TrainingTargets
+        var trainingTargets = Database.TrainingTargetSubjects
             .Where(x => x.CustomerId == customerId &&
-                        (subjectId == null || x.SubjectId == subjectId))
-            .Select(x => x.ToTrainingTarget());
-        response.TrainingTargets = await trainingTargets.Skip(skip).Take(count).ToListAsync(clt);
+                        x.ParentId == null &&
+                        (subjectId == null || x.Id == subjectId))
+            .Include(x=>x.Parent)
+            .ThenInclude(x=>x.TrainingTargets)
+            .Include(x=>x.Children)
+            .ThenInclude(x=>x.TrainingTargets)
+            .Include(x=>x.TrainingTargets)
+            .Select(x => x.ToTrainingTargetSubjects());
+        response.TrainingSubjects = await trainingTargets.Skip(skip).Take(count).ToListAsync(clt);
         response.TotalCount = await trainingTargets.CountAsync(clt);
         response.Success = true;
 

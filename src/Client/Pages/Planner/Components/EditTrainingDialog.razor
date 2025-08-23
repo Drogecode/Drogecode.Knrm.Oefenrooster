@@ -1,4 +1,5 @@
-﻿@using MudExRichTextEditor.Types
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget
+@using MudExRichTextEditor.Types
 @using MudExRichTextEditor
 
 <MudDialog>
@@ -176,15 +177,39 @@
 
     private RenderFragment TargetEditTab =>
         @<div Elevation="0" class="m-3">
-            @if (_trainingTargets is not null)
+            @if (_trainingSubjects is not null)
             {
-                <MudList T="string">
-                    @foreach (var trainingTarget in _trainingTargets)
+                <MudList T="Guid" @bind-SelectedValues="_selectedValuesTargets" SelectionMode="SelectionMode.MultiSelection">
+                    <MudListSubheader>
+                        @L["Select training targets"]
+                    </MudListSubheader>
+                    @foreach (var subject in _trainingSubjects)
                     {
-                        <MudListItem T="string" Text="@trainingTarget.Name"/>
+                        @SubjectsList(subject)
                     }
                 </MudList>
             }
         </div>;
 
+    private RenderFragment<TrainingSubject> SubjectsList => subject =>
+        @<div>
+            <MudListItem T="Guid" Text="@subject.Name" Expanded>
+                <NestedList>
+                    @if (subject.TrainingSubjects is not null)
+                    {
+                        foreach (var childSubject in subject.TrainingSubjects)
+                        {
+                            @SubjectsList(childSubject)
+                        }
+                    }
+                    @if (subject.TrainingTargets is not null)
+                    {
+                        foreach (var target in subject.TrainingTargets)
+                        {
+                            <MudListItem T="Guid" Value="@target.Id" Text="@target.Name" />
+                        }
+                    }
+                </NestedList>
+            </MudListItem>
+        </div>;
 }

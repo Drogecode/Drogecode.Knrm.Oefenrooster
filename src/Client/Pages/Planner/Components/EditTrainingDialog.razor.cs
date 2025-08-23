@@ -29,7 +29,8 @@ public sealed partial class EditTrainingDialog : IDisposable
     [Parameter] public DrogeCodeGlobal Global { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
-    private List<TrainingTarget>? _trainingTargets;
+    private List<TrainingSubject>? _trainingSubjects;
+    private IReadOnlyCollection<Guid> _selectedValuesTargets = [];
     private EditTraining? _training;
     private PlannerTrainingType? _currentTrainingType;
     private bool _success;
@@ -74,7 +75,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             _currentTrainingType = TrainingTypes?.FirstOrDefault(x => x.Id == _training?.RoosterTrainingTypeId);
             if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user))
             {
-                _trainingTargets = await TrainingTargetRepository.AllTrainingTargetsAsync(30, 0, _cls.Token);
+                _trainingSubjects = await TrainingTargetRepository.AllTrainingTargetsAsync(30, 0, _cls.Token);
             }
 
             await SetRoleBasedVariables();
