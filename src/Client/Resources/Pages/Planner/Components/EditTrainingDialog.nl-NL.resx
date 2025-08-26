@@ -174,4 +174,10 @@
   <data name="Description to long {0}/{1}" xml:space="preserve">
     <value>Omschrijving is te lang {0}/{1}</value>
   </data>
+  <data name="Basic" xml:space="preserve">
+    <value>Basis</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Omschrijving</value>
+  </data>
 </root>

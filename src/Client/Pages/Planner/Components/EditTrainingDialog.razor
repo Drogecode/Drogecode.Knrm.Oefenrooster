@@ -30,50 +30,55 @@
         }
         else
         {
-            <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors" Disabled="@(!_canEdit || _saving)">
-                <MudTextField Label="@L["Name"]" @bind-Value="@_training.Name" Counter="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE"
-                              Immediate="true" data-testid="training-name"/>
-                <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_description_edit">
-                    <MudExRichTextEdit @ref="@_editor"
-                                       ReadOnly="false"
-                                       Height="444"
-                                       Class="m-2"
-                                       Placeholder="Edit html"
-                                       ValueHtmlBehavior="GetHtmlBehavior.InnerHtml"
-                                       @bind-Value="@_training.Description">
-                        <ToolbarContent>
-                            <select class="ql-header">
-                                <option selected=""></option>
-                                <option value="1"></option>
-                                <option value="2"></option>
-                                <option value="3"></option>
-                                <option value="4"></option>
-                                <option value="5"></option>
-                            </select>
-                            <span class="ql-formats">
-                                <button class="ql-bold"></button>
-                                <button class="ql-italic"></button>
-                                <button class="ql-underline"></button>
-                                <button class="ql-strike"></button>
-                            </span>
-                            <span class="ql-formats">
-                                <select class="ql-color"></select>
-                                <select class="ql-background"></select>
-                            </span>
-                            <span class="ql-formats">
-                                <button class="ql-list" value="ordered"></button>
-                                <button class="ql-list" value="bullet"></button>
-                            </span>
-                            <span class="ql-formats">
-                                <button class="ql-link"></button>
-                            </span>
-                        </ToolbarContent>
-                    </MudExRichTextEdit>
-                    @if (_descriptionToLong)
+            <AuthorizeView Roles=@($"{AccessesNames.AUTH_scheduler_description_edit}")>
+                <Authorized>
+                    <MudTabs Rounded="true">
+                        <MudTabPanel Text="@L["Basic"]">
+                            @MainTab
+                        </MudTabPanel>
+                        <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_description_edit" Context="inner">
+                            <MudTabPanel Text="@L["Description"]">
+                                @DescriptionTab
+                            </MudTabPanel>
+                        </AuthorizeView>
+                    </MudTabs>
+                </Authorized>
+                <NotAuthorized>
+                    @MainTab
+                </NotAuthorized>
+            </AuthorizeView>
+        }
+    </DialogContent>
+    <DialogActions>
+        <div class="flex flex-wrap">
+            <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_delete">
+                @if (_training?.IsNew is not true)
+                {
+                    if (_showDelete)
                     {
-                        <MudAlert Severity="Severity.Warning">@L["Description to long {0}/{1}", _training.Description?.Length ?? -1, DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION]</MudAlert>
+                        <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">
+                            @L["Are you sure This can not be reverted"]<MudButton Color="Color.Warning" OnClick="Delete" Disabled="_saving">@LApp["Delete"]</MudButton>
+                        </MudAlert>
                     }
-                </AuthorizeView>
+
+                    <MudButton Color="Color.Warning" OnClick="() => _showDelete = !_showDelete" Disabled="@(!_canEdit || _saving)">@LApp["Delete"]</MudButton>
+                }
+            </AuthorizeView>
+            <MudButton OnClick="Cancel" Disabled="_saving">@LApp["Cancel"]</MudButton>
+            <MudButton Color="Color.Primary" OnClick="OnSubmit" Disabled="@(!_canEdit || _saving || _descriptionToLong)">@LApp["save"]</MudButton>
+        </div>
+    </DialogActions>
+</MudDialog>
+
+@code{
+
+    private RenderFragment MainTab =>
+        @<div Elevation="0" class="m-3">
+            <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors" Disabled="@(!_canEdit || _saving)">
+                <MudTextField Label="@L["Name"]" @bind-Value="@_training.Name" Counter="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE"
+                              MaxLength="@DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE"
+                              Immediate="true" data-testid="training-name"/>
+
                 <MudDatePicker Label="@L["Date"]" @bind-Date="_training.Date" Validation="@(new Func<DateTime?, string?>(DateValidation))" Required Disabled="!_training.IsNew"/>
 
                 @if (!_training.ShowTime || _startedWithShowNoTime)
@@ -118,25 +123,49 @@
                     }
                 }
             </MudForm>
-        }
-    </DialogContent>
-    <DialogActions>
-        <div class="flex flex-wrap">
-            <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_delete">
-                @if (_training?.IsNew is not true)
-                {
-                    if (_showDelete)
-                    {
-                        <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">
-                            @L["Are you sure This can not be reverted"]<MudButton Color="Color.Warning" OnClick="Delete" Disabled="_saving">@LApp["Delete"]</MudButton>
-                        </MudAlert>
-                    }
+        </div>;
 
-                    <MudButton Color="Color.Warning" OnClick="() => _showDelete = !_showDelete" Disabled="@(!_canEdit || _saving)">@LApp["Delete"]</MudButton>
-                }
-            </AuthorizeView>
-            <MudButton OnClick="Cancel" Disabled="_saving">@LApp["Cancel"]</MudButton>
-            <MudButton Color="Color.Primary" OnClick="OnSubmit" Disabled="@(!_canEdit || _saving || _descriptionToLong)">@LApp["save"]</MudButton>
-        </div>
-    </DialogActions>
-</MudDialog>
+    private RenderFragment DescriptionTab =>
+        @<div Elevation="0" class="m-3">
+            <MudExRichTextEdit @ref="@_editor"
+                               ReadOnly="false"
+                               Height="444"
+                               Class="m-2"
+                               Placeholder="@L["Description"]"
+                               ValueHtmlBehavior="GetHtmlBehavior.InnerHtml"
+                               @bind-Value="@_training.Description">
+                <ToolbarContent>
+                    <select class="ql-header">
+                        <option selected=""></option>
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                        <option value="4"></option>
+                        <option value="5"></option>
+                    </select>
+                    <span class="ql-formats">
+                                            <button class="ql-bold"></button>
+                                            <button class="ql-italic"></button>
+                                            <button class="ql-underline"></button>
+                                            <button class="ql-strike"></button>
+                                        </span>
+                    <span class="ql-formats">
+                                            <select class="ql-color"></select>
+                                            <select class="ql-background"></select>
+                                        </span>
+                    <span class="ql-formats">
+                                            <button class="ql-list" value="ordered"></button>
+                                            <button class="ql-list" value="bullet"></button>
+                                        </span>
+                    <span class="ql-formats">
+                                            <button class="ql-link"></button>
+                                        </span>
+                </ToolbarContent>
+            </MudExRichTextEdit>
+            @if (_descriptionToLong)
+            {
+                <MudAlert
+                    Severity="Severity.Warning">@L["Description to long {0}/{1}", _training.Description?.Length ?? -1, DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION]</MudAlert>
+            }
+        </div>;
+}
