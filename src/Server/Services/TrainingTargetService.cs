@@ -22,14 +22,34 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             .Where(x => x.CustomerId == customerId &&
                         x.ParentId == null &&
                         (subjectId == null || x.Id == subjectId))
-            .Include(x=>x.Parent)
-            .ThenInclude(x=>x.TrainingTargets)
-            .Include(x=>x.Children)
-            .ThenInclude(x=>x.TrainingTargets)
-            .Include(x=>x.TrainingTargets)
+            .AsNoTracking()
+            .Include(x => x.Parent)
+            .ThenInclude(x => x.TrainingTargets)
+            .Include(x => x.Children)
+            .ThenInclude(x => x.TrainingTargets)
+            .Include(x => x.TrainingTargets)
             .Select(x => x.ToTrainingTargetSubjects());
         response.TrainingSubjects = await trainingTargets.Skip(skip).Take(count).ToListAsync(clt);
         response.TotalCount = await trainingTargets.CountAsync(clt);
+        response.Success = true;
+
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
+
+    public async Task<GetSingleTargetSetResponse> GetSetLinkedToTraining(Guid trainingId, Guid customerId, CancellationToken clt)
+    {
+        var sw = StopwatchProvider.StartNew();
+        var response = new GetSingleTargetSetResponse();
+
+        var trainingTargetSet = await Database.RoosterTrainings
+            .AsNoTracking()
+            .Where(x => x.CustomerId == customerId && x.Id == trainingId)
+            .Include(x => x.TrainingTargetSet)
+            .Select(x => x.ToTrainingTargetSet())
+            .FirstOrDefaultAsync(clt);
+        response.TrainingTargetSet = trainingTargetSet;
         response.Success = true;
 
         sw.Stop();

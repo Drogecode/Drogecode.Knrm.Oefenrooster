@@ -249,6 +249,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             // TrainingTargetUserResult
             modelBuilder.Entity<DbTrainingTargetUserResult>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbTrainingTargetUserResult>().HasOne(p => p.TrainingTarget).WithMany(g => g.TrainingTargetUserResults).HasForeignKey(s => s.TrainingTargetId).IsRequired();
+            modelBuilder.Entity<DbTrainingTargetUserResult>().HasOne(p => p.RoosterAvailable).WithMany(g => g.TrainingTargetUserResults).HasForeignKey(s => s.RoosterAvailableId).IsRequired();
             modelBuilder.Entity<DbTrainingTargetUserResult>().HasOne(p => p.User).WithMany(g => g.TrainingTargetUserResults).HasForeignKey(s => s.UserId).IsRequired();
 
             //// Links

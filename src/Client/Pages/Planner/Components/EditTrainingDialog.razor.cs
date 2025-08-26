@@ -33,6 +33,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private IReadOnlyCollection<Guid> _selectedValuesTargets = [];
     private EditTraining? _training;
     private PlannerTrainingType? _currentTrainingType;
+    private TrainingTargetSet? _currentTrainingTargetSet;
     private bool _success;
     private bool _showDelete;
     private bool _startedWithShowNoTime;
@@ -41,6 +42,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private bool _editOld;
     private bool _saving;
     private bool _descriptionToLong;
+    private bool _targetSetReadonly;
 #if DEBUG
     private const bool IS_DEBUG = true;
 #else
@@ -75,7 +77,13 @@ public sealed partial class EditTrainingDialog : IDisposable
             _currentTrainingType = TrainingTypes?.FirstOrDefault(x => x.Id == _training?.RoosterTrainingTypeId);
             if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user))
             {
-                _trainingSubjects = await TrainingTargetRepository.AllTrainingTargetsAsync(30, 0, _cls.Token);
+                _trainingSubjects = await TrainingTargetRepository.AllTrainingTargets(30, 0, _cls.Token);
+                if (_training?.Id is not null)
+                {
+                    _currentTrainingTargetSet = await TrainingTargetRepository.GetSetLinkedToTraining(_training.Id.Value, CancellationToken.None);
+                    _selectedValuesTargets = _currentTrainingTargetSet?.TrainingTargetIds ?? [];
+                    _targetSetReadonly = _currentTrainingTargetSet?.IsReusable ?? false;
+                }
             }
 
             await SetRoleBasedVariables();
@@ -405,7 +413,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private void DescriptionChanged(string? newDescription)
     {
         _training!.Description = newDescription;
-        
+
         if (newDescription is not null && newDescription?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION)
         {
             _descriptionToLong = true;

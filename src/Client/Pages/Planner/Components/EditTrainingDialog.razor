@@ -179,7 +179,7 @@
         @<div Elevation="0" class="m-3">
             @if (_trainingSubjects is not null)
             {
-                <MudList T="Guid" @bind-SelectedValues="_selectedValuesTargets" SelectionMode="SelectionMode.MultiSelection">
+                <MudList T="Guid" @bind-SelectedValues="_selectedValuesTargets" SelectionMode="SelectionMode.MultiSelection" ReadOnly="_targetSetReadonly">
                     <MudListSubheader>
                         @L["Select training targets"]
                     </MudListSubheader>

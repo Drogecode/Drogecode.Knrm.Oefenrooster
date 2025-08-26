@@ -387,10 +387,16 @@
           "autH_scheduler_description_read": {
             "type": "boolean"
           },
-          "autH_scheduler_rate_read": {
+          "autH_scheduler_target_set": {
             "type": "boolean"
           },
-          "autH_scheduler_rate_edit": {
+          "autH_target_read": {
+            "type": "boolean"
+          },
+          "autH_target_edit": {
+            "type": "boolean"
+          },
+          "autH_target_user_read": {
             "type": "boolean"
           },
           "autH_users_details": {
@@ -406,9 +412,6 @@
             "type": "boolean"
           },
           "autH_users_add_role": {
-            "type": "boolean"
-          },
-          "autH_users_rate_read": {
             "type": "boolean"
           },
           "autH_action_history_full": {

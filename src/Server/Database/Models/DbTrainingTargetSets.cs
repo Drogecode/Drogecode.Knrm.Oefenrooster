@@ -8,8 +8,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 public class DbTrainingTargetSets
 {
     [Key] public Guid Id { get; set; }
-    [StringLength(DefaultSettingsHelper.MAX_LENGTH_TRAINING_TARGET_SET_NAME)]public string? Name { get; set; }
+    [StringLength(DefaultSettingsHelper.MAX_LENGTH_TRAINING_TARGET_SET_NAME)] public string? Name { get; set; }
     public List<Guid> TrainingTargetIds { get; set; } = [];
+    public bool IsActive { get; set; }
+    public bool IsReusable { get; set; }
     public DateTime CreatedOn { get; set; }
     public Guid CreatedBy { get; set; }
     public DateTime? DeletedOn { get; set; }

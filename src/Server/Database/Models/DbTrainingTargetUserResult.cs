@@ -8,6 +8,7 @@ public class DbTrainingTargetUserResult
 {
     [Key] public Guid Id { get; set; }
     public Guid TrainingTargetId { get; set; }
+    public Guid RoosterAvailableId { get; set; }
     public Guid UserId { get; set; }
     public int Result { get; set; }
     public DateTime? ResultDate { get; set; }
@@ -16,5 +17,6 @@ public class DbTrainingTargetUserResult
     public Guid? DeletedBy { get; set; }
     
     public DbTrainingTargets TrainingTarget { get; set; }
+    public DbRoosterAvailable RoosterAvailable { get; set; }
     public DbUsers User { get; set; }
 }

@@ -9,7 +9,8 @@ using Microsoft.Identity.Web.Resource;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
-[Authorize(Roles = AccessesNames.AUTH_basic_access)] // ToDo: Change to AUTH_basic_access when development is done
+[Authorize(Roles = AccessesNames.AUTH_basic_access)]
+[Authorize(Roles = $"{AccessesNames.AUTH_target_read},{AccessesNames.AUTH_scheduler_target_set},{AccessesNames.AUTH_target_edit},{AccessesNames.AUTH_target_user_read}")]
 [ApiController]
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
@@ -48,5 +49,25 @@ public class TrainingTargetController : DrogeController
             return BadRequest();
         }
     }
-    
+
+    [HttpGet]
+    [Route("set/{trainingId:guid}")]
+    public async Task<ActionResult<GetSingleTargetSetResponse>> GetSetLinkedToTraining(Guid trainingId, CancellationToken clt = default)
+    {
+        
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var response = await _trainingTargetService.GetSetLinkedToTraining(trainingId, customerId, clt);
+            return response;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            Logger.LogError(ex, "Exception in GetSetLinkedToTraining");
+            return BadRequest();
+        }
+    }
 }

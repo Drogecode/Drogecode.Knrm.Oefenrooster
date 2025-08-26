@@ -15,7 +15,7 @@ public class TrainingTargetRepository
         _offlineService = offlineService;
     }
 
-    public async Task<List<TrainingSubject>?> AllTrainingTargetsAsync(int count, int skip, CancellationToken clt)
+    public async Task<List<TrainingSubject>?> AllTrainingTargets(int count, int skip, CancellationToken clt)
     {
         var targets = await _offlineService.CachedRequestAsync($"traTarg_{count}_{skip}",
             async () => await _trainingTargetClient.AllTrainingTargetsAsync(count, skip, clt),
@@ -23,11 +23,17 @@ public class TrainingTargetRepository
         return targets?.TrainingSubjects;
     }
     
-    public async Task<List<TrainingSubject>?> AllTrainingTargetsAsync(int count, int skip, Guid subjectId, CancellationToken clt)
+    public async Task<List<TrainingSubject>?> AllTrainingTargets(int count, int skip, Guid subjectId, CancellationToken clt)
     {
         var targets = await _offlineService.CachedRequestAsync($"traTarg_{count}_{skip}_{subjectId}",
             async () => await _trainingTargetClient.AllTrainingTargets2Async(count, skip, subjectId, clt),
             clt: clt);
         return targets?.TrainingSubjects;
+    }
+
+    public async Task<TrainingTargetSet?> GetSetLinkedToTraining(Guid trainingId, CancellationToken clt)
+    {
+        var response = await _trainingTargetClient.GetSetLinkedToTrainingAsync(trainingId, clt);
+        return response?.TrainingTargetSet;
     }
 }
