@@ -39,6 +39,7 @@ public sealed partial class UserDetails : IDisposable
     private IEnumerable<DrogeUser> _selectedUsersAction;
     private bool _updatingSelection;
     private bool _updatingRoles;
+    private bool _loadingTrainings;
     private const int TAKE = 15;
     private int _total = TAKE;
     private int _skip;
@@ -54,6 +55,7 @@ public sealed partial class UserDetails : IDisposable
             if (Id is not null)
             {
                 _user = await UserRepository.GetById(Id.Value, false);
+                StateHasChanged();
                 if (_user?.LinkedAsA is not null)
                 {
                     var newList = new List<DrogeUser>();
@@ -85,7 +87,7 @@ public sealed partial class UserDetails : IDisposable
                         _userRolesForUser = [];
                         if (_userLinkRoles?.Roles is not null)
                         {
-                            foreach (var role in _userLinkRoles.Roles.Where(x=>x.IsSet))
+                            foreach (var role in _userLinkRoles.Roles.Where(x => x.IsSet))
                             {
                                 _userRolesForUser.Add(role.Id);
                             }
@@ -149,6 +151,7 @@ public sealed partial class UserDetails : IDisposable
                         DebugHelper.WriteLine($"UserRolesChanged - Role {oldRole} not found");
                         continue;
                     }
+
                     drogeUserRoleLinked.IsSet = false;
                     await UserRoleClient.LinkUserToRoleAsync(Id.Value, drogeUserRoleLinked, _cls.Token);
                     removedRoles.Add(oldRole);
@@ -173,8 +176,10 @@ public sealed partial class UserDetails : IDisposable
                         DebugHelper.WriteLine($"UserRolesChanged - Role {newRole} not found");
                         continue;
                     }
+
                     drogeUserRoleLinked = drogeUserRoleBasic.ToDrogeUserRoleLinked();
                 }
+
                 drogeUserRoleLinked.IsSet = true;
                 drogeUserRoleLinked.SetExternal = false;
                 await UserRoleClient.LinkUserToRoleAsync(Id.Value, drogeUserRoleLinked, _cls.Token);
@@ -236,6 +241,10 @@ public sealed partial class UserDetails : IDisposable
 
     private async Task LoadMore()
     {
+        if (_loadingTrainings)
+            return;
+        _loadingTrainings = true;
+        StateHasChanged();
         _skip++;
         var newTrainings = (await ScheduleRepository.AllTrainingsForUser(Id.Value, TAKE, _skip * TAKE, _cls.Token));
         if (_trainings is null || newTrainings is null || newTrainings.TotalCount != _trainings.TotalCount)
@@ -250,6 +259,7 @@ public sealed partial class UserDetails : IDisposable
             _total += TAKE;
         }
 
+        _loadingTrainings = false;
         StateHasChanged();
     }
 

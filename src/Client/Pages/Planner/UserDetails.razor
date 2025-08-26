@@ -2,22 +2,29 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole
 
-@if (_trainings is not null && _user is not null && _functions is not null)
+@if (_user is not null && _functions is not null)
 {
     <MudText Typo="Typo.h3">@L["Trainings for {0}", _user?.Name ?? "No name"]</MudText>
     <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
         <MudTabPanel Text="@L["Trainings"]">
-            <MudPaper Elevation="0" Class="flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
-                @foreach (var training in _trainings.Trainings.OrderByDescending(x => x.DateStart))
-                {
-                    <div class="flex-1">
-                        <IndexCard MinWidth="300px" MaxWidth="600px" User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles"/>
-                    </div>
-                }
-            </MudPaper>
-            @if (_trainings.TotalCount >= _total)
+            @if (_trainings is not null)
             {
-                <MudButton OnClick="LoadMore" Color="Color.Primary">@LApp["Load more"]</MudButton>
+                <MudPaper Elevation="0" Class="flex align-content-start flex-wrap grow-1 gap-4 mx-2 my-4">
+                    @foreach (var training in _trainings.Trainings.OrderByDescending(x => x.DateStart))
+                    {
+                        <div class="flex-1">
+                            <IndexCard MinWidth="300px" MaxWidth="600px" User="_user" Training="training" Functions="_functions" Users="_users" TrainingTypes="_trainingTypes" Vehicles="_vehicles"/>
+                        </div>
+                    }
+                </MudPaper>
+                @if (_trainings.TotalCount >= _total)
+                {
+                    <MudButton OnClick="LoadMore" Color="Color.Primary" Disabled="_loadingTrainings">@LApp["Load more"]</MudButton>
+                }
+            }
+            else
+            {
+                <DrogeLoading/>
             }
         </MudTabPanel>
         <MudTabPanel Text="@L["For target"]">
@@ -45,7 +52,7 @@
         <AuthorizeView Roles="@AccessesNames.AUTH_users_settings">
             <MudTabPanel Text="@L["Settings"]">
                 <MudPaper Class="pa-4" MaxWidth="500px">
-                    
+
                     <AuthorizeView Roles="@AccessesNames.AUTH_users_add_role" Context="inner">
                         @if (_userRoles?.Roles is not null && _userLinkRoles?.Roles is not null)
                         {
