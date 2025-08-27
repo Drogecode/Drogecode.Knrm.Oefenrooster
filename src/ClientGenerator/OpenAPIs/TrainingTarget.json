@@ -154,6 +154,56 @@
           }
         }
       }
+    },
+    "/api/TrainingTarget/set/all/reusable/{count}/{skip}": {
+      "get": {
+        "tags": [
+          "TrainingTarget"
+        ],
+        "operationId": "GetAllReusableSets",
+        "parameters": [
+          {
+            "name": "count",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllTargetSetResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllTargetSetResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllTargetSetResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -179,6 +229,33 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TrainingSubject"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetAllTargetSetResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "trainingTargetSets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrainingTargetSet"
             },
             "nullable": true
           }
@@ -304,11 +381,15 @@
             },
             "nullable": true
           },
-          "isActive": {
-            "type": "boolean"
+          "activeSince": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           },
-          "isReusable": {
-            "type": "boolean"
+          "reusableSince": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           },
           "createdOn": {
             "type": "string",

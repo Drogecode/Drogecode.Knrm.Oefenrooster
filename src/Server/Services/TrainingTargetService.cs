@@ -2,6 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -50,6 +51,23 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             .Select(x => x.ToTrainingTargetSet())
             .FirstOrDefaultAsync(clt);
         response.TrainingTargetSet = trainingTargetSet;
+        response.Success = true;
+
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
+
+    public async Task<ActionResult<GetAllTargetSetResponse>> GetAllReusableSets(Guid customerId, int count, int skip, CancellationToken clt)
+    {
+        var sw = StopwatchProvider.StartNew();
+        var response = new GetAllTargetSetResponse();
+
+        var trainingTargetSets = Database.TrainingTargetSets
+            .AsNoTracking()
+            .Where(x => x.CustomerId == customerId)
+            .Select(x => x.ToTrainingTargetSet());
+        response.TrainingTargetSets = await trainingTargetSets.ToListAsync(clt);
         response.Success = true;
 
         sw.Stop();

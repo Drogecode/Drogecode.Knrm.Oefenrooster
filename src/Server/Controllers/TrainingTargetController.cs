@@ -54,7 +54,6 @@ public class TrainingTargetController : DrogeController
     [Route("set/{trainingId:guid}")]
     public async Task<ActionResult<GetSingleTargetSetResponse>> GetSetLinkedToTraining(Guid trainingId, CancellationToken clt = default)
     {
-        
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
@@ -67,6 +66,26 @@ public class TrainingTargetController : DrogeController
             Debugger.Break();
 #endif
             Logger.LogError(ex, "Exception in GetSetLinkedToTraining");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("set/all/reusable/{count:int}/{skip:int}")]
+    public async Task<ActionResult<GetAllTargetSetResponse>> GetAllReusableSets(int count, int skip, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var response = await _trainingTargetService.GetAllReusableSets(customerId, count, skip, clt);
+            return response;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            Logger.LogError(ex, "Exception in GetAllReusableSets");
             return BadRequest();
         }
     }

@@ -12,11 +12,11 @@ public static class DefaultSettingsHelper
     /// <summary>
     /// Increase to show the update button when BUTTON_VERSION is on this number or above.
     /// </summary>
-    public const int UPDATE_VERSION = 10; // Set on: v0.5.38
+    public const int UPDATE_VERSION = 10; // Set on: v0.5.39
     
     // Does not show for versions below v0.5.0
     // Old versions, version when it was last on this UPDATE_VERSION
-    // 9 = v0.5.38
+    // 9 = v0.5.39
     
     /// <summary>
     /// From what UPDATE_VERSION we should show the update button.

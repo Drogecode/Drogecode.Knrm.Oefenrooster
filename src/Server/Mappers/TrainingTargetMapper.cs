@@ -69,15 +69,20 @@ public static class TrainingTargetMapper
     {
         if (roosterTraining.TrainingTargetSet is null)
             return null;
+        return roosterTraining.TrainingTargetSet.ToTrainingTargetSet();
+    }
+
+    public static TrainingTargetSet ToTrainingTargetSet(this DbTrainingTargetSets trainingTargetSet)
+    {
         return new TrainingTargetSet
         {
-            Id = roosterTraining.TrainingTargetSet.Id,
-            Name = roosterTraining.TrainingTargetSet.Name,
-            TrainingTargetIds = roosterTraining.TrainingTargetSet.TrainingTargetIds,
-            IsActive = roosterTraining.TrainingTargetSet.IsActive,
-            IsReusable = roosterTraining.TrainingTargetSet.IsReusable,
-            CreatedOn = roosterTraining.TrainingTargetSet.CreatedOn,
-            CreatedBy = roosterTraining.TrainingTargetSet.CreatedBy,
+            Id = trainingTargetSet.Id,
+            Name = trainingTargetSet.Name,
+            TrainingTargetIds = trainingTargetSet.TrainingTargetIds,
+            ActiveSince = trainingTargetSet.ActiveSince,
+            ReusableSince = trainingTargetSet.ReusableSince,
+            CreatedOn = trainingTargetSet.CreatedOn,
+            CreatedBy = trainingTargetSet.CreatedBy,
         };
     }
 }
