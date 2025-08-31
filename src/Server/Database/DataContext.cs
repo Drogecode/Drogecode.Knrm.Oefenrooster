@@ -1090,7 +1090,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         }
 
         private static readonly Guid TrainingTargetSubjectAlgemeneKennis = new Guid("b0a94df1-f7cf-4408-86a4-cc4af0702f1b");
+        private static readonly Guid TrainingTargetSubjectAlgemeneCommunicatie = new Guid("512af760-d93d-4f11-93fc-cdf0164ba0d7");
         private static readonly Guid TrainingTargetSubjectTouwhandelingen = new Guid("15b7f98c-8c47-47b3-9dd6-f9c92810aaa6");
+        private static readonly Guid TrainingTargetSubjectWalEnWater = new Guid("590b6950-e75d-4ebf-9279-0d31e17ecd66");
+        private static readonly Guid TrainingTargetSubjectCommunicatieOpHetWater= new Guid("6cfb611e-63d7-4d33-be21-ebb8e8649cba");
 
         private void SetTrainingTargetSubjects(ModelBuilder modelBuilder)
         {
@@ -1110,6 +1113,35 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 ParentId = TrainingTargetSubjectAlgemeneKennis,
                 Order = 10,
                 Name = "Touwhandelingen",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargetSubjects>(e => e.HasData(new DbTrainingTargetSubjects
+            {
+                Id = TrainingTargetSubjectAlgemeneCommunicatie,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Order = 20,
+                Name = "Communicatie",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargetSubjects>(e => e.HasData(new DbTrainingTargetSubjects
+            {
+                Id = TrainingTargetSubjectWalEnWater,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                ParentId = TrainingTargetSubjectAlgemeneCommunicatie,
+                Order = 30,
+                Name = "Wal en water",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargetSubjects>(e => e.HasData(new DbTrainingTargetSubjects
+            {
+                Id = TrainingTargetSubjectCommunicatieOpHetWater,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                ParentId = TrainingTargetSubjectAlgemeneCommunicatie,
+                Order = 40,
+                Name = "Communicatie op het water",
                 CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
                 CreatedBy = IdTaco
             }));
@@ -1138,6 +1170,54 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Name = "Een paalsteek leggen",
                 Type = TrainingTargetType.Exercise,
                 Url = "https://kompas.knrm.nl/Algemene-kennis/Touwhandelingen/Touwhandelingen-paalsteek-leggen",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargets>(e => e.HasData(new DbTrainingTargets
+            {
+                Id = new Guid("45035fb8-cc63-4d18-b1df-f6454a143eaf"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                SubjectId = TrainingTargetSubjectWalEnWater,
+                Order = 30,
+                Name = "In- en uitmelden",
+                Type = TrainingTargetType.Knowledge,
+                Url = "https://kompas.knrm.nl/Communicatie/Wal-en-water/In-en-uitmelden",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargets>(e => e.HasData(new DbTrainingTargets
+            {
+                Id = new Guid("13c608b2-76c6-48da-918e-1052a7ae3e3a"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                SubjectId = TrainingTargetSubjectWalEnWater,
+                Order = 40,
+                Name = "Uitvragen van de situatie",
+                Type = TrainingTargetType.Knowledge,
+                Url = "https://kompas.knrm.nl/Communicatie/Wal-en-water/Uitvragen-van-de-situatie",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargets>(e => e.HasData(new DbTrainingTargets
+            {
+                Id = new Guid("622ce20e-5ee4-4caa-9b3b-78aae55ac2b5"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                SubjectId = TrainingTargetSubjectCommunicatieOpHetWater,
+                Order = 50,
+                Name = "Werken met DSC",
+                Type = TrainingTargetType.Knowledge,
+                Url = "https://kompas.knrm.nl/Communicatie/Communicatie-op-het-water/Werken-met-DSC",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargets>(e => e.HasData(new DbTrainingTargets
+            {
+                Id = new Guid("4dc2a888-8b95-4754-9d0d-e185789fe3a1"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                SubjectId = TrainingTargetSubjectCommunicatieOpHetWater,
+                Order = 60,
+                Name = "SITREP",
+                Type = TrainingTargetType.Knowledge,
+                Url = "https://kompas.knrm.nl/Communicatie/Communicatie-op-het-water/SITREP",
                 CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
                 CreatedBy = IdTaco
             }));

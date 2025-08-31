@@ -83,7 +83,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 {
                     _currentTrainingTargetSet = await TrainingTargetRepository.GetSetLinkedToTraining(_training.Id.Value, CancellationToken.None) ?? new TrainingTargetSet();
                     _selectedTargets = _currentTrainingTargetSet?.TrainingTargetIds ?? [];
-                    _targetSetReadonly = _currentTrainingTargetSet?.ReusableSince != null;
+                    _targetSetReadonly = _currentTrainingTargetSet?.ReusableSince is not null;
                 }
             }
 
@@ -92,6 +92,45 @@ public sealed partial class EditTrainingDialog : IDisposable
             StateHasChanged();
             MudDialog?.StateHasChanged();
         }
+    }
+
+    private void OnSearchTarget(string arg)
+    {
+        _searchTargetText = string.IsNullOrWhiteSpace(arg) ? null : arg;
+        if (_searchTargetText is not null && _trainingSubjects is not null)
+        {
+            UpdateTrainingVisibilityBasedOnSearch(_trainingSubjects);
+        }
+    }
+
+    private bool UpdateTrainingVisibilityBasedOnSearch(List<TrainingSubject> trainingSubjects)
+    {
+        var isVisible = false;
+        foreach (var subject in trainingSubjects)
+        {
+            if (subject.TrainingTargets is not null && subject.TrainingTargets.Any(x => x.Name?.Contains(_searchTargetText, StringComparison.OrdinalIgnoreCase) == true))
+            {
+                subject.IsVisible = true;
+            }
+            else
+            {
+                if (subject.TrainingSubjects is not null)
+                {
+                    subject.IsVisible = UpdateTrainingVisibilityBasedOnSearch(subject.TrainingSubjects);
+                }
+                else
+                {
+                    subject.IsVisible = false;
+                }
+            }
+
+            if (subject.IsVisible)
+            {
+                isVisible = true;
+            }
+        }
+
+        return isVisible;
     }
 
     private async Task SetNewFromDefaultTraining()
@@ -441,10 +480,5 @@ public sealed partial class EditTrainingDialog : IDisposable
         {
             _descriptionToLong = false;
         }
-    }
-
-    private void OnSearchTarget(string arg)
-    {
-        _searchTargetText = string.IsNullOrWhiteSpace(arg) ? null : arg;
     }
 }

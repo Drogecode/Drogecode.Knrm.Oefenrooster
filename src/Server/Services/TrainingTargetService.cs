@@ -66,8 +66,10 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         var trainingTargetSets = Database.TrainingTargetSets
             .AsNoTracking()
             .Where(x => x.CustomerId == customerId)
+            .OrderByDescending(x => x.ReusableSince)
             .Select(x => x.ToTrainingTargetSet());
-        response.TrainingTargetSets = await trainingTargetSets.ToListAsync(clt);
+        response.TrainingTargetSets = await trainingTargetSets.Skip(skip).Take(count).ToListAsync(clt);
+        response.TotalCount = await trainingTargetSets.CountAsync(clt);
         response.Success = true;
 
         sw.Stop();
