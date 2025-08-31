@@ -85,4 +85,23 @@ public static class TrainingTargetMapper
             CreatedBy = trainingTargetSet.CreatedBy,
         };
     }
+
+    public static DbTrainingTargetSets ToDb(this TrainingTargetSet trainingTargetSet, Guid customerId)
+    {
+        if (trainingTargetSet.Id is null)
+        {
+            throw new DrogeCodeNullException("DbTrainingTargetSets ToDb trainingTargetSet.Id is null");
+        }
+        return new DbTrainingTargetSets
+        {
+            Id = trainingTargetSet.Id.Value,
+            CustomerId = customerId,
+            Name = trainingTargetSet.Name,
+            TrainingTargetIds = trainingTargetSet.TrainingTargetIds,
+            ActiveSince = trainingTargetSet.ActiveSince,
+            ReusableSince = trainingTargetSet.ReusableSince,
+            CreatedOn = trainingTargetSet.CreatedOn,
+            CreatedBy = trainingTargetSet.CreatedBy,
+        };
+    }
 }

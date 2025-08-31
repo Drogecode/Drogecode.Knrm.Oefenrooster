@@ -1339,6 +1339,11 @@
             "format": "uuid",
             "nullable": true
           },
+          "trainingTargetSetId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "countToTrainingTarget": {
             "type": "boolean"
           },
@@ -1483,6 +1488,11 @@
             "format": "uuid",
             "nullable": true
           },
+          "trainingTargetSetId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "countToTrainingTarget": {
             "type": "boolean"
           },
@@ -1552,6 +1562,11 @@
             "nullable": true
           },
           "defaultId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "trainingTargetSetId": {
             "type": "string",
             "format": "uuid",
             "nullable": true

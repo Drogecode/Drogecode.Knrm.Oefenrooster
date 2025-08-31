@@ -74,4 +74,53 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return response;
     }
+
+    public async Task<PutResponse> PutNewTemplateSet(TrainingTargetSet body, Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = StopwatchProvider.StartNew();
+        var response = new PutResponse();
+
+        var newId = Guid.CreateVersion7();
+        body.Id = newId;
+        body.CreatedBy = userId;
+        body.CreatedOn = DateTime.UtcNow;
+        body.ActiveSince = DateTime.UtcNow;
+
+        Database.TrainingTargetSets.Add(body.ToDb(customerId));
+
+        response.Success = await Database.SaveChangesAsync(clt) > 0;
+        if (response.Success)
+        {
+            response.NewId = newId;
+        }
+
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
+
+    public async Task<PatchResponse> PatchTemplateSet(TrainingTargetSet body, Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = StopwatchProvider.StartNew();
+        var response = new PatchResponse();
+        var oldVersion = await Database.TrainingTargetSets.FirstOrDefaultAsync(
+            u => u.Id == body.Id && u.CustomerId == customerId && u.DeletedOn == null, 
+            cancellationToken: clt
+        );
+        if (oldVersion is null)
+        {
+            return response;
+        }
+
+        oldVersion.Name = body.Name;
+        oldVersion.TrainingTargetIds = body.TrainingTargetIds;
+        oldVersion.ActiveSince = body.ActiveSince;
+        oldVersion.ReusableSince = body.ReusableSince;
+
+        Database.TrainingTargetSets.Update(oldVersion);
+        response.Success = await Database.SaveChangesAsync(clt) > 0;
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
 }

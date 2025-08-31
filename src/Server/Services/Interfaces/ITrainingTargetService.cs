@@ -9,4 +9,6 @@ public interface ITrainingTargetService : IDrogeService
     Task<AllTrainingTargetsResponse> AllTrainingTargets(int count, int skip, Guid? subjectId, Guid customerId, CancellationToken clt);
     Task<GetSingleTargetSetResponse> GetSetLinkedToTraining(Guid trainingId, Guid customerId, CancellationToken clt);
     Task<ActionResult<GetAllTargetSetResponse>> GetAllReusableSets(Guid customerId, int count, int skip, CancellationToken clt);
+    Task<PutResponse> PutNewTemplateSet(TrainingTargetSet body, Guid userId, Guid customerId, CancellationToken clt);
+    Task<PatchResponse> PatchTemplateSet(TrainingTargetSet body, Guid userId, Guid customerId, CancellationToken clt);
 }

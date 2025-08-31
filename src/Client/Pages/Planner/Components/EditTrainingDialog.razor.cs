@@ -34,6 +34,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private EditTraining? _training;
     private PlannerTrainingType? _currentTrainingType;
     private TrainingTargetSet? _currentTrainingTargetSet;
+    private string? _searchTargetText;
     private bool _success;
     private bool _showDelete;
     private bool _startedWithShowNoTime;
@@ -75,12 +76,12 @@ public sealed partial class EditTrainingDialog : IDisposable
             }
 
             _currentTrainingType = TrainingTypes?.FirstOrDefault(x => x.Id == _training?.RoosterTrainingTypeId);
-            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_super_user))
+            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_target_set))
             {
                 _trainingSubjects = await TrainingTargetRepository.AllTrainingTargets(30, 0, _cls.Token);
                 if (_training?.Id is not null)
                 {
-                    _currentTrainingTargetSet = await TrainingTargetRepository.GetSetLinkedToTraining(_training.Id.Value, CancellationToken.None);
+                    _currentTrainingTargetSet = await TrainingTargetRepository.GetSetLinkedToTraining(_training.Id.Value, CancellationToken.None) ?? new TrainingTargetSet();
                     _selectedTargets = _currentTrainingTargetSet?.TrainingTargetIds ?? [];
                     _targetSetReadonly = _currentTrainingTargetSet?.ReusableSince != null;
                 }
@@ -237,6 +238,22 @@ public sealed partial class EditTrainingDialog : IDisposable
 
             if (_training.TimeStart >= _training.TimeEnd) return;
 
+            if (_currentTrainingTargetSet?.Id is null)
+            {
+                if (_currentTrainingTargetSet is not null)
+                {
+                    _currentTrainingTargetSet.TrainingTargetIds = _selectedTargets.ToList();
+                    var putSetResponse = await TrainingTargetRepository.PutNewTemplateSet(_currentTrainingTargetSet, _cls.Token);
+                    _training.TrainingTargetSetId = putSetResponse?.NewId;
+                }
+            }
+            else
+            {
+                _currentTrainingTargetSet.TrainingTargetIds = _selectedTargets.ToList();
+                await TrainingTargetRepository.PatchTemplateSet(_currentTrainingTargetSet, _cls.Token);
+                _training.TrainingTargetSetId = _currentTrainingTargetSet.Id;
+            }
+
             if (_training.IsNew || _training.IsNewFromDefault)
             {
                 await UpdatePlannerObject();
@@ -309,6 +326,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             {
                 DefaultId = _training.DefaultId,
                 RoosterTrainingTypeId = _training.RoosterTrainingTypeId,
+                TrainingTargetSetId = _training.TrainingTargetSetId,
                 Name = _training.Name,
                 Description = _training.Description,
                 DateStart = dateStart,
@@ -325,6 +343,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             DebugHelper.WriteLine("Updating planner object.");
             Planner.DefaultId = _training.DefaultId;
             Planner.RoosterTrainingTypeId = _training.RoosterTrainingTypeId;
+            Planner.TrainingTargetSetId = _training.TrainingTargetSetId;
             Planner.Name = _training.Name;
             Planner.Description = _training.Description;
             Planner.DateStart = dateStart;
@@ -422,5 +441,10 @@ public sealed partial class EditTrainingDialog : IDisposable
         {
             _descriptionToLong = false;
         }
+    }
+
+    private void OnSearchTarget(string arg)
+    {
+        _searchTargetText = string.IsNullOrWhiteSpace(arg) ? null : arg;
     }
 }

@@ -246,6 +246,7 @@ public class ScheduleService : DrogeService, IScheduleService
             throw new UnauthorizedAccessException();
 
         oldTraining.RoosterTrainingTypeId = patchedTraining.RoosterTrainingTypeId;
+        oldTraining.TrainingTargetSetId = patchedTraining.TrainingTargetSetId;
         oldTraining.Name = sanitizer.Sanitize(patchedTraining.Name ?? string.Empty);
         oldTraining.Description = sanitizer.Sanitize(patchedTraining.Description ?? string.Empty);
         oldTraining.DateStart = patchedTraining.DateStart;
@@ -313,6 +314,7 @@ public class ScheduleService : DrogeService, IScheduleService
             TrainingId = trainingId,
             DefaultId = newTraining.DefaultId,
             RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId,
+            TrainingTargetSetId = newTraining.TrainingTargetSetId,
             Name = sanitizer.Sanitize(newTraining.Name ?? string.Empty),
             Description = sanitizer.Sanitize(newTraining.Description ?? string.Empty),
             DateStart = newTraining.DateStart,

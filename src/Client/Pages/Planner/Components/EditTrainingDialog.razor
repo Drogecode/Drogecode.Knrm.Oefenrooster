@@ -182,6 +182,13 @@
                 <MudText>
                     @L["Select training targets"]
                 </MudText>
+                @if (_currentTrainingTargetSet is not null)
+                {
+                    <MudTextField T="string" Label=@L["Name"] @bind-Value="_currentTrainingTargetSet.Name" ReadOnly="_targetSetReadonly"/>
+                    <MudSwitchM3 T="bool" Label="@L["Is reusable"]" Value="_currentTrainingTargetSet.ReusableSince == null" ValueChanged="@((e) => _currentTrainingTargetSet.ReusableSince = e ? null : DateTime.Now)" ReadOnly="_targetSetReadonly"/>
+                }
+
+                <MudTextField T="string" Label=@LApp["Search"] Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged="OnSearchTarget" Immediate="true" Clearable="true" />
                 <MudTreeView T="Guid" @bind-SelectedValues="_selectedTargets" SelectionMode="SelectionMode.MultiSelection" ReadOnly="_targetSetReadonly">
                     @foreach (var subject in _trainingSubjects)
                     {
@@ -208,7 +215,10 @@
             {
                 foreach (var target in subject.TrainingTargets)
                 {
-                    <MudTreeViewItem T="Guid" Value="@target.Id" Text="@target.Name"/>
+                    @if (_searchTargetText is null || _selectedTargets.Contains(target.Id) || target.Name?.Contains(_searchTargetText, StringComparison.CurrentCultureIgnoreCase) == true)
+                    {
+                        <MudTreeViewItem T="Guid" Value="@target.Id" Text="@target.Name"/>
+                    }
                 }
             }
         </MudTreeViewItem>;

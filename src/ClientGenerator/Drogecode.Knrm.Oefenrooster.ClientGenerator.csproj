@@ -77,7 +77,7 @@
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\TrainingTarget.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="TrainingTargetClient">
 			<OutputPath>../Clients/TrainingTargetClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget</Options>
+			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\TrainingTypes.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="TrainingTypesClient">
 			<OutputPath>../Clients/TrainingTypesClient.g.cs</OutputPath>
