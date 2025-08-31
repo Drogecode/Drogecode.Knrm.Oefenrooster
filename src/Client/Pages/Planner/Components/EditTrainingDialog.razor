@@ -78,6 +78,12 @@
 
 @code{
 
+    public class SubjectListItem
+    {
+        public Guid Id { get; set; }
+        public string? Name { get; set; }
+    }
+    
     private RenderFragment MainTab =>
         @<div Elevation="0" class="m-3">
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors" Disabled="@(!_canEdit || _saving)">
@@ -179,22 +185,25 @@
         @<div Elevation="0" class="m-3">
             @if (_trainingSubjects is not null)
             {
-                <MudList T="Guid" @bind-SelectedValues="_selectedValuesTargets" SelectionMode="SelectionMode.MultiSelection" ReadOnly="_targetSetReadonly">
-                    <MudListSubheader>
-                        @L["Select training targets"]
-                    </MudListSubheader>
+                <MudText>
+                    @L["Select training targets"]
+                </MudText>
+                <MudTreeView SelectedValues="_selectedTargets" SelectedValuesChanged="SelectedTargetsChanged" SelectedValueChanged="Testje" SelectionMode="SelectionMode.MultiSelection" ReadOnly="_targetSetReadonly">
                     @foreach (var subject in _trainingSubjects)
                     {
                         @SubjectsList(subject)
                     }
-                </MudList>
+                </MudTreeView>
+                @foreach(var d in _selectedTargets)
+                {
+                    <p>@d</p>
+                }
             }
         </div>;
 
     private RenderFragment<TrainingSubject> SubjectsList => subject =>
         @<div>
-            <MudListItem T="Guid" Text="@subject.Name" Expanded>
-                <NestedList>
+            <MudTreeViewItem Text="@subject.Name" Expanded Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
                     @if (subject.TrainingSubjects is not null)
                     {
                         foreach (var childSubject in subject.TrainingSubjects)
@@ -206,10 +215,9 @@
                     {
                         foreach (var target in subject.TrainingTargets)
                         {
-                            <MudListItem T="Guid" Value="@target.Id" Text="@target.Name" />
+                            <MudTreeViewItem Value="@target.Id.ToString()" Text="@target.Name" />
                         }
                     }
-                </NestedList>
-            </MudListItem>
+            </MudTreeViewItem>
         </div>;
 }

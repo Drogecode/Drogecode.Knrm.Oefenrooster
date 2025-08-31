@@ -30,7 +30,8 @@ public sealed partial class EditTrainingDialog : IDisposable
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
     private List<TrainingSubject>? _trainingSubjects;
-    private IReadOnlyCollection<Guid> _selectedValuesTargets = [];
+    private IReadOnlyCollection<string> _selectedTargets = [new Guid("55accb54-6a0a-449d-bd77-33aea502c355").ToString(), new Guid("55accb54-6a0a-449d-bd77-33aea502c356").ToString()];
+    private List<TreeItemData<SubjectListItem>> _treeItemData = [];
     private EditTraining? _training;
     private PlannerTrainingType? _currentTrainingType;
     private TrainingTargetSet? _currentTrainingTargetSet;
@@ -81,8 +82,12 @@ public sealed partial class EditTrainingDialog : IDisposable
                 if (_training?.Id is not null)
                 {
                     _currentTrainingTargetSet = await TrainingTargetRepository.GetSetLinkedToTraining(_training.Id.Value, CancellationToken.None);
-                    _selectedValuesTargets = _currentTrainingTargetSet?.TrainingTargetIds ?? [];
+                    //_selectedValuesTargets = _currentTrainingTargetSet?.TrainingTargetIds ?? [];
                     _targetSetReadonly = _currentTrainingTargetSet?.ReusableSince != null;
+                }
+                if (_trainingSubjects is not null)
+                {
+                    BuildTreeItemData(_trainingSubjects);
                 }
             }
 
@@ -90,6 +95,45 @@ public sealed partial class EditTrainingDialog : IDisposable
 
             StateHasChanged();
             MudDialog?.StateHasChanged();
+        }
+    }
+
+    private void BuildTreeItemData(List<TrainingSubject> trainingSubjects)
+    {
+        foreach (var trainingSubject in trainingSubjects)
+        {
+            var main = new TreeItemData<SubjectListItem>
+            {
+                Value = new SubjectListItem
+                {
+                    Id = trainingSubject.Id,
+                    Name = trainingSubject.Name,
+                }
+            };
+            if (trainingSubject.TrainingTargets is not null)
+            {
+                main.Expandable = true;
+                main.Children = [];
+                foreach (var target in trainingSubject.TrainingTargets)
+                {
+                    main.Children.Add(new TreeItemData<SubjectListItem>
+                    {
+                        Value = new SubjectListItem
+                        {
+                            Id = target.Id,
+                            Name = target.Name,
+                        },
+                        
+                    });
+                }
+            }
+
+            if (trainingSubject.TrainingSubjects is not null)
+            {
+                BuildTreeItemData(trainingSubject.TrainingSubjects);
+            }
+
+            _treeItemData.Add(main);
         }
     }
 
@@ -422,5 +466,18 @@ public sealed partial class EditTrainingDialog : IDisposable
         {
             _descriptionToLong = false;
         }
+    }
+
+    private Task SelectedTargetsChanged(IReadOnlyCollection<string>? arg)
+    {
+        Console.WriteLine($"{arg.Count} new selection count");
+        _selectedTargets = arg;
+        return Task.CompletedTask;
+    }
+
+    private Task Testje(string arg)
+    {
+        Console.WriteLine($"Value is {arg.ToString()}");
+        return Task.CompletedTask;
     }
 }
