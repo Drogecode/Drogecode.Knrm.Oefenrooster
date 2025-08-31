@@ -79,6 +79,7 @@ public class ScheduleService : DrogeService, IScheduleService
                     result.Trainings.Add(new Training
                     {
                         DefaultId = training.RoosterDefaultId,
+                        TrainingTargetSetId = training.TrainingTargetSetId,
                         TrainingId = training.Id,
                         Name = training.Name,
                         DateStart = training.DateStart,
@@ -271,7 +272,7 @@ public class ScheduleService : DrogeService, IScheduleService
     }
 
     /// <inheritdoc />
-    public async Task PatchLastSynced(Guid customerId, Guid userId, Guid availableId, CancellationToken clt)
+    public async Task PatchLastSynced(Guid customerId, Guid userId, Guid? availableId, CancellationToken clt)
     {
         var oldAva = await Database.RoosterAvailables
             .FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Id == availableId, clt);
@@ -340,6 +341,7 @@ public class ScheduleService : DrogeService, IScheduleService
         {
             Id = training.TrainingId ?? throw new NoNullAllowedException("TrainingId is still null while adding new training"),
             RoosterDefaultId = training.DefaultId,
+            TrainingTargetSetId = training.TrainingTargetSetId,
             CustomerId = customerId,
             RoosterTrainingTypeId = training.RoosterTrainingTypeId,
             Name = training.Name,
@@ -469,6 +471,7 @@ public class ScheduleService : DrogeService, IScheduleService
                         var newPlanner = new PlannedTraining
                         {
                             DefaultId = training.RoosterDefaultId,
+                            TrainingTargetSetId = training.TrainingTargetSetId,
                             TrainingId = training.Id,
                             Name = training.Name,
                             DateStart = training.DateStart,
@@ -509,6 +512,7 @@ public class ScheduleService : DrogeService, IScheduleService
                             newPlanner.PlanUsers.Add(new PlanUser
                             {
                                 UserId = user.Id,
+                                AvailableId = avaUser.Id,
                                 Availability = available,
                                 SetBy = setBy ?? AvailabilitySetBy.None,
                                 Assigned = avaUser.Assigned,
@@ -731,6 +735,7 @@ public class ScheduleService : DrogeService, IScheduleService
                 {
                     result.Training!.PlanUsers.Add(new PlanUser
                     {
+                        AvailableId = avaUser?.Id,
                         Availability = available,
                         SetBy = setBy.Value,
                         Name = user.Name,
@@ -1019,6 +1024,7 @@ public class ScheduleService : DrogeService, IScheduleService
             {
                 TrainingId = schedule.TrainingId,
                 DefaultId = schedule.Training.RoosterDefaultId,
+                TrainingTargetSetId = schedule.Training.TrainingTargetSetId,
                 Name = schedule.Training.Name,
                 DateStart = schedule.Training.DateStart,
                 DateEnd = schedule.Training.DateEnd,
@@ -1034,6 +1040,7 @@ public class ScheduleService : DrogeService, IScheduleService
                 PlanUsers = schedule.Training.RoosterAvailables!.Select(a =>
                     new PlanUser
                     {
+                        AvailableId = a.Id,
                         UserId = a.UserId,
                         Availability = a.Available,
                         Assigned = a.Assigned,
@@ -1127,6 +1134,7 @@ public class ScheduleService : DrogeService, IScheduleService
             {
                 TrainingId = training.Id,
                 DefaultId = training.RoosterDefaultId,
+                TrainingTargetSetId = training.TrainingTargetSetId,
                 Name = training.Name,
                 DateStart = training.DateStart,
                 DateEnd = training.DateEnd,

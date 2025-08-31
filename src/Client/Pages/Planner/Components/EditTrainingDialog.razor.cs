@@ -81,7 +81,7 @@ public sealed partial class EditTrainingDialog : IDisposable
                 _trainingSubjects = await TrainingTargetRepository.AllTrainingTargets(30, 0, _cls.Token);
                 if (_training?.Id is not null)
                 {
-                    _currentTrainingTargetSet = await TrainingTargetRepository.GetSetLinkedToTraining(_training.Id.Value, CancellationToken.None) ?? new TrainingTargetSet();
+                    _currentTrainingTargetSet = await TrainingTargetRepository.GetSetLinkedToTraining(_training.Id.Value, _cls.Token) ?? new TrainingTargetSet();
                     _selectedTargets = _currentTrainingTargetSet?.TrainingTargetIds ?? [];
                     _targetSetReadonly = _currentTrainingTargetSet?.ReusableSince is not null;
                 }

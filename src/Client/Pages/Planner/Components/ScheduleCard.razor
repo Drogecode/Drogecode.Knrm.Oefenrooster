@@ -3,8 +3,8 @@
     @if (Functions is not null && Vehicles is not null && Planner.PlanUsers.Any(x => x.Assigned))
     {
         <CalendarBaseCard ReplaceEmptyName="@ReplaceEmptyName" Width="@Width" MaxWidth="@MaxWidth" MinWidth="@MinWidth" Training="@Planner" OnClickCallback="@OpenScheduleDialog"
-                          OnClickSettings="@OpenConfigDialog" OnClickHistory="_showHistory ? OpenHistoryDialog : null!" ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek"
-                          @bind-ShowPastBody="@_showPastBody" MoreMessage="@L["Show attendees"]" Refresh="_refreshModel">
+                          OnClickSettings="@OpenConfigDialog" OnClickHistory="_showHistory ? OpenHistoryDialog : null!" OnClickRate="_showRate ? OpenRateDialog : null!"
+                          ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" @bind-ShowPastBody="@_showPastBody" MoreMessage="@L["Show attendees"]" Refresh="_refreshModel">
             <ChipContent>
                 <ReadMoreChip Training="Planner"/>
                 <ReadReportChip Training="Planner"/>

@@ -1,0 +1,42 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget
+<MudDialog>
+    <TitleContent>
+        @L["Rate users for training"]
+    </TitleContent>
+    <DialogContent>
+        @if (Planner is not null && _trainingTargets is not null)
+        {
+            <MudDataGrid Items="@Planner.PlanUsers.Where(x => x.Assigned)">
+                <Columns>
+                    <PropertyColumn Property="x => x.Name" Title="@LApp["User"]"/>
+                    @foreach (var target in _trainingTargets)
+                    {
+                        <TemplateColumn Title="@target.Name">
+                            <CellTemplate>
+                                <MudStack Row>
+                                    @{
+                                        var resultObject = target.TargetResults?.FirstOrDefault(x => x.UserId == context.Item.UserId);
+                                        if (resultObject is null)
+                                        {
+                                            resultObject = new TrainingTargetResult
+                                            {
+                                                UserId = context.Item.UserId,
+                                                TrainingTargetId = target.Id,
+                                                RoosterAvailableId = context.Item.AvailableId ?? Guid.Empty,
+                                            };
+                                        }
+                                    }
+                                    <MudRating Size="@Size.Small" SelectedValue="@resultObject.Result" SelectedValueChanged="i => UpdateResult(i, resultObject)"/>
+                                </MudStack>
+                            </CellTemplate>
+                        </TemplateColumn>
+                    }
+                </Columns>
+            </MudDataGrid>
+        }
+        else
+        {
+            <DrogeLoading />
+        }
+    </DialogContent>
+</MudDialog>

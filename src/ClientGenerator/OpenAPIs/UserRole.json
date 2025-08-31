@@ -399,6 +399,9 @@
           "autH_target_user_read": {
             "type": "boolean"
           },
+          "autH_target_user_rate": {
+            "type": "boolean"
+          },
           "autH_users_details": {
             "type": "boolean"
           },

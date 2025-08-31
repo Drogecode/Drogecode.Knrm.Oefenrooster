@@ -32,6 +32,11 @@
                                 break;
                         }
 
+                        @if (OnClickRate.HasDelegate)
+                        {
+                            <MudIconButton Class="DrogeCode-card-header-rate" Icon="@Icons.Material.Filled.RateReview" Color="Color.Default" OnClick="async () => await OnClickRate.InvokeAsync()"/>
+                        }
+
                         @if (OnClickHistory.HasDelegate)
                         {
                             <MudIconButton Class="DrogeCode-card-header-history" Icon="@Icons.Material.Filled.History" Color="Color.Default" OnClick="async () => await OnClickHistory.InvokeAsync()"/>

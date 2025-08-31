@@ -14,10 +14,10 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
     {
     }
 
-    public async Task<AllTrainingTargetsResponse> AllTrainingTargets(int count, int skip, Guid? subjectId, Guid customerId, CancellationToken clt)
+    public async Task<AllTrainingTargetSubjectsResponse> AllTrainingTargets(int count, int skip, Guid? subjectId, Guid customerId, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
-        var response = new AllTrainingTargetsResponse();
+        var response = new AllTrainingTargetSubjectsResponse();
 
         var trainingTargets = Database.TrainingTargetSubjects
             .Where(x => x.CustomerId == customerId &&
@@ -32,6 +32,38 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             .Select(x => x.ToTrainingTargetSubjects());
         response.TrainingSubjects = await trainingTargets.Skip(skip).Take(count).ToListAsync(clt);
         response.TotalCount = await trainingTargets.CountAsync(clt);
+        response.Success = true;
+
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
+
+    public async Task<AllTrainingTargetsResponse> GetTargetsLinkedToTraining(Guid trainingId, Guid customerId, CancellationToken clt)
+    {
+        
+        var sw = StopwatchProvider.StartNew();
+        var response = new AllTrainingTargetsResponse();
+
+        var trainingTargetSet = await Database.RoosterTrainings
+            .AsNoTracking()
+            .Where(x => x.CustomerId == customerId && x.Id == trainingId)
+            .Include(x => x.TrainingTargetSet)
+            .Select(x => x.ToTrainingTargetSet())
+            .FirstOrDefaultAsync(clt);
+
+        if (trainingTargetSet is null)
+        {
+            Logger.LogInformation("No set found for training {trainingId}", trainingId);
+            return response;
+        }
+        
+        var targets = await Database.TrainingTargets
+            .Where(x =>trainingTargetSet.TrainingTargetIds.Contains(x.Id))
+            .Include(x=>x.TrainingTargetUserResults)
+            .Select(x => x.ToTrainingTarget())
+            .ToListAsync(clt);
+        response.TrainingTargets = targets;
         response.Success = true;
 
         sw.Stop();
@@ -58,7 +90,7 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         return response;
     }
 
-    public async Task<ActionResult<GetAllTargetSetResponse>> GetAllReusableSets(Guid customerId, int count, int skip, CancellationToken clt)
+    public async Task<GetAllTargetSetResponse> GetAllReusableSets(Guid customerId, int count, int skip, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
         var response = new GetAllTargetSetResponse();

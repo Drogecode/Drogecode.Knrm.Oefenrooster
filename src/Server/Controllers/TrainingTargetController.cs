@@ -27,7 +27,7 @@ public class TrainingTargetController : DrogeController
     [Authorize(Roles = AccessesNames.AUTH_scheduler_target_set)]
     [Route("all/{count:int}/{skip:int}")]
     [Route("all/{subjectId:guid}/{count:int}/{skip:int}")]
-    public async Task<ActionResult<AllTrainingTargetsResponse>> AllTrainingTargets(int count, int skip, Guid? subjectId = null, CancellationToken clt = default)
+    public async Task<ActionResult<AllTrainingTargetSubjectsResponse>> AllTrainingTargets(int count, int skip, Guid? subjectId = null, CancellationToken clt = default)
     {
         try
         {
@@ -46,6 +46,26 @@ public class TrainingTargetController : DrogeController
             Debugger.Break();
 #endif
             Logger.LogError(ex, "Exception in AllTrainingTargets");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("{trainingId:guid}")]
+    public async Task<ActionResult<AllTrainingTargetsResponse>> GetTargetsLinkedToTraining(Guid trainingId, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var response = await _trainingTargetService.GetTargetsLinkedToTraining(trainingId, customerId, clt);
+            return response;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            Logger.LogError(ex, "Exception in GetTargetsLinkedToTraining");
             return BadRequest();
         }
     }

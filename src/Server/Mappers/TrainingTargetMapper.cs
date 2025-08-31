@@ -23,7 +23,7 @@ public static class TrainingTargetMapper
     
     public static TrainingTarget ToTrainingTarget(this DbTrainingTargets dbTrainingTarget)
     {
-        return new TrainingTarget
+        var target = new TrainingTarget
         {
             Id = dbTrainingTarget.Id,
             SubjectId = dbTrainingTarget.SubjectId,
@@ -35,6 +35,24 @@ public static class TrainingTargetMapper
             CreatedOn = dbTrainingTarget.CreatedOn,
             CreatedBy = dbTrainingTarget.CreatedBy,
         };
+        if (dbTrainingTarget.TrainingTargetUserResults is not null)
+        {
+            target.TargetResults = [];
+            foreach (var result in dbTrainingTarget.TrainingTargetUserResults)
+            {
+                target.TargetResults.Add(new TrainingTargetResult
+                {
+                    Id = result.Id,
+                    UserId = result.UserId,
+                    TrainingTargetId = result.TrainingTargetId,
+                    RoosterAvailableId = result.RoosterAvailableId,
+                    Result = result.Result,
+                    ResultDate = result.ResultDate,
+                    SetBy = result.SetBy,
+                });
+            }
+        }
+        return target;
     }
     public static TrainingSubject ToTrainingTargetSubjects(this DbTrainingTargetSubjects dbTrainingTargetSubject)
     {

@@ -45,6 +45,7 @@ public struct AccessesNames
     public const string AUTH_target_read = "WIP_target_read"; // ToDo: Remove WIP_ when ready
     public const string AUTH_target_edit = "WIP_target_edit"; // ToDo: Remove WIP_ when ready
     public const string AUTH_target_user_read = "WIP_target_user_read"; // ToDo: Remove WIP_ when ready
+    public const string AUTH_target_user_rate = "WIP_target_user_rate"; // ToDo: Remove WIP_ when ready
 
     public const string GROUP_USER = "User";
     public const string AUTH_users_details = "users_details";

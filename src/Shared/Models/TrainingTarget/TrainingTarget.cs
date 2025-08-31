@@ -13,4 +13,6 @@ public class TrainingTarget
     public TrainingTargetType Type { get; set; }
     public DateTime CreatedOn { get; set; }
     public Guid CreatedBy { get; set; }
+    
+    public List<TrainingTargetResult>? TargetResults { get; set; }
 }

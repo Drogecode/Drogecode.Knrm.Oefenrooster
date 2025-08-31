@@ -24,7 +24,7 @@ public interface IScheduleService : IDrogeService
     /// <param name="userId"></param>
     /// <param name="availableId"></param>
     /// <param name="clt"></param>
-    Task PatchLastSynced(Guid customerId, Guid userId, Guid availableId, CancellationToken clt);
+    Task PatchLastSynced(Guid customerId, Guid userId, Guid? availableId, CancellationToken clt);
     Task PatchAvailableLastChanged(Guid customerId, Guid currentUserId, PlanUser user, CancellationToken clt);
     Task<AddTrainingResponse> AddTrainingAsync(Guid customerId, PlannedTraining training, Guid trainingId, CancellationToken clt);
     Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime? fromDate, int take, int skip, OrderAscDesc order, CancellationToken clt);

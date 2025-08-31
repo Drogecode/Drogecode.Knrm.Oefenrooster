@@ -2,5 +2,5 @@
 
 public class AllTrainingTargetsResponse : BaseMultipleResponse
 {
-    public List<TrainingSubject>? TrainingSubjects { get; set; }
+    public List<TrainingTarget>? TrainingTargets { get; set; }
 }

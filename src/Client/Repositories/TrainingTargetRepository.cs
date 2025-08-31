@@ -36,6 +36,12 @@ public class TrainingTargetRepository
         var response = await _trainingTargetClient.GetSetLinkedToTrainingAsync(trainingId, clt);
         return response?.TrainingTargetSet;
     }
+
+    public async Task<List<TrainingTarget>?> GetTargetsLinkedToTraining(Guid trainingId, CancellationToken clt)
+    {
+        var response = await _trainingTargetClient.GetTargetsLinkedToTrainingAsync(trainingId, clt);
+        return response?.TrainingTargets;
+    }
     
     public async Task<PutResponse?> PutNewTemplateSet(TrainingTargetSet body, CancellationToken clt)
     {

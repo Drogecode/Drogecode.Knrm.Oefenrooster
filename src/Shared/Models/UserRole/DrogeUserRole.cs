@@ -44,6 +44,7 @@ public class DrogeUserRole : DrogeUserRoleBasic
     public bool AUTH_target_read { get; set; }
     public bool AUTH_target_edit { get; set; }
     public bool AUTH_target_user_read { get; set; }
+    public bool AUTH_target_user_rate { get; set; }
 
     // Group: GROUP_USER
     public bool AUTH_users_details { get; set; }

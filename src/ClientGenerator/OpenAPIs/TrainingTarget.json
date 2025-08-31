@@ -37,17 +37,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/AllTrainingTargetsResponse"
+                  "$ref": "#/components/schemas/AllTrainingTargetSubjectsResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AllTrainingTargetsResponse"
+                  "$ref": "#/components/schemas/AllTrainingTargetSubjectsResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AllTrainingTargetsResponse"
+                  "$ref": "#/components/schemas/AllTrainingTargetSubjectsResponse"
                 }
               }
             }
@@ -82,6 +82,47 @@
           },
           {
             "name": "subjectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllTrainingTargetSubjectsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllTrainingTargetSubjectsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllTrainingTargetSubjectsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TrainingTarget/{trainingId}": {
+      "get": {
+        "tags": [
+          "TrainingTarget"
+        ],
+        "operationId": "GetTargetsLinkedToTraining",
+        "parameters": [
+          {
+            "name": "trainingId",
             "in": "path",
             "required": true,
             "schema": {
@@ -304,7 +345,7 @@
   },
   "components": {
     "schemas": {
-      "AllTrainingTargetsResponse": {
+      "AllTrainingTargetSubjectsResponse": {
         "type": "object",
         "properties": {
           "success": {
@@ -325,6 +366,33 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TrainingSubject"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AllTrainingTargetsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "trainingTargets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrainingTarget"
             },
             "nullable": true
           }
@@ -489,6 +557,40 @@
             "format": "date-time"
           },
           "createdBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "targetResults": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrainingTargetResult"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrainingTargetResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "result": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "resultDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "setBy": {
             "type": "string",
             "format": "uuid"
           }
