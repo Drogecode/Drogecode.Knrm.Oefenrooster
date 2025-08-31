@@ -78,12 +78,6 @@
 
 @code{
 
-    public class SubjectListItem
-    {
-        public Guid Id { get; set; }
-        public string? Name { get; set; }
-    }
-    
     private RenderFragment MainTab =>
         @<div Elevation="0" class="m-3">
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors" Disabled="@(!_canEdit || _saving)">
@@ -188,13 +182,13 @@
                 <MudText>
                     @L["Select training targets"]
                 </MudText>
-                <MudTreeView SelectedValues="_selectedTargets" SelectedValuesChanged="SelectedTargetsChanged" SelectedValueChanged="Testje" SelectionMode="SelectionMode.MultiSelection" ReadOnly="_targetSetReadonly">
+                <MudTreeView T="Guid" @bind-SelectedValues="_selectedTargets" SelectionMode="SelectionMode.MultiSelection" ReadOnly="_targetSetReadonly">
                     @foreach (var subject in _trainingSubjects)
                     {
                         @SubjectsList(subject)
                     }
                 </MudTreeView>
-                @foreach(var d in _selectedTargets)
+                @foreach (var d in _selectedTargets)
                 {
                     <p>@d</p>
                 }
@@ -202,22 +196,21 @@
         </div>;
 
     private RenderFragment<TrainingSubject> SubjectsList => subject =>
-        @<div>
-            <MudTreeViewItem Text="@subject.Name" Expanded Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
-                    @if (subject.TrainingSubjects is not null)
-                    {
-                        foreach (var childSubject in subject.TrainingSubjects)
-                        {
-                            @SubjectsList(childSubject)
-                        }
-                    }
-                    @if (subject.TrainingTargets is not null)
-                    {
-                        foreach (var target in subject.TrainingTargets)
-                        {
-                            <MudTreeViewItem Value="@target.Id.ToString()" Text="@target.Name" />
-                        }
-                    }
-            </MudTreeViewItem>
-        </div>;
+        @<MudTreeViewItem T="Guid" Text="@subject.Name" Expanded Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
+            @if (subject.TrainingSubjects is not null)
+            {
+                foreach (var childSubject in subject.TrainingSubjects)
+                {
+                    @SubjectsList(childSubject)
+                }
+            }
+            @if (subject.TrainingTargets is not null)
+            {
+                foreach (var target in subject.TrainingTargets)
+                {
+                    <MudTreeViewItem T="Guid" Value="@target.Id" Text="@target.Name"/>
+                }
+            }
+        </MudTreeViewItem>;
+
 }
