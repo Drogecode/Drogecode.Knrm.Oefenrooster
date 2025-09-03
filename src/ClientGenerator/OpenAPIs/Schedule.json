@@ -1267,6 +1267,11 @@
       "PlanUser": {
         "type": "object",
         "properties": {
+          "availableId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "userId": {
             "type": "string",
             "format": "uuid"

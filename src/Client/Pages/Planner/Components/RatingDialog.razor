@@ -6,6 +6,10 @@
     <DialogContent>
         @if (Planner is not null && _trainingTargets is not null)
         {
+            <div class="inline-flex">
+                <MudText Class="mr-2">@L["All same rating"]</MudText>
+                <MudRating Size="@Size.Small" SelectedValueChanged="i => AllSameClicked(i)" Disabled="_updatingAll"/>
+            </div>
             <MudDataGrid Items="@Planner.PlanUsers.Where(x => x.Assigned)">
                 <Columns>
                     <PropertyColumn Property="x => x.Name" Title="@LApp["User"]"/>
@@ -26,7 +30,8 @@
                                             };
                                         }
                                     }
-                                    <MudRating Size="@Size.Small" SelectedValue="@resultObject.Result" SelectedValueChanged="i => UpdateResult(i, resultObject)"/>
+                                    <MudRating Size="@Size.Small" SelectedValue="@resultObject.Result" SelectedValueChanged="i => UpdateResult(i, resultObject)"
+                                               Disabled="_updatingAll || resultObject.IsUpdating"/>
                                 </MudStack>
                             </CellTemplate>
                         </TemplateColumn>
@@ -36,7 +41,7 @@
         }
         else
         {
-            <DrogeLoading />
+            <DrogeLoading/>
         }
     </DialogContent>
 </MudDialog>

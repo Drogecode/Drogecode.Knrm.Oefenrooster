@@ -6,7 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
-public partial class RatingDialog : ComponentBase
+public partial class RatingDialog : ComponentBase, IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<RatingDialog>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
@@ -19,7 +19,9 @@ public partial class RatingDialog : ComponentBase
     [Parameter] public List<DrogeUser>? Users { get; set; }
     private CancellationTokenSource _cls = new();
     private List<TrainingTarget>? _trainingTargets;
-    
+    private bool _updatingAll;
+    private int _allHovered;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -31,6 +33,7 @@ public partial class RatingDialog : ComponentBase
                     _trainingTargets = await TrainingTargetRepository.GetTargetsLinkedToTraining(Planner.TrainingId.Value, _cls.Token);
                 }
             }
+
             StateHasChanged();
             MudDialog?.StateHasChanged();
         }
@@ -38,18 +41,49 @@ public partial class RatingDialog : ComponentBase
 
     private async Task UpdateResult(int i, TrainingTargetResult resultObject)
     {
+        if (_updatingAll || resultObject.IsUpdating) return;
+        resultObject.IsUpdating = true;
+        StateHasChanged();
+        resultObject.Result = i;
         if (resultObject.RoosterAvailableId == Guid.Empty)
         {
             Console.WriteLine("RoosterAvailableId is empty");
         }
-        
+
+        Console.WriteLine($"Updating result {i} - id = {resultObject.Id} - {resultObject.RoosterAvailableId}");
+
         if (resultObject.Id is null)
         {
-            //ToDo: Add new result
+            _trainingTargets?.Where(x => x.Id == resultObject.TrainingTargetId).FirstOrDefault()?.TargetResults?.Add(resultObject);
+            var response = await TrainingTargetRepository.PutUserResponse(resultObject, _cls.Token);
+            if (response?.Success == true)
+            {
+                resultObject.Id = response.NewId;
+            }
         }
         else
         {
-            //ToDo: Update result
+            await TrainingTargetRepository.PatchUserResponse(resultObject, _cls.Token);
         }
+
+        resultObject.IsUpdating = false;
+        StateHasChanged();
+    }
+
+    private async Task AllSameClicked(int i)
+    {
+        if (_updatingAll) return;
+        _updatingAll = true;
+        StateHasChanged();
+
+        // ToDo: Update all results
+
+        _updatingAll = false;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _cls.Cancel();
     }
 }

@@ -41,7 +41,6 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
 
     public async Task<AllTrainingTargetsResponse> GetTargetsLinkedToTraining(Guid trainingId, Guid customerId, CancellationToken clt)
     {
-        
         var sw = StopwatchProvider.StartNew();
         var response = new AllTrainingTargetsResponse();
 
@@ -57,10 +56,10 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             Logger.LogInformation("No set found for training {trainingId}", trainingId);
             return response;
         }
-        
+
         var targets = await Database.TrainingTargets
-            .Where(x =>trainingTargetSet.TrainingTargetIds.Contains(x.Id))
-            .Include(x=>x.TrainingTargetUserResults)
+            .Where(x => trainingTargetSet.TrainingTargetIds.Contains(x.Id))
+            .Include(x => x.TrainingTargetUserResults)
             .Select(x => x.ToTrainingTarget())
             .ToListAsync(clt);
         response.TrainingTargets = targets;
@@ -138,7 +137,7 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         var sw = StopwatchProvider.StartNew();
         var response = new PatchResponse();
         var oldVersion = await Database.TrainingTargetSets.FirstOrDefaultAsync(
-            u => u.Id == body.Id && u.CustomerId == customerId && u.DeletedOn == null, 
+            u => u.Id == body.Id && u.CustomerId == customerId && u.DeletedOn == null,
             cancellationToken: clt
         );
         if (oldVersion is null)
@@ -153,6 +152,53 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
 
         Database.TrainingTargetSets.Update(oldVersion);
         response.Success = await Database.SaveChangesAsync(clt) > 0;
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
+
+    public async Task<PutResponse> PutUserResponse(TrainingTargetResult body, Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = StopwatchProvider.StartNew();
+        var response = new PutResponse();
+
+        var newId = Guid.CreateVersion7();
+        body.Id = newId;
+        body.ResultDate = DateTime.UtcNow;
+        body.SetBy = userId;
+
+        Database.TrainingTargetUserResults.Add(body.ToDb());
+
+        response.Success = await Database.SaveChangesAsync(clt) > 0;
+        if (response.Success)
+        {
+            response.NewId = newId;
+        }
+
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
+
+    public async Task<PatchResponse> PatchUserResponse(TrainingTargetResult body, Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = StopwatchProvider.StartNew();
+        var response = new PatchResponse();
+
+        var oldVersion = await Database.TrainingTargetUserResults.FirstOrDefaultAsync(
+            u => u.Id == body.Id && u.DeletedOn == null,
+            cancellationToken: clt
+        );
+        if (oldVersion is null)
+        {
+            return response;
+        }
+
+        oldVersion.Result = body.Result;
+        oldVersion.ResultDate = DateTime.UtcNow;
+        oldVersion.SetBy = userId;
+        Database.TrainingTargetUserResults.Update(oldVersion);
+
         sw.Stop();
         response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return response;

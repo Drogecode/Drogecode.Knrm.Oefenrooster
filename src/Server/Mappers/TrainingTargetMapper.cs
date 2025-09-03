@@ -122,4 +122,22 @@ public static class TrainingTargetMapper
             CreatedBy = trainingTargetSet.CreatedBy,
         };
     }
+
+    public static DbTrainingTargetUserResult ToDb(this TrainingTargetResult trainingTargetResult)
+    {
+        if (trainingTargetResult.Id is null)
+        {
+            throw new DrogeCodeNullException("DbTrainingTargetUserResult ToDb trainingTargetResult.Id is null");
+        }
+        return new DbTrainingTargetUserResult
+        {
+            Id = trainingTargetResult.Id.Value,
+            UserId = trainingTargetResult.UserId,
+            TrainingTargetId = trainingTargetResult.TrainingTargetId,
+            RoosterAvailableId = trainingTargetResult.RoosterAvailableId,
+            Result = trainingTargetResult.Result,
+            ResultDate = trainingTargetResult.ResultDate,
+            SetBy = trainingTargetResult.SetBy,
+        };
+    }
 }

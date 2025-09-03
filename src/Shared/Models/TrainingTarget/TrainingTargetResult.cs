@@ -1,4 +1,6 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
+﻿using System.Text.Json.Serialization;
+
+namespace Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 
 public class TrainingTargetResult
 {
@@ -9,4 +11,5 @@ public class TrainingTargetResult
     public int Result { get; set; }
     public DateTime? ResultDate { get; set; }
     public Guid SetBy { get; set; }
+    [JsonIgnore] public bool IsUpdating { get; set; }
 }

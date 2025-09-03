@@ -54,4 +54,16 @@ public class TrainingTargetRepository
         var response = await _trainingTargetClient.PatchTemplateSetAsync(body, clt);
         return response;
     }
+    
+    public async Task<PutResponse?> PutUserResponse(TrainingTargetResult body, CancellationToken clt)
+    {
+        var response = await _trainingTargetClient.PutUserResponseAsync(body, clt);
+        return response;
+    }
+    
+    public async Task<PatchResponse?> PatchUserResponse(TrainingTargetResult body, CancellationToken clt)
+    {
+        var response = await _trainingTargetClient.PatchUserResponseAsync(body, clt);
+        return response;
+    }
 }

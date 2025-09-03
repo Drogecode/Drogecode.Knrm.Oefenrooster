@@ -12,4 +12,6 @@ public interface ITrainingTargetService : IDrogeService
     Task<GetAllTargetSetResponse> GetAllReusableSets(Guid customerId, int count, int skip, CancellationToken clt);
     Task<PutResponse> PutNewTemplateSet(TrainingTargetSet body, Guid userId, Guid customerId, CancellationToken clt);
     Task<PatchResponse> PatchTemplateSet(TrainingTargetSet body, Guid userId, Guid customerId, CancellationToken clt);
+    Task<PutResponse> PutUserResponse(TrainingTargetResult body, Guid userId, Guid customerId, CancellationToken clt);
+    Task<PatchResponse> PatchUserResponse(TrainingTargetResult body, Guid userId, Guid customerId, CancellationToken clt);
 }

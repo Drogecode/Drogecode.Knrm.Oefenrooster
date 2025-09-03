@@ -153,4 +153,46 @@ public class TrainingTargetController : DrogeController
             return BadRequest();
         }
     }
+    
+    [HttpPut]
+    [Route("result")]
+    public async Task<ActionResult<PutResponse>> PutUserResponse(TrainingTargetResult body, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var response = await _trainingTargetService.PutUserResponse(body, userId, customerId, clt);
+            return response;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            Logger.LogError(ex, "Exception in PutUserResponse");
+            return BadRequest();
+        }
+    }
+    
+    [HttpPatch]
+    [Route("result")]
+    public async Task<ActionResult<PatchResponse>> PatchUserResponse(TrainingTargetResult body, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var response = await _trainingTargetService.PatchUserResponse(body, userId, customerId, clt);
+            return response;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            Logger.LogError(ex, "Exception in PatchUserResponse");
+            return BadRequest();
+        }
+    }
 }
