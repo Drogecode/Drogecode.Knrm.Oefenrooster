@@ -209,22 +209,37 @@ public class GraphService : IGraphService
             }
             else
                 continue;
-
+            
             var differentStart = ReportSettingsHelper.TrainingDifferentStart.Contains(training.Type ?? string.Empty);
             var start = differentStart ? training.Commencement : training.Start;
             var potentialLinkedTrainings = _database.RoosterTrainings
-                .AsNoTracking() 
+                .AsNoTracking()
                 .Where(x => x.CustomerId == customerId && x.DateStart <= start.AddMinutes(30) && x.DateStart >= start.AddMinutes(-30) && x.RoosterAvailables!.Any(y => y.Assigned))
                 .Include(x => x.LinkReportTrainingRoosterTrainings)
                 .Include(x => x.RoosterAvailables!.Where(y => y.Assigned))
                 .AsSingleQuery()
                 .ToList();
+            var allLinkedTrainings = _database.LinkReportTrainingRoosterTrainings
+                .Where(x => x.CustomerId == customerId && x.ReportTrainingId == dbReport.Id)
+                .ToList();
+            if (allLinkedTrainings.Count != 0)
+            {
+                foreach (var wrongLinked in allLinkedTrainings.Where(x=> potentialLinkedTrainings.Any(y=> y.Id != x.RoosterTrainingId)))
+                {
+                    _logger.LogInformation("Removed wrong link between report`{reportId}` and training `{trainingId}`", wrongLinked.ReportTrainingId, wrongLinked.RoosterTrainingId);
+                    _database.LinkReportTrainingRoosterTrainings.Remove(wrongLinked);
+                    saveCount++;
+                }
+            }
+
             if (potentialLinkedTrainings.Count != 0)
             {
                 foreach (var potentialLinked in potentialLinkedTrainings)
                 {
                     if (potentialLinked.LinkReportTrainingRoosterTrainings is not null && potentialLinked.LinkReportTrainingRoosterTrainings.Any(x => x.ReportTrainingId == dbReport.Id))
                         continue;
+                    _logger.LogInformation("Add link between report`{reportId}` and training `{trainingId}`", dbReport.Id, potentialLinked.Id);
+
                     _database.LinkReportTrainingRoosterTrainings.Add(new DbLinkReportTrainingRoosterTraining()
                     {
                         Id = Guid.NewGuid(),
