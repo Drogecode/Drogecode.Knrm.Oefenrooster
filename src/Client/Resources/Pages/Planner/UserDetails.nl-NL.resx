@@ -147,4 +147,7 @@
   <data name="Roles" xml:space="preserve">
     <value>Rollen</value>
   </data>
+  <data name="Rating" xml:space="preserve">
+    <value>Beoordeling</value>
+  </data>
 </root>

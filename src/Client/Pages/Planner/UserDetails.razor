@@ -1,6 +1,6 @@
 ﻿@page "/planner/user/{Id:guid}"
+@using Drogecode.Knrm.Oefenrooster.Client.Enums
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components
-@using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole
 
 @if (_user is not null && _functions is not null)
 {
@@ -19,7 +19,7 @@
                 </MudPaper>
                 @if (_trainings.TotalCount >= _total)
                 {
-                    <MudButton OnClick="LoadMore" Color="Color.Primary" Disabled="_loadingTrainings">@LApp["Load more"]</MudButton>
+                    <MudButton OnClick="@LoadMore" Color="Color.Primary" Disabled="_loadingTrainings">@LApp["Load more"]</MudButton>
                 }
             }
             else
@@ -49,6 +49,18 @@
                 <DrogeLoading/>
             }
         </MudTabPanel>
+        <AuthorizeView Roles="@AccessesNames.AUTH_target_user_read">
+            <MudTabPanel Text="@L["Rating"]">
+                <MudSelect T="RatingPeriod">
+                    <MudSelectItem T="RatingPeriod" Value="RatingPeriod.SelectValue">@L[nameof(RatingPeriod.SelectValue)]</MudSelectItem>
+                    <MudSelectItem T="RatingPeriod" Value="RatingPeriod.OneMonth">@L[nameof(RatingPeriod.OneMonth)]</MudSelectItem>
+                    <MudSelectItem T="RatingPeriod" Value="RatingPeriod.OneYear">@L[nameof(RatingPeriod.OneYear)]</MudSelectItem>
+                    <MudSelectItem T="RatingPeriod" Value="RatingPeriod.ThreeYear">@L[nameof(RatingPeriod.ThreeYear)]</MudSelectItem>
+                    <MudSelectItem T="RatingPeriod" Value="RatingPeriod.FiveYear">@L[nameof(RatingPeriod.FiveYear)]</MudSelectItem>
+                    <MudSelectItem T="RatingPeriod" Value="RatingPeriod.All">@L[nameof(RatingPeriod.All)]</MudSelectItem>
+                </MudSelect>
+            </MudTabPanel>
+        </AuthorizeView>
         <AuthorizeView Roles="@AccessesNames.AUTH_users_settings">
             <MudTabPanel Text="@L["Settings"]">
                 <MudPaper Class="pa-4" MaxWidth="500px">
