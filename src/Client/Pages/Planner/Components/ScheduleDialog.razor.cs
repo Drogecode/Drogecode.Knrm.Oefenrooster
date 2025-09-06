@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
@@ -7,16 +8,17 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
 
 public sealed partial class ScheduleDialog : IDisposable
 {
-    [Inject] private IStringLocalizer<ScheduleDialog> L { get; set; } = default!;
-    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private ScheduleRepository _scheduleRepository { get; set; } = default!;
-    [Inject] private VehicleRepository _vehicleRepository { get; set; } = default!;
-    [Inject] private UserRepository _userRepository { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<ScheduleDialog>? L { get; set; }
+    [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
+    [Inject, NotNull] private ScheduleRepository? ScheduleRepository { get; set; }
+    [Inject, NotNull] private VehicleRepository? VehicleRepository { get; set; }
+    [Inject, NotNull] private UserRepository? UserRepository { get; set; }
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public PlannedTraining Planner { get; set; } = default!;
@@ -28,8 +30,8 @@ public sealed partial class ScheduleDialog : IDisposable
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
     private List<DrogeVehicle> _vehicleInfoForThisTraining = [];
-    private Guid? _currentUserId = null;
-    private Guid? _specialFunctionId = null;
+    private Guid? _currentUserId;
+    private Guid? _specialFunctionId;
     private bool _plannerIsUpdated;
     private bool _showWoeps;
     private bool _canEdit;
@@ -38,14 +40,13 @@ public sealed partial class ScheduleDialog : IDisposable
     private bool _showPadlock;
     private bool _isLoading = true;
     private int _vehicleCount;
-    private int _colmn1 = 2;
-    private int _colmn2 = 3;
-    private int _colmn3 = 3;
-    private int _colmn4 = 3;
-    private int _colmn5 = 1;
+    private int _column1 = 2;
+    private int _column2 = 3;
+    private int _column3 = 3;
+    private int _column4 = 3;
+    private int _column5 = 1;
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -53,13 +54,13 @@ public sealed partial class ScheduleDialog : IDisposable
             Task<GetPlannedTrainingResponse?>? latestVersionTask = null;
             _specialFunctionId = Functions?.FirstOrDefault(x => x.Special)?.Id;
             if (Planner.TrainingId is not null && !Planner.TrainingId.Equals(Guid.Empty))
-                latestVersionTask = _scheduleRepository.GetPlannedTrainingById(Planner.TrainingId, _cls.Token);
+                latestVersionTask = ScheduleRepository.GetPlannedTrainingById(Planner.TrainingId, _cls.Token);
             else if (Planner.DefaultId is not null && !Planner.DefaultId.Equals(Guid.Empty))
-                latestVersionTask = _scheduleRepository.GetPlannedTrainingForDefaultDate(Planner.DateStart, Planner.DefaultId, _cls.Token);
+                latestVersionTask = ScheduleRepository.GetPlannedTrainingForDefaultDate(Planner.DateStart, Planner.DefaultId, _cls.Token);
             if (Planner.TrainingId != null)
-                _linkVehicleTraining = await _vehicleRepository.GetForTrainingAsync(Planner.TrainingId ?? throw new ArgumentNullException("Planner.TrainingId"));
+                _linkVehicleTraining = await VehicleRepository.GetForTrainingAsync(Planner.TrainingId ?? throw new DrogeCodeNullException("Planner.TrainingId"));
             else if (Planner.DefaultId is not null)
-                _linkVehicleTraining = await _vehicleRepository.GetForDefaultAsync(Planner.DefaultId ?? throw new ArgumentNullException("Planner.DefaultId"));
+                _linkVehicleTraining = await VehicleRepository.GetForDefaultAsync(Planner.DefaultId ?? throw new DrogeCodeNullException("Planner.DefaultId"));
             if (Vehicles != null && _linkVehicleTraining != null)
             {
                 _vehicleInfoForThisTraining = [];
@@ -82,12 +83,12 @@ public sealed partial class ScheduleDialog : IDisposable
             if (AuthenticationState is not null)
             {
                 var authState = await AuthenticationState;
-                user = authState?.User;
-                _authEditOtherUser = user?.IsInRole(AccessesNames.AUTH_scheduler_other) ?? false;
-                _authEditSelf = user?.IsInRole(AccessesNames.AUTH_scheduler_self) ?? false;
+                user = authState.User;
+                _authEditOtherUser = user.IsInRole(AccessesNames.AUTH_scheduler_other);
+                _authEditSelf = user.IsInRole(AccessesNames.AUTH_scheduler_self);
                 if (!_authEditOtherUser)
                 {
-                    var dbUser = await _userRepository.GetCurrentUserAsync();
+                    var dbUser = await UserRepository.GetCurrentUserAsync();
                     _currentUserId = dbUser?.Id;
                 }
             }
@@ -136,12 +137,12 @@ public sealed partial class ScheduleDialog : IDisposable
     {
         if (!_canEdit) return;
         user.Assigned = toggled;
-        user.VehicleId = _vehicleInfoForThisTraining?.FirstOrDefault(x => x.IsDefault)?.Id ?? _vehicleInfoForThisTraining?.FirstOrDefault()?.Id;
+        user.VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.IsDefault)?.Id ?? _vehicleInfoForThisTraining.FirstOrDefault()?.Id;
         if (toggled)
             user.PlannedFunctionId = functionId;
         else
             user.PlannedFunctionId = user.UserFunctionId;
-        var result = await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, Planner, user, AuditReason.Assigned);
+        var result = await ScheduleRepository.PatchAssignedUser(Planner.TrainingId, Planner, user, AuditReason.Assigned);
         if (Planner.TrainingId is null || Planner.TrainingId.Equals(Guid.Empty))
             Planner.TrainingId = result.IdPatched;
         MainLayout.ShowSnackbarAssignmentChanged(user, Planner);
@@ -151,8 +152,8 @@ public sealed partial class ScheduleDialog : IDisposable
     private async Task CheckChanged(bool toggled, DrogeUser user, Guid functionId)
     {
         if (!_canEdit) return;
-        //Add to schedule with a new status to indicate it was not set by the user.
-        var result = await _scheduleRepository.PutAssignedUser(toggled, Planner.TrainingId, functionId, user, Planner);
+        // Add to the schedule with a new status to indicate it was not set by the user.
+        var result = await ScheduleRepository.PutAssignedUser(toggled, Planner.TrainingId, functionId, user, Planner);
         if (Planner.TrainingId is null || Planner.TrainingId.Equals(Guid.Empty))
             Planner.TrainingId = result.IdPut;
         var planuser = Planner.PlanUsers.FirstOrDefault(x => x.UserId == user.Id);
@@ -167,7 +168,7 @@ public sealed partial class ScheduleDialog : IDisposable
                 Availability = Availability.None,
                 Assigned = toggled,
                 Name = user.Name,
-                VehicleId = _vehicleInfoForThisTraining?.FirstOrDefault(x => x.IsDefault)?.Id ?? _vehicleInfoForThisTraining?.FirstOrDefault()?.Id,
+                VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.IsDefault)?.Id ?? _vehicleInfoForThisTraining.FirstOrDefault()?.Id,
             };
             Planner.PlanUsers.Add(planuser);
         }
@@ -180,7 +181,7 @@ public sealed partial class ScheduleDialog : IDisposable
                 planuser.PlannedFunctionId = planuser.UserFunctionId;
 
         }
-        MainLayout.ShowSnackbarAssignmentChanged(planuser!, Planner);
+        MainLayout.ShowSnackbarAssignmentChanged(planuser, Planner);
         await Refresh.CallRequestRefreshAsync();
     }
 
@@ -202,7 +203,7 @@ public sealed partial class ScheduleDialog : IDisposable
     {
         if (!_canEdit) return;
         user.VehicleId = id;
-        await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, null, user, AuditReason.ChangeVehicle);
+        await ScheduleRepository.PatchAssignedUser(Planner.TrainingId, null, user, AuditReason.ChangeVehicle);
         await Refresh.CallRequestRefreshAsync();
     }
 
@@ -211,7 +212,7 @@ public sealed partial class ScheduleDialog : IDisposable
         if (!_canEdit) return;
         user.ClickedFunction = false;
         user.PlannedFunctionId = id;
-        await _scheduleRepository.PatchAssignedUser(Planner.TrainingId, null, user, AuditReason.ChangedFunction);
+        await ScheduleRepository.PatchAssignedUser(Planner.TrainingId, null, user, AuditReason.ChangedFunction);
         await Refresh.CallRequestRefreshAsync();
     }
 
