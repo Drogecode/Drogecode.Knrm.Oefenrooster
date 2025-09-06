@@ -13,7 +13,7 @@
                 <MudText>@function.Name</MudText>
                 @foreach (var user in _users.Where(x => x.UserFunctionId == function.Id).OrderBy(x => x.Name))
                 {
-                    <MudListItem T="string" OnClick="()=>ClickUser(user)">
+                    <MudListItem T="string" OnClick="@(()=>ClickUser(user))" Class="cursor-pointer">
                         <div class="flex gap-x-4">
                             <div>@user.Name</div>
                         </div>

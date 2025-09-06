@@ -257,6 +257,11 @@
             "format": "uuid",
             "nullable": true
           },
+          "trainingTargetSetId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "countToTrainingTarget": {
             "type": "boolean"
           },
