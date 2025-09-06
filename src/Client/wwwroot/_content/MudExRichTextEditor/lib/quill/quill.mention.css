@@ -1,0 +1,57 @@
+﻿/* Required because MudExRichTextEditor 8.11.1 is not backwards compatible with 8.5.2 in blazor wasm PWA */
+.ql-mention-list-container {
+    background-color: var(--mud-palette-background, #fff);
+    border: 1px solid #f0f0f0;
+    border-radius: var(--mud-default-borderradius, 4px);
+    box-shadow: 0 2px 12px 0 rgba(30,30,30,.08);
+    overflow: auto;
+    width: 270px;
+    z-index: 9001
+}
+
+.ql-mention-loading {
+    font-size: var(--mud-typography-default-size, 16px);
+    line-height: 44px;
+    padding: 0 20px;
+    vertical-align: middle
+}
+
+.ql-mention-list {
+    list-style: none;
+    margin: 0;
+    overflow: hidden;
+    padding: 0
+}
+
+.ql-mention-list-item {
+    cursor: pointer;
+    font-size: var(--mud-typography-default-size, 16px);
+    line-height: 44px;
+    padding: 0 20px;
+    vertical-align: middle
+}
+
+.ql-mention-list-item.disabled {
+    cursor: auto
+}
+
+    .ql-mention-list-item.selected {
+        color: var(--mud-palette-primary-text);
+        background-color: var(--mud-palette-primary, #d3e1eb);
+        text-decoration: none
+    }
+
+.mention {
+    background-color: var(--mud-palette-primary, #d3e1eb);
+    color: var(--mud-palette-primary-text);
+    border-radius: 6px;
+    height: 24px;
+    margin-right: 2px;
+    padding: 3px 0;
+    user-select: all;
+    width: 65px
+}
+
+.mention > span {
+    margin: 0 3px
+}
