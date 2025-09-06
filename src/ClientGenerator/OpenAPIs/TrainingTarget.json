@@ -437,10 +437,86 @@
           }
         }
       }
+    },
+    "/api/TrainingTarget/results/all/user/{userIdResult}/{period}": {
+      "get": {
+        "tags": [
+          "TrainingTarget"
+        ],
+        "operationId": "GetAllResultForUser",
+        "parameters": [
+          {
+            "name": "userIdResult",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "period",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/RatingPeriod"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllResultForUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllResultForUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllResultForUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AllResultForUserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userResultForTargets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserResultForTarget"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AllTrainingTargetSubjectsResponse": {
         "type": "object",
         "properties": {
@@ -577,6 +653,20 @@
           }
         },
         "additionalProperties": false
+      },
+      "RatingPeriod": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          100
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "TrainingSubject": {
         "type": "object",
@@ -750,6 +840,24 @@
         ],
         "type": "integer",
         "format": "int32"
+      },
+      "UserResultForTarget": {
+        "type": "object",
+        "properties": {
+          "trainingTargetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "result": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
       }
     }
   }

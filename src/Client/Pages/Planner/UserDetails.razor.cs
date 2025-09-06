@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
@@ -22,6 +23,7 @@ public sealed partial class UserDetails : IDisposable
     [Inject, NotNull] private TrainingTypesRepository? TrainingTypesRepository { get; set; }
     [Inject, NotNull] private FunctionRepository? FunctionRepository { get; set; }
     [Inject, NotNull] private VehicleRepository? VehicleRepository { get; set; }
+    [Inject, NotNull] private TrainingTargetRepository? TrainingTargetRepository { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public Guid? Id { get; set; }
     private readonly CancellationTokenSource _cls = new();
@@ -36,6 +38,7 @@ public sealed partial class UserDetails : IDisposable
     private List<DrogeFunction>? _functions;
     private List<DrogeVehicle>? _vehicles;
     private List<PlannerTrainingType>? _trainingTypes;
+    private List<UserResultForTarget>? _userResultForTargets;
     private IEnumerable<DrogeUser>? _selectedUsersAction;
     private RatingPeriod _ratingPeriod = RatingPeriod.SelectValue;
     private bool _updatingSelection;
@@ -270,6 +273,11 @@ public sealed partial class UserDetails : IDisposable
     private async Task RatingPeriodChanged(RatingPeriod value)
     {
         _ratingPeriod = value;
+
+        if (Id is not null)
+        {
+            _userResultForTargets = (await TrainingTargetRepository.GetAllResultForUser(Id.Value, _ratingPeriod, _cls.Token))?.UserResultForTargets;
+        }
     }
 
     public void Dispose()

@@ -44,7 +44,7 @@ public sealed partial class ScheduleCard : IDisposable
     {
         if (firstRender)
         {
-            _refreshModel.RefreshRequested += RefreshMe;
+            _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
             Global.TrainingDeletedAsync += TrainingDeleted;
             _showHistory = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_history);
             _showRate = Planner.TrainingTargetSetId is not null && await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate);
@@ -159,15 +159,16 @@ public sealed partial class ScheduleCard : IDisposable
         }
     }
 
-    private void RefreshMe()
+    private async Task RefreshMeAsync()
     {
+        _showRate = Planner.TrainingTargetSetId is not null && await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate);
         StateHasChanged();
         Refresh?.CallRequestRefresh();
     }
 
     public void Dispose()
     {
-        _refreshModel.RefreshRequested -= RefreshMe;
+        _refreshModel.RefreshRequestedAsync -= RefreshMeAsync;
         Global.TrainingDeletedAsync -= TrainingDeleted;
     }
 }

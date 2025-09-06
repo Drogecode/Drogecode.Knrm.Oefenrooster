@@ -44,23 +44,24 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         var sw = StopwatchProvider.StartNew();
         var response = new AllTrainingTargetsResponse();
 
-        var trainingTargetSet = await Database.RoosterTrainings
+        var trainingTargetResult = await Database.RoosterTrainings
             .AsNoTracking()
             .Where(x => x.CustomerId == customerId && x.Id == trainingId)
-            .Include(x => x.TrainingTargetSet)
-            .Select(x => x.ToTrainingTargetSet())
+            .Include(x=>x.TrainingTargetSet)
+            .Include(x=>x.RoosterAvailables!)
+            .ThenInclude(x=>x.TrainingTargetUserResults!)
+            .Select(x => x.ToTrainingTargetResult())
             .FirstOrDefaultAsync(clt);
 
-        if (trainingTargetSet is null)
+        if (trainingTargetResult?.TrainingTargetIds is null)
         {
-            Logger.LogInformation("No set found for training {trainingId}", trainingId);
+            Logger.LogInformation("No results found for training {trainingId}", trainingId);
             return response;
         }
 
         var targets = await Database.TrainingTargets
-            .Where(x => trainingTargetSet.TrainingTargetIds.Contains(x.Id))
-            .Include(x => x.TrainingTargetUserResults)
-            .Select(x => x.ToTrainingTarget())
+            .Where(x => trainingTargetResult.TrainingTargetIds.Contains(x.Id))
+            .Select(x => x.ToTrainingTarget(trainingTargetResult))
             .ToListAsync(clt);
         response.TrainingTargets = targets;
         response.Success = true;
@@ -199,6 +200,66 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         oldVersion.SetBy = userId;
         Database.TrainingTargetUserResults.Update(oldVersion);
 
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
+    
+    public async Task<AllResultForUserResponse> GetAllResultForUser(Guid userIdResult, Guid userId, RatingPeriod period, Guid customerId, CancellationToken clt)
+    {
+        var sw = StopwatchProvider.StartNew();
+        var response = new AllResultForUserResponse();
+        var allFrom = DateTimeProvider.UtcNow();
+        switch (period)
+        {
+            case RatingPeriod.OneMonth:
+                allFrom = allFrom.AddMonths(-1);
+                break;
+            case RatingPeriod.OneYear:
+                allFrom = allFrom.AddYears(-1);
+                break;
+            case RatingPeriod.TwoYear:
+                allFrom = allFrom.AddYears(-2);
+                break;
+            case RatingPeriod.ThreeYear:
+                allFrom = allFrom.AddYears(-3);
+                break;
+            case RatingPeriod.FourYear:
+                allFrom = allFrom.AddYears(-4);
+                break;
+            case RatingPeriod.FiveYear:
+                allFrom = allFrom.AddYears(-5);
+                break;
+            case RatingPeriod.All:
+                allFrom = DateTime.MinValue;
+                break;
+        }
+        var userResults = await Database.TrainingTargetUserResults
+            .AsNoTracking()
+            .Where(x=>x.UserId == userIdResult && x.ResultDate >= allFrom)
+            .OrderBy(x=>x.TrainingTargetId)
+            .ToListAsync(clt);
+        if (userResults.Count > 0)
+        {
+            response.TotalCount = userResults.Count;
+            response.UserResultForTargets = [];
+            foreach (var userResult in userResults)
+            {
+                var set = response.UserResultForTargets.FirstOrDefault(x => x.TrainingTargetId == userResult.TrainingTargetId);
+                if (set is null)
+                {
+                    set = new UserResultForTarget
+                    {
+                        TrainingTargetId = userResult.TrainingTargetId,
+                    };
+                    response.UserResultForTargets.Add(set);
+                }
+                set.Result = ((set.Result * set.Count) + userResult.Result) / (set.Count + 1);
+                set.Count++;
+            }
+            response.Success = true;
+        }
+        
         sw.Stop();
         response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return response;

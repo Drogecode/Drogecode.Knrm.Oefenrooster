@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Server.Models.TrainingTarget;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
@@ -54,6 +55,30 @@ public static class TrainingTargetMapper
         }
         return target;
     }
+    
+    public static TrainingTarget ToTrainingTarget(this DbTrainingTargets dbTrainingTarget, MultipleTrainingTargetResult trainingTargetResult)
+    {
+        var target = new TrainingTarget
+        {
+            Id = dbTrainingTarget.Id,
+            SubjectId = dbTrainingTarget.SubjectId,
+            Name = dbTrainingTarget.Name,
+            Description = dbTrainingTarget.Description,
+            Url = dbTrainingTarget.Url,
+            Order = dbTrainingTarget.Order,
+            Type = dbTrainingTarget.Type,
+            CreatedOn = dbTrainingTarget.CreatedOn,
+            CreatedBy = dbTrainingTarget.CreatedBy,
+        };
+        if (trainingTargetResult.TargetResults is null) return target;
+        target.TargetResults = [];
+        foreach (var targetResult in trainingTargetResult.TargetResults.Where(x=>x.TrainingTargetId == dbTrainingTarget.Id))
+        {
+            target.TargetResults.Add(targetResult);
+        }
+        return target;
+    }
+    
     public static TrainingSubject ToTrainingTargetSubjects(this DbTrainingTargetSubjects dbTrainingTargetSubject)
     {
         var subject = new TrainingSubject
@@ -72,7 +97,7 @@ public static class TrainingTargetMapper
                 subject.TrainingSubjects.Add(trainingTarget.ToTrainingTargetSubjects());
             }
         }
-        if (dbTrainingTargetSubject.TrainingTargets?.Any() == true)
+        if (dbTrainingTargetSubject.TrainingTargets?.Count > 0)
         {
             subject.TrainingTargets ??= [];
             foreach (var trainingTarget in dbTrainingTargetSubject.TrainingTargets)
@@ -139,5 +164,36 @@ public static class TrainingTargetMapper
             ResultDate = trainingTargetResult.ResultDate,
             SetBy = trainingTargetResult.SetBy,
         };
+    }
+
+    public static MultipleTrainingTargetResult ToTrainingTargetResult(this DbRoosterTraining dbRoosterTraining)
+    {
+        var result = new MultipleTrainingTargetResult
+        {
+            TrainingTargetIds = dbRoosterTraining.TrainingTargetSet?.TrainingTargetIds
+        };
+        var trainingTargetResults = new List<TrainingTargetResult>();
+        if (result.TrainingTargetIds is null || dbRoosterTraining.RoosterAvailables is null)
+            return result;
+        foreach (var roosterAvailable in dbRoosterTraining.RoosterAvailables)
+        {
+            if (roosterAvailable.TrainingTargetUserResults is null)
+                return result;
+            foreach (var trainingTargetUserResult in roosterAvailable.TrainingTargetUserResults)
+            {
+                trainingTargetResults.Add(new TrainingTargetResult
+                {
+                    Id = trainingTargetUserResult.Id,
+                    UserId = trainingTargetUserResult.UserId,
+                    TrainingTargetId = trainingTargetUserResult.TrainingTargetId,
+                    RoosterAvailableId = trainingTargetUserResult.RoosterAvailableId,
+                    Result = trainingTargetUserResult.Result,
+                    ResultDate = trainingTargetUserResult.ResultDate,
+                    SetBy = trainingTargetUserResult.SetBy,
+                });
+            }
+        }
+        result.TargetResults = trainingTargetResults;
+        return result;
     }
 }

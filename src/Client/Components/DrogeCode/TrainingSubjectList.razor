@@ -3,7 +3,7 @@
 {
     <MudTextField Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" DebounceInterval="500" OnDebounceIntervalElapsed="OnSearchTarget"
                   @bind-Value="@_searchTargetText" Label=@LApp["Search"]/>
-    <MudTreeView T="Guid" @bind-SelectedValues="SelectedTargets" SelectionMode="SelectionMode" ReadOnly="TargetSetReadonly">
+    <MudTreeView T="Guid" @bind-SelectedValues="SelectedTargets" SelectionMode="SelectionMode" ReadOnly="TargetSetReadonly" Disabled="@(SelectedTargets == null)">
         @foreach (var subject in _trainingSubjects)
         {
             @SubjectsList(subject)
@@ -34,8 +34,20 @@ else
             {
                 foreach (var target in subject.TrainingTargets)
                 {
-                    <MudTreeViewItem T="Guid" Value="@target.Id" Text="@target.Name"
-                                     Class="@(string.IsNullOrEmpty(_searchTargetText) || target.IsVisible ? "" : "hidden")"/>
+                    @if (BodyContent is null)
+                    {
+                        <MudTreeViewItem T="Guid" Value="@target.Id" Text="@target.Name"
+                                         Class="@(string.IsNullOrEmpty(_searchTargetText) || target.IsVisible ? "" : "hidden")"/>
+                    }
+                    else
+                    {
+                        <MudTreeViewItem T="Guid" Value="@target.Id" Text="@target.Name"
+                                         Class="@(string.IsNullOrEmpty(_searchTargetText) || target.IsVisible ? "" : "hidden")">
+                            <BodyContent>
+                                @BodyContent(target)
+                            </BodyContent>
+                        </MudTreeViewItem>
+                    }
                 }
             }
         </MudTreeViewItem>;

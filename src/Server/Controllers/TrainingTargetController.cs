@@ -18,11 +18,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 public class TrainingTargetController : DrogeController
 {
     private readonly ITrainingTargetService _trainingTargetService;
+
     public TrainingTargetController(ILogger<TrainingTargetController> logger, ITrainingTargetService trainingTargetService) : base(logger)
     {
         _trainingTargetService = trainingTargetService;
     }
-    
+
     [HttpGet]
     [Authorize(Roles = AccessesNames.AUTH_scheduler_target_set)]
     [Route("all/{count:int}/{skip:int}")]
@@ -36,6 +37,7 @@ public class TrainingTargetController : DrogeController
                 Logger.LogWarning("AllTrainingTargets count to big {0}", count);
                 return BadRequest("Count to big");
             }
+
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var response = await _trainingTargetService.AllTrainingTargets(count, skip, subjectId, customerId, clt);
             return response;
@@ -114,7 +116,6 @@ public class TrainingTargetController : DrogeController
     [Route("set")]
     public async Task<ActionResult<PutResponse>> PutNewTemplateSet([FromBody] TrainingTargetSet body, CancellationToken clt = default)
     {
-        
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
@@ -136,7 +137,6 @@ public class TrainingTargetController : DrogeController
     [Route("set")]
     public async Task<ActionResult<PatchResponse>> PatchTemplateSet([FromBody] TrainingTargetSet body, CancellationToken clt = default)
     {
-        
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
@@ -153,7 +153,7 @@ public class TrainingTargetController : DrogeController
             return BadRequest();
         }
     }
-    
+
     [HttpPut]
     [Route("result")]
     public async Task<ActionResult<PutResponse>> PutUserResponse(TrainingTargetResult body, CancellationToken clt = default)
@@ -174,7 +174,7 @@ public class TrainingTargetController : DrogeController
             return BadRequest();
         }
     }
-    
+
     [HttpPatch]
     [Route("result")]
     public async Task<ActionResult<PatchResponse>> PatchUserResponse(TrainingTargetResult body, CancellationToken clt = default)
@@ -192,6 +192,27 @@ public class TrainingTargetController : DrogeController
             Debugger.Break();
 #endif
             Logger.LogError(ex, "Exception in PatchUserResponse");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("results/all/user/{userIdResult:guid}/{period}")]
+    public async Task<ActionResult<AllResultForUserResponse>> GetAllResultForUser(Guid userIdResult, RatingPeriod period, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var response = await _trainingTargetService.GetAllResultForUser(userIdResult, userId, period, customerId, clt);
+            return response;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            Logger.LogError(ex, "Exception in GetAllResultForUser");
             return BadRequest();
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Repositories;
@@ -15,12 +16,12 @@ public class TrainingTargetRepository
         _offlineService = offlineService;
     }
 
-    public async Task<List<TrainingSubject>?> AllTrainingTargets(int count, int skip, CancellationToken clt)
+    public async Task<AllTrainingTargetSubjectsResponse?> AllTrainingTargets(int count, int skip, CancellationToken clt)
     {
         var targets = await _offlineService.CachedRequestAsync($"traTarg_{count}_{skip}",
             async () => await _trainingTargetClient.AllTrainingTargetsAsync(count, skip, clt),
             clt: clt);
-        return targets?.TrainingSubjects;
+        return targets;
     }
     
     public async Task<List<TrainingSubject>?> AllTrainingTargets(int count, int skip, Guid subjectId, CancellationToken clt)
@@ -64,6 +65,12 @@ public class TrainingTargetRepository
     public async Task<PatchResponse?> PatchUserResponse(TrainingTargetResult body, CancellationToken clt)
     {
         var response = await _trainingTargetClient.PatchUserResponseAsync(body, clt);
+        return response;
+    }
+    
+    public async Task<AllResultForUserResponse?> GetAllResultForUser(Guid userIdResult, RatingPeriod period, CancellationToken clt)
+    {
+        var response = await _trainingTargetClient.GetAllResultForUserAsync(userIdResult, period, clt);
         return response;
     }
 }
