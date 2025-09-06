@@ -29,8 +29,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     [Parameter] public DrogeCodeGlobal Global { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
-    private List<TrainingSubject>? _trainingSubjects;
-    private IReadOnlyCollection<Guid> _selectedTargets = [];
+    private IReadOnlyCollection<Guid>? _selectedTargets;
     private EditTraining? _training;
     private PlannerTrainingType? _currentTrainingType;
     private TrainingTargetSet? _currentTrainingTargetSet;
@@ -78,7 +77,6 @@ public sealed partial class EditTrainingDialog : IDisposable
             _currentTrainingType = TrainingTypes?.FirstOrDefault(x => x.Id == _training?.RoosterTrainingTypeId);
             if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_target_set))
             {
-                _trainingSubjects = await TrainingTargetRepository.AllTrainingTargets(30, 0, _cls.Token);
                 if (_training?.Id is not null)
                 {
                     _currentTrainingTargetSet = await TrainingTargetRepository.GetSetLinkedToTraining(_training.Id.Value, _cls.Token) ?? new TrainingTargetSet();
@@ -92,45 +90,6 @@ public sealed partial class EditTrainingDialog : IDisposable
             StateHasChanged();
             MudDialog?.StateHasChanged();
         }
-    }
-
-    private void OnSearchTarget(string arg)
-    {
-        _searchTargetText = string.IsNullOrWhiteSpace(arg) ? null : arg;
-        if (_searchTargetText is not null && _trainingSubjects is not null)
-        {
-            UpdateTrainingVisibilityBasedOnSearch(_trainingSubjects);
-        }
-    }
-
-    private bool UpdateTrainingVisibilityBasedOnSearch(List<TrainingSubject> trainingSubjects)
-    {
-        var isVisible = false;
-        foreach (var subject in trainingSubjects)
-        {
-            if (subject.TrainingTargets is not null && subject.TrainingTargets.Any(x => x.Name?.Contains(_searchTargetText, StringComparison.OrdinalIgnoreCase) == true))
-            {
-                subject.IsVisible = true;
-            }
-            else
-            {
-                if (subject.TrainingSubjects is not null)
-                {
-                    subject.IsVisible = UpdateTrainingVisibilityBasedOnSearch(subject.TrainingSubjects);
-                }
-                else
-                {
-                    subject.IsVisible = false;
-                }
-            }
-
-            if (subject.IsVisible)
-            {
-                isVisible = true;
-            }
-        }
-
-        return isVisible;
     }
 
     private async Task SetNewFromDefaultTraining()
@@ -277,18 +236,20 @@ public sealed partial class EditTrainingDialog : IDisposable
 
             if (_training.TimeStart >= _training.TimeEnd) return;
 
+            DebugHelper.WriteLine($"Count _selectedTargets = {_selectedTargets?.Count}");
+
             if (_currentTrainingTargetSet?.Id is null)
             {
                 if (_currentTrainingTargetSet is not null)
                 {
-                    _currentTrainingTargetSet.TrainingTargetIds = _selectedTargets.ToList();
+                    _currentTrainingTargetSet.TrainingTargetIds = (_selectedTargets ?? []).ToList();
                     var putSetResponse = await TrainingTargetRepository.PutNewTemplateSet(_currentTrainingTargetSet, _cls.Token);
                     _training.TrainingTargetSetId = putSetResponse?.NewId;
                 }
             }
             else
             {
-                _currentTrainingTargetSet.TrainingTargetIds = _selectedTargets.ToList();
+                _currentTrainingTargetSet.TrainingTargetIds = (_selectedTargets ?? []).ToList();
                 await TrainingTargetRepository.PatchTemplateSet(_currentTrainingTargetSet, _cls.Token);
                 _training.TrainingTargetSetId = _currentTrainingTargetSet.Id;
             }

@@ -1,4 +1,4 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Client.Enums;
+﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Enums;
 
 public enum RatingPeriod
 {
@@ -7,6 +7,7 @@ public enum RatingPeriod
     OneYear = 2,
     TwoYear = 3,
     ThreeYear = 4,
-    FiveYear = 5,
+    FourYear = 5,
+    FiveYear = 6,
     All = 100,
 }

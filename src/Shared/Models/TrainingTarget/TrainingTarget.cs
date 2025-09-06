@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+﻿using System.Text.Json.Serialization;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 
 namespace Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 
@@ -13,6 +14,7 @@ public class TrainingTarget
     public TrainingTargetType Type { get; set; }
     public DateTime CreatedOn { get; set; }
     public Guid CreatedBy { get; set; }
+    [JsonIgnore] public bool IsVisible { get; set; } = true;
     
     public List<TrainingTargetResult>? TargetResults { get; set; }
 }

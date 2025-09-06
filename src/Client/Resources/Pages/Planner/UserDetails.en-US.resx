@@ -150,4 +150,7 @@
   <data name="Rating" xml:space="preserve">
     <value>Rating</value>
   </data>
+  <data name="Rating period" xml:space="preserve">
+    <value>Rating period</value>
+  </data>
 </root>

@@ -66,6 +66,7 @@
                             @L["Are you sure This can not be reverted"]<MudButton Color="Color.Warning" OnClick="Delete" Disabled="_saving">@LApp["Delete"]</MudButton>
                         </MudAlert>
                     }
+
                     <MudButton Color="Color.Warning" OnClick="() => _showDelete = !_showDelete" Disabled="@(!_canEdit || _saving)">@LApp["Delete"]</MudButton>
                 }
             </AuthorizeView>
@@ -138,7 +139,8 @@
                                Class="m-2"
                                Placeholder="@L["Description"]"
                                ValueHtmlBehavior="GetHtmlBehavior.InnerHtml"
-                               @bind-Value="@_training.Description">
+                               Value="@_training?.Description"
+                               ValueChanged="@DescriptionChanged">
                 <ToolbarContent>
                     <select class="ql-header">
                         <option selected=""></option>
@@ -149,84 +151,53 @@
                         <option value="5"></option>
                     </select>
                     <span class="ql-formats">
-                                            <button class="ql-bold"></button>
-                                            <button class="ql-italic"></button>
-                                            <button class="ql-underline"></button>
-                                            <button class="ql-strike"></button>
-                                        </span>
+                        <button class="ql-bold"></button>
+                        <button class="ql-italic"></button>
+                        <button class="ql-underline"></button>
+                        <button class="ql-strike"></button>
+                    </span>
                     <span class="ql-formats">
-                                            <select class="ql-color"></select>
-                                            <select class="ql-background"></select>
-                                        </span>
+                        <select class="ql-color"></select>
+                        <select class="ql-background"></select>
+                    </span>
                     <span class="ql-formats">
-                                            <button class="ql-list" value="ordered"></button>
-                                            <button class="ql-list" value="bullet"></button>
-                                        </span>
+                        <button class="ql-list" value="ordered"></button>
+                        <button class="ql-list" value="bullet"></button>
+                    </span>
                     <span class="ql-formats">
-                                            <button class="ql-link"></button>
-                                        </span>
+                        <button class="ql-link"></button>
+                    </span>
                 </ToolbarContent>
             </MudExRichTextEdit>
             @if (_descriptionToLong)
             {
                 <MudAlert
-                    Severity="Severity.Warning">@L["Description to long {0}/{1}", _training.Description?.Length ?? -1, DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION]</MudAlert>
+                    Severity="Severity.Warning">@L["Description to long {0}/{1}", _training?.Description?.Length ?? -1, DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION]</MudAlert>
             }
         </div>;
 
     private RenderFragment TargetEditTab =>
         @<div Elevation="0" class="m-3">
-            @if (_trainingSubjects is not null)
+            <MudText>
+                @L["Select training targets"]
+            </MudText>
+            @if (_currentTrainingTargetSet is not null)
             {
-                <MudText>
-                    @L["Select training targets"]
-                </MudText>
-                @if (_currentTrainingTargetSet is not null)
+                <MudSwitchM3 T="bool" Label="@L["Is reusable"]" Value="@(_currentTrainingTargetSet.ReusableSince is not null)"
+                             ValueChanged="@((e) => _currentTrainingTargetSet.ReusableSince = e ? DateTime.UtcNow : null)" ReadOnly="_targetSetReadonly"/>
+                @if (_currentTrainingTargetSet.ReusableSince is not null)
                 {
-                    <MudSwitchM3 T="bool" Label="@L["Is reusable"]" Value="@(_currentTrainingTargetSet.ReusableSince is not null)"
-                               ValueChanged="@((e) => _currentTrainingTargetSet.ReusableSince = e ? DateTime.UtcNow : null)" ReadOnly="_targetSetReadonly"/>
-                    @if (_currentTrainingTargetSet.ReusableSince is not null)
-                    {
-                        <MudTextField T="string" Label=@L["Name"] @bind-Value="_currentTrainingTargetSet.Name" ReadOnly="_targetSetReadonly"/>
-                    }
+                    <MudTextField T="string" Label=@L["Name"] @bind-Value="_currentTrainingTargetSet.Name" ReadOnly="_targetSetReadonly"/>
                 }
-
-                <MudTextField T="string" Label=@LApp["Search"] Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged="OnSearchTarget" Immediate="true"
-                              Clearable="true"/>
-                <MudTreeView T="Guid" @bind-SelectedValues="_selectedTargets" SelectionMode="SelectionMode.MultiSelection" ReadOnly="_targetSetReadonly">
-                    @foreach (var subject in _trainingSubjects)
-                    {
-                        @if (_searchTargetText is null || subject.IsVisible)
-                        {
-                            @SubjectsList(subject)
-                        }
-                    }
-                </MudTreeView>
+            }
+            @if (_selectedTargets is not null)
+            {
+                <TrainingSubjectList @bind-SelectedTargets="_selectedTargets" SelectionMode="SelectionMode.MultiSelection" TargetSetReadonly="_targetSetReadonly"/>
+            }
+            else
+            {
+                <DrogeLoading/>
             }
         </div>;
-
-    private RenderFragment<TrainingSubject> SubjectsList => subject =>
-        @<MudTreeViewItem T="Guid" Text="@subject.Name" Expanded Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
-            @if (subject.TrainingSubjects is not null)
-            {
-                foreach (var childSubject in subject.TrainingSubjects)
-                {
-                    @if (_searchTargetText is null || childSubject.IsVisible)
-                    {
-                        @SubjectsList(childSubject)
-                    }
-                }
-            }
-            @if (subject.TrainingTargets is not null)
-            {
-                foreach (var target in subject.TrainingTargets)
-                {
-                    @if (_searchTargetText is null || _selectedTargets.Contains(target.Id) || target.Name?.Contains(_searchTargetText, StringComparison.CurrentCultureIgnoreCase) == true)
-                    {
-                        <MudTreeViewItem T="Guid" Value="@target.Id" Text="@target.Name"/>
-                    }
-                }
-            }
-        </MudTreeViewItem>;
 
 }
