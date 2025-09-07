@@ -658,11 +658,13 @@
         "enum": [
           0,
           1,
-          2,
-          3,
-          4,
-          5,
-          6,
+          15,
+          16,
+          21,
+          22,
+          23,
+          24,
+          25,
           100
         ],
         "type": "integer",
@@ -780,6 +782,11 @@
             "type": "integer",
             "format": "int32"
           },
+          "trainingDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "resultDate": {
             "type": "string",
             "format": "date-time",
@@ -849,8 +856,8 @@
             "format": "uuid"
           },
           "result": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "double"
           },
           "count": {
             "type": "integer",

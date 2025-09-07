@@ -9,6 +9,7 @@ public class TrainingTargetResult
     public Guid TrainingTargetId { get; set; }
     public Guid RoosterAvailableId { get; set; }
     public int Result { get; set; }
+    public DateTime? TrainingDate { get; set; }
     public DateTime? ResultDate { get; set; }
     public Guid SetBy { get; set; }
     [JsonIgnore] public bool IsUpdating { get; set; }

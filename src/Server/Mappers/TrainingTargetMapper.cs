@@ -162,6 +162,7 @@ public static class TrainingTargetMapper
             RoosterAvailableId = trainingTargetResult.RoosterAvailableId,
             Result = trainingTargetResult.Result,
             ResultDate = trainingTargetResult.ResultDate,
+            TrainingDate = trainingTargetResult.TrainingDate,
             SetBy = trainingTargetResult.SetBy,
         };
     }

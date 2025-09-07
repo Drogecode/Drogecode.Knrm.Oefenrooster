@@ -11,6 +11,7 @@ public class DbTrainingTargetUserResult
     public Guid RoosterAvailableId { get; set; }
     public Guid UserId { get; set; }
     public int Result { get; set; }
+    public DateTime? TrainingDate { get; set; }
     public DateTime? ResultDate { get; set; }
     public Guid SetBy { get; set; }
     public DateTime? DeletedOn { get; set; }

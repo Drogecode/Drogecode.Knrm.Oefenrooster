@@ -236,7 +236,7 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         }
         var userResults = await Database.TrainingTargetUserResults
             .AsNoTracking()
-            .Where(x=>x.UserId == userIdResult && x.ResultDate >= allFrom)
+            .Where(x=>x.UserId == userIdResult && x.TrainingDate >= allFrom)
             .OrderBy(x=>x.TrainingTargetId)
             .ToListAsync(clt);
         if (userResults.Count > 0)
