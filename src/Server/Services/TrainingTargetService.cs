@@ -47,9 +47,9 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         var trainingTargetResult = await Database.RoosterTrainings
             .AsNoTracking()
             .Where(x => x.CustomerId == customerId && x.Id == trainingId)
-            .Include(x=>x.TrainingTargetSet)
-            .Include(x=>x.RoosterAvailables!)
-            .ThenInclude(x=>x.TrainingTargetUserResults!)
+            .Include(x => x.TrainingTargetSet)
+            .Include(x => x.RoosterAvailables!)
+            .ThenInclude(x => x.TrainingTargetUserResults!)
             .Select(x => x.ToTrainingTargetResult())
             .FirstOrDefaultAsync(clt);
 
@@ -199,21 +199,31 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         oldVersion.ResultDate = DateTime.UtcNow;
         oldVersion.SetBy = userId;
         Database.TrainingTargetUserResults.Update(oldVersion);
+        response.Success = await Database.SaveChangesAsync(clt) > 0;
 
         sw.Stop();
         response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return response;
     }
-    
+
     public async Task<AllResultForUserResponse> GetAllResultForUser(Guid userIdResult, Guid userId, RatingPeriod period, Guid customerId, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
         var response = new AllResultForUserResponse();
         var allFrom = DateTimeProvider.UtcNow();
+        var allUntil = DateTimeProvider.MaxValue();
         switch (period)
         {
             case RatingPeriod.OneMonth:
                 allFrom = allFrom.AddMonths(-1);
+                break;
+            case RatingPeriod.PastYear:
+                allFrom = new DateTime(DateTimeProvider.Today().Year - 1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                allUntil = new DateTime(DateTimeProvider.Today().Year - 1, 12, 31, 23, 59, 59, DateTimeKind.Utc);
+                break;
+            case RatingPeriod.CurrentYear:
+                allFrom = new DateTime(DateTimeProvider.Today().Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                allUntil = new DateTime(DateTimeProvider.Today().Year, 12, 31, 23, 59, 59, DateTimeKind.Utc);
                 break;
             case RatingPeriod.OneYear:
                 allFrom = allFrom.AddYears(-1);
@@ -234,14 +244,15 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
                 allFrom = DateTime.MinValue;
                 break;
         }
+
         var userResults = await Database.TrainingTargetUserResults
             .AsNoTracking()
-            .Where(x=>x.UserId == userIdResult && x.TrainingDate >= allFrom)
-            .OrderBy(x=>x.TrainingTargetId)
+            .Where(x => x.UserId == userIdResult && x.TrainingDate >= allFrom && x.TrainingDate <= allUntil && x.DeletedOn == null)
+            .OrderBy(x => x.TrainingTargetId)
             .ToListAsync(clt);
+        response.TotalCount = userResults.Count;
         if (userResults.Count > 0)
         {
-            response.TotalCount = userResults.Count;
             response.UserResultForTargets = [];
             foreach (var userResult in userResults)
             {
@@ -254,12 +265,13 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
                     };
                     response.UserResultForTargets.Add(set);
                 }
+
                 set.Result = ((set.Result * set.Count) + userResult.Result) / (set.Count + 1);
                 set.Count++;
             }
-            response.Success = true;
         }
-        
+
+        response.Success = true;
         sw.Stop();
         response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return response;

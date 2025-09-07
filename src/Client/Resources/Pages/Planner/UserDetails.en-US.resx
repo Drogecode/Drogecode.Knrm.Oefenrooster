@@ -153,4 +153,10 @@
   <data name="Rating period" xml:space="preserve">
     <value>Rating period</value>
   </data>
+  <data name="PastYear ({0})" xml:space="preserve">
+    <value>Past year ({0})</value>
+  </data>
+  <data name="CurrentYear ({0})" xml:space="preserve">
+    <value>Current year ({0})</value>
+  </data>
 </root>

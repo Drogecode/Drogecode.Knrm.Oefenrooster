@@ -10,8 +10,10 @@ public class TrainingTarget
     public string? Name { get; set; }
     public string? Description { get; set; }
     public string? Url { get; set; }
+    public string? UrlDescription { get; set; }
     public int Order { get; set; }
     public TrainingTargetType Type { get; set; }
+    public TrainingTargetGroup Group { get; set; }
     public DateTime CreatedOn { get; set; }
     public Guid CreatedBy { get; set; }
     [JsonIgnore] public bool IsVisible { get; set; } = true;

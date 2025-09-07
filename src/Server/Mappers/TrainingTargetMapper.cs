@@ -15,8 +15,10 @@ public static class TrainingTargetMapper
             Name = trainingTarget.Name,
             Description = trainingTarget.Description,
             Url = trainingTarget.Url,
+            UrlDescription = trainingTarget.UrlDescription,
             Order = trainingTarget.Order,
             Type = trainingTarget.Type,
+            Group = trainingTarget.Group,
             CreatedOn = trainingTarget.CreatedOn,
             CreatedBy = trainingTarget.CreatedBy,
         };
@@ -31,8 +33,10 @@ public static class TrainingTargetMapper
             Name = dbTrainingTarget.Name,
             Description = dbTrainingTarget.Description,
             Url = dbTrainingTarget.Url,
+            UrlDescription = dbTrainingTarget.UrlDescription,
             Order = dbTrainingTarget.Order,
             Type = dbTrainingTarget.Type,
+            Group = dbTrainingTarget.Group,
             CreatedOn = dbTrainingTarget.CreatedOn,
             CreatedBy = dbTrainingTarget.CreatedBy,
         };
@@ -65,8 +69,10 @@ public static class TrainingTargetMapper
             Name = dbTrainingTarget.Name,
             Description = dbTrainingTarget.Description,
             Url = dbTrainingTarget.Url,
+            UrlDescription = dbTrainingTarget.UrlDescription,
             Order = dbTrainingTarget.Order,
             Type = dbTrainingTarget.Type,
+            Group = dbTrainingTarget.Group,
             CreatedOn = dbTrainingTarget.CreatedOn,
             CreatedBy = dbTrainingTarget.CreatedBy,
         };

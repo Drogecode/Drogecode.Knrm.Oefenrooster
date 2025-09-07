@@ -1,4 +1,5 @@
-﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget
 <MudDialog>
     <TitleContent>
         @L["Rate users for training"]
@@ -31,8 +32,21 @@
                                             };
                                         }
                                     }
-                                    <MudRating Size="@Size.Small" SelectedValue="@resultObject.Result" SelectedValueChanged="i => UpdateResult(i, resultObject)"
-                                               Disabled="_updatingAll || resultObject.IsUpdating"/>
+                                    @switch (target.Type)
+                                    {
+                                        case TrainingTargetType.Exercise:
+                                            <MudRating Size="@Size.Small" SelectedValue="@resultObject.Result" SelectedValueChanged="i => UpdateResult(i, resultObject)"
+                                                       Disabled="_updatingAll || resultObject.IsUpdating"/>
+                                            break;
+                                        case TrainingTargetType.Knowledge:
+                                            <MudSwitchM3 T="bool" Value="@(resultObject.Result > 0)"
+                                                         ValueChanged="@(e => UpdateResult(e, resultObject))" Disabled="_updatingAll || resultObject.IsUpdating"/>
+                                            break;
+                                        default:
+                                            @L["Type {0} not implemented", target.Type]
+                                            break;
+                                    }
+
                                 </MudStack>
                             </CellTemplate>
                         </TemplateColumn>

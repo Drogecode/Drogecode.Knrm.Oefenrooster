@@ -2,6 +2,7 @@
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components
 @using Drogecode.Knrm.Oefenrooster.Shared.Enums
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget
+@using Drogecode.Knrm.Oefenrooster.Shared.Providers
 
 @if (_user is not null && _functions is not null)
 {
@@ -52,34 +53,73 @@
         </MudTabPanel>
         <AuthorizeView Roles="@AccessesNames.AUTH_target_user_read">
             <MudTabPanel Text="@L["Rating"]">
-                <MudSelect T="RatingPeriod" Value="_ratingPeriod" ValueChanged="RatingPeriodChanged" Label="@L["Rating period"]">
+                <MudSelect T="RatingPeriod" Value="_ratingPeriod" ValueChanged="RatingPeriodChanged" Label="@L["Rating period"]" disabled="@_loadingRating">
                     <MudSelectItem T="RatingPeriod" Value="RatingPeriod.SelectValue" Disabled>@L[nameof(RatingPeriod.SelectValue)]</MudSelectItem>
                     <MudSelectItem T="RatingPeriod" Value="RatingPeriod.OneMonth">@L[nameof(RatingPeriod.OneMonth)]</MudSelectItem>
+                    <MudSelectItem T="RatingPeriod" Value="RatingPeriod.PastYear">@L[$"{nameof(RatingPeriod.PastYear)} " + "({0})", DateTime.Today.Year - 1]</MudSelectItem>
+                    <MudSelectItem T="RatingPeriod" Value="RatingPeriod.CurrentYear">@L[$"{nameof(RatingPeriod.CurrentYear)} " + "({0})", DateTime.Today.Year]</MudSelectItem>
                     <MudSelectItem T="RatingPeriod" Value="RatingPeriod.OneYear">@L[nameof(RatingPeriod.OneYear)]</MudSelectItem>
                     <MudSelectItem T="RatingPeriod" Value="RatingPeriod.ThreeYear">@L[nameof(RatingPeriod.ThreeYear)]</MudSelectItem>
                     <MudSelectItem T="RatingPeriod" Value="RatingPeriod.FiveYear">@L[nameof(RatingPeriod.FiveYear)]</MudSelectItem>
                     <MudSelectItem T="RatingPeriod" Value="RatingPeriod.All">@L[nameof(RatingPeriod.All)]</MudSelectItem>
                 </MudSelect>
-                @if (_userResultForTargets is not null)
+                @if (_loadingRating)
                 {
-                    // To bad disabling does not work.
+                    <DrogeLoading/>
+                }
+                else if (_userResultForTargets is not null && _userResultForTargets.Count > 0)
+                {
                     // ReSharper disable All
                     <TrainingSubjectList>
                         <BodyContent Context="trainingTarget">
                             @{
                                 var userResultForTarget = _userResultForTargets.Where(x => x.TrainingTargetId == trainingTarget.Id).FirstOrDefault();
+                                var color = Color.Primary;
+                                if (trainingTarget.Type == TrainingTargetType.Knowledge)
+                                {
+                                    color = Color.Secondary;
+                                }
+                            }
+                            @switch (trainingTarget.Group)
+                            {
+                                case TrainingTargetGroup.Single:
+                                    <MudIcon Icon="@Icons.Material.Filled.Person" Color="@color" /> 
+                                    break;
+                                case TrainingTargetGroup.Group:
+                                    <MudIcon Icon="@Icons.Material.Filled.Group" Color="@color" /> 
+                                    break;
                             }
                             <MudText>@trainingTarget.Name</MudText>
                             @if (userResultForTarget?.Count > 0)
                             {
-                                <MudText> - count @userResultForTarget?.Count -</MudText>   
-                                <MudRating Size="@Size.Small" SelectedValue="@(Convert.ToInt32(userResultForTarget!.Result))" ReadOnly/>
-                                <MudText> - @Math.Round(userResultForTarget.Result, 2)</MudText>
+                                <MudText> - count @userResultForTarget?.Count -</MudText>
+                                @switch (trainingTarget.Type)
+                                {
+                                    case TrainingTargetType.Exercise:
+                                        <MudRating Size="@Size.Small" SelectedValue="@(Convert.ToInt32(userResultForTarget!.Result))" ReadOnly/>
+                                        <MudText> - @Math.Round(userResultForTarget.Result, 2)</MudText>
+                                        break;
+                                    case TrainingTargetType.Knowledge:
+                                        <MudCheckBox T="bool" Value="@(userResultForTarget.Result > 0.3)" ReadOnly="@true"/>
+                                        break;
+                                    default:
+                                        @L["Type {0} not implemented", trainingTarget.Type]
+                                        break;
+                                }
+                            }
+                            @if (!string.IsNullOrEmpty(trainingTarget.Url))
+                            {
+                                <MudLink Href="@trainingTarget.Url" Target="_blank">@trainingTarget.UrlDescription</MudLink>
                             }
                         </BodyContent>
                     </TrainingSubjectList>
                     // ReSharper restore All
                 }
+                else
+                {
+                    <MudText Typo="Typo.body1">@L["No rating available for selected period"]</MudText>   
+                }
+
             </MudTabPanel>
         </AuthorizeView>
         <AuthorizeView Roles="@AccessesNames.AUTH_users_settings">

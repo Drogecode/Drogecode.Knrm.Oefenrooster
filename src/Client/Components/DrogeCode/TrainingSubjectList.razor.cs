@@ -14,6 +14,7 @@ public partial class TrainingSubjectList : IDisposable
     
     [Parameter] public RenderFragment<TrainingTarget>? BodyContent { get; set; }
     [Parameter] public bool TargetSetReadonly { get; set; }
+    [Parameter] public bool Disabled { get; set; }
     [Parameter]
     public IReadOnlyCollection<Guid>? SelectedTargets
     {

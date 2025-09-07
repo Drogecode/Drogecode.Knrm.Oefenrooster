@@ -5,4 +5,6 @@ public interface IDateTimeProvider
     DateTime Now();
     DateTime UtcNow();
     DateTime Today();
+    DateTime MinValue();
+    DateTime MaxValue();
 }

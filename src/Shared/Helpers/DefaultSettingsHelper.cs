@@ -44,6 +44,7 @@ public static class DefaultSettingsHelper
     public const int MAX_LENGTH_TRAINING_TARGET_NAME = 30;
     public const int MAX_LENGTH_TRAINING_TARGET_DESCRIPTION = 5000;
     public const int MAX_LENGTH_TRAINING_TARGET_URL = 300;
+    public const int MAX_LENGTH_TRAINING_TARGET_URL_Description = 15;
     public const int MAX_LENGTH_MONTH_ITEM_TEXT = 150;
     public const int MAX_LENGTH_DAY_ITEM_TEXT = 50;
     public const int MAX_LENGTH_HOLIDAY_NAME = 50;

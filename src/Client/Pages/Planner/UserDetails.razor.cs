@@ -44,6 +44,7 @@ public sealed partial class UserDetails : IDisposable
     private bool _updatingSelection;
     private bool _updatingRoles;
     private bool _loadingTrainings;
+    private bool _loadingRating;
     private const int TAKE = 15;
     private int _total = TAKE;
     private int _skip;
@@ -272,12 +273,19 @@ public sealed partial class UserDetails : IDisposable
 
     private async Task RatingPeriodChanged(RatingPeriod value)
     {
+        if (_loadingRating)
+            return;
+        _loadingRating = true;
+        StateHasChanged();
         _ratingPeriod = value;
 
         if (Id is not null)
         {
             _userResultForTargets = (await TrainingTargetRepository.GetAllResultForUser(Id.Value, _ratingPeriod, _cls.Token))?.UserResultForTargets;
         }
+
+        _loadingRating = false;
+        StateHasChanged();
     }
 
     public void Dispose()

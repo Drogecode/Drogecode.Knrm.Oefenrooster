@@ -39,6 +39,18 @@ public partial class RatingDialog : ComponentBase, IDisposable
         }
     }
 
+    private async Task UpdateResult(bool value, TrainingTargetResult resultObject)
+    {
+        if (value)
+        {
+            await UpdateResult(5, resultObject);
+        }
+        else
+        {
+            await UpdateResult(0, resultObject);
+        }
+    }
+
     private async Task UpdateResult(int i, TrainingTargetResult resultObject)
     {
         if (_updatingAll || resultObject.IsUpdating) return;

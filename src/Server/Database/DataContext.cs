@@ -1156,7 +1156,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 10,
                 Name = "De paalsteek",
                 Type = TrainingTargetType.Knowledge,
+                Group = TrainingTargetGroup.Single,
                 Url = "https://kompas.knrm.nl/Algemene-kennis/Touwhandelingen/Touwhandelingen-paalsteek",
+                UrlDescription = "Kompas",
                 CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
                 CreatedBy = IdTaco
             }));
@@ -1168,7 +1170,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 20,
                 Name = "Een paalsteek leggen",
                 Type = TrainingTargetType.Exercise,
+                Group = TrainingTargetGroup.Single,
                 Url = "https://kompas.knrm.nl/Algemene-kennis/Touwhandelingen/Touwhandelingen-paalsteek-leggen",
+                UrlDescription = "Kompas",
                 CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
                 CreatedBy = IdTaco
             }));
@@ -1180,7 +1184,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 30,
                 Name = "In- en uitmelden",
                 Type = TrainingTargetType.Knowledge,
+                Group = TrainingTargetGroup.Single,
                 Url = "https://kompas.knrm.nl/Communicatie/Wal-en-water/In-en-uitmelden",
+                UrlDescription = "Kompas",
                 CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
                 CreatedBy = IdTaco
             }));
@@ -1192,7 +1198,23 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 40,
                 Name = "Uitvragen van de situatie",
                 Type = TrainingTargetType.Knowledge,
+                Group = TrainingTargetGroup.Single,
                 Url = "https://kompas.knrm.nl/Communicatie/Wal-en-water/Uitvragen-van-de-situatie",
+                UrlDescription = "Kompas",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargets>(e => e.HasData(new DbTrainingTargets
+            {
+                Id = new Guid("f8e01dba-2d80-47d5-a254-96e20e929bea"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                SubjectId = TrainingTargetSubjectWalEnWater,
+                Order = 50,
+                Name = "Uitvragen van de situatie",
+                Type = TrainingTargetType.Exercise,
+                Group = TrainingTargetGroup.Group,
+                Url = "https://kompas.knrm.nl/Communicatie/Wal-en-water/Communicatie-uitvragen-van-de-situatie",
+                UrlDescription = "Kompas",
                 CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
                 CreatedBy = IdTaco
             }));
@@ -1204,7 +1226,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 50,
                 Name = "Werken met DSC",
                 Type = TrainingTargetType.Knowledge,
+                Group = TrainingTargetGroup.Single,
                 Url = "https://kompas.knrm.nl/Communicatie/Communicatie-op-het-water/Werken-met-DSC",
+                UrlDescription = "Kompas",
                 CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
                 CreatedBy = IdTaco
             }));
@@ -1216,7 +1240,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 60,
                 Name = "SITREP",
                 Type = TrainingTargetType.Knowledge,
+                Group = TrainingTargetGroup.Single,
                 Url = "https://kompas.knrm.nl/Communicatie/Communicatie-op-het-water/SITREP",
+                UrlDescription = "Kompas",
                 CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
                 CreatedBy = IdTaco
             }));

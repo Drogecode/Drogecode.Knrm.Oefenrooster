@@ -153,4 +153,10 @@
   <data name="Rating period" xml:space="preserve">
     <value>Beoordelings periode</value>
   </data>
+  <data name="PastYear ({0})" xml:space="preserve">
+    <value>Vorig jaar ({0})</value>
+  </data>
+  <data name="CurrentYear ({0})" xml:space="preserve">
+    <value>Dit jaar ({0})</value>
+  </data>
 </root>
