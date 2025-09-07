@@ -242,7 +242,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             {
                 if (_currentTrainingTargetSet is not null && _selectedTargets?.Count > 0)
                 {
-                    _currentTrainingTargetSet.TrainingTargetIds = (_selectedTargets ?? []).ToList();
+                    _currentTrainingTargetSet.TrainingTargetIds = _selectedTargets.ToList();
                     var putSetResponse = await TrainingTargetRepository.PutNewTemplateSet(_currentTrainingTargetSet, _cls.Token);
                     _training.TrainingTargetSetId = putSetResponse?.NewId;
                 }
