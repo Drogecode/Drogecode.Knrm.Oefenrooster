@@ -11,7 +11,7 @@ dotnet ef database update "20250721220138_AddLicensesExpire"
 
 # Update tools:
 
-dotnet tool update --global dotnet-ef --version 9.0.8
+dotnet tool update --global dotnet-ef --version 9.0.9
 
 # Create a script:
 

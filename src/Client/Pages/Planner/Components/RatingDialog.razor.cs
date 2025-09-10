@@ -88,7 +88,19 @@ public partial class RatingDialog : ComponentBase, IDisposable
         _updatingAll = true;
         StateHasChanged();
 
-        // ToDo: Update all results
+        // ToDo: Update all Exercise
+
+        _updatingAll = false;
+        StateHasChanged();
+    }
+
+    private async Task AllSameClicked(bool e)
+    {
+        if (_updatingAll) return;
+        _updatingAll = true;
+        StateHasChanged();
+
+        // ToDo: Update all Knowledge
 
         _updatingAll = false;
         StateHasChanged();

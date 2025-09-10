@@ -7,9 +7,15 @@
     <DialogContent>
         @if (Planner is not null && _trainingTargets is not null)
         {
-            <div class="inline-flex">
-                <MudText Class="mr-2">@L["All same rating"]</MudText>
-                <MudRating Size="@Size.Small" SelectedValueChanged="i => AllSameClicked(i)" Disabled="_updatingAll"/>
+            <div class="inline-grid grid-cols-1">
+                <div class="inline-flex">
+                    <MudText Class="mr-2">@L["All same rating"]</MudText>
+                    <MudRating Size="@Size.Small" SelectedValueChanged="i => AllSameClicked(i)" Disabled="_updatingAll"/>
+                </div>
+                <div class="inline-flex">
+                    <MudText Class="mr-2">@L["All read"]</MudText>
+                    <MudSwitchM3 T="bool" ValueChanged="@(e => AllSameClicked(e))" Disabled="_updatingAll"/>
+                </div>
             </div>
             <MudDataGrid Items="@Planner.PlanUsers.Where(x => x.Assigned)">
                 <Columns>
