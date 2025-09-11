@@ -8,5 +8,6 @@ public class TrainingAdvance : TrainingMiddle
     public DateTime DateEnd { get; set; }
     public bool Updated { get; set; }
     public bool HasDescription { get; set; }
+    public bool HasTargets { get; set; }
     public int LinkedReports { get; set; }
 }

@@ -50,6 +50,7 @@ public class ScheduleService : DrogeService, IScheduleService
         var trainings = Database.RoosterTrainings
             .AsNoTracking()
             .Include(x => x.LinkReportTrainingRoosterTrainings)
+            .Include(x => x.TrainingTargetSet)
             .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
             .OrderBy(x => x.DateStart);
         var availables = await Database.RoosterAvailables
@@ -92,7 +93,8 @@ public class ScheduleService : DrogeService, IScheduleService
                         IsPinned = training.IsPinned,
                         IsPermanentPinned = training.IsPermanentPinned,
                         ShowTime = training.ShowTime ?? true,
-                        HasDescription = !training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+                        HasDescription = training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+                        HasTargets = training.TrainingTargetSet?.TrainingTargetIds.Count > 0,
                         LinkedReports = training.LinkReportTrainingRoosterTrainings?.Count ?? 0
                     });
                 }
@@ -441,6 +443,7 @@ public class ScheduleService : DrogeService, IScheduleService
             .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
             .Include(x => x.LinkVehicleTrainings)
             .Include(x => x.LinkReportTrainingRoosterTrainings)
+            .Include(x => x.TrainingTargetSet)
             .OrderBy(x => x.DateStart)
             .AsSingleQuery().ToListAsync(clt);
         var availables = await Database.RoosterAvailables
@@ -655,6 +658,7 @@ public class ScheduleService : DrogeService, IScheduleService
         var result = new GetTrainingByIdResponse();
         var dbTraining = await Database.RoosterTrainings
             .Include(x => x.RoosterAvailables)
+            .Include(x => x.TrainingTargetSet)
             .FirstOrDefaultAsync(x => x.Id == trainingId && x.DeletedOn == null, clt);
         if (dbTraining is not null)
         {
@@ -695,6 +699,7 @@ public class ScheduleService : DrogeService, IScheduleService
             .ThenInclude(x => x.UserB)
             .Include(x => x.RoosterTrainingType)
             .Include(x => x.RoosterAvailables!.Where(y => y.User!.DeletedOn == null))
+            .Include(x => x.TrainingTargetSet)
             .Include(x => x.LinkVehicleTrainings!)
             .ThenInclude(x => x.Vehicles)
             .AsSingleQuery()
@@ -760,6 +765,7 @@ public class ScheduleService : DrogeService, IScheduleService
         var result = new GetPlannedTrainingResponse();
         var dbTraining = await Database.RoosterTrainings
             .Include(x => x.RoosterAvailables)
+            .Include(x => x.TrainingTargetSet)
             .FirstOrDefaultAsync(x => x.CustomerId == customerId && x.DateStart.Date == date.Date && x.RoosterDefaultId == defaultId);
         if (dbTraining is not null)
             result = await dDbTrainingToGetPlannedTrainingResponse(result, dbTraining, clt);
@@ -1001,6 +1007,8 @@ public class ScheduleService : DrogeService, IScheduleService
             .Include(i => i.Training)
             .ThenInclude(i => i.RoosterAvailables!.Where(y => y.User!.DeletedOn == null))
             .Include(i => i.Training)
+            .ThenInclude(i => i.TrainingTargetSet)
+            .Include(i => i.Training)
             .ThenInclude(i => i.LinkVehicleTrainings)
             .Include(i => i.Training)
             .ThenInclude(i => i.LinkReportTrainingRoosterTrainings);
@@ -1036,6 +1044,7 @@ public class ScheduleService : DrogeService, IScheduleService
                 IsCreated = true,
                 ShowTime = schedule.Training.ShowTime ?? true,
                 HasDescription = !schedule.Training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+                HasTargets = schedule.Training.TrainingTargetSet?.TrainingTargetIds.Count > 0,
                 LinkedReports = schedule.Training.LinkReportTrainingRoosterTrainings?.Count ?? 0,
                 PlanUsers = schedule.Training.RoosterAvailables!.Select(a =>
                     new PlanUser
@@ -1116,6 +1125,7 @@ public class ScheduleService : DrogeService, IScheduleService
         var result = new GetPinnedTrainingsForUserResponse();
         var trainings = await Database.RoosterTrainings
             .Include(i => i.RoosterAvailables!.Where(r => r.CustomerId == customerId && r.UserId == userId))
+            .Include(i => i.TrainingTargetSet)
             .Where(x => x.CustomerId == customerId && (x.IsPinned || x.IsPermanentPinned) && x.DeletedOn == null && x.DateStart >= fromDate &&
                         (x.IsPermanentPinned || x.RoosterAvailables == null || !x.RoosterAvailables.Any(r => r.UserId == userId && r.Available > 0)))
             .OrderBy(x => x.DateStart)
@@ -1146,7 +1156,8 @@ public class ScheduleService : DrogeService, IScheduleService
                 IsPinned = training.IsPinned,
                 IsPermanentPinned = training.IsPermanentPinned,
                 ShowTime = training.ShowTime ?? true,
-                HasDescription = !training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+                HasDescription =  !training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+                HasTargets = training.TrainingTargetSet?.TrainingTargetIds.Count > 0
             });
         }
 
@@ -1157,11 +1168,12 @@ public class ScheduleService : DrogeService, IScheduleService
     {
         var compareDate = DateTimeProvider.UtcNow().AddDays(-1);
         var ava = await Database.RoosterAvailables.Where(x =>
-                x.CustomerId == customerId && x.Training.DeletedOn == null && 
-                x.LastUpdateOn != null && x.LastUpdateOn > compareDate && 
+                x.CustomerId == customerId && x.Training.DeletedOn == null &&
+                x.LastUpdateOn != null && x.LastUpdateOn > compareDate &&
                 x.LastUpdateBy == userId &&
                 (x.LastSyncOn == null || x.LastUpdateOn > x.LastSyncOn))
             .Include(x => x.Training)
+            .ThenInclude(x => x.TrainingTargetSet)
             .AsNoTracking()
             .ToListAsync();
         return ava;

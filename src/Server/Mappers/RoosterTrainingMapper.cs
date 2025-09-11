@@ -22,6 +22,7 @@ public static class RoosterTrainingMapper
             IsPermanentPinned = roosterTraining.IsPermanentPinned,
             ShowTime = roosterTraining.ShowTime ?? false,
             HasDescription = !roosterTraining.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+            HasTargets = roosterTraining.TrainingTargetSet?.TrainingTargetIds.Count > 0
         };
         if (roosterTraining?.RoosterAvailables is not null && userId is not null)
         {
@@ -55,6 +56,7 @@ public static class RoosterTrainingMapper
             ShowTime = roosterTraining.ShowTime ?? true,
             TrainingTypeName = roosterTraining.RoosterTrainingType?.Name,
             HasDescription = !roosterTraining.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+            HasTargets = roosterTraining.TrainingTargetSet?.TrainingTargetIds.Count > 0
         };
         if (roosterTraining.RoosterAvailables is not null)
         {

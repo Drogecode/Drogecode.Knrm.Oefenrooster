@@ -50,6 +50,7 @@ public class AuditService : IAuditService
                 {
                     var dbTraining = await _database.RoosterTrainings
                         .Include(x => x.RoosterAvailables)
+                        .Include(x=>x.TrainingTargetSet)
                         .FirstOrDefaultAsync(x => x.Id == audit.TrainingId, clt);
                     var training = dbTraining?.ToTraining();
                     audit.Training = training;

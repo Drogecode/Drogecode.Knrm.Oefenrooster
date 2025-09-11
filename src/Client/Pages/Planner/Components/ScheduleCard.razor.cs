@@ -47,7 +47,8 @@ public sealed partial class ScheduleCard : IDisposable
             _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
             Global.TrainingDeletedAsync += TrainingDeleted;
             _showHistory = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_history);
-            _showRate = Planner.TrainingTargetSetId is not null && await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate);
+            DebugHelper.WriteLine($"Loading schedule card, {Planner.Name} {Planner.TrainingTargetSetId is not null} && {await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate)}");
+            _showRate = Planner.HasTargets && await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate);
             await SetUser();
             StateHasChanged();
         }
@@ -161,9 +162,13 @@ public sealed partial class ScheduleCard : IDisposable
 
     private async Task RefreshMeAsync()
     {
-        _showRate = Planner.TrainingTargetSetId is not null && await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate);
+        DebugHelper.WriteLine($"Refreshing schedule card, {Planner.TrainingTargetSetId is not null} && {await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate)}");
+        _showRate = Planner.HasTargets && await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate);
         StateHasChanged();
-        Refresh?.CallRequestRefresh();
+        if (Refresh is not null)
+        {
+            await Refresh.CallRequestRefreshAsync();
+        }
     }
 
     public void Dispose()

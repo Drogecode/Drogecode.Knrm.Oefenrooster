@@ -83,6 +83,12 @@ public sealed partial class EditTrainingDialog : IDisposable
                     _selectedTargets = _currentTrainingTargetSet?.TrainingTargetIds ?? [];
                     _targetSetReadonly = _currentTrainingTargetSet?.ReusableSince is not null;
                 }
+                else
+                {
+                    _currentTrainingTargetSet = new TrainingTargetSet();
+                    _selectedTargets = [];
+                    _targetSetReadonly = false;
+                }
             }
 
             await SetRoleBasedVariables();
@@ -237,7 +243,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             if (_training.TimeStart >= _training.TimeEnd) return;
 
             DebugHelper.WriteLine($"Count _selectedTargets = {_selectedTargets?.Count}");
-
+            var hasTargetSet = _selectedTargets?.Count > 0;
             if (_currentTrainingTargetSet?.Id is null)
             {
                 if (_currentTrainingTargetSet is not null && _selectedTargets?.Count > 0)
@@ -256,7 +262,7 @@ public sealed partial class EditTrainingDialog : IDisposable
 
             if (_training.IsNew || _training.IsNewFromDefault)
             {
-                await UpdatePlannerObject();
+                await UpdatePlannerObject(hasTargetSet);
                 if (Planner is null)
                 {
                     DebugHelper.WriteLine("Planner should not be null");
@@ -285,7 +291,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             }
             else if (Planner is not null)
             {
-                await UpdatePlannerObject();
+                await UpdatePlannerObject(hasTargetSet);
                 await ScheduleRepository.PatchTraining(Planner, _cls.Token);
                 if (Refresh is not null)
                     await Refresh.CallRequestRefreshAsync();
@@ -306,7 +312,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         MudDialog?.Close(DialogResult.Ok(true));
     }
 
-    private async Task UpdatePlannerObject()
+    private async Task UpdatePlannerObject(bool hasTargetSet)
     {
         if (_training is null)
         {
@@ -335,7 +341,8 @@ public sealed partial class EditTrainingDialog : IDisposable
                 IsPinned = _training.IsPinned,
                 IsPermanentPinned = _training.IsPermanentPinned,
                 ShowTime = _training.ShowTime,
-                HasDescription = !_training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false
+                HasDescription = !_training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+                HasTargets = hasTargetSet
             };
         }
         else
@@ -353,6 +360,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             Planner.IsPermanentPinned = _training.IsPermanentPinned;
             Planner.ShowTime = _training.ShowTime;
             Planner.HasDescription = !_training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false;
+            Planner.HasTargets = hasTargetSet;
         }
     }
 
@@ -409,7 +417,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         if (!_canEdit || Planner is null) return;
         if (_training?.IsNewFromDefault == true)
         {
-            await UpdatePlannerObject();
+            await UpdatePlannerObject(false);
             var newId = await ScheduleRepository.AddTraining(Planner, _cls.Token);
             Planner.TrainingId = newId;
             _training.Id = newId;
