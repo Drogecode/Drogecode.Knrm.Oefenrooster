@@ -12,7 +12,9 @@ Otherwise MudBlazor will overrule tailwindcss
 /* plugins */
 @plugin '@tailwindcss/forms';
 
+/* tailwind.css (or the one Rider associates with Tailwind) */
 @source "./tailwindHelper.html";
-@source "../**/*.html";
-@source "../**/*.razor";
-@source "../**/*.razor.cs";
+@source "../**/*.{html,razor,cshtml,js,ts}";
+
+/* exclude generated + external */
+@source not "../**/{obj,bin,_content}/**";

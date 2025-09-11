@@ -73,6 +73,7 @@ public class TestService : IAsyncLifetime
     internal readonly CustomerController CustomerController;
     internal readonly UserLinkCustomerController UserLinkCustomerController;
     internal readonly UserGlobalController UserGlobalController;
+    internal readonly TrainingTargetController TrainingTargetController;
 
     public TestService(
         DataContext dataContext,
@@ -97,7 +98,8 @@ public class TestService : IAsyncLifetime
         MenuController menuController,
         CustomerController customerController,
         UserLinkCustomerController userLinkCustomerController,
-        UserGlobalController userGlobalController)
+        UserGlobalController userGlobalController,
+        TrainingTargetController trainingTargetController)
     {
         DataContext = dataContext;
         DateTimeProviderMock = (IDateTimeProviderMock)dateTimeProvider;
@@ -123,6 +125,7 @@ public class TestService : IAsyncLifetime
         CustomerController = customerController;
         UserLinkCustomerController = userLinkCustomerController;
         UserGlobalController = userGlobalController;
+        TrainingTargetController = trainingTargetController;
     }
 
     public async Task InitializeAsync()
@@ -158,6 +161,7 @@ public class TestService : IAsyncLifetime
         MockAuthenticatedUser(CustomerController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(UserLinkCustomerController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
         MockAuthenticatedUser(UserGlobalController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
+        MockAuthenticatedUser(TrainingTargetController, DefaultSettingsHelperMock.IdDefaultUserForTests, DefaultCustomerId, defaultRoles);
 
         DefaultFunction = await AddFunction(FUNCTION_DEFAULT, true);
         DefaultUserRoleId = await AddUserRole(USER_ROLE_NAME);

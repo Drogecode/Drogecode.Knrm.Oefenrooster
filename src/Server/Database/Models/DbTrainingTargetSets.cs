@@ -1,0 +1,23 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+
+namespace Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+
+[Table("TrainingTargetSets")]
+public class DbTrainingTargetSets
+{
+    [Key] public Guid Id { get; set; }
+    public Guid CustomerId { get; set; }
+    [StringLength(DefaultSettingsHelper.MAX_LENGTH_TRAINING_TARGET_SET_NAME)] public string? Name { get; set; }
+    public List<Guid> TrainingTargetIds { get; set; } = [];
+    public DateTime? ActiveSince { get; set; }
+    public DateTime? ReusableSince { get; set; }
+    public DateTime CreatedOn { get; set; }
+    public Guid CreatedBy { get; set; }
+    public DateTime? DeletedOn { get; set; }
+    public Guid? DeletedBy { get; set; }
+    
+    public DbCustomers Customer { get; set; }
+    public ICollection<DbRoosterTraining>? RoosterTrainings { get; set; }
+}

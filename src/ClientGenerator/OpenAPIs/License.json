@@ -40,13 +40,12 @@
     "schemas": {
       "DrogeLicense": {
         "required": [
-          "name"
+          "license"
         ],
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
+          "license": {
+            "$ref": "#/components/schemas/Licenses"
           }
         },
         "additionalProperties": false
@@ -77,6 +76,15 @@
           }
         },
         "additionalProperties": false
+      },
+      "Licenses": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
       }
     }
   }

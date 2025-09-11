@@ -1,5 +1,4 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
-using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
@@ -45,6 +44,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
         public DbSet<DbReportTraining> ReportTrainings { get; set; }
         public DbSet<DbReportUser> ReportUsers { get; set; }
 
+        public DbSet<DbTrainingTargets> TrainingTargets { get; set; }
+        public DbSet<DbTrainingTargetSets> TrainingTargetSets { get; set; }
+        public DbSet<DbTrainingTargetSubjects> TrainingTargetSubjects { get; set; }
+        public DbSet<DbTrainingTargetUserResult> TrainingTargetUserResults { get; set; }
+
         public DbSet<DbLinkVehicleTraining> LinkVehicleTraining { get; set; }
         public DbSet<DbLinkUserDayItem> LinkUserDayItems { get; set; }
         public DbSet<DbLinkUserRole> LinkUserRoles { get; set; }
@@ -65,7 +69,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbCustomers>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbCustomers>(e => { e.Property(en => en.Name).IsRequired(); });
             modelBuilder.Entity<DbCustomers>(e => { e.Property(en => en.Created).IsRequired(); });
-            
+
             // Licenses
             modelBuilder.Entity<DbLicenses>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbLicenses>(e => { e.Property(en => en.License).IsRequired(); });
@@ -85,7 +89,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 .UsingEntity<DbLinkUserUser>(
                     l => l.HasOne<DbUsers>(e => e.UserA).WithMany(e => e.LinkedUserAsA).HasForeignKey(e => e.UserAId),
                     r => r.HasOne<DbUsers>(e => e.UserB).WithMany(e => e.LinkedUserAsB).HasForeignKey(e => e.UserBId));
-            
+
             // UsersGlobal
             modelBuilder.Entity<DbUsersGlobal>(e => { e.Property(en => en.Id).IsRequired(); });
 
@@ -146,7 +150,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbUserPreComEvent>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbUserPreComEvent>().HasOne(p => p.User).WithMany(g => g.UserPreComEvent).HasForeignKey(s => s.UserId);
             modelBuilder.Entity<DbUserPreComEvent>().HasOne(p => p.Customer).WithMany(g => g.UserPreComEvent).HasForeignKey(s => s.CustomerId);
-            
+
             //Menu
             modelBuilder.Entity<DbMenu>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbMenu>().HasOne(p => p.Customer).WithMany(g => g.Menus).HasForeignKey(s => s.CustomerId);
@@ -189,6 +193,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.RoosterDefault).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.RoosterDefaultId);
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.RoosterTrainingType).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.RoosterTrainingTypeId);
             modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.DeletedByUser).WithMany(g => g.TrainingsDeleted).HasForeignKey(s => s.DeletedBy);
+            modelBuilder.Entity<DbRoosterTraining>().HasOne(p => p.TrainingTargetSet).WithMany(g => g.RoosterTrainings).HasForeignKey(s => s.TrainingTargetSetId);
 
             // Rooster training type
             modelBuilder.Entity<DbRoosterTrainingType>(e => { e.Property(en => en.Id).IsRequired(); });
@@ -227,6 +232,25 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             modelBuilder.Entity<DbReportUser>().HasOne(p => p.Action).WithMany(g => g.Users).HasForeignKey(s => s.DbReportActionId);
             modelBuilder.Entity<DbReportUser>().HasOne(p => p.Training).WithMany(g => g.Users).HasForeignKey(s => s.DbReportTrainingId);
 
+            // TrainingTargets
+            modelBuilder.Entity<DbTrainingTargets>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbTrainingTargets>().HasOne(p => p.Customer).WithMany(g => g.TrainingTargets).HasForeignKey(s => s.CustomerId).IsRequired();
+            modelBuilder.Entity<DbTrainingTargets>().HasOne(p => p.Subject).WithMany(g => g.TrainingTargets).HasForeignKey(s => s.SubjectId).IsRequired();
+
+            // TrainingTargetSets
+            modelBuilder.Entity<DbTrainingTargetSets>(e => { e.Property(en => en.Id).IsRequired(); });
+
+            // TrainingTargetSubjects
+            modelBuilder.Entity<DbTrainingTargetSubjects>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbTrainingTargetSubjects>().HasOne(p => p.Customer).WithMany(g => g.TrainingTargetSubjects).HasForeignKey(s => s.CustomerId).IsRequired();
+            modelBuilder.Entity<DbTrainingTargetSubjects>().HasOne(p => p.Parent).WithMany(g => g.Children).HasForeignKey(s => s.ParentId);
+
+            // TrainingTargetUserResult
+            modelBuilder.Entity<DbTrainingTargetUserResult>(e => { e.Property(en => en.Id).IsRequired(); });
+            modelBuilder.Entity<DbTrainingTargetUserResult>().HasOne(p => p.TrainingTarget).WithMany(g => g.TrainingTargetUserResults).HasForeignKey(s => s.TrainingTargetId).IsRequired();
+            modelBuilder.Entity<DbTrainingTargetUserResult>().HasOne(p => p.RoosterAvailable).WithMany(g => g.TrainingTargetUserResults).HasForeignKey(s => s.RoosterAvailableId).IsRequired();
+            modelBuilder.Entity<DbTrainingTargetUserResult>().HasOne(p => p.User).WithMany(g => g.TrainingTargetUserResults).HasForeignKey(s => s.UserId).IsRequired();
+
             //// Links
             // Vehicles <--> Rooster available
             modelBuilder.Entity<DbLinkVehicleTraining>(e => { e.Property(en => en.Id).IsRequired(); });
@@ -252,9 +276,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             // LinkReportTraining <--> RoosterTraining
             modelBuilder.Entity<DbLinkReportTrainingRoosterTraining>(e => { e.Property(en => en.Id).IsRequired(); });
             modelBuilder.Entity<DbLinkReportTrainingRoosterTraining>().HasOne(p => p.Customer).WithMany(g => g.LinkReportTrainingRoosterTrainings).HasForeignKey(s => s.CustomerId).IsRequired();
-            modelBuilder.Entity<DbLinkReportTrainingRoosterTraining>().HasOne(p => p.ReportTraining).WithMany(g => g.LinkReportTrainingRoosterTrainings).HasForeignKey(s => s.ReportTrainingId).IsRequired();
-            modelBuilder.Entity<DbLinkReportTrainingRoosterTraining>().HasOne(p => p.RoosterTraining).WithMany(g => g.LinkReportTrainingRoosterTrainings).HasForeignKey(s => s.RoosterTrainingId).IsRequired();
-            
+            modelBuilder.Entity<DbLinkReportTrainingRoosterTraining>().HasOne(p => p.ReportTraining).WithMany(g => g.LinkReportTrainingRoosterTrainings).HasForeignKey(s => s.ReportTrainingId)
+                .IsRequired();
+            modelBuilder.Entity<DbLinkReportTrainingRoosterTraining>().HasOne(p => p.RoosterTraining).WithMany(g => g.LinkReportTrainingRoosterTrainings).HasForeignKey(s => s.RoosterTrainingId)
+                .IsRequired();
+
             // Required data
             SetCustomer(modelBuilder);
             SetDefaultRooster(modelBuilder);
@@ -267,6 +293,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
             SetMenus(modelBuilder);
             SetUserGlobal(modelBuilder);
             SetLicenses(modelBuilder);
+            SetTrainingTargetSubjects(modelBuilder);
+            SetTrainingTargets(modelBuilder);
         }
 
         private static Guid IdTaco { get; } = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461");
@@ -1032,7 +1060,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 Order = 30,
             }));
         }
-        
+
         private void SetUserGlobal(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DbUsersGlobal>(e => e.HasData(new DbUsersGlobal
@@ -1043,6 +1071,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 CreatedBy = DefaultSettingsHelper.SystemUser
             }));
         }
+
         private void SetLicenses(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DbLicenses>(e => e.HasData(new DbLicenses
@@ -1058,6 +1087,167 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database
                 License = Shared.Authorization.Licenses.L_PreCom
             }));
         }
+
+        private static readonly Guid TrainingTargetSubjectAlgemeneKennis = new Guid("b0a94df1-f7cf-4408-86a4-cc4af0702f1b");
+        private static readonly Guid TrainingTargetSubjectAlgemeneCommunicatie = new Guid("512af760-d93d-4f11-93fc-cdf0164ba0d7");
+        private static readonly Guid TrainingTargetSubjectTouwhandelingen = new Guid("15b7f98c-8c47-47b3-9dd6-f9c92810aaa6");
+        private static readonly Guid TrainingTargetSubjectWalEnWater = new Guid("590b6950-e75d-4ebf-9279-0d31e17ecd66");
+        private static readonly Guid TrainingTargetSubjectCommunicatieOpHetWater= new Guid("6cfb611e-63d7-4d33-be21-ebb8e8649cba");
+
+        private void SetTrainingTargetSubjects(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DbTrainingTargetSubjects>(e => e.HasData(new DbTrainingTargetSubjects
+            {
+                Id = TrainingTargetSubjectAlgemeneKennis,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Order = 10,
+                Name = "Algemene kennis",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargetSubjects>(e => e.HasData(new DbTrainingTargetSubjects
+            {
+                Id = TrainingTargetSubjectTouwhandelingen,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                ParentId = TrainingTargetSubjectAlgemeneKennis,
+                Order = 10,
+                Name = "Touwhandelingen",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargetSubjects>(e => e.HasData(new DbTrainingTargetSubjects
+            {
+                Id = TrainingTargetSubjectAlgemeneCommunicatie,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                Order = 20,
+                Name = "Communicatie",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargetSubjects>(e => e.HasData(new DbTrainingTargetSubjects
+            {
+                Id = TrainingTargetSubjectWalEnWater,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                ParentId = TrainingTargetSubjectAlgemeneCommunicatie,
+                Order = 30,
+                Name = "Wal en water",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargetSubjects>(e => e.HasData(new DbTrainingTargetSubjects
+            {
+                Id = TrainingTargetSubjectCommunicatieOpHetWater,
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                ParentId = TrainingTargetSubjectAlgemeneCommunicatie,
+                Order = 40,
+                Name = "Communicatie op het water",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+        }
+
+        private void SetTrainingTargets(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DbTrainingTargets>(e => e.HasData(new DbTrainingTargets
+            {
+                Id = new Guid("55accb54-6a0a-449d-bd77-33aea502c355"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                SubjectId = TrainingTargetSubjectTouwhandelingen,
+                Order = 10,
+                Name = "De paalsteek",
+                Type = TrainingTargetType.Knowledge,
+                Group = TrainingTargetGroup.Single,
+                Url = "https://kompas.knrm.nl/Algemene-kennis/Touwhandelingen/Touwhandelingen-paalsteek",
+                UrlDescription = "Kompas",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargets>(e => e.HasData(new DbTrainingTargets
+            {
+                Id = new Guid("5d0e590e-b955-43be-bd46-0edf84472a2b"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                SubjectId = TrainingTargetSubjectTouwhandelingen,
+                Order = 20,
+                Name = "Een paalsteek leggen",
+                Type = TrainingTargetType.Exercise,
+                Group = TrainingTargetGroup.Single,
+                Url = "https://kompas.knrm.nl/Algemene-kennis/Touwhandelingen/Touwhandelingen-paalsteek-leggen",
+                UrlDescription = "Kompas",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargets>(e => e.HasData(new DbTrainingTargets
+            {
+                Id = new Guid("45035fb8-cc63-4d18-b1df-f6454a143eaf"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                SubjectId = TrainingTargetSubjectWalEnWater,
+                Order = 30,
+                Name = "In- en uitmelden",
+                Type = TrainingTargetType.Knowledge,
+                Group = TrainingTargetGroup.Single,
+                Url = "https://kompas.knrm.nl/Communicatie/Wal-en-water/In-en-uitmelden",
+                UrlDescription = "Kompas",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargets>(e => e.HasData(new DbTrainingTargets
+            {
+                Id = new Guid("13c608b2-76c6-48da-918e-1052a7ae3e3a"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                SubjectId = TrainingTargetSubjectWalEnWater,
+                Order = 40,
+                Name = "Uitvragen van de situatie",
+                Type = TrainingTargetType.Knowledge,
+                Group = TrainingTargetGroup.Single,
+                Url = "https://kompas.knrm.nl/Communicatie/Wal-en-water/Uitvragen-van-de-situatie",
+                UrlDescription = "Kompas",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargets>(e => e.HasData(new DbTrainingTargets
+            {
+                Id = new Guid("f8e01dba-2d80-47d5-a254-96e20e929bea"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                SubjectId = TrainingTargetSubjectWalEnWater,
+                Order = 50,
+                Name = "Uitvragen van de situatie",
+                Type = TrainingTargetType.Exercise,
+                Group = TrainingTargetGroup.Group,
+                Url = "https://kompas.knrm.nl/Communicatie/Wal-en-water/Communicatie-uitvragen-van-de-situatie",
+                UrlDescription = "Kompas",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargets>(e => e.HasData(new DbTrainingTargets
+            {
+                Id = new Guid("622ce20e-5ee4-4caa-9b3b-78aae55ac2b5"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                SubjectId = TrainingTargetSubjectCommunicatieOpHetWater,
+                Order = 50,
+                Name = "Werken met DSC",
+                Type = TrainingTargetType.Knowledge,
+                Group = TrainingTargetGroup.Single,
+                Url = "https://kompas.knrm.nl/Communicatie/Communicatie-op-het-water/Werken-met-DSC",
+                UrlDescription = "Kompas",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+            modelBuilder.Entity<DbTrainingTargets>(e => e.HasData(new DbTrainingTargets
+            {
+                Id = new Guid("4dc2a888-8b95-4754-9d0d-e185789fe3a1"),
+                CustomerId = DefaultSettingsHelper.KnrmHuizenId,
+                SubjectId = TrainingTargetSubjectCommunicatieOpHetWater,
+                Order = 60,
+                Name = "SITREP",
+                Type = TrainingTargetType.Knowledge,
+                Group = TrainingTargetGroup.Single,
+                Url = "https://kompas.knrm.nl/Communicatie/Communicatie-op-het-water/SITREP",
+                UrlDescription = "Kompas",
+                CreatedOn = new DateTime(2025, 08, 14, 12, 12, 12, DateTimeKind.Utc),
+                CreatedBy = IdTaco
+            }));
+        }
+
         #endregion
     }
 }

@@ -29,4 +29,6 @@ public class DbRoosterAvailable
     public DbVehicles? Vehicle { get; set; }
     public DbLinkExchange? LinkExchange { get; set; }
     public DbUsers? LastUpdateByUser { get; set; }
+    
+    public ICollection<DbTrainingTargetUserResult>? TrainingTargetUserResults { get; set; }
 }
