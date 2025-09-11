@@ -177,7 +177,7 @@ public class TrainingTargetController : DrogeController
 
     [HttpPatch]
     [Route("result")]
-    public async Task<ActionResult<PatchResponse>> PatchUserResponse(TrainingTargetResult body, CancellationToken clt = default)
+    public async Task<ActionResult<PatchResponse>> PatchUserResponse([FromBody] TrainingTargetResult body, CancellationToken clt = default)
     {
         try
         {
@@ -192,6 +192,27 @@ public class TrainingTargetController : DrogeController
             Debugger.Break();
 #endif
             Logger.LogError(ex, "Exception in PatchUserResponse");
+            return BadRequest();
+        }
+    }
+
+    [HttpPatch]
+    [Route("result/training/{trainingId:guid}/{forType}/{result:int}")]
+    public async Task<ActionResult<PatchResponse>> PatchUserResponseForTraining(Guid trainingId, TrainingTargetType forType, int result, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var response = await _trainingTargetService.PatchUserResponseForTraining(trainingId, forType, result, userId, customerId, clt);
+            return response;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            Logger.LogError(ex, "Exception in PatchUserResponseForTraining");
             return BadRequest();
         }
     }

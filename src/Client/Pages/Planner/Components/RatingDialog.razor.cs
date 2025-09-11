@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
@@ -87,8 +88,8 @@ public partial class RatingDialog : ComponentBase, IDisposable
         if (_updatingAll) return;
         _updatingAll = true;
         StateHasChanged();
-
-        // ToDo: Update all Exercise
+        
+        await UpdateTrainingTargetsAsync(i, TrainingTargetType.Exercise);
 
         _updatingAll = false;
         StateHasChanged();
@@ -100,10 +101,20 @@ public partial class RatingDialog : ComponentBase, IDisposable
         _updatingAll = true;
         StateHasChanged();
 
-        // ToDo: Update all Knowledge
+        await UpdateTrainingTargetsAsync(e ? 5 : 0, TrainingTargetType.Knowledge);
 
         _updatingAll = false;
         StateHasChanged();
+    }
+
+    private async Task UpdateTrainingTargetsAsync(int i, TrainingTargetType forType)
+    {
+        var patchResult = await TrainingTargetRepository.PatchUserResponseForTrainingAsync(Planner!.TrainingId!.Value, forType, i, _cls.Token);
+        if (patchResult?.Success == true)
+        {
+            _trainingTargets = null;
+            _trainingTargets = await TrainingTargetRepository.GetTargetsLinkedToTraining(Planner.TrainingId.Value, _cls.Token);
+        }
     }
 
     public void Dispose()

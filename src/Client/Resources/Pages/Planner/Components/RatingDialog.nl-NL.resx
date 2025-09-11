@@ -18,7 +18,13 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="Rate users for training" xml:space="preserve">
-        <value>Beoordeel gebruikers</value>
+    <data name="All same rating" xml:space="preserve">
+        <value>Iedereen zelfde beoordeling</value>
+    </data>
+    <data name="All read" xml:space="preserve">
+        <value>Iedereen heeft het gelezen</value>
+    </data>
+    <data name="Type {0} not implemented" xml:space="preserve">
+        <value>Type {0} is niet geimplementeerd</value>
     </data>
 </root>

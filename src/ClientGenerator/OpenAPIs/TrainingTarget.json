@@ -438,6 +438,64 @@
         }
       }
     },
+    "/api/TrainingTarget/result/training/{trainingId}/{forType}/{result}": {
+      "patch": {
+        "tags": [
+          "TrainingTarget"
+        ],
+        "operationId": "PatchUserResponseForTraining",
+        "parameters": [
+          {
+            "name": "trainingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "forType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/TrainingTargetType"
+            }
+          },
+          {
+            "name": "result",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/TrainingTarget/results/all/user/{userIdResult}/{period}": {
       "get": {
         "tags": [
@@ -733,12 +791,19 @@
             "type": "string",
             "nullable": true
           },
+          "urlDescription": {
+            "type": "string",
+            "nullable": true
+          },
           "order": {
             "type": "integer",
             "format": "int32"
           },
           "type": {
             "$ref": "#/components/schemas/TrainingTargetType"
+          },
+          "group": {
+            "$ref": "#/components/schemas/TrainingTargetGroup"
           },
           "createdOn": {
             "type": "string",
@@ -757,6 +822,14 @@
           }
         },
         "additionalProperties": false
+      },
+      "TrainingTargetGroup": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "TrainingTargetResult": {
         "type": "object",

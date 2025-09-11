@@ -67,6 +67,11 @@ public class TrainingTargetRepository
         var response = await _trainingTargetClient.PatchUserResponseAsync(body, clt);
         return response;
     }
+    public async Task<PatchResponse?> PatchUserResponseForTrainingAsync(Guid trainingId, TrainingTargetType forType, int result, CancellationToken clt)
+    {
+        var response = await _trainingTargetClient.PatchUserResponseForTrainingAsync(trainingId, forType, result, clt);
+        return response;
+    }
     
     public async Task<AllResultForUserResponse?> GetAllResultForUser(Guid userIdResult, RatingPeriod period, CancellationToken clt)
     {

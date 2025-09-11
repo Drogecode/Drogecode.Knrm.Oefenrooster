@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
@@ -168,7 +169,9 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         body.ResultDate = DateTime.UtcNow;
         body.SetBy = userId;
 
-        Database.TrainingTargetUserResults.Add(body.ToDb());
+        var dbObject = body.ToDb();
+        dbObject.SetInBulk = false;
+        Database.TrainingTargetUserResults.Add(dbObject);
 
         response.Success = await Database.SaveChangesAsync(clt) > 0;
         if (response.Success)
@@ -198,7 +201,87 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         oldVersion.Result = body.Result;
         oldVersion.ResultDate = DateTime.UtcNow;
         oldVersion.SetBy = userId;
+        oldVersion.SetInBulk = false;
         Database.TrainingTargetUserResults.Update(oldVersion);
+        response.Success = await Database.SaveChangesAsync(clt) > 0;
+
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
+
+
+    public async Task<PatchResponse> PatchUserResponseForTraining(Guid trainingId, TrainingTargetType forType, int result, Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = StopwatchProvider.StartNew();
+        var response = new PatchResponse();
+
+        var trainingWithTargetResults = await Database.RoosterTrainings
+            .Where(x => x.CustomerId == customerId && x.Id == trainingId && x.DeletedOn == null)
+            .Include(x => x.TrainingTargetSet)
+            .Include(x => x.RoosterAvailables!.Where(y => y.Assigned))
+            .ThenInclude(x => x.TrainingTargetUserResults!.Where(y=> y.DeletedOn == null))
+            .FirstOrDefaultAsync(clt);
+
+        if (trainingWithTargetResults?.RoosterAvailables is null || trainingWithTargetResults.TrainingTargetSet is null)
+        {
+            Logger.LogWarning("Trying to PatchUserResponseForTraining but no results found for training {trainingId}", trainingId);
+            sw.Stop();
+            response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+            return response;
+        }
+
+        var targets = await Database.TrainingTargets
+            .Where(x => trainingWithTargetResults.TrainingTargetSet.TrainingTargetIds.Contains(x.Id) && x.Type == forType)
+            .ToListAsync(clt);
+
+        if (targets.Count == 0)
+        {
+            Logger.LogWarning("Trying to PatchUserResponseForTraining but no no training targets set for training {trainingId} with set {SetId}", trainingId,
+                trainingWithTargetResults.TrainingTargetSet.Id);
+            sw.Stop();
+            response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+            return response;
+        }
+
+        foreach (var roosterAvailable in trainingWithTargetResults.RoosterAvailables.Where(x => x.Assigned))
+        {
+            roosterAvailable.TrainingTargetUserResults ??= [];
+            foreach (var target in targets)
+            {
+                if (roosterAvailable.TrainingTargetUserResults.Any(x => x.TrainingTargetId == target.Id))
+                {
+                    var userResult = roosterAvailable.TrainingTargetUserResults.FirstOrDefault(x => x.TrainingTargetId == target.Id);
+                    if (userResult!.ResultDate is not null && !userResult.SetInBulk)
+                    {
+                        continue;
+                    }
+                    userResult.Result = result;
+                    userResult.ResultDate = DateTime.UtcNow;
+                    userResult.SetBy = userId;
+                    userResult.SetInBulk = true;
+                    
+                    Database.TrainingTargetUserResults.Update(userResult);
+                }
+                else
+                {
+                    var newUserResult = new DbTrainingTargetUserResult()
+                    {
+                        Id = Guid.CreateVersion7(),
+                        TrainingTargetId = target.Id,
+                        RoosterAvailableId = roosterAvailable.Id,
+                        UserId = roosterAvailable.UserId,
+                        Result = result,
+                        TrainingDate = trainingWithTargetResults.DateStart,
+                        ResultDate = DateTime.UtcNow,
+                        SetBy = userId,
+                        SetInBulk = true
+                    };
+                    Database.TrainingTargetUserResults.Add(newUserResult);
+                }
+            }
+        }
+
         response.Success = await Database.SaveChangesAsync(clt) > 0;
 
         sw.Stop();

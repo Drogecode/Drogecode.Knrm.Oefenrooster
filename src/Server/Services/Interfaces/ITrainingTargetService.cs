@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces;
 
@@ -13,5 +14,6 @@ public interface ITrainingTargetService : IDrogeService
     Task<PatchResponse> PatchTemplateSet(TrainingTargetSet body, Guid userId, Guid customerId, CancellationToken clt);
     Task<PutResponse> PutUserResponse(TrainingTargetResult body, Guid userId, Guid customerId, CancellationToken clt);
     Task<PatchResponse> PatchUserResponse(TrainingTargetResult body, Guid userId, Guid customerId, CancellationToken clt);
+    Task<PatchResponse> PatchUserResponseForTraining(Guid trainingId, TrainingTargetType forType, int result, Guid userId, Guid customerId, CancellationToken clt);
     Task<AllResultForUserResponse> GetAllResultForUser(Guid userIdResult, Guid userId, RatingPeriod period, Guid customerId, CancellationToken clt);
 }

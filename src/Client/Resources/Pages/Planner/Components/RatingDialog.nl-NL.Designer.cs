@@ -61,11 +61,29 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Planner.Components 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Beoordeel gebruikers.
+        ///   Looks up a localized string similar to Iedereen heeft het gelezen.
         /// </summary>
-        internal static string Rate_users_for_training {
+        internal static string All_read {
             get {
-                return ResourceManager.GetString("Rate users for training", resourceCulture);
+                return ResourceManager.GetString("All read", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Iedereen zelfde beoordeling.
+        /// </summary>
+        internal static string All_same_rating {
+            get {
+                return ResourceManager.GetString("All same rating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type {0} is niet geimplementeerd.
+        /// </summary>
+        internal static string Type__0__not_implemented {
+            get {
+                return ResourceManager.GetString("Type {0} not implemented", resourceCulture);
             }
         }
     }
