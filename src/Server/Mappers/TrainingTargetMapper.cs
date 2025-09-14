@@ -23,7 +23,7 @@ public static class TrainingTargetMapper
             CreatedBy = trainingTarget.CreatedBy,
         };
     }
-    
+
     public static TrainingTarget ToTrainingTarget(this DbTrainingTargets dbTrainingTarget)
     {
         var target = new TrainingTarget
@@ -57,9 +57,10 @@ public static class TrainingTargetMapper
                 });
             }
         }
+
         return target;
     }
-    
+
     public static TrainingTarget ToTrainingTarget(this DbTrainingTargets dbTrainingTarget, MultipleTrainingTargetResult trainingTargetResult)
     {
         var target = new TrainingTarget
@@ -78,13 +79,14 @@ public static class TrainingTargetMapper
         };
         if (trainingTargetResult.TargetResults is null) return target;
         target.TargetResults = [];
-        foreach (var targetResult in trainingTargetResult.TargetResults.Where(x=>x.TrainingTargetId == dbTrainingTarget.Id))
+        foreach (var targetResult in trainingTargetResult.TargetResults.Where(x => x.TrainingTargetId == dbTrainingTarget.Id))
         {
             target.TargetResults.Add(targetResult);
         }
+
         return target;
     }
-    
+
     public static TrainingSubject ToTrainingTargetSubjects(this DbTrainingTargetSubjects dbTrainingTargetSubject)
     {
         var subject = new TrainingSubject
@@ -103,6 +105,7 @@ public static class TrainingTargetMapper
                 subject.TrainingSubjects.Add(trainingTarget.ToTrainingTargetSubjects());
             }
         }
+
         if (dbTrainingTargetSubject.TrainingTargets?.Count > 0)
         {
             subject.TrainingTargets ??= [];
@@ -111,7 +114,42 @@ public static class TrainingTargetMapper
                 subject.TrainingTargets.Add(trainingTarget.ToTrainingTarget());
             }
         }
+
         return subject;
+    }
+
+    public static TrainingTargetSetWithUserResults? ToTrainingTargetSetWithUserResults(this DbRoosterTraining roosterTraining)
+    {
+        if (roosterTraining.TrainingTargetSet is null)
+        {
+            return null;
+        }
+
+        var trainingTargetSetWithUserResults = new TrainingTargetSetWithUserResults
+        {
+            Id = roosterTraining.TrainingTargetSet.Id,
+            Name = roosterTraining.TrainingTargetSet.Name,
+            TrainingTargetIds = roosterTraining.TrainingTargetSet.TrainingTargetIds,
+            ActiveSince = roosterTraining.TrainingTargetSet.ActiveSince,
+            ReusableSince = roosterTraining.TrainingTargetSet.ReusableSince,
+            CreatedOn = roosterTraining.TrainingTargetSet.CreatedOn,
+            CreatedBy = roosterTraining.TrainingTargetSet.CreatedBy,
+        };
+        if (roosterTraining.RoosterAvailables?.Count > 0)
+        {
+            var available = roosterTraining.RoosterAvailables.FirstOrDefault();
+            if (available?.TrainingTargetUserResults?.Count > 0)
+            {
+                trainingTargetSetWithUserResults.RoosterAvailableId = available.Id;
+                trainingTargetSetWithUserResults.TrainingTargetResults ??= [];
+                foreach (var userResult in available.TrainingTargetUserResults)
+                {
+                    trainingTargetSetWithUserResults.TrainingTargetResults.Add(userResult.ToTrainingTargetResult());
+                }
+            }
+        }
+
+        return trainingTargetSetWithUserResults;
     }
 
     public static TrainingTargetSet? ToTrainingTargetSet(this DbRoosterTraining roosterTraining)
@@ -141,6 +179,7 @@ public static class TrainingTargetMapper
         {
             throw new DrogeCodeNullException("DbTrainingTargetSets ToDb trainingTargetSet.Id is null");
         }
+
         return new DbTrainingTargetSets
         {
             Id = trainingTargetSet.Id.Value,
@@ -160,9 +199,25 @@ public static class TrainingTargetMapper
         {
             throw new DrogeCodeNullException("DbTrainingTargetUserResult ToDb trainingTargetResult.Id is null");
         }
+
         return new DbTrainingTargetUserResult
         {
             Id = trainingTargetResult.Id.Value,
+            UserId = trainingTargetResult.UserId,
+            TrainingTargetId = trainingTargetResult.TrainingTargetId,
+            RoosterAvailableId = trainingTargetResult.RoosterAvailableId,
+            Result = trainingTargetResult.Result,
+            ResultDate = trainingTargetResult.ResultDate,
+            TrainingDate = trainingTargetResult.TrainingDate,
+            SetBy = trainingTargetResult.SetBy,
+        };
+    }
+
+    public static TrainingTargetResult ToTrainingTargetResult(this DbTrainingTargetUserResult trainingTargetResult)
+    {
+        return new TrainingTargetResult
+        {
+            Id = trainingTargetResult.Id,
             UserId = trainingTargetResult.UserId,
             TrainingTargetId = trainingTargetResult.TrainingTargetId,
             RoosterAvailableId = trainingTargetResult.RoosterAvailableId,
@@ -200,6 +255,7 @@ public static class TrainingTargetMapper
                 });
             }
         }
+
         result.TargetResults = trainingTargetResults;
         return result;
     }

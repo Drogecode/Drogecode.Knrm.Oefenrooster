@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
@@ -12,6 +13,7 @@ public partial class RatingDialog : ComponentBase, IDisposable
     [Inject, NotNull] private IStringLocalizer<RatingDialog>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
     [Inject, NotNull] private TrainingTargetRepository? TrainingTargetRepository { get; set; }
+    [Inject, NotNull] private IRatingService? RatingService { get; set; }
     [CascadingParameter] IMudDialogInstance? MudDialog { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public PlannedTraining? Planner { get; set; }
@@ -42,42 +44,17 @@ public partial class RatingDialog : ComponentBase, IDisposable
 
     private async Task UpdateResult(bool value, TrainingTargetResult resultObject)
     {
-        if (value)
-        {
-            await UpdateResult(5, resultObject);
-        }
-        else
-        {
-            await UpdateResult(0, resultObject);
-        }
+        await UpdateResult(value ? 5 : 0, resultObject);
     }
 
     private async Task UpdateResult(int i, TrainingTargetResult resultObject)
     {
-        if (_updatingAll || resultObject.IsUpdating) return;
+        if (_updatingAll || resultObject.IsUpdating || _trainingTargets is null) return;
         resultObject.IsUpdating = true;
         StateHasChanged();
         resultObject.Result = i;
-        if (resultObject.RoosterAvailableId == Guid.Empty)
-        {
-            Console.WriteLine("RoosterAvailableId is empty");
-        }
 
-        Console.WriteLine($"Updating result {i} - id = {resultObject.Id} - {resultObject.RoosterAvailableId}");
-
-        if (resultObject.Id is null)
-        {
-            _trainingTargets?.Where(x => x.Id == resultObject.TrainingTargetId).FirstOrDefault()?.TargetResults?.Add(resultObject);
-            var response = await TrainingTargetRepository.PutUserResponse(resultObject, _cls.Token);
-            if (response?.Success == true)
-            {
-                resultObject.Id = response.NewId;
-            }
-        }
-        else
-        {
-            await TrainingTargetRepository.PatchUserResponse(resultObject, _cls.Token);
-        }
+        await RatingService.UpdateResult(i, false, resultObject, _trainingTargets);
 
         resultObject.IsUpdating = false;
         StateHasChanged();
@@ -88,7 +65,7 @@ public partial class RatingDialog : ComponentBase, IDisposable
         if (_updatingAll) return;
         _updatingAll = true;
         StateHasChanged();
-        
+
         await UpdateTrainingTargetsAsync(i, TrainingTargetType.Exercise);
 
         _updatingAll = false;

@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/api/TrainingTarget/all/{count}/{skip}": {
+    "/api/TrainingTarget/set/all/{count}/{skip}": {
       "get": {
         "tags": [
           "TrainingTarget"
@@ -55,7 +55,7 @@
         }
       }
     },
-    "/api/TrainingTarget/all/{subjectId}/{count}/{skip}": {
+    "/api/TrainingTarget/set/all/{subjectId}/{count}/{skip}": {
       "get": {
         "tags": [
           "TrainingTarget"
@@ -114,7 +114,7 @@
         }
       }
     },
-    "/api/TrainingTarget/{trainingId}": {
+    "/api/TrainingTarget/target/{trainingId}": {
       "get": {
         "tags": [
           "TrainingTarget"
@@ -189,6 +189,47 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetSingleTargetSetResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TrainingTarget/set/targets/{trainingId}": {
+      "get": {
+        "tags": [
+          "TrainingTarget"
+        ],
+        "operationId": "GetSetWithTargetsLinkedToTraining",
+        "parameters": [
+          {
+            "name": "trainingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTargetSetWithTargetsResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTargetSetWithTargetsResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTargetSetWithTargetsResult"
                 }
               }
             }
@@ -342,12 +383,22 @@
         }
       }
     },
-    "/api/TrainingTarget/result": {
+    "/api/TrainingTarget/result/{fromCurrentUser}": {
       "put": {
         "tags": [
           "TrainingTarget"
         ],
         "operationId": "PutUserResponse",
+        "parameters": [
+          {
+            "name": "fromCurrentUser",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -389,7 +440,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/TrainingTarget/result": {
       "patch": {
         "tags": [
           "TrainingTarget"
@@ -671,6 +724,47 @@
           },
           "trainingTargetSet": {
             "$ref": "#/components/schemas/TrainingTargetSet"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetTargetSetWithTargetsResult": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "offline": {
+            "type": "boolean"
+          },
+          "elapsedMilliseconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "roosterAvailableId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "trainingTargetSet": {
+            "$ref": "#/components/schemas/TrainingTargetSet"
+          },
+          "trainingTargets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrainingTarget"
+            },
+            "nullable": true
+          },
+          "trainingTargetResults": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrainingTargetResult"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

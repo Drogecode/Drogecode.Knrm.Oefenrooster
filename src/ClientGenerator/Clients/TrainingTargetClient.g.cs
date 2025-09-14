@@ -69,6 +69,15 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GetTargetSetWithTargetsResult> GetSetWithTargetsLinkedToTrainingAsync(System.Guid trainingId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GetTargetSetWithTargetsResult> GetSetWithTargetsLinkedToTrainingAsync(System.Guid trainingId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GetAllTargetSetResponse> GetAllReusableSetsAsync(int count, int skip);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -96,12 +105,12 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PutResponse> PutUserResponseAsync(TrainingTargetResult body);
+        System.Threading.Tasks.Task<PutResponse> PutUserResponseAsync(bool fromCurrentUser, TrainingTargetResult body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PutResponse> PutUserResponseAsync(TrainingTargetResult body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<PutResponse> PutUserResponseAsync(bool fromCurrentUser, TrainingTargetResult body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -193,8 +202,8 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/TrainingTarget/all/{count}/{skip}"
-                    urlBuilder_.Append("api/TrainingTarget/all/");
+                    // Operation Path: "api/TrainingTarget/set/all/{count}/{skip}"
+                    urlBuilder_.Append("api/TrainingTarget/set/all/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(count, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('/');
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(skip, System.Globalization.CultureInfo.InvariantCulture)));
@@ -283,8 +292,8 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/TrainingTarget/all/{subjectId}/{count}/{skip}"
-                    urlBuilder_.Append("api/TrainingTarget/all/");
+                    // Operation Path: "api/TrainingTarget/set/all/{subjectId}/{count}/{skip}"
+                    urlBuilder_.Append("api/TrainingTarget/set/all/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(subjectId, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('/');
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(count, System.Globalization.CultureInfo.InvariantCulture)));
@@ -369,8 +378,8 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/TrainingTarget/{trainingId}"
-                    urlBuilder_.Append("api/TrainingTarget/");
+                    // Operation Path: "api/TrainingTarget/target/{trainingId}"
+                    urlBuilder_.Append("api/TrainingTarget/target/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(trainingId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -481,6 +490,88 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<GetSingleTargetSetResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<GetTargetSetWithTargetsResult> GetSetWithTargetsLinkedToTrainingAsync(System.Guid trainingId)
+        {
+            return GetSetWithTargetsLinkedToTrainingAsync(trainingId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<GetTargetSetWithTargetsResult> GetSetWithTargetsLinkedToTrainingAsync(System.Guid trainingId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (trainingId == null)
+                throw new System.ArgumentNullException("trainingId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/TrainingTarget/set/targets/{trainingId}"
+                    urlBuilder_.Append("api/TrainingTarget/set/targets/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(trainingId, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<GetTargetSetWithTargetsResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -760,16 +851,19 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<PutResponse> PutUserResponseAsync(TrainingTargetResult body)
+        public virtual System.Threading.Tasks.Task<PutResponse> PutUserResponseAsync(bool fromCurrentUser, TrainingTargetResult body)
         {
-            return PutUserResponseAsync(body, System.Threading.CancellationToken.None);
+            return PutUserResponseAsync(fromCurrentUser, body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PutResponse> PutUserResponseAsync(TrainingTargetResult body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<PutResponse> PutUserResponseAsync(bool fromCurrentUser, TrainingTargetResult body, System.Threading.CancellationToken cancellationToken)
         {
+            if (fromCurrentUser == null)
+                throw new System.ArgumentNullException("fromCurrentUser");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -785,8 +879,9 @@ namespace Drogecode.Knrm.Oefenrooster.ClientGenerator.Client
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/TrainingTarget/result"
-                    urlBuilder_.Append("api/TrainingTarget/result");
+                    // Operation Path: "api/TrainingTarget/result/{fromCurrentUser}"
+                    urlBuilder_.Append("api/TrainingTarget/result/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(fromCurrentUser, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 

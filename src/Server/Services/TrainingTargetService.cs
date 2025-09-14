@@ -3,7 +3,6 @@ using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
@@ -84,6 +83,42 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             .Select(x => x.ToTrainingTargetSet())
             .FirstOrDefaultAsync(clt);
         response.TrainingTargetSet = trainingTargetSet;
+        response.Success = true;
+
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
+
+    public async Task<GetTargetSetWithTargetsResult> GetSetWithTargetsLinkedToTraining(Guid trainingId, Guid customerId, Guid userId, CancellationToken clt)
+    {
+        var sw = StopwatchProvider.StartNew();
+        var response = new GetTargetSetWithTargetsResult();
+
+        var trainingTargetSet = await Database.RoosterTrainings
+            .AsNoTracking()
+            .Where(x => x.CustomerId == customerId && x.Id == trainingId)
+            .Include(x => x.TrainingTargetSet)
+            .Include(x=>x.RoosterAvailables!.Where(y=>y.UserId == userId))
+            .ThenInclude(x=>x.TrainingTargetUserResults!.Where(y=>y.UserId == userId))
+            .Select(x => x.ToTrainingTargetSetWithUserResults())
+            .FirstOrDefaultAsync(clt);
+        if (trainingTargetSet is null)
+        {
+            sw.Stop();
+            response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+            return response;
+        }
+        
+        var targets = await Database.TrainingTargets
+            .Where(x=> trainingTargetSet.TrainingTargetIds.Contains(x.Id))
+            .Select(x=>x.ToTrainingTarget())
+            .ToListAsync(clt);
+        response.RoosterAvailableId = trainingTargetSet.RoosterAvailableId;
+        response.TrainingTargetSet = trainingTargetSet;
+        response.TrainingTargetResults = trainingTargetSet.TrainingTargetResults;
+        response.TrainingTargets = targets;
+        response.TotalCount = targets.Count + trainingTargetSet.TrainingTargetResults?.Count ?? 0;
         response.Success = true;
 
         sw.Stop();

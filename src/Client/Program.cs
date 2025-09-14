@@ -77,6 +77,7 @@ builder.Services.TryAddScoped<VehicleRepository>();
 
 builder.Services.TryAddScoped<ILocalStorageExpireService, LocalStorageExpireService>();
 builder.Services.TryAddScoped<ISessionExpireService, SessionExpireService>();
+builder.Services.TryAddScoped<IRatingService, RatingService>();
 builder.Services.TryAddScoped<IOfflineService, OfflineService>();
 
 builder.Services.AddScoped<CustomStateProvider>();

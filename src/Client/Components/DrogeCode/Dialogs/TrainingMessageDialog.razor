@@ -1,10 +1,33 @@
-﻿@using MudExRichTextEditor
-@using Drogecode.Knrm.Oefenrooster.Client.Components.MudExRichText
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Components.MudExRichText
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget
 <MudDialog Visible="@Visible">
     <DialogContent>
-        @if (_description?.Description is not null)
+        @if (_description?.Description is not null || _targetSetWithTargetsResult?.TrainingTargets?.Count > 0)
         {
-            <MudExRichTextReader Text="@_description.Description"/>
+            if (_description?.Description is not null)
+            {
+                <MudExRichTextReader Text="@_description.Description"/>
+            }
+
+            if (_targetSetWithTargetsResult?.TrainingTargets?.Count > 0)
+            {
+                <MudList T="string">
+                    @foreach (var target in _targetSetWithTargetsResult.TrainingTargets)
+                    {
+                        var resultObject = _targetSetWithTargetsResult.TrainingTargetResults?.Where(x => x.TrainingTargetId == target.Id).FirstOrDefault() ?? new TrainingTargetResult
+                        {
+                            TrainingTargetId = target.Id,
+                            RoosterAvailableId = _targetSetWithTargetsResult.RoosterAvailableId,
+                            TrainingDate = DateTime.UtcNow,
+                        };
+                        <MudListItem>
+                            @target.Name <MudLink Href="@target.Url" Target="_blank">@target.UrlDescription</MudLink>
+                            <MudSwitchM3 T="bool" Value="@(resultObject.Result > 0)"
+                                         ValueChanged="@(e => UpdateResult(e, resultObject))" Disabled="resultObject.IsUpdating"/>
+                        </MudListItem>
+                    }
+                </MudList>
+            }
         }
         else if (_description is not null)
         {

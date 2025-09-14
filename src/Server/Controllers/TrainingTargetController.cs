@@ -26,8 +26,8 @@ public class TrainingTargetController : DrogeController
 
     [HttpGet]
     [Authorize(Roles = AccessesNames.AUTH_scheduler_target_set)]
-    [Route("all/{count:int}/{skip:int}")]
-    [Route("all/{subjectId:guid}/{count:int}/{skip:int}")]
+    [Route("set/all/{count:int}/{skip:int}")]
+    [Route("set/all/{subjectId:guid}/{count:int}/{skip:int}")]
     public async Task<ActionResult<AllTrainingTargetSubjectsResponse>> AllTrainingTargets(int count, int skip, Guid? subjectId = null, CancellationToken clt = default)
     {
         try
@@ -53,7 +53,7 @@ public class TrainingTargetController : DrogeController
     }
 
     [HttpGet]
-    [Route("{trainingId:guid}")]
+    [Route("target/{trainingId:guid}")]
     public async Task<ActionResult<AllTrainingTargetsResponse>> GetTargetsLinkedToTraining(Guid trainingId, CancellationToken clt = default)
     {
         try
@@ -88,6 +88,27 @@ public class TrainingTargetController : DrogeController
             Debugger.Break();
 #endif
             Logger.LogError(ex, "Exception in GetSetLinkedToTraining");
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    [Route("set/targets/{trainingId:guid}")]
+    public async Task<ActionResult<GetTargetSetWithTargetsResult>> GetSetWithTargetsLinkedToTraining(Guid trainingId, CancellationToken clt = default)
+    {
+        try
+        {
+            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var response = await _trainingTargetService.GetSetWithTargetsLinkedToTraining(trainingId, customerId, userId, clt);
+            return response;
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debugger.Break();
+#endif
+            Logger.LogError(ex, "Exception in GetSetWithTargetsLinkedToTraining");
             return BadRequest();
         }
     }
@@ -155,13 +176,18 @@ public class TrainingTargetController : DrogeController
     }
 
     [HttpPut]
-    [Route("result")]
-    public async Task<ActionResult<PutResponse>> PutUserResponse(TrainingTargetResult body, CancellationToken clt = default)
+    [Route("result/{fromCurrentUser:bool}")]
+    public async Task<ActionResult<PutResponse>> PutUserResponse([FromBody] TrainingTargetResult body, bool fromCurrentUser, CancellationToken clt = default)
     {
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            if (fromCurrentUser)
+            {
+                body.UserId = userId;
+            }
+
             var response = await _trainingTargetService.PutUserResponse(body, userId, customerId, clt);
             return response;
         }

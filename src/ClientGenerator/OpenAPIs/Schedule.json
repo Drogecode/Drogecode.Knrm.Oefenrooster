@@ -1385,6 +1385,9 @@
           "hasDescription": {
             "type": "boolean"
           },
+          "hasTargets": {
+            "type": "boolean"
+          },
           "linkedReports": {
             "type": "integer",
             "format": "int32"
@@ -1534,6 +1537,9 @@
           "hasDescription": {
             "type": "boolean"
           },
+          "hasTargets": {
+            "type": "boolean"
+          },
           "linkedReports": {
             "type": "integer",
             "format": "int32"
@@ -1610,6 +1616,9 @@
             "type": "boolean"
           },
           "hasDescription": {
+            "type": "boolean"
+          },
+          "hasTargets": {
             "type": "boolean"
           },
           "linkedReports": {

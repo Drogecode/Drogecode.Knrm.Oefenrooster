@@ -11,10 +11,11 @@ public partial class TrainingSubjectList : IDisposable
     [Parameter] public SelectionMode SelectionMode { get; set; }
     [Parameter] public EventCallback<IReadOnlyCollection<Guid>> SelectedTargetsChanged { get; set; }
     private IReadOnlyCollection<Guid>? _selectedTargets;
-    
+
     [Parameter] public RenderFragment<TrainingTarget>? BodyContent { get; set; }
     [Parameter] public bool TargetSetReadonly { get; set; }
     [Parameter] public bool Disabled { get; set; }
+
     [Parameter]
     public IReadOnlyCollection<Guid>? SelectedTargets
     {
@@ -36,25 +37,7 @@ public partial class TrainingSubjectList : IDisposable
     {
         if (firstRender)
         {
-            _trainingSubjects = new List<TrainingSubject>();
-            var count = 15;
-            var skip = 0;
-            while(true)
-            {
-                var d = await TrainingTargetRepository.AllTrainingTargets(count, skip * count, _cls.Token);
-                if (d?.TrainingSubjects is null)
-                {
-                    DebugHelper.WriteLine("TrainingSubjects is null");
-                    break;
-                }
-                _trainingSubjects.AddRange( d.TrainingSubjects);
-                if (d.TotalCount <= _trainingSubjects.Count)
-                {
-                    DebugHelper.WriteLine($"TotalCount <= _trainingSubjects.Count == {d.TotalCount} <= {_trainingSubjects.Count}");
-                    break;
-                }
-                skip++;
-            }
+            _trainingSubjects = (await TrainingTargetRepository.AllTrainingTargets(_cls.Token))?.TrainingSubjects;
             StateHasChanged();
         }
     }
