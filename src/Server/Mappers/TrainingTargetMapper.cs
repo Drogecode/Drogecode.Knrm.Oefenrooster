@@ -138,9 +138,9 @@ public static class TrainingTargetMapper
         if (roosterTraining.RoosterAvailables?.Count > 0)
         {
             var available = roosterTraining.RoosterAvailables.FirstOrDefault();
+            trainingTargetSetWithUserResults.RoosterAvailableId = available?.Id;
             if (available?.TrainingTargetUserResults?.Count > 0)
             {
-                trainingTargetSetWithUserResults.RoosterAvailableId = available.Id;
                 trainingTargetSetWithUserResults.TrainingTargetResults ??= [];
                 foreach (var userResult in available.TrainingTargetUserResults)
                 {
@@ -200,12 +200,17 @@ public static class TrainingTargetMapper
             throw new DrogeCodeNullException("DbTrainingTargetUserResult ToDb trainingTargetResult.Id is null");
         }
 
+        if (trainingTargetResult.RoosterAvailableId is null)
+        {
+            throw new DrogeCodeNullException("DbTrainingTargetUserResult ToDb trainingTargetResult.RoosterAvailableId is null");
+        }
+
         return new DbTrainingTargetUserResult
         {
             Id = trainingTargetResult.Id.Value,
             UserId = trainingTargetResult.UserId,
             TrainingTargetId = trainingTargetResult.TrainingTargetId,
-            RoosterAvailableId = trainingTargetResult.RoosterAvailableId,
+            RoosterAvailableId = trainingTargetResult.RoosterAvailableId.Value,
             Result = trainingTargetResult.Result,
             ResultDate = trainingTargetResult.ResultDate,
             TrainingDate = trainingTargetResult.TrainingDate,

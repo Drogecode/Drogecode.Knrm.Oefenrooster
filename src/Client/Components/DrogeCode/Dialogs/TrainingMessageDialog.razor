@@ -1,4 +1,5 @@
 ﻿@using Drogecode.Knrm.Oefenrooster.Client.Components.MudExRichText
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums
 @using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget
 <MudDialog Visible="@Visible">
     <DialogContent>
@@ -11,7 +12,7 @@
 
             if (_targetSetWithTargetsResult?.TrainingTargets?.Count > 0)
             {
-                <MudList T="string">
+                <div class="inline-grid grid-cols-1">
                     @foreach (var target in _targetSetWithTargetsResult.TrainingTargets)
                     {
                         var resultObject = _targetSetWithTargetsResult.TrainingTargetResults?.Where(x => x.TrainingTargetId == target.Id).FirstOrDefault() ?? new TrainingTargetResult
@@ -20,13 +21,16 @@
                             RoosterAvailableId = _targetSetWithTargetsResult.RoosterAvailableId,
                             TrainingDate = DateTime.UtcNow,
                         };
-                        <MudListItem>
-                            @target.Name <MudLink Href="@target.Url" Target="_blank">@target.UrlDescription</MudLink>
-                            <MudSwitchM3 T="bool" Value="@(resultObject.Result > 0)"
-                                         ValueChanged="@(e => UpdateResult(e, resultObject))" Disabled="resultObject.IsUpdating"/>
-                        </MudListItem>
+                        <div class="inline-flex items-center" style="min-height: 40px;">
+                            <MudText Typo="Typo.body1">@target.Name <MudLink Href="@target.Url" Target="_blank">@target.UrlDescription</MudLink></MudText>
+                                @if (target.Type == TrainingTargetType.Knowledge)
+                                {
+                                    <MudSwitch Color="Color.Primary" T="bool" Value="@(resultObject.Result > 0)" ValueChanged="@(e => UpdateResult(e, resultObject))"
+                                               Disabled="resultObject.IsUpdating"/>
+                                }
+                        </div>
                     }
-                </MudList>
+                </div>
             }
         }
         else if (_description is not null)

@@ -183,8 +183,11 @@
             </MudText>
             @if (_currentTrainingTargetSet is not null)
             {
-                <MudSwitchM3 T="bool" Label="@L["Is reusable"]" Value="@(_currentTrainingTargetSet.ReusableSince is not null)"
-                             ValueChanged="@((e) => _currentTrainingTargetSet.ReusableSince = e ? DateTime.UtcNow : null)" ReadOnly="_targetSetReadonly"/>
+                <div class="inline-flex items-center gap-[0.625rem]">
+                    <MudSwitchM3 T="bool" Label="@L["Is reusable"]" Value="@(_currentTrainingTargetSet.ReusableSince is not null)"
+                                 ValueChanged="@((e) => _currentTrainingTargetSet.ReusableSince = e ? DateTime.UtcNow : null)" ReadOnly="true || _targetSetReadonly"/>
+                    <MudText Typo="Typo.caption">Nog in ontwikkeling</MudText>
+                </div>
                 @if (_currentTrainingTargetSet.ReusableSince is not null)
                 {
                     <MudTextField T="string" Label=@L["Name"] @bind-Value="_currentTrainingTargetSet.Name" ReadOnly="_targetSetReadonly"/>

@@ -3,5 +3,6 @@
 public enum TrainingTargetGroup
 {
     Single = 0,
-    Group = 1,
+    TwoPersons = 1,
+    Group = 2,
 }

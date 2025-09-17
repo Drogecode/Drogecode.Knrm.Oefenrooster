@@ -69,7 +69,6 @@
                 }
                 else if (_userResultForTargets is not null && _userResultForTargets.Count > 0)
                 {
-                    // ReSharper disable All
                     <TrainingSubjectList>
                         <BodyContent Context="trainingTarget">
                             @{
@@ -84,6 +83,9 @@
                             {
                                 case TrainingTargetGroup.Single:
                                     <MudIcon Icon="@Icons.Material.Filled.Person" Color="@color" /> 
+                                    break;
+                                    case TrainingTargetGroup.TwoPersons:
+                                    <MudIcon Icon="@Icons.Material.Filled.People" Color="@color" />
                                     break;
                                 case TrainingTargetGroup.Group:
                                     <MudIcon Icon="@Icons.Material.Filled.Group" Color="@color" /> 
@@ -113,7 +115,6 @@
                             }
                         </BodyContent>
                     </TrainingSubjectList>
-                    // ReSharper restore All
                 }
                 else
                 {

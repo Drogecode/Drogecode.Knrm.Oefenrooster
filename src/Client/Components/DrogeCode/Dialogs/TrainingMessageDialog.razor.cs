@@ -37,7 +37,13 @@ public sealed partial class TrainingMessageDialog : IDisposable
         StateHasChanged();
         resultObject.Result = b ? 5 : 0;
 
+        var isNew = resultObject.Id is null;
         await RatingService.UpdateResult(b ? 5 : 0, true, resultObject, _targetSetWithTargetsResult.TrainingTargets);
+        if (isNew)
+        {
+            _targetSetWithTargetsResult.TrainingTargetResults ??= [];
+            _targetSetWithTargetsResult.TrainingTargetResults.Add(resultObject);
+        }
 
         resultObject.IsUpdating = false;
         StateHasChanged();

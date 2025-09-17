@@ -180,4 +180,7 @@
   <data name="Description" xml:space="preserve">
     <value>Description</value>
   </data>
+  <data name="Is reusable" xml:space="preserve">
+    <value>Is reusable</value>
+  </data>
 </root>
