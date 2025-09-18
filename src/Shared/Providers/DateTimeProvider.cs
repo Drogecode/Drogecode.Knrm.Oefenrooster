@@ -18,4 +18,14 @@ public class DateTimeProvider : IDateTimeProvider
     {
         return DateTime.Today;
     }
+    
+    public DateTime MinValue()
+    {
+        return DateTime.MinValue;
+    }
+    
+    public DateTime MaxValue()
+    {
+        return DateTime.MaxValue;
+    }
 }

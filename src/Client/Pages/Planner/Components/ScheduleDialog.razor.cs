@@ -166,6 +166,7 @@ public sealed partial class ScheduleDialog : IDisposable
                 UserFunctionId = user.UserFunctionId,
                 PlannedFunctionId = functionId,
                 Availability = Availability.None,
+                AvailableId = result.AvailableId,
                 Assigned = toggled,
                 Name = user.Name,
                 VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.IsDefault)?.Id ?? _vehicleInfoForThisTraining.FirstOrDefault()?.Id,
