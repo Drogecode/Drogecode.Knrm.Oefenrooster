@@ -57,32 +57,6 @@ public sealed partial class MainLayout : IDisposable
             }
 
             await OfflineService.SetUser();
-
-            if (UserHelper.InRole(authState, AccessesNames.AUTH_External))
-            {
-                DebugHelper.WriteLine("Authenticated as external user");
-                return;
-            }
-
-            var dbUser = await UserRepository.GetCurrentUserAsync(); //Force creation of user.
-            if (dbUser?.Id != null && dbUser.Id != Guid.Empty)
-            {
-                _hubConnection = new HubConnectionBuilder()
-                    .WithAutomaticReconnect()
-                    .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
-                    .Build();
-                _hubConnection.On<string, string>($"ReceivePrecomAlert_{dbUser.Id}", (user, message) =>
-                {
-                    var config = (SnackbarOptions options) =>
-                    {
-                        options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
-                        options.RequireInteraction = true;
-                        options.ShowCloseIcon = true;
-                    };
-                    Snackbar.Add($"PreCom: {message}", Severity.Error, configure: config, key: "precom");
-                });
-                await _hubConnection.StartAsync(_cls.Token);
-            }
         }
         catch (HttpRequestException ex)
         {
@@ -95,13 +69,58 @@ public sealed partial class MainLayout : IDisposable
         if (firstRender)
         {
             _global.RefreshRequested += RefreshMe;
+            await ConfigureHub();
             RefreshMe();
         }
     }
 
-    private async Task Login(MouseEventArgs args)
+    private async Task ConfigureHub()
     {
-        Navigation.NavigateTo("/landing_page");
+        try
+        {
+            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_External))
+            {
+                DebugHelper.WriteLine("Authenticated as external user");
+                return;
+            }
+            var dbUser = await UserRepository.GetCurrentUserAsync();
+            if (dbUser?.Id != null && dbUser.Id != Guid.Empty)
+            {
+                _hubConnection = new HubConnectionBuilder()
+                    .WithAutomaticReconnect()
+                    .WithUrl(Navigation.ToAbsoluteUri("/hub/precomhub"))
+                    .Build();
+                _hubConnection.On<string, string>($"ReceivePrecomAlert_{dbUser.Id}", (user, message) =>
+                {
+                    try
+                    {
+                        var config = (SnackbarOptions options) =>
+                        {
+                            options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
+                            options.RequireInteraction = true;
+                            options.ShowCloseIcon = true;
+                        };
+                        Snackbar.Add($"PreCom: {message}", Severity.Error, configure: config, key: "precom");
+                    }
+                    catch (Exception e)
+                    {
+                        DebugHelper.WriteLine(e);
+                    }
+                });
+                await _hubConnection.StartAsync(_cls.Token);
+            }
+        }
+        catch (HttpRequestException)
+        {
+        }
+        catch (TaskCanceledException)
+        {
+        }
+        catch (Exception e)
+        {
+            DebugHelper.WriteLine("Exception in ConfigureHub main layout");
+            DebugHelper.WriteLine(e);
+        }
     }
 
     private async Task Logout(MouseEventArgs args)

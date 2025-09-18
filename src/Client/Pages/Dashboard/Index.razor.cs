@@ -112,36 +112,44 @@ public sealed partial class Index : IDisposable
                 if (_cls.Token.IsCancellationRequested)
                     return;
                 var stateHasChanged = true;
-                switch (type)
+                try
                 {
-                    case ItemUpdated.FutureTrainings:
-                        _trainings = await ScheduleRepository.GetScheduledTrainingsForUser(_userId, false, TAKE, _skip * TAKE, _cls.Token);
-                        break;
-                    case ItemUpdated.AllUsers:
-                        _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
-                        break;
-                    case ItemUpdated.AllVehicles:
-                        _vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
-                        break;
-                    case ItemUpdated.AllTrainingTypes:
-                        _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
-                        break;
-                    case ItemUpdated.AllFunctions:
-                        _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
-                        break;
-                    case ItemUpdated.DayItemDashboard:
-                        _dayItems = (await CalendarItemRepository.GetDayItemDashboardAsync(_userId, false, _cls.Token))?.DayItems;
-                        break;
-                    case ItemUpdated.PinnedDashboard:
-                        _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
-                        break;
-                    case ItemUpdated.FutureHolidays:
-                        if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
-                            _futureHolidays = await _holidayRepository.GetAllFuture(_userId, false, 30, _cls.Token);
-                        break;
-                    default:
-                        stateHasChanged = false;
-                        break;
+                    switch (type)
+                    {
+                        case ItemUpdated.FutureTrainings:
+                            _trainings = await ScheduleRepository.GetScheduledTrainingsForUser(_userId, false, TAKE, _skip * TAKE, _cls.Token);
+                            break;
+                        case ItemUpdated.AllUsers:
+                            _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
+                            break;
+                        case ItemUpdated.AllVehicles:
+                            _vehicles = await VehicleRepository.GetAllVehiclesAsync(false, _cls.Token);
+                            break;
+                        case ItemUpdated.AllTrainingTypes:
+                            _trainingTypes = await TrainingTypesRepository.GetTrainingTypes(false, false, _cls.Token);
+                            break;
+                        case ItemUpdated.AllFunctions:
+                            _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
+                            break;
+                        case ItemUpdated.DayItemDashboard:
+                            _dayItems = (await CalendarItemRepository.GetDayItemDashboardAsync(_userId, false, _cls.Token))?.DayItems;
+                            break;
+                        case ItemUpdated.PinnedDashboard:
+                            _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, false, _cls.Token))?.Trainings;
+                            break;
+                        case ItemUpdated.FutureHolidays:
+                            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
+                                _futureHolidays = await _holidayRepository.GetAllFuture(_userId, false, 30, _cls.Token);
+                            break;
+                        default:
+                            stateHasChanged = false;
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    DebugHelper.WriteLine("Exception in ConfigureHub refresh");
+                    DebugHelper.WriteLine(e);
                 }
 
                 if (stateHasChanged)
@@ -157,6 +165,7 @@ public sealed partial class Index : IDisposable
         }
         catch (Exception e)
         {
+            DebugHelper.WriteLine("Exception in ConfigureHub index");
             DebugHelper.WriteLine(e);
         }
     }

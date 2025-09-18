@@ -138,6 +138,7 @@ public sealed partial class GlobalConfiguration : IDisposable
         }
         catch (Exception e)
         {
+            DebugHelper.WriteLine("Exception in ConfigureHub global configuration");
             DebugHelper.WriteLine(e);
         }
     }
