@@ -4,4 +4,5 @@ public class TrainingTargetSetWithUserResults : TrainingTargetSet
 {
     public List<TrainingTargetResult>? TrainingTargetResults { get; set; }
     public Guid? RoosterAvailableId { get; set; }
+    public bool Assigned { get; set; }
 }

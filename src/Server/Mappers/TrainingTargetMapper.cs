@@ -139,6 +139,7 @@ public static class TrainingTargetMapper
         {
             var available = roosterTraining.RoosterAvailables.FirstOrDefault();
             trainingTargetSetWithUserResults.RoosterAvailableId = available?.Id;
+            trainingTargetSetWithUserResults.Assigned = available?.Assigned ?? false;
             if (available?.TrainingTargetUserResults?.Count > 0)
             {
                 trainingTargetSetWithUserResults.TrainingTargetResults ??= [];

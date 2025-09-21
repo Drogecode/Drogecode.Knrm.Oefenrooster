@@ -115,6 +115,7 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             .Select(x=>x.ToTrainingTarget())
             .ToListAsync(clt);
         response.RoosterAvailableId = trainingTargetSet.RoosterAvailableId;
+        response.Assigned = trainingTargetSet.Assigned;
         response.TrainingTargetSet = trainingTargetSet;
         response.TrainingTargetResults = trainingTargetSet.TrainingTargetResults;
         response.TrainingTargets = targets;

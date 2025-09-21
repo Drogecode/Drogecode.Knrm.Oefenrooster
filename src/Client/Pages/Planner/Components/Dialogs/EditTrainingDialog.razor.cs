@@ -1,16 +1,16 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
-using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using MudExRichTextEditor;
 
-namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
+namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components.Dialogs;
 
 public sealed partial class EditTrainingDialog : IDisposable
 {

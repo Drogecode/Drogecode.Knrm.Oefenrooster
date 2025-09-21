@@ -333,6 +333,9 @@
           "autH_configure_training_types": {
             "type": "boolean"
           },
+          "autH_configure_training_target": {
+            "type": "boolean"
+          },
           "autH_configure_user_roles": {
             "type": "boolean"
           },

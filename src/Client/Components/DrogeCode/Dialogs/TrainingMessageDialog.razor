@@ -19,14 +19,14 @@
                         {
                             TrainingTargetId = target.Id,
                             RoosterAvailableId = _targetSetWithTargetsResult.RoosterAvailableId,
-                            TrainingDate = DateTime.UtcNow,
+                            TrainingDate = Training.DateStart,
                         };
                         <div class="inline-flex items-center" style="min-height: 40px;">
                             <MudText Typo="Typo.body1">@target.Name <MudLink Href="@target.Url" Target="_blank">@target.UrlDescription</MudLink></MudText>
                                 @if (target.Type == TrainingTargetType.Knowledge)
                                 {
                                     <MudSwitch Color="Color.Primary" T="bool" Value="@(resultObject.Result > 0)" ValueChanged="@(e => UpdateResult(e, resultObject))"
-                                               Disabled="resultObject.IsUpdating"/>
+                                               Disabled="resultObject.IsUpdating || !_targetSetWithTargetsResult.Assigned"/>
                                 }
                         </div>
                     }

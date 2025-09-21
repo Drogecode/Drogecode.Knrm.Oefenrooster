@@ -747,7 +747,11 @@
           },
           "roosterAvailableId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
+          },
+          "assigned": {
+            "type": "boolean"
           },
           "trainingTargetSet": {
             "$ref": "#/components/schemas/TrainingTargetSet"
@@ -920,7 +924,8 @@
       "TrainingTargetGroup": {
         "enum": [
           0,
-          1
+          1,
+          2
         ],
         "type": "integer",
         "format": "int32"
@@ -943,7 +948,8 @@
           },
           "roosterAvailableId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
           },
           "result": {
             "type": "integer",

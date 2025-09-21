@@ -43,6 +43,11 @@ Changes to this file may cause incorrect behavior and will be lost if the code i
         </div>
         <div>
             <MudTooltip><ChildContent>
+                <MudSwitch Label="@L["configure_training_target"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_configure_training_target" ValueChanged="@(isChecked => { _userRole.Role.AUTH_configure_training_target = isChecked; _saved = null; })" Disabled="_isSaving"/>
+            </ChildContent><TooltipContent><MudText Typo="Typo.h6">@L["configure_training_target"]</MudText><MudText Typo="Typo.body2">@L["configure_training_target-body"]</MudText></TooltipContent></MudTooltip>
+        </div>
+        <div>
+            <MudTooltip><ChildContent>
                 <MudSwitch Label="@L["configure_user_roles"]" Color="Color.Primary" T="bool" Value="@_userRole.Role.AUTH_configure_user_roles" ValueChanged="@(isChecked => { _userRole.Role.AUTH_configure_user_roles = isChecked; _saved = null; })" Disabled="_isSaving"/>
             </ChildContent><TooltipContent><MudText Typo="Typo.h6">@L["configure_user_roles"]</MudText><MudText Typo="Typo.body2">@L["configure_user_roles-body"]</MudText></TooltipContent></MudTooltip>
         </div>

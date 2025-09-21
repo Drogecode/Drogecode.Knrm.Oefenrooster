@@ -6,7 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
-namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
+namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components.Dialogs;
 
 public partial class RatingDialog : ComponentBase, IDisposable
 {

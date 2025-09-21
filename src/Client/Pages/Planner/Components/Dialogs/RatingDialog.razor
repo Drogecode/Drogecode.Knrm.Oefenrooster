@@ -4,7 +4,7 @@
     <TitleContent>
     </TitleContent>
     <DialogContent>
-        @if (Planner is not null && _trainingTargets is not null)
+        @if (Planner is not null && _trainingTargets is not null && Planner.PlanUsers.Any(x => x.Assigned))
         {
             <div class="inline-grid grid-cols-1">
                 <div class="inline-flex">
@@ -25,27 +25,27 @@
                             <CellTemplate>
                                 <MudStack Row>
                                     @{
-                                        var resultObject = target.TargetResults?.FirstOrDefault(x => x.UserId == context.Item.UserId);
-                                        if (resultObject is null)
+                                        var resultObject = target.TargetResults?.FirstOrDefault(x => x.UserId == context.Item.UserId) ?? new TrainingTargetResult
                                         {
-                                            resultObject = new TrainingTargetResult
-                                            {
-                                                UserId = context.Item.UserId,
-                                                TrainingTargetId = target.Id,
-                                                RoosterAvailableId = context.Item.AvailableId ?? Guid.Empty,
-                                                TrainingDate = Planner.DateStart
-                                            };
-                                        }
+                                            UserId = context.Item.UserId,
+                                            TrainingTargetId = target.Id,
+                                            RoosterAvailableId = context.Item.AvailableId ?? Guid.Empty,
+                                            TrainingDate = Planner.DateStart
+                                        };
                                     }
                                     @switch (target.Type)
                                     {
                                         case TrainingTargetType.Exercise:
-                                            <MudRating Size="@Size.Small" SelectedValue="@resultObject.Result" SelectedValueChanged="i => UpdateResult(i, resultObject)"
-                                                       Disabled="_updatingAll || resultObject.IsUpdating"/>
+                                            <MudRating Size="@Size.Small" 
+                                                       SelectedValue="@resultObject.Result" 
+                                                       SelectedValueChanged="i => UpdateResult(i, resultObject)"
+                                                       Disabled="_updatingAll || resultObject.IsUpdating || resultObject.RoosterAvailableId == Guid.Empty"/>
                                             break;
                                         case TrainingTargetType.Knowledge:
-                                            <MudSwitchM3 T="bool" Value="@(resultObject.Result > 0)"
-                                                         ValueChanged="@(e => UpdateResult(e, resultObject))" Disabled="_updatingAll || resultObject.IsUpdating"/>
+                                            <MudSwitchM3 T="bool" 
+                                                         Value="@(resultObject.Result > 0)"
+                                                         ValueChanged="@(e => UpdateResult(e, resultObject))" 
+                                                         Disabled="_updatingAll || resultObject.IsUpdating || resultObject.RoosterAvailableId == Guid.Empty"/>
                                             break;
                                         default:
                                             @L["Type {0} not implemented", target.Type]
@@ -58,6 +58,10 @@
                     }
                 </Columns>
             </MudDataGrid>
+        }
+        else if (Planner is not null && _trainingTargets is not null && !Planner.PlanUsers.Any(x => x.Assigned))
+        {
+            <MudText>@L["Nobody is assigned for this training"]</MudText>
         }
         else
         {
