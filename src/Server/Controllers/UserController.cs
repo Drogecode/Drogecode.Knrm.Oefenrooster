@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Hubs;
+using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -7,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 using System.Security.Claims;
 using System.Text.Json;
-using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -97,11 +97,12 @@ public class UserController : ControllerBase
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var result = await _userService.GetOrSetUserById(userId, null, userName, userEmail, customerId, true, clt);
 
-            return new GetDrogeUserResponse { DrogeUser = result };
+            var resposne = new GetDrogeUserResponse { DrogeUser = result };
+            return resposne;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in Get");
+            _logger.LogError(ex, "Exception in GetCurrentUser");
             return BadRequest();
         }
     }
@@ -122,7 +123,7 @@ public class UserController : ControllerBase
             return BadRequest();
         }
     }
-    
+
     [HttpGet]
     [Route("{id:guid}/roles")]
     public async Task<ActionResult<MultipleLinkedUserRolesResponse>> GetRolesForUserById(Guid id, CancellationToken clt = default)
@@ -238,7 +239,7 @@ public class UserController : ControllerBase
                 result = await _userService.RemoveLinkUserUserForUser(body, userId, customerId, clt);
             await _auditService.Log(userId, AuditType.UpdateLinkUserUserForUser, customerId,
                 JsonSerializer.Serialize(new AuditLinkUserUser
-                    { UserA = body.UserAId, UserB = body.UserBId, Add = body.Add, LinkType = body.LinkType, Success = result.Success, ElapsedMilliseconds = result.ElapsedMilliseconds }));
+                { UserA = body.UserAId, UserB = body.UserBId, Add = body.Add, LinkType = body.LinkType, Success = result.Success, ElapsedMilliseconds = result.ElapsedMilliseconds }));
             return result;
         }
         catch (Exception ex)
