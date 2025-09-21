@@ -1,13 +1,12 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Database.Models;
+using Drogecode.Knrm.Oefenrooster.Server.Helpers;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Server.Models.User;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
-using System.Diagnostics;
-using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -166,7 +165,7 @@ public class UserService : DrogeService, IUserService
         var roles = await Database.Users
             .Include(x => x.LinkUserRoles)
             !.ThenInclude(x => x.Role)
-            .Where(x => x.CustomerId == customerId && x.Id == userId && x.DeletedOn == null && !x.IsSystemUser && x.LinkUserRoles != null && x.LinkUserRoles.Any(lur=>lur.IsSet))
+            .Where(x => x.CustomerId == customerId && x.Id == userId && x.DeletedOn == null && !x.IsSystemUser && x.LinkUserRoles != null && x.LinkUserRoles.Any(lur => lur.IsSet))
             .Select(x => x.ToDrogeUserRoleLinked())
             .FirstOrDefaultAsync(clt);
         result.Roles = roles;
@@ -182,8 +181,8 @@ public class UserService : DrogeService, IUserService
     {
         if (user.Name.Length > DefaultSettingsHelper.MAX_LENGTH_USER_NAME)
         {
-            Logger.LogWarning("User name {UserName} is too long, truncating to {MaxLength}", user.Name, DefaultSettingsHelper.MAX_LENGTH_USER_NAME);
-            user.Name = user.Name[..DefaultSettingsHelper.MAX_LENGTH_USER_NAME];
+            Logger.LogWarning("User name {UserName} is too long, truncating to {MaxLength}", user.Name.CleanStringForLogging(), DefaultSettingsHelper.MAX_LENGTH_USER_NAME);
+            user.Name = user.Name.CleanStringForLogging()[..DefaultSettingsHelper.MAX_LENGTH_USER_NAME];
         }
 
         var oldVersion = await Database.Users.FirstOrDefaultAsync(u => u.Id == user.Id && u.CustomerId == customerId && u.DeletedOn == null && !u.IsSystemUser);
