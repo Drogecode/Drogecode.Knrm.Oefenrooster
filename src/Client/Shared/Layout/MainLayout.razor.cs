@@ -56,6 +56,11 @@ public sealed partial class MainLayout : IDisposable
                 return;
             }
 
+            if (Guid.TryParse(authState.User?.Identities.FirstOrDefault()!.Claims.FirstOrDefault(x => x.Type.Equals("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value, out var userId))
+            {
+                DebugHelper.WriteLine($"User Id: {userId}");
+            }
+
             await OfflineService.SetUser();
         }
         catch (HttpRequestException ex)
