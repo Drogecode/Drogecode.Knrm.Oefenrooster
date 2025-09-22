@@ -21,13 +21,32 @@
                             RoosterAvailableId = _targetSetWithTargetsResult.RoosterAvailableId,
                             TrainingDate = Training.DateStart,
                         };
+                        var color = Color.Primary;
+                        if (target.Type == TrainingTargetType.Knowledge)
+                        {
+                            color = Color.Secondary;
+                        }
+
                         <div class="inline-flex items-center" style="min-height: 40px;">
-                            <MudText Typo="Typo.body1">@target.Name <MudLink Href="@target.Url" Target="_blank">@target.UrlDescription</MudLink></MudText>
-                                @if (target.Type == TrainingTargetType.Knowledge)
-                                {
-                                    <MudSwitch Color="Color.Primary" T="bool" Value="@(resultObject.Result > 0)" ValueChanged="@(e => UpdateResult(e, resultObject))"
-                                               Disabled="resultObject.IsUpdating || !_targetSetWithTargetsResult.Assigned"/>
-                                }
+                            @switch (target.Group)
+                            {
+                                case TrainingTargetGroup.Single:
+                                    <MudIcon Icon="@Icons.Material.Filled.Person" Color="@color"/>
+                                    break;
+                                case TrainingTargetGroup.TwoPersons:
+                                    <MudIcon Icon="@Icons.Material.Filled.People" Color="@color"/>
+                                    break;
+                                case TrainingTargetGroup.Group:
+                                    <MudIcon Icon="@Icons.Material.Filled.Group" Color="@color"/>
+                                    break;
+                            }
+                            <MudText Typo="Typo.body1">@target.Name <MudLink Href="@target.Url" Target="_blank">@target.UrlDescription</MudLink>
+                            </MudText>
+                            @if (target.Type == TrainingTargetType.Knowledge)
+                            {
+                                <MudSwitch Color="Color.Primary" T="bool" Value="@(resultObject.Result > 0)" ValueChanged="@(e => UpdateResult(e, resultObject))"
+                                           Disabled="resultObject.IsUpdating || !_targetSetWithTargetsResult.Assigned"/>
+                            }
                         </div>
                     }
                 </div>
