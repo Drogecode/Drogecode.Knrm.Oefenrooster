@@ -1,16 +1,16 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
-using System.Security.Claims;
-using Drogecode.Knrm.Oefenrooster.Shared.Exceptions;
 
-namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
+namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components.Dialogs;
 
 public sealed partial class ScheduleDialog : IDisposable
 {
@@ -166,6 +166,7 @@ public sealed partial class ScheduleDialog : IDisposable
                 UserFunctionId = user.UserFunctionId,
                 PlannedFunctionId = functionId,
                 Availability = Availability.None,
+                AvailableId = result.AvailableId,
                 Assigned = toggled,
                 Name = user.Name,
                 VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.IsDefault)?.Id ?? _vehicleInfoForThisTraining.FirstOrDefault()?.Id,

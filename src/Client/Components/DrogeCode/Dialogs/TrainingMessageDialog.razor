@@ -1,10 +1,56 @@
-﻿@using MudExRichTextEditor
-@using Drogecode.Knrm.Oefenrooster.Client.Components.MudExRichText
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Components.MudExRichText
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget
 <MudDialog Visible="@Visible">
     <DialogContent>
-        @if (_description?.Description is not null)
+        @if (_description?.Description is not null || _targetSetWithTargetsResult?.TrainingTargets?.Count > 0)
         {
-            <MudExRichTextReader Text="@_description.Description"/>
+            if (_description?.Description is not null)
+            {
+                <MudExRichTextReader Text="@_description.Description"/>
+            }
+
+            if (_targetSetWithTargetsResult?.TrainingTargets?.Count > 0)
+            {
+                <div class="inline-grid grid-cols-1">
+                    @foreach (var target in _targetSetWithTargetsResult.TrainingTargets)
+                    {
+                        var resultObject = _targetSetWithTargetsResult.TrainingTargetResults?.Where(x => x.TrainingTargetId == target.Id).FirstOrDefault() ?? new TrainingTargetResult
+                        {
+                            TrainingTargetId = target.Id,
+                            RoosterAvailableId = _targetSetWithTargetsResult.RoosterAvailableId,
+                            TrainingDate = Training.DateStart,
+                        };
+                        var color = Color.Primary;
+                        if (target.Type == TrainingTargetType.Knowledge)
+                        {
+                            color = Color.Secondary;
+                        }
+
+                        <div class="inline-flex items-center" style="min-height: 40px;">
+                            @switch (target.Group)
+                            {
+                                case TrainingTargetGroup.Single:
+                                    <MudIcon Icon="@Icons.Material.Filled.Person" Color="@color"/>
+                                    break;
+                                case TrainingTargetGroup.TwoPersons:
+                                    <MudIcon Icon="@Icons.Material.Filled.People" Color="@color"/>
+                                    break;
+                                case TrainingTargetGroup.Group:
+                                    <MudIcon Icon="@Icons.Material.Filled.Group" Color="@color"/>
+                                    break;
+                            }
+                            <MudText Typo="Typo.body1">@target.Name <MudLink Href="@target.Url" Target="_blank">@target.UrlDescription</MudLink>
+                            </MudText>
+                            @if (target.Type == TrainingTargetType.Knowledge)
+                            {
+                                <MudSwitch Color="Color.Primary" T="bool" Value="@(resultObject.Result > 0)" ValueChanged="@(e => UpdateResult(e, resultObject))"
+                                           Disabled="resultObject.IsUpdating || !_targetSetWithTargetsResult.Assigned"/>
+                            }
+                        </div>
+                    }
+                </div>
+            }
         }
         else if (_description is not null)
         {

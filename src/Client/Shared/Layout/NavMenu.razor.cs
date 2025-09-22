@@ -11,6 +11,7 @@ using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using System.Web;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components.Dialogs;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 

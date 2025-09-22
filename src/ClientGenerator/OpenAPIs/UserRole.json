@@ -333,6 +333,9 @@
           "autH_configure_training_types": {
             "type": "boolean"
           },
+          "autH_configure_training_target": {
+            "type": "boolean"
+          },
           "autH_configure_user_roles": {
             "type": "boolean"
           },
@@ -385,6 +388,21 @@
             "type": "boolean"
           },
           "autH_scheduler_description_read": {
+            "type": "boolean"
+          },
+          "autH_scheduler_target_set": {
+            "type": "boolean"
+          },
+          "autH_target_read": {
+            "type": "boolean"
+          },
+          "autH_target_edit": {
+            "type": "boolean"
+          },
+          "autH_target_user_read": {
+            "type": "boolean"
+          },
+          "autH_target_user_rate": {
             "type": "boolean"
           },
           "autH_users_details": {

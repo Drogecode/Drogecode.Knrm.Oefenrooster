@@ -28,7 +28,7 @@ public class ApiCachedRequest
     public bool ForceCache { get; set; } = false;
 
     /// <summary>
-    /// Return cached, but also call for update
+    /// Return cached but also call for update
     /// </summary>
     public bool CachedAndReplace { get; set; } = false;
 

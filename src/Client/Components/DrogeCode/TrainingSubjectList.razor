@@ -1,0 +1,55 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget
+@if (_trainingSubjects is not null)
+{
+    <MudTextField Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" DebounceInterval="500" OnDebounceIntervalElapsed="OnSearchTarget"
+                  @bind-Value="@_searchTargetText" Label=@LApp["Search"]/>
+    <MudTreeView T="Guid" @bind-SelectedValues="@SelectedTargets" SelectionMode="@SelectionMode" ReadOnly="@TargetSetReadonly" Disabled="@Disabled">
+        @foreach (var subject in _trainingSubjects)
+        {
+            @SubjectsList(subject)
+        }
+    </MudTreeView>
+}
+else
+{
+    <DrogeLoading/>
+}
+
+@code{
+
+    private RenderFragment<TrainingSubject> SubjectsList => subject =>
+        @<MudTreeViewItem T="Guid" Value="subject.Id" Text="@subject.Name" Expanded Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen"
+                          Class="@(string.IsNullOrEmpty(_searchTargetText) || subject.IsVisible ? "" : "hidden")">
+            @if (subject.TrainingSubjects is not null)
+            {
+                foreach (var childSubject in subject.TrainingSubjects)
+                {
+                    @if (string.IsNullOrEmpty(_searchTargetText) || childSubject.IsVisible)
+                    {
+                        @SubjectsList(childSubject)
+                    }
+                }
+            }
+            @if (subject.TrainingTargets is not null)
+            {
+                foreach (var target in subject.TrainingTargets)
+                {
+                    @if (BodyContent is null)
+                    {
+                        <MudTreeViewItem T="Guid" Value="@target.Id" Text="@target.Name"
+                                         Class="@(string.IsNullOrEmpty(_searchTargetText) || target.IsVisible ? "" : "hidden")"/>
+                    }
+                    else
+                    {
+                        <MudTreeViewItem T="Guid" Value="@target.Id" Text="@target.Name"
+                                         Class="@(string.IsNullOrEmpty(_searchTargetText) || target.IsVisible ? "" : "hidden")">
+                            <BodyContent>
+                                @BodyContent(target)
+                            </BodyContent>
+                        </MudTreeViewItem>
+                    }
+                }
+            }
+        </MudTreeViewItem>;
+
+}

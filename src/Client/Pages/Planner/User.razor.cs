@@ -1,21 +1,22 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 
 public sealed partial class User : IDisposable
 {
-    [Inject] private IStringLocalizer<User> L { get; set; } = default!;
-    [Inject] private UserRepository _userRepository { get; set; } = default!;
-    [Inject] private FunctionRepository _functionRepository { get; set; } = default!;
-    [Inject] private NavigationManager Navigation { get; set; } = default!;
-    private CancellationTokenSource _cls = new();
+    [Inject, NotNull] private IStringLocalizer<User>? L { get; set; }
+    [Inject, NotNull] private UserRepository? UserRepository { get; set; }
+    [Inject, NotNull] private FunctionRepository? FunctionRepository { get; set; }
+    [Inject, NotNull] private NavigationManager? Navigation { get; set; }
+    private readonly CancellationTokenSource _cls = new();
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
     protected override async Task OnParametersSetAsync()
     {
-        _users = await _userRepository.GetAllUsersAsync(false, false, false, _cls.Token);
-        _functions = await _functionRepository.GetAllFunctionsAsync(false, _cls.Token);
+        _users = await UserRepository.GetAllUsersAsync(false, false, false, _cls.Token);
+        _functions = await FunctionRepository.GetAllFunctionsAsync(false, _cls.Token);
         StateHasChanged();
     }
 

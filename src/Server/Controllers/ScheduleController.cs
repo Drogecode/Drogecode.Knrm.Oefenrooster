@@ -233,7 +233,7 @@ public class ScheduleController : DrogeController
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error in AddTraining");
+            Logger.LogError(ex, "Error in PatchTraining");
             return BadRequest();
         }
     }

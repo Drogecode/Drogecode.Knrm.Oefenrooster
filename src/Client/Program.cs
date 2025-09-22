@@ -47,6 +47,7 @@ builder.Services.TryAddScoped<IReportActionClient, ReportActionClient>();
 builder.Services.TryAddScoped<IReportTrainingClient, ReportTrainingClient>();
 builder.Services.TryAddScoped<IScheduleClient, ScheduleClient>();
 builder.Services.TryAddScoped<ISharePointClient, SharePointClient>();
+builder.Services.TryAddScoped<ITrainingTargetClient, TrainingTargetClient>();
 builder.Services.TryAddScoped<ITrainingTypesClient, TrainingTypesClient>();
 builder.Services.TryAddScoped<IUserClient, UserClient>();
 builder.Services.TryAddScoped<IUserGlobalClient, UserGlobalClient>();
@@ -69,12 +70,14 @@ builder.Services.TryAddScoped<PreComRepository>();
 builder.Services.TryAddScoped<ReportActionRepository>();
 builder.Services.TryAddScoped<ReportTrainingRepository>();
 builder.Services.TryAddScoped<ScheduleRepository>();
+builder.Services.TryAddScoped<TrainingTargetRepository>();
 builder.Services.TryAddScoped<TrainingTypesRepository>();
 builder.Services.TryAddScoped<UserRepository>();
 builder.Services.TryAddScoped<VehicleRepository>();
 
 builder.Services.TryAddScoped<ILocalStorageExpireService, LocalStorageExpireService>();
 builder.Services.TryAddScoped<ISessionExpireService, SessionExpireService>();
+builder.Services.TryAddScoped<IRatingService, RatingService>();
 builder.Services.TryAddScoped<IOfflineService, OfflineService>();
 
 builder.Services.AddScoped<CustomStateProvider>();

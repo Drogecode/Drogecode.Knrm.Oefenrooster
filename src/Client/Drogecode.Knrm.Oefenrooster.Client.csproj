@@ -47,4 +47,19 @@
 	  <Folder Include="wwwroot\Images\PreCom\" />
 	</ItemGroup>
 	
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\Pages\Planner\Components\RatingDialog.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>RatingDialog.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Compile Update="Resources\Pages\Planner\Components\RatingDialog.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>RatingDialog.nl-NL.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+	
 </Project>

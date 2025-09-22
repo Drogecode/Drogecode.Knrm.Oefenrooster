@@ -1,0 +1,71 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Enums
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget
+<MudDialog>
+    <TitleContent>
+    </TitleContent>
+    <DialogContent>
+        @if (Planner is not null && _trainingTargets is not null && Planner.PlanUsers.Any(x => x.Assigned))
+        {
+            <div class="inline-grid grid-cols-1">
+                <div class="inline-flex">
+                    <MudText Class="mr-2">@L["All same rating"]</MudText>
+                    <MudRating Size="@Size.Small" SelectedValueChanged="i => AllSameClicked(i)" Disabled="_updatingAll"/>
+                </div>
+                <div class="inline-flex">
+                    <MudText Class="mr-2">@L["All read"]</MudText>
+                    <MudSwitchM3 T="bool" ValueChanged="@(e => AllSameClicked(e))" Disabled="_updatingAll"/>
+                </div>
+            </div>
+            <MudDataGrid Items="@Planner.PlanUsers.Where(x => x.Assigned)">
+                <Columns>
+                    <PropertyColumn Property="x => x.Name" Title="@LApp["User"]"/>
+                    @foreach (var target in _trainingTargets)
+                    {
+                        <TemplateColumn Title="@target.Name">
+                            <CellTemplate>
+                                <MudStack Row>
+                                    @{
+                                        var resultObject = target.TargetResults?.FirstOrDefault(x => x.UserId == context.Item.UserId) ?? new TrainingTargetResult
+                                        {
+                                            UserId = context.Item.UserId,
+                                            TrainingTargetId = target.Id,
+                                            RoosterAvailableId = context.Item.AvailableId ?? Guid.Empty,
+                                            TrainingDate = Planner.DateStart
+                                        };
+                                    }
+                                    @switch (target.Type)
+                                    {
+                                        case TrainingTargetType.Exercise:
+                                            <MudRating Size="@Size.Small" 
+                                                       SelectedValue="@resultObject.Result" 
+                                                       SelectedValueChanged="i => UpdateResult(i, resultObject)"
+                                                       Disabled="_updatingAll || resultObject.IsUpdating || resultObject.RoosterAvailableId == Guid.Empty"/>
+                                            break;
+                                        case TrainingTargetType.Knowledge:
+                                            <MudSwitchM3 T="bool" 
+                                                         Value="@(resultObject.Result > 0)"
+                                                         ValueChanged="@(e => UpdateResult(e, resultObject))" 
+                                                         Disabled="_updatingAll || resultObject.IsUpdating || resultObject.RoosterAvailableId == Guid.Empty"/>
+                                            break;
+                                        default:
+                                            @L["Type {0} not implemented", target.Type]
+                                            break;
+                                    }
+
+                                </MudStack>
+                            </CellTemplate>
+                        </TemplateColumn>
+                    }
+                </Columns>
+            </MudDataGrid>
+        }
+        else if (Planner is not null && _trainingTargets is not null && !Planner.PlanUsers.Any(x => x.Assigned))
+        {
+            <MudText>@L["Nobody is assigned for this training"]</MudText>
+        }
+        else
+        {
+            <DrogeLoading/>
+        }
+    </DialogContent>
+</MudDialog>

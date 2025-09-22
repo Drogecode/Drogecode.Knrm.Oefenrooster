@@ -1,5 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components.Dialogs;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
 

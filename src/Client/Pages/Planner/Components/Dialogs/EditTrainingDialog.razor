@@ -1,4 +1,5 @@
-﻿@using MudExRichTextEditor.Types
+﻿@using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget
+@using MudExRichTextEditor.Types
 @using MudExRichTextEditor
 
 <MudDialog>
@@ -30,7 +31,7 @@
         }
         else
         {
-            <AuthorizeView Roles=@($"{AccessesNames.AUTH_scheduler_description_edit}")>
+            <AuthorizeView Roles=@($"{AccessesNames.AUTH_scheduler_target_set},{AccessesNames.AUTH_scheduler_description_edit}")>
                 <Authorized>
                     <MudTabs Rounded="true">
                         <MudTabPanel Text="@L["Basic"]">
@@ -39,6 +40,11 @@
                         <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_description_edit" Context="inner">
                             <MudTabPanel Text="@L["Description"]">
                                 @DescriptionTab
+                            </MudTabPanel>
+                        </AuthorizeView>
+                        <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_target_set" Context="inner">
+                            <MudTabPanel Text="@L["Targets"]">
+                                @TargetEditTab
                             </MudTabPanel>
                         </AuthorizeView>
                     </MudTabs>
@@ -133,7 +139,8 @@
                                Class="m-2"
                                Placeholder="@L["Description"]"
                                ValueHtmlBehavior="GetHtmlBehavior.InnerHtml"
-                               @bind-Value="@_training.Description">
+                               Value="@_training?.Description"
+                               ValueChanged="@DescriptionChanged">
                 <ToolbarContent>
                     <select class="ql-header">
                         <option selected=""></option>
@@ -144,28 +151,56 @@
                         <option value="5"></option>
                     </select>
                     <span class="ql-formats">
-                                            <button class="ql-bold"></button>
-                                            <button class="ql-italic"></button>
-                                            <button class="ql-underline"></button>
-                                            <button class="ql-strike"></button>
-                                        </span>
+                        <button class="ql-bold"></button>
+                        <button class="ql-italic"></button>
+                        <button class="ql-underline"></button>
+                        <button class="ql-strike"></button>
+                    </span>
                     <span class="ql-formats">
-                                            <select class="ql-color"></select>
-                                            <select class="ql-background"></select>
-                                        </span>
+                        <select class="ql-color"></select>
+                        <select class="ql-background"></select>
+                    </span>
                     <span class="ql-formats">
-                                            <button class="ql-list" value="ordered"></button>
-                                            <button class="ql-list" value="bullet"></button>
-                                        </span>
+                        <button class="ql-list" value="ordered"></button>
+                        <button class="ql-list" value="bullet"></button>
+                    </span>
                     <span class="ql-formats">
-                                            <button class="ql-link"></button>
-                                        </span>
+                        <button class="ql-link"></button>
+                    </span>
                 </ToolbarContent>
             </MudExRichTextEdit>
             @if (_descriptionToLong)
             {
                 <MudAlert
-                    Severity="Severity.Warning">@L["Description to long {0}/{1}", _training.Description?.Length ?? -1, DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION]</MudAlert>
+                    Severity="Severity.Warning">@L["Description to long {0}/{1}", _training?.Description?.Length ?? -1, DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION]</MudAlert>
             }
         </div>;
+
+    private RenderFragment TargetEditTab =>
+        @<div Elevation="0" class="m-3">
+            <MudText>
+                @L["Select training targets"]
+            </MudText>
+            @if (_currentTrainingTargetSet is not null)
+            {
+                <div class="inline-flex items-center gap-[0.625rem]">
+                    <MudSwitchM3 T="bool" Label="@L["Is reusable"]" Value="@(_currentTrainingTargetSet.ReusableSince is not null)"
+                                 ValueChanged="@((e) => _currentTrainingTargetSet.ReusableSince = e ? DateTime.UtcNow : null)" ReadOnly="true || _targetSetReadonly"/>
+                    <MudText Typo="Typo.caption">Nog in ontwikkeling</MudText>
+                </div>
+                @if (_currentTrainingTargetSet.ReusableSince is not null)
+                {
+                    <MudTextField T="string" Label=@L["Name"] @bind-Value="_currentTrainingTargetSet.Name" ReadOnly="_targetSetReadonly"/>
+                }
+            }
+            @if (_selectedTargets is not null)
+            {
+                <TrainingSubjectList @bind-SelectedTargets="_selectedTargets" SelectionMode="SelectionMode.MultiSelection" TargetSetReadonly="_targetSetReadonly"/>
+            }
+            else
+            {
+                <DrogeLoading/>
+            }
+        </div>;
+
 }
