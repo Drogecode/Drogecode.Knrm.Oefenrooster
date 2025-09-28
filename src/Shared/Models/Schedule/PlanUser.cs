@@ -5,7 +5,7 @@ namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
 
 public class PlanUser
 {
-    [JsonIgnore] public Guid AvailableId { get; set; }
+    public Guid? AvailableId { get; set; }
     public Guid UserId { get; set; }
     public Guid? TrainingId { get; set; }
     public Guid? UserFunctionId { get; set; }

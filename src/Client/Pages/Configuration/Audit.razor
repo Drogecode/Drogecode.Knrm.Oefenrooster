@@ -1,6 +1,12 @@
 ﻿@page "/configuration/audit"
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums
 @attribute [Authorize(Roles = AccessesNames.AUTH_super_user)]
 <PageTitle>@L["Audit"]</PageTitle>
+
+<MudSelect T="AuditType" Label="@L["Function"]" @bind-Value="_auditType"  AnchorOrigin="Origin.BottomLeft">
+        <MudSelectItem T="AuditType" Value="AuditType.DataBaseUpgrade">@L[nameof(AuditType.DataBaseUpgrade)]</MudSelectItem>
+        <MudSelectItem T="AuditType" Value="AuditType.PatchAssignedUser">@L[nameof(AuditType.PatchAssignedUser)]</MudSelectItem>
+</MudSelect>
 @if (_trainingAudits?.TrainingAudits is not null && _users is not null)
 {
     <MudDataGrid Items="_trainingAudits.TrainingAudits" Striped="true" Hover="true">

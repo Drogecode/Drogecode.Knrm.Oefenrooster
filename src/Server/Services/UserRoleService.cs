@@ -69,8 +69,8 @@ public class UserRoleService : DrogeService, IUserRoleService
             if (accesses is null) continue;
             foreach (var access in accesses.Split(','))
             {
-                if (!result.Contains(access))
-                    result.Add(access);
+                if (!result.Contains(access.Trim()))
+                    result.Add(access.Trim());
             }
         }
 

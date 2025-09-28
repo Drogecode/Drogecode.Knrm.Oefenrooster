@@ -41,6 +41,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                     case AccessesNames.AUTH_configure_training_types:
                         drogeUserRole.AUTH_configure_training_types = true;
                         break;
+                    case AccessesNames.AUTH_configure_training_target:
+                        drogeUserRole.AUTH_configure_training_target = true;
+                        break;
                     case AccessesNames.AUTH_configure_user_roles:
                         drogeUserRole.AUTH_configure_user_roles = true;
                         break;
@@ -94,6 +97,21 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                         break;
                     case AccessesNames.AUTH_scheduler_description_read:
                         drogeUserRole.AUTH_scheduler_description_read = true;
+                        break;
+                    case AccessesNames.AUTH_scheduler_target_set:
+                        drogeUserRole.AUTH_scheduler_target_set = true;
+                        break;
+                    case AccessesNames.AUTH_target_read:
+                        drogeUserRole.AUTH_target_read = true;
+                        break;
+                    case AccessesNames.AUTH_target_edit:
+                        drogeUserRole.AUTH_target_edit = true;
+                        break;
+                    case AccessesNames.AUTH_target_user_read:
+                        drogeUserRole.AUTH_target_user_read = true;
+                        break;
+                    case AccessesNames.AUTH_target_user_rate:
+                        drogeUserRole.AUTH_target_user_rate = true;
                         break;
                     case AccessesNames.AUTH_users_details:
                         drogeUserRole.AUTH_users_details = true;
@@ -168,6 +186,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_configure_global_all).Append(',');
             if (userRole.AUTH_configure_training_types)
                 sb.Append(AccessesNames.AUTH_configure_training_types).Append(',');
+            if (userRole.AUTH_configure_training_target)
+                sb.Append(AccessesNames.AUTH_configure_training_target).Append(',');
             if (userRole.AUTH_configure_user_roles)
                 sb.Append(AccessesNames.AUTH_configure_user_roles).Append(',');
             if (userRole.AUTH_configure_user_functions)
@@ -204,6 +224,16 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers
                 sb.Append(AccessesNames.AUTH_scheduler_description_edit).Append(',');
             if (userRole.AUTH_scheduler_description_read)
                 sb.Append(AccessesNames.AUTH_scheduler_description_read).Append(',');
+            if (userRole.AUTH_scheduler_target_set)
+                sb.Append(AccessesNames.AUTH_scheduler_target_set).Append(',');
+            if (userRole.AUTH_target_read)
+                sb.Append(AccessesNames.AUTH_target_read).Append(',');
+            if (userRole.AUTH_target_edit)
+                sb.Append(AccessesNames.AUTH_target_edit).Append(',');
+            if (userRole.AUTH_target_user_read)
+                sb.Append(AccessesNames.AUTH_target_user_read).Append(',');
+            if (userRole.AUTH_target_user_rate)
+                sb.Append(AccessesNames.AUTH_target_user_rate).Append(',');
             if (userRole.AUTH_users_details)
                 sb.Append(AccessesNames.AUTH_users_details).Append(',');
             if (userRole.AUTH_users_delete)

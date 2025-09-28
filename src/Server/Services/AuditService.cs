@@ -6,9 +6,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 public class AuditService : IAuditService
 {
     private readonly ILogger<AuditService> _logger;
-    private readonly Database.DataContext _database;
+    private readonly DataContext _database;
 
-    public AuditService(ILogger<AuditService> logger, Database.DataContext database)
+    public AuditService(ILogger<AuditService> logger, DataContext database)
     {
         _logger = logger;
         _database = database;
@@ -50,6 +50,7 @@ public class AuditService : IAuditService
                 {
                     var dbTraining = await _database.RoosterTrainings
                         .Include(x => x.RoosterAvailables)
+                        .Include(x=>x.TrainingTargetSet)
                         .FirstOrDefaultAsync(x => x.Id == audit.TrainingId, clt);
                     var training = dbTraining?.ToTraining();
                     audit.Training = training;

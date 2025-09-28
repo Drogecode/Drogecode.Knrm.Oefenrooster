@@ -5,6 +5,7 @@ namespace Drogecode.Knrm.Oefenrooster.SharedForTests.Providers;
 public class DateTimeProviderMock : IDateTimeProviderMock
 {
     private DateTime? _mockDateTime;
+
     public void SetMockDateTime(DateTime? dateTime)
     {
         _mockDateTime = dateTime;
@@ -32,5 +33,15 @@ public class DateTimeProviderMock : IDateTimeProviderMock
             return DateTime.Today;
         else
             return _mockDateTime.Value.Date;
+    }
+
+    public DateTime MinValue()
+    {
+        return DateTime.MinValue;
+    }
+
+    public DateTime MaxValue()
+    {
+        return DateTime.MaxValue;
     }
 }

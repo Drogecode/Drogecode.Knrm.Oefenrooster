@@ -11,6 +11,7 @@ public class DbRoosterTraining
     public Guid CustomerId { get; set; }
     public Guid? RoosterDefaultId { get; set; }
     public Guid? RoosterTrainingTypeId { get; set; }
+    public Guid? TrainingTargetSetId { get; set; }
     [StringLength(DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)] public string? Name { get; set; }
     [StringLength(DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION)] public string? Description { get; set; }
     public DateTime DateStart { get; set; }
@@ -27,6 +28,7 @@ public class DbRoosterTraining
     public DbRoosterDefault? RoosterDefault { get; set; }
     public DbRoosterTrainingType? RoosterTrainingType { get; set; }
     public DbUsers? DeletedByUser { get; set; }
+    public DbTrainingTargetSets? TrainingTargetSet { get; set; }
     public ICollection<DbRoosterAvailable>? RoosterAvailables { get; set; }
     public ICollection<DbLinkVehicleTraining>? LinkVehicleTrainings { get; set; }
     public ICollection<DbLinkReportTrainingRoosterTraining>? LinkReportTrainingRoosterTrainings { get; set; }

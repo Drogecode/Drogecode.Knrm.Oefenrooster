@@ -7,6 +7,9 @@ using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using System.Diagnostics;
+using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -165,7 +168,7 @@ public class UserService : DrogeService, IUserService
         var roles = await Database.Users
             .Include(x => x.LinkUserRoles)
             !.ThenInclude(x => x.Role)
-            .Where(x => x.CustomerId == customerId && x.Id == userId && x.DeletedOn == null && !x.IsSystemUser && x.LinkUserRoles != null && x.LinkUserRoles.Any(lur => lur.IsSet))
+            .Where(x => x.CustomerId == customerId && x.Id == userId && x.DeletedOn == null && !x.IsSystemUser && x.LinkUserRoles != null && x.LinkUserRoles.Any(lur=>lur.IsSet))
             .Select(x => x.ToDrogeUserRoleLinked())
             .FirstOrDefaultAsync(clt);
         result.Roles = roles;

@@ -1,17 +1,17 @@
 # How to:
 
 1. Open: "Package Manager Console"
-2. cd ..\Server
-3. dotnet ef migrations add AddLicenses -o Database/Migrations --project ./Drogecode.Knrm.Oefenrooster.Server.csproj
+2. cd .\src\Server\
+3. dotnet ef migrations add AddTrainingTargets -o Database/Migrations --project ./Drogecode.Knrm.Oefenrooster.Server.csproj
 4. dotnet ef database update --project ./Drogecode.Knrm.Oefenrooster.Server.csproj
 
 # Revert
 
-dotnet ef database update "20250719101736_IncreaseTrainingDescriptionLength"
+dotnet ef database update "20250721220138_AddLicensesExpire"
 
 # Update tools:
 
-dotnet tool update --global dotnet-ef --version 9.0.7
+dotnet tool update --global dotnet-ef --version 9.0.9
 
 # Create a script:
 

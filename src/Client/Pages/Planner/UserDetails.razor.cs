@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
@@ -17,29 +18,33 @@ public sealed partial class UserDetails : IDisposable
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
     [Inject, NotNull] private UserRepository? UserRepository { get; set; }
     [Inject, NotNull] private IUserClient? UserClient { get; set; }
+    [Inject, NotNull] private IUserRoleClient? UserRoleClient { get; set; }
     [Inject, NotNull] private ScheduleRepository? ScheduleRepository { get; set; }
     [Inject, NotNull] private TrainingTypesRepository? TrainingTypesRepository { get; set; }
     [Inject, NotNull] private FunctionRepository? FunctionRepository { get; set; }
     [Inject, NotNull] private VehicleRepository? VehicleRepository { get; set; }
-    [Inject, NotNull] private IUserRoleClient? UserRoleClient { get; set; }
+    [Inject, NotNull] private TrainingTargetRepository? TrainingTargetRepository { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public Guid? Id { get; set; }
-    private CancellationTokenSource _cls = new();
-    private DrogeUser? _user;
+    private readonly CancellationTokenSource _cls = new();
     private MultipleDrogeUserRolesBasicResponse? _userRoles;
     private MultipleLinkedUserRolesResponse? _userLinkRoles;
-    private List<Guid?>? _userRolesForUser;
-    private DrogeFunction? _userFunction;
-    private List<DrogeUser>? _users;
-    private List<DrogeFunction>? _functions;
     private GetScheduledTrainingsForUserResponse? _trainings;
     private GetUserMonthInfoResponse? _userMonthInfo;
+    private DrogeUser? _user;
+    private DrogeFunction? _userFunction;
+    private List<Guid?>? _userRolesForUser;
+    private List<DrogeUser>? _users;
+    private List<DrogeFunction>? _functions;
     private List<DrogeVehicle>? _vehicles;
     private List<PlannerTrainingType>? _trainingTypes;
-    private IEnumerable<DrogeUser> _selectedUsersAction;
+    private List<UserResultForTarget>? _userResultForTargets;
+    private IEnumerable<DrogeUser>? _selectedUsersAction;
+    private RatingPeriod _ratingPeriod = RatingPeriod.SelectValue;
     private bool _updatingSelection;
     private bool _updatingRoles;
     private bool _loadingTrainings;
+    private bool _loadingRating;
     private const int TAKE = 15;
     private int _total = TAKE;
     private int _skip;
@@ -79,8 +84,8 @@ public sealed partial class UserDetails : IDisposable
                 if (AuthenticationState is not null)
                 {
                     var authState = await AuthenticationState;
-                    var user = authState?.User;
-                    if (user?.IsInRole(AccessesNames.AUTH_users_add_role) ?? false)
+                    var user = authState.User;
+                    if (user.IsInRole(AccessesNames.AUTH_users_add_role))
                     {
                         _userRoles = await UserRoleClient.GetAllBasicAsync(_cls.Token);
                         _userLinkRoles = await UserClient.GetRolesForUserByIdAsync(Id.Value, _cls.Token);
@@ -125,7 +130,9 @@ public sealed partial class UserDetails : IDisposable
 
     private async Task UserRolesChanged(IEnumerable<Guid?>? userRoles)
     {
-        DebugHelper.WriteLine($"UserRolesChanged - {userRoles?.Count()} roles");
+        userRoles ??= [];
+        var userRolesList = userRoles.ToList();
+        DebugHelper.WriteLine($"UserRolesChanged - {userRolesList.Count} roles");
         if (_updatingRoles || Id is null)
             return;
         _updatingRoles = true;
@@ -133,7 +140,7 @@ public sealed partial class UserDetails : IDisposable
         try
         {
             _userRolesForUser ??= [];
-            var newRolesAsList = (userRoles ??= []).ToList();
+            var newRolesAsList = userRolesList.ToList();
             var removedRoles = new List<Guid?>();
             foreach (var oldRole in _userRolesForUser)
             {
@@ -198,6 +205,7 @@ public sealed partial class UserDetails : IDisposable
     {
         try
         {
+            var selectionList = selection.ToList();
             if (_updatingSelection || Id is null || _selectedUsersAction is null)
                 return;
             _updatingSelection = true;
@@ -213,14 +221,14 @@ public sealed partial class UserDetails : IDisposable
                 await UserRepository.UpdateLinkUserUserForUserAsync(body, _cls.Token);
             }
 
-            foreach (var newSelected in selection)
+            foreach (var newSelected in selectionList)
             {
                 body.UserBId = newSelected.Id;
                 body.Add = true;
                 await UserRepository.UpdateLinkUserUserForUserAsync(body, _cls.Token);
             }
 
-            _selectedUsersAction = selection;
+            _selectedUsersAction = selectionList;
             _updatingSelection = false;
         }
         catch (Exception ex)
@@ -241,7 +249,7 @@ public sealed partial class UserDetails : IDisposable
 
     private async Task LoadMore()
     {
-        if (_loadingTrainings)
+        if (_loadingTrainings || Id is null)
             return;
         _loadingTrainings = true;
         StateHasChanged();
@@ -260,6 +268,23 @@ public sealed partial class UserDetails : IDisposable
         }
 
         _loadingTrainings = false;
+        StateHasChanged();
+    }
+
+    private async Task RatingPeriodChanged(RatingPeriod value)
+    {
+        if (_loadingRating)
+            return;
+        _loadingRating = true;
+        StateHasChanged();
+        _ratingPeriod = value;
+
+        if (Id is not null)
+        {
+            _userResultForTargets = (await TrainingTargetRepository.GetAllResultForUser(Id.Value, _ratingPeriod, _cls.Token))?.UserResultForTargets;
+        }
+
+        _loadingRating = false;
         StateHasChanged();
     }
 

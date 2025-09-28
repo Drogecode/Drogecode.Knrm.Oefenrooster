@@ -85,6 +85,10 @@ public class PreComClient : IPreComClient
         OnlyDate(date, nameof(date));
         return Get<Group>($"api/v2/Group/GetAllFunctions?groupID={groupID}&date={date:s}", cancellationToken);
     }
+    public Task<object> GetReceivers(CancellationToken cancellationToken = default)
+    {
+        return Get<object>($"/api/v2/Message/GetAlarmMessages", cancellationToken);
+    }
 
     /*public Task TestGetA(int userId, long groupId, DateTime from, DateTime to, CancellationToken cancellationToken = default)
     {

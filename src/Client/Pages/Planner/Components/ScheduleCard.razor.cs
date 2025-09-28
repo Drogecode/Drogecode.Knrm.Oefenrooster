@@ -1,4 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components.Dialogs;
 using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
@@ -37,15 +38,18 @@ public sealed partial class ScheduleCard : IDisposable
     private bool _updating;
     private bool _isDeleted;
     private bool _showHistory;
+    private bool _showRate;
     private bool _showPastBody = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _refreshModel.RefreshRequested += RefreshMe;
+            _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
             Global.TrainingDeletedAsync += TrainingDeleted;
             _showHistory = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_history);
+            DebugHelper.WriteLine($"Loading schedule card, {Planner.Name} {Planner.TrainingTargetSetId is not null} && {await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate)}");
+            _showRate = Planner.HasTargets && await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate);
             await SetUser();
             StateHasChanged();
         }
@@ -115,6 +119,24 @@ public sealed partial class ScheduleCard : IDisposable
         return DialogProvider.ShowAsync<EditTrainingDialog>(L["Configure training"], parameters, options);
     }
 
+    private Task OpenRateDialog()
+    {
+        var parameters = new DialogParameters<RatingDialog>
+        {
+            { x => x.Planner, Planner },
+            { x => x.Refresh, _refreshModel },
+            { x => x.Global, Global },
+            { x => x.Users, Users }
+        };
+        var options = new DialogOptions
+        {
+            MaxWidth = MudBlazor.MaxWidth.ExtraExtraLarge,
+            CloseButton = true,
+            FullWidth = true
+        };
+        return DialogProvider.ShowAsync<RatingDialog>(L["Do shit"], parameters, options);
+    }
+
     private Task OpenHistoryDialog()
     {
         var parameters = new DialogParameters<TrainingHistoryDialog>
@@ -139,15 +161,20 @@ public sealed partial class ScheduleCard : IDisposable
         }
     }
 
-    private void RefreshMe()
+    private async Task RefreshMeAsync()
     {
+        DebugHelper.WriteLine($"Refreshing schedule card, {Planner.TrainingTargetSetId is not null} && {await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate)}");
+        _showRate = Planner.HasTargets && await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate);
         StateHasChanged();
-        Refresh?.CallRequestRefresh();
+        if (Refresh is not null)
+        {
+            await Refresh.CallRequestRefreshAsync();
+        }
     }
 
     public void Dispose()
     {
-        _refreshModel.RefreshRequested -= RefreshMe;
+        _refreshModel.RefreshRequestedAsync -= RefreshMeAsync;
         Global.TrainingDeletedAsync -= TrainingDeleted;
     }
 }

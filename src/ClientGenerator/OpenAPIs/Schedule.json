@@ -1267,6 +1267,11 @@
       "PlanUser": {
         "type": "object",
         "properties": {
+          "availableId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "userId": {
             "type": "string",
             "format": "uuid"
@@ -1339,6 +1344,11 @@
             "format": "uuid",
             "nullable": true
           },
+          "trainingTargetSetId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "countToTrainingTarget": {
             "type": "boolean"
           },
@@ -1373,6 +1383,9 @@
             "type": "boolean"
           },
           "hasDescription": {
+            "type": "boolean"
+          },
+          "hasTargets": {
             "type": "boolean"
           },
           "linkedReports": {
@@ -1483,6 +1496,11 @@
             "format": "uuid",
             "nullable": true
           },
+          "trainingTargetSetId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "countToTrainingTarget": {
             "type": "boolean"
           },
@@ -1517,6 +1535,9 @@
             "type": "boolean"
           },
           "hasDescription": {
+            "type": "boolean"
+          },
+          "hasTargets": {
             "type": "boolean"
           },
           "linkedReports": {
@@ -1556,6 +1577,11 @@
             "format": "uuid",
             "nullable": true
           },
+          "trainingTargetSetId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "countToTrainingTarget": {
             "type": "boolean"
           },
@@ -1590,6 +1616,9 @@
             "type": "boolean"
           },
           "hasDescription": {
+            "type": "boolean"
+          },
+          "hasTargets": {
             "type": "boolean"
           },
           "linkedReports": {

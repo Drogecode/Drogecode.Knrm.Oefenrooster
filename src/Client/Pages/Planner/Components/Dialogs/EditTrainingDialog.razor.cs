@@ -1,23 +1,25 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
-using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.Shared.Extensions;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
+using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using MudExRichTextEditor;
 
-namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
+namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components.Dialogs;
 
 public sealed partial class EditTrainingDialog : IDisposable
 {
-    [Inject] private IStringLocalizer<EditTrainingDialog> L { get; set; } = default!;
-    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
-    [Inject] private VehicleRepository VehicleRepository { get; set; } = default!;
-    [Inject] private IAuditClient AuditClient { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<EditTrainingDialog>? L { get; set; }
+    [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
+    [Inject, NotNull] private ScheduleRepository? ScheduleRepository { get; set; }
+    [Inject, NotNull] private VehicleRepository? VehicleRepository { get; set; }
+    [Inject, NotNull] private IAuditClient? AuditClient { get; set; }
+    [Inject, NotNull] private TrainingTargetRepository? TrainingTargetRepository { get; set; }
     [CascadingParameter] IMudDialogInstance? MudDialog { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
@@ -27,8 +29,11 @@ public sealed partial class EditTrainingDialog : IDisposable
     [Parameter] public DrogeCodeGlobal Global { get; set; } = default!;
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
+    private IReadOnlyCollection<Guid>? _selectedTargets;
     private EditTraining? _training;
     private PlannerTrainingType? _currentTrainingType;
+    private TrainingTargetSet? _currentTrainingTargetSet;
+    private string? _searchTargetText;
     private bool _success;
     private bool _showDelete;
     private bool _startedWithShowNoTime;
@@ -37,6 +42,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private bool _editOld;
     private bool _saving;
     private bool _descriptionToLong;
+    private bool _targetSetReadonly;
 #if DEBUG
     private const bool IS_DEBUG = true;
 #else
@@ -69,6 +75,21 @@ public sealed partial class EditTrainingDialog : IDisposable
             }
 
             _currentTrainingType = TrainingTypes?.FirstOrDefault(x => x.Id == _training?.RoosterTrainingTypeId);
+            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_target_set))
+            {
+                if (_training?.Id is not null)
+                {
+                    _currentTrainingTargetSet = await TrainingTargetRepository.GetSetLinkedToTraining(_training.Id.Value, _cls.Token) ?? new TrainingTargetSet();
+                    _selectedTargets = _currentTrainingTargetSet?.TrainingTargetIds ?? [];
+                    _targetSetReadonly = _currentTrainingTargetSet?.ReusableSince is not null;
+                }
+                else
+                {
+                    _currentTrainingTargetSet = new TrainingTargetSet();
+                    _selectedTargets = [];
+                    _targetSetReadonly = false;
+                }
+            }
 
             await SetRoleBasedVariables();
 
@@ -158,7 +179,7 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private string? DateValidation(DateTime? newDate)
     {
-        if (_editOld || !_canEdit)
+        if (_editOld)
             return null;
         if (newDate >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
             return null;
@@ -221,9 +242,27 @@ public sealed partial class EditTrainingDialog : IDisposable
 
             if (_training.TimeStart >= _training.TimeEnd) return;
 
+            DebugHelper.WriteLine($"Count _selectedTargets = {_selectedTargets?.Count}");
+            var hasTargetSet = _selectedTargets?.Count > 0;
+            if (_currentTrainingTargetSet?.Id is null)
+            {
+                if (_currentTrainingTargetSet is not null && _selectedTargets?.Count > 0)
+                {
+                    _currentTrainingTargetSet.TrainingTargetIds = _selectedTargets.ToList();
+                    var putSetResponse = await TrainingTargetRepository.PutNewTemplateSet(_currentTrainingTargetSet, _cls.Token);
+                    _training.TrainingTargetSetId = putSetResponse?.NewId;
+                }
+            }
+            else
+            {
+                _currentTrainingTargetSet.TrainingTargetIds = (_selectedTargets ?? []).ToList();
+                await TrainingTargetRepository.PatchTemplateSet(_currentTrainingTargetSet, _cls.Token);
+                _training.TrainingTargetSetId = _currentTrainingTargetSet.Id;
+            }
+
             if (_training.IsNew || _training.IsNewFromDefault)
             {
-                await UpdatePlannerObject();
+                await UpdatePlannerObject(hasTargetSet);
                 if (Planner is null)
                 {
                     DebugHelper.WriteLine("Planner should not be null");
@@ -252,7 +291,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             }
             else if (Planner is not null)
             {
-                await UpdatePlannerObject();
+                await UpdatePlannerObject(hasTargetSet);
                 await ScheduleRepository.PatchTraining(Planner, _cls.Token);
                 if (Refresh is not null)
                     await Refresh.CallRequestRefreshAsync();
@@ -273,7 +312,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         MudDialog?.Close(DialogResult.Ok(true));
     }
 
-    private async Task UpdatePlannerObject()
+    private async Task UpdatePlannerObject(bool hasTargetSet)
     {
         if (_training is null)
         {
@@ -293,6 +332,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             {
                 DefaultId = _training.DefaultId,
                 RoosterTrainingTypeId = _training.RoosterTrainingTypeId,
+                TrainingTargetSetId = _training.TrainingTargetSetId,
                 Name = _training.Name,
                 Description = _training.Description,
                 DateStart = dateStart,
@@ -301,7 +341,8 @@ public sealed partial class EditTrainingDialog : IDisposable
                 IsPinned = _training.IsPinned,
                 IsPermanentPinned = _training.IsPermanentPinned,
                 ShowTime = _training.ShowTime,
-                HasDescription = !_training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false
+                HasDescription = !_training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+                HasTargets = hasTargetSet
             };
         }
         else
@@ -309,6 +350,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             DebugHelper.WriteLine("Updating planner object.");
             Planner.DefaultId = _training.DefaultId;
             Planner.RoosterTrainingTypeId = _training.RoosterTrainingTypeId;
+            Planner.TrainingTargetSetId = _training.TrainingTargetSetId;
             Planner.Name = _training.Name;
             Planner.Description = _training.Description;
             Planner.DateStart = dateStart;
@@ -318,6 +360,7 @@ public sealed partial class EditTrainingDialog : IDisposable
             Planner.IsPermanentPinned = _training.IsPermanentPinned;
             Planner.ShowTime = _training.ShowTime;
             Planner.HasDescription = !_training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false;
+            Planner.HasTargets = hasTargetSet;
         }
     }
 
@@ -374,7 +417,7 @@ public sealed partial class EditTrainingDialog : IDisposable
         if (!_canEdit || Planner is null) return;
         if (_training?.IsNewFromDefault == true)
         {
-            await UpdatePlannerObject();
+            await UpdatePlannerObject(false);
             var newId = await ScheduleRepository.AddTraining(Planner, _cls.Token);
             Planner.TrainingId = newId;
             _training.Id = newId;
@@ -397,7 +440,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     private void DescriptionChanged(string? newDescription)
     {
         _training!.Description = newDescription;
-        
+
         if (newDescription is not null && newDescription?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_DESCRIPTION)
         {
             _descriptionToLong = true;

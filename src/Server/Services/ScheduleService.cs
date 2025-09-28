@@ -50,6 +50,7 @@ public class ScheduleService : DrogeService, IScheduleService
         var trainings = Database.RoosterTrainings
             .AsNoTracking()
             .Include(x => x.LinkReportTrainingRoosterTrainings)
+            .Include(x => x.TrainingTargetSet)
             .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
             .OrderBy(x => x.DateStart);
         var availables = await Database.RoosterAvailables
@@ -79,6 +80,7 @@ public class ScheduleService : DrogeService, IScheduleService
                     result.Trainings.Add(new Training
                     {
                         DefaultId = training.RoosterDefaultId,
+                        TrainingTargetSetId = training.TrainingTargetSetId,
                         TrainingId = training.Id,
                         Name = training.Name,
                         DateStart = training.DateStart,
@@ -91,7 +93,8 @@ public class ScheduleService : DrogeService, IScheduleService
                         IsPinned = training.IsPinned,
                         IsPermanentPinned = training.IsPermanentPinned,
                         ShowTime = training.ShowTime ?? true,
-                        HasDescription = !training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+                        HasDescription = training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+                        HasTargets = training.TrainingTargetSet?.TrainingTargetIds.Count > 0,
                         LinkedReports = training.LinkReportTrainingRoosterTrainings?.Count ?? 0
                     });
                 }
@@ -246,6 +249,7 @@ public class ScheduleService : DrogeService, IScheduleService
             throw new UnauthorizedAccessException();
 
         oldTraining.RoosterTrainingTypeId = patchedTraining.RoosterTrainingTypeId;
+        oldTraining.TrainingTargetSetId = patchedTraining.TrainingTargetSetId;
         oldTraining.Name = sanitizer.Sanitize(patchedTraining.Name ?? string.Empty);
         oldTraining.Description = sanitizer.Sanitize(patchedTraining.Description ?? string.Empty);
         oldTraining.DateStart = patchedTraining.DateStart;
@@ -270,7 +274,7 @@ public class ScheduleService : DrogeService, IScheduleService
     }
 
     /// <inheritdoc />
-    public async Task PatchLastSynced(Guid customerId, Guid userId, Guid availableId, CancellationToken clt)
+    public async Task PatchLastSynced(Guid customerId, Guid userId, Guid? availableId, CancellationToken clt)
     {
         var oldAva = await Database.RoosterAvailables
             .FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.Id == availableId, clt);
@@ -313,6 +317,7 @@ public class ScheduleService : DrogeService, IScheduleService
             TrainingId = trainingId,
             DefaultId = newTraining.DefaultId,
             RoosterTrainingTypeId = newTraining.RoosterTrainingTypeId,
+            TrainingTargetSetId = newTraining.TrainingTargetSetId,
             Name = sanitizer.Sanitize(newTraining.Name ?? string.Empty),
             Description = sanitizer.Sanitize(newTraining.Description ?? string.Empty),
             DateStart = newTraining.DateStart,
@@ -338,6 +343,7 @@ public class ScheduleService : DrogeService, IScheduleService
         {
             Id = training.TrainingId ?? throw new NoNullAllowedException("TrainingId is still null while adding new training"),
             RoosterDefaultId = training.DefaultId,
+            TrainingTargetSetId = training.TrainingTargetSetId,
             CustomerId = customerId,
             RoosterTrainingTypeId = training.RoosterTrainingTypeId,
             Name = training.Name,
@@ -437,6 +443,7 @@ public class ScheduleService : DrogeService, IScheduleService
             .Where(x => x.CustomerId == customerId && x.DateStart >= startDate && x.DateStart <= tillDate)
             .Include(x => x.LinkVehicleTrainings)
             .Include(x => x.LinkReportTrainingRoosterTrainings)
+            .Include(x => x.TrainingTargetSet)
             .OrderBy(x => x.DateStart)
             .AsSingleQuery().ToListAsync(clt);
         var availables = await Database.RoosterAvailables
@@ -467,6 +474,7 @@ public class ScheduleService : DrogeService, IScheduleService
                         var newPlanner = new PlannedTraining
                         {
                             DefaultId = training.RoosterDefaultId,
+                            TrainingTargetSetId = training.TrainingTargetSetId,
                             TrainingId = training.Id,
                             Name = training.Name,
                             DateStart = training.DateStart,
@@ -478,7 +486,8 @@ public class ScheduleService : DrogeService, IScheduleService
                             IsPermanentPinned = training.IsPermanentPinned,
                             ShowTime = training.ShowTime ?? true,
                             HasDescription = !training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
-                            LinkedReports = training.LinkReportTrainingRoosterTrainings?.Count ?? 0
+                            LinkedReports = training.LinkReportTrainingRoosterTrainings?.Count ?? 0,
+                            HasTargets = training.TrainingTargetSet?.TrainingTargetIds.Count > 0,
                         };
                         foreach (var user in users)
                         {
@@ -507,6 +516,7 @@ public class ScheduleService : DrogeService, IScheduleService
                             newPlanner.PlanUsers.Add(new PlanUser
                             {
                                 UserId = user.Id,
+                                AvailableId = avaUser.Id,
                                 Availability = available,
                                 SetBy = setBy ?? AvailabilitySetBy.None,
                                 Assigned = avaUser.Assigned,
@@ -649,6 +659,7 @@ public class ScheduleService : DrogeService, IScheduleService
         var result = new GetTrainingByIdResponse();
         var dbTraining = await Database.RoosterTrainings
             .Include(x => x.RoosterAvailables)
+            .Include(x => x.TrainingTargetSet)
             .FirstOrDefaultAsync(x => x.Id == trainingId && x.DeletedOn == null, clt);
         if (dbTraining is not null)
         {
@@ -689,6 +700,7 @@ public class ScheduleService : DrogeService, IScheduleService
             .ThenInclude(x => x.UserB)
             .Include(x => x.RoosterTrainingType)
             .Include(x => x.RoosterAvailables!.Where(y => y.User!.DeletedOn == null))
+            .Include(x => x.TrainingTargetSet)
             .Include(x => x.LinkVehicleTrainings!)
             .ThenInclude(x => x.Vehicles)
             .AsSingleQuery()
@@ -729,6 +741,7 @@ public class ScheduleService : DrogeService, IScheduleService
                 {
                     result.Training!.PlanUsers.Add(new PlanUser
                     {
+                        AvailableId = avaUser?.Id,
                         Availability = available,
                         SetBy = setBy.Value,
                         Name = user.Name,
@@ -753,6 +766,7 @@ public class ScheduleService : DrogeService, IScheduleService
         var result = new GetPlannedTrainingResponse();
         var dbTraining = await Database.RoosterTrainings
             .Include(x => x.RoosterAvailables)
+            .Include(x => x.TrainingTargetSet)
             .FirstOrDefaultAsync(x => x.CustomerId == customerId && x.DateStart.Date == date.Date && x.RoosterDefaultId == defaultId);
         if (dbTraining is not null)
             result = await dDbTrainingToGetPlannedTrainingResponse(result, dbTraining, clt);
@@ -994,6 +1008,8 @@ public class ScheduleService : DrogeService, IScheduleService
             .Include(i => i.Training)
             .ThenInclude(i => i.RoosterAvailables!.Where(y => y.User!.DeletedOn == null))
             .Include(i => i.Training)
+            .ThenInclude(i => i.TrainingTargetSet)
+            .Include(i => i.Training)
             .ThenInclude(i => i.LinkVehicleTrainings)
             .Include(i => i.Training)
             .ThenInclude(i => i.LinkReportTrainingRoosterTrainings);
@@ -1017,6 +1033,7 @@ public class ScheduleService : DrogeService, IScheduleService
             {
                 TrainingId = schedule.TrainingId,
                 DefaultId = schedule.Training.RoosterDefaultId,
+                TrainingTargetSetId = schedule.Training.TrainingTargetSetId,
                 Name = schedule.Training.Name,
                 DateStart = schedule.Training.DateStart,
                 DateEnd = schedule.Training.DateEnd,
@@ -1028,10 +1045,12 @@ public class ScheduleService : DrogeService, IScheduleService
                 IsCreated = true,
                 ShowTime = schedule.Training.ShowTime ?? true,
                 HasDescription = !schedule.Training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+                HasTargets = schedule.Training.TrainingTargetSet?.TrainingTargetIds.Count > 0,
                 LinkedReports = schedule.Training.LinkReportTrainingRoosterTrainings?.Count ?? 0,
                 PlanUsers = schedule.Training.RoosterAvailables!.Select(a =>
                     new PlanUser
                     {
+                        AvailableId = a.Id,
                         UserId = a.UserId,
                         Availability = a.Available,
                         Assigned = a.Assigned,
@@ -1107,6 +1126,7 @@ public class ScheduleService : DrogeService, IScheduleService
         var result = new GetPinnedTrainingsForUserResponse();
         var trainings = await Database.RoosterTrainings
             .Include(i => i.RoosterAvailables!.Where(r => r.CustomerId == customerId && r.UserId == userId))
+            .Include(i => i.TrainingTargetSet)
             .Where(x => x.CustomerId == customerId && (x.IsPinned || x.IsPermanentPinned) && x.DeletedOn == null && x.DateStart >= fromDate &&
                         (x.IsPermanentPinned || x.RoosterAvailables == null || !x.RoosterAvailables.Any(r => r.UserId == userId && r.Available > 0)))
             .OrderBy(x => x.DateStart)
@@ -1125,6 +1145,7 @@ public class ScheduleService : DrogeService, IScheduleService
             {
                 TrainingId = training.Id,
                 DefaultId = training.RoosterDefaultId,
+                TrainingTargetSetId = training.TrainingTargetSetId,
                 Name = training.Name,
                 DateStart = training.DateStart,
                 DateEnd = training.DateEnd,
@@ -1136,7 +1157,8 @@ public class ScheduleService : DrogeService, IScheduleService
                 IsPinned = training.IsPinned,
                 IsPermanentPinned = training.IsPermanentPinned,
                 ShowTime = training.ShowTime ?? true,
-                HasDescription = !training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+                HasDescription =  !training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+                HasTargets = training.TrainingTargetSet?.TrainingTargetIds.Count > 0
             });
         }
 
@@ -1147,11 +1169,12 @@ public class ScheduleService : DrogeService, IScheduleService
     {
         var compareDate = DateTimeProvider.UtcNow().AddDays(-1);
         var ava = await Database.RoosterAvailables.Where(x =>
-                x.CustomerId == customerId && x.Training.DeletedOn == null && 
-                x.LastUpdateOn != null && x.LastUpdateOn > compareDate && 
+                x.CustomerId == customerId && x.Training.DeletedOn == null &&
+                x.LastUpdateOn != null && x.LastUpdateOn > compareDate &&
                 x.LastUpdateBy == userId &&
                 (x.LastSyncOn == null || x.LastUpdateOn > x.LastSyncOn))
             .Include(x => x.Training)
+            .ThenInclude(x => x.TrainingTargetSet)
             .AsNoTracking()
             .ToListAsync();
         return ava;

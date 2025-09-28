@@ -51,4 +51,5 @@ public class DbUsers
     public ICollection<DbUserLastCalendarUpdate>? UserLastCalendarUpdates { get; set; }
     public ICollection<DbLinkUserCustomer>? LinkUserCustomers { get; set; }
     public ICollection<DbUserPreComEvent>? UserPreComEvent { get; set; }
+    public ICollection<DbTrainingTargetUserResult>? TrainingTargetUserResults { get; set; }
 }

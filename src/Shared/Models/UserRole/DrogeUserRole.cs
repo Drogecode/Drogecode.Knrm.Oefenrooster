@@ -18,6 +18,7 @@ public class DrogeUserRole : DrogeUserRoleBasic
     // Group: GROUP_CONFIGURATION
     public bool AUTH_configure_global_all { get; set; }
     public bool AUTH_configure_training_types { get; set; }
+    public bool AUTH_configure_training_target { get; set; }
     public bool AUTH_configure_user_roles { get; set; }
     public bool AUTH_configure_user_functions { get; set; }
     public bool AUTH_configure_default_schedule { get; set; }
@@ -38,6 +39,13 @@ public class DrogeUserRole : DrogeUserRoleBasic
     public bool AUTH_scheduler_remaining_days_unavailable { get; set; }
     public bool AUTH_scheduler_description_edit { get; set; }
     public bool AUTH_scheduler_description_read { get; set; }
+    public bool AUTH_scheduler_target_set { get; set; }
+
+    // Group: GROUP_TARGET
+    public bool AUTH_target_read { get; set; }
+    public bool AUTH_target_edit { get; set; }
+    public bool AUTH_target_user_read { get; set; }
+    public bool AUTH_target_user_rate { get; set; }
 
     // Group: GROUP_USER
     public bool AUTH_users_details { get; set; }

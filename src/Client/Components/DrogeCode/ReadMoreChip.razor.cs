@@ -10,7 +10,6 @@ public sealed partial class ReadMoreChip
     [Inject] private IDialogService DialogProvider { get; set; } = default!;
     [Parameter, EditorRequired, NotNull] public TrainingAdvance? Training { get; set; }
     
-
     private Task OpenMessageDialog()
     {
         var parameters = new DialogParameters<TrainingMessageDialog>

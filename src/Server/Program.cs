@@ -152,6 +152,7 @@ builder.Services.AddScoped<IReportActionSharedService, ReportActionSharedService
 builder.Services.AddScoped<IReportActionService, ReportActionService>();
 builder.Services.AddScoped<IReportTrainingService, ReportTrainingService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
+builder.Services.AddScoped<ITrainingTargetService, TrainingTargetService>();
 builder.Services.AddScoped<IUserGlobalService, UserGlobalService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -192,6 +193,7 @@ var groupNames = new List<string>
     "Menu",
     "Vehicle",
     "SharePoint",
+    "TrainingTarget",
     "ReportActionShared",
     "ReportAction",
     "ReportTraining",

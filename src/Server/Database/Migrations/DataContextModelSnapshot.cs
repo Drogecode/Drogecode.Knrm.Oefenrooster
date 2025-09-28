@@ -18,7 +18,7 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.7")
+                .HasAnnotation("ProductVersion", "9.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -1426,6 +1426,9 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(true);
 
+                    b.Property<Guid?>("TrainingTargetSetId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
@@ -1435,6 +1438,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.HasIndex("RoosterDefaultId");
 
                     b.HasIndex("RoosterTrainingTypeId");
+
+                    b.HasIndex("TrainingTargetSetId");
 
                     b.ToTable("RoosterTraining");
                 });
@@ -1613,6 +1618,343 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                             Order = 80,
                             TextColorDark = "#C0C0C0",
                             TextColorLight = "#FFFFFF"
+                        });
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargetSets", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ActiveSince")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<DateTime?>("ReusableSince")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.PrimitiveCollection<List<Guid>>("TrainingTargetIds")
+                        .IsRequired()
+                        .HasColumnType("uuid[]");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("TrainingTargetSets");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargetSubjects", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("TrainingTargetSubjects");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("b0a94df1-f7cf-4408-86a4-cc4af0702f1b"),
+                            CreatedBy = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461"),
+                            CreatedOn = new DateTime(2025, 8, 14, 12, 12, 12, 0, DateTimeKind.Utc),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "Algemene kennis",
+                            Order = 10
+                        },
+                        new
+                        {
+                            Id = new Guid("15b7f98c-8c47-47b3-9dd6-f9c92810aaa6"),
+                            CreatedBy = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461"),
+                            CreatedOn = new DateTime(2025, 8, 14, 12, 12, 12, 0, DateTimeKind.Utc),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "Touwhandelingen",
+                            Order = 10,
+                            ParentId = new Guid("b0a94df1-f7cf-4408-86a4-cc4af0702f1b")
+                        },
+                        new
+                        {
+                            Id = new Guid("512af760-d93d-4f11-93fc-cdf0164ba0d7"),
+                            CreatedBy = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461"),
+                            CreatedOn = new DateTime(2025, 8, 14, 12, 12, 12, 0, DateTimeKind.Utc),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "Communicatie",
+                            Order = 20
+                        },
+                        new
+                        {
+                            Id = new Guid("590b6950-e75d-4ebf-9279-0d31e17ecd66"),
+                            CreatedBy = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461"),
+                            CreatedOn = new DateTime(2025, 8, 14, 12, 12, 12, 0, DateTimeKind.Utc),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "Wal en water",
+                            Order = 30,
+                            ParentId = new Guid("512af760-d93d-4f11-93fc-cdf0164ba0d7")
+                        },
+                        new
+                        {
+                            Id = new Guid("6cfb611e-63d7-4d33-be21-ebb8e8649cba"),
+                            CreatedBy = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461"),
+                            CreatedOn = new DateTime(2025, 8, 14, 12, 12, 12, 0, DateTimeKind.Utc),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Name = "Communicatie op het water",
+                            Order = 40,
+                            ParentId = new Guid("512af760-d93d-4f11-93fc-cdf0164ba0d7")
+                        });
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargetUserResult", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Result")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ResultDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("RoosterAvailableId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SetBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("SetInBulk")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("TrainingDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TrainingTargetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoosterAvailableId");
+
+                    b.HasIndex("TrainingTargetId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TrainingTargetUserResult");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargets", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)");
+
+                    b.Property<int>("Group")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("UrlDescription")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("TrainingTargets");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("55accb54-6a0a-449d-bd77-33aea502c355"),
+                            CreatedBy = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461"),
+                            CreatedOn = new DateTime(2025, 8, 14, 12, 12, 12, 0, DateTimeKind.Utc),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Group = 0,
+                            Name = "De paalsteek",
+                            Order = 10,
+                            SubjectId = new Guid("15b7f98c-8c47-47b3-9dd6-f9c92810aaa6"),
+                            Type = 0,
+                            Url = "https://kompas.knrm.nl/Algemene-kennis/Touwhandelingen/Touwhandelingen-paalsteek",
+                            UrlDescription = "Kompas"
+                        },
+                        new
+                        {
+                            Id = new Guid("5d0e590e-b955-43be-bd46-0edf84472a2b"),
+                            CreatedBy = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461"),
+                            CreatedOn = new DateTime(2025, 8, 14, 12, 12, 12, 0, DateTimeKind.Utc),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Group = 0,
+                            Name = "Een paalsteek leggen",
+                            Order = 20,
+                            SubjectId = new Guid("15b7f98c-8c47-47b3-9dd6-f9c92810aaa6"),
+                            Type = 1,
+                            Url = "https://kompas.knrm.nl/Algemene-kennis/Touwhandelingen/Touwhandelingen-paalsteek-leggen",
+                            UrlDescription = "Kompas"
+                        },
+                        new
+                        {
+                            Id = new Guid("45035fb8-cc63-4d18-b1df-f6454a143eaf"),
+                            CreatedBy = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461"),
+                            CreatedOn = new DateTime(2025, 8, 14, 12, 12, 12, 0, DateTimeKind.Utc),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Group = 0,
+                            Name = "In- en uitmelden",
+                            Order = 30,
+                            SubjectId = new Guid("590b6950-e75d-4ebf-9279-0d31e17ecd66"),
+                            Type = 0,
+                            Url = "https://kompas.knrm.nl/Communicatie/Wal-en-water/In-en-uitmelden",
+                            UrlDescription = "Kompas"
+                        },
+                        new
+                        {
+                            Id = new Guid("13c608b2-76c6-48da-918e-1052a7ae3e3a"),
+                            CreatedBy = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461"),
+                            CreatedOn = new DateTime(2025, 8, 14, 12, 12, 12, 0, DateTimeKind.Utc),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Group = 0,
+                            Name = "Uitvragen van de situatie",
+                            Order = 40,
+                            SubjectId = new Guid("590b6950-e75d-4ebf-9279-0d31e17ecd66"),
+                            Type = 0,
+                            Url = "https://kompas.knrm.nl/Communicatie/Wal-en-water/Uitvragen-van-de-situatie",
+                            UrlDescription = "Kompas"
+                        },
+                        new
+                        {
+                            Id = new Guid("f8e01dba-2d80-47d5-a254-96e20e929bea"),
+                            CreatedBy = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461"),
+                            CreatedOn = new DateTime(2025, 8, 14, 12, 12, 12, 0, DateTimeKind.Utc),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Group = 2,
+                            Name = "Uitvragen van de situatie",
+                            Order = 50,
+                            SubjectId = new Guid("590b6950-e75d-4ebf-9279-0d31e17ecd66"),
+                            Type = 1,
+                            Url = "https://kompas.knrm.nl/Communicatie/Wal-en-water/Communicatie-uitvragen-van-de-situatie",
+                            UrlDescription = "Kompas"
+                        },
+                        new
+                        {
+                            Id = new Guid("622ce20e-5ee4-4caa-9b3b-78aae55ac2b5"),
+                            CreatedBy = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461"),
+                            CreatedOn = new DateTime(2025, 8, 14, 12, 12, 12, 0, DateTimeKind.Utc),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Group = 0,
+                            Name = "Werken met DSC",
+                            Order = 50,
+                            SubjectId = new Guid("6cfb611e-63d7-4d33-be21-ebb8e8649cba"),
+                            Type = 0,
+                            Url = "https://kompas.knrm.nl/Communicatie/Communicatie-op-het-water/Werken-met-DSC",
+                            UrlDescription = "Kompas"
+                        },
+                        new
+                        {
+                            Id = new Guid("4dc2a888-8b95-4754-9d0d-e185789fe3a1"),
+                            CreatedBy = new Guid("04a6b34a-c517-4fa0-87b1-7fde3ebc5461"),
+                            CreatedOn = new DateTime(2025, 8, 14, 12, 12, 12, 0, DateTimeKind.Utc),
+                            CustomerId = new Guid("d9754755-b054-4a9c-a77f-da42a4009365"),
+                            Group = 0,
+                            Name = "SITREP",
+                            Order = 60,
+                            SubjectId = new Guid("6cfb611e-63d7-4d33-be21-ebb8e8649cba"),
+                            Type = 0,
+                            Url = "https://kompas.knrm.nl/Communicatie/Communicatie-op-het-water/SITREP",
+                            UrlDescription = "Kompas"
                         });
                 });
 
@@ -2893,6 +3235,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .WithMany("RoosterTrainings")
                         .HasForeignKey("RoosterTrainingTypeId");
 
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargetSets", "TrainingTargetSet")
+                        .WithMany("RoosterTrainings")
+                        .HasForeignKey("TrainingTargetSetId");
+
                     b.Navigation("Customer");
 
                     b.Navigation("DeletedByUser");
@@ -2900,6 +3246,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("RoosterDefault");
 
                     b.Navigation("RoosterTrainingType");
+
+                    b.Navigation("TrainingTargetSet");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterTrainingType", b =>
@@ -2911,6 +3259,80 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargetSets", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("DbTrainingTargetSets")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargetSubjects", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("TrainingTargetSubjects")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargetSubjects", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargetUserResult", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterAvailable", "RoosterAvailable")
+                        .WithMany("TrainingTargetUserResults")
+                        .HasForeignKey("RoosterAvailableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargets", "TrainingTarget")
+                        .WithMany("TrainingTargetUserResults")
+                        .HasForeignKey("TrainingTargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUsers", "User")
+                        .WithMany("TrainingTargetUserResults")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RoosterAvailable");
+
+                    b.Navigation("TrainingTarget");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargets", b =>
+                {
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbCustomers", "Customer")
+                        .WithMany("TrainingTargets")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargetSubjects", "Subject")
+                        .WithMany("TrainingTargets")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserDefaultAvailable", b =>
@@ -3150,6 +3572,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
 
                     b.Navigation("CustomerSettings");
 
+                    b.Navigation("DbTrainingTargetSets");
+
                     b.Navigation("Licenses");
 
                     b.Navigation("LinkExchanges");
@@ -3183,6 +3607,10 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("RoosterTrainingTypes");
 
                     b.Navigation("RoosterTrainings");
+
+                    b.Navigation("TrainingTargetSubjects");
+
+                    b.Navigation("TrainingTargets");
 
                     b.Navigation("UserDefaultAvailables");
 
@@ -3236,6 +3664,11 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterAvailable", b =>
+                {
+                    b.Navigation("TrainingTargetUserResults");
+                });
+
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbRoosterDefault", b =>
                 {
                     b.Navigation("RoosterTrainings");
@@ -3262,6 +3695,23 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("RoosterDefaults");
 
                     b.Navigation("RoosterTrainings");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargetSets", b =>
+                {
+                    b.Navigation("RoosterTrainings");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargetSubjects", b =>
+                {
+                    b.Navigation("Children");
+
+                    b.Navigation("TrainingTargets");
+                });
+
+            modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbTrainingTargets", b =>
+                {
+                    b.Navigation("TrainingTargetUserResults");
                 });
 
             modelBuilder.Entity("Drogecode.Knrm.Oefenrooster.Server.Database.Models.DbUserDefaultGroup", b =>
@@ -3304,6 +3754,8 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Database.Migrations
                     b.Navigation("RoosterAvailables");
 
                     b.Navigation("TrainingAvailableLastUpdated");
+
+                    b.Navigation("TrainingTargetUserResults");
 
                     b.Navigation("TrainingsDeleted");
 

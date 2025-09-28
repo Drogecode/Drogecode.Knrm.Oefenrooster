@@ -2,7 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
-namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components;
+namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components.Dialogs;
 
 public sealed partial class TrainingHistoryDialog
 {

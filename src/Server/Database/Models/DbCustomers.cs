@@ -51,4 +51,7 @@ public class DbCustomers
     public ICollection<DbUserPreComEvent>? UserPreComEvent { get; set; }
     public ICollection<DbLinkReportTrainingRoosterTraining>? LinkReportTrainingRoosterTrainings { get; set; }
     public ICollection<DbLicenses>? Licenses { get; set; }
+    public ICollection<DbTrainingTargets>? TrainingTargets { get; set; }
+    public ICollection<DbTrainingTargetSubjects>? TrainingTargetSubjects { get; set; }
+    public ICollection<DbTrainingTargetSets>? DbTrainingTargetSets { get; set; }
 }

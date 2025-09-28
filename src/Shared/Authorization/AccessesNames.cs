@@ -19,6 +19,7 @@ public struct AccessesNames
     public const string GROUP_CONFIGURATION = "Configuration";
     public const string AUTH_configure_global_all = "configure_global_all";
     public const string AUTH_configure_training_types = "configure_training-types";
+    public const string AUTH_configure_training_target = "configure_training_target";
     public const string AUTH_configure_user_roles = "configure_user_roles";
     public const string AUTH_configure_user_functions = "configure_user_functions";
     public const string AUTH_configure_default_schedule = "configure_default_schedule";
@@ -39,6 +40,13 @@ public struct AccessesNames
     public const string AUTH_scheduler_remaining_days_unavailable = "scheduler_remaining_unavailable";
     public const string AUTH_scheduler_description_edit = "scheduler_description_edit";
     public const string AUTH_scheduler_description_read = "scheduler_description_read";
+    public const string AUTH_scheduler_target_set = "WIP_scheduler_target_set"; // ToDo: Remove WIP_ when ready
+    
+    public const string GROUP_TARGET = "Target";
+    public const string AUTH_target_read = "WIP_target_read"; // ToDo: Remove WIP_ when ready
+    public const string AUTH_target_edit = "WIP_target_edit"; // ToDo: Remove WIP_ when ready
+    public const string AUTH_target_user_read = "WIP_target_user_read"; // ToDo: Remove WIP_ when ready
+    public const string AUTH_target_user_rate = "WIP_target_user_rate"; // ToDo: Remove WIP_ when ready
 
     public const string GROUP_USER = "User";
     public const string AUTH_users_details = "users_details";
@@ -46,7 +54,7 @@ public struct AccessesNames
     public const string AUTH_users_counter = "users_counter";
     public const string AUTH_users_settings = "users_settings";
     public const string AUTH_users_add_role = "users_add_role";
-
+    
     public const string GROUP_DASHBOARD = "Dashboard";
     public const string AUTH_action_history_full = "full_action_history";
     public const string AUTH_training_history_full = "full_training_history";
