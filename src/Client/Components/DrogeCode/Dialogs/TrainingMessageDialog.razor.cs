@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 
@@ -13,6 +14,7 @@ public sealed partial class TrainingMessageDialog : IDisposable
     [Inject, NotNull] private TrainingTargetRepository? TrainingTargetRepository { get; set; }
     [Inject, NotNull] private IRatingService? RatingService { get; set; }
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+    [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 
     [Parameter, EditorRequired] public TrainingAdvance Training { get; set; } = default!;
     [Parameter] public bool Visible { get; set; }
@@ -25,7 +27,10 @@ public sealed partial class TrainingMessageDialog : IDisposable
         if (firstRender && Training.TrainingId is not null)
         {
             _description = await ScheduleClient.GetDescriptionByTrainingIdAsync(Training.TrainingId.Value, _cls.Token);
-            _targetSetWithTargetsResult = await TrainingTargetRepository.GetSetWithTargetsLinkedToTraining(Training.TrainingId.Value, _cls.Token);
+            if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_read))
+            {
+                _targetSetWithTargetsResult = await TrainingTargetRepository.GetSetWithTargetsLinkedToTraining(Training.TrainingId.Value, _cls.Token);
+            }
             StateHasChanged();
         }
     }
