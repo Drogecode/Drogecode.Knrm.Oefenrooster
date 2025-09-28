@@ -1,2 +1,4 @@
 ﻿@page "/configuration/training-targets"
-<h3>TrainingTargets</h3>
+@attribute [Authorize(Roles = AccessesNames.AUTH_configure_training_target)]
+
+<TrainingSubjectList/>

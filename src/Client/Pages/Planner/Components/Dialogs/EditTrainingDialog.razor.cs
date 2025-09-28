@@ -179,7 +179,7 @@ public sealed partial class EditTrainingDialog : IDisposable
 
     private string? DateValidation(DateTime? newDate)
     {
-        if (_editOld || !_canEdit)
+        if (_editOld)
             return null;
         if (newDate >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
             return null;
