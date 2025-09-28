@@ -52,7 +52,7 @@
     <script src="version.js?v=#{VERSION_TOKEN}#"></script>
     <script src="js/VisibilityWatcher.js?v=#{VERSION_TOKEN}#"></script>
     <script src="_content/MudExRichTextEditor/lib/quill/quill.js?v=#{VERSION_TOKEN}#"></script>
-    <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script>navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' });</script>
 </body>
 
 </html>
