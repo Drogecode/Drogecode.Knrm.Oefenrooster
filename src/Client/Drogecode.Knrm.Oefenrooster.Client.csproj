@@ -48,14 +48,23 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <EmbeddedResource Update="Resources\Pages\Planner\Components\RatingDialog.nl-NL.resx">
+	  <EmbeddedResource Update="Resources\Pages\Planner\Components\Dialogs\EditTrainingDialog.nl-NL.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Pages\Planner\Components\Dialogs\RatingDialog.nl-NL.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>RatingDialog.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Pages\Planner\Components\Dialogs\ScheduleDialog.en-US.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Pages\Planner\Components\Dialogs\ScheduleDialog.nl-NL.resx">
+	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <Compile Update="Resources\Pages\Planner\Components\RatingDialog.nl-NL.Designer.cs">
+	  <Compile Update="Resources\Pages\Planner\Components\Dialogs\RatingDialog.nl-NL.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>RatingDialog.nl-NL.resx</DependentUpon>

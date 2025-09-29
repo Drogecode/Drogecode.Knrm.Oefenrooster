@@ -93,7 +93,7 @@ public class ScheduleService : DrogeService, IScheduleService
                         IsPinned = training.IsPinned,
                         IsPermanentPinned = training.IsPermanentPinned,
                         ShowTime = training.ShowTime ?? true,
-                        HasDescription = training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+                        HasDescription = !training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
                         HasTargets = training.TrainingTargetSet?.TrainingTargetIds.Count > 0,
                         LinkedReports = training.LinkReportTrainingRoosterTrainings?.Count ?? 0
                     });
