@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
@@ -7,10 +8,10 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
 public sealed partial class MonthItem : IDisposable
 {
-    [Inject] private IStringLocalizer<MonthItem> L { get; set; } = default!;
-    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private IMonthItemClient MonthItemClient { get; set; } = default!;
-    [Inject] private IDialogService DialogProvider { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<MonthItem>? L { get; set; }
+    [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
+    [Inject, NotNull] private IMonthItemClient? MonthItemClient { get; set; }
+    [Inject, NotNull] private IDialogService? DialogProvider { get; set; }
 
     private GetMultipleMonthItemResponse? _monthItems;
     private CancellationTokenSource _cls = new();

@@ -50,6 +50,14 @@ else
                     }
                 }
             }
+            @if (AddSubjectOrTargetContent is not null)
+            {
+                <MudTreeViewItem T="Guid">
+                    <BodyContent>
+                        @AddSubjectOrTargetContent(subject)
+                    </BodyContent>
+                </MudTreeViewItem>
+            }
         </MudTreeViewItem>;
 
 }

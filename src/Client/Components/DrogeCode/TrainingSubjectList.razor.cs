@@ -13,6 +13,7 @@ public partial class TrainingSubjectList : IDisposable
     private IReadOnlyCollection<Guid>? _selectedTargets;
 
     [Parameter] public RenderFragment<TrainingTarget>? BodyContent { get; set; }
+    [Parameter] public RenderFragment<TrainingSubject>? AddSubjectOrTargetContent { get; set; }
     [Parameter] public bool TargetSetReadonly { get; set; }
     [Parameter] public bool Disabled { get; set; }
 
