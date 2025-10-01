@@ -1,6 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
 using Drogecode.Knrm.Oefenrooster.TestClient.Mocks.MockClients;
 using Drogecode.Knrm.Oefenrooster.TestClient.TestPages.Pages.Configuration;

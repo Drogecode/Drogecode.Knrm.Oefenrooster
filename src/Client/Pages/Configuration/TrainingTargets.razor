@@ -3,7 +3,12 @@
 @attribute [Authorize(Roles = AccessesNames.AUTH_configure_training_target)]
 
 <TrainingSubjectList>
-    <BodyContent Context="trainingTarget">
+    <SubjectBodyContent Context="trainingSubject">
+        <MudChip T="string">@trainingSubject.Order</MudChip>
+        @trainingSubject.Name
+        <MudButton Color="Color.Primary">@LApp["Edit"]</MudButton>
+    </SubjectBodyContent>
+    <TargetBodyContent Context="trainingTarget">
         @{
             var color = Color.Primary;
             if (trainingTarget.Type == TrainingTargetType.Knowledge)
@@ -11,6 +16,7 @@
                 color = Color.Secondary;
             }
         }
+        <MudChip T="string">@trainingTarget.Order</MudChip>
         @switch (trainingTarget.Group)
         {
             case TrainingTargetGroup.Single:
@@ -24,9 +30,13 @@
                 break;
         }
         <MudText>@trainingTarget.Name</MudText>
-        <MudButton>@LApp["Edit"]</MudButton>
-    </BodyContent>
+        <MudButton Color="Color.Primary" OnClick="@(() => OpenTrainingTargetDialog(trainingTarget, trainingTarget.SubjectId, false))">@LApp["Edit"]</MudButton>
+    </TargetBodyContent>
     <AddSubjectOrTargetContent Context="trainingSubject">
-        <MudButton>@LApp["Add"]</MudButton>
+        <MudButtonGroup Color="Color.Primary">
+            <MudButton OnClick="@(() => OpenTrainingTargetDialog(null, trainingSubject.Id, true))">@L["Add target"]</MudButton>
+            <MudButton OnClick="@(() => OpenTrainingSubjectDialog(null, trainingSubject.Id, true))">@L["Add subject"]</MudButton>
+        </MudButtonGroup>
     </AddSubjectOrTargetContent>
 </TrainingSubjectList>
+<MudButton Color="Color.Primary" OnClick="@(() => OpenTrainingSubjectDialog(null, null, true))">@L["Add subject to base"]</MudButton>

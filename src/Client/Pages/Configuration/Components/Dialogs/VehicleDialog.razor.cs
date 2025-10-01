@@ -2,7 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 
-namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
+namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 
 public partial class VehicleDialog : IDisposable
 {

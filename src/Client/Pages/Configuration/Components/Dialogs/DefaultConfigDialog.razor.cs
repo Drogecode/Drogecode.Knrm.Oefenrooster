@@ -5,7 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
+namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 
 public sealed partial class DefaultConfigDialog : IDisposable
 {

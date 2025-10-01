@@ -4,7 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
-namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
+namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 
 public sealed partial class DayItemDialog : IDisposable
 {

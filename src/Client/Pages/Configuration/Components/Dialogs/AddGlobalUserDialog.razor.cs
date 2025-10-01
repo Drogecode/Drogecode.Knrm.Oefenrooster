@@ -3,7 +3,7 @@ using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserGlobal;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
+namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 
 public partial class AddGlobalUserDialog : IDisposable
 {
@@ -17,15 +17,15 @@ public partial class AddGlobalUserDialog : IDisposable
     [Parameter] public bool? IsNew { get; set; }
 
     [AllowNull] private MudForm _form;
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private bool _success;
     private string[] _errors = [];
 
     void Cancel() => MudDialog.Cancel();
 
-    protected override void OnParametersSet()
+    protected override void OnAfterRender(bool firstRender)
     {
-        if (IsNew == true && GlobalUser is null)
+        if (firstRender && IsNew == true && GlobalUser is null)
         {
             GlobalUser = new DrogeUserGlobal();
         }

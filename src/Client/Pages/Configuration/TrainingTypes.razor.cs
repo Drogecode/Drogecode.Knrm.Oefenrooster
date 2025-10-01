@@ -1,14 +1,15 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
 public sealed partial class TrainingTypes : IDisposable
 {
-    [Inject] private IStringLocalizer<TrainingTypes> L { get; set; } = default!;
-    [Inject] private IDialogService DialogProvider { get; set; } = default!;
-    [Inject] private TrainingTypesRepository TrainingTypesRepository { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<TrainingTypes>? L { get; set; }
+    [Inject, NotNull] private IDialogService? DialogProvider { get; set; }
+    [Inject, NotNull] private TrainingTypesRepository? TrainingTypesRepository { get; set; }
     private List<PlannerTrainingType>? _trainingTypes;
     private readonly CancellationTokenSource _cls = new();
     private readonly RefreshModel _refreshModel = new();

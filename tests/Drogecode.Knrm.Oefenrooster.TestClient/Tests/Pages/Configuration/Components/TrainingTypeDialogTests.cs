@@ -1,12 +1,12 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.TestClient.Attributes;
 using Microsoft.AspNetCore.Components;
 
 namespace Drogecode.Knrm.Oefenrooster.TestClient.Tests.Pages.Configuration.Components;
 
-public class xTrainingTypeDialogTests : BlazorTestBase
+public class TrainingTypeDialogTests : BlazorTestBase
 {
     [Theory]
     [AutoFakeItEasyData]

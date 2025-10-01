@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 

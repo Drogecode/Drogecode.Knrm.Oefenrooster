@@ -61,6 +61,10 @@
 	  <EmbeddedResource Update="Resources\Pages\Planner\Components\Dialogs\ScheduleDialog.nl-NL.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Pages\Configuration\TrainingTargets.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>TrainingTargets.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -68,6 +72,11 @@
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>RatingDialog.nl-NL.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Pages\Configuration\TrainingTargets.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>TrainingTargets.nl-NL.resx</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 	

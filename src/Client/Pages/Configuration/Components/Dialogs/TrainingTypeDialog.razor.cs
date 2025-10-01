@@ -2,7 +2,7 @@
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
+namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 
 public sealed partial class TrainingTypeDialog : IDisposable
 {

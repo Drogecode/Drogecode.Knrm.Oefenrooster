@@ -1,5 +1,4 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
 using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Customer;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
@@ -7,6 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserGlobal;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer;
 using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 

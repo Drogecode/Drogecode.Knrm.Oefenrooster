@@ -8,14 +8,15 @@ public partial class TrainingSubjectList : IDisposable
     [Inject, NotNull] private IStringLocalizer<TrainingSubjectList>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
     [Inject, NotNull] private TrainingTargetRepository? TrainingTargetRepository { get; set; }
-    [Parameter] public SelectionMode SelectionMode { get; set; }
-    [Parameter] public EventCallback<IReadOnlyCollection<Guid>> SelectedTargetsChanged { get; set; }
-    private IReadOnlyCollection<Guid>? _selectedTargets;
-
-    [Parameter] public RenderFragment<TrainingTarget>? BodyContent { get; set; }
-    [Parameter] public RenderFragment<TrainingSubject>? AddSubjectOrTargetContent { get; set; }
     [Parameter] public bool TargetSetReadonly { get; set; }
     [Parameter] public bool Disabled { get; set; }
+    [Parameter] public SelectionMode SelectionMode { get; set; }
+    [Parameter] public RenderFragment<TrainingSubject>? SubjectBodyContent { get; set; }
+    [Parameter] public RenderFragment<TrainingTarget>? TargetBodyContent { get; set; }
+    [Parameter] public RenderFragment<TrainingSubject>? AddSubjectOrTargetContent { get; set; }
+
+    private IReadOnlyCollection<Guid>? _selectedTargets;
+    [Parameter] public EventCallback<IReadOnlyCollection<Guid>> SelectedTargetsChanged { get; set; }
 
     [Parameter]
     public IReadOnlyCollection<Guid>? SelectedTargets
@@ -23,7 +24,6 @@ public partial class TrainingSubjectList : IDisposable
         get => _selectedTargets;
         set
         {
-            DebugHelper.WriteLine($"SelectedTargets changed to {value.Count}");
             if (Equals(_selectedTargets, value)) return;
             _selectedTargets = value;
             SelectedTargetsChanged.InvokeAsync(value);
@@ -61,7 +61,7 @@ public partial class TrainingSubjectList : IDisposable
             {
                 foreach (var target in subject.TrainingTargets)
                 {
-                    if (target.Name?.Contains(search, StringComparison.OrdinalIgnoreCase) == true || SelectedTargets.Contains(target.Id))
+                    if (target.Name?.Contains(search, StringComparison.OrdinalIgnoreCase) == true || (SelectedTargets is not null && SelectedTargets.Contains(target.Id)))
                     {
                         target.IsVisible = true;
                         subject.IsVisible = true;

@@ -10,7 +10,8 @@ using Microsoft.Identity.Web.Resource;
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
 [Authorize(Roles = AccessesNames.AUTH_basic_access)]
-[Authorize(Roles = $"{AccessesNames.AUTH_target_read},{AccessesNames.AUTH_scheduler_target_set},{AccessesNames.AUTH_target_edit},{AccessesNames.AUTH_target_user_read}")]
+[Authorize(Roles =
+    $"{AccessesNames.AUTH_target_read},{AccessesNames.AUTH_scheduler_target_set},{AccessesNames.AUTH_target_edit},{AccessesNames.AUTH_target_user_read},{AccessesNames.AUTH_configure_training_target}")]
 [ApiController]
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]

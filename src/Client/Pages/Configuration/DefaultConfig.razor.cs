@@ -1,6 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
-using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components;
+using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;

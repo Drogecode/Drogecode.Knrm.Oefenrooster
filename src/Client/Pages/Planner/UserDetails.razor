@@ -70,7 +70,7 @@
                 else if (_userResultForTargets is not null && _userResultForTargets.Count > 0)
                 {
                     <TrainingSubjectList>
-                        <BodyContent Context="trainingTarget">
+                        <TargetBodyContent Context="trainingTarget">
                             @{
                                 var userResultForTarget = _userResultForTargets.Where(x => x.TrainingTargetId == trainingTarget.Id).FirstOrDefault();
                                 var color = Color.Primary;
@@ -113,7 +113,7 @@
                             {
                                 <MudLink Href="@trainingTarget.Url" Target="_blank">@trainingTarget.UrlDescription</MudLink>
                             }
-                        </BodyContent>
+                        </TargetBodyContent>
                     </TrainingSubjectList>
                 }
                 else

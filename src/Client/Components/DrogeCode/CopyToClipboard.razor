@@ -6,14 +6,14 @@
             <MudText>@Label</MudText>
         }
         <MudTextField Value="@TextField" ReadOnly="true"/>
-        <MudButton OnClick="() => CopyTextToClipboard(TextField)">@L["Copy"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="() => CopyTextToClipboard(TextField)">@L["Copy"]</MudButton>
     </MudPaper>
 }
 else if (TrustedHtmlText is not null)
 {
     <div>@((MarkupString)TrustedHtmlText)</div>
     <div>
-        <MudButton OnClick='() => CopyTextToClipboard(TrustedHtmlText)'>@L["Copy"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick='() => CopyTextToClipboard(TrustedHtmlText)'>@L["Copy"]</MudButton>
     </div>
 }
 
