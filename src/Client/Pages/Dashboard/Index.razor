@@ -1,4 +1,6 @@
 ﻿@page "/"
+@page "/dashboard/{Tab}"
+@page "/dashboard/{Tab}/{Tab2}"
 @attribute [Authorize]
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components
 @using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
@@ -6,19 +8,19 @@
 <PageTitle>Dashboard</PageTitle>
 <AuthorizeView Roles="@nameof(Licenses.L_SharePointReports)">
     <Authorized>
-        <MudTabs Rounded="true">
-            <MudTabPanel Text="@L["Planner"]">
+        <MudTabs Rounded="true" @ref="_tabs" ActivePanelIndexChanged="ActiveTabChanged">
+            <MudTabPanel Text="@L["Planner"]" ID=@("pn_one")>
                 @MainTab
             </MudTabPanel>
-            <MudTabPanel Text="@L["Actions"]">
+            <MudTabPanel Text="@L["Actions"]" ID="@("pn_two")">
                 <ActionsTab Users="@_users" Functions="@_functions" EnableOptions="true"/>
             </MudTabPanel>
-            <MudTabPanel Text="@L["Trainings"]">
+            <MudTabPanel Text="@L["Trainings"]" ID="@("pn_three")">
                 <TrainingsTab Users="@_users" Functions="@_functions"/>
             </MudTabPanel>
             <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_Statistics" Context="inner">
-                <MudTabPanel Text="@L["Statistics"]">
-                    <StatisticsTab User="@_user" Users="@_users" Functions="@_functions"/>
+                <MudTabPanel Text="@L["Statistics"]" ID="@("pn_four")">
+                    <StatisticsTab User="@_user" Users="@_users" Functions="@_functions" Tab="@Tab2"/>
                 </MudTabPanel>
             </AuthorizeView>
         </MudTabs>
@@ -30,6 +32,7 @@
 
 
 @code{
+
     private RenderFragment MainTab =>
         @<div>
             @if (_name is not null)

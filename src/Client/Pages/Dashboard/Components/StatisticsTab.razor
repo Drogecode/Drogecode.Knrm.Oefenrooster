@@ -1,7 +1,7 @@
 ﻿@using Color = MudBlazor.Color
 <MudPaper Elevation="0" Class="p-2">
-    <MudTabs Rounded="true">
-        <MudTabPanel Text="@L["Year charts"]">
+    <MudTabs Rounded="true" @ref="_tabs" ActivePanelIndexChanged="ActiveTabChanged">
+        <MudTabPanel Text="@L["Year charts"]" ID=@("pn_one")>
             <SelectMultipleUsers Users="@Users" Functions="@Functions" Selection="@_selectedUsers" SelectionChanged="OnSelectionChanged" MultiSelection="true"/>
             <MudSwitch Label="@L["Analyze all years"]" Color="Color.Primary" T="bool" Value="@_allYears" ValueChanged="@(async (isChecked) => await AllYearsChanged(isChecked))"/>
             <MudSwitch Label="@L["Total"]" Color="Color.Primary" T="bool" Value="@_total" ValueChanged="@(async (isChecked) => await TotalChanged(isChecked))"/>
@@ -21,12 +21,12 @@
             </MudPaper>
         </MudTabPanel>
         <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
-            <MudTabPanel Text="@L["Interesting numbers"]">
+            <MudTabPanel Text="@L["Interesting numbers"]" ID=@("pn_two")>
                 <StatisticsInteresting />
             </MudTabPanel>
         </AuthorizeView>
         <AuthorizeView Roles="@AccessesNames.AUTH_dashboard_Statistics_user_tabel">
-            <MudTabPanel Text="@L["User table"]">
+            <MudTabPanel Text="@L["User table"]" ID=@("pn_three")>
                 <StatisticsUserTable/>
             </MudTabPanel>
         </AuthorizeView>

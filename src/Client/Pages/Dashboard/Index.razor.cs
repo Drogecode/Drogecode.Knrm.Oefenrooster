@@ -30,6 +30,8 @@ public sealed partial class Index : IDisposable
     [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+    [Parameter] public string? Tab { get; set; }
+    [Parameter] public string? Tab2 { get; set; }
     private readonly CancellationTokenSource _cls = new();
     private ClaimsPrincipal? _userClaims;
     private HubConnection? _hubConnection;
@@ -42,6 +44,7 @@ public sealed partial class Index : IDisposable
     private List<PlannerTrainingType>? _trainingTypes;
     private List<RoosterItemDay>? _dayItems;
     private MultipleHolidaysResponse? _futureHolidays;
+    private MudTabs _tabs;
     private string? _name;
     private Guid _userId;
     private bool _loading = true;
@@ -56,6 +59,27 @@ public sealed partial class Index : IDisposable
         {
             if (!await SetUser())
                 return;
+
+            if (!string.IsNullOrEmpty(Tab))
+            {
+                switch (Tab.ToLower())
+                {
+                    case "planner":
+                        _tabs.ActivatePanel("pn_one");
+                        break;
+                    case "actions":
+                        _tabs.ActivatePanel("pn_two");
+                        break;
+                    case "trainings":
+                        _tabs.ActivatePanel("pn_three");
+                        break;
+                    case "statistics":
+                        _tabs.ActivatePanel("pn_four");
+                        break;
+                }
+                StateHasChanged();
+            }
+
             await ConfigureHub();
 
             _users = await UserRepository.GetAllUsersAsync(false, false, true, _cls.Token);
@@ -70,7 +94,27 @@ public sealed partial class Index : IDisposable
 
             Global.VisibilityChangeAsync += VisibilityChanged;
             _loading = false;
+
             StateHasChanged();
+        }
+    }
+
+    private void ActiveTabChanged(int arg)
+    {
+        switch (arg)
+        {
+            case 0:
+                Navigation.NavigateTo($"dashboard/planner");
+                break;
+            case 1:
+                Navigation.NavigateTo($"dashboard/actions");
+                break;
+            case 2:
+                Navigation.NavigateTo($"dashboard/trainings");
+                break;
+            case 3:
+                Navigation.NavigateTo($"dashboard/statistics");
+                break;
         }
     }
 
