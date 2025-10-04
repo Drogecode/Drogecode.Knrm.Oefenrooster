@@ -6,7 +6,7 @@
     <SubjectBodyContent Context="trainingSubject">
         <MudChip T="string">@trainingSubject.Order</MudChip>
         @trainingSubject.Name
-        <MudButton Color="Color.Primary">@LApp["Edit"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@(() => OpenTrainingSubjectDialog(trainingSubject, null, false))">@LApp["Edit"]</MudButton>
     </SubjectBodyContent>
     <TargetBodyContent Context="trainingTarget">
         @{
@@ -30,7 +30,7 @@
                 break;
         }
         <MudText>@trainingTarget.Name</MudText>
-        <MudButton Color="Color.Primary" OnClick="@(() => OpenTrainingTargetDialog(trainingTarget, trainingTarget.SubjectId, false))">@LApp["Edit"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@(() => OpenTrainingTargetDialog(trainingTarget, null, false))">@LApp["Edit"]</MudButton>
     </TargetBodyContent>
     <AddSubjectOrTargetContent Context="trainingSubject">
         <MudButtonGroup Color="Color.Primary">

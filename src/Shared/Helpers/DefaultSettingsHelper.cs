@@ -16,12 +16,17 @@ public static class DefaultSettingsHelper
     
     // Does not show for versions below v0.5.0
     // Old versions, version when it was last on this UPDATE_VERSION
-    // 9 = v0.5.40
     
     /// <summary>
     /// From what UPDATE_VERSION we should show the update button.
     /// </summary>
     public const int BUTTON_VERSION = 8; // v0.5.28 version when it was last on this UPDATE_VERSION
+
+    /// <summary>
+    /// From what UPDATE_VERSION we should block the user from using the app.
+    /// </summary>
+    public const int BLOCKRER_VERSION = 7; // Only working after v0.5.43 (between 10 and 11)
+    // 9 = v0.5.40
     // 8 = v0.5.28
     // 7 = v0.5.18
     // 6 = v0.5.12

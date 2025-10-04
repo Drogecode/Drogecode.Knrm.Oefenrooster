@@ -1,0 +1,15 @@
+﻿@layout LandingLayout
+@page "/update-required"
+<MudContainer Class="d-flex flex-column justify-center" MaxWidth="MaxWidth.Medium">
+    <MudText Typo="Typo.body1" Align="Align.Center">@L["Click the button below to load the new version of this app"]</MudText>
+    <MudPaper Class="flex justify-center" Elevation="0">
+        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white; width: 200px; height: 60px;" OnClick="@ReloadPage">
+            @L["Reload"]
+        </MudButton>
+    </MudPaper>
+    <MudText Typo="Typo.h4" Align="Align.Center">@L["If reloading doesn't work"]</MudText>
+    <MudText Typo="Typo.h5" Align="Align.Center">@L["Browser"]</MudText>
+    <MudText Typo="Typo.body1" Align="Align.Center">@L["Click [ctrl]+[shift]+[R]"]</MudText>
+    <MudText Typo="Typo.h5" Align="Align.Center">@L["Smartphone"]</MudText>
+    <MudText Typo="Typo.body1" Align="Align.Center">@L["Force close the app and wait a minute, reopen app"]</MudText>
+</MudContainer>

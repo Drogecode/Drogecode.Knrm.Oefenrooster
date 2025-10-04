@@ -87,6 +87,7 @@ public class ConfigurationController : ControllerBase
                 CurrentVersion = DefaultSettingsHelper.CURRENT_VERSION,
                 UpdateVersion = DefaultSettingsHelper.UPDATE_VERSION,
                 ButtonVersion = DefaultSettingsHelper.BUTTON_VERSION,
+                BlockerVersion = DefaultSettingsHelper.BLOCKRER_VERSION,
             };
             await _userService.PatchLastOnline(userId, customerId, clientVersion, clt);
             await _configurationHub.SendMessage(new ConfigurationUpdatedHub { ConfigurationUpdated = ConfigurationUpdated.UsersOnlineChanged, ByUserId = userId });

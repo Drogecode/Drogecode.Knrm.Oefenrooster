@@ -6,4 +6,5 @@ public class VersionDetailResponse : BaseResponse
     public string CurrentVersion { get; set; } = string.Empty;
     public int UpdateVersion { get; set; }
     public int ButtonVersion { get; set; }
+    public int BlockerVersion { get; set; }
 }

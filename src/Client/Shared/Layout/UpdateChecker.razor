@@ -26,25 +26,32 @@
                     _updateDetails = await ConfigurationRepository.NewVersionAvailable();
                     if (_updateDetails is not null && (_updateDetails.UpdateVersion != DefaultSettingsHelper.UPDATE_VERSION || _updateDetails.ButtonVersion != DefaultSettingsHelper.BUTTON_VERSION) && DefaultSettingsHelper.UPDATE_VERSION <= _updateDetails.ButtonVersion)
                     {
-                        var config = (SnackbarOptions options) =>
+                        if (_updateDetails.BlockerVersion >= DefaultSettingsHelper.UPDATE_VERSION)
                         {
-                            options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
-                            options.RequireInteraction = true;
-                            options.Action = L["Click to reload"];
-                            options.ActionColor = Color.Inherit;
-                            options.OnClick = snackbar =>
+                            Navigation.NavigateTo("/update-required", true); 
+                        }
+                        else
+                        {
+                            var config = (SnackbarOptions options) =>
                             {
-                                Navigation.NavigateTo(Navigation.Uri, true);
-                                return Task.CompletedTask;
+                                options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
+                                options.RequireInteraction = true;
+                                options.Action = L["Click to reload"];
+                                options.ActionColor = Color.Inherit;
+                                options.OnClick = snackbar =>
+                                {
+                                    Navigation.NavigateTo(Navigation.Uri, true);
+                                    return Task.CompletedTask;
+                                };
                             };
-                        };
-                        Snackbar.Add(L["Update available"], Severity.Warning, configure: config, key: "outdated");
+                            Snackbar.Add(L["Update available"], Severity.Warning, configure: config, key: "outdated");
+                        }
                     }
 
                     if (user.User.Identity?.IsAuthenticated is true) continue;
                     await AuthenticationStateProvider.Logout();
                     StateHasChanged();
-                    Navigation.NavigateTo("/landing_page");
+                    Navigation.NavigateTo("/landing_page"); 
                 }
                 catch (Exception ex)
                 {

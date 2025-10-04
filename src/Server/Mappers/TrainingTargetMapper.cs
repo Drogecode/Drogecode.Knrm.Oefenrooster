@@ -92,6 +92,7 @@ public static class TrainingTargetMapper
         var subject = new TrainingSubject
         {
             Id = dbTrainingTargetSubject.Id,
+            ParentId = dbTrainingTargetSubject.ParentId,
             Name = dbTrainingTargetSubject.Name,
             Order = dbTrainingTargetSubject.Order,
             CreatedOn = dbTrainingTargetSubject.CreatedOn,

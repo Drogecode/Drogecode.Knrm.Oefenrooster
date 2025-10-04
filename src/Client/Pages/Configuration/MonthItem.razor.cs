@@ -14,7 +14,7 @@ public sealed partial class MonthItem : IDisposable
     [Inject, NotNull] private IDialogService? DialogProvider { get; set; }
 
     private GetMultipleMonthItemResponse? _monthItems;
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private RefreshModel _refreshModel = new();
     private int _currentPage = 1;
     private int _count = 30;
@@ -86,5 +86,6 @@ public sealed partial class MonthItem : IDisposable
     public void Dispose()
     {
         _cls.Cancel();
+        _refreshModel.RefreshRequestedAsync -= RefreshMeAsync;
     }
 }

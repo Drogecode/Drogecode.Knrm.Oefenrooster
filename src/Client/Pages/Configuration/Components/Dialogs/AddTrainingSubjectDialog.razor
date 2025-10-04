@@ -1,0 +1,15 @@
+﻿<MudDialog>
+    <DialogContent>
+        @if (TrainingSubject is not null)
+        {
+            <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
+                <MudNumericField Label="@L["Order"]" @bind-Value="@TrainingSubject.Order" />
+                <MudTextField T="string" Label="@L["Name"]" @bind-Value="@TrainingSubject.Name" />
+            </MudForm>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@LApp["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">@LApp["Submit"]</MudButton>
+    </DialogActions>
+</MudDialog>
