@@ -159,4 +159,25 @@
   <data name="CurrentYear ({0})" xml:space="preserve">
     <value>Dit jaar ({0})</value>
   </data>
+  <data name="SelectValue" xml:space="preserve">
+    <value>Selecteer waarde</value>
+  </data>
+  <data name="OneMonth" xml:space="preserve">
+    <value>een maand</value>
+  </data>
+  <data name="OneYear" xml:space="preserve">
+    <value>Een jaar</value>
+  </data>
+  <data name="ThreeYear" xml:space="preserve">
+    <value>Drie jaar</value>
+  </data>
+  <data name="FiveYear" xml:space="preserve">
+    <value>Vijf jaar</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>Allemaal</value>
+  </data>
+  <data name="No rating available for selected period" xml:space="preserve">
+    <value>Geen beoordelingen beschikbaar voor geselecteerde periode.</value>
+  </data>
 </root>

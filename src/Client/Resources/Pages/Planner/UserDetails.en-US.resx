@@ -159,4 +159,25 @@
   <data name="CurrentYear ({0})" xml:space="preserve">
     <value>Current year ({0})</value>
   </data>
+  <data name="SelectValue" xml:space="preserve">
+    <value>Select value</value>
+  </data>
+  <data name="OneMonth" xml:space="preserve">
+    <value>One month</value>
+  </data>
+  <data name="OneYear" xml:space="preserve">
+    <value>One year</value>
+  </data>
+  <data name="ThreeYear" xml:space="preserve">
+    <value>Three year</value>
+  </data>
+  <data name="FiveYear" xml:space="preserve">
+    <value>Five year</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="No rating available for selected period" xml:space="preserve">
+    <value>No rating available for selected period.</value>
+  </data>
 </root>

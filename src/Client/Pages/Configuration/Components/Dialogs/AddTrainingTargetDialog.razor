@@ -6,7 +6,7 @@
             <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
                 <MudNumericField Label="@LApp["Order"]" @bind-Value="@TrainingTarget.Order" />
                 <MudTextField T="string" Label="@LApp["Name"]" @bind-Value="@TrainingTarget.Name" />
-                <MudTextField T="string" Label="@LApp["Description"]" @bind-Value="@TrainingTarget.Description" />
+                @*<MudTextField T="string" Label="@LApp["Description"]" @bind-Value="@TrainingTarget.Description" />*@
                 <MudTextField T="string" Label="@L["Url"]" @bind-Value="@TrainingTarget.Url" />
                 <MudTextField T="string" Label="@L["UrlDescription"]" @bind-Value="@TrainingTarget.UrlDescription" />
                 <MudSelect T="TrainingTargetType" @bind-Value="@TrainingTarget.Type" Label="@LApp["Type"]">

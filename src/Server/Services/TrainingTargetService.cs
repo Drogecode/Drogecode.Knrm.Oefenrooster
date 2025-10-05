@@ -450,6 +450,9 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
 
         var userResults = await Database.TrainingTargetUserResults
             .AsNoTracking()
+            .Include(x => x.RoosterAvailable)
+            .ThenInclude(x => x.Training)
+            .ThenInclude(x => x.TrainingTargetSet)
             .Where(x => x.UserId == userIdResult && x.TrainingDate >= allFrom && x.TrainingDate <= allUntil && x.DeletedOn == null)
             .OrderBy(x => x.TrainingTargetId)
             .ToListAsync(clt);
@@ -459,6 +462,8 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             response.UserResultForTargets = [];
             foreach (var userResult in userResults)
             {
+                if (userResult.RoosterAvailable.Training.TrainingTargetSet?.TrainingTargetIds.Any(x => x == userResult.TrainingTargetId) != true)
+                    continue;
                 var set = response.UserResultForTargets.FirstOrDefault(x => x.TrainingTargetId == userResult.TrainingTargetId);
                 if (set is null)
                 {
