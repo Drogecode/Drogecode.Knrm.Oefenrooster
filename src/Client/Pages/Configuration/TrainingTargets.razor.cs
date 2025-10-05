@@ -18,7 +18,7 @@ public partial class TrainingTargets : IDisposable
     {
         if (firstRender)
         {
-            _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
+            _refreshModel.RefreshRequested += RefreshMe;
         }
     }
     
@@ -43,7 +43,7 @@ public partial class TrainingTargets : IDisposable
 
     private Task OpenTrainingSubjectDialog(TrainingSubject? trainingSubject, Guid? parentId, bool isNew)
     {
-        var header = isNew ? L["Add new training target"] : L["Edit training target"];
+        var header = isNew ? L["Add new training subject"] : L["Edit training subject"];
         var parameters = new DialogParameters<AddTrainingSubjectDialog>
         {
             { x => x.TrainingSubject, trainingSubject },
@@ -60,14 +60,14 @@ public partial class TrainingTargets : IDisposable
         return DialogProvider.ShowAsync<AddTrainingSubjectDialog>(header, parameters, options);
     }
 
-    private async Task RefreshMeAsync()
+    private void RefreshMe()
     {
-        StateHasChanged();
+        // Refresh done in TrainingSubjectList
     }
 
     public void Dispose()
     {
         _cls.Cancel();
-        _refreshModel.RefreshRequestedAsync -= RefreshMeAsync;
+        _refreshModel.RefreshRequested -= RefreshMe;
     }
 }

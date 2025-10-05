@@ -7,6 +7,10 @@ public interface ITrainingTargetService : IDrogeService
 {
     Task<AllTrainingTargetSubjectsResponse> AllTrainingTargets(int count, int skip, Guid? subjectId, Guid customerId, CancellationToken clt);
     Task<AllTrainingTargetsResponse> GetTargetsLinkedToTraining(Guid trainingId, Guid customerId, CancellationToken clt);
+    Task<PutResponse> PutNewTarget(TrainingTarget body, Guid userId, Guid customerId, CancellationToken clt);
+    Task<PatchResponse> PatchTarget(TrainingTarget body, Guid userId, Guid customerId, CancellationToken clt);
+    Task<PutResponse> PutNewSubject(TrainingSubject body, Guid userId, Guid customerId, CancellationToken clt);
+    Task<PatchResponse> PatchSubject(TrainingSubject body, Guid userId, Guid customerId, CancellationToken clt);
     Task<GetSingleTargetSetResponse> GetSetLinkedToTraining(Guid trainingId, Guid customerId, CancellationToken clt);
     Task<GetTargetSetWithTargetsResult> GetSetWithTargetsLinkedToTraining(Guid trainingId, Guid customerId, Guid userId, CancellationToken clt);
     Task<GetAllTargetSetResponse> GetAllReusableSets(Guid customerId, int count, int skip, CancellationToken clt);

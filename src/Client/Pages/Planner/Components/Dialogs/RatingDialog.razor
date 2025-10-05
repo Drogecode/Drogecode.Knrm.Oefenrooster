@@ -22,6 +22,12 @@
                     @foreach (var target in _trainingTargets)
                     {
                         <TemplateColumn Title="@target.Name">
+                            <HeaderTemplate>
+                                <div class="inline-flex items-center">
+                                    <MudIcon Icon="@target.Icon" Color="@target.IconColor"/>
+                                    @target.Name
+                                </div>
+                            </HeaderTemplate>
                             <CellTemplate>
                                 <MudStack Row>
                                     @{
@@ -36,15 +42,15 @@
                                     @switch (target.Type)
                                     {
                                         case TrainingTargetType.Exercise:
-                                            <MudRating Size="@Size.Small" 
-                                                       SelectedValue="@resultObject.Result" 
+                                            <MudRating Size="@Size.Small"
+                                                       SelectedValue="@resultObject.Result"
                                                        SelectedValueChanged="i => UpdateResult(i, resultObject)"
                                                        Disabled="_updatingAll || resultObject.IsUpdating || resultObject.RoosterAvailableId == Guid.Empty"/>
                                             break;
                                         case TrainingTargetType.Knowledge:
-                                            <MudSwitchM3 T="bool" 
+                                            <MudSwitchM3 T="bool"
                                                          Value="@(resultObject.Result > 0)"
-                                                         ValueChanged="@(e => UpdateResult(e, resultObject))" 
+                                                         ValueChanged="@(e => UpdateResult(e, resultObject))"
                                                          Disabled="_updatingAll || resultObject.IsUpdating || resultObject.RoosterAvailableId == Guid.Empty"/>
                                             break;
                                         default:

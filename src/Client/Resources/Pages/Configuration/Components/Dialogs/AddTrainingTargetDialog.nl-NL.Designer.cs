@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration {
+namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Components.Dialogs {
     using System;
     
     
@@ -21,14 +21,14 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class TrainingTargets_nl_NL {
+    internal class AddTrainingTargetDialog_nl_NL {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal TrainingTargets_nl_NL() {
+        internal AddTrainingTargetDialog_nl_NL() {
         }
         
         /// <summary>
@@ -38,8 +38,8 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.TrainingTargets." +
-                            "nl-NL", typeof(TrainingTargets_nl_NL).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration.Components.Dialo" +
+                            "gs.AddTrainingTargetDialog.nl-NL", typeof(AddTrainingTargetDialog_nl_NL).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,65 +61,29 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Pages.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Maak nieuw training categorie.
+        ///   Looks up a localized string similar to Groep.
         /// </summary>
-        internal static string Add_new_training_subject {
+        internal static string Group {
             get {
-                return ResourceManager.GetString("Add new training subject", resourceCulture);
+                return ResourceManager.GetString("Group", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Maak nieuw training doel.
+        ///   Looks up a localized string similar to Url.
         /// </summary>
-        internal static string Add_new_training_target {
+        internal static string Url {
             get {
-                return ResourceManager.GetString("Add new training target", resourceCulture);
+                return ResourceManager.GetString("Url", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Maak sub categorie aan.
+        ///   Looks up a localized string similar to Url tekst.
         /// </summary>
-        internal static string Add_subject {
+        internal static string UrlDescription {
             get {
-                return ResourceManager.GetString("Add subject", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Maak nieuw basis categorie aan.
-        /// </summary>
-        internal static string Add_subject_to_base {
-            get {
-                return ResourceManager.GetString("Add subject to base", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Maak doel aan.
-        /// </summary>
-        internal static string Add_target {
-            get {
-                return ResourceManager.GetString("Add target", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Bewerk training categorie.
-        /// </summary>
-        internal static string Edit_training_subject {
-            get {
-                return ResourceManager.GetString("Edit training subject", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Bewerkt training doel.
-        /// </summary>
-        internal static string Edit_training_target {
-            get {
-                return ResourceManager.GetString("Edit training target", resourceCulture);
+                return ResourceManager.GetString("UrlDescription", resourceCulture);
             }
         }
     }

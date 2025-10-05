@@ -1,34 +1,15 @@
 ﻿@page "/configuration/training-targets"
-@using Drogecode.Knrm.Oefenrooster.Shared.Enums
 @attribute [Authorize(Roles = AccessesNames.AUTH_configure_training_target)]
 
-<TrainingSubjectList>
+<TrainingSubjectList RefreshModel="_refreshModel">
     <SubjectBodyContent Context="trainingSubject">
         <MudChip T="string">@trainingSubject.Order</MudChip>
         @trainingSubject.Name
         <MudButton Color="Color.Primary" OnClick="@(() => OpenTrainingSubjectDialog(trainingSubject, null, false))">@LApp["Edit"]</MudButton>
     </SubjectBodyContent>
     <TargetBodyContent Context="trainingTarget">
-        @{
-            var color = Color.Primary;
-            if (trainingTarget.Type == TrainingTargetType.Knowledge)
-            {
-                color = Color.Secondary;
-            }
-        }
         <MudChip T="string">@trainingTarget.Order</MudChip>
-        @switch (trainingTarget.Group)
-        {
-            case TrainingTargetGroup.Single:
-                <MudIcon Icon="@Icons.Material.Filled.Person" Color="@color"/>
-                break;
-            case TrainingTargetGroup.TwoPersons:
-                <MudIcon Icon="@Icons.Material.Filled.People" Color="@color"/>
-                break;
-            case TrainingTargetGroup.Group:
-                <MudIcon Icon="@Icons.Material.Filled.Group" Color="@color"/>
-                break;
-        }
+        <MudIcon Icon="@trainingTarget.Icon" Color="@trainingTarget.IconColor"/>
         <MudText>@trainingTarget.Name</MudText>
         <MudButton Color="Color.Primary" OnClick="@(() => OpenTrainingTargetDialog(trainingTarget, null, false))">@LApp["Edit"]</MudButton>
     </TargetBodyContent>

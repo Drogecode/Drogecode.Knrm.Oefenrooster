@@ -18,25 +18,13 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="Add subject to base" xml:space="preserve">
-        <value>Maak nieuw basis categorie aan</value>
+    <data name="Url" xml:space="preserve">
+        <value>Url</value>
     </data>
-    <data name="Add subject" xml:space="preserve">
-        <value>Maak sub categorie aan</value>
+    <data name="UrlDescription" xml:space="preserve">
+        <value>Url tekst</value>
     </data>
-    <data name="Add target" xml:space="preserve">
-        <value>Maak doel aan</value>
-    </data>
-    <data name="Add new training target" xml:space="preserve">
-        <value>Maak nieuw training doel</value>
-    </data>
-    <data name="Edit training target" xml:space="preserve">
-        <value>Bewerkt training doel</value>
-    </data>
-    <data name="Add new training subject" xml:space="preserve">
-        <value>Maak nieuw training categorie</value>
-    </data>
-    <data name="Edit training subject" xml:space="preserve">
-        <value>Bewerk training categorie</value>
+    <data name="Group" xml:space="preserve">
+        <value>Groep</value>
     </data>
 </root>

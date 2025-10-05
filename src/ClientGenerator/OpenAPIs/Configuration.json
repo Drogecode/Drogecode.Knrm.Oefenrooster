@@ -338,6 +338,10 @@
           "buttonVersion": {
             "type": "integer",
             "format": "int32"
+          },
+          "blockerVersion": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

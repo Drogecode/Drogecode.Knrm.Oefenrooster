@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
 
-public static class TraininTypeMapper
+public static class TrainingTypeMapper
 {
     public static DbRoosterTrainingType ToDb(this PlannerTrainingType trainingType)
     {

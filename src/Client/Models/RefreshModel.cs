@@ -15,8 +15,6 @@ public class RefreshModel
     {
         RefreshRequested?.Invoke();
         var task = RefreshRequestedAsync?.Invoke();
-        if (task != null)
-            return task;
-        return Task.CompletedTask;
+        return task ?? Task.CompletedTask;
     }
 }

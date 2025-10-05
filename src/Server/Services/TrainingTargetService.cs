@@ -71,6 +71,89 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         return response;
     }
 
+    public async Task<PutResponse> PutNewTarget(TrainingTarget newTarget, Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = StopwatchProvider.StartNew();
+        var response = new PutResponse();
+
+        var dbTarget = newTarget.ToDb();
+        dbTarget.Id = Guid.CreateVersion7();
+        dbTarget.CustomerId = customerId;
+        dbTarget.CreatedOn = DateTimeProvider.UtcNow();
+        dbTarget.CreatedBy = userId;
+        Database.TrainingTargets.Add(dbTarget);
+        if (await Database.SaveChangesAsync(clt) > 0)
+        {
+            response.NewId = dbTarget.Id;
+            response.Success = true;
+        }
+
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
+
+    public async Task<PatchResponse> PatchTarget(TrainingTarget target, Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = StopwatchProvider.StartNew();
+        var response = new PatchResponse();
+        var oldVersion = await Database.TrainingTargets.FirstOrDefaultAsync(x => x.Id == target.Id, clt);
+        if (oldVersion is not null)
+        {
+            oldVersion.Name = target.Name;
+            oldVersion.Description = target.Description;
+            oldVersion.Url = target.Url;
+            oldVersion.UrlDescription = target.UrlDescription;
+            oldVersion.Order = target.Order;
+            oldVersion.Type = target.Type;
+            oldVersion.Group = target.Group;
+        }
+
+        response.Success = await Database.SaveChangesAsync(clt) > 0;
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
+
+    public async Task<PutResponse> PutNewSubject(TrainingSubject newSubject, Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = StopwatchProvider.StartNew();
+        var response = new PutResponse();
+
+        var dbSubject = newSubject.ToDb();
+        dbSubject.Id = Guid.CreateVersion7();
+        dbSubject.CustomerId = customerId;
+        dbSubject.CreatedOn = DateTimeProvider.UtcNow();
+        dbSubject.CreatedBy = userId;
+        Database.TrainingTargetSubjects.Add(dbSubject);
+        if (await Database.SaveChangesAsync(clt) > 0)
+        {
+            response.NewId = dbSubject.Id;
+            response.Success = true;
+        }
+
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
+
+    public async Task<PatchResponse> PatchSubject(TrainingSubject subject, Guid userId, Guid customerId, CancellationToken clt)
+    {
+        var sw = StopwatchProvider.StartNew();
+        var response = new PatchResponse();
+        var oldVersion = await Database.TrainingTargetSubjects.FirstOrDefaultAsync(x => x.Id == subject.Id, clt);
+        if (oldVersion is not null)
+        {
+            oldVersion.Name = subject.Name;
+            oldVersion.Order = subject.Order;
+        }
+
+        response.Success = await Database.SaveChangesAsync(clt) > 0;
+        sw.Stop();
+        response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
+        return response;
+    }
+
     public async Task<GetSingleTargetSetResponse> GetSetLinkedToTraining(Guid trainingId, Guid customerId, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
@@ -99,8 +182,8 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             .AsNoTracking()
             .Where(x => x.CustomerId == customerId && x.Id == trainingId)
             .Include(x => x.TrainingTargetSet)
-            .Include(x=>x.RoosterAvailables!.Where(y=>y.UserId == userId))
-            .ThenInclude(x=>x.TrainingTargetUserResults!.Where(y=>y.UserId == userId))
+            .Include(x => x.RoosterAvailables!.Where(y => y.UserId == userId))
+            .ThenInclude(x => x.TrainingTargetUserResults!.Where(y => y.UserId == userId))
             .Select(x => x.ToTrainingTargetSetWithUserResults())
             .FirstOrDefaultAsync(clt);
         if (trainingTargetSet is null)
@@ -109,10 +192,10 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             response.ElapsedMilliseconds = sw.ElapsedMilliseconds;
             return response;
         }
-        
+
         var targets = await Database.TrainingTargets
-            .Where(x=> trainingTargetSet.TrainingTargetIds.Contains(x.Id))
-            .Select(x=>x.ToTrainingTarget())
+            .Where(x => trainingTargetSet.TrainingTargetIds.Contains(x.Id))
+            .Select(x => x.ToTrainingTarget())
             .ToListAsync(clt);
         response.RoosterAvailableId = trainingTargetSet.RoosterAvailableId;
         response.Assigned = trainingTargetSet.Assigned;
@@ -256,7 +339,7 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             .Where(x => x.CustomerId == customerId && x.Id == trainingId && x.DeletedOn == null)
             .Include(x => x.TrainingTargetSet)
             .Include(x => x.RoosterAvailables!.Where(y => y.Assigned))
-            .ThenInclude(x => x.TrainingTargetUserResults!.Where(y=> y.DeletedOn == null))
+            .ThenInclude(x => x.TrainingTargetUserResults!.Where(y => y.DeletedOn == null))
             .FirstOrDefaultAsync(clt);
 
         if (trainingWithTargetResults?.RoosterAvailables is null || trainingWithTargetResults.TrainingTargetSet is null)
@@ -292,11 +375,12 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
                     {
                         continue;
                     }
+
                     userResult.Result = result;
                     userResult.ResultDate = DateTime.UtcNow;
                     userResult.SetBy = userId;
                     userResult.SetInBulk = true;
-                    
+
                     Database.TrainingTargetUserResults.Update(userResult);
                 }
                 else

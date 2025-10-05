@@ -72,25 +72,9 @@
                     <TrainingSubjectList>
                         <TargetBodyContent Context="trainingTarget">
                             @{
-                                var userResultForTarget = _userResultForTargets.Where(x => x.TrainingTargetId == trainingTarget.Id).FirstOrDefault();
-                                var color = Color.Primary;
-                                if (trainingTarget.Type == TrainingTargetType.Knowledge)
-                                {
-                                    color = Color.Secondary;
-                                }
+                                var userResultForTarget = _userResultForTargets.FirstOrDefault(x => x.TrainingTargetId == trainingTarget.Id);
                             }
-                            @switch (trainingTarget.Group)
-                            {
-                                case TrainingTargetGroup.Single:
-                                    <MudIcon Icon="@Icons.Material.Filled.Person" Color="@color" /> 
-                                    break;
-                                    case TrainingTargetGroup.TwoPersons:
-                                    <MudIcon Icon="@Icons.Material.Filled.People" Color="@color" />
-                                    break;
-                                case TrainingTargetGroup.Group:
-                                    <MudIcon Icon="@Icons.Material.Filled.Group" Color="@color" /> 
-                                    break;
-                            }
+                            <MudIcon Icon="@trainingTarget.Icon" Color="@trainingTarget.IconColor"/>
                             <MudText>@trainingTarget.Name</MudText>
                             @if (userResultForTarget?.Count > 0)
                             {
@@ -118,7 +102,7 @@
                 }
                 else
                 {
-                    <MudText Typo="Typo.body1">@L["No rating available for selected period"]</MudText>   
+                    <MudText Typo="Typo.body1">@L["No rating available for selected period"]</MudText>
                 }
 
             </MudTabPanel>

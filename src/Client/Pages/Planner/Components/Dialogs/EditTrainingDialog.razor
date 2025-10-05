@@ -195,7 +195,12 @@
             }
             @if (_selectedTargets is not null)
             {
-                <TrainingSubjectList @bind-SelectedTargets="_selectedTargets" SelectionMode="SelectionMode.MultiSelection" TargetSetReadonly="_targetSetReadonly"/>
+                <TrainingSubjectList @bind-SelectedTargets="_selectedTargets" SelectionMode="SelectionMode.MultiSelection" TargetSetReadonly="_targetSetReadonly">
+                    <TargetBodyContent Context="trainingTarget">
+                        <MudIcon Icon="@trainingTarget.Icon" Color="@trainingTarget.IconColor"/>
+                        <MudText>@trainingTarget.Name</MudText>
+                    </TargetBodyContent>
+                </TrainingSubjectList>
             }
             else
             {

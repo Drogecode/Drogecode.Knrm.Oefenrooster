@@ -16,7 +16,7 @@
                 <AuthorizeView Roles="@AccessesNames.AUTH_action_search">
                     <MudTextField T="string?" Disabled="_busy" Label="@LApp["Search"]" Value="@_search" ValueChanged="@SearchChanged"/>
                 </AuthorizeView>
-                <MudSelect T="string" Disabled="_busy" Label="@L["Type"]" SelectedValues="_selectedActionTypes" SelectedValuesChanged="SelectedActionChanged" Clearable="true" MultiSelection="true">
+                <MudSelect T="string" Disabled="_busy" Label="@LApp["Type"]" SelectedValues="_selectedActionTypes" SelectedValuesChanged="SelectedActionChanged" Clearable="true" MultiSelection="true">
                     @foreach (var type in _actionTypes.OrderBy(x => x))
                     {
                         <MudSelectItem T="string" Value="@type">@type</MudSelectItem>
@@ -85,7 +85,7 @@
                             <MudText Typo="Typo.h6">@L["Miscellaneous"]</MudText>
                             <MudList T="string" ReadOnly="true">
                                 <MudListItem>@L["Boat"]: @context.Item.Boat</MudListItem>
-                                <MudListItem>@L["Type"]: @context.Item.Type</MudListItem>
+                                <MudListItem>@LApp["Type"]: @context.Item.Type</MudListItem>
                                 <MudListItem>@L["CallMadeBy"]: @context.Item.CallMadeBy</MudListItem>
                                 <MudListItem>@L["Causes"]: @context.Item.Causes</MudListItem>
                                 <MudListItem>@L["Implications"]: @context.Item.Implications</MudListItem>

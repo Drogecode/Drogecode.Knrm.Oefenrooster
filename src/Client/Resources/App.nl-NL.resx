@@ -228,4 +228,10 @@
   <data name="Report" xml:space="preserve">
     <value>Rapport</value>
   </data>
+  <data name="Order" xml:space="preserve">
+    <value>Volgorde</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Naam</value>
+  </data>
 </root>

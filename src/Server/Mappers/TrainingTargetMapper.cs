@@ -23,6 +23,18 @@ public static class TrainingTargetMapper
             CreatedBy = trainingTarget.CreatedBy,
         };
     }
+    public static DbTrainingTargetSubjects ToDb(this TrainingSubject trainingTarget)
+    {
+        return new DbTrainingTargetSubjects
+        {
+            Id = trainingTarget.Id,
+            ParentId = trainingTarget.ParentId,
+            Name = trainingTarget.Name,
+            Order = trainingTarget.Order,
+            CreatedOn = trainingTarget.CreatedOn,
+            CreatedBy = trainingTarget.CreatedBy,
+        };
+    }
 
     public static TrainingTarget ToTrainingTarget(this DbTrainingTargets dbTrainingTarget)
     {

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
@@ -11,6 +12,7 @@ public partial class TrainingSubjectList : IDisposable
     [Parameter] public bool TargetSetReadonly { get; set; }
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public SelectionMode SelectionMode { get; set; }
+    [Parameter] public RefreshModel? RefreshModel { get; set; }
     [Parameter] public RenderFragment<TrainingSubject>? SubjectBodyContent { get; set; }
     [Parameter] public RenderFragment<TrainingTarget>? TargetBodyContent { get; set; }
     [Parameter] public RenderFragment<TrainingSubject>? AddSubjectOrTargetContent { get; set; }
@@ -38,6 +40,10 @@ public partial class TrainingSubjectList : IDisposable
     {
         if (firstRender)
         {
+            if (RefreshModel is not null)
+            {
+                RefreshModel.RefreshRequestedAsync += RefreshMeAsync;
+            }
             _trainingSubjects = (await TrainingTargetRepository.AllTrainingTargets(_cls.Token))?.TrainingSubjects;
             StateHasChanged();
         }
@@ -86,8 +92,18 @@ public partial class TrainingSubjectList : IDisposable
         return isVisible;
     }
 
+    private async Task RefreshMeAsync()
+    {
+        _trainingSubjects = (await TrainingTargetRepository.AllTrainingTargets(_cls.Token))?.TrainingSubjects;
+        StateHasChanged();
+    }
+
     public void Dispose()
     {
+        if (RefreshModel is not null)
+        {
+            RefreshModel.RefreshRequestedAsync -= RefreshMeAsync;
+        }
         _cls.Cancel();
     }
 }

@@ -1,13 +1,14 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
+using Drogecode.Knrm.Oefenrooster.ClientGenerator.Client;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 
 public partial class AddTrainingSubjectDialog : IDisposable
 {
-    [Inject, NotNull] private IStringLocalizer<AddGlobalUserDialog>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
+    [Inject, NotNull] private ITrainingTargetClient? TrainingTargetClient { get; set; }
     [CascadingParameter, NotNull] IMudDialogInstance? MudDialog { get; set; }
     [Parameter] public TrainingSubject? TrainingSubject { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }
@@ -34,7 +35,25 @@ public partial class AddTrainingSubjectDialog : IDisposable
 
     private async Task Submit()
     {
-        MudDialog.Close();
+        if (TrainingSubject is null) return;
+        bool result;
+        if (IsNew == true)
+        {
+            result = (await TrainingTargetClient.PutNewSubjectAsync(TrainingSubject, _cls.Token)).Success;
+        }
+        else
+        {
+            result = (await TrainingTargetClient.PatchSubjectAsync(TrainingSubject, _cls.Token)).Success;
+        }
+
+        if (result)
+        {
+            if (Refresh is not null)
+            {
+                await Refresh.CallRequestRefreshAsync();
+            }
+            MudDialog.Close();
+        }
     }
 
     public void Dispose()
