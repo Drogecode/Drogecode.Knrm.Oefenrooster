@@ -4,7 +4,7 @@
 <MudText Typo="Typo.h4">@L["Add and change vacations"]</MudText>
 @if (_holidays is not null)
 {
-    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="()=>{GoToVacationAdd();}">@L["Add new vacation"]</MudButton>
+    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="@(()=>{GoToVacationAdd();})">@L["Add new vacation"]</MudButton>
     <MudTable Items="_holidays.OrderByDescending(x=>x.ValidFrom)">
         <HeaderContent>
             <MudTh>@L["Description"]</MudTh>

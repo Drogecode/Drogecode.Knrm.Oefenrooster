@@ -20,7 +20,6 @@ public sealed partial class Authentication
     [Parameter, SupplyParameterFromQuery] public string? code { get; set; }
     [Parameter, SupplyParameterFromQuery] public string? state { get; set; }
     [Parameter, SupplyParameterFromQuery] public string? session_state { get; set; }
-    private bool _showLogin;
 
     //https://learn.microsoft.com/nl-nl/azure/active-directory/develop/v2-protocols-oidc
     //https://codewithmukesh.com/blog/authentication-in-blazor-webassembly/

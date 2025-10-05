@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Enums;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Enums;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components.Dialogs;
 using Drogecode.Knrm.Oefenrooster.Shared.Enums;
@@ -9,12 +10,12 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 
 public partial class StatisticsUserTable : IDisposable
 {
-    [Inject] private IStringLocalizer<StatisticsTab> L { get; set; } = default!;
-    [Inject] private ReportActionRepository ReportActionRepository { get; set; } = default!;
-    [Inject] private ReportTrainingRepository ReportTrainingRepository { get; set; } = default!;
-    [Inject] private UserRepository UserRepository { get; set; } = default!;
-    [Inject] private FunctionRepository FunctionRepository { get; set; } = default!;
-    [Inject] private IDialogService DialogProvider { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<StatisticsTab>? L { get; set; }
+    [Inject, NotNull] private ReportActionRepository? ReportActionRepository { get; set; }
+    [Inject, NotNull] private ReportTrainingRepository? ReportTrainingRepository { get; set; }
+    [Inject, NotNull] private UserRepository? UserRepository { get; set; }
+    [Inject, NotNull] private FunctionRepository? FunctionRepository { get; set; }
+    [Inject, NotNull] private IDialogService? DialogProvider { get; set; }
     private CancellationTokenSource _cls = new();
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;

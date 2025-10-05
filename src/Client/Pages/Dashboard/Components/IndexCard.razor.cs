@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -8,7 +9,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 
 public sealed partial class IndexCard : IDisposable
 {
-    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
     [Parameter, EditorRequired] public DrogeUser? User { get; set; }
     [Parameter, EditorRequired] public PlannedTraining Training { get; set; } = default!;
     [Parameter, EditorRequired] public List<DrogeFunction>? Functions { get; set; }

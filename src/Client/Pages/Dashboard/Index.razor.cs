@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
@@ -16,19 +17,19 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard;
 
 public sealed partial class Index : IDisposable
 {
-    [Inject] private IStringLocalizer<Index> L { get; set; } = default!;
-    [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
-    [Inject] private IStringLocalizer<DateToString> LDateToString { get; set; } = default!;
-    [Inject] private FunctionRepository FunctionRepository { get; set; } = default!;
-    [Inject] private ScheduleRepository ScheduleRepository { get; set; } = default!;
-    [Inject] private TrainingTypesRepository TrainingTypesRepository { get; set; } = default!;
-    [Inject] private UserRepository UserRepository { get; set; } = default!;
-    [Inject] private VehicleRepository VehicleRepository { get; set; } = default!;
-    [Inject] private DayItemRepository CalendarItemRepository { get; set; } = default!;
-    [Inject] private HolidayRepository _holidayRepository { get; set; } = default!;
-    [Inject] private NavigationManager Navigation { get; set; } = default!;
-    [Inject] private CustomStateProvider AuthenticationStateProvider { get; set; } = default!;
-    [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<Index>? L { get; set; }
+    [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
+    [Inject, NotNull] private IStringLocalizer<DateToString>? LDateToString { get; set; }
+    [Inject, NotNull] private FunctionRepository? FunctionRepository { get; set; }
+    [Inject, NotNull] private ScheduleRepository? ScheduleRepository { get; set; }
+    [Inject, NotNull] private TrainingTypesRepository? TrainingTypesRepository { get; set; }
+    [Inject, NotNull] private UserRepository? UserRepository { get; set; }
+    [Inject, NotNull] private VehicleRepository? VehicleRepository { get; set; }
+    [Inject, NotNull] private DayItemRepository? CalendarItemRepository { get; set; }
+    [Inject, NotNull] private HolidayRepository? HolidayRepository { get; set; }
+    [Inject, NotNull] private NavigationManager? Navigation { get; set; }
+    [Inject, NotNull] private CustomStateProvider? AuthenticationStateProvider { get; set; }
+    [CascadingParameter] DrogeCodeGlobal Global { get; set; } = null!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public string? Tab { get; set; }
     [Parameter] public string? Tab2 { get; set; }
@@ -51,8 +52,18 @@ public sealed partial class Index : IDisposable
     private bool _allHolidays;
     private const int TAKE = 15;
     private int _total = TAKE;
-    private int _skip = 0;
-
+    private int _skip;
+    
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        var oldTab = Tab;
+        await base.SetParametersAsync(parameters);
+        if (oldTab != Tab && string.IsNullOrEmpty(Tab))
+        {
+            SetCorrectTab();
+        }
+    }
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -60,25 +71,7 @@ public sealed partial class Index : IDisposable
             if (!await SetUser())
                 return;
 
-            if (!string.IsNullOrEmpty(Tab))
-            {
-                switch (Tab.ToLower())
-                {
-                    case "planner":
-                        _tabs.ActivatePanel("pn_one");
-                        break;
-                    case "actions":
-                        _tabs.ActivatePanel("pn_two");
-                        break;
-                    case "trainings":
-                        _tabs.ActivatePanel("pn_three");
-                        break;
-                    case "statistics":
-                        _tabs.ActivatePanel("pn_four");
-                        break;
-                }
-                StateHasChanged();
-            }
+            SetCorrectTab();
 
             await ConfigureHub();
 
@@ -88,7 +81,7 @@ public sealed partial class Index : IDisposable
             _functions = await FunctionRepository.GetAllFunctionsAsync(true, _cls.Token);
             _dayItems = (await CalendarItemRepository.GetDayItemDashboardAsync(_userId, true, _cls.Token))?.DayItems;
             if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
-                _futureHolidays = await _holidayRepository.GetAllFuture(_userId, true, 30, _cls.Token);
+                _futureHolidays = await HolidayRepository.GetAllFuture(_userId, true, 30, _cls.Token);
             _pinnedTrainings = (await ScheduleRepository.GetPinnedTrainingsForUser(_userId, true, _cls.Token))?.Trainings;
             _trainings = await ScheduleRepository.GetScheduledTrainingsForUser(_userId, true, TAKE, _skip * TAKE, _cls.Token);
 
@@ -101,6 +94,8 @@ public sealed partial class Index : IDisposable
 
     private void ActiveTabChanged(int arg)
     {
+        if (string.IsNullOrEmpty(Tab) && arg == 0)
+            return;
         switch (arg)
         {
             case 0:
@@ -116,6 +111,33 @@ public sealed partial class Index : IDisposable
                 Navigation.NavigateTo($"dashboard/statistics");
                 break;
         }
+    }
+
+    private void SetCorrectTab()
+    {
+        if (!string.IsNullOrEmpty(Tab))
+        {
+            switch (Tab.ToLower())
+            {
+                case "planner":
+                    _tabs.ActivatePanel("pn_one");
+                    break;
+                case "actions":
+                    _tabs.ActivatePanel("pn_two");
+                    break;
+                case "trainings":
+                    _tabs.ActivatePanel("pn_three");
+                    break;
+                case "statistics":
+                    _tabs.ActivatePanel("pn_four");
+                    break;
+            }
+        }
+        else
+        {
+            _tabs.ActivatePanel("pn_one");
+        }
+        StateHasChanged();
     }
 
     private async Task<bool> SetUser()
@@ -183,7 +205,7 @@ public sealed partial class Index : IDisposable
                             break;
                         case ItemUpdated.FutureHolidays:
                             if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
-                                _futureHolidays = await _holidayRepository.GetAllFuture(_userId, false, 30, _cls.Token);
+                                _futureHolidays = await HolidayRepository.GetAllFuture(_userId, false, 30, _cls.Token);
                             break;
                         default:
                             stateHasChanged = false;
@@ -257,7 +279,7 @@ public sealed partial class Index : IDisposable
     {
         _allHolidays = true;
         if (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_dashboard_holidays))
-            _futureHolidays = await _holidayRepository.GetAllFuture(_userId, false, 365, _cls.Token);
+            _futureHolidays = await HolidayRepository.GetAllFuture(_userId, false, 365, _cls.Token);
     }
 
     public void Dispose()

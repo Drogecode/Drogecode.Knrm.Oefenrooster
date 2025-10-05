@@ -49,7 +49,6 @@ public sealed partial class ScheduleCard : IDisposable
             _refreshModel.RefreshRequestedAsync += RefreshMeAsync;
             Global.TrainingDeletedAsync += TrainingDeleted;
             _showHistory = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_history);
-            DebugHelper.WriteLine($"Loading schedule card, {Planner.Name} {Planner.TrainingTargetSetId is not null} && {await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate)}");
             _showRate = Planner.HasTargets && await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate);
             await SetUser();
             StateHasChanged();

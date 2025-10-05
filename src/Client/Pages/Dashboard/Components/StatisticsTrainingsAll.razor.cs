@@ -1,4 +1,5 @@
-﻿using ApexCharts;
+﻿using System.Diagnostics.CodeAnalysis;
+using ApexCharts;
 using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
@@ -7,8 +8,8 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 
 public sealed partial class StatisticsTrainingsAll : IDisposable
 {
-    [Inject] private IStringLocalizer<StatisticsTab> L { get; set; } = default!;
-    [Inject] private ReportTrainingRepository ReportTrainingRepository { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<StatisticsTab>? L { get; set; }
+    [Inject, NotNull] private ReportTrainingRepository? ReportTrainingRepository { get; set; }
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter] [EditorRequired] public StatisticsTab StatisticsTab { get; set; } = default!;
     [Parameter] [EditorRequired] public IEnumerable<DrogeUser> SelectedUsers { get; set; } = default!;

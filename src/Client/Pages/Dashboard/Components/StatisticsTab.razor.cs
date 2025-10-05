@@ -7,7 +7,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 
 public sealed partial class StatisticsTab
 {
-    [Inject, NotNull] private IStringLocalizer<StatisticsTab>?L { get; set; }
+    [Inject, NotNull] private IStringLocalizer<StatisticsTab>? L { get; set; }
     [Inject, NotNull] private NavigationManager? Navigation { get; set; }
     [Parameter] [EditorRequired] public DrogeUser User { get; set; } = default!;
     [Parameter] [EditorRequired] public List<DrogeUser> Users { get; set; } = default!;
@@ -41,6 +41,7 @@ public sealed partial class StatisticsTab
                         _tabs.ActivatePanel("pn_three");
                         break;
                 }
+
                 StateHasChanged();
             }
 

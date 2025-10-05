@@ -10,11 +10,9 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Externals;
 
 public partial class SharedActions : IDisposable
 {
-    [Inject] private IStringLocalizer<SharedActions> L { get; set; } = default!;
+    [Inject, NotNull] private IStringLocalizer<SharedActions>? L { get; set; }
     [Inject, NotNull] private CustomStateProvider? AuthenticationStateProvider { get; set; }
     [Inject, NotNull] private IAuthenticationClient? AuthenticationClient { get; set; }
-    [Inject, NotNull] private UserRepository? UserRepository { get; set; }
-    [Inject, NotNull] private FunctionRepository? FunctionRepository { get; set; }
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [Parameter] public Guid? Id { get; set; }
     private readonly CancellationTokenSource _cls = new();

@@ -16,7 +16,7 @@ public sealed partial class Vacations : IDisposable
     private RefreshModel _refreshModel = new();
     private bool _updating;
     private bool _success;
-    private string[] _errors = Array.Empty<string>();
+    private string[] _errors = [];
     [AllowNull] private MudForm _form;
 
     protected override async Task OnParametersSetAsync()

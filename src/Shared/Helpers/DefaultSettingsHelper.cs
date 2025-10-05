@@ -1,4 +1,5 @@
-﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Helpers;
+﻿// ReSharper disable InconsistentNaming
+namespace Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 
 public static class DefaultSettingsHelper
 {
@@ -25,7 +26,7 @@ public static class DefaultSettingsHelper
     /// <summary>
     /// From what UPDATE_VERSION we should block the user from using the app.
     /// </summary>
-    public const int BLOCKRER_VERSION = 7; // Only working after v0.5.43 (between 10 and 11)
+    public const int BLOCKER_VERSION = 7; // Only working after v0.5.43 (between 10 and 11)
     // 9 = v0.5.40
     // 8 = v0.5.28
     // 7 = v0.5.18
