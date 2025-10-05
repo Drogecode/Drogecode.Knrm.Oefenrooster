@@ -453,6 +453,7 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             .Include(x => x.RoosterAvailable)
             .ThenInclude(x => x.Training)
             .ThenInclude(x => x.TrainingTargetSet)
+            .Include(x=>x.TrainingTarget)
             .Where(x => x.UserId == userIdResult && x.TrainingDate >= allFrom && x.TrainingDate <= allUntil && x.DeletedOn == null)
             .OrderBy(x => x.TrainingTargetId)
             .ToListAsync(clt);
@@ -463,19 +464,25 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             foreach (var userResult in userResults)
             {
                 if (userResult.RoosterAvailable.Training.TrainingTargetSet?.TrainingTargetIds.Any(x => x == userResult.TrainingTargetId) != true)
-                    continue;
-                var set = response.UserResultForTargets.FirstOrDefault(x => x.TrainingTargetId == userResult.TrainingTargetId);
-                if (set is null)
                 {
-                    set = new UserResultForTarget
+                    continue;
+                }
+                if (userResult.TrainingTarget.Type == TrainingTargetType.Knowledge && userResult.Result <= 1)
+                {
+                    continue;
+                }
+                var responseResult = response.UserResultForTargets.FirstOrDefault(x => x.TrainingTargetId == userResult.TrainingTargetId);
+                if (responseResult is null)
+                {
+                    responseResult = new UserResultForTarget
                     {
                         TrainingTargetId = userResult.TrainingTargetId,
                     };
-                    response.UserResultForTargets.Add(set);
+                    response.UserResultForTargets.Add(responseResult);
                 }
 
-                set.Result = ((set.Result * set.Count) + userResult.Result) / (set.Count + 1);
-                set.Count++;
+                responseResult.Result = ((responseResult.Result * responseResult.Count) + userResult.Result) / (responseResult.Count + 1);
+                responseResult.Count++;
             }
         }
 

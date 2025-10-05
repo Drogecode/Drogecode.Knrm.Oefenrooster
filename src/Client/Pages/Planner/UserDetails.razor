@@ -56,8 +56,8 @@
                 <MudSelect T="RatingPeriod" Value="_ratingPeriod" ValueChanged="RatingPeriodChanged" Label="@L["Rating period"]" disabled="@_loadingRating">
                     <MudSelectItem T="RatingPeriod" Value="RatingPeriod.SelectValue" Disabled>@L[nameof(RatingPeriod.SelectValue)]</MudSelectItem>
                     <MudSelectItem T="RatingPeriod" Value="RatingPeriod.OneMonth">@L[nameof(RatingPeriod.OneMonth)]</MudSelectItem>
-                    <MudSelectItem T="RatingPeriod" Value="RatingPeriod.PastYear">@L[$"{nameof(RatingPeriod.PastYear)} " + "({0})", DateTime.Today.Year - 1]</MudSelectItem>
                     <MudSelectItem T="RatingPeriod" Value="RatingPeriod.CurrentYear">@L[$"{nameof(RatingPeriod.CurrentYear)} " + "({0})", DateTime.Today.Year]</MudSelectItem>
+                    <MudSelectItem T="RatingPeriod" Value="RatingPeriod.PastYear">@L[$"{nameof(RatingPeriod.PastYear)} " + "({0})", DateTime.Today.Year - 1]</MudSelectItem>
                     <MudSelectItem T="RatingPeriod" Value="RatingPeriod.OneYear">@L[nameof(RatingPeriod.OneYear)]</MudSelectItem>
                     <MudSelectItem T="RatingPeriod" Value="RatingPeriod.ThreeYear">@L[nameof(RatingPeriod.ThreeYear)]</MudSelectItem>
                     <MudSelectItem T="RatingPeriod" Value="RatingPeriod.FiveYear">@L[nameof(RatingPeriod.FiveYear)]</MudSelectItem>
@@ -78,12 +78,11 @@
                             <MudText>@trainingTarget.Name</MudText>
                             @if (userResultForTarget?.Count > 0)
                             {
-                                <MudText> - count @userResultForTarget?.Count -</MudText>
+                                <MudText> - @L["count"] @userResultForTarget?.Count -</MudText>
                                 @switch (trainingTarget.Type)
                                 {
                                     case TrainingTargetType.Exercise:
                                         <MudRating Size="@Size.Small" SelectedValue="@(Convert.ToInt32(userResultForTarget!.Result))" ReadOnly/>
-                                        <MudText> - @Math.Round(userResultForTarget.Result, 2)</MudText>
                                         break;
                                     case TrainingTargetType.Knowledge:
                                         <MudCheckBox T="bool" Value="@(userResultForTarget.Result > 0.3)" ReadOnly="@true"/>

@@ -23,8 +23,9 @@
                 {
                     var innerI = i;
                     hasVehicle = true;
-                    <MudItem >
-                        <MudText Typo="_vehicleInfoForThisTraining[innerI].IsActive ? Typo.body1 : Typo.subtitle1" Class='@(_vehicleInfoForThisTraining[innerI].IsActive ? "d-flex" :  "opacity-75 text-base d-flex")'>
+                    <MudItem>
+                        <MudText Typo="_vehicleInfoForThisTraining[innerI].IsActive ? Typo.body1 : Typo.subtitle1"
+                                 Class='@(_vehicleInfoForThisTraining[innerI].IsActive ? "d-flex" : "opacity-75 text-base d-flex")'>
                             @_vehicleInfoForThisTraining[innerI].Name
                             @if (innerI + 1 < _vehicleInfoForThisTraining.Count)
                             {
@@ -59,10 +60,10 @@
                     {
                         <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="py-2">
                             <MudItem Class="max-md:order-2 md:order-1" xs="12" sm="@(_column1 * 2)" md="@_column1">
-                                @if (_authEditOtherUser || ( _authEditSelf && user.UserId.Equals(_currentUserId)))
+                                @if (_authEditOtherUser || (_authEditSelf && user.UserId.Equals(_currentUserId)))
                                 {
                                     <MudButtonGroup Variant="Variant.Text">
-                                        <MudButton Disabled="@(!_canEdit)" StartIcon="@Icons.Material.Filled.KeyboardArrowDown" Variant="Variant.Filled"
+                                        <MudButton Disabled="@(!_canEdit || _isUpdating.Contains(user.UserId))" StartIcon="@Icons.Material.Filled.KeyboardArrowDown" Variant="Variant.Filled"
                                                    OnClick="@(() => CheckChanged(false, user, function.Id))" IconColor="GetColor(user.Availability)" Tag="user"/>
                                         @if (_specialFunctionId is not null)
                                         {
@@ -76,13 +77,13 @@
                                 <MudText Typo="Typo.body1">@user.Name</MudText>
                             </MudItem>
                             <MudItem Class="order-5" xs="12" sm="@(_column3 * 2)" md="@_column3">
-                                <MudText Typo="Typo.body1" @onclick="() => { if (!_canEdit) return; user.ClickedFunction = !user.ClickedFunction; }" Class="cursor-pointer">
+                                <MudText Typo="Typo.body1" @onclick="() => { if (!_canEdit || _isUpdating.Contains(user.UserId)) return; user.ClickedFunction = !user.ClickedFunction; }" Class="cursor-pointer">
                                     @Functions.FirstOrDefault(x => x.Id == user.UserFunctionId)?.Name
                                 </MudText>
                                 @if (user.ClickedFunction)
                                 {
-                                    <MudSelect Disabled="@(!_canEdit)" T="Guid?" Label="@LApp["function"]" Variant="Variant.Text" Value="@user.PlannedFunctionId"
-                                               ValueChanged="(e) => FunctionSelectionChanged(user, e)">
+                                    <MudSelect Disabled="@(!_canEdit || _isUpdating.Contains(user.UserId))" T="Guid?" Label="@LApp["function"]" Variant="Variant.Text" Value="@user.PlannedFunctionId"
+                                               ValueChanged="(e) => FunctionSelectionChanged(user, e)" >
                                         @foreach (var activeFunction in Functions.Where(x => x.Active).OrderBy(x => x.Order))
                                         {
                                             <MudSelectItem T="Guid?" Value="@activeFunction.Id">@activeFunction.Name</MudSelectItem>
@@ -100,7 +101,7 @@
                                             user.VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.IsDefault)!.Id;
                                         }
 
-                                        <MudSelect Disabled="@(!_canEdit)" T="Guid?" Label="@L["vehicle"]" Variant="Variant.Text" Value="@user.VehicleId"
+                                        <MudSelect Disabled="@(!_canEdit || _isUpdating.Contains(user.UserId))" T="Guid?" Label="@L["vehicle"]" Variant="Variant.Text" Value="@user.VehicleId"
                                                    ValueChanged="(e) => VehicleSelectionChanged(user, e)">
                                             @foreach (var vehicle in _vehicleInfoForThisTraining)
                                             {
@@ -156,10 +157,10 @@
                         {
                             <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                                 <MudItem xs="@_column1">
-                                    @if (_authEditOtherUser || ( _authEditSelf && user.UserId.Equals(_currentUserId)))
+                                    @if (_authEditOtherUser || (_authEditSelf && user.UserId.Equals(_currentUserId)))
                                     {
                                         <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Filled" OnClick="@(() => CheckChanged(true, user, function.Id))"
-                                                       Color="GetColor(user.Availability)" Tag="user"/>
+                                                       Color="GetColor(user.Availability)" Tag="user" Disabled="@(!_canEdit || _isUpdating.Contains(user.UserId))"/>
                                     }
                                 </MudItem>
                                 <MudItem xs="@_column2">
@@ -198,10 +199,10 @@
                             {
                                 <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                                     <MudItem xs="@_column1">
-                                        @if (_authEditOtherUser || ( _authEditSelf && user.UserId.Equals(_currentUserId)))
+                                        @if (_authEditOtherUser || (_authEditSelf && user.UserId.Equals(_currentUserId)))
                                         {
                                             <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Filled" OnClick="@(() => CheckChanged(true, user, function.Id))"
-                                                           Color="GetColor(user.Availability)" Tag="user"/>
+                                                           Color="GetColor(user.Availability)" Tag="user" Disabled="@(!_canEdit || _isUpdating.Contains(user.UserId))" />
                                         }
                                     </MudItem>
                                     <MudItem xs="@_column2">
@@ -223,9 +224,10 @@
                                 @if (Planner.PlanUsers.Any(x => x.UserId == user.Id)) continue;
                                 <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                                     <MudItem xs="@_column1">
-                                        @if (_authEditOtherUser || ( _authEditSelf && user.Id.Equals(_currentUserId)))
+                                        @if (_authEditOtherUser || (_authEditSelf && user.Id.Equals(_currentUserId)))
                                         {
-                                            <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Filled" OnClick="@(() => CheckChanged(true, user, function.Id))" Tag="user"/>
+                                            <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Filled" OnClick="@(() => CheckChanged(true, user, function.Id))"
+                                                           Tag="user" Disabled="@(!_canEdit || _isUpdating.Contains(user.Id))" />
                                         }
                                     </MudItem>
                                     <MudItem xs="@_column2">
@@ -250,7 +252,7 @@
                 }
                 else
                 {
-                    <DrogeLoading />
+                    <DrogeLoading/>
                 }
             }
         }

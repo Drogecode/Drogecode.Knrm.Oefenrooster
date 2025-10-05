@@ -180,4 +180,7 @@
   <data name="No rating available for selected period" xml:space="preserve">
     <value>Geen beoordelingen beschikbaar voor geselecteerde periode.</value>
   </data>
+  <data name="count" xml:space="preserve">
+    <value>aantal</value>
+  </data>
 </root>

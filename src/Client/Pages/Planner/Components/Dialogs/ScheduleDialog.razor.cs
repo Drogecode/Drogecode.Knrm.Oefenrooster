@@ -30,6 +30,7 @@ public sealed partial class ScheduleDialog : IDisposable
     private CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
     private List<DrogeVehicle> _vehicleInfoForThisTraining = [];
+    private List<Guid> _isUpdating = [];
     private Guid? _currentUserId;
     private Guid? _specialFunctionId;
     private bool _plannerIsUpdated;
@@ -135,55 +136,76 @@ public sealed partial class ScheduleDialog : IDisposable
 
     private async Task CheckChanged(bool toggled, PlanUser user, Guid functionId)
     {
-        if (!_canEdit) return;
-        user.Assigned = toggled;
-        user.VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.IsDefault)?.Id ?? _vehicleInfoForThisTraining.FirstOrDefault()?.Id;
-        if (toggled)
-            user.PlannedFunctionId = functionId;
-        else
-            user.PlannedFunctionId = user.UserFunctionId;
-        var result = await ScheduleRepository.PatchAssignedUser(Planner.TrainingId, Planner, user, AuditReason.Assigned);
-        if (Planner.TrainingId is null || Planner.TrainingId.Equals(Guid.Empty))
-            Planner.TrainingId = result.IdPatched;
-        MainLayout.ShowSnackbarAssignmentChanged(user, Planner);
-        await Refresh.CallRequestRefreshAsync();
+        if (!_canEdit || _isUpdating.Contains(user.UserId)) return;
+        _isUpdating.Add(user.UserId);
+        StateHasChanged();
+        try
+        {
+            user.Assigned = toggled;
+            user.VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.IsDefault)?.Id ?? _vehicleInfoForThisTraining.FirstOrDefault()?.Id;
+            if (toggled)
+                user.PlannedFunctionId = functionId;
+            else
+                user.PlannedFunctionId = user.UserFunctionId;
+            var result = await ScheduleRepository.PatchAssignedUser(Planner.TrainingId, Planner, user, AuditReason.Assigned);
+            if (Planner.TrainingId is null || Planner.TrainingId.Equals(Guid.Empty))
+                Planner.TrainingId = result.IdPatched;
+            MainLayout.ShowSnackbarAssignmentChanged(user, Planner);
+            await Refresh.CallRequestRefreshAsync();
+        }
+        finally
+        {
+            _isUpdating.Remove(user.UserId);
+            StateHasChanged();
+        }
     }
 
     private async Task CheckChanged(bool toggled, DrogeUser user, Guid functionId)
     {
-        if (!_canEdit) return;
-        // Add to the schedule with a new status to indicate it was not set by the user.
-        var result = await ScheduleRepository.PutAssignedUser(toggled, Planner.TrainingId, functionId, user, Planner);
-        if (Planner.TrainingId is null || Planner.TrainingId.Equals(Guid.Empty))
-            Planner.TrainingId = result.IdPut;
-        var planuser = Planner.PlanUsers.FirstOrDefault(x => x.UserId == user.Id);
-        if (planuser is null)
+        if (!_canEdit || _isUpdating.Contains(user.Id)) return;
+        _isUpdating.Add(user.Id);
+        StateHasChanged();
+        try
         {
-            planuser = new PlanUser
+            // Add to the schedule with a new status to indicate it was not set by the user.
+            var result = await ScheduleRepository.PutAssignedUser(toggled, Planner.TrainingId, functionId, user, Planner);
+            if (Planner.TrainingId is null || Planner.TrainingId.Equals(Guid.Empty))
+                Planner.TrainingId = result.IdPut;
+            var planuser = Planner.PlanUsers.FirstOrDefault(x => x.UserId == user.Id);
+            if (planuser is null)
             {
-                UserId = user.Id,
-                TrainingId = Planner.TrainingId,
-                UserFunctionId = user.UserFunctionId,
-                PlannedFunctionId = functionId,
-                Availability = Availability.None,
-                AvailableId = result.AvailableId,
-                Assigned = toggled,
-                Name = user.Name,
-                VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.IsDefault)?.Id ?? _vehicleInfoForThisTraining.FirstOrDefault()?.Id,
-            };
-            Planner.PlanUsers.Add(planuser);
-        }
-        else
-        {
-            planuser.Assigned = toggled;
-            if (toggled)
-                planuser.PlannedFunctionId = functionId;
+                planuser = new PlanUser
+                {
+                    UserId = user.Id,
+                    TrainingId = Planner.TrainingId,
+                    UserFunctionId = user.UserFunctionId,
+                    PlannedFunctionId = functionId,
+                    Availability = Availability.None,
+                    AvailableId = result.AvailableId,
+                    Assigned = toggled,
+                    Name = user.Name,
+                    VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.IsDefault)?.Id ?? _vehicleInfoForThisTraining.FirstOrDefault()?.Id,
+                };
+                Planner.PlanUsers.Add(planuser);
+            }
             else
-                planuser.PlannedFunctionId = planuser.UserFunctionId;
+            {
+                planuser.Assigned = toggled;
+                if (toggled)
+                    planuser.PlannedFunctionId = functionId;
+                else
+                    planuser.PlannedFunctionId = planuser.UserFunctionId;
 
+            }
+
+            MainLayout.ShowSnackbarAssignmentChanged(planuser, Planner);
+            await Refresh.CallRequestRefreshAsync();
         }
-        MainLayout.ShowSnackbarAssignmentChanged(planuser, Planner);
-        await Refresh.CallRequestRefreshAsync();
+        finally
+        {
+            _isUpdating.Remove(user.Id);
+            StateHasChanged();
+        }
     }
 
     private Color GetColor(Availability? availabilty)
