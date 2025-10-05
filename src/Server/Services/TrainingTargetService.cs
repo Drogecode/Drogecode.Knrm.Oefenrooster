@@ -463,11 +463,9 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             response.UserResultForTargets = [];
             foreach (var userResult in userResults)
             {
-                if (userResult.RoosterAvailable.Training.TrainingTargetSet?.TrainingTargetIds.Any(x => x == userResult.TrainingTargetId) != true)
-                {
-                    continue;
-                }
-                if (userResult.TrainingTarget.Type == TrainingTargetType.Knowledge && userResult.Result <= 1)
+                if (!userResult.RoosterAvailable.Assigned ||
+                    userResult.RoosterAvailable.Training.TrainingTargetSet?.TrainingTargetIds.Any(x => x == userResult.TrainingTargetId) != true ||
+                    userResult.TrainingTarget.Type == TrainingTargetType.Knowledge && userResult.Result <= 1)
                 {
                     continue;
                 }
