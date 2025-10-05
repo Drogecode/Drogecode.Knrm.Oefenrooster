@@ -15,6 +15,7 @@
                     @ChildContent
                 }
                 <MudList T="string" ReadOnly="true">
+                    @{ var userCount = 0; }
                     @foreach (var vehicle in Vehicles.Where(x => Planner.PlanUsers.Any(y => y.VehicleId == x.Id) || (x.IsDefault && Planner.PlanUsers.Any(y => y.VehicleId == null))))
                     {
                         @if (Functions.Any(f => f.Active) && Planner.PlanUsers.Any(x => x.Assigned && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))))
@@ -23,19 +24,25 @@
                                 <MudText Typo="Typo.subtitle2">@vehicle.Name</MudText>
                                 @foreach (var function in Functions.Where(x => x.Active).OrderBy(x => x.Order))
                                 {
-                                    @if (!Planner.PlanUsers.Any(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))))
+                                    var users = Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))).OrderBy(x => x.Name).ToList();
+                                    foreach (var assignedUser in users.Take(_showUsers))
                                     {
-                                        continue;
-                                    }
-
-                                    foreach (var assignedUser in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))).OrderBy(x => x.Name))
-                                    {
+                                        if (userCount >= _showUsers)
+                                        {
+                                            userCount++;
+                                            break;
+                                        }
+                                        userCount++;
                                         <MudListItem T="string" Disabled="!assignedUser.UserId.Equals(_userId)"
                                                      OnClick="@OpenScheduleDialog">@assignedUser.Name@(assignedUser.PlannedFunctionId != assignedUser.UserFunctionId ? $" - {LApp["As"]} {function.Name}" : "")</MudListItem>
                                     }
                                 }
                             </div>
                         }
+                    }
+                    @if (userCount > _showUsers)
+                    {
+                        <MudButton OnClick="@ShowAllParticipants">@L["Show all attendees"]</MudButton>       
                     }
                 </MudList>
             </ChildContent>

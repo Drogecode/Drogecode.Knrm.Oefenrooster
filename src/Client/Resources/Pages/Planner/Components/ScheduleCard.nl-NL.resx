@@ -147,4 +147,7 @@
   <data name="till" xml:space="preserve">
     <value>t/m</value>
   </data>
+  <data name="Show all attendees" xml:space="preserve">
+    <value>Toon alle deelnemers</value>
+  </data>
 </root>

@@ -35,6 +35,7 @@ public sealed partial class ScheduleCard : IDisposable
     [Parameter] public bool ShowPastBody { get; set; } = true;
     private RefreshModel _refreshModel = new();
     private Guid _userId;
+    private int _showUsers = 8;
     private bool _updating;
     private bool _isDeleted;
     private bool _showHistory;
@@ -159,6 +160,12 @@ public sealed partial class ScheduleCard : IDisposable
         {
             _isDeleted = true;
         }
+    }
+
+    private async Task ShowAllParticipants()
+    {
+        _showUsers += 100;
+        await RefreshMeAsync();
     }
 
     private async Task RefreshMeAsync()

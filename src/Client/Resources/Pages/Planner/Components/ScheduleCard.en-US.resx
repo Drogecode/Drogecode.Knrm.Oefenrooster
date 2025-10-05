@@ -147,4 +147,7 @@
   <data name="till" xml:space="preserve">
     <value>till</value>
   </data>
+  <data name="Show all attendees" xml:space="preserve">
+    <value>Show all attendees</value>
+  </data>
 </root>

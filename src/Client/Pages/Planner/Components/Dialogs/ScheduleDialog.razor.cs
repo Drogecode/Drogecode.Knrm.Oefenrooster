@@ -171,10 +171,10 @@ public sealed partial class ScheduleDialog : IDisposable
             var result = await ScheduleRepository.PutAssignedUser(toggled, Planner.TrainingId, functionId, user, Planner);
             if (Planner.TrainingId is null || Planner.TrainingId.Equals(Guid.Empty))
                 Planner.TrainingId = result.IdPut;
-            var planuser = Planner.PlanUsers.FirstOrDefault(x => x.UserId == user.Id);
-            if (planuser is null)
+            var planUser = Planner.PlanUsers.FirstOrDefault(x => x.UserId == user.Id);
+            if (planUser is null)
             {
-                planuser = new PlanUser
+                planUser = new PlanUser
                 {
                     UserId = user.Id,
                     TrainingId = Planner.TrainingId,
@@ -186,19 +186,19 @@ public sealed partial class ScheduleDialog : IDisposable
                     Name = user.Name,
                     VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.IsDefault)?.Id ?? _vehicleInfoForThisTraining.FirstOrDefault()?.Id,
                 };
-                Planner.PlanUsers.Add(planuser);
+                Planner.PlanUsers.Add(planUser);
             }
             else
             {
-                planuser.Assigned = toggled;
+                planUser.Assigned = toggled;
                 if (toggled)
-                    planuser.PlannedFunctionId = functionId;
+                    planUser.PlannedFunctionId = functionId;
                 else
-                    planuser.PlannedFunctionId = planuser.UserFunctionId;
+                    planUser.PlannedFunctionId = planUser.UserFunctionId;
 
             }
 
-            MainLayout.ShowSnackbarAssignmentChanged(planuser, Planner);
+            MainLayout.ShowSnackbarAssignmentChanged(planUser, Planner);
             await Refresh.CallRequestRefreshAsync();
         }
         finally
