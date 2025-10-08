@@ -16,7 +16,22 @@ public sealed partial class StatisticsActionsAll : IDisposable
     [Parameter] [EditorRequired] public bool AllYears { get; set; }
     private CancellationTokenSource _cls = new();
     private List<StatisticsTab.ChartYear>? _data;
-    private readonly ApexChartOptions<StatisticsTab.ChartMonth> _options = new() { Theme = new Theme() { Mode = Mode.Dark } };
+
+    private readonly ApexChartOptions<StatisticsTab.ChartMonth> _options = new()
+    {
+        Theme = new Theme
+        {
+            Mode = Mode.Dark
+        },
+        Chart = new Chart
+        {
+            Zoom = new Zoom
+            {
+                Enabled = false
+            }
+        }
+    };
+
     private IEnumerable<string?>? _selectedPrio;
     private List<string?>? _prios;
     private long _elapsedMilliseconds = -1;
@@ -30,6 +45,7 @@ public sealed partial class StatisticsActionsAll : IDisposable
         {
             Global.DarkLightChangedAsync += DarkModeChanged;
             _options.Theme.Mode = Global.DarkMode ? Mode.Dark : Mode.Light;
+            _options.Chart.Zoom.Enabled = false;
             _prios = (await ReportActionRepository.Distinct(DistinctReport.Prio, _cls.Token))?.Values;
             await UpdateAnalyzeYearChartAll();
         }

@@ -15,7 +15,7 @@
                     @ChildContent
                 }
                 <MudList T="string" ReadOnly="true">
-                    @{ var userCount = 0; }
+                    @{ var userCount = 0; var showShowAll = false; }
                     @foreach (var vehicle in Vehicles.Where(x => Planner.PlanUsers.Any(y => y.VehicleId == x.Id) || (x.IsDefault && Planner.PlanUsers.Any(y => y.VehicleId == null))))
                     {
                         @if (Functions.Any(f => f.Active) && Planner.PlanUsers.Any(x => x.Assigned && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))))
@@ -27,10 +27,11 @@
                                     var users = Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id && (x.VehicleId == vehicle.Id || (vehicle.IsDefault && x.VehicleId == null))).OrderBy(x => x.Name).ToList();
                                     foreach (var assignedUser in users.Take(_showUsers))
                                     {
-                                        if (userCount >= _showUsers)
+                                        if (userCount >= _showUsers && !assignedUser.UserId.Equals(_userId))
                                         {
                                             userCount++;
-                                            break;
+                                            showShowAll = true;
+                                            continue;
                                         }
                                         userCount++;
                                         <MudListItem T="string" Disabled="!assignedUser.UserId.Equals(_userId)"
@@ -40,7 +41,7 @@
                             </div>
                         }
                     }
-                    @if (userCount > _showUsers)
+                    @if (showShowAll)
                     {
                         <MudButton OnClick="@ShowAllParticipants">@L["Show all attendees"]</MudButton>       
                     }

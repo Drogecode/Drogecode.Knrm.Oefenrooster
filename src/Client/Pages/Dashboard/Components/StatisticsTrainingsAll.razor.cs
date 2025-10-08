@@ -16,7 +16,22 @@ public sealed partial class StatisticsTrainingsAll : IDisposable
     [Parameter] [EditorRequired] public bool AllYears { get; set; }
     private CancellationTokenSource _cls = new();
     private List<StatisticsTab.ChartYear>? _data;
-    private readonly ApexChartOptions<StatisticsTab.ChartMonth> _options = new() { Theme = new Theme() { Mode = Mode.Dark } };
+
+    private readonly ApexChartOptions<StatisticsTab.ChartMonth> _options = new()
+    {
+        Theme = new Theme
+        {
+            Mode = Mode.Dark
+        },
+        Chart = new Chart
+        {
+            Zoom = new Zoom
+            {
+                Enabled = false
+            }
+        }
+    };
+
     private string[]? _xAxisLabels;
     private long _elapsedMilliseconds = -1;
     private int _totalCount;
@@ -33,7 +48,7 @@ public sealed partial class StatisticsTrainingsAll : IDisposable
             await UpdateAnalyzeYearChartAll();
         }
     }
-    
+
     private async Task DarkModeChanged(bool newValue)
     {
         var newMode = newValue ? Mode.Dark : Mode.Light;
