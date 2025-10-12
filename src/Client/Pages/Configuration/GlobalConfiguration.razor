@@ -90,11 +90,11 @@
 
 @if (_loaded)
 {
-    <MudSwitch Label="setting training to calendar" Color="Color.Primary" T="bool" Value="@(_settingTrainingToCalendar ?? false)" Disabled="@(_settingTrainingToCalendar is null)"
+    <ConfirmSwitch Label="@L["setting training to calendar"]" Color="Color.Primary" Value="@(_settingTrainingToCalendar ?? false)" Disabled="@(_settingTrainingToCalendar is null)"
                ValueChanged="@(async (isChecked) => await PatchTrainingToCalendar(isChecked))"/>
-    <MudSwitch Label="delay syncing" Color="Color.Primary" T="bool" Value="@(_delaySyncingTrainingToOutlook ?? false)" Disabled="@(_delaySyncingTrainingToOutlook is null)"
+    <ConfirmSwitch Label="@L["delay syncing"]" Color="Color.Primary" Value="@(_delaySyncingTrainingToOutlook ?? false)" Disabled="@(_delaySyncingTrainingToOutlook is null)"
                ValueChanged="@(async (isChecked) => await PatchDelaySyncingTrainingToOutlook(isChecked))"/>
-    <MudSwitch Label="Performance monitoring enabled" Color="Color.Primary" T="bool" Value="@(_performanceEnabled ?? false)" Disabled="@(_performanceEnabled is null)"
+    <MudSwitch Label="@L["Performance monitoring enabled"]" Color="Color.Primary" T="bool" Value="@(_performanceEnabled ?? false)" Disabled="@(_performanceEnabled is null)"
                ValueChanged="@(async (isChecked) => await PatchPerformanceEnabled(isChecked))"/>
     <MudTextField Label="@L["CalenderPrefix"]" T="string" Value="_settingCalenderPrefix" ValueChanged="PatchCalenderPrefix"/>
 
