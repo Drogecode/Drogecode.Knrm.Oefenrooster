@@ -34,22 +34,54 @@
 
                         @if (OnClickRate.HasDelegate)
                         {
-                            <MudIconButton Class="DrogeCode-card-header-rate" Icon="@Icons.Material.Filled.RateReview" Color="Color.Default" OnClick="async () => await OnClickRate.InvokeAsync()"/>
+                            <MudIconButton Class="DrogeCode-card-header-rate" Icon="@Icons.Material.Filled.RateReview" Color="Color.Default"
+                                           OnClick="@(async () => await OnClickRate.InvokeAsync())"/>
                         }
 
                         @if (OnClickHistory.HasDelegate)
                         {
-                            <MudIconButton Class="DrogeCode-card-header-history" Icon="@Icons.Material.Filled.History" Color="Color.Default" OnClick="async () => await OnClickHistory.InvokeAsync()"/>
+                            <MudIconButton Class="DrogeCode-card-header-history" Icon="@Icons.Material.Filled.History" Color="Color.Default"
+                                           OnClick="@(async () => await OnClickHistory.InvokeAsync())"/>
                         }
 
                         @if (OnClickSettings.HasDelegate)
                         {
-                            <MudIconButton Class="DrogeCode-card-header-settings" Icon="@Icons.Material.Filled.Settings" Color="Color.Default" OnClick="async () => await OnClickSettings.InvokeAsync()"/>
+                            <MudIconButton Class="DrogeCode-card-header-settings" Icon="@Icons.Material.Filled.Settings" Color="Color.Default"
+                                           OnClick="@(async () => await OnClickSettings.InvokeAsync())"/>
+                        }
+
+                        @if (OnClickSchedule.HasDelegate)
+                        {
+                            <MudIconButton Class="DrogeCode-card-header-schedule" Icon="@Icons.Material.Filled.EditCalendar" Color="Color.Default"
+                                           OnClick="@(async () => await OnClickSchedule.InvokeAsync())"/>
                         }
                     }
                     else if (_iconCount > 1)
                     {
-                        <MudIconButton Class="DrogeCode-card-header-more-icons" Icon="@Icons.Material.Filled.MoreVert" Color="Color.Default" OnClick="() => _showAllIcons = true"/>
+                        <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" AnchorOrigin="@Origin.BottomRight" TransformOrigin="@Origin.TopRight"
+                                 Class="DrogeCode-card-header-more-icons" AriaLabel="Base card dropdown" data-testid="top-menu-settings">
+
+                            @if (OnClickSettings.HasDelegate)
+                            {
+                                <MudMenuItem Class="DrogeCode-card-header-settings" Icon="@Icons.Material.Filled.Settings" Color="Color.Default"
+                                             OnClick="@(async () => await OnClickSettings.InvokeAsync())">@L["Settings"]</MudMenuItem>
+                            }
+                            @if (OnClickSchedule.HasDelegate)
+                            {
+                                <MudMenuItem Class="DrogeCode-card-header-schedule" Icon="@Icons.Material.Filled.EditCalendar" Color="Color.Default"
+                                             OnClick="@(async () => await OnClickSchedule.InvokeAsync())">@L["Schedule"]</MudMenuItem>
+                            }
+                            @if (OnClickRate.HasDelegate)
+                            {
+                                <MudMenuItem Class="DrogeCode-card-header-rate" Icon="@Icons.Material.Filled.RateReview" Color="Color.Default"
+                                             OnClick="@(async () => await OnClickRate.InvokeAsync())">@L["Rate"]</MudMenuItem>
+                            }
+                            @if (OnClickHistory.HasDelegate)
+                            {
+                                <MudMenuItem MudIconButton Class="DrogeCode-card-header-history" Icon="@Icons.Material.Filled.History" Color="Color.Default"
+                                             OnClick="@(async () => await OnClickHistory.InvokeAsync())">@L["History"]</MudMenuItem>
+                            }
+                        </MudMenu>
                     }
                 </CardHeaderActions>
             </MudCardHeader>

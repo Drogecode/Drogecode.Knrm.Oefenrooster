@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components.Dialogs;
 using Drogecode.Knrm.Oefenrooster.Client.Services;
 using Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
@@ -34,12 +35,14 @@ public sealed partial class ScheduleCard : IDisposable
     [Parameter] public bool ShowDayOfWeek { get; set; }
     [Parameter] public bool ShowPastBody { get; set; } = true;
     private RefreshModel _refreshModel = new();
+    private ClaimsPrincipal? User;
     private Guid _userId;
     private int _showUsers = 8;
     private bool _updating;
     private bool _isDeleted;
     private bool _showHistory;
     private bool _showRate;
+    private bool _showScheduleButton;
     private bool _showPastBody = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -51,6 +54,9 @@ public sealed partial class ScheduleCard : IDisposable
             _showHistory = await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_history);
             _showRate = Planner.HasTargets && await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_target_user_rate);
             await SetUser();
+            var canEdit = PlannerHelper.CanEdit(Planner.DateEnd, User);
+            _showScheduleButton = canEdit.CanEdit && (await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_self) ||
+                                                      await UserHelper.InRole(AuthenticationState, AccessesNames.AUTH_scheduler_other));
             StateHasChanged();
         }
     }
@@ -59,23 +65,26 @@ public sealed partial class ScheduleCard : IDisposable
     {
         _showPastBody = ShowPastBody;
     }
-    
-    
 
     private async Task<bool> SetUser()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var userClaims = authState.User;
-        if (userClaims?.Identity?.IsAuthenticated ?? false)
+        User = authState.User;
+        if (User?.Identity?.IsAuthenticated ?? false)
         {
-            if (!Guid.TryParse(userClaims.Identities.FirstOrDefault()!.Claims.FirstOrDefault(x => x.Type.Equals("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value, out _userId))
+            if (!Guid.TryParse(User.Identities.FirstOrDefault()!.Claims.FirstOrDefault(x => x.Type.Equals("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value, out _userId))
+            {
+                DebugHelper.WriteLine("Failed to get user id from claims");
                 return false;
+            }
         }
         else
         {
             // Should never happen.
+            DebugHelper.WriteLine("User is not authenticated");
             return false;
         }
+
         return true;
     }
 

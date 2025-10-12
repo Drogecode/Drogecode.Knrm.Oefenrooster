@@ -1,11 +1,13 @@
-﻿using Drogecode.Knrm.Oefenrooster.Shared.Enums;
+﻿using System.Security.Claims;
+using Drogecode.Knrm.Oefenrooster.Client.Models.Planner;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
+using Drogecode.Knrm.Oefenrooster.Shared.Enums;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Helpers;
 
 public static class PlannerHelper
 {
-
     public static Color ColorAvailabilty(Availability? availabilty)
     {
         switch (availabilty)
@@ -60,9 +62,26 @@ public static class PlannerHelper
                 findMonth = findMonth.AddDays(1);
                 continue;
             }
+
             forMonth = findMonth;
         }
 
         return forMonth;
+    }
+
+    public static CanEditModel CanEdit(DateTime dateEnd, ClaimsPrincipal? user)
+    {
+        if (dateEnd >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
+        {
+            return new CanEditModel { CanEdit = true, ShowPadlock = false };
+        }
+
+        if (user is not null)
+        {
+            var canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
+            return new CanEditModel { CanEdit = canEdit, ShowPadlock = true };
+        }
+
+        return new CanEditModel { CanEdit = false, ShowPadlock = false };
     }
 }

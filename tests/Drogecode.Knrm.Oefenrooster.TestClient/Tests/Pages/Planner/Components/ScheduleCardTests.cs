@@ -11,9 +11,10 @@ public class ScheduleCardTests : BlazorTestBase
 {
     [Theory]
     [AutoFakeItEasyData]
-    public void HasNameTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3, [Frozen] IStringLocalizer<ReadMoreChip> L4, [Frozen] IStringLocalizer<ReadReportChip> L5)
+    public void HasNameTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3, [Frozen] IStringLocalizer<ReadMoreChip> L4, 
+        [Frozen] IStringLocalizer<ReadReportChip> L5, [Frozen] IStringLocalizer<CalendarBaseCard> L6)
     {
-        Localize(L1, L2, L3, L4, L5);
+        Localize(L1, L2, L3, L4, L5, L6);
 
         var training = new PlannedTraining
         {
@@ -29,9 +30,10 @@ public class ScheduleCardTests : BlazorTestBase
     
     [Theory]
     [AutoFakeItEasyData]
-    public void HasInformationTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3, [Frozen] IStringLocalizer<ReadMoreChip> L4, [Frozen] IStringLocalizer<ReadReportChip> L5)
+    public void HasInformationTest([Frozen] IStringLocalizer<App> L1, [Frozen] IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3, [Frozen] IStringLocalizer<ReadMoreChip> L4, 
+        [Frozen] IStringLocalizer<ReadReportChip> L5, [Frozen] IStringLocalizer<CalendarBaseCard> L6)
     {
-        Localize(L1, L2, L3, L4, L5);
+        Localize(L1, L2, L3, L4, L5, L6);
 
         var training = new PlannedTraining
         {
@@ -48,9 +50,10 @@ public class ScheduleCardTests : BlazorTestBase
 
     [Theory]
     [AutoFakeItEasyData]
-    public void ListTest([Frozen] IStringLocalizer<App> L1, IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3, [Frozen] IStringLocalizer<ReadMoreChip> L4, [Frozen] IStringLocalizer<ReadReportChip> L5)
+    public void ListTest([Frozen] IStringLocalizer<App> L1, IStringLocalizer<ScheduleCard> L2, [Frozen] IStringLocalizer<DateToString> L3, [Frozen] IStringLocalizer<ReadMoreChip> L4, 
+        [Frozen] IStringLocalizer<ReadReportChip> L5, [Frozen] IStringLocalizer<CalendarBaseCard> L6, [Frozen] IStringLocalizer<ReadMoreChip> L7)
     {
-        Localize(L1, L2, L3, L4, L5);
+        Localize(L1, L2, L3, L4, L5, L6);
 
         var cut = RenderComponent<ScheduleCard>(parameter => parameter
         .Add(p => p.Planner, Training)
@@ -69,16 +72,21 @@ public class ScheduleCardTests : BlazorTestBase
         cut.Markup.Should().NotContain("Vehicle 3 not selected");
     }
 
-    private void Localize(IStringLocalizer<App> L1, IStringLocalizer<ScheduleCard> L2, IStringLocalizer<DateToString> L3, IStringLocalizer<ReadMoreChip> L4, IStringLocalizer<ReadReportChip> L5)
+    private void Localize(IStringLocalizer<App> L1, IStringLocalizer<ScheduleCard> L2, IStringLocalizer<DateToString> L3, IStringLocalizer<ReadMoreChip> L4, 
+        IStringLocalizer<ReadReportChip> L5, IStringLocalizer<CalendarBaseCard> L6)
     {
         Services.AddSingleton(L1);
         Services.AddSingleton(L2);
         Services.AddSingleton(L3);
         Services.AddSingleton(L4);
         Services.AddSingleton(L5);
+        Services.AddSingleton(L6);
 
         A.CallTo(() => L1["till"]).Returns(new LocalizedString("till", "till with some more text to ensure it is replaced"));
         LocalizeA(L2, "Read more");
         LocalizeA(L4, "Information");
+        LocalizeA(L6, "Settings");
+        LocalizeA(L6, "History");
+        LocalizeA(L6, "Rate");
     }
 }

@@ -35,6 +35,10 @@ public abstract class BlazorTestBase : TestContext
             options.SnackbarConfiguration.ShowTransitionDuration = 0;
             options.SnackbarConfiguration.HideTransitionDuration = 0;
             options.PopoverOptions.CheckForPopoverProvider = false;
+            options.SnackbarConfiguration.PreventDuplicates = true;
+            options.SnackbarConfiguration.NewestOnTop = false;
+            options.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
+            options.PopoverOptions.ThrowOnDuplicateProvider = false;    
         });
         MockHttp = Services.AddMockHttpClient();
         Services.AddOptions();

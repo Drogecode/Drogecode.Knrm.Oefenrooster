@@ -73,6 +73,10 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>AddTrainingTargetDialog.nl-NL.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\Components\DrogeCode\CalendarBaseCard.nl-NL.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>CalendarBaseCard.nl-NL.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -95,6 +99,11 @@
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>AddTrainingTargetDialog.nl-NL.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Components\DrogeCode\CalendarBaseCard.nl-NL.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>CalendarBaseCard.nl-NL.resx</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 	

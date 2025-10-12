@@ -40,7 +40,6 @@ public class TrainingTypeDialogTests : BlazorTestBase
 
     private async Task<IRenderedComponent<MudDialogProvider>> RenderTestDialogComponent(string name)
     {
-        var today = DateTime.Today;
         var planner = new PlannerTrainingType
         {
             Name = name,

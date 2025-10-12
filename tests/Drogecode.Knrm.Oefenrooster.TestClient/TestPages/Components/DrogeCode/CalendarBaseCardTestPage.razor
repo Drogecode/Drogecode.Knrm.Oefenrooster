@@ -1,0 +1,31 @@
+﻿@using Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode
+@using Drogecode.Knrm.Oefenrooster.Client.Models
+@using Drogecode.Knrm.Oefenrooster.Shared.Enums
+@using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract
+@using MudBlazor
+<MudPopoverProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+<CalendarBaseCard Training="@Training" ChildContent="ChildContent" ChipContent="ChipContent" OnClickCallback="OnClickCallback" OnClickSettings="OnClickSettings" OnClickHistory="OnClickHistory"
+                  OnClickRate="OnClickRate" SetBy="SetBy" Refresh="Refresh" ContentClass="ContentClass" Width="@Width" MinWidth="@MinWidth" MaxWidth="@MaxWidth" replaceEmptyName="@ReplaceEmptyName"
+                  ShowDate="@ShowDate" ShowDayOfWeek="@ShowDayOfWeek" MoreMessage="moreMessage"/>
+
+@code {
+    [Parameter, EditorRequired] public TrainingAdvance Training { get; set; } = default!;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? ChipContent { get; set; }
+    [Parameter] public EventCallback OnClickCallback { get; set; }
+    [Parameter] public EventCallback OnClickSettings { get; set; }
+    [Parameter] public EventCallback OnClickHistory { get; set; }
+    [Parameter] public EventCallback OnClickRate { get; set; }
+    [Parameter] public AvailabilitySetBy SetBy { get; set; }
+    [Parameter] public RefreshModel? Refresh { get; set; }
+    [Parameter] public string? ContentClass { get; set; }
+    [Parameter] public string Width { get; set; } = "200px";
+    [Parameter] public string? MinWidth { get; set; }
+    [Parameter] public string? MaxWidth { get; set; }
+    [Parameter] public bool ReplaceEmptyName { get; set; }
+    [Parameter] public bool ShowDate { get; set; } = true;
+    [Parameter] public bool ShowDayOfWeek { get; set; }
+    [Parameter] public string MoreMessage { get; set; } = "Show more";
+}

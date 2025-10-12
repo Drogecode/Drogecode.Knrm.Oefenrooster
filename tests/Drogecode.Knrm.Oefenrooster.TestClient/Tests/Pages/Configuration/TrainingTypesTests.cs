@@ -27,7 +27,6 @@ public class TrainingTypesTests : BlazorTestBase
     {
         Localize(L1, L2, L3);
 
-        var today = DateTime.Today;
         var cut = RenderComponent<TrainingTypesTestPage>();
         cut.WaitForElement($"#edit-trainingtype-{MockTrainingTypesClient.DEFAULT_PLANNER_TYPE}", TimeSpan.FromSeconds(2));
         cut.Find($"#edit-trainingtype-{MockTrainingTypesClient.DEFAULT_PLANNER_TYPE}").Click();

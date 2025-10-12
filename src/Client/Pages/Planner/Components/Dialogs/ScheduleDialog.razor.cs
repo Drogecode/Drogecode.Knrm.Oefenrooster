@@ -48,6 +48,7 @@ public sealed partial class ScheduleDialog : IDisposable
     private int _column5 = 1;
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -103,16 +104,10 @@ public sealed partial class ScheduleDialog : IDisposable
             }
             else
                 _showWoeps = true;
-
-            if (Planner.DateEnd >= DateTime.UtcNow.AddDays(AccessesSettings.AUTH_scheduler_edit_past_days))
-            {
-                _canEdit = true;
-            }
-            else if (user is not null)
-            {
-                _showPadlock = true;
-                _canEdit = user.IsInRole(AccessesNames.AUTH_scheduler_edit_past);
-            }
+            
+            var canEditModel = PlannerHelper.CanEdit(Planner.DateEnd, user);
+            _canEdit = canEditModel.CanEdit;
+            _showPadlock = canEditModel.ShowPadlock;
 
             if (!_canEdit)
             {
@@ -195,7 +190,6 @@ public sealed partial class ScheduleDialog : IDisposable
                     planUser.PlannedFunctionId = functionId;
                 else
                     planUser.PlannedFunctionId = planUser.UserFunctionId;
-
             }
 
             MainLayout.ShowSnackbarAssignmentChanged(planUser, Planner);

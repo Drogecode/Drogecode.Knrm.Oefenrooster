@@ -9,6 +9,7 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 
 public sealed partial class CalendarBaseCard : IDisposable
 {
+    [Inject, NotNull] private IStringLocalizer<CalendarBaseCard>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
     [Inject, NotNull] private IStringLocalizer<DateToString>? LDateToString { get; set; }
     [Inject, NotNull] private CustomerSettingRepository? CustomerSettingRepository { get; set; }
@@ -19,6 +20,7 @@ public sealed partial class CalendarBaseCard : IDisposable
     [Parameter] public EventCallback OnClickSettings { get; set; }
     [Parameter] public EventCallback OnClickHistory { get; set; }
     [Parameter] public EventCallback OnClickRate { get; set; }
+    [Parameter] public EventCallback OnClickSchedule { get; set; }
     [Parameter] public AvailabilitySetBy SetBy { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public string? ContentClass { get; set; }
@@ -67,6 +69,8 @@ public sealed partial class CalendarBaseCard : IDisposable
         if (OnClickHistory.HasDelegate)
             _iconCount++;
         if (OnClickSettings.HasDelegate)
+            _iconCount++;
+        if (OnClickSchedule.HasDelegate)
             _iconCount++;
     }
     
