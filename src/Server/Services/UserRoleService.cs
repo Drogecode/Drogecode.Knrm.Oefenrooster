@@ -48,12 +48,15 @@ public class UserRoleService : DrogeService, IUserRoleService
             if (role is null) continue;
             await _linkUserRoleService.LinkUserToRoleAsync(userId, role.ToDrogeUserRole(), true, true, true, clt);
             linkedRoles.Remove(role.Id);
+            Logger.LogInformation("Removed role `{role}` from user `{userId}`", role.Name, userId);
         }
 
         foreach (var linkedRole in linkedRoles)
         {
             var role = roles.FirstOrDefault(x => x.Id == linkedRole);
+            if (role is null) continue;
             await _linkUserRoleService.LinkUserToRoleAsync(userId, role.ToDrogeUserRole(), false, false, true, clt);
+            Logger.LogInformation("Linked role `{role}` to user `{userId}`", role.Name, userId);       
         }
 
         return await GetAccessForUserByUserId(userId, customerId, clt); // including access from roles linked by user.

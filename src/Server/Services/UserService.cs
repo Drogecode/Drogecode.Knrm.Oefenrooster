@@ -94,20 +94,22 @@ public class UserService : DrogeService, IUserService
             userObj = await Database.Users.FirstOrDefaultAsync(u => u.CustomerId == customerId && u.ExternalId == externalId, cancellationToken: clt);
         else
             userObj = await Database.Users.FirstOrDefaultAsync(u => u.CustomerId == customerId && u.Id == userId, cancellationToken: clt);
+        
         if (userName.Length > DefaultSettingsHelper.MAX_LENGTH_USER_NAME)
         {
-            Logger.LogWarning("User name {UserName} is too long, truncating to {MaxLength}", userName, DefaultSettingsHelper.MAX_LENGTH_USER_NAME);
+            Logger.LogWarning("User name `{UserName}` is too long, truncating to `{MaxLength}`", userName, DefaultSettingsHelper.MAX_LENGTH_USER_NAME);
             userName = userName[..DefaultSettingsHelper.MAX_LENGTH_USER_NAME];
         }
 
         if (userEmail.Length > DefaultSettingsHelper.MAX_LENGTH_USER_EMAIL)
         {
-            Logger.LogWarning("User email {userEmail} is too long, truncating to {MaxLength}", userEmail, DefaultSettingsHelper.MAX_LENGTH_USER_EMAIL);
+            Logger.LogWarning("User email `{userEmail}` is too long, truncating to `{MaxLength}`", userEmail, DefaultSettingsHelper.MAX_LENGTH_USER_EMAIL);
             userEmail = userEmail[..DefaultSettingsHelper.MAX_LENGTH_USER_EMAIL];
         }
 
         if (userObj is null)
         {
+            Logger.LogInformation("Creating new user `{UserName}` `{UserEmail}` for userId `{userId}` or externalId `{externalId}`", userName, userEmail, userId, externalId);
             isNew = true;
             userId ??= Guid.NewGuid();
             var newUser = new DbUsers
@@ -141,11 +143,12 @@ public class UserService : DrogeService, IUserService
                 var defaultFunction = await Database.UserFunctions.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.IsDefault, cancellationToken: clt);
                 if (defaultFunction is not null)
                 {
+                    Logger.LogInformation("Setting default function for user `{userId}` to `{UserFunctionId}`", userObj.Id, defaultFunction.Id);
                     userObj.UserFunctionId = defaultFunction.Id;
                 }
                 else
                 {
-                    Logger.LogWarning("No default UserFunction found for {CustomerId}", customerId);
+                    Logger.LogWarning("No default UserFunction found for `{CustomerId}`", customerId);
                 }
             }
 

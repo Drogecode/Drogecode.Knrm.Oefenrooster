@@ -466,13 +466,13 @@ public class AuthenticationController : DrogeController
         var customers = await _customerService.GetByTenantId(tenantId, clt);
         if (customers is null || customers.Count == 0)
         {
-            Logger.LogWarning("Failed to get or set customers by external id");
+            Logger.LogWarning("Failed to get or set customers by external id for tenantId `{tenantId}`", tenantId);
             throw new UnauthorizedAccessException();
         }
 
         if (claims is null)
         {
-            Logger.LogWarning("No claims while authorization.");
+            Logger.LogWarning("No claims while authorization for tenantId `{tenantId}`", tenantId);
             throw new UnauthorizedAccessException();
         }
 
@@ -489,7 +489,7 @@ public class AuthenticationController : DrogeController
             }
         }
 
-        Logger.LogWarning("Failed to link user to customer");
+        Logger.LogWarning("Failed to link user to customer for tenantId `{tenantId}`", tenantId);
         throw new UnauthorizedAccessException();
     }
 

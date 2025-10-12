@@ -71,7 +71,7 @@
 </AuthorizeView>
 <AuthorizeView Roles="@AccessesNames.AUTH_super_user">
     <AuthorizeView Roles="@nameof(Licenses.L_SharePointReports)" Context="inner">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="KillDb" Disabled="_clickedSyncHistorical">Kill db</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@KillDb" Disabled="_clickedSyncHistorical">Kill db</MudButton>
         @switch (_killDb?.Success)
         {
             case true:
