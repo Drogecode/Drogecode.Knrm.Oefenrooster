@@ -46,6 +46,12 @@ ExternalId TEXT)
 where u."Name" = p."name" and u."Name" = ne."name";
 
 
+-- Only when testing to break link with real calendar events. (different instance when moving but still important)
+update "RoosterAvailable" set "CalendarEventId" = null
+delete from "UserPreComEvent"
+delete from "UserSettings"
+
+
 SELECT dblink_disconnect('otherdb');
 
 select * from "Users" u where u."DeletedBy" IS null

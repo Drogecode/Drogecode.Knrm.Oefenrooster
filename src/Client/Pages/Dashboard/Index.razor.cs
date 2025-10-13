@@ -60,7 +60,7 @@ public sealed partial class Index : IDisposable
         await base.SetParametersAsync(parameters);
         if (oldTab != Tab && string.IsNullOrEmpty(Tab))
         {
-            SetCorrectTab();
+          await  SetCorrectTab();
         }
     }
     
@@ -71,8 +71,7 @@ public sealed partial class Index : IDisposable
             if (!await SetUser())
                 return;
 
-            SetCorrectTab();
-
+            await SetCorrectTab();
             await ConfigureHub();
 
             _users = await UserRepository.GetAllUsersAsync(false, false, true, _cls.Token);
@@ -113,8 +112,10 @@ public sealed partial class Index : IDisposable
         }
     }
 
-    private void SetCorrectTab()
+    private async Task SetCorrectTab()
     {
+        if (!await UserHelper.InRole(AuthenticationState, nameof(Licenses.L_SharePointReports)))
+            return;
         if (!string.IsNullOrEmpty(Tab))
         {
             switch (Tab.ToLower())

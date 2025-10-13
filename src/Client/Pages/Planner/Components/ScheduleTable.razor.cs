@@ -56,15 +56,22 @@ public sealed partial class ScheduleTable : IDisposable
 
     private async Task SetMonth(DateTime? dateTime)
     {
-        if (dateTime == null) return;
-        _month = dateTime;
-        DateRange dateRange = new DateRange
+        try
         {
-            Start = new DateTime(dateTime.Value.Year, dateTime.Value.Month, 1),
-            End = new DateTime(dateTime.Value.Year, dateTime.Value.Month, DateTime.DaysInMonth(dateTime.Value.Year, dateTime.Value.Month))
-        };
-        await SetCalenderForMonth(dateRange);
-        await SessionExpireService.SetSelectedMonth(dateTime, _cls.Token);
+            if (dateTime == null) return;
+            _month = dateTime;
+            var dateRange = new DateRange
+            {
+                Start = new DateTime(dateTime.Value.Year, dateTime.Value.Month, 1),
+                End = new DateTime(dateTime.Value.Year, dateTime.Value.Month, DateTime.DaysInMonth(dateTime.Value.Year, dateTime.Value.Month))
+            };
+            await SetCalenderForMonth(dateRange);
+            await SessionExpireService.SetSelectedMonth(dateTime, _cls.Token);
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.WriteLine(ex);
+        }
     }
 
     private async Task SetCalenderForMonth(DateRange dateRange)
