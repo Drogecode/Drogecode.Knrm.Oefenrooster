@@ -197,6 +197,7 @@ public class UserService : DrogeService, IUserService
             oldVersion.UserFunctionId = user.UserFunctionId;
             oldVersion.SyncedFromSharePoint = user.SyncedFromSharePoint;
             oldVersion.RoleFromSharePoint = user.RoleFromSharePoint;
+            oldVersion.ExternalId = user.ExternalId;
             oldVersion.Nr = user.Nr;
             oldVersion.Name = user.Name.Trim();
             Database.Users.Update(oldVersion);

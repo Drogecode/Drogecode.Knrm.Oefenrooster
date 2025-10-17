@@ -35,13 +35,56 @@
                 <MudText Typo="Typo.body1">@L["Target: {0}", _userFunction.TrainingTarget]</MudText>
                 <MudPaper>
                     <MudGrid Spacing="2" Justify="Justify.FlexStart">
+                        @{
+                            UserMonthInfo? previousMonth = null;
+                            var breakPoint = 0;
+                        }
                         @foreach (var userMonthInfo in _userMonthInfo.UserMonthInfo.OrderByDescending(x => x.Year).ThenByDescending(x => x.Month))
                         {
+                            while (previousMonth is not null && (previousMonth.Year != userMonthInfo.Year || previousMonth.Month != userMonthInfo.Month))
+                            {
+                                if (breakPoint > 1000) 
+                                    break;
+                                breakPoint++;
+                                var inLoop = (UserMonthInfo)previousMonth.Clone();
+                                DebugHelper.WriteLine($"in loop: {inLoop.Year} {inLoop.Month} - {inLoop.All} {inLoop.Valid}");
+                                <MudItem xs="12" sm="6" md="4" lg="3">
+                                    <MudText Style=@(inLoop.Valid < _userFunction.TrainingTarget ? "color: var(--mud-palette-error)" : "")>
+                                        @($"{new DateTime(inLoop.Year, inLoop.Month, 1).ToString(DateTime.Now.Year == inLoop.Year ? "MMMM" : "yyyy MMMM")} - {L["For target"]}: {inLoop.Valid} {L["Total"]}: {inLoop.All}")
+                                    </MudText>
+                                </MudItem>
+                                if (previousMonth.Month != 1)
+                                {
+                                    previousMonth.Month--;
+                                }
+                                else
+                                {
+                                    previousMonth.Year--;
+                                    previousMonth.Month = 12;
+                                }
+                            }
+
                             <MudItem xs="12" sm="6" md="4" lg="3">
-                                <MudText Style=@(userMonthInfo.Valid < _userFunction.TrainingTarget ? "color: var(--mud-palette-error)" : "")>
+                                <MudText Style=@(userMonthInfo.Valid < _userFunction.TrainingTarget ? "color: var(--mud-palette-error-lighten)" : "")>
                                     @($"{new DateTime(userMonthInfo.Year, userMonthInfo.Month, 1).ToString(DateTime.Now.Year == userMonthInfo.Year ? "MMMM" : "yyyy MMMM")} - {L["For target"]}: {userMonthInfo.Valid} {L["Total"]}: {userMonthInfo.All}")
                                 </MudText>
                             </MudItem>
+                            {
+                                previousMonth = (UserMonthInfo)userMonthInfo.Clone();
+                                var newLoop = (UserMonthInfo)previousMonth.Clone();
+                                DebugHelper.WriteLine($"new loop: {newLoop.Year} {newLoop.Month} - {newLoop.All} {newLoop.Valid}");
+                                previousMonth.All = 0;
+                                previousMonth.Valid = 0;
+                                if (previousMonth.Month != 1)
+                                {
+                                    previousMonth.Month--;
+                                }
+                                else
+                                {
+                                    previousMonth.Year--;
+                                    previousMonth.Month = 12;
+                                }
+                            }
                         }
                     </MudGrid>
                 </MudPaper>
