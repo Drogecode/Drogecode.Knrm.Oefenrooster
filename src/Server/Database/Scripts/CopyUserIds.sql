@@ -52,7 +52,7 @@ where u."Name" = p."name" and u."Name" = ne."name" and u."DeletedOn" is null and
 update "Customers" set "TenantId" = '0237f806-c2b0-417b-9d23-eaec1e553223' where "TenantId" = 'd9754755-b054-4a9c-a77f-da42a4009365';
 update "Customers" set "GroupId" = 'd52c4bba-9ba6-465a-9218-ed274f1e8f54' where "GroupId" = '1639c514-7c30-42d2-a384-795313b4eae1';
 update "UserRoles" set "ExternalId" = 'd52c4bba-9ba6-465a-9218-ed274f1e8f54' where "ExternalId" = '1639c514-7c30-42d2-a384-795313b4eae1';
-update "LinkUserRoles" set "SetExternal" = false;
+update "LinkUserRoles" set "SetExternal" = false where "SetExternal" = true;
 
 
 -- Only when testing to break link with real calendar events. (different instance when moving but still important)
