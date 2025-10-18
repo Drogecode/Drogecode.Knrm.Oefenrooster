@@ -70,6 +70,24 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Resources.Components.DrogeCode {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to uit.
+        /// </summary>
+        internal static string disabled {
+            get {
+                return ResourceManager.GetString("disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to aan.
+        /// </summary>
+        internal static string enabled {
+            get {
+                return ResourceManager.GetString("enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Nieuwe waarde: {0}.
         /// </summary>
         internal static string New_value__0_ {

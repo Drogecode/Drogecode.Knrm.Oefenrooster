@@ -18,7 +18,7 @@ public partial class ConfirmSwitch : ComponentBase
         var parameters = new DialogParameters<ConfirmDialog>
         {
             { x => x.Value, value },
-            { x => x.Body, L["New value {0}", value] },
+            { x => x.Body, L["New value {0}", L[value ? "enabled" : "disabled"]] },
         };
         var options = new DialogOptions
         {

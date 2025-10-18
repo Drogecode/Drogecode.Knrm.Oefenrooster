@@ -24,4 +24,10 @@
     <data name="Confirm" xml:space="preserve">
         <value>Bevestig</value>
     </data>
+    <data name="enabled" xml:space="preserve">
+        <value>aan</value>
+    </data>
+    <data name="disabled" xml:space="preserve">
+        <value>uit</value>
+    </data>
 </root>

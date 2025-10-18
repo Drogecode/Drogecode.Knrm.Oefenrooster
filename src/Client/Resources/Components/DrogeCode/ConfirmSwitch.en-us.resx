@@ -17,4 +17,10 @@
     <data name="Confirm" xml:space="preserve">
         <value>Confirm</value>
     </data>
+    <data name="enabled" xml:space="preserve">
+        <value>enabled</value>
+    </data>
+    <data name="disabled" xml:space="preserve">
+        <value>disabled</value>
+    </data>
 </root>
