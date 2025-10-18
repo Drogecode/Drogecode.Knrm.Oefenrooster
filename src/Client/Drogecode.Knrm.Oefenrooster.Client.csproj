@@ -13,7 +13,6 @@
 		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 		<SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
 		<TrimMode>full</TrimMode>
-		<JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
 	</PropertyGroup>
 
 	<ItemGroup>
