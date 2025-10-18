@@ -1,11 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
-		<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+        <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+        <BlazorWebAssemblyI18NAssemblies>westeurope</BlazorWebAssemblyI18NAssemblies>
+        <PublishTrimmed>true</PublishTrimmed>
+        <RunAOTCompilation>true</RunAOTCompilation>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+        <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -39,6 +44,10 @@
 
 	<ItemGroup>
 		<ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<TrimmerRootAssembly Include="Microsoft.AspNetCore.Components.WebAssembly" />
 	</ItemGroup>
 	
 	<Import Project="JsLib/tailwindcss.targets" />

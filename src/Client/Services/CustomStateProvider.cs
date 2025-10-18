@@ -106,7 +106,7 @@ public class CustomStateProvider : AuthenticationStateProvider
     {
         if (!identity.IsAuthenticated)
         {
-            DebugHelper.WriteLine("❌ Identity not authenticated.");
+            DebugHelper.WriteLine("Identity not authenticated.");
             return await RefreshInternal();
         }
 
@@ -119,7 +119,7 @@ public class CustomStateProvider : AuthenticationStateProvider
         // If parsing fails or the dates are invalid (e.g., DateTime.MinValue), refresh.
         if (!parsedFrom || !parsedTo || validFrom == default || validTo == default)
         {
-            DebugHelper.WriteLine($"⚠️ Failed to parse ValidFrom/ValidTo. From='{parsedFrom}-{validFromClaim}', To='{parsedTo}-{validToClaim}'");
+            DebugHelper.WriteLine($"Failed to parse ValidFrom/ValidTo. From='{parsedFrom}-{validFromClaim}', To='{parsedTo}-{validToClaim}'");
             identity = await RefreshInternal();
             return identity;
         }
@@ -134,13 +134,13 @@ public class CustomStateProvider : AuthenticationStateProvider
         {
             if (now < validFrom.AddMinutes(-5) || now > validTo)
             {
-                DebugHelper.WriteLine($"⏰ Token expired or not yet valid. Now={now}, From={validFrom}, To={validTo}");
+                DebugHelper.WriteLine($"Token expired or not yet valid. Now={now}, From={validFrom}, To={validTo}");
                 identity = await RefreshInternal();
             }
         }
         catch (ArgumentOutOfRangeException ex)
         {
-            DebugHelper.WriteLine($"❌ DateTime overflow: {ex.Message}");
+            DebugHelper.WriteLine($"DateTime overflow: {ex.Message}");
             identity = await RefreshInternal();
         }
 
