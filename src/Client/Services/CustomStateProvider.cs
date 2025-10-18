@@ -156,18 +156,26 @@ public class CustomStateProvider : AuthenticationStateProvider
             _currentUser = null;
             return new ClaimsIdentity();
         }
-
-        if (refreshResponse.ForceRefresh) // ToDo: add logic to compare claims
-        {
-            DebugHelper.WriteLine("Should force refresh");
-            _lastModified = DateTime.UtcNow;
-        }
-        else
-        {
-            DebugHelper.WriteLine("State changed but hold refresh");
-        }
+        var oldUser = _currentUser;
 
         _currentUser = null;
-        return await GetCurrentUser();
+        var newUser = await GetCurrentUser();
+        
+        if (refreshResponse.ForceRefresh || oldUser is null || oldUser.Claims.Count() != newUser.Claims.Count())
+        {
+            DebugHelper.WriteLine($"Should force refresh");
+            _lastModified = DateTime.UtcNow;
+            return newUser;
+        }
+
+        if (newUser.Claims.Where(x=>x.Type.Equals(ClaimTypes.Role)).Any(newClaim => !oldUser.Claims.Any(x => x.Type.Equals(ClaimTypes.Role) && x.Value.Equals(newClaim.Value))))
+        {
+            DebugHelper.WriteLine("Should force refresh because role changed");
+            _lastModified = DateTime.UtcNow;
+            return newUser;
+        }
+        
+        DebugHelper.WriteLine("State changed but hold refresh");
+        return newUser;
     }
 }
