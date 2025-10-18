@@ -63,7 +63,7 @@ public class Worker : BackgroundService
                 if (tenantId.Equals(DefaultSettingsHelper.KnrmHuizenId.ToString()) && count % 15 == 6) // Every 15 runs, but not directly after restart.
                 {
                     var preComSyncJob = new PreComSyncTask(_logger, _dateTimeProvider);
-                    successfully &= await preComSyncJob.SyncPreComAvailability(scope, clt);
+                    successfully &= (await RunBackgroundTask(async () => await preComSyncJob.SyncPreComAvailability(scope, clt), "SyncPreComAvailability", _clt)); 
                 }
 
                 count++;

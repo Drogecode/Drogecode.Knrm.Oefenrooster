@@ -16,7 +16,8 @@ public class DbVehicles
     public bool IsDefault { get; set; }
     public bool IsActive { get; set; }
     public DateTime? DeletedOn { get; set; }
-    public Guid? Deletedby { get; set; }
+    [Column("Deletedby")]
+    public Guid? DeletedBy { get; set; }
     public DateTime? CreatedOn { get; set; }
     public Guid? Createdby { get; set; }
 

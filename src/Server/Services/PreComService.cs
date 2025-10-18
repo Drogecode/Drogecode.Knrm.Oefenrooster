@@ -30,7 +30,6 @@ public class PreComService : DrogeService, IPreComService
 
     public async Task<PreComClient?> GetPreComClient()
     {
-        var preComClient = new PreComClient(_httpClient, "drogecode", Logger);
         var preComUser = _configuration.GetValue<string>("PreCom:User");
         var preComPassword = _configuration.GetValue<string>("PreCom:Password");
         if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
@@ -38,9 +37,13 @@ public class PreComService : DrogeService, IPreComService
             preComUser = KeyVaultHelper.GetSecret("PreComUser", Logger)?.Value;
             preComPassword = KeyVaultHelper.GetSecret("PreComPassword", Logger)?.Value;
             if (string.IsNullOrWhiteSpace(preComUser) || string.IsNullOrWhiteSpace(preComPassword))
+            {
+                Logger.LogWarning("No PreCom credentials found");
                 return null;
+            }
         }
 
+        var preComClient = new PreComClient(_httpClient, "drogecode", Logger);
         await preComClient.Login(preComUser, preComPassword);
 
         return preComClient;

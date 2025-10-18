@@ -59,9 +59,10 @@
                 {
                     @foreach (var user in Planner.PlanUsers.Where(x => x.Assigned && x.PlannedFunctionId == function.Id).OrderBy(x => x.Name))
                     {
+                        var canEditThisUser = _canEdit && (_authEditOtherUser || (_authEditSelf && user.UserId.Equals(_currentUserId)));
                         <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="py-2">
                             <MudItem Class="max-md:order-2 md:order-1" xs="12" sm="@(_column1 * 2)" md="@_column1">
-                                @if (_authEditOtherUser || (_authEditSelf && user.UserId.Equals(_currentUserId)))
+                                @if (canEditThisUser)
                                 {
                                     <MudButtonGroup Variant="Variant.Text">
                                         <MudButton Disabled="@(!_canEdit || _isUpdating.Contains(user.UserId))" StartIcon="@Icons.Material.Filled.KeyboardArrowDown" Variant="Variant.Filled"
@@ -78,13 +79,13 @@
                                 <MudText Typo="Typo.body1">@user.Name</MudText>
                             </MudItem>
                             <MudItem Class="order-5" xs="12" sm="@(_column3 * 2)" md="@_column3">
-                                <MudText Typo="Typo.body1" @onclick="() => { if (!_canEdit || _isUpdating.Contains(user.UserId)) return; user.ClickedFunction = !user.ClickedFunction; }" Class="cursor-pointer">
+                                <MudText Typo="Typo.body1" @onclick="() => { if (!canEditThisUser) return; user.ClickedFunction = !user.ClickedFunction; }" Class="cursor-pointer">
                                     @Functions.FirstOrDefault(x => x.Id == user.UserFunctionId)?.Name
                                 </MudText>
-                                @if (user.ClickedFunction)
+                                @if (user.ClickedFunction && canEditThisUser)
                                 {
                                     <MudSelect Disabled="@(!_canEdit || _isUpdating.Contains(user.UserId))" T="Guid?" Label="@LApp["function"]" Variant="Variant.Text" Value="@user.PlannedFunctionId"
-                                               ValueChanged="(e) => FunctionSelectionChanged(user, e)" >
+                                               ValueChanged="(e) => FunctionSelectionChanged(user, e)">
                                         @foreach (var activeFunction in Functions.Where(x => x.Active).OrderBy(x => x.Order))
                                         {
                                             <MudSelectItem T="Guid?" Value="@activeFunction.Id">@activeFunction.Name</MudSelectItem>
@@ -102,20 +103,30 @@
                                             user.VehicleId = _vehicleInfoForThisTraining.FirstOrDefault(x => x.IsDefault)!.Id;
                                         }
 
-                                        <MudSelect Disabled="@(!_canEdit || _isUpdating.Contains(user.UserId))" T="Guid?" Label="@L["vehicle"]" Variant="Variant.Text" Value="@user.VehicleId"
-                                                   ValueChanged="(e) => VehicleSelectionChanged(user, e)">
-                                            @foreach (var vehicle in _vehicleInfoForThisTraining)
-                                            {
-                                                if (vehicle.IsActive)
+                                        if (!canEditThisUser)
+                                        {
+                                            var currentVehicleName = _vehicleInfoForThisTraining.FirstOrDefault(x => x.Id == user.VehicleId)?.Name ?? L["No vehicle selected"];
+                                            <MudText>
+                                                @currentVehicleName
+                                            </MudText>
+                                        }
+                                        else
+                                        {
+                                            <MudSelect Disabled="@(!canEditThisUser)" T="Guid?" Label="@L["vehicle"]" Variant="Variant.Text" Value="@user.VehicleId"
+                                                       ValueChanged="(e) => VehicleSelectionChanged(user, e)">
+                                                @foreach (var vehicle in _vehicleInfoForThisTraining)
                                                 {
-                                                    <MudSelectItem T="Guid?" Value="@vehicle.Id">@vehicle.Name</MudSelectItem>
+                                                    if (vehicle.IsActive)
+                                                    {
+                                                        <MudSelectItem T="Guid?" Value="@vehicle.Id">@vehicle.Name</MudSelectItem>
+                                                    }
+                                                    else if (vehicle.Id.Equals(user.VehicleId))
+                                                    {
+                                                        <MudSelectItem T="Guid?" Value="@vehicle.Id" Disabled>@vehicle.Name</MudSelectItem>
+                                                    }
                                                 }
-                                                else if (vehicle.Id.Equals(user.VehicleId))
-                                                {
-                                                    <MudSelectItem T="Guid?" Value="@vehicle.Id" Disabled>@vehicle.Name</MudSelectItem>
-                                                }
-                                            }
-                                        </MudSelect>
+                                            </MudSelect>
+                                        }
                                     }
                                     else
                                     {
@@ -138,7 +149,7 @@
                 }
             </div>
 
-            @if (_canEdit)
+            @if (_canEdit && (_authEditOtherUser || _authEditSelf))
             {
                 @if (Planner.PlanUsers.Any(x => x is { Assigned: false, Availability: Availability.Available }))
                 {
@@ -156,9 +167,10 @@
                         </MudText>
                         @foreach (var user in Planner.PlanUsers.Where(x => x is { Assigned: false, Availability: Availability.Available } && x.UserFunctionId == function.Id).OrderBy(x => x.Name))
                         {
+                            var canEditThisUser = _canEdit && (_authEditOtherUser || (_authEditSelf && user.UserId.Equals(_currentUserId)));
                             <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                                 <MudItem xs="@_column1">
-                                    @if (_authEditOtherUser || (_authEditSelf && user.UserId.Equals(_currentUserId)))
+                                    @if (canEditThisUser)
                                     {
                                         <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Filled" OnClick="@(() => CheckChanged(true, user, function.Id))"
                                                        Color="GetColor(user.Availability)" Tag="user" Disabled="@(!_canEdit || _isUpdating.Contains(user.UserId))"/>
@@ -198,12 +210,13 @@
                             </MudText>
                             @foreach (var user in Planner.PlanUsers.Where(x => !x.Assigned && x.Availability != Availability.Available && x.UserFunctionId == function.Id).OrderBy(o => o.Availability).ThenBy(x => x.Name))
                             {
+                                var canEditThisUser = _canEdit && (_authEditOtherUser || (_authEditSelf && user.UserId.Equals(_currentUserId)));
                                 <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                                     <MudItem xs="@_column1">
-                                        @if (_authEditOtherUser || (_authEditSelf && user.UserId.Equals(_currentUserId)))
+                                        @if (canEditThisUser)
                                         {
                                             <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Filled" OnClick="@(() => CheckChanged(true, user, function.Id))"
-                                                           Color="GetColor(user.Availability)" Tag="user" Disabled="@(!_canEdit || _isUpdating.Contains(user.UserId))" />
+                                                           Color="GetColor(user.Availability)" Tag="user" Disabled="@(!_canEdit || _isUpdating.Contains(user.UserId))"/>
                                         }
                                     </MudItem>
                                     <MudItem xs="@_column2">
@@ -223,12 +236,13 @@
                             @foreach (var user in Users.Where(x => x.UserFunctionId == function.Id).OrderBy(x => x.Name))
                             {
                                 @if (Planner.PlanUsers.Any(x => x.UserId == user.Id)) continue;
+                                var canEditThisUser = _canEdit && (_authEditOtherUser || (_authEditSelf && user.Id.Equals(_currentUserId)));
                                 <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="pa-1">
                                     <MudItem xs="@_column1">
-                                        @if (_authEditOtherUser || (_authEditSelf && user.Id.Equals(_currentUserId)))
+                                        @if (canEditThisUser)
                                         {
                                             <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowUp" Variant="Variant.Filled" OnClick="@(() => CheckChanged(true, user, function.Id))"
-                                                           Tag="user" Disabled="@(!_canEdit || _isUpdating.Contains(user.Id))" />
+                                                           Tag="user" Disabled="@(!_canEdit || _isUpdating.Contains(user.Id))"/>
                                         }
                                     </MudItem>
                                     <MudItem xs="@_column2">
