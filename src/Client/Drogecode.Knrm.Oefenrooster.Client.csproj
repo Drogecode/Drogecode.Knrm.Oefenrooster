@@ -11,7 +11,7 @@
         <RunAOTCompilation>true</RunAOTCompilation>
         <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
         <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
-        <TrimMode>full</TrimMode>
+        <TrimMode>partial</TrimMode>
 	</PropertyGroup>
 
 	<ItemGroup>
