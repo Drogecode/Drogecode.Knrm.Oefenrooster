@@ -22,6 +22,7 @@ RUN set -uex; \
     apt-get -qy install nodejs;
 WORKDIR /src
 COPY ["src/Server/Drogecode.Knrm.Oefenrooster.Server.csproj", "Server/"]
+RUN dotnet workload restore "Client/Drogecode.Knrm.Oefenrooster.Client.csproj"
 RUN dotnet restore "Server/Drogecode.Knrm.Oefenrooster.Server.csproj"
 COPY . .
 WORKDIR "/src/src/Server"
