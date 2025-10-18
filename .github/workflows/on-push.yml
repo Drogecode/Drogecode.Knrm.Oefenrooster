@@ -33,6 +33,8 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Workload restore
+        run: dotnet workload restore
       - name: Install dependencies
         run: dotnet restore ./Drogecode.Knrm.Oefenrooster.sln
       - name: Build
