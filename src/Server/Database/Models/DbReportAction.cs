@@ -8,6 +8,10 @@ public class DbReportAction
 {
     [Key] public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
+    /// <summary>
+    /// Indicates if or when the report was synced from the external system.
+    /// </summary>
+    public DateTime? SetByExternalOn { get; set; }
     public string? OdataEtag { get; set; }
     public DateTime LastUpdated { get; set; }
     public DateTime Commencement { get; set; }

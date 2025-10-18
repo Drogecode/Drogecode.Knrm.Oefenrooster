@@ -128,7 +128,7 @@ public class GraphService : IGraphService
             var dbAction = dbActions.FirstOrDefault(x => x.Id == action.Id);
             if (dbAction is null)
             {
-                dbAction = action.ToDbReportAction(customerId);
+                dbAction = action.ToDbReportAction(customerId, true);
                 await _database.ReportActions.AddAsync(dbAction, clt);
                 saveCount++;
             }
@@ -186,7 +186,7 @@ public class GraphService : IGraphService
             var dbReport = dbTrainingReports.FirstOrDefault(x => x.Id == training.Id);
             if (dbReport is null)
             {
-                dbReport = training.ToDbReportTraining(customerId);
+                dbReport = training.ToDbReportTraining(customerId, true);
                 await _database.ReportTrainings.AddAsync(dbReport, clt);
                 saveCount++;
             }
@@ -240,9 +240,10 @@ public class GraphService : IGraphService
                         continue;
                     _logger.LogInformation("Add link between report`{reportId}` and training `{trainingId}`", dbReport.Id, potentialLinked.Id);
 
-                    _database.LinkReportTrainingRoosterTrainings.Add(new DbLinkReportTrainingRoosterTraining()
+                    _database.LinkReportTrainingRoosterTrainings.Add(new DbLinkReportTrainingRoosterTraining
                     {
                         Id = Guid.NewGuid(),
+                        SetByExternalOn = DateTime.UtcNow,
                         CustomerId = customerId,
                         ReportTrainingId = dbReport.Id,
                         RoosterTrainingId = potentialLinked.Id
@@ -499,7 +500,7 @@ public class GraphService : IGraphService
             var dbAction = dbActions.FirstOrDefault(x => x.Id == action.Id);
             if (dbAction is null)
             {
-                dbAction = action.ToDbReportAction(customerId);
+                dbAction = action.ToDbReportAction(customerId, true);
                 await _database.ReportActions.AddAsync(dbAction, clt);
                 saveCount++;
             }
@@ -544,7 +545,7 @@ public class GraphService : IGraphService
             var dbTraining = dbTrainings.FirstOrDefault(x => x.Id == training.Id);
             if (dbTraining is null)
             {
-                dbTraining = training.ToDbReportTraining(customerId);
+                dbTraining = training.ToDbReportTraining(customerId, true);
                 await _database.ReportTrainings.AddAsync(dbTraining, clt);
                 saveCount++;
             }

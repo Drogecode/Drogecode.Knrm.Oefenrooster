@@ -9,6 +9,10 @@ public class DbReportUser
     [Key] public Guid Id { get; set; }
     public Guid? DbReportActionId { get; set; }
     public Guid? DbReportTrainingId { get; set; }
+    /// <summary>
+    /// Indicates if or when the report was synced from the external system.
+    /// </summary>
+    public DateTime? SetByExternalOn { get; set; }
     [StringLength(10)] public string? SharePointID { get; set; }
     public Guid? DrogeCodeId { get; set; }
     [StringLength(50)] public string? Name { get; set; }

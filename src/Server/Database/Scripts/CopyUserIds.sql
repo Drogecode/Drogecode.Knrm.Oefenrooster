@@ -53,6 +53,10 @@ update "Customers" set "TenantId" = '0237f806-c2b0-417b-9d23-eaec1e553223' where
 update "Customers" set "GroupId" = 'd52c4bba-9ba6-465a-9218-ed274f1e8f54' where "GroupId" = '1639c514-7c30-42d2-a384-795313b4eae1';
 update "UserRoles" set "ExternalId" = 'd52c4bba-9ba6-465a-9218-ed274f1e8f54' where "ExternalId" = '1639c514-7c30-42d2-a384-795313b4eae1';
 update "LinkUserRoles" set "SetExternal" = false where "SetExternal" = true;
+update "LinkReportTrainingRoosterTraining" set "SetByExternalOn" = null where "SetByExternalOn" is not null;
+update "ReportUsers" set "SetByExternalOn" = null where "SetByExternalOn" is not null;
+update "ReportActions" set "SetByExternalOn" = null where "SetByExternalOn" is not null;
+update "ReportTrainings" set "SetByExternalOn" = null where "SetByExternalOn" is not null;
 
 
 -- Only when testing to break link with real calendar events. (different instance when moving but still important)

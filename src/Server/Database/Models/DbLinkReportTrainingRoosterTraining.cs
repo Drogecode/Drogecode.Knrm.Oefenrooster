@@ -10,6 +10,10 @@ public class DbLinkReportTrainingRoosterTraining
     public required Guid RoosterTrainingId { get; set; }
     public required Guid ReportTrainingId { get; set; }
     public required Guid CustomerId { get; set; }
+    /// <summary>
+    /// Indicates if or when the report was synced from the external system.
+    /// </summary>
+    public DateTime? SetByExternalOn { get; set; }
     public DateTime? DeletedOn { get; set; }
     public Guid? DeletedBy { get; set; }
     

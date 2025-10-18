@@ -18,7 +18,7 @@ public class ReportActionMapperTests : BaseTest
             OdataEtag = "01026485-d3e6-4ff6-bfac-e1da6704e900,4",
             Number = 1
         };
-        var dbAction = spAction.ToDbReportAction(Tester.DefaultCustomerId);
+        var dbAction = spAction.ToDbReportAction(Tester.DefaultCustomerId, true);
         dbAction.Should().NotBeNull();
         dbAction.CustomerId.Should().Be(Tester.DefaultCustomerId);
     }

@@ -7,11 +7,12 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Mappers;
 
 public static class ReportActionMapper
 {
-    public static DbReportAction ToDbReportAction(this SharePointAction spAction, Guid customerId)
+    public static DbReportAction ToDbReportAction(this SharePointAction spAction, Guid customerId, bool isExternal)
     {
         var dbReport = new DbReportAction
         {
             Id = spAction.Id,
+            SetByExternalOn = isExternal ? DateTime.UtcNow : null,
             CustomerId = customerId,
             OdataEtag = spAction.OdataEtag,
             Number = spAction.Number,
@@ -57,6 +58,7 @@ public static class ReportActionMapper
             dbReport.Users.Add(new()
             {
                 Id = Guid.NewGuid(),
+                SetByExternalOn = isExternal ? DateTime.UtcNow : null,
                 DbReportActionId = dbReport.Id,
                 SharePointID = user.SharePointID,
                 Name = user.Name,
@@ -69,11 +71,12 @@ public static class ReportActionMapper
         return dbReport;
     }
 
-    public static DbReportTraining ToDbReportTraining(this SharePointTraining spTraining, Guid customerId)
+    public static DbReportTraining ToDbReportTraining(this SharePointTraining spTraining, Guid customerId, bool isExternal)
     {
         var dbTraining = new DbReportTraining
         {
             Id = spTraining.Id,
+            SetByExternalOn = isExternal ? DateTime.UtcNow : null,
             CustomerId = customerId,
             OdataEtag = spTraining.OdataEtag,
             Title = spTraining.Title,
@@ -104,6 +107,7 @@ public static class ReportActionMapper
             dbTraining.Users.Add(new()
             {
                 Id = Guid.NewGuid(),
+                SetByExternalOn = isExternal ? DateTime.UtcNow : null,
                 DbReportTrainingId = dbTraining.Id,
                 SharePointID = user.SharePointID,
                 Name = user.Name,

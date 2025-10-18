@@ -232,10 +232,24 @@ public class ReportActionService : IReportActionService
     {
         var sw = StopwatchProvider.StartNew();
         var result = new KillDbResponse();
-        result.KillCount += await _database.LinkReportTrainingRoosterTrainings.ExecuteDeleteAsync(clt);
-        result.KillCount += await _database.ReportUsers.ExecuteDeleteAsync(clt);
-        result.KillCount += await _database.ReportActions.ExecuteDeleteAsync(clt);
-        result.KillCount += await _database.ReportTrainings.ExecuteDeleteAsync(clt);
+        result.KillCount += await _database.LinkReportTrainingRoosterTrainings
+            .Where(x=>x.CustomerId == customerId &&
+                      x.SetByExternalOn != null)
+            .ExecuteDeleteAsync(clt);
+        result.KillCount += await _database.ReportUsers
+            .Include(x=>x.Action)
+            .Include(x=>x.Training)
+            .Where(x=> ((x.Action != null && x.Action.CustomerId == customerId) || (x.Training != null && x.Training.CustomerId == customerId)) &&
+                                x.SetByExternalOn != null)
+            .ExecuteDeleteAsync(clt);
+        result.KillCount += await _database.ReportActions
+            .Where(x=>x.CustomerId == customerId &&
+                      x.SetByExternalOn != null)
+            .ExecuteDeleteAsync(clt);
+        result.KillCount += await _database.ReportTrainings
+            .Where(x=>x.CustomerId == customerId &&
+                      x.SetByExternalOn != null)
+            .ExecuteDeleteAsync(clt);
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         result.Success = true;
