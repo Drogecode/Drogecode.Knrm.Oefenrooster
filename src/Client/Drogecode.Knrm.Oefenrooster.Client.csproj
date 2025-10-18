@@ -5,10 +5,11 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
-		<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+		<BlazorWebAssemblyLoadAllGlobalizationData>false</BlazorWebAssemblyLoadAllGlobalizationData>
+		<InvariantGlobalization>false</InvariantGlobalization>
+		<BlazorWebAssemblyI18NAssemblies>westeurope</BlazorWebAssemblyI18NAssemblies>
 		<PublishTrimmed>true</PublishTrimmed>
 		<RunAOTCompilation>true</RunAOTCompilation>
-		<InvariantGlobalization>false</InvariantGlobalization>
 		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 		<SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
 		<TrimMode>full</TrimMode>
