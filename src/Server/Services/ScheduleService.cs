@@ -896,6 +896,11 @@ public class ScheduleService : DrogeService, IScheduleService
                 return null;
             }
         }
+        else if (body.Training is null)
+        {
+            var training = await Database.RoosterTrainings.FirstOrDefaultAsync(x => x.Id == body.TrainingId && x.CustomerId == customerId, clt);
+            body.Training = training?.ToTraining(userId);
+        }
 
         if (!await Database.RoosterTrainings.AnyAsync(x => x.CustomerId == customerId && x.Id == body.TrainingId, cancellationToken: clt))
         {
