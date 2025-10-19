@@ -12,9 +12,9 @@ public class DefaultScheduleService : IDefaultScheduleService
 {
     private readonly ILogger<DefaultScheduleService> _logger;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly Database.DataContext _database;
+    private readonly DataContext _database;
 
-    public DefaultScheduleService(ILogger<DefaultScheduleService> logger, IDateTimeProvider dateTimeProvider, Database.DataContext database)
+    public DefaultScheduleService(ILogger<DefaultScheduleService> logger, IDateTimeProvider dateTimeProvider, DataContext database)
     {
         _logger = logger;
         _dateTimeProvider = dateTimeProvider;
@@ -112,6 +112,14 @@ public class DefaultScheduleService : IDefaultScheduleService
         return response;
     }
 
+    public async Task<PatchDefaultUserSchedule?> GetDefaultScheduleById(Guid customerId, Guid userId, Guid? defaultId, CancellationToken clt)
+    {
+        var userDefault = await _database.UserDefaultAvailables
+            .Include(x=>x.RoosterDefault)
+            .FirstOrDefaultAsync(y => y.UserId == userId && y.Id == defaultId, clt);
+        return userDefault?.RoosterDefault.ToPatchDefaultUserSchedule(userId, userDefault.Id);
+    }
+
     public async Task<PutGroupResponse> PutGroup(DefaultGroup body, Guid customerId, Guid userId)
     {
         var sw = StopwatchProvider.StartNew();
@@ -179,7 +187,6 @@ public class DefaultScheduleService : IDefaultScheduleService
             return result;
         }
 
-        var dbCustomer = await _database.Customers.FindAsync(customerId) ?? throw new DrogeCodeNullException($"Customer {customerId} not found");
         dbDefault.Name = body.Name;
         dbDefault.TimeStart = TimeOnly.FromTimeSpan(body.TimeStart ?? throw new ArgumentNullException("TimeStart is null"));
         dbDefault.TimeEnd = TimeOnly.FromTimeSpan(body.TimeEnd ?? throw new ArgumentNullException("TimeEnd is null"));
@@ -191,7 +198,7 @@ public class DefaultScheduleService : IDefaultScheduleService
         dbDefault.CountToTrainingTarget = body.CountToTrainingTarget;
         dbDefault.VehicleIds = body.VehicleIds;
         _database.RoosterDefaults.Update(dbDefault);
-        result.Success = (await _database.SaveChangesAsync()) >= 1;
+        result.Success = await _database.SaveChangesAsync() > 0;
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;

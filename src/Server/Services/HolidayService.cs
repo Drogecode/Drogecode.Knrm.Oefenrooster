@@ -54,7 +54,6 @@ public class HolidayService : IHolidayService
         result.TotalCount = await dbHolidays.CountAsync(clt);
         foreach (var dbHoliday in await dbHolidays.Where(y => y.ValidFrom <= _dateTimeProvider.UtcNow().AddDays(days)).OrderBy(x => x.ValidFrom).ToListAsync(clt))
         {
-            if (dbHoliday is null) continue;
             list.Add(new Holiday
             {
                 Id = dbHoliday.Id,

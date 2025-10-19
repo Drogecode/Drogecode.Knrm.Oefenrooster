@@ -1022,7 +1022,7 @@ public class ScheduleService : DrogeService, IScheduleService
         return result;
     }
 
-    public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, DateTime? fromDate, int take, int skip, OrderAscDesc order,
+    public async Task<GetScheduledTrainingsForUserResponse> GetScheduledTrainingsForUser(Guid userId, Guid customerId, Guid? defaultId, DateTime? fromDate, int take, int skip, OrderAscDesc order,
         CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
@@ -1031,7 +1031,6 @@ public class ScheduleService : DrogeService, IScheduleService
         var defaultAveUser = await Database.UserDefaultAvailables.Include(x => x.DefaultGroup).Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= fromDate)
             .ToListAsync(cancellationToken: clt);
         var scheduled = Database.RoosterAvailables
-            .Where(x => x.CustomerId == customerId && x.UserId == userId && x.Assigned == true && x.Training.DeletedOn == null && (fromDate == null || x.Date >= fromDate))
             .Include(i => i.Training)
             .ThenInclude(i => i.RoosterAvailables!.Where(y => y.User!.DeletedOn == null))
             .Include(i => i.Training)
@@ -1039,7 +1038,13 @@ public class ScheduleService : DrogeService, IScheduleService
             .Include(i => i.Training)
             .ThenInclude(i => i.LinkVehicleTrainings)
             .Include(i => i.Training)
-            .ThenInclude(i => i.LinkReportTrainingRoosterTrainings);
+            .ThenInclude(i => i.LinkReportTrainingRoosterTrainings)
+            .Where(x => 
+                x.CustomerId == customerId && 
+                x.UserId == userId && x.Assigned == true && 
+                x.Training.DeletedOn == null && 
+                (fromDate == null || x.Date >= fromDate) &&
+                (defaultId == null || x.Training.RoosterDefaultId == defaultId));
         var users = Database.Users.Where(x => x.CustomerId == customerId && x.DeletedOn == null);
         result.TotalCount = await scheduled.CountAsync(clt);
         var schedules = order switch
@@ -1090,7 +1095,7 @@ public class ScheduleService : DrogeService, IScheduleService
                     }).ToList()
             };
             var defaultVehicle = await GetDefaultVehicleForTraining(customerId, schedule.Training, clt);
-            foreach (var user in plan.PlanUsers.Where(x => x.Assigned && x.UserId == userId))
+            foreach (var user in plan.PlanUsers.Where(x => x.Assigned))
             {
                 Availability? availabilty = user.Availability;
                 AvailabilitySetBy? setBy = user.SetBy;

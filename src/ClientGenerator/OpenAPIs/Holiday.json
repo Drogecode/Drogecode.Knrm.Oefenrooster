@@ -106,17 +106,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetResponse"
+                  "$ref": "#/components/schemas/GetHolidayResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetResponse"
+                  "$ref": "#/components/schemas/GetHolidayResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetResponse"
+                  "$ref": "#/components/schemas/GetHolidayResponse"
                 }
               }
             }
@@ -288,7 +288,7 @@
         },
         "additionalProperties": false
       },
-      "GetResponse": {
+      "GetHolidayResponse": {
         "type": "object",
         "properties": {
           "success": {

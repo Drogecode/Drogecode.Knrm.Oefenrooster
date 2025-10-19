@@ -150,4 +150,7 @@
   <data name="ChangeHoliday" xml:space="preserve">
     <value>Wijzig vakantie</value>
   </data>
+  <data name="ChangeDefaultAvailable" xml:space="preserve">
+    <value>Wijzig standaard</value>
+  </data>
 </root>

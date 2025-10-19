@@ -150,4 +150,7 @@
   <data name="ChangeHoliday" xml:space="preserve">
     <value>Change holiday</value>
   </data>
+  <data name="ChangeDefaultAvailable" xml:space="preserve">
+    <value>Change default</value>
+  </data>
 </root>

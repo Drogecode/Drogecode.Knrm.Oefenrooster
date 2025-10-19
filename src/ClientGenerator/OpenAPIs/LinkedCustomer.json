@@ -204,6 +204,9 @@
         "additionalProperties": false
       },
       "DrogeUserGlobal": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "id": {

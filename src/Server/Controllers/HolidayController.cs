@@ -129,9 +129,9 @@ public class HolidayController : ControllerBase
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var trainingsForUserBefore = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, body.ValidFrom, 1000, 0, OrderAscDesc.Asc, clt);
+            var trainingsForUserBefore = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, null, body.ValidFrom, 1000, 0, OrderAscDesc.Asc, clt);
             var result = await _holidayService.PutHolidaysForUser(body, customerId, userId, clt);
-            var trainingsForUserAfter = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, body.ValidFrom, 1000, 0, OrderAscDesc.Asc, clt);
+            var trainingsForUserAfter = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, null, body.ValidFrom, 1000, 0, OrderAscDesc.Asc, clt);
             var holiday = await _holidayService.Get(body.Id, customerId, userId, clt);
 
             if (result.Success)
@@ -167,9 +167,9 @@ public class HolidayController : ControllerBase
             }
 
             var validFrom = DateTime.Compare(holiday.Holiday.ValidFrom ?? DateTime.MaxValue, body.ValidFrom ?? DateTime.MaxValue) > 0 ? holiday.Holiday.ValidFrom : body.ValidFrom;
-            var trainingsForUserBefore = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, validFrom, 1000, 0, OrderAscDesc.Asc, clt);
+            var trainingsForUserBefore = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, null, validFrom, 1000, 0, OrderAscDesc.Asc, clt);
             var result = await _holidayService.PatchHolidaysForUser(body, customerId, userId, clt);
-            var trainingsForUserAfter = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, validFrom, 1000, 0, OrderAscDesc.Asc, clt);
+            var trainingsForUserAfter = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, null, validFrom, 1000, 0, OrderAscDesc.Asc, clt);
             if (result.Success)
             {
                 await WriteAuditToTrainingIfRequired(result.Patched ?? body, trainingsForUserBefore, trainingsForUserAfter, holiday, userId, customerId, false);
@@ -202,9 +202,9 @@ public class HolidayController : ControllerBase
                 return BadRequest();
             }
 
-            var trainingsForUserBefore = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, holiday.Holiday.ValidFrom, 1000, 0, OrderAscDesc.Asc, clt);
+            var trainingsForUserBefore = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, null, holiday.Holiday.ValidFrom, 1000, 0, OrderAscDesc.Asc, clt);
             var result = await _holidayService.Delete(id, customerId, userId, clt);
-            var trainingsForUserAfter = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, holiday.Holiday.ValidFrom, 1000, 0, OrderAscDesc.Asc, clt);
+            var trainingsForUserAfter = await _scheduleService.GetScheduledTrainingsForUser(userId, customerId, null, holiday.Holiday.ValidFrom, 1000, 0, OrderAscDesc.Asc, clt);
 
             holiday.Holiday.Availability = Availability.None;
             await WriteAuditToTrainingIfRequired(holiday.Holiday, trainingsForUserBefore, trainingsForUserAfter, holiday, userId, customerId, true);
@@ -247,11 +247,15 @@ public class HolidayController : ControllerBase
 
             if (!isDelete && training.DateStart >= patchedHoliday.ValidFrom && training.DateEnd <= patchedHoliday.ValidUntil)
             {
+                if (userInTraining.Availability == patchedHoliday.Availability)
+                    continue;
                 availability = patchedHoliday.Availability;
                 setBy = AvailabilitySetBy.Holiday;
             }
             else if (newUserInTraining is not null)
             {
+                if (userInTraining.Availability == newUserInTraining.Availability)
+                    continue;
                 availability = newUserInTraining.Availability;
                 setBy = newUserInTraining.SetBy;
             }
