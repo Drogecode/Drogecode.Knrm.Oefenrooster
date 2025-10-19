@@ -232,7 +232,7 @@ public class ScheduleService : DrogeService, IScheduleService
         return dbTraining;
     }
 
-    public async Task<PatchTrainingResponse> PatchTraining(Guid customerId, PlannedTraining patchedTraining, bool inRoleEditPast, CancellationToken clt)
+    public async Task<PatchTrainingResponse> PatchTraining(Guid customerId, PlannedTraining training, bool inRoleEditPast, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
         var result = new PatchTrainingResponse();
@@ -240,39 +240,39 @@ public class ScheduleService : DrogeService, IScheduleService
         sanitizer.AllowedAttributes.Add("data-list");
         var oldTraining = await Database.RoosterTrainings
             .Include(x => x.RoosterAvailables)
-            .Where(x => x.Id == patchedTraining.TrainingId)
+            .Where(x => x.Id == training.TrainingId)
             .FirstOrDefaultAsync(clt);
         if (oldTraining == null) return result;
-        if (patchedTraining.Name?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)
+        if (training.Name?.Length > DefaultSettingsHelper.MAX_LENGTH_TRAINING_TITLE)
             throw new DrogeCodeToLongException();
         if (!inRoleEditPast && oldTraining.DateEnd < DateTimeProvider.UtcNow().AddDays(AccessesSettings.AUTH_scheduler_edit_past_days - 1))
             throw new UnauthorizedAccessException();
         
-        var newName = sanitizer.Sanitize(patchedTraining.Name ?? string.Empty);
+        var newName = sanitizer.Sanitize(training.Name ?? string.Empty);
         if (!newName.Equals(oldTraining.Name, StringComparison.CurrentCulture) ||
-            !oldTraining.DateStart.Equals(patchedTraining.DateStart) ||
-            !oldTraining.DateEnd.Equals(patchedTraining.DateEnd) ||
-            !oldTraining.RoosterTrainingTypeId.Equals(patchedTraining.RoosterTrainingTypeId) ||
-            oldTraining.ShowTime != patchedTraining.ShowTime)
+            !oldTraining.DateStart.Equals(training.DateStart) ||
+            !oldTraining.DateEnd.Equals(training.DateEnd) ||
+            !oldTraining.RoosterTrainingTypeId.Equals(training.RoosterTrainingTypeId) ||
+            oldTraining.ShowTime != training.ShowTime)
         {
             result.ShouldUpdateOutlookEvent = true;
         }
 
-        oldTraining.RoosterTrainingTypeId = patchedTraining.RoosterTrainingTypeId;
-        oldTraining.TrainingTargetSetId = patchedTraining.TrainingTargetSetId;
+        oldTraining.RoosterTrainingTypeId = training.RoosterTrainingTypeId;
+        oldTraining.TrainingTargetSetId = training.TrainingTargetSetId;
         oldTraining.Name = newName;
-        oldTraining.Description = sanitizer.Sanitize(patchedTraining.Description ?? string.Empty);
-        oldTraining.DateStart = patchedTraining.DateStart;
-        oldTraining.DateEnd = patchedTraining.DateEnd;
-        oldTraining.CountToTrainingTarget = patchedTraining.CountToTrainingTarget;
-        oldTraining.IsPinned = patchedTraining.IsPinned;
-        oldTraining.IsPermanentPinned = patchedTraining.IsPermanentPinned;
-        oldTraining.ShowTime = patchedTraining.ShowTime;
+        oldTraining.Description = sanitizer.Sanitize(training.Description ?? string.Empty);
+        oldTraining.DateStart = training.DateStart;
+        oldTraining.DateEnd = training.DateEnd;
+        oldTraining.CountToTrainingTarget = training.CountToTrainingTarget;
+        oldTraining.IsPinned = training.IsPinned;
+        oldTraining.IsPermanentPinned = training.IsPermanentPinned;
+        oldTraining.ShowTime = training.ShowTime;
         if (oldTraining.RoosterAvailables is not null)
         {
             foreach (var available in oldTraining.RoosterAvailables)
             {
-                available.Date = patchedTraining.DateStart;
+                available.Date = training.DateStart;
             }
         }
 
@@ -314,7 +314,7 @@ public class ScheduleService : DrogeService, IScheduleService
         Database.RoosterAvailables.Update(oldAva);
     }
 
-    public async Task<AddTrainingResponse> AddTrainingAsync(Guid customerId, PlannedTraining newTraining, Guid trainingId, CancellationToken token)
+    public async Task<AddTrainingResponse> AddTrainingAsync(Guid customerId, PlannedTraining newTraining, Guid trainingId, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
         var result = new AddTrainingResponse
@@ -337,7 +337,7 @@ public class ScheduleService : DrogeService, IScheduleService
             IsPermanentPinned = newTraining.IsPermanentPinned,
             ShowTime = newTraining.ShowTime,
         };
-        result.Success = await AddTrainingInternalAsync(customerId, training, token);
+        result.Success = await AddTrainingInternalAsync(customerId, training, clt);
         sw.Stop();
         result.ElapsedMilliseconds = sw.ElapsedMilliseconds;
         return result;
@@ -1131,7 +1131,7 @@ public class ScheduleService : DrogeService, IScheduleService
         return result;
     }
 
-    public async Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUser(Guid userId, Guid customerId, DateTime fromDate, CancellationToken token)
+    public async Task<GetPinnedTrainingsForUserResponse> GetPinnedTrainingsForUser(Guid userId, Guid customerId, DateTime fromDate, CancellationToken clt)
     {
         var result = new GetPinnedTrainingsForUserResponse();
         var trainings = await Database.RoosterTrainings
@@ -1140,10 +1140,10 @@ public class ScheduleService : DrogeService, IScheduleService
             .Where(x => x.CustomerId == customerId && (x.IsPinned || x.IsPermanentPinned) && x.DeletedOn == null && x.DateStart >= fromDate &&
                         (x.IsPermanentPinned || x.RoosterAvailables == null || !x.RoosterAvailables.Any(r => r.UserId == userId && r.Available > 0)))
             .OrderBy(x => x.DateStart)
-            .ToListAsync(cancellationToken: token);
-        var userHolidays = await Database.UserHolidays.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= fromDate).ToListAsync(cancellationToken: token);
+            .ToListAsync(clt);
+        var userHolidays = await Database.UserHolidays.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= fromDate).ToListAsync(clt);
         var defaultAveUser = await Database.UserDefaultAvailables.Include(x => x.DefaultGroup).Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= fromDate)
-            .ToListAsync(cancellationToken: token);
+            .ToListAsync(clt);
 
         foreach (var training in trainings)
         {

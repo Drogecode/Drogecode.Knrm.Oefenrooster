@@ -64,8 +64,7 @@ public class ReportActionSharedController : ControllerBase
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var result = await _reportActionSharedService.GetAllReportActionSharedConfiguration(customerId, userId, clt);
+            var result = await _reportActionSharedService.GetAllReportActionSharedConfiguration(customerId, clt);
             return result;
         }
         catch (OperationCanceledException)
@@ -90,8 +89,7 @@ public class ReportActionSharedController : ControllerBase
         try
         {
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
-            var result = await _reportActionSharedService.DeleteReportActionSharedConfiguration(itemId, customerId, userId, clt);
+            var result = await _reportActionSharedService.DeleteReportActionSharedConfiguration(itemId, customerId, clt);
             return result;
         }
         catch (OperationCanceledException)

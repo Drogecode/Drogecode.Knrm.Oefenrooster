@@ -44,6 +44,7 @@ public partial class TrainingSubjectList : IDisposable
             {
                 RefreshModel.RefreshRequestedAsync += RefreshMeAsync;
             }
+
             _trainingSubjects = (await TrainingTargetRepository.AllTrainingTargets(_cls.Token))?.TrainingSubjects;
             StateHasChanged();
         }
@@ -63,7 +64,7 @@ public partial class TrainingSubjectList : IDisposable
         foreach (var subject in trainingSubjects)
         {
             subject.IsVisible = false;
-            if (subject.TrainingTargets is not null && subject.TrainingTargets.Count != 0)
+            if (subject.TrainingTargets is { Count: > 0 })
             {
                 foreach (var target in subject.TrainingTargets)
                 {
@@ -71,11 +72,10 @@ public partial class TrainingSubjectList : IDisposable
                     {
                         target.IsVisible = true;
                         subject.IsVisible = true;
+                        continue;
                     }
-                    else
-                    {
-                        target.IsVisible = false;
-                    }
+
+                    target.IsVisible = false;
                 }
             }
             else
@@ -104,6 +104,7 @@ public partial class TrainingSubjectList : IDisposable
         {
             RefreshModel.RefreshRequestedAsync -= RefreshMeAsync;
         }
+
         _cls.Cancel();
     }
 }

@@ -7,18 +7,14 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Shared.Layout;
 public partial class ExternalsLayout
 {
     [Inject] private IStringLocalizer<MainLayout> L { get; set; } = default!;
-    private DrogeCodeGlobal _global { get; set; } = new();
-    private DarkLightMode _darkModeToggle;
+    private readonly DrogeCodeGlobal _global = new();
+    private readonly DarkLightMode _darkModeToggle = DarkLightMode.System;
     private AppShell _appShell = new();
     private bool _isDarkMode;
 
-    private MudTheme _myCustomTheme = new()
+    private readonly MudTheme _myCustomTheme = new()
     {
         PaletteLight = new KnrmPaletteLight(),
         PaletteDark = new KnrmPaletteDark(),
     };
-
-    protected override async Task OnInitializedAsync()
-    {
-    }
 }

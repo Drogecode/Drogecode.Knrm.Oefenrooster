@@ -2,7 +2,7 @@
 
 public static class ApiCachedRequestDefaults
 {
-    public static ApiCachedRequest LongCache = new()
+    public static readonly ApiCachedRequest LongCache = new()
     {
         OneCallPerSession = true,
         OneCallPerCache = true,

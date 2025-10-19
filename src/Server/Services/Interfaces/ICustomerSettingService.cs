@@ -10,7 +10,7 @@ public interface ICustomerSettingService
     Task<string> GetTimeZone(Guid customerId);
     Task<SettingStringResponse> GetStringCustomerSetting(Guid customerId, SettingName setting, string def, CancellationToken clt);
     Task<SettingListIntResponse> GetListIntCustomerSetting(Guid customerId, SettingName setting, List<int> def);
-    Task PatchBoolSetting(Guid customerId, SettingName name, bool value);
+    Task PatchBoolSetting(Guid customerId, SettingName setting, bool value);
     Task PatchIntSetting(Guid customerId, SettingName setting, int value);
     Task PatchStringSetting(Guid customerId, SettingName setting, string value);
 }

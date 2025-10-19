@@ -98,7 +98,7 @@ public class DayItemService : IDayItemService
         return result;
     }
 
-    public async Task<GetDayItemResponse> GetDayItemById(Guid customerId, Guid id, CancellationToken clt = default)
+    public async Task<GetDayItemResponse> GetDayItemById(Guid customerId, Guid id, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
         var result = new GetDayItemResponse();
@@ -106,7 +106,7 @@ public class DayItemService : IDayItemService
             .Include(x => x.LinkUserDayItems)
             !.ThenInclude(x=>x.User)
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null && x.CustomerId == customerId);
+            .FirstOrDefaultAsync(x => x.Id == id && x.DeletedOn == null && x.CustomerId == customerId, clt);
         if (dayItem is null)
         {
             result.Success = false;

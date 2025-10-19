@@ -18,7 +18,7 @@ public class ReportActionSharedService : IReportActionSharedService
         _logger = logger;
     }
 
-    public async Task<MultipleReportActionShareConfigurationResponse> GetAllReportActionSharedConfiguration(Guid customerId, Guid userId, CancellationToken clt)
+    public async Task<MultipleReportActionShareConfigurationResponse> GetAllReportActionSharedConfiguration(Guid customerId, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
         var query = _database.ReportActionShares.Where(x=>x.CustomerId == customerId && x.ValidUntil >= DateTime.UtcNow).Select(x=>x.ToDrogecode());
@@ -63,13 +63,13 @@ public class ReportActionSharedService : IReportActionSharedService
         return await _database.ReportActionShares.Where(x => x.CustomerId == customerId && x.Id == sharedId).Select(x => x.ToDrogecode()).FirstOrDefaultAsync(clt);
     }
 
-    public async Task<AuthenticateExternalResult> AuthenticateExternal(AuthenticateExternalRequest body, CancellationToken clt)
+    public async Task<AuthenticateExternalResult> AuthenticateExternal(AuthenticateExternalRequest authenticateExternalRequest, CancellationToken clt)
     {
         var response = new AuthenticateExternalResult();
-        var sharedReport = await _database.ReportActionShares.Where(x => x.Id == body.ExternalId).Select(x => new { x.HashedPassword, x.CustomerId, x.ValidUntil }).FirstOrDefaultAsync(clt);
+        var sharedReport = await _database.ReportActionShares.Where(x => x.Id == authenticateExternalRequest.ExternalId).Select(x => new { x.HashedPassword, x.CustomerId, x.ValidUntil }).FirstOrDefaultAsync(clt);
         if (sharedReport is null || sharedReport.ValidUntil < DateTime.UtcNow)
             return response;
-        if (PasswordHasher.ComparePassword(body.Password, sharedReport?.HashedPassword))
+        if (PasswordHasher.ComparePassword(authenticateExternalRequest.Password, sharedReport?.HashedPassword))
         {
             response.Success = true;
             response.CustomerId = sharedReport!.CustomerId;
@@ -78,11 +78,11 @@ public class ReportActionSharedService : IReportActionSharedService
         return response;
     }
 
-    public async Task<DeleteResponse> DeleteReportActionSharedConfiguration(Guid itemId, Guid customerId, Guid userId, CancellationToken clt)
+    public async Task<DeleteResponse> DeleteReportActionSharedConfiguration(Guid reportActionSharedId, Guid customerId, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
         var result = new DeleteResponse();
-        var reportActionShared = await _database.ReportActionShares.Where(x => x.CustomerId == customerId && x.Id == itemId).FirstOrDefaultAsync(clt);
+        var reportActionShared = await _database.ReportActionShares.Where(x => x.CustomerId == customerId && x.Id == reportActionSharedId).FirstOrDefaultAsync(clt);
         if (reportActionShared is not null)
         {
             reportActionShared.ValidUntil = DateTime.UtcNow;

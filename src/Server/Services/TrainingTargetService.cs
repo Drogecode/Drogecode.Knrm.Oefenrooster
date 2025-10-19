@@ -229,18 +229,18 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         return response;
     }
 
-    public async Task<PutResponse> PutNewTemplateSet(TrainingTargetSet body, Guid userId, Guid customerId, CancellationToken clt)
+    public async Task<PutResponse> PutNewTemplateSet(TrainingTargetSet newTemplate, Guid userId, Guid customerId, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
         var response = new PutResponse();
 
         var newId = Guid.CreateVersion7();
-        body.Id = newId;
-        body.CreatedBy = userId;
-        body.CreatedOn = DateTime.UtcNow;
-        body.ActiveSince = DateTime.UtcNow;
+        newTemplate.Id = newId;
+        newTemplate.CreatedBy = userId;
+        newTemplate.CreatedOn = DateTime.UtcNow;
+        newTemplate.ActiveSince = DateTime.UtcNow;
 
-        Database.TrainingTargetSets.Add(body.ToDb(customerId));
+        Database.TrainingTargetSets.Add(newTemplate.ToDb(customerId));
 
         response.Success = await Database.SaveChangesAsync(clt) > 0;
         if (response.Success)
@@ -253,12 +253,12 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         return response;
     }
 
-    public async Task<PatchResponse> PatchTemplateSet(TrainingTargetSet body, Guid userId, Guid customerId, CancellationToken clt)
+    public async Task<PatchResponse> PatchTemplateSet(TrainingTargetSet template, Guid userId, Guid customerId, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
         var response = new PatchResponse();
         var oldVersion = await Database.TrainingTargetSets.FirstOrDefaultAsync(
-            u => u.Id == body.Id && u.CustomerId == customerId && u.DeletedOn == null,
+            u => u.Id == template.Id && u.CustomerId == customerId && u.DeletedOn == null,
             cancellationToken: clt
         );
         if (oldVersion is null)
@@ -266,10 +266,10 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             return response;
         }
 
-        oldVersion.Name = body.Name;
-        oldVersion.TrainingTargetIds = body.TrainingTargetIds;
-        oldVersion.ActiveSince = body.ActiveSince;
-        oldVersion.ReusableSince = body.ReusableSince;
+        oldVersion.Name = template.Name;
+        oldVersion.TrainingTargetIds = template.TrainingTargetIds;
+        oldVersion.ActiveSince = template.ActiveSince;
+        oldVersion.ReusableSince = template.ReusableSince;
 
         Database.TrainingTargetSets.Update(oldVersion);
         response.Success = await Database.SaveChangesAsync(clt) > 0;
@@ -278,17 +278,17 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         return response;
     }
 
-    public async Task<PutResponse> PutUserResponse(TrainingTargetResult body, Guid userId, Guid customerId, CancellationToken clt)
+    public async Task<PutResponse> PutUserResponse(TrainingTargetResult newTrainingTarget, Guid userId, Guid customerId, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
         var response = new PutResponse();
 
         var newId = Guid.CreateVersion7();
-        body.Id = newId;
-        body.ResultDate = DateTime.UtcNow;
-        body.SetBy = userId;
+        newTrainingTarget.Id = newId;
+        newTrainingTarget.ResultDate = DateTime.UtcNow;
+        newTrainingTarget.SetBy = userId;
 
-        var dbObject = body.ToDb();
+        var dbObject = newTrainingTarget.ToDb();
         dbObject.SetInBulk = false;
         Database.TrainingTargetUserResults.Add(dbObject);
 
@@ -303,13 +303,13 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
         return response;
     }
 
-    public async Task<PatchResponse> PatchUserResponse(TrainingTargetResult body, Guid userId, Guid customerId, CancellationToken clt)
+    public async Task<PatchResponse> PatchUserResponse(TrainingTargetResult trainingTarget, Guid userId, Guid customerId, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
         var response = new PatchResponse();
 
         var oldVersion = await Database.TrainingTargetUserResults.FirstOrDefaultAsync(
-            u => u.Id == body.Id && u.DeletedOn == null,
+            u => u.Id == trainingTarget.Id && u.DeletedOn == null,
             cancellationToken: clt
         );
         if (oldVersion is null)
@@ -317,7 +317,7 @@ public class TrainingTargetService : DrogeService, ITrainingTargetService
             return response;
         }
 
-        oldVersion.Result = body.Result;
+        oldVersion.Result = trainingTarget.Result;
         oldVersion.ResultDate = DateTime.UtcNow;
         oldVersion.SetBy = userId;
         oldVersion.SetInBulk = false;

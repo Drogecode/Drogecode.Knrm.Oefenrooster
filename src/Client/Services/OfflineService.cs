@@ -1,4 +1,5 @@
-﻿using Drogecode.Knrm.Oefenrooster.Client.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Drogecode.Knrm.Oefenrooster.Client.Models;
 using Drogecode.Knrm.Oefenrooster.Client.Services.Interfaces;
 using System.Text.Json;
 
@@ -8,26 +9,26 @@ public class OfflineService : IOfflineService
 {
     private readonly ILocalStorageExpireService _localStorageExpireService;
     private readonly ISessionExpireService _sessionStorageExpireService;
-    private readonly CustomStateProvider _customStateProvider;
 
-    private static Guid? _userId;
+    internal static Guid? UserId { get; set; }
 
     public OfflineService(
         ILocalStorageExpireService localStorageExpireService,
-        ISessionExpireService sessionStorageExpireService,
-        CustomStateProvider customStateProvider)
+        ISessionExpireService sessionStorageExpireService)
     {
         _localStorageExpireService = localStorageExpireService;
         _sessionStorageExpireService = sessionStorageExpireService;
-        _customStateProvider = customStateProvider;
     }
 
-    public async Task<TRes?> CachedRequestAsync<TRes>(string cacheKey, Func<Task<TRes>> function, ApiCachedRequest? request = null, CancellationToken clt = default)
+    public async Task<TRes?> CachedRequestAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] TRes>(
+        string cacheKey, Func<Task<TRes>> function, 
+        ApiCachedRequest? request = null, 
+        CancellationToken clt = default)
     {
         try
         {
-            cacheKey += $"__{_userId}";
-            if (clt.IsCancellationRequested) return default(TRes);
+            cacheKey += $"__{UserId}";
+            if (clt.IsCancellationRequested) return default;
             request ??= new ApiCachedRequest();
             if (request.CachedAndReplace)
             {
@@ -114,25 +115,5 @@ public class OfflineService : IOfflineService
         if (request.OneCallPerSession)
             await _sessionStorageExpireService.SetItemAsync(cacheKey, result, request.ExpireSession, clt);
         return result;
-    }
-
-    public async Task<bool> SetUser()
-    {
-        var authState = await _customStateProvider.GetAuthenticationStateAsync();
-        var userClaims = authState.User;
-        if (userClaims?.Identity?.IsAuthenticated ?? false)
-        {
-            if (!Guid.TryParse(userClaims.Identities.FirstOrDefault()!.Claims.FirstOrDefault(x => x.Type.Equals("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value,
-                    out var userId))
-                return false;
-            _userId = userId;
-        }
-        else
-        {
-            // Should never happen.
-            return false;
-        }
-
-        return true;
     }
 }

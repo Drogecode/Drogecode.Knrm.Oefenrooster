@@ -30,9 +30,9 @@ public class Worker : BackgroundService
         _dateTimeProvider = dateTimeProvider;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken clt)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _clt = clt;
+        _clt = stoppingToken;
         _memoryCache.Set(NEXT_USER_SYNC, DateTime.SpecifyKind(DateTime.Today.AddDays(1).AddHours(1), DateTimeKind.Utc)); // do not run on startup
         var count = 0;
         while (!_clt.IsCancellationRequested && _configuration.GetValue<bool>("Drogecode:RunBackgroundService"))
@@ -45,9 +45,9 @@ public class Worker : BackgroundService
                 {
                     if (_clt.IsCancellationRequested) return; // run once every second.
 #if DEBUG
-                    await Task.Delay(100, clt);
+                    await Task.Delay(100, _clt);
 #else
-                    await Task.Delay(1000, clt);
+                    await Task.Delay(1000, _clt);
 #endif
                 }
 
@@ -59,11 +59,11 @@ public class Worker : BackgroundService
                 var graphService = scope.ServiceProvider.GetRequiredService<IGraphService>();
                 graphService.InitializeGraph();
                 
-                var successfully = await SyncSharePoint(scope, graphService, tenantId, clt);
+                var successfully = await SyncSharePoint(scope, graphService, tenantId, _clt);
                 if (tenantId.Equals(DefaultSettingsHelper.KnrmHuizenId.ToString()) && count % 15 == 6) // Every 15 runs, but not directly after restart.
                 {
                     var preComSyncJob = new PreComSyncTask(_logger, _dateTimeProvider);
-                    successfully &= (await RunBackgroundTask(async () => await preComSyncJob.SyncPreComAvailability(scope, clt), "SyncPreComAvailability", _clt)); 
+                    successfully &= (await RunBackgroundTask(async () => await preComSyncJob.SyncPreComAvailability(scope, _clt), "SyncPreComAvailability", _clt)); 
                 }
 
                 count++;
