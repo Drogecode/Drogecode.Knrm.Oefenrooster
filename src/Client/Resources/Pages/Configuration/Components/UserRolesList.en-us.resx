@@ -1,0 +1,53 @@
+﻿<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Global" xml:space="preserve">
+        <value>Global</value>
+    </data>
+    <data name="configure_training-types" xml:space="preserve">
+        <value>Configure training types</value>
+    </data>
+    <data name="ExternalId" xml:space="preserve">
+        <value>External ID</value>
+    </data>
+    <data name="basic_access" xml:space="preserve">
+        <value>basic access</value>
+    </data>
+    <data name="basic_access-body" xml:space="preserve">
+        <value>basic access required for access to this application</value>
+    </data>
+    <data name="showCfooter" xml:space="preserve">
+        <value>show © footer</value>
+    </data>
+    <data name="showCfooter-body" xml:space="preserve">
+        <value>show © footer below every page</value>
+    </data>
+    <data name="Configuration" xml:space="preserve">
+        <value>Configuration</value>
+    </data>
+    <data name="configure_global_all" xml:space="preserve">
+        <value>Global configuration</value>
+    </data>
+    <data name="configure_global_all-body" xml:space="preserve">
+        <value>Access to global configuration page</value>
+    </data>
+    <data name="configure_training-types-body" xml:space="preserve">
+        <value>Access to configure training types page</value>
+    </data>
+    <data name="configure_training_target" xml:space="preserve">
+        <value>Configure training targets</value>
+    </data>
+    <data name="configure_training_target-body" xml:space="preserve">
+        <value>Access to configure training targets page</value>
+    </data>
+</root>

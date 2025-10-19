@@ -16,7 +16,7 @@ Changes to this file may cause incorrect behavior and will be lost if the code i
         }
         else
         {
-            <MudTextField T="string?" @bind-Value="_userRole.Role.Name" Label="@L["Name"]"/>
+            <MudTextField T="string?" @bind-Value="_userRole.Role.Name" Label="@LApp["Name"]"/>
         }
         <MudTextField T="string?" @bind-Value="_userRole.Role.ExternalId" Counter="@DefaultSettingsHelper.MAX_LENGTH_ROLE_EXTERNAL_ID" MaxLength="@DefaultSettingsHelper.MAX_LENGTH_ROLE_EXTERNAL_ID" Label="@L["ExternalId"]"/>
         <MudText Typo="Typo.h6">@L["Global"]</MudText>

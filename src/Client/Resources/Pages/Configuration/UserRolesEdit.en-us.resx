@@ -17,9 +17,6 @@
     <data name="ExternalId" xml:space="preserve">
         <value>External Id</value>
     </data>
-    <data name="configure_training-types" xml:space="preserve">
-        <value>Configure training types</value>
-    </data>
     <data name="Users in this role" xml:space="preserve">
         <value>Users in this role</value>
     </data>
