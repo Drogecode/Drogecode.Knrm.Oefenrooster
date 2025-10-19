@@ -222,7 +222,7 @@ public class PreComService : DrogeService, IPreComService
         return dbForward?.ToPreComForward();
     }
 
-    public async Task<DeleteResponse> DeleteDuplicates()
+    public async Task<DeleteResponse> DeleteDuplicates(CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
         var range = 1000;
@@ -234,13 +234,13 @@ public class PreComService : DrogeService, IPreComService
         };
         for (var i = 0; i < 10000; i++)
         {
-            var selection = Database.PreComAlerts.Skip(i * range).Take(range).Select(x => x).OrderBy(x => x.SendTime).ToList();
+            var selection = await Database.PreComAlerts.Skip(i * range).Take(range).Select(x => x).OrderBy(x => x.SendTime).ToListAsync(clt);
             if (selection.Count == 0)
                 break;
             foreach (var alert in selection)
             {
                 saved.Add(alert.Id);
-                var duplicates = Database.PreComAlerts.Where(x => x.UserId == alert.UserId && x.CustomerId == alert.CustomerId && x.Id != alert.Id && x.Raw == alert.Raw).ToList();
+                var duplicates = await Database.PreComAlerts.Where(x => x.UserId == alert.UserId && x.CustomerId == alert.CustomerId && x.Id != alert.Id && x.Raw == alert.Raw).ToListAsync(clt);
                 if (duplicates.Count <= 0 || duplicates.Any(x => saved.Contains(x.Id)))
                     continue;
                 deleted += duplicates.Count;

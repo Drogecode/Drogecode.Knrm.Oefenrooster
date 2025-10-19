@@ -21,7 +21,7 @@ public class MenuService : IMenuService
         var result = new MultipleMenuResponse();
 
         var dbMenus = _database.Menus.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x => x.ToDrogeMenu());
-        if (dbMenus.Any())
+        if (await dbMenus.AnyAsync(clt))
         {
             result.Menus = await dbMenus.ToListAsync(clt);
             result.TotalCount = dbMenus.Count();

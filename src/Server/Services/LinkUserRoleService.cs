@@ -46,9 +46,9 @@ public class LinkUserRoleService : ILinkUserRoleService
         var link = await _database.LinkUserRoles.FirstOrDefaultAsync(x => x.UserId == userId && x.RoleId == role.Id, cancellationToken: clt);
         if (link is null)
         {
-            if (!_database.UserRoles.Any(x => x.ExternalId == role.ExternalId))
+            if (!await _database.UserRoles.AnyAsync(x => x.ExternalId == role.ExternalId, clt))
                 return false;
-            _database.LinkUserRoles.Add(new DbLinkUserRole()
+            _database.LinkUserRoles.Add(new DbLinkUserRole
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,

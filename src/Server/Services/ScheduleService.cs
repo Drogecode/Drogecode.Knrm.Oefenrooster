@@ -67,7 +67,7 @@ public class ScheduleService : DrogeService, IScheduleService
             var start = scheduleDate.ToDateTime(new TimeOnly(0, 0, 0), DateTimeKind.Utc);
             var end = scheduleDate.ToDateTime(new TimeOnly(23, 59, 59), DateTimeKind.Utc);
             var defaultsToday = defaults.Where(x => x.WeekDay == scheduleDate.DayOfWeek && x.ValidFrom <= start && x.ValidUntil >= end).ToList();
-            var trainingsToday = trainings.Where(x => x.DateStart >= start && x.DateStart <= end).ToList();
+            var trainingsToday = await trainings.Where(x => x.DateStart >= start && x.DateStart <= end).ToListAsync(clt);
             foreach (var training in trainingsToday)
             {
                 if (training.DeletedOn is null)

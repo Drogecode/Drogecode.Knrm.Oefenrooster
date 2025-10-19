@@ -331,7 +331,7 @@ public class PreComController : DrogeController
     {
         try
         {
-            var result = await _preComService.DeleteDuplicates();
+            var result = await _preComService.DeleteDuplicates(clt);
             return result;
         }
         catch (Exception ex)

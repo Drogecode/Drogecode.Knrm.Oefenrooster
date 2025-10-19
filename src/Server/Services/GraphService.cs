@@ -212,16 +212,16 @@ public class GraphService : IGraphService
             
             var differentStart = ReportSettingsHelper.TrainingDifferentStart.Contains(training.Type ?? string.Empty);
             var start = differentStart ? training.Commencement : training.Start;
-            var potentialLinkedTrainings = _database.RoosterTrainings
+            var potentialLinkedTrainings = await _database.RoosterTrainings
                 .AsNoTracking()
                 .Where(x => x.CustomerId == customerId && x.DateStart <= start.AddMinutes(30) && x.DateStart >= start.AddMinutes(-30) && x.RoosterAvailables!.Any(y => y.Assigned))
                 .Include(x => x.LinkReportTrainingRoosterTrainings)
                 .Include(x => x.RoosterAvailables!.Where(y => y.Assigned))
                 .AsSingleQuery()
-                .ToList();
-            var allLinkedTrainings = _database.LinkReportTrainingRoosterTrainings
+                .ToListAsync(clt);
+            var allLinkedTrainings = await _database.LinkReportTrainingRoosterTrainings
                 .Where(x => x.CustomerId == customerId && x.ReportTrainingId == dbReport.Id)
-                .ToList();
+                .ToListAsync(clt);
             if (allLinkedTrainings.Count != 0)
             {
                 foreach (var wrongLinked in allLinkedTrainings.Where(x=> potentialLinkedTrainings.Any(y=> y.Id != x.RoosterTrainingId)))
