@@ -12,9 +12,9 @@ public sealed partial class DefaultConfig : IDisposable
     [Inject] private IStringLocalizer<DateToString> LDateToString { get; set; } = default!;
     [Inject] private IDialogService DialogProvider { get; set; } = default!;
     [Inject] private DefaultScheduleRepository DefaultScheduleRepository { get; set; } = default!;
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private GetAllDefaultScheduleResponse? _defaults;
-    private RefreshModel _refreshModel = new();
+    private readonly RefreshModel _refreshModel = new();
     private bool _bussy;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

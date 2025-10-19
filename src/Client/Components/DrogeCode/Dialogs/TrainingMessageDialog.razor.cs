@@ -18,7 +18,7 @@ public sealed partial class TrainingMessageDialog : IDisposable
 
     [Parameter, EditorRequired] public TrainingAdvance Training { get; set; } = default!;
     [Parameter] public bool Visible { get; set; }
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private GetTargetSetWithTargetsResult? _targetSetWithTargetsResult;
     private GetDescriptionByTrainingIdResponse? _description;
 

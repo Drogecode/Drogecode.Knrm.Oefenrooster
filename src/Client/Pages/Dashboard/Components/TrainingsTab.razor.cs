@@ -21,9 +21,9 @@ public sealed partial class TrainingsTab : IDisposable
     [Parameter] public List<DrogeFunction>? Functions { get; set; }
     [Parameter] public Guid? DrogeTrainingId { get; set; }
     private MultipleReportTrainingsResponse? _reportTrainings;
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private IEnumerable<DrogeUser> _selectedUsersTraining = new List<DrogeUser>();
-    private List<string> _trainingTypes = [];
+    private readonly List<string> _trainingTypes = [];
     private IEnumerable<string> _selectedTrainingTypes = new List<string>();
     private const int DEFAULT_COUNT = 10;
     private int _currentPage = 1;

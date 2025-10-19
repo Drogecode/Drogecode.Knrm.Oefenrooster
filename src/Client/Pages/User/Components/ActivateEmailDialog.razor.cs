@@ -5,7 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User.Components;
 
-public partial class ActivateEmailDialog : IDisposable
+public sealed partial class ActivateEmailDialog : IDisposable
 {
     [Inject] private IStringLocalizer<ActivateEmailDialog> L { get; set; } = default!;
     [Inject] private IUserLinkedMailsClient UserLinkedMailsClient { get; set; } = default!;

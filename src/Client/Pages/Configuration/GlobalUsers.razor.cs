@@ -6,7 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
-public partial class GlobalUsers : IDisposable
+public sealed partial class GlobalUsers : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<GlobalUsers>? L { get; set; }
     [Inject, NotNull] private IUserGlobalClient? UserGlobalClient { get; set; }

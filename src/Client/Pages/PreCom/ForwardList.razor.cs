@@ -11,7 +11,7 @@ public sealed partial class ForwardList : IDisposable
     [Inject, NotNull] private PreComRepository? PreComRepository { get; set; }
     [Inject, NotNull] private IPreComClient? PreComClient { get; set; }
     [Inject, NotNull] private NavigationManager? Navigation { get; set; }
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private MultiplePreComForwardsResponse? _forwards;
 
     private readonly DialogOptions _editOptions = new()

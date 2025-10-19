@@ -14,8 +14,6 @@ public class AuthenticationManager : DrogeManager, IAuthenticationManager
     private readonly DataContext _database;
     private IAuthenticationService? _authService;
 
-    private const string REFRESHTOKEN = "RefreshToken";
-
     public AuthenticationManager(
         ILogger<AuthenticationManager> logger,
         IMemoryCache memoryCache,

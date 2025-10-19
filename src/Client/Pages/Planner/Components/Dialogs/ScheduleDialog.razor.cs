@@ -27,10 +27,10 @@ public sealed partial class ScheduleDialog : IDisposable
     [Parameter] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter] public RefreshModel Refresh { get; set; } = default!;
     [Parameter] public MainLayout MainLayout { get; set; } = default!;
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
     private List<DrogeVehicle> _vehicleInfoForThisTraining = [];
-    private List<Guid> _isUpdating = [];
+    private readonly List<Guid> _isUpdating = [];
     private Guid? _currentUserId;
     private Guid? _specialFunctionId;
     private bool _plannerIsUpdated;

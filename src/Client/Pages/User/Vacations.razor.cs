@@ -11,9 +11,9 @@ public sealed partial class Vacations : IDisposable
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private HolidayRepository _holidayRepository { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
-    private CancellationTokenSource _cls = new();
-    private List<Holiday>? _holidays { get; set; }
-    private RefreshModel _refreshModel = new();
+    private readonly CancellationTokenSource _cls = new();
+    private List<Holiday>? _holidays;
+    private readonly RefreshModel _refreshModel = new();
     private bool _updating;
     private bool _success;
     private string[] _errors = [];

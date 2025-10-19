@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components.Dialogs;
 
-public partial class ShareActionListDialog : IDisposable
+public sealed partial class ShareActionListDialog : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<ShareActionDialog>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }

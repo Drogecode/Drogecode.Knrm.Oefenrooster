@@ -5,7 +5,6 @@ namespace Drogecode.Knrm.Oefenrooster.Server.Repositories.Abstract;
 
 public abstract class BaseRepository
 {
-    
     protected readonly ILogger<BaseRepository> Logger;
     protected readonly DataContext Database;
     protected readonly IMemoryCache MemoryCache;
@@ -26,6 +25,7 @@ public abstract class BaseRepository
         var cacheOptions = new MemoryCacheEntryOptions();
         cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(3));
         cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(7));
+        cacheOptions.Priority = CacheItemPriority.Normal;
         CacheOptions = cacheOptions;
     }
 }

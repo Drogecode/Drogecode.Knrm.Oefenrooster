@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
-public partial class UserRolesEdit : IDisposable
+public sealed partial class UserRolesEdit : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<UserRolesEdit>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }

@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Externals;
 
-public partial class SharedActions : IDisposable
+public sealed partial class SharedActions : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<SharedActions>? L { get; set; }
     [Inject, NotNull] private CustomStateProvider? AuthenticationStateProvider { get; set; }

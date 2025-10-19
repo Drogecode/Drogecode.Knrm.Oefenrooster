@@ -8,7 +8,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner.Components.Dialogs;
 
-public partial class RatingDialog : ComponentBase, IDisposable
+public sealed partial class RatingDialog : ComponentBase, IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<RatingDialog>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
@@ -20,7 +20,7 @@ public partial class RatingDialog : ComponentBase, IDisposable
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public DrogeCodeGlobal? Global { get; set; }
     [Parameter] public List<DrogeUser>? Users { get; set; }
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private List<TrainingTarget>? _trainingTargets;
     private bool _updatingAll;
     private int _allHovered;

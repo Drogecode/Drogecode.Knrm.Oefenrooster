@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Planner;
 
-public partial class TrainingDetails : IDisposable
+public sealed partial class TrainingDetails : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<TrainingDetails>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
@@ -16,7 +16,7 @@ public partial class TrainingDetails : IDisposable
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [CascadingParameter] private DrogeCodeGlobal Global { get; set; } = default!;
     [Parameter] public Guid? Id { get; set; }
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private PlannedTraining? _training = null;
     private List<PlannerTrainingType>? _trainingTypes;
     private List<DrogeVehicle>? _vehicles;

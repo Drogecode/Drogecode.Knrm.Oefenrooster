@@ -8,7 +8,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 
-public partial class StatisticsUserTable : IDisposable
+public sealed partial class StatisticsUserTable : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<StatisticsTab>? L { get; set; }
     [Inject, NotNull] private ReportActionRepository? ReportActionRepository { get; set; }
@@ -16,7 +16,7 @@ public partial class StatisticsUserTable : IDisposable
     [Inject, NotNull] private UserRepository? UserRepository { get; set; }
     [Inject, NotNull] private FunctionRepository? FunctionRepository { get; set; }
     [Inject, NotNull] private IDialogService? DialogProvider { get; set; }
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;
     private List<DistinctType>? _distinctTypes;

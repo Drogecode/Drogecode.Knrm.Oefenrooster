@@ -13,7 +13,7 @@ public sealed partial class CalendarCard : IDisposable
     [Parameter] public bool ShowDate { get; set; }
     [Parameter] public bool ShowDayOfWeek { get; set; }
     [Parameter] public bool ShowSelectAvailability { get; set; } = true;
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private bool _updating;
 
     protected override void OnParametersSet()

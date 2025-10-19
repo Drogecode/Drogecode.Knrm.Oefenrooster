@@ -14,7 +14,7 @@ public sealed partial class GroupDialog : IDisposable
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool? IsNew { get; set; }
 
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     void Cancel() => MudDialog.Cancel();
     private DefaultGroup? _originalDefaultGroup;
     protected override async Task OnParametersSetAsync()

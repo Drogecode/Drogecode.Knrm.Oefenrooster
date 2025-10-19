@@ -9,7 +9,7 @@ using NSubstitute;
 
 namespace Drogecode.Knrm.Oefenrooster.TestPreCom.Tests;
 
-public class FutureProblemsTests : IDisposable
+public sealed class FutureProblemsTests : IDisposable
 {
     private readonly ILogger _logger;
     private readonly IDateTimeProviderMock _dateTimeProviderMock;

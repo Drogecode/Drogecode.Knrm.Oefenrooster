@@ -4,14 +4,14 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.PreCom;
 
-public partial class SendAlertToForward : IDisposable
+public sealed partial class SendAlertToForward : IDisposable
 {
     [Inject] private IStringLocalizer<SendAlertToForward> L { get; set; } = default!;
     [Inject] private PreComRepository PreComRepository { get; set; } = default!;
     [Inject] private UserRepository UserRepository { get; set; } = default!;
     [Inject] private FunctionRepository FunctionRepository { get; set; } = default!;
 
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private PreComForward? _selectedForward;
     private string? _message;
     private bool _isSelectingUser;

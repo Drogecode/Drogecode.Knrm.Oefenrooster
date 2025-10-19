@@ -28,7 +28,7 @@ public sealed partial class ScheduleCalendar : IDisposable
     [Parameter, EditorRequired] public List<DrogeVehicle>? Vehicles { get; set; }
     [Parameter, EditorRequired] public List<PlannerTrainingType>? TrainingTypes { get; set; }
     private static string _timeZone = "Europe/Amsterdam";
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private List<CalendarItem> _events = new();
     private List<UserTrainingCounter>? _userTrainingCounter;
     private List<RoosterItemMonth>? _monthItems;

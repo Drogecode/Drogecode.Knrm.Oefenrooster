@@ -11,8 +11,8 @@ public sealed partial class DefaultPanel : IDisposable
     [Inject] private IDialogService _dialogProvider { get; set; } = default!;
     [Inject] private DefaultScheduleRepository _defaultScheduleRepository { get; set; } = default!;
     [Parameter][EditorRequired] public DefaultGroup Group { get; set; } = default!;
-    private RefreshModel _refreshModel = new();
-    private CancellationTokenSource _cls = new();
+    private readonly RefreshModel _refreshModel = new();
+    private readonly CancellationTokenSource _cls = new();
     private List<DefaultSchedule>? _defaultSchedules;
     private bool _updating;
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -34,7 +34,7 @@ public sealed partial class NavMenu : IDisposable
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
     [CascadingParameter] DrogeCodeGlobal Global { get; set; } = default!;
 
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private UserMenuSettings? _userMenuSettings;
     private List<DrogeMenu>? _menuItems;
     private List<LinkedCustomer>? _linkedCustomers;

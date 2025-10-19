@@ -16,8 +16,8 @@ public sealed partial class DayItem : IDisposable
     [Inject] private UserRepository UserRepository { get; set; } = default!;
     [Inject] private FunctionRepository FunctionRepository { get; set; } = default!;
 
-    private CancellationTokenSource _cls = new();
-    private RefreshModel _refreshModel = new();
+    private readonly CancellationTokenSource _cls = new();
+    private readonly RefreshModel _refreshModel = new();
     private GetMultipleDayItemResponse? _items;
     private List<DrogeUser>? _users;
     private List<DrogeFunction>? _functions;

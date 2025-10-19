@@ -4,7 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 
-public partial class TrainingSubjectList : IDisposable
+public sealed partial class TrainingSubjectList : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<TrainingSubjectList>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }

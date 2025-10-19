@@ -10,9 +10,9 @@ public sealed partial class Defaults : IDisposable
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;
     [Inject] private IDialogService DialogProvider { get; set; } = default!;
     [Inject] private DefaultScheduleRepository _defaultScheduleRepository { get; set; } = default!;
-    private RefreshModel _refreshModel = new();
-    private CancellationTokenSource _cls = new();
-    private List<DefaultGroup>? _defaultGroups { get; set; }
+    private readonly RefreshModel _refreshModel = new();
+    private readonly CancellationTokenSource _cls = new();
+    private List<DefaultGroup>? _defaultGroups;
 
     protected override async Task OnParametersSetAsync()
     {

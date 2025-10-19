@@ -77,6 +77,11 @@ public class AuthenticationController : DrogeController
     {
         try
         {
+            if (body.State is null)
+            {
+                return BadRequest(false);
+            }
+            
             var found = _memoryCache.Get<CacheLoginSecrets>(body.State);
             if (found?.Success is not true || found.CodeVerifier is null)
             {
@@ -97,7 +102,7 @@ public class AuthenticationController : DrogeController
         catch (Exception e)
         {
             Logger.LogError(e, "AuthenticateUser POST");
-            return false;
+            return BadRequest(false);
         }
     }
 
@@ -144,7 +149,7 @@ public class AuthenticationController : DrogeController
         catch (Exception e)
         {
             Logger.LogError(e, "AuthenticateExternal");
-            return false;
+            return BadRequest(false);
         }
     }
 
@@ -297,7 +302,7 @@ public class AuthenticationController : DrogeController
             case RefreshState.None:
                 return false;
             case RefreshState.AuthenticationRefreshed:
-                return false; // Should be true, but disabled for now
+                return true;
             case null:
             default:
                 return false;

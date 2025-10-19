@@ -15,7 +15,7 @@ public sealed partial class AddCustomerDialog : IDisposable
     [Parameter] public Customer? Customer { get; set; }
     [Parameter] public bool? IsNew { get; set; }
     [AllowNull] private MudForm _form;
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private bool _success;
     private string[] _errors = [];
     void Cancel() => MudDialog.Cancel();

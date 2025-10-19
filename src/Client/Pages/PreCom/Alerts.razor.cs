@@ -17,13 +17,13 @@ public sealed partial class Alerts : IDisposable
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Inject] private UserRepository UserRepository { get; set; } = default!;
     [CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private MultiplePreComAlertsResponse? _alerts;
     private DrogeUser? _user;
     private bool _isTaco;
     private bool _showHowTo;
     private int _currentPage = 1;
-    private int _count = 30;
+    private readonly int _count = 30;
     private bool _bussy;
     private bool _noProblems;
     private bool _loadingProblems;

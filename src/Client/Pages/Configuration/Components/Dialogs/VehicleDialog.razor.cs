@@ -4,7 +4,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 
-public partial class VehicleDialog : IDisposable
+public sealed partial class VehicleDialog : IDisposable
 {
     [Inject] private IStringLocalizer<Vehicles> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;

@@ -8,8 +8,6 @@ namespace Drogecode.Knrm.Oefenrooster.Playwright.Tests
     [TestFixture]
     public class LoginTests : BaseTest
     {
-        private readonly IConfigurationRoot _appSettings;
-
         [SetUp]
         public override async Task SetUp()
         {

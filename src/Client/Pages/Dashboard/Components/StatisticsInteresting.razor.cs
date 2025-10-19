@@ -3,11 +3,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Dashboard.Components;
 
-public partial class StatisticsInteresting : IDisposable
+public sealed partial class StatisticsInteresting : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<StatisticsTab>? L { get; set; }
     [Inject, NotNull] private ReportActionRepository? ReportActionRepository { get; set; }
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private List<int>? _years;
     private List<int> _selectedYear = [];
 

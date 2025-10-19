@@ -19,7 +19,7 @@ public sealed partial class IndexCard : IDisposable
     [Parameter] public string? MinWidth { get; set; }
     [Parameter] public string? MaxWidth { get; set; }
     [Parameter] public bool ShowDayOfWeek { get; set; }
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private PlanUser? _planUser;
 
     protected override void OnParametersSet()

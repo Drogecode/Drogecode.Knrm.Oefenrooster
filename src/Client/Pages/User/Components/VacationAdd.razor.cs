@@ -11,7 +11,7 @@ public sealed partial class VacationAdd : IDisposable
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [Parameter] public Guid? Id { get; set; }
 
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private Holiday? _holiday;
     private Holiday? _originalHoliday;
     private bool _isNew = true;

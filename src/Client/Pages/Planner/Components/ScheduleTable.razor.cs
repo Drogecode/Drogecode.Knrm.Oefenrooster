@@ -25,7 +25,7 @@ public sealed partial class ScheduleTable : IDisposable
     [Parameter, EditorRequired] public List<PlannerTrainingType>? TrainingTypes { get; set; } = default!;
     [Parameter, EditorRequired] public bool CanEdit { get; set; }
 
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private Guid? _specialFunctionId = null;
     private bool _updating;
     private bool _working;

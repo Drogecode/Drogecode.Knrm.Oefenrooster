@@ -6,14 +6,14 @@ using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
-public partial class Vehicles : IDisposable
+public sealed partial class Vehicles : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<Vehicles>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }
     [Inject, NotNull] private IVehicleClient? VehicleClient { get; set; }
     [Inject, NotNull] private IDialogService? DialogProvider { get; set; }
-    private CancellationTokenSource _cls = new();
-    private RefreshModel _refreshModel = new();
+    private readonly CancellationTokenSource _cls = new();
+    private readonly RefreshModel _refreshModel = new();
     private MultipleVehicleResponse? _vehicles;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

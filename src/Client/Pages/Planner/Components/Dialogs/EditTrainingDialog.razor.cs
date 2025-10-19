@@ -27,7 +27,7 @@ public sealed partial class EditTrainingDialog : IDisposable
     [Parameter] public PlannedTraining? Planner { get; set; }
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public DrogeCodeGlobal Global { get; set; } = default!;
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private List<DrogeLinkVehicleTraining>? _linkVehicleTraining;
     private IReadOnlyCollection<Guid>? _selectedTargets;
     private EditTraining? _training;

@@ -13,7 +13,7 @@ public sealed partial class DefaultDialog : IDisposable
     [Parameter] public RefreshModel? Refresh { get; set; }
     [Parameter] public bool? IsNew { get; set; }
     [Parameter] public Guid? DefaultId { get; set; }
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
    private void Cancel() => MudDialog.Cancel();
     protected override void OnParametersSet()
     {

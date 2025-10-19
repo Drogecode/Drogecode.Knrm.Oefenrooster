@@ -5,7 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 
-public partial class AddTrainingTargetDialog : IDisposable
+public sealed partial class AddTrainingTargetDialog : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<AddTrainingTargetDialog>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }

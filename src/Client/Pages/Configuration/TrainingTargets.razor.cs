@@ -5,7 +5,7 @@ using Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
-public partial class TrainingTargets : IDisposable
+public sealed partial class TrainingTargets : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<TrainingTargets>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }

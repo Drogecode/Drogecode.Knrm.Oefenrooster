@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
-public partial class UserFunctions : IDisposable
+public sealed partial class UserFunctions : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<UserFunctions>? L { get; set; }
     [Inject, NotNull] private IFunctionClient? FunctionClient { get; set; }

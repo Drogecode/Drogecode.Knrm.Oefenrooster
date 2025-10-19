@@ -6,7 +6,7 @@ using Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration;
 
-public partial class Customers : IDisposable
+public sealed partial class Customers : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<Customers>? L { get; set; }
     [Inject, NotNull] private ICustomerClient? CustomerClient { get; set; }
@@ -14,8 +14,8 @@ public partial class Customers : IDisposable
     [Inject, NotNull] private NavigationManager? Navigation { get; set; }
 
     private GetAllCustomersResponse? _customers;
-    private RefreshModel _refreshModel = new();
-    private CancellationTokenSource _cls = new();
+    private readonly RefreshModel _refreshModel = new();
+    private readonly CancellationTokenSource _cls = new();
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

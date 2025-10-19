@@ -25,7 +25,7 @@ public sealed partial class Theming : IDisposable
     private DarkLightMode _darkModeToggle;
     private LocalUserSettings? _localUserSettings;
     private DotNetObjectReference<Theming>? _dotNetHelper;
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private DateTime _lastVisibilityChange = DateTime.UtcNow;
     private bool _isDarkMode;
     private bool _watchStarted;

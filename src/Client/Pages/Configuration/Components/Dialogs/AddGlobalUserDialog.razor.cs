@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.Configuration.Components.Dialogs;
 
-public partial class AddGlobalUserDialog : IDisposable
+public sealed partial class AddGlobalUserDialog : IDisposable
 {
     [Inject, NotNull] private IStringLocalizer<AddGlobalUserDialog>? L { get; set; }
     [Inject, NotNull] private IStringLocalizer<App>? LApp { get; set; }

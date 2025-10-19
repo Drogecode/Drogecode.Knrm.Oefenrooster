@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Pages.User;
 
-public partial class AddEditLinkMail : IDisposable
+public sealed partial class AddEditLinkMail : IDisposable
 {
     [Inject] private IStringLocalizer<AddEditLinkMail> L { get; set; } = default!;
     [Inject] private IStringLocalizer<App> LApp { get; set; } = default!;

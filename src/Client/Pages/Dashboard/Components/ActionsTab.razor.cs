@@ -24,9 +24,9 @@ public sealed partial class ActionsTab : IDisposable
     [Parameter] public List<DrogeFunction>? Functions { get; set; }
     [Parameter, EditorRequired] public bool EnableOptions { get; set; }
     private MultipleReportActionsResponse? _reportActions;
-    private CancellationTokenSource _cls = new();
+    private readonly CancellationTokenSource _cls = new();
     private IEnumerable<DrogeUser> _selectedUsersAction = new List<DrogeUser>();
-    private List<string> _actionTypes = [];
+    private readonly List<string> _actionTypes = [];
     private IEnumerable<string> _selectedActionTypes = new List<string>();
     private const int DEFAULT_COUNT = 10;
     private int _currentPage = 1;

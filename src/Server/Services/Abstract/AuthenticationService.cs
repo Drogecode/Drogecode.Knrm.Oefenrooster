@@ -62,7 +62,7 @@ public abstract class AuthenticationService
         };
 
         var cacheOptions = new MemoryCacheEntryOptions();
-        cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
+        cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
         cacheOptions.Priority = CacheItemPriority.High;
         _memoryCache.Set(response.LoginSecret, response, cacheOptions);
         return response;
