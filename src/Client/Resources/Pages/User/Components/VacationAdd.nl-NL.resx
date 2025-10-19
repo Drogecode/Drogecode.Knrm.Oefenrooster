@@ -147,4 +147,7 @@
   <data name="Failed to save" xml:space="preserve">
     <value>Opslaan mislukt, probeer het later nogmaals</value>
   </data>
+  <data name="Should not be after end date" xml:space="preserve">
+    <value>Mag niet na eind datum</value>
+  </data>
 </root>

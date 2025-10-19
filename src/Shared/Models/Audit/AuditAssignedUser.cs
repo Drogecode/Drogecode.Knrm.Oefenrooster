@@ -20,4 +20,5 @@ public enum AuditReason
     ChangeAvailability = 2,
     ChangeVehicle = 3,
     ChangedFunction = 4,
+    ChangeHoliday = 5,
 }

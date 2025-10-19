@@ -1,6 +1,6 @@
 ﻿namespace Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday;
 
-public class GetResponse : BaseResponse
+public class GetHolidayResponse : BaseResponse
 {
     public Holiday? Holiday { get; set; }
 }

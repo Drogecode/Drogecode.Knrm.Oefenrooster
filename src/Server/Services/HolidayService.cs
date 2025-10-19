@@ -72,9 +72,9 @@ public class HolidayService : IHolidayService
         return result;
     }
 
-    public async Task<GetResponse> Get(Guid id, Guid customerId, Guid userId, CancellationToken clt)
+    public async Task<GetHolidayResponse> Get(Guid id, Guid customerId, Guid userId, CancellationToken clt)
     {
-        var result = new GetResponse();
+        var result = new GetHolidayResponse();
         var dbHoliday = await _database.UserHolidays.FirstOrDefaultAsync(x => x.Id == id && x.CustomerId == customerId && x.UserId == userId, clt);
         if (dbHoliday is null) return result;
         result.Holiday = new Holiday
@@ -103,10 +103,9 @@ public class HolidayService : IHolidayService
         body.Id = dbHoliday.Id;
         body.ValidFrom = dbHoliday.ValidFrom;
         _database.UserHolidays.Add(dbHoliday);
-        await _database.SaveChangesAsync(clt);
         return new PutHolidaysForUserResponse
         {
-            Success = true,
+            Success = await _database.SaveChangesAsync(clt) > 0,
             Put = body
         };
     }

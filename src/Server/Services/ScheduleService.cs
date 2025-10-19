@@ -142,31 +142,27 @@ public class ScheduleService : DrogeService, IScheduleService
     private static void GetAvailability(List<DbUserDefaultAvailable>? defaultAveUser, List<DbUserHolidays> userHolidays, DateTime start, DateTime end, Guid? roosterDefaultId, Guid? userId,
         ref Availability? available, ref AvailabilitySetBy? setBy)
     {
-        if ((setBy != AvailabilitySetBy.User && setBy is null) || available is null || available == Availability.None)
+        if (setBy == AvailabilitySetBy.User)
+            return;
+
+        var userHoliday = userHolidays.FirstOrDefault(x => x.ValidFrom <= start && x.ValidUntil >= end && (userId is null || x.UserId == userId));
+        if (userHoliday?.Available != null)
         {
-            var userHoliday = userHolidays.FirstOrDefault(x => x.ValidFrom <= start && x.ValidUntil >= end && (userId is null || x.UserId == userId));
-            if (userHoliday?.Available != null)
-            {
-                available = userHoliday.Available;
-                setBy = AvailabilitySetBy.Holiday;
-            }
+            available = userHoliday.Available;
+            setBy = AvailabilitySetBy.Holiday;
+            return;
         }
 
-        if ((setBy != AvailabilitySetBy.User && setBy != AvailabilitySetBy.Holiday && setBy is null) || available is null || available == Availability.None)
+        var defAvaForUser = defaultAveUser?.Where(x => x.RoosterDefaultId == roosterDefaultId && x.ValidFrom <= start && x.ValidUntil >= end && (userId is null || x.UserId == userId))
+            .OrderBy(x => x.DefaultGroup?.IsDefault).FirstOrDefault();
+        if (defAvaForUser?.Available != null)
         {
-            var defAvaForUser = defaultAveUser?.Where(x => x.RoosterDefaultId == roosterDefaultId && x.ValidFrom <= start && x.ValidUntil >= end && (userId is null || x.UserId == userId))
-                .OrderBy(x => x.DefaultGroup?.IsDefault).FirstOrDefault();
-            if (defAvaForUser?.Available != null)
-            {
-                available = defAvaForUser.Available;
-                setBy = AvailabilitySetBy.DefaultAvailable;
-            }
+            available = defAvaForUser.Available;
+            setBy = AvailabilitySetBy.DefaultAvailable;
+            return;
         }
 
-        if (available is null || available == Availability.None)
-        {
-            setBy = AvailabilitySetBy.None;
-        }
+        setBy = AvailabilitySetBy.None;
     }
 
     public async Task<PatchScheduleForUserResponse> PatchScheduleForUserAsync(Guid userId, Guid customerId, Training training, CancellationToken clt)
@@ -258,7 +254,7 @@ public class ScheduleService : DrogeService, IScheduleService
             throw new DrogeCodeToLongException();
         if (!inRoleEditPast && oldTraining.DateEnd < DateTimeProvider.UtcNow().AddDays(AccessesSettings.AUTH_scheduler_edit_past_days - 1))
             throw new UnauthorizedAccessException();
-        
+
         var newName = sanitizer.Sanitize(training.Name ?? string.Empty);
         if (!newName.Equals(oldTraining.Name, StringComparison.CurrentCulture) ||
             !oldTraining.DateStart.Equals(training.DateStart) ||
@@ -732,7 +728,7 @@ public class ScheduleService : DrogeService, IScheduleService
 
             var ava = await Database.UserDefaultAvailables.Include(x => x.DefaultGroup).Where(x => x.CustomerId == customerId && x.RoosterDefaultId == dbTraining.RoosterDefaultId)
                 .ToListAsync(cancellationToken: clt);
-            var userHolidays = await Database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= dbTraining.DateEnd.AddDays(1) && x.ValidUntil >= dbTraining.DateStart.AddDays(-1))
+            var userHolidays = await Database.UserHolidays.Where(x => x.ValidFrom <= dbTraining.DateEnd.AddDays(1) && x.ValidUntil >= dbTraining.DateStart.AddDays(-1))
                 .ToListAsync(cancellationToken: clt);
             var availables = Database.RoosterAvailables.Where(x => x.CustomerId == customerId && x.TrainingId == trainingId);
             var users = await Database.Users
@@ -808,7 +804,7 @@ public class ScheduleService : DrogeService, IScheduleService
                     .ToListAsync(cancellationToken: clt);
                 var defaultAveUser = await Database.UserDefaultAvailables.Include(x => x.DefaultGroup)
                     .Where(x => x.CustomerId == customerId && x.ValidFrom <= trainingStart && x.ValidUntil >= trainingEnd).ToListAsync(cancellationToken: clt);
-                var userHolidays = await Database.UserHolidays.Where(x => x.CustomerId == customerId && x.ValidFrom <= trainingStart && x.ValidUntil >= trainingEnd)
+                var userHolidays = await Database.UserHolidays.Where(x => x.ValidFrom <= trainingStart && x.ValidUntil >= trainingEnd)
                     .ToListAsync(cancellationToken: clt);
 
                 var newPlanner = new PlannedTraining
@@ -934,7 +930,7 @@ public class ScheduleService : DrogeService, IScheduleService
             var userHolidays = await _userHolidaysRepository.GetUserHolidaysForUser(false, customerId, userId, body.Training.DateEnd, body.Training.DateStart, clt);
             GetAvailability(defaultAveUser, userHolidays, body.Training.DateStart, body.Training.DateEnd, body.Training.DefaultId, null, ref available, ref setBy);
         }
-        
+
         ava.Available = available;
         ava.SetBy = setBy ?? AvailabilitySetBy.None;
         ava.Assigned = body.User.Assigned;
@@ -1031,7 +1027,7 @@ public class ScheduleService : DrogeService, IScheduleService
     {
         var sw = StopwatchProvider.StartNew();
         var result = new GetScheduledTrainingsForUserResponse();
-        var userHolidays = await Database.UserHolidays.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= fromDate).ToListAsync(cancellationToken: clt);
+        var userHolidays = await Database.UserHolidays.Where(x => x.UserId == userId && x.ValidFrom >= fromDate).ToListAsync(cancellationToken: clt);
         var defaultAveUser = await Database.UserDefaultAvailables.Include(x => x.DefaultGroup).Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= fromDate)
             .ToListAsync(cancellationToken: clt);
         var scheduled = Database.RoosterAvailables
@@ -1084,6 +1080,7 @@ public class ScheduleService : DrogeService, IScheduleService
                         AvailableId = a.Id,
                         UserId = a.UserId,
                         Availability = a.Available,
+                        SetBy = a.SetBy,
                         Assigned = a.Assigned,
                         Name = users.FirstOrDefault(x => x.Id == a.UserId)?.Name ?? "Name not found",
                         PlannedFunctionId = a.UserFunctionId ?? users.FirstOrDefault(x => x.Id == a.UserId)?.UserFunctionId,
@@ -1093,7 +1090,7 @@ public class ScheduleService : DrogeService, IScheduleService
                     }).ToList()
             };
             var defaultVehicle = await GetDefaultVehicleForTraining(customerId, schedule.Training, clt);
-            foreach (var user in plan.PlanUsers.Where(x => x.Assigned))
+            foreach (var user in plan.PlanUsers.Where(x => x.Assigned && x.UserId == userId))
             {
                 Availability? availabilty = user.Availability;
                 AvailabilitySetBy? setBy = user.SetBy;
@@ -1162,7 +1159,7 @@ public class ScheduleService : DrogeService, IScheduleService
                         (x.IsPermanentPinned || x.RoosterAvailables == null || !x.RoosterAvailables.Any(r => r.UserId == userId && r.Available > 0)))
             .OrderBy(x => x.DateStart)
             .ToListAsync(clt);
-        var userHolidays = await Database.UserHolidays.Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= fromDate).ToListAsync(clt);
+        var userHolidays = await Database.UserHolidays.Where(x => x.UserId == userId && x.ValidFrom <= fromDate).ToListAsync(clt);
         var defaultAveUser = await Database.UserDefaultAvailables.Include(x => x.DefaultGroup).Where(x => x.CustomerId == customerId && x.UserId == userId && x.ValidFrom <= fromDate)
             .ToListAsync(clt);
 
@@ -1188,7 +1185,7 @@ public class ScheduleService : DrogeService, IScheduleService
                 IsPinned = training.IsPinned,
                 IsPermanentPinned = training.IsPermanentPinned,
                 ShowTime = training.ShowTime ?? true,
-                HasDescription =  !training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
+                HasDescription = !training.Description?.IsHtmlOnlyWhitespaceOrBreaks() ?? false,
                 HasTargets = training.TrainingTargetSet?.TrainingTargetIds.Count > 0
             });
         }

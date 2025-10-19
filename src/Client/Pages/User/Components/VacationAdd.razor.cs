@@ -15,6 +15,7 @@ public sealed partial class VacationAdd : IDisposable
     private Holiday? _holiday;
     private Holiday? _originalHoliday;
     private bool _isNew = true;
+    private bool _isSaving;
     private string? _error;
     protected override async Task OnParametersSetAsync()
     {
@@ -33,8 +34,11 @@ public sealed partial class VacationAdd : IDisposable
     public string? ValidateStartDate(DateTime? newValue)
     {
         if (newValue == _originalHoliday?.ValidFrom) return null;
-        if (newValue == null) return L["No value for start date"];
+        if (newValue == null || _holiday is null) return L["No value for start date"];
         if (newValue.Value.CompareTo(DateTime.UtcNow.Date) < 0) return L["Should not be in the past"];
+        if (_holiday.ValidUntil is not null && newValue.Value.CompareTo(_holiday.ValidUntil) > 0) return L["Should not be after end date"];
+        _holiday.ValidFrom ??= newValue.Value.AddDays(1);
+        StateHasChanged();
         return null;
     }
     public string? ValidateTillDate(DateTime? newValue)
@@ -42,7 +46,7 @@ public sealed partial class VacationAdd : IDisposable
         if (newValue == _originalHoliday?.ValidUntil) return null;
         if (newValue == null || _holiday is null) return L["No value for till date"];
         if (newValue.Value.CompareTo(DateTime.UtcNow.Date) < 0) return L["Should not be in the past"];
-        if (newValue.Value.CompareTo(_holiday.ValidFrom) < 0) return L["Should not be before start date"];
+        if (_holiday.ValidFrom is not null && newValue.Value.CompareTo(_holiday.ValidFrom) < 0) return L["Should not be before start date"];
         return null;
     }
 
@@ -55,7 +59,15 @@ public sealed partial class VacationAdd : IDisposable
         try
         {
             // https://github.com/MudBlazor/MudBlazor/issues/4047
-            if (_holiday?.Description is null || _holiday.ValidUntil is null || _holiday.ValidFrom is null) return;
+            if (_holiday?.Description is null || _holiday.ValidUntil is null || _holiday.ValidFrom is null || _isSaving ||
+                !string.IsNullOrEmpty(ValidateStartDate(_holiday.ValidFrom)) ||
+                !string.IsNullOrEmpty(ValidateTillDate(_holiday.ValidUntil)))
+            {
+                return;
+            }
+            
+            _isSaving = true;
+            StateHasChanged();
             _holiday.Availability = Availability.NotAvailable;
             _holiday.ValidFrom = DateTime.SpecifyKind(_holiday.ValidFrom.Value, DateTimeKind.Utc);
             _holiday.ValidUntil = new DateTime(_holiday.ValidUntil.Value.Year, _holiday.ValidUntil.Value.Month, _holiday.ValidUntil.Value.Day, 23, 59, 59, DateTimeKind.Utc);
@@ -81,6 +93,11 @@ public sealed partial class VacationAdd : IDisposable
         {
             DebugHelper.WriteLine(ex);
             _error = L["Failed to save"];
+        }
+        finally
+        {
+            _isSaving = false;
+            StateHasChanged();
         }
     }
 

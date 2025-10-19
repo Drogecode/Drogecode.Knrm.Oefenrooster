@@ -147,4 +147,7 @@
   <data name="ChangedFunction" xml:space="preserve">
     <value>Wijzig functie</value>
   </data>
+  <data name="ChangeHoliday" xml:space="preserve">
+    <value>Wijzig vakantie</value>
+  </data>
 </root>
