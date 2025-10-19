@@ -247,10 +247,20 @@ public class ScheduleService : DrogeService, IScheduleService
             throw new DrogeCodeToLongException();
         if (!inRoleEditPast && oldTraining.DateEnd < DateTimeProvider.UtcNow().AddDays(AccessesSettings.AUTH_scheduler_edit_past_days - 1))
             throw new UnauthorizedAccessException();
+        
+        var newName = sanitizer.Sanitize(patchedTraining.Name ?? string.Empty);
+        if (!newName.Equals(oldTraining.Name, StringComparison.CurrentCulture) ||
+            !oldTraining.DateStart.Equals(patchedTraining.DateStart) ||
+            !oldTraining.DateEnd.Equals(patchedTraining.DateEnd) ||
+            !oldTraining.RoosterTrainingTypeId.Equals(patchedTraining.RoosterTrainingTypeId) ||
+            oldTraining.ShowTime != patchedTraining.ShowTime)
+        {
+            result.ShouldUpdateOutlookEvent = true;
+        }
 
         oldTraining.RoosterTrainingTypeId = patchedTraining.RoosterTrainingTypeId;
         oldTraining.TrainingTargetSetId = patchedTraining.TrainingTargetSetId;
-        oldTraining.Name = sanitizer.Sanitize(patchedTraining.Name ?? string.Empty);
+        oldTraining.Name = newName;
         oldTraining.Description = sanitizer.Sanitize(patchedTraining.Description ?? string.Empty);
         oldTraining.DateStart = patchedTraining.DateStart;
         oldTraining.DateEnd = patchedTraining.DateEnd;

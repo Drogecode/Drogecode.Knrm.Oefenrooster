@@ -222,7 +222,7 @@ public class ScheduleController : DrogeController
 
             await _userService.PatchLastOnline(userId, clt);
             clt = CancellationToken.None;
-            await PatchTrainingCalenderUsers(patchedTraining.TrainingId!.Value, customerId, userId, clt);
+            await PatchTrainingCalenderUsers(patchedTraining.TrainingId!.Value, customerId, userId, result.ShouldUpdateOutlookEvent, clt);
             await _userService.PatchLastOnline(userId, clt);
 
             return result;
@@ -238,7 +238,10 @@ public class ScheduleController : DrogeController
         }
     }
 
-    private async Task PatchTrainingCalenderUsers(Guid trainingId, Guid customerId, Guid currentUserId, CancellationToken clt)
+    /// <summary>
+    /// Send update to Outlook calendar and sends a message with signalR to update the client if the user is online.
+    /// </summary>
+    private async Task PatchTrainingCalenderUsers(Guid trainingId, Guid customerId, Guid currentUserId, bool sendUpdateEvent, CancellationToken clt)
     {
         var training = await _scheduleService.GetPlannedTrainingById(customerId, trainingId, clt);
         clt.ThrowIfCancellationRequested();
@@ -251,35 +254,36 @@ public class ScheduleController : DrogeController
             foreach (var user in training.Training.PlanUsers)
             {
                 await _refreshHub.SendMessage(user.UserId, ItemUpdated.FutureTrainings);
-                if (string.IsNullOrEmpty(user.CalendarEventId))
+                if (string.IsNullOrEmpty(user.CalendarEventId) || !sendUpdateEvent)
                 {
                     continue;
                 }
+
                 var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(30, 0, user.UserId, customerId, true, clt)).UserLinkedMails ?? [];
-                if (delay.Value && allUserLinkedMail.Any(x=>x is { IsActive: true, IsEnabled: true, IsDrogeCodeUser: false }))
+                if (delay.Value && allUserLinkedMail.Any(x => x is { IsActive: true, IsEnabled: true, IsDrogeCodeUser: false }))
                 {
                     await _scheduleService.PatchAvailableLastChanged(customerId, currentUserId, user, clt);
-                }
-                else
-                {
-                    var drogeUser = await _userService.GetUserById(customerId, user.UserId, false, clt);
-                    if (drogeUser is null)
-                    {
-                        Logger.LogError("No user found for user id `{userId}` in customer `{customerId}`", user.UserId, customerId);
-                        throw new DrogeCodeNullException("No user found");
-                    }
-                    var preText = await _userSettingService.GetStringUserSetting(customerId, drogeUser.Id, SettingName.CalendarPrefix, string.Empty, clt);
-                    DrogeFunction? function = null;
-                    if (user.PlannedFunctionId is not null && user.UserFunctionId is not null && user.UserFunctionId != user.PlannedFunctionId)
-                    {
-                        function = await _functionService.GetById(customerId, user.PlannedFunctionId.Value, clt);
-                    }
-                    var text = GetTrainingCalenderText(training.Training.TrainingTypeName, training.Training.Name, function?.Name, preText.Value);
-                    await _graphService.PatchCalender(drogeUser.ExternalId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime,
-                        FreeBusyStatus.Busy, allUserLinkedMail);
-                    await _scheduleService.PatchLastSynced(customerId, user.UserId, user.AvailableId, clt);
+                    continue;
                 }
 
+                DrogeFunction? function = null;
+                if (user.PlannedFunctionId is not null && user.UserFunctionId is not null && user.UserFunctionId != user.PlannedFunctionId)
+                {
+                    function = await _functionService.GetById(customerId, user.PlannedFunctionId.Value, clt);
+                }
+
+                var drogeUser = await _userService.GetUserById(customerId, user.UserId, false, clt);
+                if (drogeUser is null)
+                {
+                    Logger.LogWarning("No user found for user id `{userId}` in customer `{customerId}`", user.UserId, customerId);
+                    continue;
+                }
+
+                var preText = await _userSettingService.GetStringUserSetting(customerId, drogeUser.Id, SettingName.CalendarPrefix, string.Empty, clt);
+                var text = GetTrainingCalenderText(training.Training.TrainingTypeName, training.Training.Name, function?.Name, preText.Value);
+                await _graphService.PatchCalender(drogeUser.ExternalId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime,
+                    FreeBusyStatus.Busy, allUserLinkedMail);
+                await _scheduleService.PatchLastSynced(customerId, user.UserId, user.AvailableId, clt);
                 i++;
             }
 
@@ -324,6 +328,7 @@ public class ScheduleController : DrogeController
                 Logger.LogWarning("User `{userId}` is not allowed to add training.", userId);
                 return Unauthorized();
             }
+
             var trainingId = Guid.NewGuid();
             var result = await _scheduleService.AddTrainingAsync(customerId, newTraining, trainingId, clt);
             if (false && result.Success) // Not sure if required
@@ -682,7 +687,7 @@ public class ScheduleController : DrogeController
         {
             var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(30, 0, planUserId, customerId, true, clt)).UserLinkedMails ?? [];
             var delay = await _userSettingService.GetBoolUserSetting(customerId, currentUserId, SettingName.DelaySyncingTrainingToOutlook, false, clt);
-            if (delay.Value && !fromBackgroundWorker && allUserLinkedMail.Any(x=>x is { IsActive: true, IsEnabled: true, IsDrogeCodeUser: false }))
+            if (delay.Value && !fromBackgroundWorker && allUserLinkedMail.Any(x => x is { IsActive: true, IsEnabled: true, IsDrogeCodeUser: false }))
             {
                 return;
             }
@@ -719,7 +724,6 @@ public class ScheduleController : DrogeController
                         Logger.LogWarning(
                             "text is null or empty for {customerId} {planUserId} {trainingId} {assigned} {currentUserId} {availableId} {calendarEventId}",
                             customerId, planUserId, trainingId, assigned, currentUserId, availableId, calendarEventId);
-                        
                     }
                 }
                 else

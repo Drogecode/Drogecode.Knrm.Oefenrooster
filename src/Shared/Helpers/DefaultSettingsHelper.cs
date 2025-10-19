@@ -13,7 +13,7 @@ public static class DefaultSettingsHelper
     /// <summary>
     /// Increase to show the update button when BUTTON_VERSION is on this number or above.
     /// </summary>
-    public const int UPDATE_VERSION = 11; // Set on: v0.5.46
+    public const int UPDATE_VERSION = 11; // Set on: v0.5.47
     
     /// <summary>
     /// From what UPDATE_VERSION we should show the update button.
@@ -24,7 +24,7 @@ public static class DefaultSettingsHelper
     /// From what UPDATE_VERSION we should block the user from using the app.
     /// </summary>
     public const int BLOCKER_VERSION = 8; // Only working after v0.5.43 (between 10 and 11)
-    // 10 = v0.5.46
+    // 10 = v0.5.47
     // 9 = v0.5.40
     // 8 = v0.5.28
     // 7 = v0.5.18
