@@ -95,6 +95,8 @@ public class UserService : DrogeService, IUserService
         else
             userObj = await Database.Users.FirstOrDefaultAsync(u => u.CustomerId == customerId && u.Id == userId, cancellationToken: clt);
         
+        userName = userName.CleanStringForLogging();
+        userEmail = userEmail.CleanStringForLogging();
         if (userName.Length > DefaultSettingsHelper.MAX_LENGTH_USER_NAME)
         {
             Logger.LogWarning("User name `{UserName}` is too long, truncating to `{MaxLength}`", userName, DefaultSettingsHelper.MAX_LENGTH_USER_NAME);
