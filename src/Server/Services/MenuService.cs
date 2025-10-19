@@ -24,7 +24,7 @@ public class MenuService : IMenuService
         if (await dbMenus.AnyAsync(clt))
         {
             result.Menus = await dbMenus.ToListAsync(clt);
-            result.TotalCount = dbMenus.Count();
+            result.TotalCount = await dbMenus.CountAsync(clt);
             result.Success = true;
         }
 
