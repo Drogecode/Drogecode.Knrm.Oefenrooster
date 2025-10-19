@@ -5,115 +5,120 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
+    
+    <PropertyGroup>
+        <NSwagCommonOptions>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false</NSwagCommonOptions>
+        <NSwagBaseNamespace>/AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models</NSwagBaseNamespace>
+    </PropertyGroup>
 
 	<ItemGroup>
 		<OpenApiReference Include="OpenAPIs\Audit.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="AuditClient">
 			<OutputPath>../Clients/AuditClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Audit</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.Audit</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Authentication.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="AuthenticationClient">
 			<OutputPath>../Clients/AuthenticationClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.User,Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.User,Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\DayItem.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="DayItemClient">
 			<OutputPath>../Clients/DayItemClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.DayItem</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\MonthItem.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="MonthItemClient">
 			<OutputPath>../Clients/MonthItemClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Configuration.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ConfigurationClient">
 			<OutputPath>../Clients/ConfigurationClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration,Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.Configuration</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\CustomerSettings.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="CustomerSettingsClient">
 			<OutputPath>../Clients/CustomerSettingsClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Enums,Drogecode.Knrm.Oefenrooster.Shared.Models.Setting</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Enums,Drogecode.Knrm.Oefenrooster.Shared.Models.Setting</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\DefaultSchedule.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="DefaultScheduleClient">
 			<OutputPath>../Clients/DefaultScheduleClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule,Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.DefaultSchedule</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Function.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="FunctionClient">
 			<OutputPath>../Clients/FunctionClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Function,Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.Function</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Menu.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="MenuClient">
 			<OutputPath>../Clients/MenuClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Menu,Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.Menu</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\License.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="LicenseClient">
 			<OutputPath>../Clients/LicenseClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.License,Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.License</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Holiday.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="HolidayClient">
 			<OutputPath>../Clients/HolidayClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday,Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.Holiday</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\PreCom.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="PreComClient">
 			<OutputPath>../Clients/PreComClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom,Drogecode.Knrm.Oefenrooster.Shared.Enums</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.PreCom,Drogecode.Knrm.Oefenrooster.Shared.Enums</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\ReportActionShared.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ReportActionSharedClient">
 			<OutputPath>../Clients/ReportActionSharedClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models.ReportActionShared,Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.ReportActionShared,Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\ReportAction.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ReportActionClient">
 			<OutputPath>../Clients/ReportActionClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction,Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Enums</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction,Drogecode.Knrm.Oefenrooster.Shared.Enums</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\ReportTraining.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ReportTrainingClient">
 			<OutputPath>../Clients/ReportTrainingClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining,Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction,Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Enums</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.ReportTraining,Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction,Drogecode.Knrm.Oefenrooster.Shared.Enums</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Schedule.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="ScheduleClient">
 			<OutputPath>../Clients/ScheduleClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\SharePoint.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="SharePointClient">
 			<OutputPath>../Clients/SharePointClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.SharePoint</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\TrainingTarget.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="TrainingTargetClient">
 			<OutputPath>../Clients/TrainingTargetClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget,Drogecode.Knrm.Oefenrooster.Shared.Enums</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTarget,Drogecode.Knrm.Oefenrooster.Shared.Enums</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\TrainingTypes.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="TrainingTypesClient">
 			<OutputPath>../Clients/TrainingTypesClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.TrainingTypes</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\User.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="UserClient">
 			<OutputPath>../Clients/UserClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.User</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.User</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\UserGlobal.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="UserGlobalClient">
 			<OutputPath>../Clients/UserGlobalClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models.UserGlobal</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.UserGlobal</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Customer.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="CustomerClient">
 			<OutputPath>../Clients/CustomerClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer,Drogecode.Knrm.Oefenrooster.Shared.Models.Customer</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer,Drogecode.Knrm.Oefenrooster.Shared.Models.Customer</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\LinkedCustomer.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="LinkedCustomerClient">
 			<OutputPath>../Clients/LinkedCustomerClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer,Drogecode.Knrm.Oefenrooster.Shared.Models.Customer,Drogecode.Knrm.Oefenrooster.Shared.Models.User</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkCustomer,Drogecode.Knrm.Oefenrooster.Shared.Models.Customer,Drogecode.Knrm.Oefenrooster.Shared.Models.User</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\UserLinkedMails.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="UserLinkedMailsClient">
 			<OutputPath>../Clients/UserLinkedMailsClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail,Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.UserLinkedMail</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\UserRole.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="UserRoleClient">
 			<OutputPath>../Clients/UserRoleClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole,Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\UserSettings.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="UserSettingsClient">
 			<OutputPath>../Clients/UserSettingsClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Enums,Drogecode.Knrm.Oefenrooster.Shared.Models.Setting</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Enums,Drogecode.Knrm.Oefenrooster.Shared.Models.Setting</Options>
 		</OpenApiReference>
 		<OpenApiReference Include="OpenAPIs\Vehicle.json" CodeGenerator="NSwagCSharp" Namespace="Drogecode.Knrm.Oefenrooster.ClientGenerator.Client" ClassName="VehicleClient">
 			<OutputPath>../Clients/VehicleClient.g.cs</OutputPath>
-			<Options>/GenerateClientInterfaces:true /GenerateDtoTypes:false /UseBaseUrl:false /AdditionalNamespaceUsages:Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle,Drogecode.Knrm.Oefenrooster.Shared.Models,Drogecode.Knrm.Oefenrooster.Shared.Models</Options>
+			<Options>$(NSwagCommonOptions) $(NSwagBaseNamespace),Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle</Options>
 		</OpenApiReference>
 	</ItemGroup>
 

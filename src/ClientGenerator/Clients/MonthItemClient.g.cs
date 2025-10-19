@@ -4,6 +4,7 @@
 // </auto-generated>
 //----------------------
 
+using Drogecode.Knrm.Oefenrooster.Shared.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.MonthItem;
 
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."

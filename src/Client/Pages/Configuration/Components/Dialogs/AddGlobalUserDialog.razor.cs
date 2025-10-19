@@ -27,7 +27,10 @@ public partial class AddGlobalUserDialog : IDisposable
     {
         if (firstRender && IsNew == true && GlobalUser is null)
         {
-            GlobalUser = new DrogeUserGlobal();
+            GlobalUser = new DrogeUserGlobal
+            {
+                Name = string.Empty
+            };
         }
     }
 

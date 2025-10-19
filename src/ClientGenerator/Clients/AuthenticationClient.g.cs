@@ -4,6 +4,7 @@
 // </auto-generated>
 //----------------------
 
+using Drogecode.Knrm.Oefenrooster.Shared.Models;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.User;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Authentication;
 
