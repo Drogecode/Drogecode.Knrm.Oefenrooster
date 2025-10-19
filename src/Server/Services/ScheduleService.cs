@@ -179,18 +179,29 @@ public class ScheduleService : DrogeService, IScheduleService
             result.PatchedTraining = training;
             var dbTraining = await CreateAndGetTraining(userId, customerId, training, clt);
             if (dbTraining is null) return result;
-            var available = await Database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.TrainingId == dbTraining.Id);
-            if (available is null)
+            var ava = await Database.RoosterAvailables.FirstOrDefaultAsync(x => x.CustomerId == customerId && x.UserId == userId && x.TrainingId == dbTraining.Id, clt);
+            if (ava is null)
             {
                 if (!await AddAvailableInternalAsync(userId, customerId, training)) return result;
             }
-            else if (!await PatchAvailableInternalAsync(userId, available, training)) return result;
+            else if (!await PatchAvailableInternalAsync(userId, ava, training)) return result;
+
+            Availability? available = ava?.Available;
+            AvailabilitySetBy? setBy = ava?.SetBy;
+            if (setBy is not AvailabilitySetBy.User)
+            {
+                var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerInSpan(false, customerId, userId, training.DateEnd, training.DateStart, clt);
+                var userHolidays = await _userHolidaysRepository.GetUserHolidaysForUser(false, customerId, userId, training.DateEnd, training.DateStart, clt);
+                GetAvailability(defaultAveUser, userHolidays, training.DateStart, training.DateEnd, training.DefaultId, null, ref available, ref setBy);
+            }
 
             training.Updated = true;
             result.Success = true;
             result.PatchedTraining = training;
-            result.AvailableId = available?.Id;
-            result.CalendarEventId = available?.CalendarEventId;
+            result.AvailableId = ava?.Id;
+            result.CalendarEventId = ava?.CalendarEventId;
+            result.Available = available;
+            result.SetBy = setBy;
         }
 
         sw.Stop();
@@ -915,6 +926,17 @@ public class ScheduleService : DrogeService, IScheduleService
             }
         }
 
+        Availability? available = ava.Available;
+        AvailabilitySetBy? setBy = ava.SetBy;
+        if (setBy is not AvailabilitySetBy.User && body.Training is not null)
+        {
+            var defaultAveUser = await _userDefaultAvailableRepository.GetUserDefaultAvailableForCustomerInSpan(false, customerId, userId, body.Training.DateEnd, body.Training.DateStart, clt);
+            var userHolidays = await _userHolidaysRepository.GetUserHolidaysForUser(false, customerId, userId, body.Training.DateEnd, body.Training.DateStart, clt);
+            GetAvailability(defaultAveUser, userHolidays, body.Training.DateStart, body.Training.DateEnd, body.Training.DefaultId, null, ref available, ref setBy);
+        }
+        
+        ava.Available = available;
+        ava.SetBy = setBy ?? AvailabilitySetBy.None;
         ava.Assigned = body.User.Assigned;
         ava.UserFunctionId = body.User.PlannedFunctionId;
         ava.VehicleId = body.User.VehicleId;
@@ -923,8 +945,7 @@ public class ScheduleService : DrogeService, IScheduleService
         clt.ThrowIfCancellationRequested();
         clt = CancellationToken.None;
         Database.RoosterAvailables.Update(ava);
-        await Database.SaveChangesAsync(clt);
-        result.Success = true;
+        result.Success = await Database.SaveChangesAsync(clt) > 0;
         result.AvailableId = ava.Id;
         result.CalendarEventId = ava.CalendarEventId;
         result.Availability = ava.Available;

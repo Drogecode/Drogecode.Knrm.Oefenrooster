@@ -378,17 +378,17 @@ public class ScheduleController : DrogeController
                     response.Success = false;
                 response.ElapsedMilliseconds += result.ElapsedMilliseconds;
 
-                if (result is { Success: true, PatchedTraining.Assigned: true })
-                {
-                    await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
-                        JsonSerializer.Serialize(new AuditAssignedUser
-                        {
-                            UserId = userId, Assigned = result.PatchedTraining.Assigned, Availability = result.PatchedTraining.Availability, SetBy = result.PatchedTraining.SetBy,
-                            AuditReason = AuditReason.ChangeAvailability
-                        }),
-                        training.TrainingId);
-                    await _refreshHub.SendMessage(userId, ItemUpdated.FutureTrainings);
-                }
+                if (result is not { Success: true, PatchedTraining.Assigned: true }) continue;
+                await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
+                    JsonSerializer.Serialize(new AuditAssignedUser
+                    {
+                        UserId = userId, Assigned = result.PatchedTraining.Assigned, 
+                        Availability = result.Available, 
+                        SetBy = result.SetBy,
+                        AuditReason = AuditReason.ChangeAvailability
+                    }),
+                    training.TrainingId);
+                await _refreshHub.SendMessage(userId, ItemUpdated.FutureTrainings);
             }
 
             await _userService.PatchLastOnline(userId, clt);
@@ -415,7 +415,9 @@ public class ScheduleController : DrogeController
                 await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
                     JsonSerializer.Serialize(new AuditAssignedUser
                     {
-                        UserId = userId, Assigned = result.PatchedTraining.Assigned, Availability = result.PatchedTraining.Availability, SetBy = result.PatchedTraining.SetBy,
+                        UserId = userId, Assigned = result.PatchedTraining.Assigned, 
+                        Availability = result.Available, 
+                        SetBy = result.SetBy,
                         AuditReason = AuditReason.ChangeAvailability
                     }),
                     training.TrainingId);
@@ -444,10 +446,15 @@ public class ScheduleController : DrogeController
             if (!inRoleEditOther && !userId.Equals(body.User?.UserId))
                 return Unauthorized();
             var result = await _scheduleService.PatchAssignedUserAsync(userId, customerId, body, clt);
-            await _auditService.Log(userId, AuditType.PatchAssignedUser, customerId,
+            await _auditService.Log(userId, 
+                AuditType.PatchAssignedUser,
+                customerId,
                 JsonSerializer.Serialize(new AuditAssignedUser
                 {
-                    UserId = body.User?.UserId, Assigned = body.User?.Assigned, Availability = result?.Availability, SetBy = result?.SetBy,
+                    UserId = body.User?.UserId, 
+                    Assigned = body.User?.Assigned, 
+                    Availability = result?.Availability, 
+                    SetBy = result?.SetBy,
                     AuditReason = body.AuditReason ?? AuditReason.Assigned, // body.AuditReason was added in v0.3.81
                     VehicleId = body.AuditReason == AuditReason.ChangeVehicle ? body.User?.VehicleId : null,
                     FunctionId = body.AuditReason == AuditReason.ChangedFunction ? body.User?.PlannedFunctionId : null
