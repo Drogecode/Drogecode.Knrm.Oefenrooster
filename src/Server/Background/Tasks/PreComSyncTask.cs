@@ -38,7 +38,7 @@ public class PreComSyncTask(ILogger _logger, IDateTimeProvider dateTimeProvider)
         userIdsWithNull = await userSettingService.GetAllPreComIdAndValue(DefaultSettingsHelper.KnrmHuizenId, SettingName.SyncPreComDeleteOld, clt);
         if (userIdsWithNull.Count != 0)
         {
-            // Delete old availability from outlook
+            // Delete old availability from Outlook
             var usersToDeleteOld = userIdsWithNull.Where(x => x is { UserPreComId: not null, Value: true }).ToList();
             itemsSynced += await LoopSyncPreComAvailability(usersToDeleteOld, date.AddDays(-7), true, preComWorker, userService, customerSettingService, userPreComEventService, userSettingService,
                 clt);

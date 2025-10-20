@@ -44,9 +44,7 @@ public class UserPreComEventService(
 
     public async Task<bool> AddEvent(DrogeUser drogeUser, PreComPeriod period, DateOnly date, bool syncWithExternal, CancellationToken clt)
     {
-        var text = (await _userSettingService.GetStringUserSetting(drogeUser.CustomerId, drogeUser.Id, SettingName.PreComAvailableText, string.Empty, clt)).Value;
-        if (string.IsNullOrWhiteSpace(text))
-            text = "Piket";
+        var text = (await _userSettingService.GetStringUserSetting(drogeUser.CustomerId, drogeUser.Id, SettingName.PreComAvailableText, "Piket", clt)).Value;
 
         var start = period.Start;
         var end = period.End;

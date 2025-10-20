@@ -78,6 +78,8 @@ public class Worker : BackgroundService
                 {
                     _errorCount++;
                     _logger.LogWarning("Error in worker, increasing counter with one `{errorCount}`", _errorCount);
+                    if (_errorCount > 10000)
+                        _errorCount = 10000;
                 }
                 _logger.LogDebug("Finish worker run");
             }

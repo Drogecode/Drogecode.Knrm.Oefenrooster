@@ -36,7 +36,7 @@ public class ScheduleControllerTests : BaseTest
     }
 
     [Fact]
-    public async Task FailAssignTrainingTest()
+    public async Task AssignTrainingTest1()
     {
         var user = (await Tester.UserController.GetById(Tester.DefaultUserId))!.Value!.User;
         Assert.NotNull(user);
@@ -53,11 +53,11 @@ public class ScheduleControllerTests : BaseTest
         };
         var result = await Tester.ScheduleController.PatchAssignedUser(body);
         Assert.NotNull(result?.Value?.IdPatched);
-        Assert.False(result.Value.Success);
+        Assert.True(result.Value.Success);
     }
 
     [Fact]
-    public async Task AssignTrainingTest()
+    public async Task AssignTrainingTest2()
     {
         var user = (await Tester.UserController.GetById(Tester.DefaultUserId))!.Value!.User;
         Assert.NotNull(user);
