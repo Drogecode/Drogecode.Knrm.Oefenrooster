@@ -159,7 +159,7 @@
                             <MudSelectExtended T="Guid?" Label="@L["Roles"]" MultiSelection="true" SelectedValues="_userRolesForUser" SelectedValuesChanged="UserRolesChanged"
                                                MultiSelectionTextFunc="@(new Func<List<Guid?>, string>(GetSelectedRolesText))" AnchorOrigin="Origin.BottomCenter"
                                                Disabled="_updatingRoles">
-                                @foreach (var role in _userRoles.Roles.OrderBy(x => x.Name))
+                                @foreach (var role in _userRoles.Roles)
                                 {
                                     <MudSelectItemExtended T="Guid?" Value="@role.Id" Disabled="_userLinkRoles.Roles.Any(x=>x.Id == role.Id && x.SetExternal)">@role.Name</MudSelectItemExtended>
                                 }

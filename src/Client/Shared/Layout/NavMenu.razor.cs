@@ -38,13 +38,12 @@ public sealed partial class NavMenu : IDisposable
     private UserMenuSettings? _userMenuSettings;
     private List<DrogeMenu>? _menuItems;
     private List<LinkedCustomer>? _linkedCustomers;
-    private string _uriCalendar = "/planner/calendar";
-    private string _uriSchedule = "/planner/schedule";
-    private string _uriPlannerUser = "/planner/user";
-    private string _sharePointUrl = string.Empty;
-    private string _lplhUrl = string.Empty;
+    private const string URI_CALENDAR = "/planner/calendar";
+    private const string URI_SCHEDULE = "/planner/schedule";
+    private const string URI_PLANNER_USER = "/planner/user";
+    private const string LOCAL_STORAGE_KEY = "userMenuSettings";
     private Guid? _currentCustomer;
-    private bool _useFullLinkExpanded;
+    private Dictionary<Guid, bool> _useFullLinkExpanded;
     private bool _configurationExpanded;
     private bool _changingCustomer;
     private bool _addingTraining;
@@ -67,9 +66,9 @@ public sealed partial class NavMenu : IDisposable
             return;
         }
 
-        _userMenuSettings = (await LocalStorage.GetItemAsync<UserMenuSettings>("userMenuSettings")) ?? new UserMenuSettings();
-        // Cannot use the object directly because it freezes the page.
-        _useFullLinkExpanded = _userMenuSettings.UseFullLinkExpanded;
+        _userMenuSettings = (await LocalStorage.GetItemAsync<UserMenuSettings>(LOCAL_STORAGE_KEY)) ?? new UserMenuSettings();
+        // Cannot use the local storage object directly because it freezes the page.
+        _useFullLinkExpanded = _userMenuSettings.Expanded;
         _configurationExpanded = _userMenuSettings.ConfigurationExpanded;
         _menuItems = await MenuRepository.GetAllAsync(false, false, _cls.Token);
         var linkedCustomers = await LinkedCustomerClient.GetAllCustomersLinkedToMeAsync();
@@ -152,12 +151,12 @@ public sealed partial class NavMenu : IDisposable
         }
     }
 
-    private async Task UseFullLinksExpandedChanged(bool newValue)
+    private async Task UseFullLinksExpandedChanged(bool newValue, Guid menuId)
     {
-        if (_userMenuSettings is null || _userMenuSettings.UseFullLinkExpanded == newValue) return;
-        _userMenuSettings.UseFullLinkExpanded = newValue;
-        _useFullLinkExpanded = newValue;
-        await LocalStorage.SetItemAsync("userMenuSettings", _userMenuSettings);
+        if (_userMenuSettings is null) return;
+        _userMenuSettings.Expanded[menuId] = newValue;
+        _useFullLinkExpanded[menuId] = newValue;
+        await LocalStorage.SetItemAsync(LOCAL_STORAGE_KEY, _userMenuSettings);
     }
 
     private async Task ConfigurationExpandedChanged(bool newValue)
@@ -165,7 +164,7 @@ public sealed partial class NavMenu : IDisposable
         if (_userMenuSettings is null || _userMenuSettings.ConfigurationExpanded == newValue) return;
         _userMenuSettings.ConfigurationExpanded = newValue;
         _configurationExpanded = newValue;
-        await LocalStorage.SetItemAsync("userMenuSettings", _userMenuSettings);
+        await LocalStorage.SetItemAsync(LOCAL_STORAGE_KEY, _userMenuSettings);
     }
 
     private async Task ClickExtraMenu(DrogeMenu menu)

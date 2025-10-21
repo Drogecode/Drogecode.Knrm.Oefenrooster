@@ -1,5 +1,4 @@
 using Drogecode.Knrm.Oefenrooster.Server.Background.Tasks;
-using Drogecode.Knrm.Oefenrooster.Server.Controllers;
 using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
@@ -21,7 +20,11 @@ public class Worker : BackgroundService
     private const string NEXT_USER_SYNC = "all_usr_sync";
     private int _errorCount = 0;
 
-    public Worker(ILogger<Worker> logger, IServiceScopeFactory scopeFactory, IConfiguration configuration, IMemoryCache memoryCache, IDateTimeProvider dateTimeProvider)
+    public Worker(ILogger<Worker> logger,
+        IServiceScopeFactory scopeFactory, 
+        IConfiguration configuration, 
+        IMemoryCache memoryCache, 
+        IDateTimeProvider dateTimeProvider)
     {
         _logger = logger;
         _scopeFactory = scopeFactory;
@@ -102,7 +105,7 @@ public class Worker : BackgroundService
         }
 
         result &= await SyncSharePointUsers(scope, graphService);
-        result &= await SyncCalendarEvents(scope, graphService, clt);
+        result &= await SyncCalendarEvents(scope, clt);
         return result;
     }
 
@@ -152,7 +155,7 @@ public class Worker : BackgroundService
         return response;
     }
 
-    private async Task<bool> SyncCalendarEvents(IServiceScope scope, IGraphService graphService, CancellationToken clt)
+    private async Task<bool> SyncCalendarEvents(IServiceScope scope, CancellationToken clt)
     {
         var minutesInThePast = 10;
 #if DEBUG
@@ -160,7 +163,7 @@ public class Worker : BackgroundService
 #endif
         var userLastCalendarUpdateService = scope.ServiceProvider.GetRequiredService<IUserLastCalendarUpdateService>();
         var scheduleService = scope.ServiceProvider.GetRequiredService<IScheduleService>();
-        var scheduleController = scope.ServiceProvider.GetRequiredService<ScheduleController>();
+        var outlookManager = scope.ServiceProvider.GetRequiredService<IOutlookManager>();
         var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
         var functionService = scope.ServiceProvider.GetRequiredService<IFunctionService>();
         var usersToUpdate = await userLastCalendarUpdateService.GetLastUpdateUsers(minutesInThePast, 45, clt);
@@ -184,7 +187,7 @@ public class Worker : BackgroundService
                     function = await functionService.GetById(ava.CustomerId, ava.UserFunctionId.Value, clt);
                 }
 
-                await scheduleController.ToOutlookCalendar(ava.UserId, thisUser.ExternalId, ava.TrainingId, ava.Assigned, ava.Training.ToPlannedTraining(), user.UserId, ava.CustomerId,
+                await outlookManager.ToOutlookCalendar(ava.UserId, thisUser.ExternalId, ava.TrainingId, ava.Assigned, ava.Training.ToPlannedTraining(), user.UserId, ava.CustomerId,
                     ava.Id, ava.CalendarEventId, function?.Name, true, clt);
                 await Task.Delay(100, clt); // 0.1 s Do not spam outlook
             }

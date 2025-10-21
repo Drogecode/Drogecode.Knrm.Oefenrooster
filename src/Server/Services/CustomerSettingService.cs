@@ -17,7 +17,7 @@ public class CustomerSettingService : ICustomerSettingService
     public async Task<SettingBoolResponse> GetBoolCustomerSetting(Guid customerId, SettingName setting, bool def, CancellationToken clt)
     {
         var response = new SettingBoolResponse();
-        var result = await GetStringCustomerSetting(customerId, setting, def ? "true" : "false", clt);
+        var result = await GetStringCustomerSetting(customerId, setting, def ? "t" : "f", clt);
         response.Value = SettingNames.StringToBool(result.Value);
         response.Success = result.Success;
         return response;
@@ -46,7 +46,7 @@ public class CustomerSettingService : ICustomerSettingService
 
     public async Task PatchBoolSetting(Guid customerId, SettingName setting, bool value)
     {
-        await PatchStringSetting(customerId, setting, value ? "true" : "false");
+        await PatchStringSetting(customerId, setting, value ? "t" : "f");
     }
     public async Task PatchIntSetting(Guid customerId, SettingName setting, int value)
     {
@@ -62,7 +62,8 @@ public class CustomerSettingService : ICustomerSettingService
 
         var response = new SettingStringResponse
         {
-            Value = def
+            Value = def,
+            Success = true, // default is also success.
         };
         var result = await _database.CustomerSettings
             .Where(x => x.CustomerId == customerId && x.Name == setting)
@@ -70,7 +71,6 @@ public class CustomerSettingService : ICustomerSettingService
             .FirstOrDefaultAsync(clt);
         if (result?.Value is null) return response;
         response.Value = result.Value;
-        response.Success = true;
         return response;
     }
 

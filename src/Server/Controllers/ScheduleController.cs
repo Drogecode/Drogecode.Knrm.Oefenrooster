@@ -4,17 +4,16 @@ using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Audit;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule;
-using Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Vehicle;
 using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Graph.Models;
 using Microsoft.Identity.Web.Resource;
-using System.Diagnostics;
 using System.Security.Claims;
-using System.Text;
 using System.Text.Json;
+using Drogecode.Knrm.Oefenrooster.Server.Managers;
+using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
 using Training = Drogecode.Knrm.Oefenrooster.Shared.Models.Schedule.Training;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
@@ -30,7 +29,6 @@ public class ScheduleController : DrogeController
     private readonly IScheduleService _scheduleService;
     private readonly IAuditService _auditService;
     private readonly IGraphService _graphService;
-    private readonly ITrainingTypesService _trainingTypesService;
     private readonly IUserSettingService _userSettingService;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IUserService _userService;
@@ -38,6 +36,7 @@ public class ScheduleController : DrogeController
     private readonly IFunctionService _functionService;
     private readonly IUserLinkedMailsService _userLinkedMailsService;
     private readonly IUserLastCalendarUpdateService _userLastCalendarUpdateService;
+    private readonly IOutlookManager _outlookManager;
 
     public ScheduleController(
         RefreshHub refreshHub,
@@ -45,20 +44,19 @@ public class ScheduleController : DrogeController
         IScheduleService scheduleService,
         IAuditService auditService,
         IGraphService graphService,
-        ITrainingTypesService trainingTypesService,
         IUserSettingService userSettingService,
         IDateTimeProvider dateTimeProvider,
         IUserService userService,
         IVehicleService vehicleService,
         IFunctionService functionService,
         IUserLinkedMailsService userLinkedMailsService,
-        IUserLastCalendarUpdateService userLastCalendarUpdateService) : base(logger)
+        IUserLastCalendarUpdateService userLastCalendarUpdateService,
+        IOutlookManager outlookManager) : base(logger)
     {
         _refreshHub = refreshHub;
         _scheduleService = scheduleService;
         _auditService = auditService;
         _graphService = graphService;
-        _trainingTypesService = trainingTypesService;
         _userSettingService = userSettingService;
         _dateTimeProvider = dateTimeProvider;
         _userService = userService;
@@ -66,6 +64,7 @@ public class ScheduleController : DrogeController
         _functionService = functionService;
         _userLinkedMailsService = userLinkedMailsService;
         _userLastCalendarUpdateService = userLastCalendarUpdateService;
+        _outlookManager = outlookManager;
     }
 
     [HttpGet]
@@ -280,7 +279,7 @@ public class ScheduleController : DrogeController
                 }
 
                 var preText = await _userSettingService.GetStringUserSetting(customerId, drogeUser.Id, SettingName.CalendarPrefix, string.Empty, clt);
-                var text = GetTrainingCalenderText(training.Training.TrainingTypeName, training.Training.Name, function?.Name, preText.Value);
+                var text = OutlookManager.GetTrainingCalenderText(training.Training.TrainingTypeName, training.Training.Name, function?.Name, preText.Value);
                 await _graphService.PatchCalender(drogeUser.ExternalId, user.CalendarEventId, text, training.Training.DateStart, training.Training.DateEnd, !training.Training.ShowTime,
                     FreeBusyStatus.Busy, allUserLinkedMail);
                 await _scheduleService.PatchLastSynced(customerId, user.UserId, user.AvailableId, clt);
@@ -297,21 +296,6 @@ public class ScheduleController : DrogeController
                 }
             }
         }
-    }
-
-    private static string GetTrainingCalenderText(string? trainingTypeName, string? trainingName, string? functionName, string preText)
-    {
-        var text = new StringBuilder();
-        text.Append(preText);
-        if (!string.IsNullOrEmpty(trainingTypeName))
-            text.Append(trainingTypeName);
-        if (!string.IsNullOrEmpty(trainingTypeName) && !string.IsNullOrEmpty(trainingName))
-            text.Append(" - ");
-        if (!string.IsNullOrEmpty(trainingName))
-            text.Append(trainingName);
-        if (!string.IsNullOrEmpty(functionName))
-            text.Append(" * ").Append(functionName);
-        return text.ToString();
     }
 
     [HttpPost]
@@ -470,7 +454,7 @@ public class ScheduleController : DrogeController
                 var user = await _userService.GetUserById(customerId, body.User.UserId, false, clt);
                 if (user is null) throw new DrogeCodeNullException("No user found");
                 await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(customerId, userId, clt);
-                await ToOutlookCalendar(body.User.UserId, user.ExternalId, body.TrainingId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId,
+                await _outlookManager.ToOutlookCalendar(body.User.UserId, user.ExternalId, body.TrainingId, body.User.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId,
                     function?.Name, false, clt);
                 await _refreshHub.SendMessage(body.User.UserId, ItemUpdated.FutureTrainings);
             }
@@ -519,7 +503,7 @@ public class ScheduleController : DrogeController
                 if (body.Training?.PlannedFunctionId is not null && user.UserFunctionId is not null && user.UserFunctionId != body.Training.PlannedFunctionId)
                     function = await _functionService.GetById(customerId, body.Training.PlannedFunctionId.Value, clt);
                 await _userLastCalendarUpdateService.AddOrUpdateLastUpdateUser(customerId, userId, clt);
-                await ToOutlookCalendar(body.UserId.Value, user.ExternalId, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId,
+                await _outlookManager.ToOutlookCalendar(body.UserId.Value, user.ExternalId, body.TrainingId, body.Assigned, body.Training, userId, customerId, result.AvailableId, result.CalendarEventId,
                     function?.Name, false, clt);
                 await _refreshHub.SendMessage(body.UserId.Value, ItemUpdated.FutureTrainings);
             }
@@ -684,80 +668,6 @@ public class ScheduleController : DrogeController
         {
             Logger.LogError(ex, "Error in DeleteTraining");
             return BadRequest();
-        }
-    }
-
-    internal async Task ToOutlookCalendar(Guid planUserId, string? externalUserId, Guid? trainingId, bool assigned, TrainingAdvance? training, Guid currentUserId, Guid customerId, Guid? availableId,
-        string? calendarEventId, string? functionName, bool fromBackgroundWorker, CancellationToken clt)
-    {
-        try
-        {
-            var allUserLinkedMail = (await _userLinkedMailsService.AllUserLinkedMail(30, 0, planUserId, customerId, true, clt)).UserLinkedMails ?? [];
-            var delay = await _userSettingService.GetBoolUserSetting(customerId, currentUserId, SettingName.DelaySyncingTrainingToOutlook, false, clt);
-            if (delay.Value && !fromBackgroundWorker && allUserLinkedMail.Any(x => x is { IsActive: true, IsEnabled: true, IsDrogeCodeUser: false }))
-            {
-                return;
-            }
-
-            if (assigned && (await _userSettingService.GetBoolUserSetting(customerId, planUserId, SettingName.TrainingToCalendar, false, clt)).Value)
-            {
-#if DEBUG
-                // Be careful when debugging.
-                Debugger.Break();
-#endif
-                if (training is null && trainingId is not null)
-                    training = (await _scheduleService.GetTrainingById(planUserId, customerId, trainingId.Value, clt)).Training;
-                var type = await _trainingTypesService.GetById(training?.RoosterTrainingTypeId ?? Guid.Empty, customerId, clt);
-                var preText = await _userSettingService.GetStringUserSetting(customerId, planUserId, SettingName.CalendarPrefix, string.Empty, clt);
-                var text = GetTrainingCalenderText(type.TrainingType?.Name, training?.Name, functionName, preText.Value);
-                if (training is null)
-                {
-                    Logger.LogWarning("Failed to set a training for trainingId {trainingId}", trainingId);
-                    return;
-                }
-
-                _graphService.InitializeGraph();
-                if (string.IsNullOrEmpty(calendarEventId))
-                {
-                    if (!string.IsNullOrEmpty(text))
-                    {
-                        Logger.LogInformation("Creating event for user `{userId}` for training `{trainingId}`", planUserId, trainingId);
-                        var eventResult = await _graphService.AddToCalendar(externalUserId, text, training.DateStart, training.DateEnd, !training.ShowTime, FreeBusyStatus.Busy, allUserLinkedMail);
-                        if (eventResult is not null)
-                            await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, eventResult.Id, clt);
-                    }
-                    else
-                    {
-                        Logger.LogWarning(
-                            "text is null or empty for {customerId} {planUserId} {trainingId} {assigned} {currentUserId} {availableId} {calendarEventId}",
-                            customerId, planUserId, trainingId, assigned, currentUserId, availableId, calendarEventId);
-                    }
-                }
-                else
-                {
-                    Logger.LogInformation("Patching event for user `{userId}` for training `{trainingId}`", planUserId, trainingId);
-                    await _graphService.PatchCalender(externalUserId, calendarEventId, text, training.DateStart, training.DateEnd, !training.ShowTime, FreeBusyStatus.Busy, allUserLinkedMail);
-                    if (availableId is not null)
-                    {
-                        await _scheduleService.PatchLastSynced(customerId, planUserId, availableId.Value, clt);
-                        await _scheduleService.SaveDb(clt);
-                    }
-                }
-            }
-            else if (!string.IsNullOrEmpty(calendarEventId))
-            {
-                _graphService.InitializeGraph();
-                await _graphService.DeleteCalendarEvent(externalUserId, calendarEventId, clt);
-                await _scheduleService.PatchEventIdForUserAvailible(planUserId, customerId, availableId, null, clt);
-            }
-        }
-        catch (Exception ex)
-        {
-#if DEBUG
-            Debugger.Break();
-#endif
-            Logger.LogError(ex, "Exception in ToOutlookCalendar {customerId} {planUserId} {trainingId} {assigned} {currentUserId} {availableId} {calendarEventId} and training is {trainingNullOrNot}",
-                customerId, planUserId, trainingId, assigned, currentUserId, availableId, calendarEventId, training is null ? "null" : "not null");
         }
     }
 }

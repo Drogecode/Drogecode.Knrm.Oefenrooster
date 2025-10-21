@@ -12,15 +12,15 @@
         </div>
     }
     <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/" Match="NavLinkMatch.All">@L["Dashboard"]</MudNavLink>
-    <MudNavLink Icon="@Icons.Material.Filled.CalendarMonth" Href="@_uriCalendar" Match="NavLinkMatch.Prefix">@LApp["Availability"]</MudNavLink>
-    <MudNavLink Icon="@Icons.Material.Filled.EditCalendar" Href="@_uriSchedule" Match="NavLinkMatch.Prefix" data-testid="nav-schedule">@L["Schedule"]</MudNavLink>
+    <MudNavLink Icon="@Icons.Material.Filled.CalendarMonth" Href="@URI_CALENDAR" Match="NavLinkMatch.Prefix">@LApp["Availability"]</MudNavLink>
+    <MudNavLink Icon="@Icons.Material.Filled.EditCalendar" Href="@URI_SCHEDULE" Match="NavLinkMatch.Prefix" data-testid="nav-schedule">@L["Schedule"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.AutoGraph" Href="/user/defaults" Match="NavLinkMatch.Prefix">@L["Defaults"]</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.WbSunny" Href="/user/vacations" Match="NavLinkMatch.Prefix">@L["Vacations"]</MudNavLink>
     <AuthorizeView Roles="@nameof(Licenses.L_PreCom)">
         <MudNavLink Icon="@Icons.Material.Filled.SecurityUpdateWarning" Href="/precom/alerts" Match="NavLinkMatch.Prefix">@L["PreCom alerts"]</MudNavLink>
     </AuthorizeView>
     <AuthorizeView Roles="@AccessesNames.AUTH_users_details">
-        <MudNavLink Icon="@Icons.Material.Filled.ManageAccounts" Href="@_uriPlannerUser" Match="NavLinkMatch.Prefix">@L["User details"]</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Filled.ManageAccounts" Href="@URI_PLANNER_USER" Match="NavLinkMatch.Prefix">@L["User details"]</MudNavLink>
     </AuthorizeView>
     <AuthorizeView
         Roles="@(AccessesNames.AUTH_configure_training_types + ", " + AccessesNames.AUTH_super_user + ", " + AccessesNames.AUTH_scheduler_monthitem + ", " + AccessesNames.AUTH_configure_default_schedule + ", " +
@@ -66,8 +66,8 @@
         @CustomerMenu((menuItems, 0))
     }
     <MudDivider/>
-    @if (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriCalendar.Substring(1)) ||
-         (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(_uriSchedule.Substring(1)) && !Navigation.Uri.EndsWith("Table")))
+    @if (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(URI_CALENDAR.Substring(1)) ||
+         (Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith(URI_SCHEDULE.Substring(1)) && !Navigation.Uri.EndsWith("Table")))
     {
         <MudList T="string">
             <AuthorizeView Roles="@AccessesNames.AUTH_scheduler_add">
@@ -87,6 +87,7 @@
 </MudNavMenu>
 
 @code{
+
     private RenderFragment<(List<DrogeMenu> menuItems, int depth)> CustomerMenu => value =>
         @<div id="@($"menu-depth-{value.depth}")">
             @{
@@ -101,7 +102,13 @@
                 {
                     if (menu.IsGroup)
                     {
-                        <MudNavGroup Title="@menu.Text" Expanded="@_useFullLinkExpanded" ExpandedChanged="UseFullLinksExpandedChanged">
+                        var expanded = false;
+                        if (_useFullLinkExpanded.TryGetValue(menu.Id, out var expandedFromList))
+                        {
+                            expanded = expandedFromList;
+                        }
+                        
+                        <MudNavGroup Title="@menu.Text" Expanded="@expanded" ExpandedChanged="(e)=>UseFullLinksExpandedChanged(e, menu.Id)">
                             @{
                                 var subMenu = value.menuItems.ToList();
                             }

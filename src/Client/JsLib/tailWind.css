@@ -17,4 +17,4 @@ Otherwise MudBlazor will overrule tailwindcss
 @source "../**/*.{html,razor,cshtml,js,ts}";
 
 /* exclude generated + external */
-@source not "../**/{obj,bin,_content}/**";
+@source not "../**/{obj,bin,_content,node_modules}/**";

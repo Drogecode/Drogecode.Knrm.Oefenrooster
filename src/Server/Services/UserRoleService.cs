@@ -68,7 +68,10 @@ public class UserRoleService : DrogeService, IUserRoleService
         var linkedRoles = await _linkUserRoleService.GetLinkUserRolesAsync(userId, false, clt);
         foreach (var linkedRole in linkedRoles)
         {
-            var accesses = await Database.UserRoles.Where(x => x.Id == linkedRole).Select(x => x.Accesses).FirstOrDefaultAsync(clt);
+            var accesses = await Database.UserRoles
+                .Where(x => x.Id == linkedRole)
+                .Select(x => x.Accesses)
+                .FirstOrDefaultAsync(clt);
             if (accesses is null) continue;
             foreach (var access in accesses.Split(','))
             {
@@ -85,7 +88,11 @@ public class UserRoleService : DrogeService, IUserRoleService
         var sw = StopwatchProvider.StartNew();
         var result = new MultipleDrogeUserRolesResponse();
 
-        var roles = await Database.UserRoles.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x => x.ToDrogeUserRole()).ToListAsync(clt);
+        var roles = await Database.UserRoles
+            .Where(x => x.CustomerId == customerId)
+            .OrderBy(x => x.Name) // Also has Order value, but not used.
+            .Select(x => x.ToDrogeUserRole())
+            .ToListAsync(clt);
         result.Roles = roles;
         result.TotalCount = roles.Count;
         result.Success = true;
@@ -99,7 +106,11 @@ public class UserRoleService : DrogeService, IUserRoleService
         var sw = StopwatchProvider.StartNew();
         var result = new MultipleDrogeUserRolesBasicResponse();
 
-        var roles = await Database.UserRoles.Where(x => x.CustomerId == customerId).OrderBy(x => x.Order).Select(x => x.ToDrogeUserRoleBasic()).ToListAsync(clt);
+        var roles = await Database.UserRoles
+            .Where(x => x.CustomerId == customerId)
+            .OrderBy(x => x.Name) // Also has Order value, but not used.
+            .Select(x => x.ToDrogeUserRoleBasic())
+            .ToListAsync(clt);
         result.Roles = roles;
         result.TotalCount = roles.Count;
         result.Success = true;
@@ -113,7 +124,10 @@ public class UserRoleService : DrogeService, IUserRoleService
         var sw = StopwatchProvider.StartNew();
         var result = new GetUserRoleResponse();
 
-        var role = await Database.UserRoles.Where(x => x.CustomerId == customerId && x.Id == id).Select(x => x.ToDrogeUserRole()).FirstOrDefaultAsync(clt);
+        var role = await Database.UserRoles
+            .Where(x => x.CustomerId == customerId && x.Id == id)
+            .Select(x => x.ToDrogeUserRole())
+            .FirstOrDefaultAsync(clt);
         if (role is not null)
         {
             result.Role = role;
@@ -130,7 +144,9 @@ public class UserRoleService : DrogeService, IUserRoleService
         var sw = StopwatchProvider.StartNew();
         var result = new UpdateUserRoleResponse();
 
-        var role = await Database.UserRoles.Where(x => x.CustomerId == customerId && x.Id == userRole.Id).FirstOrDefaultAsync(clt);
+        var role = await Database.UserRoles
+            .Where(x => x.CustomerId == customerId && x.Id == userRole.Id)
+            .FirstOrDefaultAsync(clt);
         if (role is not null)
         {
             var updated = userRole.ToDb(customerId);

@@ -56,6 +56,7 @@ public class Startup
         services.AddScoped<IUserPreComEventService, UserPreComEventService>();
         
         services.AddScoped<IAuthenticationManager, AuthenticationManager>();
+        services.AddScoped<IOutlookManager, OutlookManager>();
         services.AddScoped<IUserSyncManager, UserSyncManager>();
 
         services.AddScoped<IRoosterDefaultsRepository, RoosterDefaultsRepository>();
@@ -83,6 +84,7 @@ public class Startup
         services.AddScoped<UserRoleController>();
         services.AddScoped<UserLinkMailsController>();
         services.AddScoped<UserLinkCustomerController>();
+        services.AddScoped<UserSettingController>();
         services.AddScoped<VehicleController>();
         services.AddScoped<DefaultScheduleController>();
 

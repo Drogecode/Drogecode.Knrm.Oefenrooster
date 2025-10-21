@@ -2,6 +2,6 @@
 
 public class UserMenuSettings
 {
-    public bool UseFullLinkExpanded { get; set; }
     public bool ConfigurationExpanded { get; set; }
+    public Dictionary<Guid, bool> Expanded { get; } = new();
 }

@@ -169,6 +169,7 @@ builder.Services.AddScoped<ICustomerSettingService, CustomerSettingService>();
 builder.Services.AddScoped<IUserLinkCustomerService, UserLinkCustomerService>();
 
 builder.Services.AddScoped<IAuthenticationManager, AuthenticationManager>();
+builder.Services.AddScoped<IOutlookManager, OutlookManager>();
 builder.Services.AddScoped<IUserSyncManager, UserSyncManager>();
 
 builder.Services.AddScoped<UserController>();
