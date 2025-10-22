@@ -10,6 +10,9 @@ public class OfflineService : IOfflineService
     private readonly ILocalStorageExpireService _localStorageExpireService;
     private readonly ISessionExpireService _sessionStorageExpireService;
 
+    /// <summary>
+    /// Unique id to be prefixed in case multiple users can use the app at the same time.
+    /// </summary>
     internal static Guid? UserId { get; set; }
 
     public OfflineService(
@@ -21,7 +24,8 @@ public class OfflineService : IOfflineService
     }
 
     public async Task<TRes?> CachedRequestAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] TRes>(
-        string cacheKey, Func<Task<TRes>> function, 
+        string cacheKey, 
+        Func<Task<TRes>> function, 
         ApiCachedRequest? request = null, 
         CancellationToken clt = default)
     {
