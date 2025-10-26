@@ -1,6 +1,7 @@
 using Drogecode.Knrm.Oefenrooster.Server.Background.Tasks;
 using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
+using Drogecode.Knrm.Oefenrooster.Shared.Authorization;
 using Drogecode.Knrm.Oefenrooster.Shared.Helpers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.Function;
 using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
@@ -21,9 +22,9 @@ public class Worker : BackgroundService
     private int _errorCount = 0;
 
     public Worker(ILogger<Worker> logger,
-        IServiceScopeFactory scopeFactory, 
-        IConfiguration configuration, 
-        IMemoryCache memoryCache, 
+        IServiceScopeFactory scopeFactory,
+        IConfiguration configuration,
+        IMemoryCache memoryCache,
         IDateTimeProvider dateTimeProvider)
     {
         _logger = logger;
@@ -54,19 +55,31 @@ public class Worker : BackgroundService
 #endif
                 }
 
+                var successfully = false;
                 using var scope = _scopeFactory.CreateScope();
-                var authenticationManager = scope.ServiceProvider.GetRequiredService<IAuthenticationManager>();
-                var authService = authenticationManager.GetAuthenticationService();
-                var tenantId = authService.GetTenantId();
-                
-                var graphService = scope.ServiceProvider.GetRequiredService<IGraphService>();
-                graphService.InitializeGraph();
-                
-                var successfully = await SyncSharePoint(scope, graphService, tenantId, _clt);
-                if (tenantId.Equals(DefaultSettingsHelper.KnrmHuizenId.ToString()) && count % 15 == 6) // Every 15 runs, but not directly after restart.
+                var licenseService = scope.ServiceProvider.GetRequiredService<ILicenseService>();
+                var customersWithSharePointReportsLicense = await licenseService.GetAllCustomerIdsWithLicense(Licenses.L_SharePointReports, _clt);
+                if (customersWithSharePointReportsLicense.CustomerIds is not null && customersWithSharePointReportsLicense.CustomerIds.Count > 0)
                 {
-                    var preComSyncJob = new PreComSyncTask(_logger, _dateTimeProvider);
-                    successfully &= (await RunBackgroundTask(async () => await preComSyncJob.SyncPreComAvailability(scope, _clt), "SyncPreComAvailability", _clt)); 
+                    var graphService = scope.ServiceProvider.GetRequiredService<IGraphService>();
+                    graphService.InitializeGraph();
+                    foreach (var customerId in customersWithSharePointReportsLicense.CustomerIds)
+                    {
+                        successfully = await SyncSharePoint(scope, graphService, customerId.ToString(), _clt);
+                    }
+                }
+
+                if (count % 15 == 7) // Every 15 runs, but not directly after restart.
+                {
+                    var customersWithPreComLicense = await licenseService.GetAllCustomerIdsWithLicense(Licenses.L_PreCom, _clt);
+                    if (customersWithPreComLicense.CustomerIds is not null && customersWithPreComLicense.CustomerIds.Count > 0)
+                    {
+                        foreach (var customerId in customersWithPreComLicense.CustomerIds)
+                        {
+                            var preComSyncJob = new PreComSyncTask(_logger, _dateTimeProvider);
+                            successfully &= (await RunBackgroundTask(async () => await preComSyncJob.SyncPreComAvailability(scope, customerId, _clt), "SyncPreComAvailability", _clt));
+                        }
+                    }
                 }
 
                 count++;
@@ -81,9 +94,8 @@ public class Worker : BackgroundService
                 {
                     _errorCount++;
                     _logger.LogWarning("Error in worker, increasing counter with one `{errorCount}`", _errorCount);
-                    if (_errorCount > 10000)
-                        _errorCount = 10000;
                 }
+
                 _logger.LogDebug("Finish worker run");
             }
             catch (Exception ex)
@@ -92,18 +104,17 @@ public class Worker : BackgroundService
                 _logger.LogError(ex, "Error `{errorCount}` in worker", _errorCount);
             }
 
-            if (_clt.IsCancellationRequested) return;
+            if (_errorCount <= 10000) continue;
+            _logger.LogError("Error count is huge `{errorCount}`, there is a bug or configuration issue that should be fixed asap!", _errorCount);
+            _errorCount = 9990;
         }
     }
 
     private async Task<bool> SyncSharePoint(IServiceScope scope, IGraphService graphService, string tenantId, CancellationToken clt)
     {
         var result = true;
-        if (tenantId.Equals(DefaultSettingsHelper.KnrmHuizenId.ToString()))
-        {
-            result &= await SyncSharePointReports(graphService);
-        }
-
+        //ToDo: Only works for KNRM Huizen for now.
+        result &= await SyncSharePointReports(graphService);
         result &= await SyncSharePointUsers(scope, graphService);
         result &= await SyncCalendarEvents(scope, clt);
         return result;

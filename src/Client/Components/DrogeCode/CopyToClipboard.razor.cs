@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.JSInterop;
 
 namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
@@ -6,8 +6,8 @@ namespace Drogecode.Knrm.Oefenrooster.Client.Components.DrogeCode;
 public sealed partial class CopyToClipboard
 {
     // https://chrissainty.com/copy-to-clipboard-in-blazor/
-    [Inject] IStringLocalizer<CopyToClipboard> L { get; set; }
-    [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
+    [Inject, NotNull] IStringLocalizer<CopyToClipboard>? L { get; set; }
+    [Inject, NotNull] private IJSRuntime? JSRuntime { get; set; }
     [Parameter] public string? Label { get; set; }
     [Parameter] public string? TextField { get; set; }
     [Parameter] public string? TrustedHtmlText { get; set; }

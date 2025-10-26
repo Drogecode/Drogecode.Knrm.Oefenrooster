@@ -10,9 +10,9 @@ public abstract class DrogeService : IDrogeService
     protected readonly DataContext Database;
     protected readonly IMemoryCache MemoryCache;
     protected readonly IDateTimeProvider DateTimeProvider;
-    internal MemoryCacheEntryOptions CacheOptions;
+    internal readonly MemoryCacheEntryOptions CacheOptions;
 
-    public DrogeService(
+    protected DrogeService(
         ILogger<DrogeService> logger,
         DataContext database,
         IMemoryCache memoryCache,
@@ -26,6 +26,7 @@ public abstract class DrogeService : IDrogeService
         var cacheOptions = new MemoryCacheEntryOptions();
         cacheOptions.SetSlidingExpiration(TimeSpan.FromMinutes(3));
         cacheOptions.SetAbsoluteExpiration(TimeSpan.FromMinutes(7));
+        cacheOptions.Priority = CacheItemPriority.Normal;
         CacheOptions = cacheOptions;
     }
 
