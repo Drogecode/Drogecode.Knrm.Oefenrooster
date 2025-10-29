@@ -21,11 +21,11 @@ public class ReportTrainingService : IReportTrainingService
     {
         var sw = StopwatchProvider.StartNew();
         var listWhere = _database.ReportTrainings
-            .Include(x => x.Users)
+            .Include(x => x.Users!.Where(y=>y.IsDeleted == false))
             .Include(x => x.LinkReportTrainingRoosterTrainings!.Where(y => y.DeletedOn == null))
             .Where(x => x.CustomerId == customerId
-                        && x.Users.Count(y => users.Contains(y.DrogeCodeId)) == users.Count
-                        && (types == null || !types.Any() || types.Contains(x.Type)));
+                        && x.Users!.Count(y => !y.IsDeleted && users.Contains(y.DrogeCodeId)) == users.Count
+                        && (types == null || !types.Any() || types.Contains(x.Type!)));
         var sharePointActionsUser = new MultipleReportTrainingsResponse
         {
             Trainings = await listWhere.OrderByDescending(x => x.Start).Skip(skip).Take(count).Select(x => x.ToDrogeTraining()).ToListAsync(clt),
@@ -59,7 +59,7 @@ public class ReportTrainingService : IReportTrainingService
     {
         var sw = StopwatchProvider.StartNew();
         var allReports = await _database.ReportTrainings
-            .Where(x => x.CustomerId == customerId && x.Users!.Count(y => trainingRequest.Users!.Contains(y.DrogeCodeId)) == trainingRequest.Users!.Count)
+            .Where(x => x.CustomerId == customerId && x.Users!.Count(y => !y.IsDeleted && trainingRequest.Users!.Contains(y.DrogeCodeId)) == trainingRequest.Users!.Count)
             .Select(x => new { x.Start })
             .OrderByDescending(x => x.Start)
             .ToListAsync(clt);

@@ -1,7 +1,6 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Extensions;
 using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.ReportAction;
-using System.Diagnostics;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Services;
 
@@ -21,12 +20,13 @@ public class ReportActionService : IReportActionService
         bool minimal, DateTime? startDate, DateTime? endDate, CancellationToken clt)
     {
         var sw = StopwatchProvider.StartNew();
-        var listWhere = _database.ReportActions.Include(x => x.Users)
+        var listWhere = _database.ReportActions
+            .Include(x => x.Users!.Where(y=>y.IsDeleted == false))
             .Where(x => x.CustomerId == customerId
                         && (startDate == null || x.Start > startDate)
                         && (endDate == null || x.End < endDate)
-                        && x.Users.Count(y => users.Contains(y.DrogeCodeId!.Value)) == users.Count
-                        && (types == null || !types.Any() || types.Contains(x.Type))
+                        && x.Users!.Count(y => !y.IsDeleted && users.Contains(y.DrogeCodeId!.Value)) == users.Count
+                        && (types == null || !types.Any() || types.Contains(x.Type!))
                         && (search == null || !search.Any() || search.Any(y => EF.Functions.ILike(x.ShortDescription, "%" + y + "%"))
                             || search.Any(y => EF.Functions.ILike(x.Description, "%" + y + "%"))));
 
@@ -53,7 +53,7 @@ public class ReportActionService : IReportActionService
         var allReports = await _database.ReportActions
             .Where(x => x.CustomerId == customerId
                         && (actionRequest.Prio == null || !actionRequest.Prio.Any() || actionRequest.Prio.Contains(x.Prio))
-                        && x.Users!.Count(y => actionRequest.Users!.Contains(y.DrogeCodeId)) == actionRequest.Users!.Count
+                        && x.Users!.Count(y => !y.IsDeleted && actionRequest.Users!.Contains(y.DrogeCodeId)) == actionRequest.Users!.Count
                         && (x.Type == null || !_typeInzetToIgnore.Contains(x.Type)))
             .Select(x => new { x.Start, x.Number })
             .OrderByDescending(x => x.Start)

@@ -144,6 +144,8 @@ public class GraphService : IGraphService
                             _database.ReportUsers.Add(user);
                         else
                             _database.ReportUsers.Update(user);
+                        if (user.IsDeleted)
+                            _database.ReportUsers.Remove(user);
                     }
                 }
 
@@ -202,6 +204,8 @@ public class GraphService : IGraphService
                             _database.ReportUsers.Add(user);
                         else
                             _database.ReportUsers.Update(user);
+                        if (user.IsDeleted)
+                            _database.ReportUsers.Remove(user);
                     }
                 }
 

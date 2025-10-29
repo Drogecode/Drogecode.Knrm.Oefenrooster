@@ -163,6 +163,7 @@ public static class ReportActionMapper
             TotalFullHours = dbAction.TotalFullHours,
         };
     }
+
     public static DrogeAction ToMinimalDrogeAction(this DbReportAction dbAction)
     {
         return new DrogeAction
@@ -211,8 +212,8 @@ public static class ReportActionMapper
             Users = dbTraining.Users?.Select(x => x.ToSharePointUser()).ToList(),
             TotalMinutes = dbTraining.TotalMinutes,
             TotalFullHours = dbTraining.TotalFullHours,
-            
-            LinkedTrainings = dbTraining.LinkReportTrainingRoosterTrainings?.Select(x=>x.RoosterTrainingId).ToList()
+
+            LinkedTrainings = dbTraining.LinkReportTrainingRoosterTrainings?.Select(x => x.RoosterTrainingId).ToList()
         };
     }
 
@@ -270,9 +271,9 @@ public static class ReportActionMapper
         {
             foreach (var dbUser in dbAction.Users)
             {
-                if (spAction.Users.Any(x => (x.DrogeCodeId is not null && x.DrogeCodeId == dbUser.DrogeCodeId)
-                                            || (x.SharePointID is not null && x.SharePointID == dbUser.SharePointID)
-                                            || (x.SharePointID == null && x.Name == dbUser.Name)))
+                if (spAction.Users?.Any(x => (x.DrogeCodeId is not null && x.DrogeCodeId == dbUser.DrogeCodeId)
+                                             || (x.SharePointID is not null && x.SharePointID == dbUser.SharePointID)
+                                             || (x.SharePointID == null && x.Name == dbUser.Name)) == true)
                 {
                     var user = spAction.Users.FirstOrDefault(x =>
                         (x.DrogeCodeId is not null && x.DrogeCodeId == dbUser.DrogeCodeId)
@@ -289,6 +290,7 @@ public static class ReportActionMapper
                 }
             }
 
+            if (spAction.Users is null) return;
             foreach (var user in spAction.Users)
             {
                 if (dbAction.Users.Any(x => (x.DrogeCodeId is not null && x.DrogeCodeId == user.DrogeCodeId)
@@ -337,7 +339,7 @@ public static class ReportActionMapper
         {
             foreach (var dbUser in dbTraining.Users)
             {
-                if (spTraining.Users.Any(x => x.DrogeCodeId == dbUser.DrogeCodeId || x.SharePointID == dbUser.SharePointID || (x.SharePointID == null && x.Name?.Equals(dbUser.Name) == true)))
+                if (spTraining.Users?.Any(x => x.DrogeCodeId == dbUser.DrogeCodeId || x.SharePointID == dbUser.SharePointID || (x.SharePointID == null && x.Name?.Equals(dbUser.Name) == true)) == true)
                 {
                     var user = spTraining.Users.FirstOrDefault(x =>
                         x.DrogeCodeId == dbUser.DrogeCodeId || x.SharePointID == dbUser.SharePointID || (x.SharePointID == null && x.Name?.Equals(dbUser.Name) == true));
@@ -352,6 +354,7 @@ public static class ReportActionMapper
                 }
             }
 
+            if (spTraining.Users is null) return;
             foreach (var user in spTraining.Users)
             {
                 if (dbTraining.Users.Any(x => (x.DrogeCodeId is not null && x.DrogeCodeId == user.DrogeCodeId)

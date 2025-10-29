@@ -37,13 +37,11 @@ public class ReportActionController : ControllerBase
         try
         {
             if (count > 50) return Forbid();
-            var userName = User?.FindFirstValue("FullName") ?? throw new Exception("No userName found");
             var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
             var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
             var users = new List<Guid>() { userId };
 
             var result = await _reportActionService.GetListActionsUser(users, null, null, count, skip, customerId, false, null, null, clt);
-            _logger.LogInformation("Loading actions {count} skipping {skip} for user {userName}", count, skip, userName);
             return result;
         }
         catch (OperationCanceledException)
@@ -80,7 +78,6 @@ public class ReportActionController : ControllerBase
             var cleanedTypes = FilthyInputHelper.CleanList(body.Types, 10, _logger);
 
             var result = await _reportActionService.GetListActionsUser(body.Users, cleanedTypes, cleanedSearch, body.Count, body.Skip, customerId, false, null, null, clt);
-            _logger.LogInformation("Loading actions {count} skipping {skip} for user {users} ({userId})", body.Count, body.Skip, body.Users, userId);
             return result;
         }
         catch (OperationCanceledException)
