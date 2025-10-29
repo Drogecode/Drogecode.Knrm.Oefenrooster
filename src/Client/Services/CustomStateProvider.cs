@@ -109,7 +109,6 @@ public class CustomStateProvider : AuthenticationStateProvider
     {
         if (!identity.IsAuthenticated)
         {
-            DebugHelper.WriteLine("Identity not authenticated.");
             return await RefreshInternal();
         }
 
@@ -122,7 +121,7 @@ public class CustomStateProvider : AuthenticationStateProvider
         // If parsing fails or the dates are invalid (e.g., DateTime.MinValue), refresh.
         if (!parsedFrom || !parsedTo || validFrom == default || validTo == default)
         {
-            DebugHelper.WriteLine($"Failed to parse ValidFrom/ValidTo. From='{parsedFrom}-{validFromClaim}', To='{parsedTo}-{validToClaim}'");
+            //Failed to parse ValidFrom/ValidTo.
             identity = await RefreshInternal();
             return identity;
         }
@@ -137,7 +136,6 @@ public class CustomStateProvider : AuthenticationStateProvider
         {
             if (now < validFrom.AddMinutes(-5) || now > validTo)
             {
-                DebugHelper.WriteLine($"Token expired or not yet valid. Now={now}, From={validFrom}, To={validTo}");
                 identity = await RefreshInternal();
             }
         }
@@ -155,7 +153,7 @@ public class CustomStateProvider : AuthenticationStateProvider
         var refreshResponse = await _authenticationClient.RefreshUserAsync();
         if (!refreshResponse.Success || refreshResponse.State != RefreshState.AuthenticationRefreshed)
         {
-            DebugHelper.WriteLine("Logged out after failed refresh");
+            //Logged out after a failed refresh
             _currentUser = null;
             return new ClaimsIdentity();
         }
@@ -166,19 +164,19 @@ public class CustomStateProvider : AuthenticationStateProvider
         
         if (refreshResponse.ForceRefresh || oldUser is null || oldUser.Claims.Count() != newUser.Claims.Count())
         {
-            DebugHelper.WriteLine($"Should force refresh");
+            // Should force refresh
             _lastModified = DateTime.UtcNow;
             return newUser;
         }
 
         if (newUser.Claims.Where(x=>x.Type.Equals(ClaimTypes.Role)).Any(newClaim => !oldUser.Claims.Any(x => x.Type.Equals(ClaimTypes.Role) && x.Value.Equals(newClaim.Value))))
         {
-            DebugHelper.WriteLine("Should force refresh because role changed");
+            // Should force refresh because a role has changed
             _lastModified = DateTime.UtcNow;
             return newUser;
         }
         
-        DebugHelper.WriteLine("State changed but hold refresh");
+        // State changed but hold refresh
         return newUser;
     }
 }

@@ -170,34 +170,23 @@ public sealed partial class NavMenu : IDisposable
     private async Task ClickExtraMenu(DrogeMenu menu)
     {
         string? url = null;
-        string? loginHint = null;
-        if (AuthenticationState is not null)
-        {
-            var authState = await AuthenticationState;
-            loginHint = authState.User.FindFirst(c => c.Type == ClaimTypes.Name)?.Value;
-        }
 
-        if (menu.AddLoginHint != null && loginHint is not null)
+        if (menu.AddLoginHint != null)
         {
-            switch (menu.AddLoginHint)
+            var loginHint = AuthenticationStateProvider.LoginHint;
+            if (loginHint is not null)
             {
-                case '&':
-                    url = $"{menu.Url}&login_hint={HttpUtility.UrlEncode(loginHint)}";
-                    break;
-                case '?':
-                    url = $"{menu.Url}?login_hint={HttpUtility.UrlEncode(loginHint)}";
-                    break;
+                url = menu.AddLoginHint switch
+                {
+                    '&' => $"{menu.Url}&login_hint={HttpUtility.UrlEncode(loginHint)}",
+                    '?' => $"{menu.Url}?login_hint={HttpUtility.UrlEncode(loginHint)}",
+                    _ => menu.Url
+                };
             }
         }
-        else
-        {
-            url = menu.Url;
-        }
 
-        if (url is not null)
-        {
-            await JsRuntime.InvokeVoidAsync("open", url, menu.TargetBlank ? "_blank" : "");
-        }
+        url ??= menu.Url;
+        await JsRuntime.InvokeVoidAsync("open", url, menu.TargetBlank ? "_blank" : "");
     }
 
     public void Dispose()
