@@ -8,6 +8,8 @@ public class CustomStateProvider : AuthenticationStateProvider
     private ClaimsIdentity? _currentUser;
     private IAuthenticationClient _authenticationClient;
     private DateTime _lastModified = DateTime.MinValue;
+    
+    public string? LoginHint { get; private set; }
 
     public CustomStateProvider(IAuthenticationClient authenticationClient)
     {
@@ -99,6 +101,7 @@ public class CustomStateProvider : AuthenticationStateProvider
 
         var claims = new[] { new Claim(ClaimTypes.Name, user.UserName ?? "No name") }.Concat(user.Claims.Select(c => new Claim(c.Key, c.Value)));
         _currentUser = new ClaimsIdentity(claims, "Server authentication");
+        LoginHint = _currentUser.Claims.FirstOrDefault(x => x.Type.Equals("login_hint"))?.Value;
         return _currentUser;
     }
 

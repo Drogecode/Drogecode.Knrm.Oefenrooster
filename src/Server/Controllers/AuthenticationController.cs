@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Server.Managers.Interfaces;
-using IAuthenticationService = Drogecode.Knrm.Oefenrooster.Server.Services.Interfaces.IAuthenticationService;
 
 namespace Drogecode.Knrm.Oefenrooster.Server.Controllers;
 
@@ -28,9 +27,8 @@ public class AuthenticationController : DrogeController
     private readonly IReportActionSharedService _reportActionSharedService;
     private readonly IAuthenticationManager _authenticationManager;
     private readonly IConfiguration _configuration;
-    private IAuthenticationService? _authService;
 
-    private const string REFRESHTOKEN = "RefreshToken";
+    private const string REFRESH_TOKEN = "RefreshToken";
 
     public AuthenticationController(
         ILogger<AuthenticationController> logger,
@@ -77,7 +75,7 @@ public class AuthenticationController : DrogeController
     {
         try
         {
-            if (body.State is null)
+            if (body.State is null || body.Code is null || body.SessionState is null)
             {
                 return BadRequest(false);
             }
@@ -96,7 +94,7 @@ public class AuthenticationController : DrogeController
             if (supResult.Success is not true || supResult.JwtSecurityToken is null)
                 return false;
 
-            await SetUser(supResult, false, body.ClientVersion, clt);
+            await SetUser(supResult, true, body.ClientVersion, clt);
             return true;
         }
         catch (Exception e)
@@ -112,7 +110,7 @@ public class AuthenticationController : DrogeController
     {
         try
         {
-            if (User?.Identity?.IsAuthenticated == true && !User.IsInRole(AccessesNames.AUTH_External))
+            if (User.Identity?.IsAuthenticated == true && !User.IsInRole(AccessesNames.AUTH_External))
             {
                 Logger.LogInformation("AuthenticateExternal request, but user is already authenticated");
                 return false;
@@ -155,7 +153,7 @@ public class AuthenticationController : DrogeController
 
     [HttpGet]
     [Route("current-user-info")]
-    public async Task<ActionResult<CurrentUser>> CurrentUserInfo(CancellationToken clt = default)
+    public ActionResult<CurrentUser> CurrentUserInfo(CancellationToken clt = default)
     {
         try
         {
@@ -173,7 +171,7 @@ public class AuthenticationController : DrogeController
                 };
             }
 
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No objectidentifier found"));
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No objectidentifier found"));
             var res = new CurrentUser
             {
                 IsAuthenticated = User.Identity.IsAuthenticated,
@@ -197,10 +195,10 @@ public class AuthenticationController : DrogeController
     {
         try
         {
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
-            var refreshToken = User?.FindFirstValue(REFRESHTOKEN) ?? throw new Exception("REFRESHTOKEN not found");
-            var idToken = User?.FindFirstValue("idToken") ?? throw new Exception("idToken not found");
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new Exception("No objectidentifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new Exception("customerId not found"));
+            var refreshToken = User.FindFirstValue(REFRESH_TOKEN) ?? throw new Exception("REFRESH_TOKEN not found");
+            var idToken = User.FindFirstValue("idToken") ?? throw new Exception("idToken not found");
             var linkedUsers = await _userLinkCustomerService.GetAllLinkUserCustomers(userId, customerId, clt);
             var inSuperUserRole = User.IsInRole(AccessesNames.AUTH_super_user);
             if (!linkedUsers.Success || linkedUsers.UserLinkedCustomers?.Count < 2)
@@ -226,11 +224,11 @@ public class AuthenticationController : DrogeController
             var ip = GetRequesterIp();
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Name, linkedUser.Email ?? ""),
+                new(ClaimTypes.Name, linkedUser.Email ?? string.Empty),
                 new("FullName", linkedUser.Name),
-                new(REFRESHTOKEN, refreshToken),
+                new(REFRESH_TOKEN, refreshToken),
                 new("idToken", idToken),
-                new("http://schemas.microsoft.com/identity/claims/objectidentifier", linkedUser.Id.ToString() ?? ""),
+                new("http://schemas.microsoft.com/identity/claims/objectidentifier", linkedUser.Id.ToString()),
                 new("http://schemas.microsoft.com/identity/claims/tenantid", linkedUser.CustomerId.ToString()),
                 new("ExternalId", linkedUser.ExternalId ?? string.Empty),
                 new("ValidFrom", DateTime.UtcNow.AddMinutes(-10).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
@@ -293,20 +291,12 @@ public class AuthenticationController : DrogeController
     public async Task<ActionResult<bool>> Refresh(CancellationToken clt = default)
     {
         var refresh = (await RefreshUser(clt)).Value;
-        switch (refresh?.State)
+        return refresh?.State switch
         {
-            case RefreshState.CurrentAuthenticationExpired:
-            case RefreshState.CurrentAuthenticationValid:
-            case RefreshState.NotAuthenticated:
-            case RefreshState.NoRefreshToken:
-            case RefreshState.None:
-                return false;
-            case RefreshState.AuthenticationRefreshed:
-                return true;
-            case null:
-            default:
-                return false;
-        }
+            RefreshState.CurrentAuthenticationExpired or RefreshState.CurrentAuthenticationValid or RefreshState.NotAuthenticated or RefreshState.NoRefreshToken or RefreshState.None => false,
+            RefreshState.AuthenticationRefreshed => true,
+            _ => false
+        };
     }
 
     [Authorize]
@@ -320,7 +310,7 @@ public class AuthenticationController : DrogeController
         };
         try
         {
-            if (User?.Identity?.IsAuthenticated != true)
+            if (User.Identity?.IsAuthenticated != true)
             {
                 Logger.LogInformation("Refresh request, but user is not authenticated");
                 response.State = RefreshState.NotAuthenticated;
@@ -335,10 +325,10 @@ public class AuthenticationController : DrogeController
                 return response;
             }
 
-            var customerId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
-            var userId = new Guid(User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
+            var customerId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/tenantid") ?? throw new DrogeCodeNullException("customerId not found"));
+            var userId = new Guid(User.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ?? throw new DrogeCodeNullException("No object identifier found"));
 
-            var oldRefreshToken = User?.FindFirstValue(REFRESHTOKEN);
+            var oldRefreshToken = User.FindFirstValue(REFRESH_TOKEN);
             if (oldRefreshToken == null)
             {
                 Logger.LogInformation("Refresh request, but old refresh token is null for user `{userId}` in customer `{customerId}`", userId, customerId);
@@ -358,7 +348,7 @@ public class AuthenticationController : DrogeController
             }
 
             Logger.LogInformation("Refresh for user `{userId}` in customer `{customerId}` successful", userId, customerId);
-            await SetUser(supResult, false, "refresh", clt);
+            await SetUser(supResult, true, "refresh", clt);
             response.Success = true;
             response.ForceRefresh = false; // Set to true to enable.
             response.State = RefreshState.AuthenticationRefreshed;
@@ -422,7 +412,7 @@ public class AuthenticationController : DrogeController
             new("FullName", drogeClaims.FullName),
             new("ExternalUserId", drogeClaims.ExternalUserId),
             new("login_hint", drogeClaims.LoginHint),
-            new(REFRESHTOKEN, subResult.RefreshToken),
+            new(REFRESH_TOKEN, subResult.RefreshToken),
             new("idToken", drogeClaims.IdToken),
             new("ValidFrom", subResult.JwtSecurityToken!.ValidFrom.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
             new("ValidTo", subResult.JwtSecurityToken!.ValidTo.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'")),
@@ -469,7 +459,7 @@ public class AuthenticationController : DrogeController
     private async Task<Guid> GetCustomerIdByExternalId(string tenantId, IEnumerable<Claim>? claims, CancellationToken clt)
     {
         var customers = await _customerService.GetByTenantId(tenantId, clt);
-        if (customers is null || customers.Count == 0)
+        if (customers.Count == 0)
         {
             Logger.LogWarning("Failed to get or set customers by external id for tenantId `{tenantId}`", tenantId);
             throw new UnauthorizedAccessException();

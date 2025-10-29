@@ -79,7 +79,7 @@ public sealed partial class Authentication
     {
         await AuditClient.PostLogAsync(new PostLogRequest { Message = "Logout start" });
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var logoutHint = authState.User.FindFirst(c => c.Type == "login_hint")?.Value ?? "";
+        var logoutHint = AuthenticationStateProvider.LoginHint;
         if (!Enum.TryParse(authState.User.FindFirst(c => c.Type == "IdentityProvider")?.Value, out IdentityProvider identityProvider))
             identityProvider = IdentityProvider.Azure;
 

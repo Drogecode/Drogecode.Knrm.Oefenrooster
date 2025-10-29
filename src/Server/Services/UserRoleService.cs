@@ -1,6 +1,5 @@
 ﻿using Drogecode.Knrm.Oefenrooster.Server.Mappers;
 using Drogecode.Knrm.Oefenrooster.Shared.Models.UserRole;
-using System.Diagnostics;
 using System.Security.Claims;
 using Drogecode.Knrm.Oefenrooster.Server.Services.Abstract;
 using Drogecode.Knrm.Oefenrooster.Shared.Providers.Interfaces;
