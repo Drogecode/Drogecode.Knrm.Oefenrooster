@@ -112,6 +112,7 @@ public class Worker : BackgroundService
 
     private async Task<bool> SyncSharePoint(IServiceScope scope, IGraphService graphService, string tenantId, CancellationToken clt)
     {
+        return true;
         var result = true;
         //ToDo: Only works for KNRM Huizen for now.
         result &= await SyncSharePointReports(graphService);
