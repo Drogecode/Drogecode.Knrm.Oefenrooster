@@ -47,7 +47,7 @@
                             <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft" TransformOrigin="@Origin.TopLeft"
                                      AriaLabel="@L["User menu dropdown"]" data-testid="top-menu-settings">
                                 <MudMenuItem Href="/user/settings" data-testid="user-settings">@L["Settings"]</MudMenuItem>
-                                <MudMenuItem Href="/authentication/logout" data-testid="user-logout">@L["Logout"]</MudMenuItem>
+                                <MudMenuItem OnClick="@Logout" data-testid="user-logout">@L["Logout"]</MudMenuItem>
                             </MudMenu>
                             <Theming Global="_global" MudThemeProvider="_appShell.MudThemeProvider" @bind-IsDarkMode="_isDarkMode" @bind-DarkModeToggle="_darkModeToggle"/>
                         </MudAppBar>
@@ -76,7 +76,7 @@
                         <MudMainContent>
                             <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
                                 <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">@L["No access"]</MudText>
-                                <MudButton @onclick="Logout">@L["Logout"]</MudButton>
+                                <MudButton OnClick="@Logout">@L["Logout"]</MudButton>
                             </MudContainer>
                         </MudMainContent>
                     </NotAuthorized>

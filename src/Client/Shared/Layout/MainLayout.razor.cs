@@ -128,11 +128,9 @@ public sealed partial class MainLayout : IDisposable
         }
     }
 
-    private async Task Logout(MouseEventArgs args)
+    private void Logout(MouseEventArgs args)
     {
-        await AuthenticationStateProvider.Logout();
-        StateHasChanged();
-        Navigation.NavigateTo("/landing_page");
+        Navigation.NavigateTo("/authentication/logout", true);
     }
 
     public void ShowSnackbarAssignmentChanged(PlanUser user, PlannedTraining training)
