@@ -33,7 +33,7 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.10" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.10" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.10" />
-		<PackageReference Include="Microsoft.Graph" Version="5.94.0" />
+		<PackageReference Include="Microsoft.Graph" Version="5.95.0" />
 		<PackageReference Include="Microsoft.Graph.Core" Version="3.2.4" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
 		<PackageReference Include="Nager.Holiday" Version="1.0.1" />
