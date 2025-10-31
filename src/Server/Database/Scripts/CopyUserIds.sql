@@ -60,9 +60,9 @@ update "ReportTrainings" set "SetByExternalOn" = null where "SetByExternalOn" is
 
 
 -- Only when testing to break link with real calendar events. (different instance when moving but still important)
-update "RoosterAvailable" set "CalendarEventId" = null;
-delete from "UserPreComEvent";
-delete from "UserSettings";
+update "RoosterAvailable" set "CalendarEventId" = null where "CalendarEventId" is not null;
+delete from "UserPreComEvent" where "CalendarEventId" is not null;
+delete from "UserSettings" where "Name" is not null;
 
 select * from "Users" u where u."DeletedBy" is not null order by "DeletedOn";
 select * from "Users" u where u."Name" LIKE 'Jim%';
