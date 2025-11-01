@@ -27,9 +27,6 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
-      - name: Workload restore
-        run: dotnet workload restore
-
       - name: Get the version
         id: get_version
         run: echo "VERSION=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_OUTPUT

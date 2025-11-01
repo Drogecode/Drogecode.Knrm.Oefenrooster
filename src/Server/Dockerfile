@@ -21,9 +21,6 @@ RUN set -uex; \
     apt-get -qy update; \
     apt-get -qy install nodejs;
 
-# Install wasm-tools workload
-RUN dotnet workload install wasm-tools
-
 WORKDIR /src
 COPY ["src/Server/Drogecode.Knrm.Oefenrooster.Server.csproj", "Server/"]
 RUN dotnet restore "Server/Drogecode.Knrm.Oefenrooster.Server.csproj"

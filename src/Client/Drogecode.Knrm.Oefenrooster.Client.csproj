@@ -8,7 +8,6 @@
         <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
         <BlazorWebAssemblyI18NAssemblies>westeurope</BlazorWebAssemblyI18NAssemblies>
         <PublishTrimmed>true</PublishTrimmed>
-        <RunAOTCompilation>true</RunAOTCompilation>
         <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
         <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
 	</PropertyGroup>

@@ -88,12 +88,12 @@ public class Worker : BackgroundService
                 if (successfully && _errorCount > 0)
                 {
                     _errorCount--;
-                    _logger.LogInformation("No error in worker, decreasing counter with one `{errorCount}`", _errorCount);
+                    _logger.LogInformation("No error in worker, decreasing counter with one `{errorCount}` total counter = '{count}'", _errorCount, count);
                 }
                 else if (!successfully)
                 {
                     _errorCount++;
-                    _logger.LogWarning("Error in worker, increasing counter with one `{errorCount}`", _errorCount);
+                    _logger.LogWarning("Error in worker, increasing counter with one `{errorCount}` total counter = '{count}'", _errorCount, count);
                 }
 
                 _logger.LogDebug("Finish worker run");
@@ -101,11 +101,11 @@ public class Worker : BackgroundService
             catch (Exception ex)
             {
                 _errorCount++;
-                _logger.LogError(ex, "Error `{errorCount}` in worker", _errorCount);
+                _logger.LogError(ex, "Error `{errorCount}` in worker total counter = '{count}'", _errorCount, count);
             }
 
             if (_errorCount <= 10000) continue;
-            _logger.LogError("Error count is huge `{errorCount}`, there is a bug or configuration issue that should be fixed asap!", _errorCount);
+            _logger.LogError("Error count is huge `{errorCount}`, there is a bug or configuration issue that should be fixed asap! total counter = '{count}'", _errorCount, count);
             _errorCount = 9990;
         }
     }
